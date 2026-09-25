@@ -1,0 +1,134 @@
+{
+  "format": "orbital-economy-change-policy-v1",
+  "name": "Orbital Economy v7.7 Construction Materials - change contract candidate r1",
+  "description": "Written before implementation from V7_7_ARCHITECTURE_SPEC.md. Accepted baseline: v7.6.1 r1. Modes 0-26 must reproduce it exactly; new behaviour lives in Modes 27-29 behind Construction Materials Enabled. validation_sha256 must be set to the delivered validation. First executor run intentionally keeps validation_sha256 placeholder until candidate.yml prints the delivered validation SHA.",
+  "accepted_model_sha256": "16e8ca6c5719e67422e16a6ec1ea2724b6121a062200eaf91e81389a2a180cd1",
+  "validation_sha256": "<SHA-256 of the delivered validation.json>",
+  "comparison": {
+    "abs_tolerance": 0,
+    "rel_tolerance": null,
+    "rel_floor": 1e-12
+  },
+  "engine": {
+    "package": "simulation",
+    "version": "9.0.0"
+  },
+  "default_action": "deny",
+  "require_full_mode_coverage": true,
+  "rules": [
+    {
+      "id": "regression-guard-modes-0-26",
+      "action": "deny",
+      "event": "series_changed",
+      "modes": "0-26",
+      "name": "*",
+      "note": "Modes 0-26 set Construction Materials Enabled = 0 and must reproduce v7.6.1 r1 exactly (first match wins)."
+    },
+    {
+      "id": "forbid-removals-and-structural-drift",
+      "action": "deny",
+      "event": [
+        "element_removed",
+        "series_removed",
+        "mode_removed",
+        "link_removed",
+        "type_changed",
+        "simulation_changed",
+        "time_axis_changed",
+        "scenario_renamed"
+      ],
+      "name": "*"
+    },
+    {
+      "id": "add-construction-materials-and-regolith",
+      "action": "allow",
+      "event": "element_added",
+      "name": [
+        "Construction Materials Enabled",
+        "Construction Materials *",
+        "* Construction Materials *",
+        "* Regolith *",
+        "Regolith *",
+        "Test 28 *",
+        "Test 29 *",
+        "? Test 28 * Applies",
+        "? Test 29 * Applies",
+        "v7.7 *"
+      ],
+      "required": true,
+      "note": "new sector, raw resource, coefficients, switch and Modes 28-29 test wiring (architecture spec §2-§4)"
+    },
+    {
+      "id": "change-expansion-flows-per-spec",
+      "action": "allow",
+      "event": "definition_changed",
+      "name": [
+        "? Refinery Expansion",
+        "? Electronics Factory Expansion",
+        "? Power Generation Expansion"
+      ],
+      "required": true,
+      "note": "IfThenElse([Construction Materials Enabled] = 1, [X <Sector> Desired Expansion] * Min([X Capital Goods Fulfillment], [X Construction Materials Fulfillment]), <old verbatim>)"
+    },
+    {
+      "id": "link-into-changed-expansion",
+      "action": "allow",
+      "event": "link_added",
+      "name": [
+        "* -> ? Refinery Expansion",
+        "* -> ? Electronics Factory Expansion",
+        "* -> ? Power Generation Expansion"
+      ]
+    },
+    {
+      "id": "link-into-new-elements",
+      "action": "allow",
+      "event": "link_added",
+      "name": [
+        "* -> Construction Materials Enabled",
+        "* -> Construction Materials *",
+        "* -> * Construction Materials *",
+        "* -> * Regolith *",
+        "* -> Regolith *",
+        "* -> Test 28 *",
+        "* -> Test 29 *",
+        "* -> ? Test 28 * Applies",
+        "* -> ? Test 29 * Applies",
+        "* -> v7.7 *"
+      ]
+    },
+    {
+      "id": "add-modes-27-29",
+      "action": "allow",
+      "event": "mode_added",
+      "modes": "27-29",
+      "required": true
+    },
+    {
+      "id": "scenarios-0-26-gain-switch-off",
+      "action": "allow",
+      "event": "scenario_input_changed",
+      "modes": "0-26",
+      "required": true,
+      "note": "only \"Construction Materials Enabled\": 0"
+    },
+    {
+      "id": "new-series-everywhere",
+      "action": "allow",
+      "event": "series_added",
+      "name": [
+        "Construction Materials Enabled",
+        "Construction Materials *",
+        "* Construction Materials *",
+        "* Regolith *",
+        "Regolith *",
+        "Test 28 *",
+        "Test 29 *",
+        "? Test 28 * Applies",
+        "? Test 29 * Applies",
+        "v7.7 *"
+      ],
+      "note": "the new elements are output series in every Mode (constant or zero where the switch is off)"
+    }
+  ]
+}

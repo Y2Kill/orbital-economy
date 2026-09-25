@@ -1,0 +1,1337 @@
+{
+  "format": "orbital-economy-model-patch-v1",
+  "base_sha256": "16e8ca6c5719e67422e16a6ec1ea2724b6121a062200eaf91e81389a2a180cd1",
+  "name": "Orbital Economy v7.7 Construction Materials candidate r1",
+  "description": "Regolith -> Construction Materials -> colonial Refinery/Electronics/Power expansion; Transport and energy use are intentionally unchanged.",
+  "add_elements": [
+    {
+      "type": "VARIABLE",
+      "name": "Construction Materials Enabled",
+      "behavior": {
+        "value": 1
+      },
+      "description": "v7.7 master switch: construction materials physically constrain colonial capacity expansion."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "Regolith per Construction Materials Unit",
+      "behavior": {
+        "value": 2
+      },
+      "description": "[calib] Regolith units consumed per unit of Construction Materials."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "Construction Materials Target Days",
+      "behavior": {
+        "value": 30
+      },
+      "description": "Target Construction Materials inventory coverage in days of desired construction demand."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "Construction Materials Adjustment Time",
+      "behavior": {
+        "value": 20
+      },
+      "description": "First-order inventory correction time for desired Construction Materials production."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "Construction Materials Buffer Days",
+      "behavior": {
+        "value": 1
+      },
+      "description": "Scale-free Construction Materials fulfillment half-saturation buffer in days of current demand."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "Regolith Target Days",
+      "behavior": {
+        "value": 10
+      },
+      "description": "Target Regolith inventory coverage in days of current Regolith requirement."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "Regolith Adjustment Time",
+      "behavior": {
+        "value": 10
+      },
+      "description": "First-order inventory correction time for desired Regolith extraction."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "Regolith Buffer Days",
+      "behavior": {
+        "value": 1
+      },
+      "description": "Scale-free Regolith availability half-saturation buffer in days of current Regolith requirement."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "v7.7 Construction Materials Shock Multiplier",
+      "behavior": {
+        "value": 0.1
+      },
+      "description": "[calib] Mode 28 test-only multiplier applied to selected colony Construction Materials production capacity."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "v7.7 Regolith Shock Multiplier",
+      "behavior": {
+        "value": 0.1
+      },
+      "description": "[calib] Mode 29 test-only multiplier applied to selected colony Regolith extraction capacity."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "Test 28 Construction Materials Shock Active",
+      "behavior": {
+        "value": "IfThenElse([Timed Test Mode] = 28, [Temporary Test Window], 0)"
+      },
+      "description": "1 during the Mode-28 temporary Construction Materials processing-capacity shock."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "Test 29 Regolith Shock Active",
+      "behavior": {
+        "value": "IfThenElse([Timed Test Mode] = 29, [Temporary Test Window], 0)"
+      },
+      "description": "1 during the Mode-29 temporary Regolith extraction-capacity shock."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "A Test 28 Construction Materials Shock Applies",
+      "behavior": {
+        "value": 1
+      },
+      "description": "Applicability flag for symmetric Mode 28 Construction Materials shock wiring in colony A."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "A Test 29 Regolith Shock Applies",
+      "behavior": {
+        "value": 1
+      },
+      "description": "Applicability flag for symmetric Mode 29 Regolith shock wiring in colony A."
+    },
+    {
+      "type": "STOCK",
+      "name": "A Regolith Inventory",
+      "behavior": {
+        "initial_value": 40,
+        "non_negative": true
+      },
+      "description": "[calib] Physical Regolith inventory in colony A."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "A Regolith Base Extraction Capacity",
+      "behavior": {
+        "value": 7
+      },
+      "description": "[calib] Baseline Regolith extraction capacity in colony A."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "A Regolith Extraction Capacity",
+      "behavior": {
+        "value": "IfThenElse([Test 29 Regolith Shock Active] = 1, [A Regolith Base Extraction Capacity] * IfThenElse([A Test 29 Regolith Shock Applies] = 1, [v7.7 Regolith Shock Multiplier], 1), [A Regolith Base Extraction Capacity])"
+      },
+      "description": "Effective Regolith extraction capacity in colony A, including Mode 29 test wiring."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "A Regolith Requirement",
+      "behavior": {
+        "value": "[A Desired Construction Materials Production] * [Regolith per Construction Materials Unit]"
+      },
+      "description": "Regolith requirement implied by desired Construction Materials production in colony A."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "A Regolith Target Inventory",
+      "behavior": {
+        "value": "[A Regolith Requirement] * [Regolith Target Days]"
+      },
+      "description": "Target Regolith inventory in colony A."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "A Desired Regolith Extraction",
+      "behavior": {
+        "value": "Max(0, [A Regolith Requirement] + ([A Regolith Target Inventory] - [A Regolith Inventory]) / [Regolith Adjustment Time])"
+      },
+      "description": "Desired Regolith extraction including inventory correction in colony A."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "A Regolith Extraction Rate",
+      "behavior": {
+        "value": "IfThenElse([Construction Materials Enabled] = 1, [A Desired Regolith Extraction] / (1 + ([A Desired Regolith Extraction] / ([A Regolith Extraction Capacity] + 0.001)) ^ 8) ^ 0.125, 0)"
+      },
+      "description": "Actual Regolith extraction rate after the soft capacity constraint in colony A."
+    },
+    {
+      "type": "FLOW",
+      "name": "A Regolith Extraction",
+      "from": null,
+      "to": "A Regolith Inventory",
+      "behavior": {
+        "value": "[A Regolith Extraction Rate]",
+        "non_negative": true
+      },
+      "description": "Primary Regolith inflow feeding the A physical inventory."
+    },
+    {
+      "type": "STOCK",
+      "name": "A Construction Materials Inventory",
+      "behavior": {
+        "initial_value": 30,
+        "non_negative": true
+      },
+      "description": "[calib] Local Construction Materials inventory in colony A."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "A Construction Materials Base Production Capacity",
+      "behavior": {
+        "value": 3
+      },
+      "description": "[calib] Baseline Construction Materials production capacity in colony A."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "A Construction Materials Production Capacity",
+      "behavior": {
+        "value": "IfThenElse([Test 28 Construction Materials Shock Active] = 1, [A Construction Materials Base Production Capacity] * IfThenElse([A Test 28 Construction Materials Shock Applies] = 1, [v7.7 Construction Materials Shock Multiplier], 1), [A Construction Materials Base Production Capacity])"
+      },
+      "description": "Effective Construction Materials production capacity in colony A, including Mode 28 test wiring."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "A Refinery Construction Materials per Capacity",
+      "behavior": {
+        "value": 20
+      },
+      "description": "[calib] Construction Materials consumed per unit of new A Refinery installed capacity."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "A Electronics Construction Materials per Capacity",
+      "behavior": {
+        "value": 12
+      },
+      "description": "[calib] Construction Materials consumed per unit of new A Electronics installed capacity."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "A Power Construction Materials per Capacity",
+      "behavior": {
+        "value": 1
+      },
+      "description": "[calib] Construction Materials consumed per unit of new A Power installed generation capital."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "A Construction Materials Demand",
+      "behavior": {
+        "value": "[A Refinery Desired Expansion] * [A Refinery Construction Materials per Capacity] + [A Electronics Desired Expansion] * [A Electronics Construction Materials per Capacity] + [A Power Desired Expansion] * [A Power Construction Materials per Capacity]"
+      },
+      "description": "Total desired local Construction Materials demand generated by colonial capacity expansion in colony A."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "A Construction Materials Target Inventory",
+      "behavior": {
+        "value": "[A Construction Materials Demand] * [Construction Materials Target Days]"
+      },
+      "description": "Target Construction Materials inventory in colony A."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "A Desired Construction Materials Production",
+      "behavior": {
+        "value": "Max(0, [A Construction Materials Demand] + ([A Construction Materials Target Inventory] - [A Construction Materials Inventory]) / [Construction Materials Adjustment Time])"
+      },
+      "description": "Desired Construction Materials production including inventory correction in colony A."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "A Construction Materials Production Rate",
+      "behavior": {
+        "value": "IfThenElse([Construction Materials Enabled] = 1, [A Desired Construction Materials Production] / (1 + ([A Desired Construction Materials Production] / ([A Construction Materials Production Capacity] + 0.001)) ^ 8) ^ 0.125 * [A Regolith Inventory] / ([A Regolith Inventory] + [Regolith Buffer Days] * Max([A Regolith Requirement], 0.000000001)), 0)"
+      },
+      "description": "Actual Construction Materials production rate after capacity and scale-free Regolith availability constraints in colony A."
+    },
+    {
+      "type": "FLOW",
+      "name": "A Construction Materials Production",
+      "from": null,
+      "to": "A Construction Materials Inventory",
+      "behavior": {
+        "value": "[A Construction Materials Production Rate]",
+        "non_negative": true
+      },
+      "description": "Production inflow of local Construction Materials in colony A."
+    },
+    {
+      "type": "FLOW",
+      "name": "A Construction Materials Regolith Consumption",
+      "from": "A Regolith Inventory",
+      "to": null,
+      "behavior": {
+        "value": "[A Construction Materials Production Rate] * [Regolith per Construction Materials Unit]",
+        "non_negative": true
+      },
+      "description": "Regolith physically consumed by Construction Materials production in colony A."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "A Construction Materials Fulfillment",
+      "behavior": {
+        "value": "IfThenElse([Construction Materials Enabled] = 1, [A Construction Materials Inventory] / ([A Construction Materials Inventory] + [Construction Materials Buffer Days] * Max([A Construction Materials Demand], 0.000000001)), 1)"
+      },
+      "description": "Common Construction Materials fulfillment factor applied to colonial expansion in colony A."
+    },
+    {
+      "type": "FLOW",
+      "name": "A Refinery Construction Materials Consumption",
+      "from": "A Construction Materials Inventory",
+      "to": null,
+      "behavior": {
+        "value": "IfThenElse([Construction Materials Enabled] = 1, [A Refinery Expansion] * [A Refinery Construction Materials per Capacity], 0)",
+        "non_negative": true
+      },
+      "description": "Construction Materials consumed by Refinery expansion in colony A."
+    },
+    {
+      "type": "FLOW",
+      "name": "A Electronics Construction Materials Consumption",
+      "from": "A Construction Materials Inventory",
+      "to": null,
+      "behavior": {
+        "value": "IfThenElse([Construction Materials Enabled] = 1, [Capital Lifecycle Enabled] * [A Electronics Factory Expansion] * [A Electronics Construction Materials per Capacity], 0)",
+        "non_negative": true
+      },
+      "description": "Construction Materials consumed by Electronics expansion in colony A."
+    },
+    {
+      "type": "FLOW",
+      "name": "A Power Construction Materials Consumption",
+      "from": "A Construction Materials Inventory",
+      "to": null,
+      "behavior": {
+        "value": "IfThenElse([Construction Materials Enabled] = 1, [Capital Lifecycle Enabled] * [A Power Generation Expansion] * [A Power Construction Materials per Capacity], 0)",
+        "non_negative": true
+      },
+      "description": "Construction Materials consumed by Power expansion in colony A."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "A Refinery Construction Materials Expansion Ratio",
+      "behavior": {
+        "value": "[A Refinery Expansion] / Max([A Refinery Desired Expansion], 0.000000001)"
+      },
+      "description": "Diagnostic ratio of actual to desired Refinery expansion for v7.7 Construction Materials tests."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "B Test 28 Construction Materials Shock Applies",
+      "behavior": {
+        "value": 0
+      },
+      "description": "Applicability flag for symmetric Mode 28 Construction Materials shock wiring in colony B."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "B Test 29 Regolith Shock Applies",
+      "behavior": {
+        "value": 0
+      },
+      "description": "Applicability flag for symmetric Mode 29 Regolith shock wiring in colony B."
+    },
+    {
+      "type": "STOCK",
+      "name": "B Regolith Inventory",
+      "behavior": {
+        "initial_value": 40,
+        "non_negative": true
+      },
+      "description": "[calib] Physical Regolith inventory in colony B."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "B Regolith Base Extraction Capacity",
+      "behavior": {
+        "value": 5
+      },
+      "description": "[calib] Baseline Regolith extraction capacity in colony B."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "B Regolith Extraction Capacity",
+      "behavior": {
+        "value": "IfThenElse([Test 29 Regolith Shock Active] = 1, [B Regolith Base Extraction Capacity] * IfThenElse([B Test 29 Regolith Shock Applies] = 1, [v7.7 Regolith Shock Multiplier], 1), [B Regolith Base Extraction Capacity])"
+      },
+      "description": "Effective Regolith extraction capacity in colony B, including Mode 29 test wiring."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "B Regolith Requirement",
+      "behavior": {
+        "value": "[B Desired Construction Materials Production] * [Regolith per Construction Materials Unit]"
+      },
+      "description": "Regolith requirement implied by desired Construction Materials production in colony B."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "B Regolith Target Inventory",
+      "behavior": {
+        "value": "[B Regolith Requirement] * [Regolith Target Days]"
+      },
+      "description": "Target Regolith inventory in colony B."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "B Desired Regolith Extraction",
+      "behavior": {
+        "value": "Max(0, [B Regolith Requirement] + ([B Regolith Target Inventory] - [B Regolith Inventory]) / [Regolith Adjustment Time])"
+      },
+      "description": "Desired Regolith extraction including inventory correction in colony B."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "B Regolith Extraction Rate",
+      "behavior": {
+        "value": "IfThenElse([Construction Materials Enabled] = 1, [B Desired Regolith Extraction] / (1 + ([B Desired Regolith Extraction] / ([B Regolith Extraction Capacity] + 0.001)) ^ 8) ^ 0.125, 0)"
+      },
+      "description": "Actual Regolith extraction rate after the soft capacity constraint in colony B."
+    },
+    {
+      "type": "FLOW",
+      "name": "B Regolith Extraction",
+      "from": null,
+      "to": "B Regolith Inventory",
+      "behavior": {
+        "value": "[B Regolith Extraction Rate]",
+        "non_negative": true
+      },
+      "description": "Primary Regolith inflow feeding the B physical inventory."
+    },
+    {
+      "type": "STOCK",
+      "name": "B Construction Materials Inventory",
+      "behavior": {
+        "initial_value": 30,
+        "non_negative": true
+      },
+      "description": "[calib] Local Construction Materials inventory in colony B."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "B Construction Materials Base Production Capacity",
+      "behavior": {
+        "value": 2
+      },
+      "description": "[calib] Baseline Construction Materials production capacity in colony B."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "B Construction Materials Production Capacity",
+      "behavior": {
+        "value": "IfThenElse([Test 28 Construction Materials Shock Active] = 1, [B Construction Materials Base Production Capacity] * IfThenElse([B Test 28 Construction Materials Shock Applies] = 1, [v7.7 Construction Materials Shock Multiplier], 1), [B Construction Materials Base Production Capacity])"
+      },
+      "description": "Effective Construction Materials production capacity in colony B, including Mode 28 test wiring."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "B Refinery Construction Materials per Capacity",
+      "behavior": {
+        "value": 20
+      },
+      "description": "[calib] Construction Materials consumed per unit of new B Refinery installed capacity."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "B Electronics Construction Materials per Capacity",
+      "behavior": {
+        "value": 12
+      },
+      "description": "[calib] Construction Materials consumed per unit of new B Electronics installed capacity."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "B Power Construction Materials per Capacity",
+      "behavior": {
+        "value": 1
+      },
+      "description": "[calib] Construction Materials consumed per unit of new B Power installed generation capital."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "B Construction Materials Demand",
+      "behavior": {
+        "value": "[B Refinery Desired Expansion] * [B Refinery Construction Materials per Capacity] + [B Electronics Desired Expansion] * [B Electronics Construction Materials per Capacity] + [B Power Desired Expansion] * [B Power Construction Materials per Capacity]"
+      },
+      "description": "Total desired local Construction Materials demand generated by colonial capacity expansion in colony B."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "B Construction Materials Target Inventory",
+      "behavior": {
+        "value": "[B Construction Materials Demand] * [Construction Materials Target Days]"
+      },
+      "description": "Target Construction Materials inventory in colony B."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "B Desired Construction Materials Production",
+      "behavior": {
+        "value": "Max(0, [B Construction Materials Demand] + ([B Construction Materials Target Inventory] - [B Construction Materials Inventory]) / [Construction Materials Adjustment Time])"
+      },
+      "description": "Desired Construction Materials production including inventory correction in colony B."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "B Construction Materials Production Rate",
+      "behavior": {
+        "value": "IfThenElse([Construction Materials Enabled] = 1, [B Desired Construction Materials Production] / (1 + ([B Desired Construction Materials Production] / ([B Construction Materials Production Capacity] + 0.001)) ^ 8) ^ 0.125 * [B Regolith Inventory] / ([B Regolith Inventory] + [Regolith Buffer Days] * Max([B Regolith Requirement], 0.000000001)), 0)"
+      },
+      "description": "Actual Construction Materials production rate after capacity and scale-free Regolith availability constraints in colony B."
+    },
+    {
+      "type": "FLOW",
+      "name": "B Construction Materials Production",
+      "from": null,
+      "to": "B Construction Materials Inventory",
+      "behavior": {
+        "value": "[B Construction Materials Production Rate]",
+        "non_negative": true
+      },
+      "description": "Production inflow of local Construction Materials in colony B."
+    },
+    {
+      "type": "FLOW",
+      "name": "B Construction Materials Regolith Consumption",
+      "from": "B Regolith Inventory",
+      "to": null,
+      "behavior": {
+        "value": "[B Construction Materials Production Rate] * [Regolith per Construction Materials Unit]",
+        "non_negative": true
+      },
+      "description": "Regolith physically consumed by Construction Materials production in colony B."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "B Construction Materials Fulfillment",
+      "behavior": {
+        "value": "IfThenElse([Construction Materials Enabled] = 1, [B Construction Materials Inventory] / ([B Construction Materials Inventory] + [Construction Materials Buffer Days] * Max([B Construction Materials Demand], 0.000000001)), 1)"
+      },
+      "description": "Common Construction Materials fulfillment factor applied to colonial expansion in colony B."
+    },
+    {
+      "type": "FLOW",
+      "name": "B Refinery Construction Materials Consumption",
+      "from": "B Construction Materials Inventory",
+      "to": null,
+      "behavior": {
+        "value": "IfThenElse([Construction Materials Enabled] = 1, [B Refinery Expansion] * [B Refinery Construction Materials per Capacity], 0)",
+        "non_negative": true
+      },
+      "description": "Construction Materials consumed by Refinery expansion in colony B."
+    },
+    {
+      "type": "FLOW",
+      "name": "B Electronics Construction Materials Consumption",
+      "from": "B Construction Materials Inventory",
+      "to": null,
+      "behavior": {
+        "value": "IfThenElse([Construction Materials Enabled] = 1, [Capital Lifecycle Enabled] * [B Electronics Factory Expansion] * [B Electronics Construction Materials per Capacity], 0)",
+        "non_negative": true
+      },
+      "description": "Construction Materials consumed by Electronics expansion in colony B."
+    },
+    {
+      "type": "FLOW",
+      "name": "B Power Construction Materials Consumption",
+      "from": "B Construction Materials Inventory",
+      "to": null,
+      "behavior": {
+        "value": "IfThenElse([Construction Materials Enabled] = 1, [Capital Lifecycle Enabled] * [B Power Generation Expansion] * [B Power Construction Materials per Capacity], 0)",
+        "non_negative": true
+      },
+      "description": "Construction Materials consumed by Power expansion in colony B."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "B Refinery Construction Materials Expansion Ratio",
+      "behavior": {
+        "value": "[B Refinery Expansion] / Max([B Refinery Desired Expansion], 0.000000001)"
+      },
+      "description": "Diagnostic ratio of actual to desired Refinery expansion for v7.7 Construction Materials tests."
+    }
+  ],
+  "replace_formulas": [
+    {
+      "name": "A Refinery Expansion",
+      "value": "IfThenElse([Construction Materials Enabled] = 1, [A Refinery Desired Expansion] * Min([A Capital Goods Fulfillment], [A Construction Materials Fulfillment]), IfThenElse([Capital Goods Enabled] = 1, [A Refinery Desired Expansion] * [A Capital Goods Fulfillment], (([A Refinery Gap Limited Construction]) + ([A Refinery Finance Limited Construction]) - (((([A Refinery Gap Limited Construction]) - ([A Refinery Finance Limited Construction])) ^ 2) ^ 0.5)) / 2))"
+    },
+    {
+      "name": "A Electronics Factory Expansion",
+      "value": "IfThenElse([Construction Materials Enabled] = 1, [A Electronics Desired Expansion] * Min([A Capital Goods Fulfillment], [A Construction Materials Fulfillment]), IfThenElse([Capital Goods Enabled] = 1, [A Electronics Desired Expansion] * [A Capital Goods Fulfillment], [Capital Lifecycle Enabled] * (([A Electronics Gap Limited Construction]) + ([A Electronics Finance Limited Construction]) - (((([A Electronics Gap Limited Construction]) - ([A Electronics Finance Limited Construction])) ^ 2) ^ 0.5)) / 2))"
+    },
+    {
+      "name": "A Power Generation Expansion",
+      "value": "IfThenElse([Construction Materials Enabled] = 1, [A Power Desired Expansion] * Min([A Capital Goods Fulfillment], [A Construction Materials Fulfillment]), IfThenElse([Capital Goods Enabled] = 1, [A Power Desired Expansion] * [A Capital Goods Fulfillment], [Capital Lifecycle Enabled] * [A Power Gap Limited Construction]))"
+    },
+    {
+      "name": "B Refinery Expansion",
+      "value": "IfThenElse([Construction Materials Enabled] = 1, [B Refinery Desired Expansion] * Min([B Capital Goods Fulfillment], [B Construction Materials Fulfillment]), IfThenElse([Capital Goods Enabled] = 1, [B Refinery Desired Expansion] * [B Capital Goods Fulfillment], (([B Refinery Gap Limited Construction]) + ([B Refinery Finance Limited Construction]) - (((([B Refinery Gap Limited Construction]) - ([B Refinery Finance Limited Construction])) ^ 2) ^ 0.5)) / 2))"
+    },
+    {
+      "name": "B Electronics Factory Expansion",
+      "value": "IfThenElse([Construction Materials Enabled] = 1, [B Electronics Desired Expansion] * Min([B Capital Goods Fulfillment], [B Construction Materials Fulfillment]), IfThenElse([Capital Goods Enabled] = 1, [B Electronics Desired Expansion] * [B Capital Goods Fulfillment], [Capital Lifecycle Enabled] * (([B Electronics Gap Limited Construction]) + ([B Electronics Finance Limited Construction]) - (((([B Electronics Gap Limited Construction]) - ([B Electronics Finance Limited Construction])) ^ 2) ^ 0.5)) / 2))"
+    },
+    {
+      "name": "B Power Generation Expansion",
+      "value": "IfThenElse([Construction Materials Enabled] = 1, [B Power Desired Expansion] * Min([B Capital Goods Fulfillment], [B Construction Materials Fulfillment]), IfThenElse([Capital Goods Enabled] = 1, [B Power Desired Expansion] * [B Capital Goods Fulfillment], [Capital Lifecycle Enabled] * [B Power Gap Limited Construction]))"
+    }
+  ],
+  "add_links": [
+    {
+      "from": "Timed Test Mode",
+      "to": "Test 28 Construction Materials Shock Active"
+    },
+    {
+      "from": "Temporary Test Window",
+      "to": "Test 28 Construction Materials Shock Active"
+    },
+    {
+      "from": "Timed Test Mode",
+      "to": "Test 29 Regolith Shock Active"
+    },
+    {
+      "from": "Temporary Test Window",
+      "to": "Test 29 Regolith Shock Active"
+    },
+    {
+      "from": "Test 29 Regolith Shock Active",
+      "to": "A Regolith Extraction Capacity"
+    },
+    {
+      "from": "A Regolith Base Extraction Capacity",
+      "to": "A Regolith Extraction Capacity"
+    },
+    {
+      "from": "A Test 29 Regolith Shock Applies",
+      "to": "A Regolith Extraction Capacity"
+    },
+    {
+      "from": "v7.7 Regolith Shock Multiplier",
+      "to": "A Regolith Extraction Capacity"
+    },
+    {
+      "from": "A Desired Construction Materials Production",
+      "to": "A Regolith Requirement"
+    },
+    {
+      "from": "Regolith per Construction Materials Unit",
+      "to": "A Regolith Requirement"
+    },
+    {
+      "from": "A Regolith Requirement",
+      "to": "A Regolith Target Inventory"
+    },
+    {
+      "from": "Regolith Target Days",
+      "to": "A Regolith Target Inventory"
+    },
+    {
+      "from": "A Regolith Requirement",
+      "to": "A Desired Regolith Extraction"
+    },
+    {
+      "from": "A Regolith Target Inventory",
+      "to": "A Desired Regolith Extraction"
+    },
+    {
+      "from": "A Regolith Inventory",
+      "to": "A Desired Regolith Extraction"
+    },
+    {
+      "from": "Regolith Adjustment Time",
+      "to": "A Desired Regolith Extraction"
+    },
+    {
+      "from": "Construction Materials Enabled",
+      "to": "A Regolith Extraction Rate"
+    },
+    {
+      "from": "A Desired Regolith Extraction",
+      "to": "A Regolith Extraction Rate"
+    },
+    {
+      "from": "A Regolith Extraction Capacity",
+      "to": "A Regolith Extraction Rate"
+    },
+    {
+      "from": "A Regolith Extraction Rate",
+      "to": "A Regolith Extraction"
+    },
+    {
+      "from": "Test 28 Construction Materials Shock Active",
+      "to": "A Construction Materials Production Capacity"
+    },
+    {
+      "from": "A Construction Materials Base Production Capacity",
+      "to": "A Construction Materials Production Capacity"
+    },
+    {
+      "from": "A Test 28 Construction Materials Shock Applies",
+      "to": "A Construction Materials Production Capacity"
+    },
+    {
+      "from": "v7.7 Construction Materials Shock Multiplier",
+      "to": "A Construction Materials Production Capacity"
+    },
+    {
+      "from": "A Refinery Desired Expansion",
+      "to": "A Construction Materials Demand"
+    },
+    {
+      "from": "A Refinery Construction Materials per Capacity",
+      "to": "A Construction Materials Demand"
+    },
+    {
+      "from": "A Electronics Desired Expansion",
+      "to": "A Construction Materials Demand"
+    },
+    {
+      "from": "A Electronics Construction Materials per Capacity",
+      "to": "A Construction Materials Demand"
+    },
+    {
+      "from": "A Power Desired Expansion",
+      "to": "A Construction Materials Demand"
+    },
+    {
+      "from": "A Power Construction Materials per Capacity",
+      "to": "A Construction Materials Demand"
+    },
+    {
+      "from": "A Construction Materials Demand",
+      "to": "A Construction Materials Target Inventory"
+    },
+    {
+      "from": "Construction Materials Target Days",
+      "to": "A Construction Materials Target Inventory"
+    },
+    {
+      "from": "A Construction Materials Demand",
+      "to": "A Desired Construction Materials Production"
+    },
+    {
+      "from": "A Construction Materials Target Inventory",
+      "to": "A Desired Construction Materials Production"
+    },
+    {
+      "from": "A Construction Materials Inventory",
+      "to": "A Desired Construction Materials Production"
+    },
+    {
+      "from": "Construction Materials Adjustment Time",
+      "to": "A Desired Construction Materials Production"
+    },
+    {
+      "from": "Construction Materials Enabled",
+      "to": "A Construction Materials Production Rate"
+    },
+    {
+      "from": "A Desired Construction Materials Production",
+      "to": "A Construction Materials Production Rate"
+    },
+    {
+      "from": "A Construction Materials Production Capacity",
+      "to": "A Construction Materials Production Rate"
+    },
+    {
+      "from": "A Regolith Inventory",
+      "to": "A Construction Materials Production Rate"
+    },
+    {
+      "from": "Regolith Buffer Days",
+      "to": "A Construction Materials Production Rate"
+    },
+    {
+      "from": "A Regolith Requirement",
+      "to": "A Construction Materials Production Rate"
+    },
+    {
+      "from": "A Construction Materials Production Rate",
+      "to": "A Construction Materials Production"
+    },
+    {
+      "from": "A Construction Materials Production Rate",
+      "to": "A Construction Materials Regolith Consumption"
+    },
+    {
+      "from": "Regolith per Construction Materials Unit",
+      "to": "A Construction Materials Regolith Consumption"
+    },
+    {
+      "from": "Construction Materials Enabled",
+      "to": "A Construction Materials Fulfillment"
+    },
+    {
+      "from": "A Construction Materials Inventory",
+      "to": "A Construction Materials Fulfillment"
+    },
+    {
+      "from": "Construction Materials Buffer Days",
+      "to": "A Construction Materials Fulfillment"
+    },
+    {
+      "from": "A Construction Materials Demand",
+      "to": "A Construction Materials Fulfillment"
+    },
+    {
+      "from": "Construction Materials Enabled",
+      "to": "A Refinery Construction Materials Consumption"
+    },
+    {
+      "from": "A Refinery Expansion",
+      "to": "A Refinery Construction Materials Consumption"
+    },
+    {
+      "from": "A Refinery Construction Materials per Capacity",
+      "to": "A Refinery Construction Materials Consumption"
+    },
+    {
+      "from": "Construction Materials Enabled",
+      "to": "A Electronics Construction Materials Consumption"
+    },
+    {
+      "from": "Capital Lifecycle Enabled",
+      "to": "A Electronics Construction Materials Consumption"
+    },
+    {
+      "from": "A Electronics Factory Expansion",
+      "to": "A Electronics Construction Materials Consumption"
+    },
+    {
+      "from": "A Electronics Construction Materials per Capacity",
+      "to": "A Electronics Construction Materials Consumption"
+    },
+    {
+      "from": "Construction Materials Enabled",
+      "to": "A Power Construction Materials Consumption"
+    },
+    {
+      "from": "Capital Lifecycle Enabled",
+      "to": "A Power Construction Materials Consumption"
+    },
+    {
+      "from": "A Power Generation Expansion",
+      "to": "A Power Construction Materials Consumption"
+    },
+    {
+      "from": "A Power Construction Materials per Capacity",
+      "to": "A Power Construction Materials Consumption"
+    },
+    {
+      "from": "A Refinery Expansion",
+      "to": "A Refinery Construction Materials Expansion Ratio"
+    },
+    {
+      "from": "A Refinery Desired Expansion",
+      "to": "A Refinery Construction Materials Expansion Ratio"
+    },
+    {
+      "from": "Test 29 Regolith Shock Active",
+      "to": "B Regolith Extraction Capacity"
+    },
+    {
+      "from": "B Regolith Base Extraction Capacity",
+      "to": "B Regolith Extraction Capacity"
+    },
+    {
+      "from": "B Test 29 Regolith Shock Applies",
+      "to": "B Regolith Extraction Capacity"
+    },
+    {
+      "from": "v7.7 Regolith Shock Multiplier",
+      "to": "B Regolith Extraction Capacity"
+    },
+    {
+      "from": "B Desired Construction Materials Production",
+      "to": "B Regolith Requirement"
+    },
+    {
+      "from": "Regolith per Construction Materials Unit",
+      "to": "B Regolith Requirement"
+    },
+    {
+      "from": "B Regolith Requirement",
+      "to": "B Regolith Target Inventory"
+    },
+    {
+      "from": "Regolith Target Days",
+      "to": "B Regolith Target Inventory"
+    },
+    {
+      "from": "B Regolith Requirement",
+      "to": "B Desired Regolith Extraction"
+    },
+    {
+      "from": "B Regolith Target Inventory",
+      "to": "B Desired Regolith Extraction"
+    },
+    {
+      "from": "B Regolith Inventory",
+      "to": "B Desired Regolith Extraction"
+    },
+    {
+      "from": "Regolith Adjustment Time",
+      "to": "B Desired Regolith Extraction"
+    },
+    {
+      "from": "Construction Materials Enabled",
+      "to": "B Regolith Extraction Rate"
+    },
+    {
+      "from": "B Desired Regolith Extraction",
+      "to": "B Regolith Extraction Rate"
+    },
+    {
+      "from": "B Regolith Extraction Capacity",
+      "to": "B Regolith Extraction Rate"
+    },
+    {
+      "from": "B Regolith Extraction Rate",
+      "to": "B Regolith Extraction"
+    },
+    {
+      "from": "Test 28 Construction Materials Shock Active",
+      "to": "B Construction Materials Production Capacity"
+    },
+    {
+      "from": "B Construction Materials Base Production Capacity",
+      "to": "B Construction Materials Production Capacity"
+    },
+    {
+      "from": "B Test 28 Construction Materials Shock Applies",
+      "to": "B Construction Materials Production Capacity"
+    },
+    {
+      "from": "v7.7 Construction Materials Shock Multiplier",
+      "to": "B Construction Materials Production Capacity"
+    },
+    {
+      "from": "B Refinery Desired Expansion",
+      "to": "B Construction Materials Demand"
+    },
+    {
+      "from": "B Refinery Construction Materials per Capacity",
+      "to": "B Construction Materials Demand"
+    },
+    {
+      "from": "B Electronics Desired Expansion",
+      "to": "B Construction Materials Demand"
+    },
+    {
+      "from": "B Electronics Construction Materials per Capacity",
+      "to": "B Construction Materials Demand"
+    },
+    {
+      "from": "B Power Desired Expansion",
+      "to": "B Construction Materials Demand"
+    },
+    {
+      "from": "B Power Construction Materials per Capacity",
+      "to": "B Construction Materials Demand"
+    },
+    {
+      "from": "B Construction Materials Demand",
+      "to": "B Construction Materials Target Inventory"
+    },
+    {
+      "from": "Construction Materials Target Days",
+      "to": "B Construction Materials Target Inventory"
+    },
+    {
+      "from": "B Construction Materials Demand",
+      "to": "B Desired Construction Materials Production"
+    },
+    {
+      "from": "B Construction Materials Target Inventory",
+      "to": "B Desired Construction Materials Production"
+    },
+    {
+      "from": "B Construction Materials Inventory",
+      "to": "B Desired Construction Materials Production"
+    },
+    {
+      "from": "Construction Materials Adjustment Time",
+      "to": "B Desired Construction Materials Production"
+    },
+    {
+      "from": "Construction Materials Enabled",
+      "to": "B Construction Materials Production Rate"
+    },
+    {
+      "from": "B Desired Construction Materials Production",
+      "to": "B Construction Materials Production Rate"
+    },
+    {
+      "from": "B Construction Materials Production Capacity",
+      "to": "B Construction Materials Production Rate"
+    },
+    {
+      "from": "B Regolith Inventory",
+      "to": "B Construction Materials Production Rate"
+    },
+    {
+      "from": "Regolith Buffer Days",
+      "to": "B Construction Materials Production Rate"
+    },
+    {
+      "from": "B Regolith Requirement",
+      "to": "B Construction Materials Production Rate"
+    },
+    {
+      "from": "B Construction Materials Production Rate",
+      "to": "B Construction Materials Production"
+    },
+    {
+      "from": "B Construction Materials Production Rate",
+      "to": "B Construction Materials Regolith Consumption"
+    },
+    {
+      "from": "Regolith per Construction Materials Unit",
+      "to": "B Construction Materials Regolith Consumption"
+    },
+    {
+      "from": "Construction Materials Enabled",
+      "to": "B Construction Materials Fulfillment"
+    },
+    {
+      "from": "B Construction Materials Inventory",
+      "to": "B Construction Materials Fulfillment"
+    },
+    {
+      "from": "Construction Materials Buffer Days",
+      "to": "B Construction Materials Fulfillment"
+    },
+    {
+      "from": "B Construction Materials Demand",
+      "to": "B Construction Materials Fulfillment"
+    },
+    {
+      "from": "Construction Materials Enabled",
+      "to": "B Refinery Construction Materials Consumption"
+    },
+    {
+      "from": "B Refinery Expansion",
+      "to": "B Refinery Construction Materials Consumption"
+    },
+    {
+      "from": "B Refinery Construction Materials per Capacity",
+      "to": "B Refinery Construction Materials Consumption"
+    },
+    {
+      "from": "Construction Materials Enabled",
+      "to": "B Electronics Construction Materials Consumption"
+    },
+    {
+      "from": "Capital Lifecycle Enabled",
+      "to": "B Electronics Construction Materials Consumption"
+    },
+    {
+      "from": "B Electronics Factory Expansion",
+      "to": "B Electronics Construction Materials Consumption"
+    },
+    {
+      "from": "B Electronics Construction Materials per Capacity",
+      "to": "B Electronics Construction Materials Consumption"
+    },
+    {
+      "from": "Construction Materials Enabled",
+      "to": "B Power Construction Materials Consumption"
+    },
+    {
+      "from": "Capital Lifecycle Enabled",
+      "to": "B Power Construction Materials Consumption"
+    },
+    {
+      "from": "B Power Generation Expansion",
+      "to": "B Power Construction Materials Consumption"
+    },
+    {
+      "from": "B Power Construction Materials per Capacity",
+      "to": "B Power Construction Materials Consumption"
+    },
+    {
+      "from": "B Refinery Expansion",
+      "to": "B Refinery Construction Materials Expansion Ratio"
+    },
+    {
+      "from": "B Refinery Desired Expansion",
+      "to": "B Refinery Construction Materials Expansion Ratio"
+    },
+    {
+      "from": "Construction Materials Enabled",
+      "to": "A Refinery Expansion"
+    },
+    {
+      "from": "A Construction Materials Fulfillment",
+      "to": "A Refinery Expansion"
+    },
+    {
+      "from": "Construction Materials Enabled",
+      "to": "A Electronics Factory Expansion"
+    },
+    {
+      "from": "A Construction Materials Fulfillment",
+      "to": "A Electronics Factory Expansion"
+    },
+    {
+      "from": "Construction Materials Enabled",
+      "to": "A Power Generation Expansion"
+    },
+    {
+      "from": "A Construction Materials Fulfillment",
+      "to": "A Power Generation Expansion"
+    },
+    {
+      "from": "Construction Materials Enabled",
+      "to": "B Refinery Expansion"
+    },
+    {
+      "from": "B Construction Materials Fulfillment",
+      "to": "B Refinery Expansion"
+    },
+    {
+      "from": "Construction Materials Enabled",
+      "to": "B Electronics Factory Expansion"
+    },
+    {
+      "from": "B Construction Materials Fulfillment",
+      "to": "B Electronics Factory Expansion"
+    },
+    {
+      "from": "Construction Materials Enabled",
+      "to": "B Power Generation Expansion"
+    },
+    {
+      "from": "B Construction Materials Fulfillment",
+      "to": "B Power Generation Expansion"
+    }
+  ],
+  "modify_scenarios": [
+    {
+      "mode": 0,
+      "set": {
+        "Construction Materials Enabled": 0
+      }
+    },
+    {
+      "mode": 1,
+      "set": {
+        "Construction Materials Enabled": 0
+      }
+    },
+    {
+      "mode": 2,
+      "set": {
+        "Construction Materials Enabled": 0
+      }
+    },
+    {
+      "mode": 3,
+      "set": {
+        "Construction Materials Enabled": 0
+      }
+    },
+    {
+      "mode": 4,
+      "set": {
+        "Construction Materials Enabled": 0
+      }
+    },
+    {
+      "mode": 5,
+      "set": {
+        "Construction Materials Enabled": 0
+      }
+    },
+    {
+      "mode": 6,
+      "set": {
+        "Construction Materials Enabled": 0
+      }
+    },
+    {
+      "mode": 7,
+      "set": {
+        "Construction Materials Enabled": 0
+      }
+    },
+    {
+      "mode": 8,
+      "set": {
+        "Construction Materials Enabled": 0
+      }
+    },
+    {
+      "mode": 9,
+      "set": {
+        "Construction Materials Enabled": 0
+      }
+    },
+    {
+      "mode": 10,
+      "set": {
+        "Construction Materials Enabled": 0
+      }
+    },
+    {
+      "mode": 11,
+      "set": {
+        "Construction Materials Enabled": 0
+      }
+    },
+    {
+      "mode": 12,
+      "set": {
+        "Construction Materials Enabled": 0
+      }
+    },
+    {
+      "mode": 13,
+      "set": {
+        "Construction Materials Enabled": 0
+      }
+    },
+    {
+      "mode": 14,
+      "set": {
+        "Construction Materials Enabled": 0
+      }
+    },
+    {
+      "mode": 15,
+      "set": {
+        "Construction Materials Enabled": 0
+      }
+    },
+    {
+      "mode": 16,
+      "set": {
+        "Construction Materials Enabled": 0
+      }
+    },
+    {
+      "mode": 17,
+      "set": {
+        "Construction Materials Enabled": 0
+      }
+    },
+    {
+      "mode": 18,
+      "set": {
+        "Construction Materials Enabled": 0
+      }
+    },
+    {
+      "mode": 19,
+      "set": {
+        "Construction Materials Enabled": 0
+      }
+    },
+    {
+      "mode": 20,
+      "set": {
+        "Construction Materials Enabled": 0
+      }
+    },
+    {
+      "mode": 21,
+      "set": {
+        "Construction Materials Enabled": 0
+      }
+    },
+    {
+      "mode": 22,
+      "set": {
+        "Construction Materials Enabled": 0
+      }
+    },
+    {
+      "mode": 23,
+      "set": {
+        "Construction Materials Enabled": 0
+      }
+    },
+    {
+      "mode": 24,
+      "set": {
+        "Construction Materials Enabled": 0
+      }
+    },
+    {
+      "mode": 25,
+      "set": {
+        "Construction Materials Enabled": 0
+      }
+    },
+    {
+      "mode": 26,
+      "set": {
+        "Construction Materials Enabled": 0
+      }
+    }
+  ],
+  "add_scenarios": [
+    {
+      "name": "v7.7 Construction Materials Baseline",
+      "description": "Full coupled economy with Construction Materials enabled and no v7.7 supply shock.",
+      "values": {
+        "Timed Test Mode": 27,
+        "Capital Lifecycle Enabled": 1,
+        "Intermediate Inputs Enabled": 1,
+        "Capital Goods Enabled": 1,
+        "Transport Capital Goods Enabled": 1,
+        "Power Resource Enabled": 1,
+        "Construction Materials Enabled": 1
+      }
+    },
+    {
+      "name": "v7.7 Construction Materials Supply Shock",
+      "description": "Construction Materials enabled. Colony A processing capacity is multiplied by the v7.7 Construction Materials Shock Multiplier during the standard temporary test window; B remains unshocked.",
+      "values": {
+        "Timed Test Mode": 28,
+        "Capital Lifecycle Enabled": 1,
+        "Intermediate Inputs Enabled": 1,
+        "Capital Goods Enabled": 1,
+        "Transport Capital Goods Enabled": 1,
+        "Power Resource Enabled": 1,
+        "Construction Materials Enabled": 1
+      }
+    },
+    {
+      "name": "v7.7 Regolith Supply Shock",
+      "description": "Construction Materials enabled. Colony A Regolith extraction capacity is multiplied by the v7.7 Regolith Shock Multiplier during the standard temporary test window; B remains unshocked.",
+      "values": {
+        "Timed Test Mode": 29,
+        "Capital Lifecycle Enabled": 1,
+        "Intermediate Inputs Enabled": 1,
+        "Capital Goods Enabled": 1,
+        "Transport Capital Goods Enabled": 1,
+        "Power Resource Enabled": 1,
+        "Construction Materials Enabled": 1
+      }
+    }
+  ]
+}
