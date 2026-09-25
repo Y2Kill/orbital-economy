@@ -19,6 +19,7 @@ jobs:
     name: guard
     if: startsWith(github.ref_name, 'task/')
     runs-on: ubuntu-latest
+    timeout-minutes: 15
     steps:
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
         with:
@@ -56,6 +57,7 @@ jobs:
     name: integrity
     if: github.ref_name == 'main'
     runs-on: ubuntu-latest
+    timeout-minutes: 15
     steps:
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
         with:
@@ -69,6 +71,7 @@ jobs:
   tools-selftest:
     name: tools-selftest
     runs-on: ubuntu-latest
+    timeout-minutes: 15
     steps:
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
         with:
@@ -88,6 +91,7 @@ jobs:
   bench-selftests:
     name: bench-selftests
     runs-on: ubuntu-latest
+    timeout-minutes: 15
     steps:
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
         with:

@@ -13,6 +13,11 @@ trap 'rm -rf "$SANDBOX"' EXIT
 PASSED=0; FAILED=0
 
 git clone -q --bare "$REPO" "$SANDBOX/origin.git"
+# A CI checkout of a task branch has origin/main but no local main: seed the sandbox's main from
+# whichever of the two exists.
+BASE_REF=refs/heads/main
+git -C "$REPO" show-ref --verify --quiet "$BASE_REF" || BASE_REF=refs/remotes/origin/main
+git --git-dir="$SANDBOX/origin.git" fetch -q "$REPO" "+$BASE_REF:refs/heads/main"
 git --git-dir="$SANDBOX/origin.git" symbolic-ref HEAD refs/heads/main
 for b in $(git --git-dir="$SANDBOX/origin.git" for-each-ref --format='%(refname:short)' refs/heads/); do
   [ "$b" = main ] || git --git-dir="$SANDBOX/origin.git" branch -q -D "$b"

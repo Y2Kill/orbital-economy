@@ -44,7 +44,10 @@ docs/tasks/NNN-имя/
 агент      3. ветка task/NNN-имя от текущего main; работа; node tools/build_sums.mjs
            4. самопроверка: node tools/check_branch.mjs --scope=… --head=HEAD --base=origin/main --no-remote
                             + стенд — в объёме раздела «Приёмка» задания
-              (агент без локального git этот шаг пропускает — §9.4; первый раунд тогда наш)
+              (агент без локального git этот шаг пропускает — §9.4)
+           4a. с задачи 005: каждый push в task/** запускает CI (.github/workflows/ci.yml) — guard,
+              самотесты tools и стенда на Linux; агент ждёт зелёного CI и прикладывает ссылку на запуск.
+              CI — подсказка, не приёмка: workflow исполняется из проверяемой ветки. Полный прогон — bench-full (кнопкой)
            5. REPORT_RU.md; push ветки; PR в main, если может (описание = краткий отчёт)
 мы         6. node tools/check_branch.mjs --scope=docs/tasks/NNN-имя/scope.json
                  guard: origin/main и теги на месте, ветка — fast-forward от main, линейна,
