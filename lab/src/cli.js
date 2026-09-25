@@ -18,7 +18,7 @@ function defaultOutDir() {
 
 function usage() {
   console.log(`
-Orbital Economy Lab v0.9.2
+Orbital Economy Lab v0.9.3
 
 Recommended workspace commands:
   lab [--input=input] [--modes=all] [--out=DIR]

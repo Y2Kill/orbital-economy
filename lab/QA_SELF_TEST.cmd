@@ -2,7 +2,7 @@
 setlocal
 cd /d "%~dp0"
 echo ============================================================
-echo Orbital Economy Lab v0.9.2 - automated harness QA
+echo Orbital Economy Lab v0.9.3 - automated harness QA
 echo Tests error handling in disposable temporary folders.
 echo Does NOT modify input or output working data.
 echo ============================================================

@@ -1,4 +1,4 @@
-# QA самого Orbital Economy Lab v0.9.2
+# QA самого Orbital Economy Lab v0.9.3
 
 ## 1. Operational QA
 
@@ -31,7 +31,7 @@ QA создаёт одноразовые временные рабочие ка�
 
 - parameter registry (v0.8.0): инвентарь = все числовые константы + начальные запасы, переключатели распознаны, аннотации сливаются (в т.ч. на зеркало), неизвестные имена — предупреждение, malformed-файл отклоняется.
 
-Ожидаемый итог: **29 passed, 0 failed**.
+Ожидаемый итог: **30 passed, 0 failed**.
 
 ## 2. Integration QA factual comparator
 

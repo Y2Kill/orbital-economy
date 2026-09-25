@@ -3,7 +3,7 @@ chcp 65001 >nul
 setlocal
 cd /d "%~dp0"
 echo ============================================================
-echo Orbital Economy Lab v0.9.2 - change-policy integration QA
+echo Orbital Economy Lab v0.9.3 - change-policy integration QA
 echo Synthetic policy tests + one real changed Mode 0 comparison.
 echo Does NOT modify production input/output.
 echo ============================================================

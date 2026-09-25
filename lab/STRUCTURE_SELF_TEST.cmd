@@ -3,7 +3,7 @@ chcp 65001 >nul
 setlocal
 cd /d "%~dp0"
 echo ============================================================
-echo Orbital Economy Lab v0.9.2 - structure audit QA
+echo Orbital Economy Lab v0.9.3 - structure audit QA
 echo open_boundaries + colony_symmetry negative tests on mutated copies
 echo of the accepted model. No simulation.
 echo Does NOT modify production input/output.

@@ -4,7 +4,7 @@ setlocal EnableExtensions
 cd /d "%~dp0"
 
 echo ============================================================
-echo Orbital Economy Lab v0.9.2 - accepted vs candidate comparison
+echo Orbital Economy Lab v0.9.3 - accepted vs candidate comparison
 echo ============================================================
 
 if not exist "node_modules\simulation" (

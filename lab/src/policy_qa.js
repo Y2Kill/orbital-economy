@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+import { ENGINE_VERSION } from './engine.js';
 import { discoverSingleJson } from './workspace.js';
 import fs from 'node:fs';
 import os from 'node:os';
@@ -23,7 +24,7 @@ const basePolicy = {
   accepted_model_sha256: acceptedSha,
   validation_sha256: validationSha,
   comparison: { abs_tolerance: 0, rel_tolerance: null, rel_floor: 1e-12 },
-  engine: { package: 'simulation', version: '9.0.0' },
+  engine: { package: 'simulation', version: ENGINE_VERSION },
   default_action: 'deny',
   require_full_mode_coverage: true,
   rules: []
@@ -34,7 +35,7 @@ function emptyComparison() {
     generated: new Date().toISOString(),
     overall: 'COMPLETE',
     result: 'OUTPUTS_IDENTICAL',
-    engine: { package: 'simulation', version: '9.0.0', node: process.version },
+    engine: { package: 'simulation', version: ENGINE_VERSION, node: process.version },
     accepted: { sha256: acceptedSha, name: 'accepted' },
     candidate: { sha256: 'b'.repeat(64), name: 'candidate' },
     validation: { sha256: validationSha },

@@ -32,7 +32,7 @@ INSTALL.cmd
 RUN_LAB.cmd
 ```
 
-`INSTALL.cmd` installs the pinned engine (`lab/node_modules` is not in git). `RUN_LAB.cmd` needs no arguments: `lab/input/` and `lab/reference/accepted/` already hold the accepted artefacts, so it runs all 27 Modes of the accepted model against the accepted validation contract. Expected: `OVERALL: PASS`.
+`INSTALL.cmd` installs the pinned dependencies only from the vendored npm tarballs in `lab/vendor/`, using a temporary isolated cache and `npm ci --offline` (`lab/node_modules` is not in git). The bench then verifies the actually installed `simulation` version before engine-backed commands run. `RUN_LAB.cmd` needs no arguments: `lab/input/` and `lab/reference/accepted/` already hold the accepted artefacts, so it runs all 27 Modes of the accepted model against the accepted validation contract. Expected: `OVERALL: PASS`.
 
 Everything else is one command:
 

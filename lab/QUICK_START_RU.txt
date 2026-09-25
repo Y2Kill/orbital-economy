@@ -1,8 +1,8 @@
-Orbital Economy Lab v0.9.2 — быстрый старт
+Orbital Economy Lab v0.9.3 — быстрый старт
 ===========================================
 
 ПЕРВАЯ УСТАНОВКА
-1. INSTALL.cmd
+1. INSTALL.cmd  (установка только из vendor\*.tgz: временный кэш + npm ci --offline)
 2. SELF_TEST.cmd
 3. QA_SELF_TEST.cmd
 4. COMPARE_SELF_TEST.cmd
@@ -58,7 +58,7 @@ Web CSV для обычной разработки НЕ нужны.
 3. RUN_LAB.cmd
 
 ВАЖНО
-- simulation зафиксирован на 9.0.0
+- simulation зафиксирован на 9.0.0; стенд проверяет фактически установленную версию при запуске
 - reference\accepted\model\ — замороженный accepted baseline
 - input\policy\ — versioned explicit change contract
 - HARD/static/physics validation не отключается policy

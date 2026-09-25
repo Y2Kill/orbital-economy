@@ -4,7 +4,7 @@ setlocal EnableExtensions
 cd /d "%~dp0"
 
 echo ============================================================
-echo Orbital Economy Lab v0.9.2 - candidate policy check
+echo Orbital Economy Lab v0.9.3 - candidate policy check
 echo accepted vs candidate + explicit change contract
 echo ============================================================
 

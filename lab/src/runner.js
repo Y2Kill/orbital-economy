@@ -1,7 +1,6 @@
 import fs from 'node:fs';
 import path from 'node:path';
-import { loadModelJSON } from 'simulation';
-const ENGINE_VERSION = '9.0.0';
+import { loadModelJSON, ENGINE_VERSION } from './engine.js';
 import { modelJsonForScenario, listScenarios } from './model.js';
 import { checkFiniteAll, checkNonNegativeRegex, checkPlugin, checkTimeAxis, runGenericCheck, seriesContext } from './checks.js';
 import { compareResultsToCsv, inspectWebReferenceBatch } from './regression.js';

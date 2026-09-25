@@ -3,7 +3,7 @@ chcp 65001 >nul
 setlocal
 cd /d "%~dp0"
 echo ============================================================
-echo Orbital Economy Lab v0.9.2 - self test
+echo Orbital Economy Lab v0.9.3 - self test
 echo Runs the workspace model (input\model), Modes 0 and 12. No web CSV required.
 echo ============================================================
 if not exist "node_modules\simulation" (

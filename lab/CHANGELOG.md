@@ -1,5 +1,13 @@
 # Changelog
 
+## v0.9.3 — vendored offline install + enforced engine pin
+
+- `INSTALL.cmd`: installation now uses only the repository's `vendor/*.tgz`: a separate temporary npm cache is seeded from the two tarballs, then `npm ci --offline` installs strictly from `package-lock.json`; the user's normal npm cache and network are not required;
+- `src/engine.js`: single enforcement point for `simulation@9.0.0`; the installed version is read from `node_modules/simulation/package.json`, a mismatch aborts startup with a diagnostic, and reports receive the actual installed version instead of a display-only constant;
+- all direct `simulation` imports used by the bench are routed through the engine-pin module; CLI paths and self-tests that load the engine therefore share the same check;
+- `QA_SELF_TEST`: +1 negative case — a temporary fake `simulation/package.json` with version 9.0.1 must be rejected; failure of the pin check makes the QA case fail;
+- package/lab version bumped to v0.9.3; install, pin and licence documentation updated for vendored dependencies.
+
 ## v0.9.2 — гигиена репозитория, без изменений поведения проверок
 
 Первый коммит после нулевого (`v7.6-r2`). Модель, validation и policy не менялись.

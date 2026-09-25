@@ -1,6 +1,6 @@
 import fs from 'node:fs';
 import path from 'node:path';
-import { loadModelJSON } from 'simulation';
+import { loadModelJSON, ENGINE_VERSION } from './engine.js';
 import { readJson, sha256File, nowIso } from './util.js';
 import { listScenarios, modelJsonForScenario } from './model.js';
 import { checkFiniteAll, checkNonNegativeRegex, checkPlugin, checkTimeAxis, runGenericCheck, seriesContext } from './checks.js';
@@ -9,7 +9,6 @@ import { writeModelComparisonReports } from './compare_report.js';
 import { runLifecycleConformance } from './lifecycle_conformance.js';
 import { runStructureAudits, structureAuditErrors } from './structure_audit.js';
 
-const ENGINE_VERSION = '9.0.0';
 
 function stable(value) {
   if (Array.isArray(value)) return value.map(stable);

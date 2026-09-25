@@ -10,7 +10,7 @@ import { compareModelStructure } from './compare_models.js';
 import { runGenericCheck } from './checks.js';
 import { applyPatch, validatePatch, PATCH_FORMAT } from './patch.js';
 import { inventory, buildRegistry, validateAnnotations } from './parameters.js';
-import { loadModelJSON } from 'simulation';
+import { loadModelJSON, assertEngineVersion } from './engine.js';
 
 const root = path.resolve(process.cwd());
 const sourceModel = discoverSingleJson(path.join(root, 'input', 'model'), 'accepted ModelJSON');
@@ -195,6 +195,18 @@ try {
     return typeof m?.model?.sha256 === 'string' && m.model.sha256.length === 64 && typeof m?.validation?.sha256 === 'string' && m.validation.sha256.length === 64;
   });
 
+
+  await expect('engine pin rejects a substituted installed version', async () => {
+    const fakePackage = path.join(tmp, 'engine-pin', 'package.json');
+    ensureDir(path.dirname(fakePackage));
+    writeJson(fakePackage, { name: 'simulation', version: '9.0.1' });
+    try {
+      assertEngineVersion(fakePackage);
+      return false;
+    } catch (e) {
+      return String(e?.message || e).includes('requires simulation@9.0.0') && String(e?.message || e).includes('found 9.0.1');
+    }
+  });
 
   await expect('model diff: identical model has no semantic structural changes', async () => {
     const raw = readJson(sourceModel);

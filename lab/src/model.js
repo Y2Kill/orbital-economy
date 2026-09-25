@@ -1,4 +1,4 @@
-import { loadModelJSON } from 'simulation';
+import { loadModelJSON } from './engine.js';
 import { deepClone } from './util.js';
 
 export function scenarioMode(scenario, index, modeVariable = 'Timed Test Mode') {

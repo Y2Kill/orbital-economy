@@ -6,7 +6,7 @@ import { discoverSingleJson } from './workspace.js';
 import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
-import { loadModelJSON } from 'simulation';
+import { loadModelJSON } from './engine.js';
 import { runLifecycleConformance, findKernelPlugin } from './lifecycle_conformance.js';
 import { checkPlugin, seriesContext } from './checks.js';
 import { listScenarios, modelJsonForScenario } from './model.js';

@@ -4,7 +4,7 @@ setlocal EnableExtensions
 cd /d "%~dp0"
 
 echo ============================================================
-echo Orbital Economy Lab v0.9.2 - structure audit
+echo Orbital Economy Lab v0.9.3 - structure audit
 echo open boundaries (planet meter) + colony symmetry, no simulation
 echo ============================================================
 

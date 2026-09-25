@@ -1,4 +1,4 @@
-# Orbital Economy Lab v0.9.2
+# Orbital Economy Lab v0.9.3
 
 Локальный стенд для запуска, проверки, regression-анализа, policy-gating, проверки соответствия Capital Lifecycle Kernel и статических аудитов структуры (открытые границы, A/B-симметрия) для ModelJSON экономической модели Orbital Economy.
 
@@ -129,12 +129,16 @@ POLICY_SELF_TEST.cmd
 INSTALL.cmd
 ```
 
+`INSTALL.cmd` не обращается к npm registry: он создаёт отдельный временный npm-кэш, заполняет его только поставляемыми `vendor\simulation-9.0.0.tgz` и `vendor\csv-parse-5.6.0.tgz`, затем выполняет `npm ci --offline` строго по `package-lock.json`. Пользовательский npm-кэш для установки не используется.
+
 Зафиксированные зависимости:
 
 ```text
 simulation 9.0.0
 csv-parse 5.6.0
 ```
+
+При запуске стенд читает фактическую версию из `node_modules\simulation\package.json` и отказывается работать, если она не равна `9.0.0`; та же фактическая версия попадает в отчёты.
 
 Не выполнять без отдельного решения:
 

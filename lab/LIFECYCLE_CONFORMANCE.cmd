@@ -4,7 +4,7 @@ setlocal EnableExtensions
 cd /d "%~dp0"
 
 echo ============================================================
-echo Orbital Economy Lab v0.9.2 - Capital Lifecycle Kernel conformance
+echo Orbital Economy Lab v0.9.3 - Capital Lifecycle Kernel conformance
 echo static topology / wiring check, no simulation
 echo ============================================================
 
