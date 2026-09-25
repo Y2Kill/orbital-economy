@@ -218,7 +218,59 @@ jobs:
       - name: Find earliest differing primitive
         run: node docs/tasks/006-cross-os/repro/compare-probe.mjs probe-artifacts/probe-ubuntu/probe.json probe-artifacts/probe-windows/probe.json
 
+  pow-trace:
+    if: github.event_name == 'push' && contains(github.event.head_commit.message, '[pow-probe]')
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: ubuntu-latest
+            label: ubuntu
+          - os: windows-latest
+            label: windows
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+        with:
+          node-version: '24.11.1'
+      - name: Install bench dependencies offline from vendor
+        working-directory: lab
+        shell: bash
+        run: |
+          set -euo pipefail
+          cache="${RUNNER_TEMP}/orbital-economy-npm-cache"
+          rm -rf "${cache}"
+          mkdir -p "${cache}"
+          npm cache add ./vendor/simulation-9.0.0.tgz ./vendor/csv-parse-5.6.0.tgz --cache "${cache}"
+          npm ci --offline --cache "${cache}"
+          rm -rf "${cache}"
+      - name: Trace Math.pow in Mode 0
+        run: node --expose-gc docs/tasks/006-cross-os/repro/trace-pow.mjs 0 pow-trace.json
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: pow-trace-${{ matrix.label }}
+          path: pow-trace.json
+          if-no-files-found: error
+          retention-days: 14
+
+  compare-pow-trace:
+    if: github.event_name == 'push' && contains(github.event.head_commit.message, '[pow-probe]')
+    needs: pow-trace
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+      - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093
+        with:
+          pattern: pow-trace-*
+          path: pow-traces
+      - name: Compare Math.pow traces
+        run: node docs/tasks/006-cross-os/repro/compare-pow-trace.mjs pow-traces/pow-trace-ubuntu/pow-trace.json pow-traces/pow-trace-windows/pow-trace.json
+
   repro:
+    if: github.event_name != 'push' || !contains(github.event.head_commit.message, '[pow-probe]')
     strategy:
       fail-fast: false
       matrix:
