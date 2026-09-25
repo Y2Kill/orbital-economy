@@ -11,7 +11,6 @@ on:
       ref:
         description: Task branch/ref containing docs/tasks/NNN-*/candidate/
         required: true
-        default: main
         type: string
       modes:
         description: Modes to run (all for acceptance; subsets are diagnostic)
@@ -23,7 +22,7 @@ permissions:
   contents: read
 
 concurrency:
-  group: candidate-${{ github.ref }}
+  group: candidate-${{ github.event_name == 'workflow_dispatch' && inputs.ref || github.ref }}
   cancel-in-progress: true
 
 jobs:
@@ -216,7 +215,7 @@ jobs:
           echo "$((SECONDS-start))" > output/candidate/policy.seconds
           exit "${rc}"
 
-      - name: Candidate summary
+      - name: Prepare candidate summary
         if: always()
         working-directory: lab
         shell: bash
@@ -254,7 +253,7 @@ jobs:
             echo "# Candidate acceptance summary"
             echo
             if [[ "${DIAGNOSTIC:-no}" == "yes" ]]; then
-              echo "**DIAGNOSTIC RUN** — partial Modes=`${MODES}`; not an acceptance result."
+              echo "**DIAGNOSTIC RUN** — partial Modes=${MODES}; not an acceptance result."
               echo
             fi
             echo "| Gate | Result | Time |"
@@ -265,8 +264,8 @@ jobs:
             echo "| validation | $(gate "${VALIDATION_OUTCOME}") | $(duration validation) |"
             echo "| policy | $(gate "${POLICY_OUTCOME}") | $(duration policy) |"
             echo
-            echo "Candidate SHA-256: `${candidate_sha}`"
-            echo "Validation SHA-256: `${validation_sha}`"
+            echo "Candidate SHA-256: ${candidate_sha}"
+            echo "Validation SHA-256: ${validation_sha}"
             echo
           } > "${summary}"
 
@@ -281,6 +280,7 @@ jobs:
           console.log(`Expected: ${c.expected ?? 'unavailable'}`);
           console.log(`Unexpected: ${c.unexpected ?? 'unavailable'}`);
           console.log(`Forbidden: ${c.forbidden ?? 'unavailable'}`);
+          console.log(`Threshold exceed: ${c.thresholdExceeded ?? 'unavailable'}`);
           console.log(`Required missing: ${c.requiredMissing ?? 'unavailable'}`);
           console.log(`Hard blockers: ${c.hardBlockers ?? 'unavailable'}`);
           const bad=(p.events || []).filter(e => ['UNEXPECTED_CHANGE','FORBIDDEN_CHANGE','THRESHOLD_EXCEEDED'].includes(e.classification));
@@ -298,13 +298,12 @@ jobs:
               echo "Expected: unavailable"
               echo "Unexpected: unavailable"
               echo "Forbidden: unavailable"
+              echo "Threshold exceed: unavailable"
               echo "Required missing: unavailable"
               echo "Hard blockers: unavailable"
             } >> "${summary}"
           fi
 
-          cat "${summary}"
-          cat "${summary}" >> "${GITHUB_STEP_SUMMARY}"
 
       - name: Upload candidate reports
         if: always()
@@ -315,8 +314,9 @@ jobs:
           if-no-files-found: error
           retention-days: 14
 
-      - name: Final gate result
+      - name: Candidate summary and final result
         if: always()
+        working-directory: lab
         shell: bash
         env:
           INSTALL_OUTCOME: ${{ steps.install.outcome }}
@@ -327,6 +327,8 @@ jobs:
           POLICY_OUTCOME: ${{ steps.policy.outcome }}
         run: |
           set -euo pipefail
+          cat output/candidate/SUMMARY.md
+          cat output/candidate/SUMMARY.md >> "${GITHUB_STEP_SUMMARY}"
           for outcome in "${INSTALL_OUTCOME}" "${APPLY_OUTCOME}" "${CONFORMANCE_OUTCOME}" "${AUDIT_OUTCOME}" "${VALIDATION_OUTCOME}" "${POLICY_OUTCOME}"; do
             [[ "${outcome}" == "success" ]] || exit 1
           done
