@@ -1,28 +1,26 @@
 #!/usr/bin/env node
 
 function fromHex(h) {
-  const b = Buffer.from(h, 'hex');
-  return b.readDoubleBE(0);
+  return Buffer.from(h, 'hex').readDoubleBE(0);
 }
 function bits(x) {
-  const b = Buffer.alloc(8);
-  b.writeDoubleBE(x, 0);
+  const b=Buffer.alloc(8);
+  b.writeDoubleBE(x,0);
   return b.toString('hex');
 }
 
-const inputs = [
-  ['sample-square', '3fd6e403878ca48b'],
-  ['linux-gap-square', '3fd6e403878ca30d'],
-  ['windows-gap-square', '3fd6e403878ca3cc']
+const cases=[
+  ['step88-inner','3ff0a00e7d9dd843'],
+  ['step89-inner','3ff0a0a5a6c27bb6'],
+  ['step90-inner','3ff0a138d9c75ee1']
 ];
 
-for (const [name, hex] of inputs) {
-  const x = fromHex(hex);
+for(const [name,h] of cases){
+  const x=fromHex(h);
   console.log(JSON.stringify({
     name,
-    input: hex,
-    pow: bits(Math.pow(x, 0.5)),
-    exponent: bits(x ** 0.5),
-    sqrt: bits(Math.sqrt(x))
+    input:h,
+    exponent:'0.125',
+    output:bits(Math.pow(x,0.125))
   }));
 }
