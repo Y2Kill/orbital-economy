@@ -1,0 +1,30 @@
+{
+  "task": "006",
+  "title": "Why the bench computes differently on Linux and Windows: bit-exact series digest, cross-OS matrix, root cause",
+  "branch": "task/006-cross-os",
+  "allow": [
+    "README.md",
+    "lab/README_RU.md",
+    "lab/*.cmd",
+    "lab/src/**",
+    "lab/package.json",
+    "lab/package-lock.json",
+    "lab/CHANGELOG.md",
+    "lab/QUICK_START_RU.txt",
+    "lab/ENGINE_PIN.md",
+    "lab/docs/**",
+    "docs/HISTORY_RU.md"
+  ],
+  "allow_binary": [],
+  "allow_protected": [
+    ".github/workflows/cross-os.yml",
+    "docs/tasks/006-cross-os/repro/**"
+  ],
+  "required_changes": [
+    ".github/workflows/cross-os.yml",
+    "lab/src/**",
+    "lab/CHANGELOG.md",
+    "docs/tasks/006-cross-os/repro/**"
+  ],
+  "sums_by": "reviewer"
+}
