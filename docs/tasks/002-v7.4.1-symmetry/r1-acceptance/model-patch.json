@@ -1,0 +1,742 @@
+{
+  "format": "orbital-economy-model-patch-v1",
+  "base_sha256": "5de080f30bcfd2229c600121cf32cb48c28f6eec1d98215fdd36f907fe2d6ee3",
+  "name": "Orbital Economy v7.4.1 symmetry candidate r1",
+  "description": "Behavior-preserving A/B symmetry cleanup: explicit test applicability flags and neutral A-side override mirrors. Scenarios unchanged.",
+  "add_elements": [
+    {
+      "type": "VARIABLE",
+      "name": "Reverse A Wage",
+      "behavior": {
+        "value": 100
+      },
+      "description": "Mode 4 override wage for A; neutral value equal to A Wage."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "Reverse A Mining Capacity",
+      "behavior": {
+        "value": 70
+      },
+      "description": "Mode 4 override mining capacity for A; neutral value equal to A Mining Capacity."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "Priority Stress A Ore Base Cost",
+      "behavior": {
+        "value": 4
+      },
+      "description": "Mode 8 ore-base-cost override for A; neutral value equal to A Ore Base Cost."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "A Effective Wage",
+      "behavior": {
+        "value": "IfThenElse([Test 4 Reverse Advantage Active] = 1, [Reverse A Wage], [A Wage])"
+      },
+      "description": "Symmetric effective-wage wrapper for Mode 4 test wiring."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "A Test 20 Metal Demand Applies",
+      "behavior": {
+        "value": 0
+      },
+      "description": "Applicability flag for Mode 20 metal-demand test wiring in colony A."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "A Test 16 Metal Demand Applies",
+      "behavior": {
+        "value": 0
+      },
+      "description": "Applicability flag for Mode 16 metal-demand test wiring in colony A."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "A Test 9 Metal Demand Applies",
+      "behavior": {
+        "value": 0
+      },
+      "description": "Applicability flag for Mode 9 metal-demand test wiring in colony A."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "A Test 8 Metal Demand Applies",
+      "behavior": {
+        "value": 0
+      },
+      "description": "Applicability flag for Mode 8 metal-demand test wiring in colony A."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "A Test 7 Metal Demand Applies",
+      "behavior": {
+        "value": 0
+      },
+      "description": "Applicability flag for Mode 7 metal-demand test wiring in colony A."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "A Test 2 Metal Demand Applies",
+      "behavior": {
+        "value": 0
+      },
+      "description": "Applicability flag for Mode 2 metal-demand test wiring in colony A."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "A Test 3 Metal Demand Applies",
+      "behavior": {
+        "value": 0
+      },
+      "description": "Applicability flag for Mode 3 metal-demand test wiring in colony A."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "B Test 20 Metal Demand Applies",
+      "behavior": {
+        "value": 1
+      },
+      "description": "Applicability flag for Mode 20 metal-demand test wiring in colony B."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "B Test 16 Metal Demand Applies",
+      "behavior": {
+        "value": 1
+      },
+      "description": "Applicability flag for Mode 16 metal-demand test wiring in colony B."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "B Test 9 Metal Demand Applies",
+      "behavior": {
+        "value": 1
+      },
+      "description": "Applicability flag for Mode 9 metal-demand test wiring in colony B."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "B Test 8 Metal Demand Applies",
+      "behavior": {
+        "value": 1
+      },
+      "description": "Applicability flag for Mode 8 metal-demand test wiring in colony B."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "B Test 7 Metal Demand Applies",
+      "behavior": {
+        "value": 1
+      },
+      "description": "Applicability flag for Mode 7 metal-demand test wiring in colony B."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "B Test 2 Metal Demand Applies",
+      "behavior": {
+        "value": 1
+      },
+      "description": "Applicability flag for Mode 2 metal-demand test wiring in colony B."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "B Test 3 Metal Demand Applies",
+      "behavior": {
+        "value": 1
+      },
+      "description": "Applicability flag for Mode 3 metal-demand test wiring in colony B."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "A Test 19 Electronics Demand Applies",
+      "behavior": {
+        "value": 1
+      },
+      "description": "Applicability flag for Mode 19 electronics-demand test wiring in colony A."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "A Test 14 Electronics Demand Applies",
+      "behavior": {
+        "value": 1
+      },
+      "description": "Applicability flag for Mode 14 electronics-demand test wiring in colony A."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "A Test 13 Electronics Demand Applies",
+      "behavior": {
+        "value": 1
+      },
+      "description": "Applicability flag for Mode 13 electronics-demand test wiring in colony A."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "A Test 9 Electronics Demand Applies",
+      "behavior": {
+        "value": 1
+      },
+      "description": "Applicability flag for Mode 9 electronics-demand test wiring in colony A."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "A Test 8 Electronics Demand Applies",
+      "behavior": {
+        "value": 1
+      },
+      "description": "Applicability flag for Mode 8 electronics-demand test wiring in colony A."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "A Test 5 Electronics Demand Applies",
+      "behavior": {
+        "value": 1
+      },
+      "description": "Applicability flag for Mode 5 electronics-demand test wiring in colony A."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "A Test 7 Electronics Demand Applies",
+      "behavior": {
+        "value": 1
+      },
+      "description": "Applicability flag for Mode 7 electronics-demand test wiring in colony A."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "A Test 15 Electronics Demand Applies",
+      "behavior": {
+        "value": 0
+      },
+      "description": "Applicability flag for Mode 15 electronics-demand test wiring in colony A."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "B Test 19 Electronics Demand Applies",
+      "behavior": {
+        "value": 0
+      },
+      "description": "Applicability flag for Mode 19 electronics-demand test wiring in colony B."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "B Test 14 Electronics Demand Applies",
+      "behavior": {
+        "value": 0
+      },
+      "description": "Applicability flag for Mode 14 electronics-demand test wiring in colony B."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "B Test 13 Electronics Demand Applies",
+      "behavior": {
+        "value": 0
+      },
+      "description": "Applicability flag for Mode 13 electronics-demand test wiring in colony B."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "B Test 9 Electronics Demand Applies",
+      "behavior": {
+        "value": 0
+      },
+      "description": "Applicability flag for Mode 9 electronics-demand test wiring in colony B."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "B Test 8 Electronics Demand Applies",
+      "behavior": {
+        "value": 0
+      },
+      "description": "Applicability flag for Mode 8 electronics-demand test wiring in colony B."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "B Test 5 Electronics Demand Applies",
+      "behavior": {
+        "value": 0
+      },
+      "description": "Applicability flag for Mode 5 electronics-demand test wiring in colony B."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "B Test 7 Electronics Demand Applies",
+      "behavior": {
+        "value": 0
+      },
+      "description": "Applicability flag for Mode 7 electronics-demand test wiring in colony B."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "B Test 15 Electronics Demand Applies",
+      "behavior": {
+        "value": 1
+      },
+      "description": "Applicability flag for Mode 15 electronics-demand test wiring in colony B."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "A Test 18 Mining Shock Applies",
+      "behavior": {
+        "value": 1
+      },
+      "description": "Applicability flag: the v7.4 Mode 18 mining shock applies to colony A."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "B Test 18 Mining Shock Applies",
+      "behavior": {
+        "value": 0
+      },
+      "description": "Applicability flag: the v7.4 Mode 18 mining shock does not apply to colony B."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "A Test 11 Generation Shock Applies",
+      "behavior": {
+        "value": 1
+      },
+      "description": "Applicability flag for symmetric power test wiring."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "B Test 11 Generation Shock Applies",
+      "behavior": {
+        "value": 0
+      },
+      "description": "Applicability flag for symmetric power test wiring."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "A Test 6 Headroom Applies",
+      "behavior": {
+        "value": 1
+      },
+      "description": "Applicability flag for symmetric power test wiring."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "B Test 6 Headroom Applies",
+      "behavior": {
+        "value": 0
+      },
+      "description": "Applicability flag for symmetric power test wiring."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "A Test 4 Headroom Applies",
+      "behavior": {
+        "value": 0
+      },
+      "description": "Applicability flag for symmetric power test wiring."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "B Test 4 Headroom Applies",
+      "behavior": {
+        "value": 1
+      },
+      "description": "Applicability flag for symmetric power test wiring."
+    }
+  ],
+  "replace_formulas": [
+    {
+      "name": "A Metal Unit Cost",
+      "value": "[A Ore per Metal] * [A Ore Price] + [A Energy per Metal] * [A Effective Energy Price] + [A Labor per Metal] * [A Effective Wage]"
+    },
+    {
+      "name": "A Effective Ore Base Cost",
+      "value": "IfThenElse([Test 8 Metal Priority Scarcity Active] = 1, [Priority Stress A Ore Base Cost], IfThenElse([Test 4 Reverse Advantage Active] = 1, [Reverse A Ore Base Cost], [A Ore Base Cost]))"
+    },
+    {
+      "name": "A Effective Mining Capacity",
+      "value": "IfThenElse([Intermediate Inputs Enabled] = 1, IfThenElse([Test 18 Metal Supply Shock Active] = 1, [A Mining Capacity] * IfThenElse([A Test 18 Mining Shock Applies] = 1, [v7.4 Metal Supply Shock Multiplier], 1), IfThenElse([Test 4 Reverse Advantage Active] = 1, [Reverse A Mining Capacity], [A Mining Capacity])), IfThenElse([Test 4 Reverse Advantage Active] = 1, [Reverse A Mining Capacity], [A Mining Capacity]))"
+    },
+    {
+      "name": "B Effective Mining Capacity",
+      "value": "IfThenElse([Intermediate Inputs Enabled] = 1, IfThenElse([Test 18 Metal Supply Shock Active] = 1, [B Mining Capacity] * IfThenElse([B Test 18 Mining Shock Applies] = 1, [v7.4 Metal Supply Shock Multiplier], 1), IfThenElse([Test 4 Reverse Advantage Active] = 1, [Reverse B Mining Capacity], [B Mining Capacity])), IfThenElse([Test 4 Reverse Advantage Active] = 1, [Reverse B Mining Capacity], [B Mining Capacity]))"
+    },
+    {
+      "name": "A Mining Rate",
+      "value": "[A Positive Desired Mining Rate] / (1 + ([A Positive Desired Mining Rate] / ([A Effective Mining Capacity] + 0.001)) ^ 8) ^ 0.125"
+    },
+    {
+      "name": "B Mining Rate",
+      "value": "[B Positive Desired Mining Rate] / (1 + ([B Positive Desired Mining Rate] / ([B Effective Mining Capacity] + 0.001)) ^ 8) ^ 0.125"
+    },
+    {
+      "name": "A Power Active Generation Capacity",
+      "value": "IfThenElse([Capital Lifecycle Enabled] = 1, [A Power Active Generation Capital], [A Power Installed Generation Capacity]) * IfThenElse([Test 11 Generation Capacity Shock Active] = 1, IfThenElse([A Test 11 Generation Shock Applies] = 1, [Generation Capacity Shock Factor], 1), IfThenElse([Test 6 Electronics Reverse Advantage Active] = 1, IfThenElse([A Test 6 Headroom Applies] = 1, [Legacy Advantage Test Power Headroom Multiplier], 1), IfThenElse([Test 4 Reverse Advantage Active] = 1, IfThenElse([A Test 4 Headroom Applies] = 1, [Legacy Advantage Test Power Headroom Multiplier], 1), 1)))"
+    },
+    {
+      "name": "B Power Active Generation Capacity",
+      "value": "IfThenElse([Capital Lifecycle Enabled] = 1, [B Power Active Generation Capital], [B Power Installed Generation Capacity]) * IfThenElse([Test 11 Generation Capacity Shock Active] = 1, IfThenElse([B Test 11 Generation Shock Applies] = 1, [Generation Capacity Shock Factor], 1), IfThenElse([Test 6 Electronics Reverse Advantage Active] = 1, IfThenElse([B Test 6 Headroom Applies] = 1, [Legacy Advantage Test Power Headroom Multiplier], 1), IfThenElse([Test 4 Reverse Advantage Active] = 1, IfThenElse([B Test 4 Headroom Applies] = 1, [Legacy Advantage Test Power Headroom Multiplier], 1), 1)))"
+    },
+    {
+      "name": "A Effective Local Base Demand",
+      "value": "IfThenElse([Intermediate Inputs Enabled] = 1, IfThenElse([Test 20 Coupled Metal Demand Growth Active] = 1, [A Local Base Demand] * IfThenElse([A Test 20 Metal Demand Applies] = 1, [v7.4 Coupled Metal Demand Growth Multiplier], 1), IfThenElse([Test 16 Sustained Metal Energy Growth Active] = 1, [A Local Base Demand] * IfThenElse([A Test 16 Metal Demand Applies] = 1, [v7.3 Sustained Metal Demand Growth Multiplier], 1), IfThenElse([Test 9 Two Industry Energy Stress Active] = 1, [A Local Base Demand] * IfThenElse([A Test 9 Metal Demand Applies] = 1, [Two Industry Energy Stress Demand Multiplier], 1), IfThenElse([Test 8 Metal Priority Scarcity Active] = 1, [A Local Base Demand] * IfThenElse([A Test 8 Metal Demand Applies] = 1, [Priority Stress Demand Multiplier], 1), IfThenElse([Test 7 Two Good Transport Surge Active] = 1, [A Local Base Demand] * IfThenElse([A Test 7 Metal Demand Applies] = 1, [Two Good Demand Surge Multiplier], 1), IfThenElse([Test 2 Transport Surge Active] = 1, [A Local Base Demand] * IfThenElse([A Test 2 Metal Demand Applies] = 1, [Transport Demand Surge Multiplier], 1), IfThenElse([Test 3 Low Demand Active] = 1, [A Local Base Demand] * IfThenElse([A Test 3 Metal Demand Applies] = 1, [Low Demand Multiplier], 1), [A Local Base Demand]))))))), IfThenElse([Test 16 Sustained Metal Energy Growth Active] = 1, [A Local Base Demand] * IfThenElse([A Test 16 Metal Demand Applies] = 1, [v7.3 Sustained Metal Demand Growth Multiplier], 1), IfThenElse([Test 9 Two Industry Energy Stress Active] = 1, [A Local Base Demand] * IfThenElse([A Test 9 Metal Demand Applies] = 1, [Two Industry Energy Stress Demand Multiplier], 1), IfThenElse([Test 8 Metal Priority Scarcity Active] = 1, [A Local Base Demand] * IfThenElse([A Test 8 Metal Demand Applies] = 1, [Priority Stress Demand Multiplier], 1), IfThenElse([Test 7 Two Good Transport Surge Active] = 1, [A Local Base Demand] * IfThenElse([A Test 7 Metal Demand Applies] = 1, [Two Good Demand Surge Multiplier], 1), IfThenElse([Test 2 Transport Surge Active] = 1, [A Local Base Demand] * IfThenElse([A Test 2 Metal Demand Applies] = 1, [Transport Demand Surge Multiplier], 1), IfThenElse([Test 3 Low Demand Active] = 1, [A Local Base Demand] * IfThenElse([A Test 3 Metal Demand Applies] = 1, [Low Demand Multiplier], 1), [A Local Base Demand])))))))"
+    },
+    {
+      "name": "B Effective Local Base Demand",
+      "value": "IfThenElse([Intermediate Inputs Enabled] = 1, IfThenElse([Test 20 Coupled Metal Demand Growth Active] = 1, [B Local Base Demand] * IfThenElse([B Test 20 Metal Demand Applies] = 1, [v7.4 Coupled Metal Demand Growth Multiplier], 1), IfThenElse([Test 16 Sustained Metal Energy Growth Active] = 1, [B Local Base Demand] * IfThenElse([B Test 16 Metal Demand Applies] = 1, [v7.3 Sustained Metal Demand Growth Multiplier], 1), IfThenElse([Test 9 Two Industry Energy Stress Active] = 1, [B Local Base Demand] * IfThenElse([B Test 9 Metal Demand Applies] = 1, [Two Industry Energy Stress Demand Multiplier], 1), IfThenElse([Test 8 Metal Priority Scarcity Active] = 1, [B Local Base Demand] * IfThenElse([B Test 8 Metal Demand Applies] = 1, [Priority Stress Demand Multiplier], 1), IfThenElse([Test 7 Two Good Transport Surge Active] = 1, [B Local Base Demand] * IfThenElse([B Test 7 Metal Demand Applies] = 1, [Two Good Demand Surge Multiplier], 1), IfThenElse([Test 2 Transport Surge Active] = 1, [B Local Base Demand] * IfThenElse([B Test 2 Metal Demand Applies] = 1, [Transport Demand Surge Multiplier], 1), IfThenElse([Test 3 Low Demand Active] = 1, [B Local Base Demand] * IfThenElse([B Test 3 Metal Demand Applies] = 1, [Low Demand Multiplier], 1), [B Local Base Demand]))))))), IfThenElse([Test 16 Sustained Metal Energy Growth Active] = 1, [B Local Base Demand] * IfThenElse([B Test 16 Metal Demand Applies] = 1, [v7.3 Sustained Metal Demand Growth Multiplier], 1), IfThenElse([Test 9 Two Industry Energy Stress Active] = 1, [B Local Base Demand] * IfThenElse([B Test 9 Metal Demand Applies] = 1, [Two Industry Energy Stress Demand Multiplier], 1), IfThenElse([Test 8 Metal Priority Scarcity Active] = 1, [B Local Base Demand] * IfThenElse([B Test 8 Metal Demand Applies] = 1, [Priority Stress Demand Multiplier], 1), IfThenElse([Test 7 Two Good Transport Surge Active] = 1, [B Local Base Demand] * IfThenElse([B Test 7 Metal Demand Applies] = 1, [Two Good Demand Surge Multiplier], 1), IfThenElse([Test 2 Transport Surge Active] = 1, [B Local Base Demand] * IfThenElse([B Test 2 Metal Demand Applies] = 1, [Transport Demand Surge Multiplier], 1), IfThenElse([Test 3 Low Demand Active] = 1, [B Local Base Demand] * IfThenElse([B Test 3 Metal Demand Applies] = 1, [Low Demand Multiplier], 1), [B Local Base Demand])))))))"
+    },
+    {
+      "name": "A Effective Electronics Local Base Demand",
+      "value": "IfThenElse([Intermediate Inputs Enabled] = 1, IfThenElse([Test 19 Coupled Electronics Growth Active] = 1, [A Electronics Local Base Demand] * IfThenElse([A Test 19 Electronics Demand Applies] = 1, [v7.4 Coupled Electronics Growth Multiplier], 1), IfThenElse([Test 14 Sustained Electronics Growth Active] = 1, [A Electronics Local Base Demand] * IfThenElse([A Test 14 Electronics Demand Applies] = 1, [v7.3 Sustained Electronics Growth Multiplier], 1), IfThenElse([Test 13 Temporary Electronics Lifecycle Surge Active] = 1, [A Electronics Local Base Demand] * IfThenElse([A Test 13 Electronics Demand Applies] = 1, [v7.3 Temporary Electronics Demand Multiplier], 1), IfThenElse([Test 9 Two Industry Energy Stress Active] = 1, [A Electronics Local Base Demand] * IfThenElse([A Test 9 Electronics Demand Applies] = 1, [Two Industry Energy Stress Demand Multiplier], 1), IfThenElse([Test 8 Metal Priority Scarcity Active] = 1, [A Electronics Local Base Demand] * IfThenElse([A Test 8 Electronics Demand Applies] = 1, [Priority Stress Demand Multiplier], 1), IfThenElse([Test 5 Electronics Demand Surge Active] = 1, [A Electronics Local Base Demand] * IfThenElse([A Test 5 Electronics Demand Applies] = 1, [Electronics Demand Surge Multiplier], 1), IfThenElse([Test 7 Two Good Transport Surge Active] = 1, [A Electronics Local Base Demand] * IfThenElse([A Test 7 Electronics Demand Applies] = 1, [Two Good Demand Surge Multiplier], 1), IfThenElse([Test 15 Electronics Collapse Recovery Active] = 1, [A Electronics Local Base Demand] * IfThenElse([A Test 15 Electronics Demand Applies] = 1, [v7.3 Electronics Demand Collapse Multiplier], 1), [A Electronics Local Base Demand])))))))), IfThenElse([Test 14 Sustained Electronics Growth Active] = 1, [A Electronics Local Base Demand] * IfThenElse([A Test 14 Electronics Demand Applies] = 1, [v7.3 Sustained Electronics Growth Multiplier], 1), IfThenElse([Test 13 Temporary Electronics Lifecycle Surge Active] = 1, [A Electronics Local Base Demand] * IfThenElse([A Test 13 Electronics Demand Applies] = 1, [v7.3 Temporary Electronics Demand Multiplier], 1), IfThenElse([Test 9 Two Industry Energy Stress Active] = 1, [A Electronics Local Base Demand] * IfThenElse([A Test 9 Electronics Demand Applies] = 1, [Two Industry Energy Stress Demand Multiplier], 1), IfThenElse([Test 8 Metal Priority Scarcity Active] = 1, [A Electronics Local Base Demand] * IfThenElse([A Test 8 Electronics Demand Applies] = 1, [Priority Stress Demand Multiplier], 1), IfThenElse([Test 5 Electronics Demand Surge Active] = 1, [A Electronics Local Base Demand] * IfThenElse([A Test 5 Electronics Demand Applies] = 1, [Electronics Demand Surge Multiplier], 1), IfThenElse([Test 7 Two Good Transport Surge Active] = 1, [A Electronics Local Base Demand] * IfThenElse([A Test 7 Electronics Demand Applies] = 1, [Two Good Demand Surge Multiplier], 1), IfThenElse([Test 15 Electronics Collapse Recovery Active] = 1, [A Electronics Local Base Demand] * IfThenElse([A Test 15 Electronics Demand Applies] = 1, [v7.3 Electronics Demand Collapse Multiplier], 1), [A Electronics Local Base Demand]))))))))"
+    },
+    {
+      "name": "B Effective Electronics Local Base Demand",
+      "value": "IfThenElse([Intermediate Inputs Enabled] = 1, IfThenElse([Test 19 Coupled Electronics Growth Active] = 1, [B Electronics Local Base Demand] * IfThenElse([B Test 19 Electronics Demand Applies] = 1, [v7.4 Coupled Electronics Growth Multiplier], 1), IfThenElse([Test 14 Sustained Electronics Growth Active] = 1, [B Electronics Local Base Demand] * IfThenElse([B Test 14 Electronics Demand Applies] = 1, [v7.3 Sustained Electronics Growth Multiplier], 1), IfThenElse([Test 13 Temporary Electronics Lifecycle Surge Active] = 1, [B Electronics Local Base Demand] * IfThenElse([B Test 13 Electronics Demand Applies] = 1, [v7.3 Temporary Electronics Demand Multiplier], 1), IfThenElse([Test 9 Two Industry Energy Stress Active] = 1, [B Electronics Local Base Demand] * IfThenElse([B Test 9 Electronics Demand Applies] = 1, [Two Industry Energy Stress Demand Multiplier], 1), IfThenElse([Test 8 Metal Priority Scarcity Active] = 1, [B Electronics Local Base Demand] * IfThenElse([B Test 8 Electronics Demand Applies] = 1, [Priority Stress Demand Multiplier], 1), IfThenElse([Test 5 Electronics Demand Surge Active] = 1, [B Electronics Local Base Demand] * IfThenElse([B Test 5 Electronics Demand Applies] = 1, [Electronics Demand Surge Multiplier], 1), IfThenElse([Test 7 Two Good Transport Surge Active] = 1, [B Electronics Local Base Demand] * IfThenElse([B Test 7 Electronics Demand Applies] = 1, [Two Good Demand Surge Multiplier], 1), IfThenElse([Test 15 Electronics Collapse Recovery Active] = 1, [B Electronics Local Base Demand] * IfThenElse([B Test 15 Electronics Demand Applies] = 1, [v7.3 Electronics Demand Collapse Multiplier], 1), [B Electronics Local Base Demand])))))))), IfThenElse([Test 14 Sustained Electronics Growth Active] = 1, [B Electronics Local Base Demand] * IfThenElse([B Test 14 Electronics Demand Applies] = 1, [v7.3 Sustained Electronics Growth Multiplier], 1), IfThenElse([Test 13 Temporary Electronics Lifecycle Surge Active] = 1, [B Electronics Local Base Demand] * IfThenElse([B Test 13 Electronics Demand Applies] = 1, [v7.3 Temporary Electronics Demand Multiplier], 1), IfThenElse([Test 9 Two Industry Energy Stress Active] = 1, [B Electronics Local Base Demand] * IfThenElse([B Test 9 Electronics Demand Applies] = 1, [Two Industry Energy Stress Demand Multiplier], 1), IfThenElse([Test 8 Metal Priority Scarcity Active] = 1, [B Electronics Local Base Demand] * IfThenElse([B Test 8 Electronics Demand Applies] = 1, [Priority Stress Demand Multiplier], 1), IfThenElse([Test 5 Electronics Demand Surge Active] = 1, [B Electronics Local Base Demand] * IfThenElse([B Test 5 Electronics Demand Applies] = 1, [Electronics Demand Surge Multiplier], 1), IfThenElse([Test 7 Two Good Transport Surge Active] = 1, [B Electronics Local Base Demand] * IfThenElse([B Test 7 Electronics Demand Applies] = 1, [Two Good Demand Surge Multiplier], 1), IfThenElse([Test 15 Electronics Collapse Recovery Active] = 1, [B Electronics Local Base Demand] * IfThenElse([B Test 15 Electronics Demand Applies] = 1, [v7.3 Electronics Demand Collapse Multiplier], 1), [B Electronics Local Base Demand]))))))))"
+    }
+  ],
+  "add_links": [
+    {
+      "from": "Test 4 Reverse Advantage Active",
+      "to": "A Effective Wage"
+    },
+    {
+      "from": "Reverse A Wage",
+      "to": "A Effective Wage"
+    },
+    {
+      "from": "A Wage",
+      "to": "A Effective Wage"
+    },
+    {
+      "from": "A Effective Wage",
+      "to": "A Metal Unit Cost"
+    },
+    {
+      "from": "Test 8 Metal Priority Scarcity Active",
+      "to": "A Effective Ore Base Cost"
+    },
+    {
+      "from": "Priority Stress A Ore Base Cost",
+      "to": "A Effective Ore Base Cost"
+    },
+    {
+      "from": "A Test 18 Mining Shock Applies",
+      "to": "A Effective Mining Capacity"
+    },
+    {
+      "from": "Test 4 Reverse Advantage Active",
+      "to": "A Effective Mining Capacity"
+    },
+    {
+      "from": "Reverse A Mining Capacity",
+      "to": "A Effective Mining Capacity"
+    },
+    {
+      "from": "Intermediate Inputs Enabled",
+      "to": "B Effective Mining Capacity"
+    },
+    {
+      "from": "Test 18 Metal Supply Shock Active",
+      "to": "B Effective Mining Capacity"
+    },
+    {
+      "from": "B Test 18 Mining Shock Applies",
+      "to": "B Effective Mining Capacity"
+    },
+    {
+      "from": "v7.4 Metal Supply Shock Multiplier",
+      "to": "B Effective Mining Capacity"
+    },
+    {
+      "from": "A Test 11 Generation Shock Applies",
+      "to": "A Power Active Generation Capacity"
+    },
+    {
+      "from": "A Test 6 Headroom Applies",
+      "to": "A Power Active Generation Capacity"
+    },
+    {
+      "from": "Test 4 Reverse Advantage Active",
+      "to": "A Power Active Generation Capacity"
+    },
+    {
+      "from": "A Test 4 Headroom Applies",
+      "to": "A Power Active Generation Capacity"
+    },
+    {
+      "from": "Test 11 Generation Capacity Shock Active",
+      "to": "B Power Active Generation Capacity"
+    },
+    {
+      "from": "B Test 11 Generation Shock Applies",
+      "to": "B Power Active Generation Capacity"
+    },
+    {
+      "from": "Generation Capacity Shock Factor",
+      "to": "B Power Active Generation Capacity"
+    },
+    {
+      "from": "Test 6 Electronics Reverse Advantage Active",
+      "to": "B Power Active Generation Capacity"
+    },
+    {
+      "from": "B Test 6 Headroom Applies",
+      "to": "B Power Active Generation Capacity"
+    },
+    {
+      "from": "B Test 4 Headroom Applies",
+      "to": "B Power Active Generation Capacity"
+    },
+    {
+      "from": "Intermediate Inputs Enabled",
+      "to": "A Effective Local Base Demand"
+    },
+    {
+      "from": "Test 20 Coupled Metal Demand Growth Active",
+      "to": "A Effective Local Base Demand"
+    },
+    {
+      "from": "A Test 20 Metal Demand Applies",
+      "to": "A Effective Local Base Demand"
+    },
+    {
+      "from": "v7.4 Coupled Metal Demand Growth Multiplier",
+      "to": "A Effective Local Base Demand"
+    },
+    {
+      "from": "Test 16 Sustained Metal Energy Growth Active",
+      "to": "A Effective Local Base Demand"
+    },
+    {
+      "from": "A Test 16 Metal Demand Applies",
+      "to": "A Effective Local Base Demand"
+    },
+    {
+      "from": "v7.3 Sustained Metal Demand Growth Multiplier",
+      "to": "A Effective Local Base Demand"
+    },
+    {
+      "from": "Test 9 Two Industry Energy Stress Active",
+      "to": "A Effective Local Base Demand"
+    },
+    {
+      "from": "A Test 9 Metal Demand Applies",
+      "to": "A Effective Local Base Demand"
+    },
+    {
+      "from": "Two Industry Energy Stress Demand Multiplier",
+      "to": "A Effective Local Base Demand"
+    },
+    {
+      "from": "Test 8 Metal Priority Scarcity Active",
+      "to": "A Effective Local Base Demand"
+    },
+    {
+      "from": "A Test 8 Metal Demand Applies",
+      "to": "A Effective Local Base Demand"
+    },
+    {
+      "from": "Priority Stress Demand Multiplier",
+      "to": "A Effective Local Base Demand"
+    },
+    {
+      "from": "Test 7 Two Good Transport Surge Active",
+      "to": "A Effective Local Base Demand"
+    },
+    {
+      "from": "A Test 7 Metal Demand Applies",
+      "to": "A Effective Local Base Demand"
+    },
+    {
+      "from": "Two Good Demand Surge Multiplier",
+      "to": "A Effective Local Base Demand"
+    },
+    {
+      "from": "Test 2 Transport Surge Active",
+      "to": "A Effective Local Base Demand"
+    },
+    {
+      "from": "A Test 2 Metal Demand Applies",
+      "to": "A Effective Local Base Demand"
+    },
+    {
+      "from": "Transport Demand Surge Multiplier",
+      "to": "A Effective Local Base Demand"
+    },
+    {
+      "from": "Test 3 Low Demand Active",
+      "to": "A Effective Local Base Demand"
+    },
+    {
+      "from": "A Test 3 Metal Demand Applies",
+      "to": "A Effective Local Base Demand"
+    },
+    {
+      "from": "Low Demand Multiplier",
+      "to": "A Effective Local Base Demand"
+    },
+    {
+      "from": "B Test 20 Metal Demand Applies",
+      "to": "B Effective Local Base Demand"
+    },
+    {
+      "from": "B Test 16 Metal Demand Applies",
+      "to": "B Effective Local Base Demand"
+    },
+    {
+      "from": "B Test 9 Metal Demand Applies",
+      "to": "B Effective Local Base Demand"
+    },
+    {
+      "from": "B Test 8 Metal Demand Applies",
+      "to": "B Effective Local Base Demand"
+    },
+    {
+      "from": "B Test 7 Metal Demand Applies",
+      "to": "B Effective Local Base Demand"
+    },
+    {
+      "from": "B Test 2 Metal Demand Applies",
+      "to": "B Effective Local Base Demand"
+    },
+    {
+      "from": "B Test 3 Metal Demand Applies",
+      "to": "B Effective Local Base Demand"
+    },
+    {
+      "from": "A Test 19 Electronics Demand Applies",
+      "to": "A Effective Electronics Local Base Demand"
+    },
+    {
+      "from": "A Test 14 Electronics Demand Applies",
+      "to": "A Effective Electronics Local Base Demand"
+    },
+    {
+      "from": "A Test 13 Electronics Demand Applies",
+      "to": "A Effective Electronics Local Base Demand"
+    },
+    {
+      "from": "A Test 9 Electronics Demand Applies",
+      "to": "A Effective Electronics Local Base Demand"
+    },
+    {
+      "from": "A Test 8 Electronics Demand Applies",
+      "to": "A Effective Electronics Local Base Demand"
+    },
+    {
+      "from": "A Test 5 Electronics Demand Applies",
+      "to": "A Effective Electronics Local Base Demand"
+    },
+    {
+      "from": "A Test 7 Electronics Demand Applies",
+      "to": "A Effective Electronics Local Base Demand"
+    },
+    {
+      "from": "Test 15 Electronics Collapse Recovery Active",
+      "to": "A Effective Electronics Local Base Demand"
+    },
+    {
+      "from": "A Test 15 Electronics Demand Applies",
+      "to": "A Effective Electronics Local Base Demand"
+    },
+    {
+      "from": "v7.3 Electronics Demand Collapse Multiplier",
+      "to": "A Effective Electronics Local Base Demand"
+    },
+    {
+      "from": "Intermediate Inputs Enabled",
+      "to": "B Effective Electronics Local Base Demand"
+    },
+    {
+      "from": "Test 19 Coupled Electronics Growth Active",
+      "to": "B Effective Electronics Local Base Demand"
+    },
+    {
+      "from": "B Test 19 Electronics Demand Applies",
+      "to": "B Effective Electronics Local Base Demand"
+    },
+    {
+      "from": "v7.4 Coupled Electronics Growth Multiplier",
+      "to": "B Effective Electronics Local Base Demand"
+    },
+    {
+      "from": "Test 14 Sustained Electronics Growth Active",
+      "to": "B Effective Electronics Local Base Demand"
+    },
+    {
+      "from": "B Test 14 Electronics Demand Applies",
+      "to": "B Effective Electronics Local Base Demand"
+    },
+    {
+      "from": "v7.3 Sustained Electronics Growth Multiplier",
+      "to": "B Effective Electronics Local Base Demand"
+    },
+    {
+      "from": "Test 13 Temporary Electronics Lifecycle Surge Active",
+      "to": "B Effective Electronics Local Base Demand"
+    },
+    {
+      "from": "B Test 13 Electronics Demand Applies",
+      "to": "B Effective Electronics Local Base Demand"
+    },
+    {
+      "from": "v7.3 Temporary Electronics Demand Multiplier",
+      "to": "B Effective Electronics Local Base Demand"
+    },
+    {
+      "from": "Test 9 Two Industry Energy Stress Active",
+      "to": "B Effective Electronics Local Base Demand"
+    },
+    {
+      "from": "B Test 9 Electronics Demand Applies",
+      "to": "B Effective Electronics Local Base Demand"
+    },
+    {
+      "from": "Two Industry Energy Stress Demand Multiplier",
+      "to": "B Effective Electronics Local Base Demand"
+    },
+    {
+      "from": "Test 8 Metal Priority Scarcity Active",
+      "to": "B Effective Electronics Local Base Demand"
+    },
+    {
+      "from": "B Test 8 Electronics Demand Applies",
+      "to": "B Effective Electronics Local Base Demand"
+    },
+    {
+      "from": "Priority Stress Demand Multiplier",
+      "to": "B Effective Electronics Local Base Demand"
+    },
+    {
+      "from": "Test 5 Electronics Demand Surge Active",
+      "to": "B Effective Electronics Local Base Demand"
+    },
+    {
+      "from": "B Test 5 Electronics Demand Applies",
+      "to": "B Effective Electronics Local Base Demand"
+    },
+    {
+      "from": "Electronics Demand Surge Multiplier",
+      "to": "B Effective Electronics Local Base Demand"
+    },
+    {
+      "from": "Test 7 Two Good Transport Surge Active",
+      "to": "B Effective Electronics Local Base Demand"
+    },
+    {
+      "from": "B Test 7 Electronics Demand Applies",
+      "to": "B Effective Electronics Local Base Demand"
+    },
+    {
+      "from": "Two Good Demand Surge Multiplier",
+      "to": "B Effective Electronics Local Base Demand"
+    },
+    {
+      "from": "B Test 15 Electronics Demand Applies",
+      "to": "B Effective Electronics Local Base Demand"
+    },
+    {
+      "from": "Intermediate Inputs Enabled",
+      "to": "B Mining Rate"
+    }
+  ],
+  "modify_scenarios": [],
+  "add_scenarios": []
+}

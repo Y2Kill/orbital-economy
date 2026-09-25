@@ -1,0 +1,137 @@
+{
+  "format": "orbital-economy-change-policy-v1",
+  "name": "Orbital Economy v7.4.1 symmetry — change contract (DRAFT r0)",
+  "description": "Behavior-preserving structural task: symmetrize A/B test wiring via applicability flags and neutral A-side override constants (V7_4_1_SYMMETRY_SPEC.md). No output series may change in any Mode 0-20 (explicit deny). Additive only. Draft: validation_sha256 bound by the contractor to the delivered validation.",
+  "accepted_model_sha256": "5de080f30bcfd2229c600121cf32cb48c28f6eec1d98215fdd36f907fe2d6ee3",
+  "validation_sha256": null,
+  "comparison": {
+    "abs_tolerance": 0,
+    "rel_tolerance": null,
+    "rel_floor": 1e-12
+  },
+  "engine": {
+    "package": "simulation",
+    "version": "9.0.0"
+  },
+  "default_action": "deny",
+  "require_full_mode_coverage": true,
+  "rules": [
+    {
+      "id": "behavior-preserving-guard",
+      "action": "deny",
+      "event": [
+        "series_changed",
+        "time_axis_changed"
+      ],
+      "modes": "0-20",
+      "name": "*",
+      "note": "Any numerical change anywhere is a failure of this task."
+    },
+    {
+      "id": "no-structural-drift",
+      "action": "deny",
+      "event": [
+        "element_removed",
+        "series_removed",
+        "mode_added",
+        "mode_removed",
+        "link_removed",
+        "type_changed",
+        "simulation_changed",
+        "scenario_input_changed",
+        "scenario_renamed"
+      ],
+      "name": "*"
+    },
+    {
+      "id": "add-neutral-overrides-and-effective-wage",
+      "action": "allow",
+      "event": "element_added",
+      "name": [
+        "Reverse A Wage",
+        "Reverse A Mining Capacity",
+        "Priority Stress A Ore Base Cost",
+        "A Effective Wage"
+      ],
+      "required": true
+    },
+    {
+      "id": "add-applicability-flags",
+      "action": "allow",
+      "event": "element_added",
+      "name": [
+        "? Test * Applies"
+      ],
+      "required": true,
+      "note": "X Test N <Metal Demand|Electronics Demand|Mining Shock|Generation Shock|Headroom> Applies — 0/1 constants (spec §3)."
+    },
+    {
+      "id": "change-definitions-per-spec-s3",
+      "action": "allow",
+      "event": "definition_changed",
+      "name": [
+        "A Metal Unit Cost",
+        "A Effective Ore Base Cost",
+        "? Effective Mining Capacity",
+        "? Mining Rate",
+        "? Power Active Generation Capacity",
+        "? Effective Local Base Demand",
+        "? Effective Electronics Local Base Demand"
+      ],
+      "required": true
+    },
+    {
+      "id": "link-into-new-elements",
+      "action": "allow",
+      "event": "link_added",
+      "name": [
+        "* -> A Effective Wage",
+        "* -> ? Test * Applies"
+      ],
+      "required": true
+    },
+    {
+      "id": "link-from-new-elements",
+      "action": "allow",
+      "event": "link_added",
+      "name": [
+        "Reverse A Wage -> *",
+        "Reverse A Mining Capacity -> *",
+        "Priority Stress A Ore Base Cost -> *",
+        "A Effective Wage -> *",
+        "? Test * Applies -> *"
+      ],
+      "required": true
+    },
+    {
+      "id": "link-into-changed-definitions",
+      "action": "allow",
+      "event": "link_added",
+      "name": [
+        "* -> A Metal Unit Cost",
+        "* -> A Effective Ore Base Cost",
+        "* -> ? Effective Mining Capacity",
+        "* -> ? Mining Rate",
+        "* -> ? Power Active Generation Capacity",
+        "* -> ? Effective Local Base Demand",
+        "* -> ? Effective Electronics Local Base Demand"
+      ],
+      "required": true,
+      "note": "Mirrored chains need links from test switches / multipliers that one side lacked."
+    },
+    {
+      "id": "new-series-all-modes",
+      "action": "allow",
+      "event": "series_added",
+      "modes": "0-20",
+      "name": [
+        "Reverse A Wage",
+        "Reverse A Mining Capacity",
+        "Priority Stress A Ore Base Cost",
+        "A Effective Wage",
+        "? Test * Applies"
+      ],
+      "required": true
+    }
+  ]
+}

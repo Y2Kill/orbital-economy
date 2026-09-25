@@ -1,0 +1,227 @@
+{
+  "format": "orbital-economy-change-policy-v1",
+  "name": "Orbital Economy v7.4 Intermediate Inputs — change contract r2.1)",
+  "description": "Candidate r2 change contract derived from architecture/test-plan revision r1.1. Accepted baseline: v7.3 r2. Modes 0-16 must preserve all existing outputs exactly. r2 implements planned-output intermediate demand, coupled feedstock initial-stock re-denomination, Mode 18 A-side mining shock, planet-wide diagnostics, and mirrored Metal Input final-fulfillment helpers for declarative proportional-rationing validation. r2.1: rebound to validation-v7.4-r2.1.json (acceptance-side Mode 19 test redefinition, test plan r1.2); rules unchanged.",
+  "accepted_model_sha256": "57a2a102f2b632c69c37cc00c4cd11182ca2601d2af9395560228b5fdde0f44d",
+  "validation_sha256": "91184e72cad11c0af0be68887254d723931047cbeb36f13ee1a7bc9142ee2d70",
+  "comparison": {
+    "abs_tolerance": 0,
+    "rel_tolerance": null,
+    "rel_floor": 1e-12
+  },
+  "engine": {
+    "package": "simulation",
+    "version": "9.0.0"
+  },
+  "default_action": "deny",
+  "require_full_mode_coverage": true,
+  "rules": [
+    {
+      "id": "regression-guard-modes-0-16",
+      "action": "deny",
+      "event": "series_changed",
+      "modes": "0-16",
+      "name": "*",
+      "note": "Non-regression rule: any numerical change of an existing series in Modes 0-16 is forbidden regardless of later allow rules (first match wins)."
+    },
+    {
+      "id": "forbid-removals-and-structural-drift",
+      "action": "deny",
+      "event": [
+        "element_removed",
+        "series_removed",
+        "mode_removed",
+        "link_removed",
+        "type_changed",
+        "simulation_changed",
+        "time_axis_changed",
+        "scenario_renamed"
+      ],
+      "name": "*",
+      "note": "v7.4 is purely additive on top of v7.3 r2."
+    },
+    {
+      "id": "add-switch-and-global-coefficients",
+      "action": "allow",
+      "event": "element_added",
+      "name": [
+        "Intermediate Inputs Enabled",
+        "Metal per Electronics",
+        "Metal Input Target Days",
+        "Metal Input Adjustment Time",
+        "A Effective Mining Capacity",
+        "Planet Electronics Production Rate",
+        "Planet Smelting Rate"
+      ],
+      "required": true,
+      "note": "r1.1: A Effective Mining Capacity carries the Mode 18 shock on A; Planet * totals are diagnostic sums used by going-concern checks."
+    },
+    {
+      "id": "add-colony-interface-elements",
+      "action": "allow",
+      "event": "element_added",
+      "name": [
+        "? Electronics Metal Input Target Inventory",
+        "? Electronics Metal Input Demand",
+        "? Metal Available for Intermediate Use",
+        "? Electronics Metal Input Delivery",
+        "? Electronics Metal Input Fulfillment"
+      ],
+      "required": true,
+      "note": "Canonical names from spec §3; must exist for both A and B (colony_symmetry enforces mirroring)."
+    },
+    {
+      "id": "add-test-wiring-modes-18-20",
+      "action": "allow",
+      "event": "element_added",
+      "name": [
+        "Test 18 *",
+        "Test 19 *",
+        "Test 20 *",
+        "v7.4 *"
+      ],
+      "required": true
+    },
+    {
+      "id": "add-helper-elements-in-namespace",
+      "action": "allow",
+      "event": "element_added",
+      "name": [
+        "* Metal Input *",
+        "* Intermediate *"
+      ],
+      "note": "Optional helpers; anything outside these namespaces is an unexpected change."
+    },
+    {
+      "id": "change-definitions-per-spec-s4",
+      "action": "allow",
+      "event": "definition_changed",
+      "name": [
+        "? Electronics Feedstock Extraction Rate",
+        "? Electronics Feedstock Consumption Rate",
+        "? Electronics Feedstock Price",
+        "? Electronics Unit Cost",
+        "? Electronics Feedstock Target Inventory",
+        "? Desired Smelting Rate",
+        "A Mining Rate",
+        "? Electronics Feedstock Inventory"
+      ],
+      "required": true,
+      "note": "Only the IfThenElse(switch=1, new, old) form is acceptable (for STOCK initial_value as well); verified by regression-guard + reviewer."
+    },
+    {
+      "id": "change-test-wiring-definitions",
+      "action": "allow",
+      "event": "definition_changed",
+      "name": [
+        "A Effective Electronics Local Base Demand",
+        "B Effective Local Base Demand"
+      ],
+      "required": true,
+      "note": "New IfThenElse branches for Test 19 / Test 20; existing branches untouched. (r1.1: B Effective Mining Capacity is no longer changed; Mode 18 targets A.)"
+    },
+    {
+      "id": "change-optional-feedstock-buffer",
+      "action": "allow",
+      "event": "definition_changed",
+      "name": [
+        "? Electronics Feedstock Buffer"
+      ]
+    },
+    {
+      "id": "link-into-new-elements",
+      "action": "allow",
+      "event": "link_added",
+      "name": [
+        "* -> * Metal Input *",
+        "* -> * Intermediate *",
+        "* -> Test 18 *",
+        "* -> Test 19 *",
+        "* -> Test 20 *",
+        "* -> v7.4 *",
+        "* -> A Effective Mining Capacity",
+        "* -> Planet *"
+      ],
+      "required": true
+    },
+    {
+      "id": "link-from-new-elements",
+      "action": "allow",
+      "event": "link_added",
+      "name": [
+        "Intermediate Inputs Enabled -> *",
+        "Metal per Electronics -> *",
+        "Metal Input * -> *",
+        "* Metal Input * -> *",
+        "* Intermediate * -> *",
+        "Test 18 * -> *",
+        "Test 19 * -> *",
+        "Test 20 * -> *",
+        "v7.4 * -> *",
+        "A Effective Mining Capacity -> *"
+      ],
+      "required": true
+    },
+    {
+      "id": "link-into-changed-definitions",
+      "action": "allow",
+      "event": "link_added",
+      "name": [
+        "* -> ? Electronics Feedstock Extraction Rate",
+        "* -> ? Electronics Feedstock Consumption Rate",
+        "* -> ? Electronics Feedstock Price",
+        "* -> ? Electronics Unit Cost",
+        "* -> ? Electronics Feedstock Target Inventory",
+        "* -> ? Desired Smelting Rate",
+        "* -> A Effective Electronics Local Base Demand",
+        "* -> B Effective Local Base Demand",
+        "* -> ? Electronics Feedstock Buffer",
+        "* -> A Mining Rate",
+        "* -> ? Electronics Feedstock Inventory"
+      ],
+      "required": true
+    },
+    {
+      "id": "add-modes-17-20",
+      "action": "allow",
+      "event": "mode_added",
+      "modes": "17-20",
+      "required": true
+    },
+    {
+      "id": "scenarios-0-16-gain-switch-off",
+      "action": "allow",
+      "event": "scenario_input_changed",
+      "modes": "0-16",
+      "required": true,
+      "note": "The only permitted change is adding \"Intermediate Inputs Enabled\": 0. Reviewer verifies the diff in model-comparison.md."
+    },
+    {
+      "id": "new-series-in-modes-0-16",
+      "action": "allow",
+      "event": "series_added",
+      "modes": "0-16",
+      "name": [
+        "Intermediate Inputs Enabled",
+        "Metal per Electronics",
+        "Metal Input Target Days",
+        "Metal Input Adjustment Time",
+        "? Electronics Metal Input Target Inventory",
+        "? Electronics Metal Input Demand",
+        "? Metal Available for Intermediate Use",
+        "? Electronics Metal Input Delivery",
+        "? Electronics Metal Input Fulfillment",
+        "Test 18 *",
+        "Test 19 *",
+        "Test 20 *",
+        "v7.4 *",
+        "* Metal Input *",
+        "* Intermediate *",
+        "A Effective Mining Capacity",
+        "Planet *"
+      ],
+      "required": true,
+      "note": "New elements produce new series in every Mode; they are allowed only within the v7.4 namespaces."
+    }
+  ]
+}

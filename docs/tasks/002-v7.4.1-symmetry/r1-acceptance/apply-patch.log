@@ -1,0 +1,146 @@
+Base:  <old-project>\acceptance_task_002_r1\lab\reference\accepted\model\orbital_economy_v7_4_modeljson.json
+  SHA-256: 5de080f30bcfd2229c600121cf32cb48c28f6eec1d98215fdd36f907fe2d6ee3
+Patch: ../../delivery_r1/model-patch.json
+  + VARIABLE Reverse A Wage
+  + VARIABLE Reverse A Mining Capacity
+  + VARIABLE Priority Stress A Ore Base Cost
+  + VARIABLE A Effective Wage
+  + VARIABLE A Test 20 Metal Demand Applies
+  + VARIABLE A Test 16 Metal Demand Applies
+  + VARIABLE A Test 9 Metal Demand Applies
+  + VARIABLE A Test 8 Metal Demand Applies
+  + VARIABLE A Test 7 Metal Demand Applies
+  + VARIABLE A Test 2 Metal Demand Applies
+  + VARIABLE A Test 3 Metal Demand Applies
+  + VARIABLE B Test 20 Metal Demand Applies
+  + VARIABLE B Test 16 Metal Demand Applies
+  + VARIABLE B Test 9 Metal Demand Applies
+  + VARIABLE B Test 8 Metal Demand Applies
+  + VARIABLE B Test 7 Metal Demand Applies
+  + VARIABLE B Test 2 Metal Demand Applies
+  + VARIABLE B Test 3 Metal Demand Applies
+  + VARIABLE A Test 19 Electronics Demand Applies
+  + VARIABLE A Test 14 Electronics Demand Applies
+  + VARIABLE A Test 13 Electronics Demand Applies
+  + VARIABLE A Test 9 Electronics Demand Applies
+  + VARIABLE A Test 8 Electronics Demand Applies
+  + VARIABLE A Test 5 Electronics Demand Applies
+  + VARIABLE A Test 7 Electronics Demand Applies
+  + VARIABLE A Test 15 Electronics Demand Applies
+  + VARIABLE B Test 19 Electronics Demand Applies
+  + VARIABLE B Test 14 Electronics Demand Applies
+  + VARIABLE B Test 13 Electronics Demand Applies
+  + VARIABLE B Test 9 Electronics Demand Applies
+  + VARIABLE B Test 8 Electronics Demand Applies
+  + VARIABLE B Test 5 Electronics Demand Applies
+  + VARIABLE B Test 7 Electronics Demand Applies
+  + VARIABLE B Test 15 Electronics Demand Applies
+  + VARIABLE A Test 18 Mining Shock Applies
+  + VARIABLE B Test 18 Mining Shock Applies
+  + VARIABLE A Test 11 Generation Shock Applies
+  + VARIABLE B Test 11 Generation Shock Applies
+  + VARIABLE A Test 6 Headroom Applies
+  + VARIABLE B Test 6 Headroom Applies
+  + VARIABLE A Test 4 Headroom Applies
+  + VARIABLE B Test 4 Headroom Applies
+  ~ VARIABLE A Metal Unit Cost: value replaced
+  ~ VARIABLE A Effective Ore Base Cost: value replaced
+  ~ VARIABLE A Effective Mining Capacity: value replaced
+  ~ VARIABLE B Effective Mining Capacity: value replaced
+  ~ VARIABLE A Mining Rate: value replaced
+  ~ VARIABLE B Mining Rate: value replaced
+  ~ VARIABLE A Power Active Generation Capacity: value replaced
+  ~ VARIABLE B Power Active Generation Capacity: value replaced
+  ~ VARIABLE A Effective Local Base Demand: value replaced
+  ~ VARIABLE B Effective Local Base Demand: value replaced
+  ~ VARIABLE A Effective Electronics Local Base Demand: value replaced
+  ~ VARIABLE B Effective Electronics Local Base Demand: value replaced
+  + LINK Test 4 Reverse Advantage Active -> A Effective Wage
+  + LINK Reverse A Wage -> A Effective Wage
+  + LINK A Wage -> A Effective Wage
+  + LINK A Effective Wage -> A Metal Unit Cost
+  + LINK Test 8 Metal Priority Scarcity Active -> A Effective Ore Base Cost
+  + LINK Priority Stress A Ore Base Cost -> A Effective Ore Base Cost
+  + LINK A Test 18 Mining Shock Applies -> A Effective Mining Capacity
+  + LINK Test 4 Reverse Advantage Active -> A Effective Mining Capacity
+  + LINK Reverse A Mining Capacity -> A Effective Mining Capacity
+  + LINK Intermediate Inputs Enabled -> B Effective Mining Capacity
+  + LINK Test 18 Metal Supply Shock Active -> B Effective Mining Capacity
+  + LINK B Test 18 Mining Shock Applies -> B Effective Mining Capacity
+  + LINK v7.4 Metal Supply Shock Multiplier -> B Effective Mining Capacity
+  + LINK A Test 11 Generation Shock Applies -> A Power Active Generation Capacity
+  + LINK A Test 6 Headroom Applies -> A Power Active Generation Capacity
+  + LINK Test 4 Reverse Advantage Active -> A Power Active Generation Capacity
+  + LINK A Test 4 Headroom Applies -> A Power Active Generation Capacity
+  + LINK Test 11 Generation Capacity Shock Active -> B Power Active Generation Capacity
+  + LINK B Test 11 Generation Shock Applies -> B Power Active Generation Capacity
+  + LINK Generation Capacity Shock Factor -> B Power Active Generation Capacity
+  + LINK Test 6 Electronics Reverse Advantage Active -> B Power Active Generation Capacity
+  + LINK B Test 6 Headroom Applies -> B Power Active Generation Capacity
+  + LINK B Test 4 Headroom Applies -> B Power Active Generation Capacity
+  + LINK Intermediate Inputs Enabled -> A Effective Local Base Demand
+  + LINK Test 20 Coupled Metal Demand Growth Active -> A Effective Local Base Demand
+  + LINK A Test 20 Metal Demand Applies -> A Effective Local Base Demand
+  + LINK v7.4 Coupled Metal Demand Growth Multiplier -> A Effective Local Base Demand
+  + LINK Test 16 Sustained Metal Energy Growth Active -> A Effective Local Base Demand
+  + LINK A Test 16 Metal Demand Applies -> A Effective Local Base Demand
+  + LINK v7.3 Sustained Metal Demand Growth Multiplier -> A Effective Local Base Demand
+  + LINK Test 9 Two Industry Energy Stress Active -> A Effective Local Base Demand
+  + LINK A Test 9 Metal Demand Applies -> A Effective Local Base Demand
+  + LINK Two Industry Energy Stress Demand Multiplier -> A Effective Local Base Demand
+  + LINK Test 8 Metal Priority Scarcity Active -> A Effective Local Base Demand
+  + LINK A Test 8 Metal Demand Applies -> A Effective Local Base Demand
+  + LINK Priority Stress Demand Multiplier -> A Effective Local Base Demand
+  + LINK Test 7 Two Good Transport Surge Active -> A Effective Local Base Demand
+  + LINK A Test 7 Metal Demand Applies -> A Effective Local Base Demand
+  + LINK Two Good Demand Surge Multiplier -> A Effective Local Base Demand
+  + LINK Test 2 Transport Surge Active -> A Effective Local Base Demand
+  + LINK A Test 2 Metal Demand Applies -> A Effective Local Base Demand
+  + LINK Transport Demand Surge Multiplier -> A Effective Local Base Demand
+  + LINK Test 3 Low Demand Active -> A Effective Local Base Demand
+  + LINK A Test 3 Metal Demand Applies -> A Effective Local Base Demand
+  + LINK Low Demand Multiplier -> A Effective Local Base Demand
+  + LINK B Test 20 Metal Demand Applies -> B Effective Local Base Demand
+  + LINK B Test 16 Metal Demand Applies -> B Effective Local Base Demand
+  + LINK B Test 9 Metal Demand Applies -> B Effective Local Base Demand
+  + LINK B Test 8 Metal Demand Applies -> B Effective Local Base Demand
+  + LINK B Test 7 Metal Demand Applies -> B Effective Local Base Demand
+  + LINK B Test 2 Metal Demand Applies -> B Effective Local Base Demand
+  + LINK B Test 3 Metal Demand Applies -> B Effective Local Base Demand
+  + LINK A Test 19 Electronics Demand Applies -> A Effective Electronics Local Base Demand
+  + LINK A Test 14 Electronics Demand Applies -> A Effective Electronics Local Base Demand
+  + LINK A Test 13 Electronics Demand Applies -> A Effective Electronics Local Base Demand
+  + LINK A Test 9 Electronics Demand Applies -> A Effective Electronics Local Base Demand
+  + LINK A Test 8 Electronics Demand Applies -> A Effective Electronics Local Base Demand
+  + LINK A Test 5 Electronics Demand Applies -> A Effective Electronics Local Base Demand
+  + LINK A Test 7 Electronics Demand Applies -> A Effective Electronics Local Base Demand
+  + LINK Test 15 Electronics Collapse Recovery Active -> A Effective Electronics Local Base Demand
+  + LINK A Test 15 Electronics Demand Applies -> A Effective Electronics Local Base Demand
+  + LINK v7.3 Electronics Demand Collapse Multiplier -> A Effective Electronics Local Base Demand
+  + LINK Intermediate Inputs Enabled -> B Effective Electronics Local Base Demand
+  + LINK Test 19 Coupled Electronics Growth Active -> B Effective Electronics Local Base Demand
+  + LINK B Test 19 Electronics Demand Applies -> B Effective Electronics Local Base Demand
+  + LINK v7.4 Coupled Electronics Growth Multiplier -> B Effective Electronics Local Base Demand
+  + LINK Test 14 Sustained Electronics Growth Active -> B Effective Electronics Local Base Demand
+  + LINK B Test 14 Electronics Demand Applies -> B Effective Electronics Local Base Demand
+  + LINK v7.3 Sustained Electronics Growth Multiplier -> B Effective Electronics Local Base Demand
+  + LINK Test 13 Temporary Electronics Lifecycle Surge Active -> B Effective Electronics Local Base Demand
+  + LINK B Test 13 Electronics Demand Applies -> B Effective Electronics Local Base Demand
+  + LINK v7.3 Temporary Electronics Demand Multiplier -> B Effective Electronics Local Base Demand
+  + LINK Test 9 Two Industry Energy Stress Active -> B Effective Electronics Local Base Demand
+  + LINK B Test 9 Electronics Demand Applies -> B Effective Electronics Local Base Demand
+  + LINK Two Industry Energy Stress Demand Multiplier -> B Effective Electronics Local Base Demand
+  + LINK Test 8 Metal Priority Scarcity Active -> B Effective Electronics Local Base Demand
+  + LINK B Test 8 Electronics Demand Applies -> B Effective Electronics Local Base Demand
+  + LINK Priority Stress Demand Multiplier -> B Effective Electronics Local Base Demand
+  + LINK Test 5 Electronics Demand Surge Active -> B Effective Electronics Local Base Demand
+  + LINK B Test 5 Electronics Demand Applies -> B Effective Electronics Local Base Demand
+  + LINK Electronics Demand Surge Multiplier -> B Effective Electronics Local Base Demand
+  + LINK Test 7 Two Good Transport Surge Active -> B Effective Electronics Local Base Demand
+  + LINK B Test 7 Electronics Demand Applies -> B Effective Electronics Local Base Demand
+  + LINK Two Good Demand Surge Multiplier -> B Effective Electronics Local Base Demand
+  + LINK B Test 15 Electronics Demand Applies -> B Effective Electronics Local Base Demand
+  + LINK Intermediate Inputs Enabled -> B Mining Rate
+Candidate written: <old-project>\acceptance_task_002_r1\lab\input\model\orbital_economy_v7_4_1_candidate_r1.json
+  SHA-256: 07ce33e004597ef485e47e3a95026b584197824468382e28daa80950a45fb08e
+Elements: 2568; scenarios: 21

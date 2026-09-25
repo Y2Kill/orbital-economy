@@ -1,0 +1,230 @@
+{
+  "format": "orbital-economy-change-policy-v1",
+  "name": "Orbital Economy v7.5 Capital Goods — change contract (DRAFT r0)",
+  "description": "Derived from V7_5_ARCHITECTURE_SPEC.md before implementation (skeleton verified). Accepted baseline v7.4.1 r1. Modes 0-20 must reproduce accepted outputs exactly (explicit deny on series_changed). validation_sha256 bound by the contractor at delivery.",
+  "accepted_model_sha256": "07ce33e004597ef485e47e3a95026b584197824468382e28daa80950a45fb08e",
+  "validation_sha256": "4a90912d918f8cd891fb63ec6677e4f7a56f996b0c322891fc1a08d6e8cf9cdc",
+  "comparison": {
+    "abs_tolerance": 0,
+    "rel_tolerance": null,
+    "rel_floor": 1e-12
+  },
+  "engine": {
+    "package": "simulation",
+    "version": "9.0.0"
+  },
+  "default_action": "deny",
+  "require_full_mode_coverage": true,
+  "rules": [
+    {
+      "id": "regression-guard-modes-0-20",
+      "action": "deny",
+      "event": "series_changed",
+      "modes": "0-20",
+      "name": "*"
+    },
+    {
+      "id": "forbid-removals-and-structural-drift",
+      "action": "deny",
+      "event": [
+        "element_removed",
+        "series_removed",
+        "mode_removed",
+        "link_removed",
+        "type_changed",
+        "simulation_changed",
+        "time_axis_changed",
+        "scenario_renamed"
+      ],
+      "name": "*"
+    },
+    {
+      "id": "add-global-coefficients-and-switch",
+      "action": "allow",
+      "event": "element_added",
+      "name": [
+        "Capital Goods Enabled",
+        "Metal per Capital Goods Unit",
+        "Electronics per Capital Goods Unit",
+        "Capital Goods Target Days",
+        "Capital Goods Adjustment Time",
+        "Capital Goods Buffer"
+      ],
+      "required": true
+    },
+    {
+      "id": "add-capital-goods-sector-and-kernel-v2-roles",
+      "action": "allow",
+      "event": "element_added",
+      "name": [
+        "? Capital Goods Inventory",
+        "? Capital Goods Demand",
+        "? Capital Goods Target Inventory",
+        "? Desired Capital Goods Production",
+        "? Capital Goods Production Rate",
+        "? Capital Goods Production Capacity",
+        "? Capital Goods Production",
+        "? Capital Goods Metal Consumption",
+        "? Capital Goods Electronics Consumption",
+        "? Capital Goods Fulfillment",
+        "? Refinery Desired Expansion",
+        "? Electronics Desired Expansion",
+        "? Power Desired Expansion",
+        "? Refinery Capital Goods Consumption",
+        "? Electronics Capital Goods Consumption",
+        "? Power Capital Goods Consumption",
+        "? Refinery Capital Goods per Capacity",
+        "? Electronics Capital Goods per Capacity",
+        "? Power Capital Goods per Capacity",
+        "? Capital Goods Base Production Capacity"
+      ],
+      "required": true,
+      "note": "spec §2; mirrored A/B"
+    },
+    {
+      "id": "add-test-wiring-modes-22-23",
+      "action": "allow",
+      "event": "element_added",
+      "name": [
+        "Test 22 *",
+        "Test 23 *",
+        "v7.5 *",
+        "? Test 22 * Applies",
+        "? Test 23 * Applies"
+      ],
+      "required": true
+    },
+    {
+      "id": "add-helper-elements-in-namespace",
+      "action": "allow",
+      "event": "element_added",
+      "name": [
+        "* Capital Goods *"
+      ]
+    },
+    {
+      "id": "change-expansion-flows-per-spec-s3",
+      "action": "allow",
+      "event": "definition_changed",
+      "name": [
+        "? Refinery Expansion",
+        "? Electronics Factory Expansion",
+        "? Power Generation Expansion"
+      ],
+      "required": true,
+      "note": "IfThenElse([Capital Goods Enabled] = 1, desired × fulfillment, old verbatim)"
+    },
+    {
+      "id": "change-test-wiring-definitions",
+      "action": "allow",
+      "event": "definition_changed",
+      "name": [
+        "? Effective Electronics Local Base Demand"
+      ],
+      "note": "Test 23 branch (flagged) prepended to the coupled branch of both electronics demand chains"
+    },
+    {
+      "id": "link-into-new-elements",
+      "action": "allow",
+      "event": "link_added",
+      "name": [
+        "* -> * Capital Goods *",
+        "* -> ? Refinery Desired Expansion",
+        "* -> ? Electronics Desired Expansion",
+        "* -> ? Power Desired Expansion",
+        "* -> Test 22 *",
+        "* -> Test 23 *",
+        "* -> v7.5 *",
+        "* -> ? Test 22 * Applies",
+        "* -> ? Test 23 * Applies"
+      ],
+      "required": true
+    },
+    {
+      "id": "link-from-new-elements",
+      "action": "allow",
+      "event": "link_added",
+      "name": [
+        "Capital Goods Enabled -> *",
+        "* Capital Goods * -> *",
+        "? Refinery Desired Expansion -> *",
+        "? Electronics Desired Expansion -> *",
+        "? Power Desired Expansion -> *",
+        "Test 22 * -> *",
+        "Test 23 * -> *",
+        "v7.5 * -> *",
+        "? Test 22 * Applies -> *",
+        "? Test 23 * Applies -> *"
+      ],
+      "required": true
+    },
+    {
+      "id": "link-into-changed-definitions",
+      "action": "allow",
+      "event": "link_added",
+      "name": [
+        "* -> ? Refinery Expansion",
+        "* -> ? Electronics Factory Expansion",
+        "* -> ? Power Generation Expansion",
+        "* -> ? Effective Electronics Local Base Demand"
+      ],
+      "required": true
+    },
+    {
+      "id": "add-modes-21-23",
+      "action": "allow",
+      "event": "mode_added",
+      "modes": "21-23",
+      "required": true
+    },
+    {
+      "id": "scenarios-0-20-gain-switch-off",
+      "action": "allow",
+      "event": "scenario_input_changed",
+      "modes": "0-20",
+      "required": true,
+      "note": "only \"Capital Goods Enabled\": 0"
+    },
+    {
+      "id": "new-series-in-modes-0-20",
+      "action": "allow",
+      "event": "series_added",
+      "modes": "0-20",
+      "name": [
+        "Capital Goods Enabled",
+        "Metal per Capital Goods Unit",
+        "Electronics per Capital Goods Unit",
+        "Capital Goods Target Days",
+        "Capital Goods Adjustment Time",
+        "Capital Goods Buffer",
+        "? Capital Goods Inventory",
+        "? Capital Goods Demand",
+        "? Capital Goods Target Inventory",
+        "? Desired Capital Goods Production",
+        "? Capital Goods Production Rate",
+        "? Capital Goods Production Capacity",
+        "? Capital Goods Production",
+        "? Capital Goods Metal Consumption",
+        "? Capital Goods Electronics Consumption",
+        "? Capital Goods Fulfillment",
+        "? Refinery Desired Expansion",
+        "? Electronics Desired Expansion",
+        "? Power Desired Expansion",
+        "? Refinery Capital Goods Consumption",
+        "? Electronics Capital Goods Consumption",
+        "? Power Capital Goods Consumption",
+        "? Refinery Capital Goods per Capacity",
+        "? Electronics Capital Goods per Capacity",
+        "? Power Capital Goods per Capacity",
+        "? Capital Goods Base Production Capacity",
+        "Test 22 *",
+        "Test 23 *",
+        "v7.5 *",
+        "? Test 22 * Applies",
+        "? Test 23 * Applies",
+        "* Capital Goods *"
+      ],
+      "required": true
+    }
+  ]
+}

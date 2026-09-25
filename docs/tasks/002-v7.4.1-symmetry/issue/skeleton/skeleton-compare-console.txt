@@ -1,0 +1,143 @@
+Orbital Economy Lab - model-to-model comparison
+Accepted:  Orbital Economy v7.4 Intermediate Inputs candidate r2
+  SHA-256: 5de080f30bcfd2229c600121cf32cb48c28f6eec1d98215fdd36f907fe2d6ee3
+Candidate: Orbital Economy v7.4 SKELETON task 002 (symmetry, partial)
+  SHA-256: 22858b2d37068f96f5f20e86f6a0345208ddf2686b482e5414e8af3634929b5d
+Byte-identical: NO
+Static accepted: PASS; candidate: PASS
+Kernel conformance accepted: PASS; candidate: PASS
+Structure audits accepted: FAIL (informational); candidate: PASS (closed-world violations: 7; symmetry mismatches: 0)
+
+Selected Modes: 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20
+
+=== Mode 0: Baseline Control ===
+    Candidate validation: PASS
+    Output comparison:    IDENTICAL
+    common=852, changed=0, added=8, removed=0, maxAbs=0
+    runtime accepted=8.37s candidate=8.07s
+
+=== Mode 1: Timed B Reactivation ===
+    Candidate validation: PASS
+    Output comparison:    IDENTICAL
+    common=852, changed=0, added=8, removed=0, maxAbs=0
+    runtime accepted=8.00s candidate=7.92s
+
+=== Mode 2: Timed Transport Demand Surge ===
+    Candidate validation: PASS
+    Output comparison:    IDENTICAL
+    common=852, changed=0, added=8, removed=0, maxAbs=0
+    runtime accepted=8.41s candidate=7.84s
+
+=== Mode 3: Timed Low Demand Rationalization ===
+    Candidate validation: PASS
+    Output comparison:    IDENTICAL
+    common=852, changed=0, added=8, removed=0, maxAbs=0
+    runtime accepted=8.31s candidate=7.80s
+
+=== Mode 4: Timed Reverse Advantage ===
+    Candidate validation: PASS
+    Output comparison:    IDENTICAL
+    common=852, changed=0, added=8, removed=0, maxAbs=0
+    runtime accepted=8.29s candidate=8.01s
+
+=== Mode 5: Timed Electronics Demand Surge ===
+    Candidate validation: PASS
+    Output comparison:    IDENTICAL
+    common=852, changed=0, added=8, removed=0, maxAbs=0
+    runtime accepted=7.96s candidate=7.99s
+
+=== Mode 6: Timed Reverse Electronics Advantage ===
+    Candidate validation: PASS
+    Output comparison:    IDENTICAL
+    common=852, changed=0, added=8, removed=0, maxAbs=0
+    runtime accepted=7.92s candidate=7.84s
+
+=== Mode 7: Timed Two-Good Transport Surge ===
+    Candidate validation: PASS
+    Output comparison:    IDENTICAL
+    common=852, changed=0, added=8, removed=0, maxAbs=0
+    runtime accepted=8.13s candidate=7.85s
+
+=== Mode 8: Timed Metal Priority Scarcity ===
+    Candidate validation: PASS
+    Output comparison:    IDENTICAL
+    common=852, changed=0, added=8, removed=0, maxAbs=0
+    runtime accepted=7.93s candidate=7.96s
+
+=== Mode 9: v7.2 Simultaneous Two-Industry Energy Shortage ===
+    Candidate validation: PASS
+    Output comparison:    IDENTICAL
+    common=852, changed=0, added=8, removed=0, maxAbs=0
+    runtime accepted=8.02s candidate=7.78s
+
+=== Mode 10: v7.2 Cheap-Energy Comparative Advantage ===
+    Candidate validation: PASS
+    Output comparison:    IDENTICAL
+    common=852, changed=0, added=8, removed=0, maxAbs=0
+    runtime accepted=7.93s candidate=7.92s
+
+=== Mode 11: v7.2 Generation Capacity Shock Recovery ===
+    Candidate validation: PASS
+    Output comparison:    IDENTICAL
+    common=852, changed=0, added=8, removed=0, maxAbs=0
+    runtime accepted=7.95s candidate=8.01s
+
+=== Mode 12: v7.3 Lifecycle Baseline ===
+    Candidate validation: PASS
+    Output comparison:    IDENTICAL
+    common=852, changed=0, added=8, removed=0, maxAbs=0
+    runtime accepted=7.95s candidate=7.99s
+
+=== Mode 13: v7.3 Temporary Electronics Reactivation ===
+    Candidate validation: PASS
+    Output comparison:    IDENTICAL
+    common=852, changed=0, added=8, removed=0, maxAbs=0
+    runtime accepted=8.17s candidate=7.96s
+
+=== Mode 14: v7.3 Sustained Electronics Growth ===
+    Candidate validation: PASS
+    Output comparison:    IDENTICAL
+    common=852, changed=0, added=8, removed=0, maxAbs=0
+    runtime accepted=7.90s candidate=7.99s
+
+=== Mode 15: v7.3 Electronics Collapse and Recovery ===
+    Candidate validation: PASS
+    Output comparison:    IDENTICAL
+    common=852, changed=0, added=8, removed=0, maxAbs=0
+    runtime accepted=7.89s candidate=8.38s
+
+=== Mode 16: v7.3 Sustained Metal Driven Power Growth ===
+    Candidate validation: PASS
+    Output comparison:    IDENTICAL
+    common=852, changed=0, added=8, removed=0, maxAbs=0
+    runtime accepted=8.35s candidate=7.59s
+
+=== Mode 17: v7.4 Intermediate Inputs Baseline ===
+    Candidate validation: PASS
+    Output comparison:    IDENTICAL
+    common=852, changed=0, added=8, removed=0, maxAbs=0
+    runtime accepted=7.73s candidate=7.79s
+
+=== Mode 18: v7.4 Temporary Metal Supply Shock ===
+    Candidate validation: PASS
+    Output comparison:    IDENTICAL
+    common=852, changed=0, added=8, removed=0, maxAbs=0
+    runtime accepted=7.75s candidate=7.68s
+
+=== Mode 19: v7.4 Sustained Electronics Growth with Input Coupling ===
+    Candidate validation: PASS
+    Output comparison:    IDENTICAL
+    common=852, changed=0, added=8, removed=0, maxAbs=0
+    runtime accepted=7.77s candidate=7.64s
+
+=== Mode 20: v7.4 Coupled Metal Demand Growth ===
+    Candidate validation: PASS
+    Output comparison:    IDENTICAL
+    common=852, changed=0, added=8, removed=0, maxAbs=0
+    runtime accepted=7.90s candidate=9.17s
+
+============================================================
+COMPARISON RESULT: OUTPUTS_IDENTICAL_WITH_NEW_SERIES
+RUN STATUS:        COMPLETE
+Report: <old-project>\orbital-economy-baseline-v7.4\lab\output\skeleton-002\compare\model-comparison.md
+============================================================

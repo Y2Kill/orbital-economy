@@ -1,0 +1,132 @@
+{
+  "format": "r2 formula reference (verification variant, not a patch)",
+  "base_sha256": "07ce33e004597ef485e47e3a95026b584197824468382e28daa80950a45fb08e",
+  "relative_to": "candidate r1 (919d0bfc...)",
+  "changed_or_added_elements": [
+    {
+      "name": "Capital Goods Buffer Days",
+      "type": "VARIABLE",
+      "r1_value": null,
+      "r2_value": 1,
+      "description": "v7.5: capital goods fulfillment half-saturation expressed in days of current capital goods demand (scale-free)."
+    },
+    {
+      "name": "v7.5 Capital Goods Shock Multiplier",
+      "type": "VARIABLE",
+      "r1_value": 0.3,
+      "r2_value": 0.1,
+      "description": "Mode 22 multiplier applied to the selected colony capital-goods production capacity."
+    },
+    {
+      "name": "A Capital Goods Fulfillment",
+      "type": "VARIABLE",
+      "r1_value": "IfThenElse([Capital Goods Enabled] = 1, [A Capital Goods Inventory] / ([A Capital Goods Inventory] + [Capital Goods Buffer]), 1)",
+      "r2_value": "IfThenElse([Capital Goods Enabled] = 1, [A Capital Goods Inventory] / ([A Capital Goods Inventory] + [Capital Goods Buffer Days] * Max([A Capital Goods Demand], 0.000000001)), 1)",
+      "description": "Common capital-goods fulfillment factor applied proportionally to all three expanding sectors in colony A."
+    },
+    {
+      "name": "A Refinery Capital Goods Consumption",
+      "type": "FLOW",
+      "r1_value": "[A Refinery Expansion] * [A Refinery Capital Goods per Capacity]",
+      "r2_value": "IfThenElse([Capital Goods Enabled] = 1, [A Refinery Expansion] * [A Refinery Capital Goods per Capacity], 0)",
+      "description": "Capital goods consumed by refinery expansion in colony A."
+    },
+    {
+      "name": "A Electronics Capital Goods Consumption",
+      "type": "FLOW",
+      "r1_value": "[Capital Lifecycle Enabled] * [A Electronics Factory Expansion] * [A Electronics Capital Goods per Capacity]",
+      "r2_value": "IfThenElse([Capital Goods Enabled] = 1, [Capital Lifecycle Enabled] * [A Electronics Factory Expansion] * [A Electronics Capital Goods per Capacity], 0)",
+      "description": "Capital goods consumed by electronics factory expansion in colony A."
+    },
+    {
+      "name": "A Power Capital Goods Consumption",
+      "type": "FLOW",
+      "r1_value": "[Capital Lifecycle Enabled] * [A Power Generation Expansion] * [A Power Capital Goods per Capacity]",
+      "r2_value": "IfThenElse([Capital Goods Enabled] = 1, [Capital Lifecycle Enabled] * [A Power Generation Expansion] * [A Power Capital Goods per Capacity], 0)",
+      "description": "Capital goods consumed by power generation expansion in colony A."
+    },
+    {
+      "name": "B Capital Goods Fulfillment",
+      "type": "VARIABLE",
+      "r1_value": "IfThenElse([Capital Goods Enabled] = 1, [B Capital Goods Inventory] / ([B Capital Goods Inventory] + [Capital Goods Buffer]), 1)",
+      "r2_value": "IfThenElse([Capital Goods Enabled] = 1, [B Capital Goods Inventory] / ([B Capital Goods Inventory] + [Capital Goods Buffer Days] * Max([B Capital Goods Demand], 0.000000001)), 1)",
+      "description": "Common capital-goods fulfillment factor applied proportionally to all three expanding sectors in colony B."
+    },
+    {
+      "name": "B Refinery Capital Goods Consumption",
+      "type": "FLOW",
+      "r1_value": "[B Refinery Expansion] * [B Refinery Capital Goods per Capacity]",
+      "r2_value": "IfThenElse([Capital Goods Enabled] = 1, [B Refinery Expansion] * [B Refinery Capital Goods per Capacity], 0)",
+      "description": "Capital goods consumed by refinery expansion in colony B."
+    },
+    {
+      "name": "B Electronics Capital Goods Consumption",
+      "type": "FLOW",
+      "r1_value": "[Capital Lifecycle Enabled] * [B Electronics Factory Expansion] * [B Electronics Capital Goods per Capacity]",
+      "r2_value": "IfThenElse([Capital Goods Enabled] = 1, [Capital Lifecycle Enabled] * [B Electronics Factory Expansion] * [B Electronics Capital Goods per Capacity], 0)",
+      "description": "Capital goods consumed by electronics factory expansion in colony B."
+    },
+    {
+      "name": "B Power Capital Goods Consumption",
+      "type": "FLOW",
+      "r1_value": "[Capital Lifecycle Enabled] * [B Power Generation Expansion] * [B Power Capital Goods per Capacity]",
+      "r2_value": "IfThenElse([Capital Goods Enabled] = 1, [Capital Lifecycle Enabled] * [B Power Generation Expansion] * [B Power Capital Goods per Capacity], 0)",
+      "description": "Capital goods consumed by power generation expansion in colony B."
+    }
+  ],
+  "withdrawn_elements": [
+    "Capital Goods Buffer"
+  ],
+  "added_links": [
+    {
+      "from": "A Capital Goods Demand",
+      "to": "A Capital Goods Fulfillment"
+    },
+    {
+      "from": "B Capital Goods Demand",
+      "to": "B Capital Goods Fulfillment"
+    },
+    {
+      "from": "Capital Goods Buffer Days",
+      "to": "A Capital Goods Fulfillment"
+    },
+    {
+      "from": "Capital Goods Buffer Days",
+      "to": "B Capital Goods Fulfillment"
+    },
+    {
+      "from": "Capital Goods Enabled",
+      "to": "A Electronics Capital Goods Consumption"
+    },
+    {
+      "from": "Capital Goods Enabled",
+      "to": "A Power Capital Goods Consumption"
+    },
+    {
+      "from": "Capital Goods Enabled",
+      "to": "A Refinery Capital Goods Consumption"
+    },
+    {
+      "from": "Capital Goods Enabled",
+      "to": "B Electronics Capital Goods Consumption"
+    },
+    {
+      "from": "Capital Goods Enabled",
+      "to": "B Power Capital Goods Consumption"
+    },
+    {
+      "from": "Capital Goods Enabled",
+      "to": "B Refinery Capital Goods Consumption"
+    }
+  ],
+  "withdrawn_links": [
+    {
+      "from": "Capital Goods Buffer",
+      "to": "A Capital Goods Fulfillment"
+    },
+    {
+      "from": "Capital Goods Buffer",
+      "to": "B Capital Goods Fulfillment"
+    }
+  ]
+}

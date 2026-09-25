@@ -1,0 +1,138 @@
+{
+  "format": "orbital-economy-model-patch-v1",
+  "base_sha256": "5de080f30bcfd2229c600121cf32cb48c28f6eec1d98215fdd36f907fe2d6ee3",
+  "name": "Orbital Economy v7.4 SKELETON task 002 (symmetry, partial)",
+  "add_elements": [
+    {
+      "type": "VARIABLE",
+      "name": "Reverse A Wage",
+      "behavior": {
+        "value": 100
+      },
+      "description": "Mode 4 override wage for A; equals A Wage (A conditions do not change in Mode 4)."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "A Effective Wage",
+      "behavior": {
+        "value": "IfThenElse([Test 4 Reverse Advantage Active] = 1, [Reverse A Wage], [A Wage])"
+      }
+    },
+    {
+      "type": "VARIABLE",
+      "name": "A Test 11 Generation Shock Applies",
+      "behavior": {
+        "value": 1
+      }
+    },
+    {
+      "type": "VARIABLE",
+      "name": "A Test 6 Headroom Applies",
+      "behavior": {
+        "value": 1
+      }
+    },
+    {
+      "type": "VARIABLE",
+      "name": "A Test 4 Headroom Applies",
+      "behavior": {
+        "value": 0
+      }
+    },
+    {
+      "type": "VARIABLE",
+      "name": "B Test 11 Generation Shock Applies",
+      "behavior": {
+        "value": 0
+      }
+    },
+    {
+      "type": "VARIABLE",
+      "name": "B Test 6 Headroom Applies",
+      "behavior": {
+        "value": 0
+      }
+    },
+    {
+      "type": "VARIABLE",
+      "name": "B Test 4 Headroom Applies",
+      "behavior": {
+        "value": 1
+      }
+    }
+  ],
+  "replace_formulas": [
+    {
+      "name": "A Metal Unit Cost",
+      "value": "[A Ore per Metal] * [A Ore Price] + [A Energy per Metal] * [A Effective Energy Price] + [A Labor per Metal] * [A Effective Wage]"
+    },
+    {
+      "name": "A Power Active Generation Capacity",
+      "value": "IfThenElse([Capital Lifecycle Enabled] = 1, [A Power Active Generation Capital], [A Power Installed Generation Capacity]) * IfThenElse([Test 11 Generation Capacity Shock Active] = 1, IfThenElse([A Test 11 Generation Shock Applies] = 1, [Generation Capacity Shock Factor], 1), IfThenElse([Test 6 Electronics Reverse Advantage Active] = 1, IfThenElse([A Test 6 Headroom Applies] = 1, [Legacy Advantage Test Power Headroom Multiplier], 1), IfThenElse([Test 4 Reverse Advantage Active] = 1, IfThenElse([A Test 4 Headroom Applies] = 1, [Legacy Advantage Test Power Headroom Multiplier], 1), 1)))"
+    },
+    {
+      "name": "B Power Active Generation Capacity",
+      "value": "IfThenElse([Capital Lifecycle Enabled] = 1, [B Power Active Generation Capital], [B Power Installed Generation Capacity]) * IfThenElse([Test 11 Generation Capacity Shock Active] = 1, IfThenElse([B Test 11 Generation Shock Applies] = 1, [Generation Capacity Shock Factor], 1), IfThenElse([Test 6 Electronics Reverse Advantage Active] = 1, IfThenElse([B Test 6 Headroom Applies] = 1, [Legacy Advantage Test Power Headroom Multiplier], 1), IfThenElse([Test 4 Reverse Advantage Active] = 1, IfThenElse([B Test 4 Headroom Applies] = 1, [Legacy Advantage Test Power Headroom Multiplier], 1), 1)))"
+    }
+  ],
+  "add_links": [
+    {
+      "from": "Test 4 Reverse Advantage Active",
+      "to": "A Effective Wage"
+    },
+    {
+      "from": "Reverse A Wage",
+      "to": "A Effective Wage"
+    },
+    {
+      "from": "A Wage",
+      "to": "A Effective Wage"
+    },
+    {
+      "from": "A Effective Wage",
+      "to": "A Metal Unit Cost"
+    },
+    {
+      "from": "A Test 11 Generation Shock Applies",
+      "to": "A Power Active Generation Capacity"
+    },
+    {
+      "from": "A Test 6 Headroom Applies",
+      "to": "A Power Active Generation Capacity"
+    },
+    {
+      "from": "A Test 4 Headroom Applies",
+      "to": "A Power Active Generation Capacity"
+    },
+    {
+      "from": "Test 4 Reverse Advantage Active",
+      "to": "A Power Active Generation Capacity"
+    },
+    {
+      "from": "B Test 11 Generation Shock Applies",
+      "to": "B Power Active Generation Capacity"
+    },
+    {
+      "from": "B Test 6 Headroom Applies",
+      "to": "B Power Active Generation Capacity"
+    },
+    {
+      "from": "B Test 4 Headroom Applies",
+      "to": "B Power Active Generation Capacity"
+    },
+    {
+      "from": "Test 11 Generation Capacity Shock Active",
+      "to": "B Power Active Generation Capacity"
+    },
+    {
+      "from": "Test 6 Electronics Reverse Advantage Active",
+      "to": "B Power Active Generation Capacity"
+    },
+    {
+      "from": "Generation Capacity Shock Factor",
+      "to": "B Power Active Generation Capacity"
+    }
+  ],
+  "modify_scenarios": [],
+  "add_scenarios": []
+}

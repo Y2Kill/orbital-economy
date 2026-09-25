@@ -1,0 +1,485 @@
+{
+  "format": "orbital-economy-model-patch-v1",
+  "base_sha256": "07ce33e004597ef485e47e3a95026b584197824468382e28daa80950a45fb08e",
+  "name": "Orbital Economy v7.5 SKELETON (A: capital goods + refinery/power expansion)",
+  "add_elements": [
+    {
+      "type": "VARIABLE",
+      "name": "Capital Goods Enabled",
+      "behavior": {
+        "value": 1
+      },
+      "description": "v7.5 master switch: expansion of installed capital consumes capital goods produced from metal and electronics."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "Metal per Capital Goods Unit",
+      "behavior": {
+        "value": 1
+      }
+    },
+    {
+      "type": "VARIABLE",
+      "name": "Electronics per Capital Goods Unit",
+      "behavior": {
+        "value": 0.5
+      }
+    },
+    {
+      "type": "VARIABLE",
+      "name": "Capital Goods Target Days",
+      "behavior": {
+        "value": 30
+      }
+    },
+    {
+      "type": "VARIABLE",
+      "name": "Capital Goods Adjustment Time",
+      "behavior": {
+        "value": 20
+      }
+    },
+    {
+      "type": "VARIABLE",
+      "name": "Capital Goods Buffer",
+      "behavior": {
+        "value": 2
+      }
+    },
+    {
+      "type": "VARIABLE",
+      "name": "A Refinery Capital Goods per Capacity",
+      "behavior": {
+        "value": 17
+      }
+    },
+    {
+      "type": "VARIABLE",
+      "name": "A Power Capital Goods per Capacity",
+      "behavior": {
+        "value": 0.5
+      }
+    },
+    {
+      "type": "VARIABLE",
+      "name": "A Capital Goods Production Capacity",
+      "behavior": {
+        "value": 2
+      }
+    },
+    {
+      "type": "STOCK",
+      "name": "A Capital Goods Inventory",
+      "behavior": {
+        "initial_value": 30,
+        "non_negative": true
+      }
+    },
+    {
+      "type": "VARIABLE",
+      "name": "A Refinery Desired Expansion",
+      "behavior": {
+        "value": "(([A Refinery Gap Limited Construction]) + ([A Refinery Finance Limited Construction]) - (((([A Refinery Gap Limited Construction]) - ([A Refinery Finance Limited Construction])) ^ 2) ^ 0.5)) / 2"
+      }
+    },
+    {
+      "type": "VARIABLE",
+      "name": "A Power Desired Expansion",
+      "behavior": {
+        "value": "[Capital Lifecycle Enabled] * [A Power Gap Limited Construction]"
+      }
+    },
+    {
+      "type": "VARIABLE",
+      "name": "A Capital Goods Fulfillment",
+      "behavior": {
+        "value": "IfThenElse([Capital Goods Enabled] = 1, [A Capital Goods Inventory] / ([A Capital Goods Inventory] + [Capital Goods Buffer]), 1)"
+      }
+    },
+    {
+      "type": "VARIABLE",
+      "name": "A Capital Goods Demand",
+      "behavior": {
+        "value": "[A Refinery Desired Expansion] * [A Refinery Capital Goods per Capacity] + [A Power Desired Expansion] * [A Power Capital Goods per Capacity]"
+      }
+    },
+    {
+      "type": "VARIABLE",
+      "name": "A Capital Goods Target Inventory",
+      "behavior": {
+        "value": "[A Capital Goods Demand] * [Capital Goods Target Days]"
+      }
+    },
+    {
+      "type": "VARIABLE",
+      "name": "A Desired Capital Goods Production",
+      "behavior": {
+        "value": "Max(0, [A Capital Goods Demand] + ([A Capital Goods Target Inventory] - [A Capital Goods Inventory]) / [Capital Goods Adjustment Time])"
+      }
+    },
+    {
+      "type": "VARIABLE",
+      "name": "A Capital Goods Production Rate",
+      "behavior": {
+        "value": "IfThenElse([Capital Goods Enabled] = 1, [A Desired Capital Goods Production] / (1 + ([A Desired Capital Goods Production] / ([A Capital Goods Production Capacity] + 0.001)) ^ 8) ^ 0.125 * [A Metal Inventory] / ([A Metal Inventory] + [A Metal Buffer]) * [A Electronics Inventory] / ([A Electronics Inventory] + [A Electronics Buffer]), 0)"
+      }
+    },
+    {
+      "type": "FLOW",
+      "name": "A Capital Goods Production",
+      "from": null,
+      "to": "A Capital Goods Inventory",
+      "behavior": {
+        "value": "[A Capital Goods Production Rate]",
+        "non_negative": true
+      }
+    },
+    {
+      "type": "FLOW",
+      "name": "A Capital Goods Metal Consumption",
+      "from": "A Metal Inventory",
+      "to": null,
+      "behavior": {
+        "value": "[A Capital Goods Production Rate] * [Metal per Capital Goods Unit]",
+        "non_negative": true
+      }
+    },
+    {
+      "type": "FLOW",
+      "name": "A Capital Goods Electronics Consumption",
+      "from": "A Electronics Inventory",
+      "to": null,
+      "behavior": {
+        "value": "[A Capital Goods Production Rate] * [Electronics per Capital Goods Unit]",
+        "non_negative": true
+      }
+    },
+    {
+      "type": "FLOW",
+      "name": "A Refinery Capital Goods Consumption",
+      "from": "A Capital Goods Inventory",
+      "to": null,
+      "behavior": {
+        "value": "[A Refinery Expansion] * [A Refinery Capital Goods per Capacity]",
+        "non_negative": true
+      }
+    },
+    {
+      "type": "FLOW",
+      "name": "A Power Capital Goods Consumption",
+      "from": "A Capital Goods Inventory",
+      "to": null,
+      "behavior": {
+        "value": "[A Power Generation Expansion] * [A Power Capital Goods per Capacity]",
+        "non_negative": true
+      }
+    }
+  ],
+  "replace_formulas": [
+    {
+      "name": "A Refinery Expansion",
+      "value": "IfThenElse([Capital Goods Enabled] = 1, [A Refinery Desired Expansion] * [A Capital Goods Fulfillment], (([A Refinery Gap Limited Construction]) + ([A Refinery Finance Limited Construction]) - (((([A Refinery Gap Limited Construction]) - ([A Refinery Finance Limited Construction])) ^ 2) ^ 0.5)) / 2)"
+    },
+    {
+      "name": "A Power Generation Expansion",
+      "value": "IfThenElse([Capital Goods Enabled] = 1, [A Power Desired Expansion] * [A Capital Goods Fulfillment], [Capital Lifecycle Enabled] * [A Power Gap Limited Construction])"
+    }
+  ],
+  "add_links": [
+    {
+      "from": "A Refinery Gap Limited Construction",
+      "to": "A Refinery Desired Expansion"
+    },
+    {
+      "from": "A Refinery Finance Limited Construction",
+      "to": "A Refinery Desired Expansion"
+    },
+    {
+      "from": "Capital Lifecycle Enabled",
+      "to": "A Power Desired Expansion"
+    },
+    {
+      "from": "A Power Gap Limited Construction",
+      "to": "A Power Desired Expansion"
+    },
+    {
+      "from": "Capital Goods Enabled",
+      "to": "A Capital Goods Fulfillment"
+    },
+    {
+      "from": "A Capital Goods Inventory",
+      "to": "A Capital Goods Fulfillment"
+    },
+    {
+      "from": "Capital Goods Buffer",
+      "to": "A Capital Goods Fulfillment"
+    },
+    {
+      "from": "A Refinery Desired Expansion",
+      "to": "A Capital Goods Demand"
+    },
+    {
+      "from": "A Refinery Capital Goods per Capacity",
+      "to": "A Capital Goods Demand"
+    },
+    {
+      "from": "A Power Desired Expansion",
+      "to": "A Capital Goods Demand"
+    },
+    {
+      "from": "A Power Capital Goods per Capacity",
+      "to": "A Capital Goods Demand"
+    },
+    {
+      "from": "A Capital Goods Demand",
+      "to": "A Capital Goods Target Inventory"
+    },
+    {
+      "from": "Capital Goods Target Days",
+      "to": "A Capital Goods Target Inventory"
+    },
+    {
+      "from": "A Capital Goods Demand",
+      "to": "A Desired Capital Goods Production"
+    },
+    {
+      "from": "A Capital Goods Target Inventory",
+      "to": "A Desired Capital Goods Production"
+    },
+    {
+      "from": "A Capital Goods Inventory",
+      "to": "A Desired Capital Goods Production"
+    },
+    {
+      "from": "Capital Goods Adjustment Time",
+      "to": "A Desired Capital Goods Production"
+    },
+    {
+      "from": "Capital Goods Enabled",
+      "to": "A Capital Goods Production Rate"
+    },
+    {
+      "from": "A Desired Capital Goods Production",
+      "to": "A Capital Goods Production Rate"
+    },
+    {
+      "from": "A Capital Goods Production Capacity",
+      "to": "A Capital Goods Production Rate"
+    },
+    {
+      "from": "A Metal Inventory",
+      "to": "A Capital Goods Production Rate"
+    },
+    {
+      "from": "A Metal Buffer",
+      "to": "A Capital Goods Production Rate"
+    },
+    {
+      "from": "A Electronics Inventory",
+      "to": "A Capital Goods Production Rate"
+    },
+    {
+      "from": "A Electronics Buffer",
+      "to": "A Capital Goods Production Rate"
+    },
+    {
+      "from": "A Capital Goods Production Rate",
+      "to": "A Capital Goods Production"
+    },
+    {
+      "from": "A Capital Goods Production Rate",
+      "to": "A Capital Goods Metal Consumption"
+    },
+    {
+      "from": "Metal per Capital Goods Unit",
+      "to": "A Capital Goods Metal Consumption"
+    },
+    {
+      "from": "A Capital Goods Production Rate",
+      "to": "A Capital Goods Electronics Consumption"
+    },
+    {
+      "from": "Electronics per Capital Goods Unit",
+      "to": "A Capital Goods Electronics Consumption"
+    },
+    {
+      "from": "A Refinery Expansion",
+      "to": "A Refinery Capital Goods Consumption"
+    },
+    {
+      "from": "A Refinery Capital Goods per Capacity",
+      "to": "A Refinery Capital Goods Consumption"
+    },
+    {
+      "from": "A Power Generation Expansion",
+      "to": "A Power Capital Goods Consumption"
+    },
+    {
+      "from": "A Power Capital Goods per Capacity",
+      "to": "A Power Capital Goods Consumption"
+    },
+    {
+      "from": "Capital Goods Enabled",
+      "to": "A Refinery Expansion"
+    },
+    {
+      "from": "A Refinery Desired Expansion",
+      "to": "A Refinery Expansion"
+    },
+    {
+      "from": "A Capital Goods Fulfillment",
+      "to": "A Refinery Expansion"
+    },
+    {
+      "from": "Capital Goods Enabled",
+      "to": "A Power Generation Expansion"
+    },
+    {
+      "from": "A Power Desired Expansion",
+      "to": "A Power Generation Expansion"
+    },
+    {
+      "from": "A Capital Goods Fulfillment",
+      "to": "A Power Generation Expansion"
+    }
+  ],
+  "modify_scenarios": [
+    {
+      "mode": 0,
+      "set": {
+        "Capital Goods Enabled": 0
+      }
+    },
+    {
+      "mode": 1,
+      "set": {
+        "Capital Goods Enabled": 0
+      }
+    },
+    {
+      "mode": 2,
+      "set": {
+        "Capital Goods Enabled": 0
+      }
+    },
+    {
+      "mode": 3,
+      "set": {
+        "Capital Goods Enabled": 0
+      }
+    },
+    {
+      "mode": 4,
+      "set": {
+        "Capital Goods Enabled": 0
+      }
+    },
+    {
+      "mode": 5,
+      "set": {
+        "Capital Goods Enabled": 0
+      }
+    },
+    {
+      "mode": 6,
+      "set": {
+        "Capital Goods Enabled": 0
+      }
+    },
+    {
+      "mode": 7,
+      "set": {
+        "Capital Goods Enabled": 0
+      }
+    },
+    {
+      "mode": 8,
+      "set": {
+        "Capital Goods Enabled": 0
+      }
+    },
+    {
+      "mode": 9,
+      "set": {
+        "Capital Goods Enabled": 0
+      }
+    },
+    {
+      "mode": 10,
+      "set": {
+        "Capital Goods Enabled": 0
+      }
+    },
+    {
+      "mode": 11,
+      "set": {
+        "Capital Goods Enabled": 0
+      }
+    },
+    {
+      "mode": 12,
+      "set": {
+        "Capital Goods Enabled": 0
+      }
+    },
+    {
+      "mode": 13,
+      "set": {
+        "Capital Goods Enabled": 0
+      }
+    },
+    {
+      "mode": 14,
+      "set": {
+        "Capital Goods Enabled": 0
+      }
+    },
+    {
+      "mode": 15,
+      "set": {
+        "Capital Goods Enabled": 0
+      }
+    },
+    {
+      "mode": 16,
+      "set": {
+        "Capital Goods Enabled": 0
+      }
+    },
+    {
+      "mode": 17,
+      "set": {
+        "Capital Goods Enabled": 0
+      }
+    },
+    {
+      "mode": 18,
+      "set": {
+        "Capital Goods Enabled": 0
+      }
+    },
+    {
+      "mode": 19,
+      "set": {
+        "Capital Goods Enabled": 0
+      }
+    },
+    {
+      "mode": 20,
+      "set": {
+        "Capital Goods Enabled": 0
+      }
+    }
+  ],
+  "add_scenarios": [
+    {
+      "name": "v7.5 Capital Goods Baseline (skeleton)",
+      "values": {
+        "Timed Test Mode": 21,
+        "Capital Lifecycle Enabled": 1,
+        "Intermediate Inputs Enabled": 1,
+        "Capital Goods Enabled": 1
+      }
+    }
+  ]
+}

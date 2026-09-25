@@ -1,0 +1,159 @@
+Base:  <old-project>\acceptance_task_001_r2\lab\reference\accepted\model\orbital_economy_v7_3_modeljson.json
+  SHA-256: 57a2a102f2b632c69c37cc00c4cd11182ca2601d2af9395560228b5fdde0f44d
+Patch: ../../task_001_v7.4_resp_2/model-patch.json
+  + VARIABLE Intermediate Inputs Enabled
+  + VARIABLE Metal per Electronics
+  + VARIABLE Metal Input Target Days
+  + VARIABLE Metal Input Adjustment Time
+  + VARIABLE Test 18 Metal Supply Shock Active
+  + VARIABLE Test 19 Coupled Electronics Growth Active
+  + VARIABLE Test 20 Coupled Metal Demand Growth Active
+  + VARIABLE v7.4 Metal Supply Shock Multiplier
+  + VARIABLE v7.4 Coupled Electronics Growth Multiplier
+  + VARIABLE v7.4 Coupled Metal Demand Growth Multiplier
+  + VARIABLE A Electronics Metal Input Target Inventory
+  + VARIABLE A Electronics Metal Input Demand
+  + VARIABLE A Metal Available for Intermediate Use
+  + FLOW A Electronics Metal Input Delivery (A Metal Inventory -> A Electronics Feedstock Inventory)
+  + VARIABLE A Electronics Metal Input Fulfillment
+  + VARIABLE B Electronics Metal Input Target Inventory
+  + VARIABLE B Electronics Metal Input Demand
+  + VARIABLE B Metal Available for Intermediate Use
+  + FLOW B Electronics Metal Input Delivery (B Metal Inventory -> B Electronics Feedstock Inventory)
+  + VARIABLE B Electronics Metal Input Fulfillment
+  + VARIABLE A Effective Mining Capacity
+  + VARIABLE Planet Electronics Production Rate
+  + VARIABLE Planet Smelting Rate
+  + VARIABLE A Metal Input Final Fulfillment
+  + VARIABLE B Metal Input Final Fulfillment
+  ~ VARIABLE A Electronics Feedstock Extraction Rate: value replaced
+  ~ VARIABLE A Electronics Feedstock Consumption Rate: value replaced
+  ~ VARIABLE A Electronics Feedstock Price: value replaced
+  ~ VARIABLE A Electronics Unit Cost: value replaced
+  ~ VARIABLE A Electronics Feedstock Target Inventory: value replaced
+  ~ VARIABLE A Electronics Feedstock Buffer: value replaced
+  ~ VARIABLE A Desired Smelting Rate: value replaced
+  ~ VARIABLE B Electronics Feedstock Extraction Rate: value replaced
+  ~ VARIABLE B Electronics Feedstock Consumption Rate: value replaced
+  ~ VARIABLE B Electronics Feedstock Price: value replaced
+  ~ VARIABLE B Electronics Unit Cost: value replaced
+  ~ VARIABLE B Electronics Feedstock Target Inventory: value replaced
+  ~ VARIABLE B Electronics Feedstock Buffer: value replaced
+  ~ VARIABLE B Desired Smelting Rate: value replaced
+  ~ VARIABLE A Effective Electronics Local Base Demand: value replaced
+  ~ VARIABLE B Effective Local Base Demand: value replaced
+  ~ STOCK A Electronics Feedstock Inventory: initial_value replaced
+  ~ STOCK B Electronics Feedstock Inventory: initial_value replaced
+  ~ VARIABLE A Mining Rate: value replaced
+  + LINK A Electronics Metal Input Delivery -> A Desired Smelting Rate
+  + LINK Intermediate Inputs Enabled -> A Desired Smelting Rate
+  + LINK Intermediate Inputs Enabled -> A Effective Electronics Local Base Demand
+  + LINK Test 19 Coupled Electronics Growth Active -> A Effective Electronics Local Base Demand
+  + LINK v7.4 Coupled Electronics Growth Multiplier -> A Effective Electronics Local Base Demand
+  + LINK A Mining Capacity -> A Effective Mining Capacity
+  + LINK Intermediate Inputs Enabled -> A Effective Mining Capacity
+  + LINK Test 18 Metal Supply Shock Active -> A Effective Mining Capacity
+  + LINK v7.4 Metal Supply Shock Multiplier -> A Effective Mining Capacity
+  + LINK Intermediate Inputs Enabled -> A Electronics Feedstock Buffer
+  + LINK Metal per Electronics -> A Electronics Feedstock Buffer
+  + LINK Intermediate Inputs Enabled -> A Electronics Feedstock Consumption Rate
+  + LINK Metal per Electronics -> A Electronics Feedstock Consumption Rate
+  + LINK Intermediate Inputs Enabled -> A Electronics Feedstock Extraction Rate
+  + LINK Intermediate Inputs Enabled -> A Electronics Feedstock Inventory
+  + LINK Metal per Electronics -> A Electronics Feedstock Inventory
+  + LINK A Market Price -> A Electronics Feedstock Price
+  + LINK Intermediate Inputs Enabled -> A Electronics Feedstock Price
+  + LINK A Electronics Metal Input Target Inventory -> A Electronics Feedstock Target Inventory
+  + LINK Intermediate Inputs Enabled -> A Electronics Feedstock Target Inventory
+  + LINK A Metal Available for Intermediate Use -> A Electronics Metal Input Delivery
+  + LINK Intermediate Inputs Enabled -> A Electronics Metal Input Delivery
+  + LINK A Electronics Feedstock Inventory -> A Electronics Metal Input Demand
+  + LINK A Electronics Metal Input Target Inventory -> A Electronics Metal Input Demand
+  + LINK A Pre Energy Electronics Production Rate -> A Electronics Metal Input Demand
+  + LINK Metal Input Adjustment Time -> A Electronics Metal Input Demand
+  + LINK Metal per Electronics -> A Electronics Metal Input Demand
+  + LINK A Electronics Metal Input Delivery -> A Electronics Metal Input Fulfillment
+  + LINK A Electronics Metal Input Demand -> A Electronics Metal Input Fulfillment
+  + LINK Intermediate Inputs Enabled -> A Electronics Metal Input Fulfillment
+  + LINK A Pre Energy Electronics Production Rate -> A Electronics Metal Input Target Inventory
+  + LINK Metal Input Target Days -> A Electronics Metal Input Target Inventory
+  + LINK Metal per Electronics -> A Electronics Metal Input Target Inventory
+  + LINK Intermediate Inputs Enabled -> A Electronics Unit Cost
+  + LINK Metal per Electronics -> A Electronics Unit Cost
+  + LINK A Electronics Metal Input Demand -> A Metal Available for Intermediate Use
+  + LINK A Metal Buffer -> A Metal Available for Intermediate Use
+  + LINK A Metal Inventory -> A Metal Available for Intermediate Use
+  + LINK A Local Demand -> A Metal Input Final Fulfillment
+  + LINK A Local Sales -> A Metal Input Final Fulfillment
+  + LINK A Effective Mining Capacity -> A Mining Rate
+  + LINK Intermediate Inputs Enabled -> A Mining Rate
+  + LINK B Electronics Metal Input Delivery -> B Desired Smelting Rate
+  + LINK Intermediate Inputs Enabled -> B Desired Smelting Rate
+  + LINK Intermediate Inputs Enabled -> B Effective Local Base Demand
+  + LINK Test 20 Coupled Metal Demand Growth Active -> B Effective Local Base Demand
+  + LINK v7.4 Coupled Metal Demand Growth Multiplier -> B Effective Local Base Demand
+  + LINK Intermediate Inputs Enabled -> B Electronics Feedstock Buffer
+  + LINK Metal per Electronics -> B Electronics Feedstock Buffer
+  + LINK Intermediate Inputs Enabled -> B Electronics Feedstock Consumption Rate
+  + LINK Metal per Electronics -> B Electronics Feedstock Consumption Rate
+  + LINK Intermediate Inputs Enabled -> B Electronics Feedstock Extraction Rate
+  + LINK Intermediate Inputs Enabled -> B Electronics Feedstock Inventory
+  + LINK Metal per Electronics -> B Electronics Feedstock Inventory
+  + LINK B Market Price -> B Electronics Feedstock Price
+  + LINK Intermediate Inputs Enabled -> B Electronics Feedstock Price
+  + LINK B Electronics Metal Input Target Inventory -> B Electronics Feedstock Target Inventory
+  + LINK Intermediate Inputs Enabled -> B Electronics Feedstock Target Inventory
+  + LINK B Metal Available for Intermediate Use -> B Electronics Metal Input Delivery
+  + LINK Intermediate Inputs Enabled -> B Electronics Metal Input Delivery
+  + LINK B Electronics Feedstock Inventory -> B Electronics Metal Input Demand
+  + LINK B Electronics Metal Input Target Inventory -> B Electronics Metal Input Demand
+  + LINK B Pre Energy Electronics Production Rate -> B Electronics Metal Input Demand
+  + LINK Metal Input Adjustment Time -> B Electronics Metal Input Demand
+  + LINK Metal per Electronics -> B Electronics Metal Input Demand
+  + LINK B Electronics Metal Input Delivery -> B Electronics Metal Input Fulfillment
+  + LINK B Electronics Metal Input Demand -> B Electronics Metal Input Fulfillment
+  + LINK Intermediate Inputs Enabled -> B Electronics Metal Input Fulfillment
+  + LINK B Pre Energy Electronics Production Rate -> B Electronics Metal Input Target Inventory
+  + LINK Metal Input Target Days -> B Electronics Metal Input Target Inventory
+  + LINK Metal per Electronics -> B Electronics Metal Input Target Inventory
+  + LINK Intermediate Inputs Enabled -> B Electronics Unit Cost
+  + LINK Metal per Electronics -> B Electronics Unit Cost
+  + LINK B Electronics Metal Input Demand -> B Metal Available for Intermediate Use
+  + LINK B Metal Buffer -> B Metal Available for Intermediate Use
+  + LINK B Metal Inventory -> B Metal Available for Intermediate Use
+  + LINK B Local Demand -> B Metal Input Final Fulfillment
+  + LINK B Local Sales -> B Metal Input Final Fulfillment
+  + LINK A Electronics Production Rate -> Planet Electronics Production Rate
+  + LINK B Electronics Production Rate -> Planet Electronics Production Rate
+  + LINK A Smelting Rate -> Planet Smelting Rate
+  + LINK B Smelting Rate -> Planet Smelting Rate
+  + LINK Temporary Test Window -> Test 18 Metal Supply Shock Active
+  + LINK Timed Test Mode -> Test 18 Metal Supply Shock Active
+  + LINK Reverse Advantage Window -> Test 19 Coupled Electronics Growth Active
+  + LINK Timed Test Mode -> Test 19 Coupled Electronics Growth Active
+  + LINK Reverse Advantage Window -> Test 20 Coupled Metal Demand Growth Active
+  + LINK Timed Test Mode -> Test 20 Coupled Metal Demand Growth Active
+  ~ scenario Mode 0: set Intermediate Inputs Enabled
+  ~ scenario Mode 1: set Intermediate Inputs Enabled
+  ~ scenario Mode 2: set Intermediate Inputs Enabled
+  ~ scenario Mode 3: set Intermediate Inputs Enabled
+  ~ scenario Mode 4: set Intermediate Inputs Enabled
+  ~ scenario Mode 5: set Intermediate Inputs Enabled
+  ~ scenario Mode 6: set Intermediate Inputs Enabled
+  ~ scenario Mode 7: set Intermediate Inputs Enabled
+  ~ scenario Mode 8: set Intermediate Inputs Enabled
+  ~ scenario Mode 9: set Intermediate Inputs Enabled
+  ~ scenario Mode 10: set Intermediate Inputs Enabled
+  ~ scenario Mode 11: set Intermediate Inputs Enabled
+  ~ scenario Mode 12: set Intermediate Inputs Enabled
+  ~ scenario Mode 13: set Intermediate Inputs Enabled
+  ~ scenario Mode 14: set Intermediate Inputs Enabled
+  ~ scenario Mode 15: set Intermediate Inputs Enabled
+  ~ scenario Mode 16: set Intermediate Inputs Enabled
+  + scenario Mode 17: v7.4 Intermediate Inputs Baseline
+  + scenario Mode 18: v7.4 Temporary Metal Supply Shock
+  + scenario Mode 19: v7.4 Sustained Electronics Growth with Input Coupling
+  + scenario Mode 20: v7.4 Coupled Metal Demand Growth
+Candidate written: <old-project>\acceptance_task_001_r2\lab\input\model\orbital_economy_v7_4_candidate_r2.json
+  SHA-256: 5de080f30bcfd2229c600121cf32cb48c28f6eec1d98215fdd36f907fe2d6ee3
+Elements: 2440; scenarios: 21

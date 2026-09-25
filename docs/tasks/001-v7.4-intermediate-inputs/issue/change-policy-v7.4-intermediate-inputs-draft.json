@@ -1,0 +1,216 @@
+{
+  "format": "orbital-economy-change-policy-v1",
+  "name": "Orbital Economy v7.4 Intermediate Inputs — change contract (DRAFT r0)",
+  "description": "Derived from V7_4_ARCHITECTURE_SPEC.md and V7_4_TEST_PLAN.md BEFORE implementation. Accepted baseline: v7.3 r2. validation_sha256 is null in the draft; the contractor binds it to the delivered validation-v7.4.json SHA-256 and returns the policy as r1 with a justification for every rule they add. Modes 0-16 must reproduce accepted outputs exactly (explicit deny on series_changed). HARD/static validation failures are never waivable.",
+  "accepted_model_sha256": "57a2a102f2b632c69c37cc00c4cd11182ca2601d2af9395560228b5fdde0f44d",
+  "validation_sha256": null,
+  "comparison": {
+    "abs_tolerance": 0,
+    "rel_tolerance": null,
+    "rel_floor": 1e-12
+  },
+  "engine": {
+    "package": "simulation",
+    "version": "9.0.0"
+  },
+  "default_action": "deny",
+  "require_full_mode_coverage": true,
+  "rules": [
+    {
+      "id": "regression-guard-modes-0-16",
+      "action": "deny",
+      "event": "series_changed",
+      "modes": "0-16",
+      "name": "*",
+      "note": "Non-regression rule: any numerical change of an existing series in Modes 0-16 is forbidden regardless of later allow rules (first match wins)."
+    },
+    {
+      "id": "forbid-removals-and-structural-drift",
+      "action": "deny",
+      "event": [
+        "element_removed",
+        "series_removed",
+        "mode_removed",
+        "link_removed",
+        "type_changed",
+        "simulation_changed",
+        "time_axis_changed",
+        "scenario_renamed"
+      ],
+      "name": "*",
+      "note": "v7.4 is purely additive on top of v7.3 r2."
+    },
+    {
+      "id": "add-switch-and-global-coefficients",
+      "action": "allow",
+      "event": "element_added",
+      "name": [
+        "Intermediate Inputs Enabled",
+        "Metal per Electronics",
+        "Metal Input Target Days",
+        "Metal Input Adjustment Time"
+      ],
+      "required": true
+    },
+    {
+      "id": "add-colony-interface-elements",
+      "action": "allow",
+      "event": "element_added",
+      "name": [
+        "? Electronics Metal Input Target Inventory",
+        "? Electronics Metal Input Demand",
+        "? Metal Available for Intermediate Use",
+        "? Electronics Metal Input Delivery",
+        "? Electronics Metal Input Fulfillment"
+      ],
+      "required": true,
+      "note": "Canonical names from spec §3; must exist for both A and B (colony_symmetry enforces mirroring)."
+    },
+    {
+      "id": "add-test-wiring-modes-18-20",
+      "action": "allow",
+      "event": "element_added",
+      "name": [
+        "Test 18 *",
+        "Test 19 *",
+        "Test 20 *",
+        "v7.4 *"
+      ],
+      "required": true
+    },
+    {
+      "id": "add-helper-elements-in-namespace",
+      "action": "allow",
+      "event": "element_added",
+      "name": [
+        "* Metal Input *",
+        "* Intermediate *"
+      ],
+      "note": "Optional helpers; anything outside these namespaces is an unexpected change."
+    },
+    {
+      "id": "change-definitions-per-spec-s4",
+      "action": "allow",
+      "event": "definition_changed",
+      "name": [
+        "? Electronics Feedstock Extraction Rate",
+        "? Electronics Feedstock Consumption Rate",
+        "? Electronics Feedstock Price",
+        "? Electronics Unit Cost",
+        "? Electronics Feedstock Target Inventory",
+        "? Desired Smelting Rate"
+      ],
+      "required": true,
+      "note": "Only the IfThenElse(switch=1, new, old) form is acceptable; verified by regression-guard + reviewer."
+    },
+    {
+      "id": "change-test-wiring-definitions",
+      "action": "allow",
+      "event": "definition_changed",
+      "name": [
+        "A Effective Electronics Local Base Demand",
+        "B Effective Local Base Demand",
+        "B Effective Mining Capacity"
+      ],
+      "required": true,
+      "note": "New IfThenElse branches for Test 18/19/20; existing branches untouched."
+    },
+    {
+      "id": "change-optional-feedstock-buffer",
+      "action": "allow",
+      "event": "definition_changed",
+      "name": [
+        "? Electronics Feedstock Buffer"
+      ]
+    },
+    {
+      "id": "link-into-new-elements",
+      "action": "allow",
+      "event": "link_added",
+      "name": [
+        "* -> * Metal Input *",
+        "* -> * Intermediate *",
+        "* -> Test 18 *",
+        "* -> Test 19 *",
+        "* -> Test 20 *",
+        "* -> v7.4 *"
+      ],
+      "required": true
+    },
+    {
+      "id": "link-from-new-elements",
+      "action": "allow",
+      "event": "link_added",
+      "name": [
+        "Intermediate Inputs Enabled -> *",
+        "Metal per Electronics -> *",
+        "Metal Input * -> *",
+        "* Metal Input * -> *",
+        "* Intermediate * -> *",
+        "Test 18 * -> *",
+        "Test 19 * -> *",
+        "Test 20 * -> *",
+        "v7.4 * -> *"
+      ],
+      "required": true
+    },
+    {
+      "id": "link-into-changed-definitions",
+      "action": "allow",
+      "event": "link_added",
+      "name": [
+        "* -> ? Electronics Feedstock Extraction Rate",
+        "* -> ? Electronics Feedstock Consumption Rate",
+        "* -> ? Electronics Feedstock Price",
+        "* -> ? Electronics Unit Cost",
+        "* -> ? Electronics Feedstock Target Inventory",
+        "* -> ? Desired Smelting Rate",
+        "* -> A Effective Electronics Local Base Demand",
+        "* -> B Effective Local Base Demand",
+        "* -> B Effective Mining Capacity",
+        "* -> ? Electronics Feedstock Buffer"
+      ],
+      "required": true
+    },
+    {
+      "id": "add-modes-17-20",
+      "action": "allow",
+      "event": "mode_added",
+      "modes": "17-20",
+      "required": true
+    },
+    {
+      "id": "scenarios-0-16-gain-switch-off",
+      "action": "allow",
+      "event": "scenario_input_changed",
+      "modes": "0-16",
+      "required": true,
+      "note": "The only permitted change is adding \"Intermediate Inputs Enabled\": 0. Reviewer verifies the diff in model-comparison.md."
+    },
+    {
+      "id": "new-series-in-modes-0-16",
+      "action": "allow",
+      "event": "series_added",
+      "modes": "0-16",
+      "name": [
+        "Intermediate Inputs Enabled",
+        "Metal per Electronics",
+        "Metal Input Target Days",
+        "Metal Input Adjustment Time",
+        "? Electronics Metal Input Target Inventory",
+        "? Electronics Metal Input Demand",
+        "? Metal Available for Intermediate Use",
+        "? Electronics Metal Input Delivery",
+        "? Electronics Metal Input Fulfillment",
+        "Test 18 *",
+        "Test 19 *",
+        "Test 20 *",
+        "v7.4 *",
+        "* Metal Input *",
+        "* Intermediate *"
+      ],
+      "required": true,
+      "note": "New elements produce new series in every Mode; they are allowed only within the v7.4 namespaces."
+    }
+  ]
+}

@@ -1,0 +1,218 @@
+Base:  <old-project>\_acceptance_003_r1\lab\reference\accepted\model\orbital_economy_v7_4_1_modeljson.json
+  SHA-256: 07ce33e004597ef485e47e3a95026b584197824468382e28daa80950a45fb08e
+Patch: ../../task_003_v7.5_delivery_r1/delivery_r1/model-patch.json
+  + VARIABLE Capital Goods Enabled
+  + VARIABLE Metal per Capital Goods Unit
+  + VARIABLE Electronics per Capital Goods Unit
+  + VARIABLE Capital Goods Target Days
+  + VARIABLE Capital Goods Adjustment Time
+  + VARIABLE Capital Goods Buffer
+  + VARIABLE Test 22 Capital Goods Supply Shock Active
+  + VARIABLE Test 23 Investment Boom Active
+  + VARIABLE v7.5 Capital Goods Shock Multiplier
+  + VARIABLE v7.5 Investment Boom Multiplier
+  + VARIABLE A Refinery Capital Goods per Capacity
+  + VARIABLE A Electronics Capital Goods per Capacity
+  + VARIABLE A Power Capital Goods per Capacity
+  + VARIABLE A Capital Goods Base Production Capacity
+  + VARIABLE A Test 22 Capital Goods Shock Applies
+  + VARIABLE A Test 23 Electronics Demand Applies
+  + VARIABLE A Capital Goods Production Capacity
+  + STOCK A Capital Goods Inventory
+  + VARIABLE A Refinery Desired Expansion
+  + VARIABLE A Electronics Desired Expansion
+  + VARIABLE A Power Desired Expansion
+  + VARIABLE A Capital Goods Demand
+  + VARIABLE A Capital Goods Target Inventory
+  + VARIABLE A Desired Capital Goods Production
+  + VARIABLE A Capital Goods Production Rate
+  + VARIABLE A Capital Goods Fulfillment
+  + VARIABLE A Refinery Capital Goods Expansion Ratio
+  + FLOW A Capital Goods Production (∅ -> A Capital Goods Inventory)
+  + FLOW A Capital Goods Metal Consumption (A Metal Inventory -> ∅)
+  + FLOW A Capital Goods Electronics Consumption (A Electronics Inventory -> ∅)
+  + FLOW A Refinery Capital Goods Consumption (A Capital Goods Inventory -> ∅)
+  + FLOW A Electronics Capital Goods Consumption (A Capital Goods Inventory -> ∅)
+  + FLOW A Power Capital Goods Consumption (A Capital Goods Inventory -> ∅)
+  + VARIABLE B Refinery Capital Goods per Capacity
+  + VARIABLE B Electronics Capital Goods per Capacity
+  + VARIABLE B Power Capital Goods per Capacity
+  + VARIABLE B Capital Goods Base Production Capacity
+  + VARIABLE B Test 22 Capital Goods Shock Applies
+  + VARIABLE B Test 23 Electronics Demand Applies
+  + VARIABLE B Capital Goods Production Capacity
+  + STOCK B Capital Goods Inventory
+  + VARIABLE B Refinery Desired Expansion
+  + VARIABLE B Electronics Desired Expansion
+  + VARIABLE B Power Desired Expansion
+  + VARIABLE B Capital Goods Demand
+  + VARIABLE B Capital Goods Target Inventory
+  + VARIABLE B Desired Capital Goods Production
+  + VARIABLE B Capital Goods Production Rate
+  + VARIABLE B Capital Goods Fulfillment
+  + VARIABLE B Refinery Capital Goods Expansion Ratio
+  + FLOW B Capital Goods Production (∅ -> B Capital Goods Inventory)
+  + FLOW B Capital Goods Metal Consumption (B Metal Inventory -> ∅)
+  + FLOW B Capital Goods Electronics Consumption (B Electronics Inventory -> ∅)
+  + FLOW B Refinery Capital Goods Consumption (B Capital Goods Inventory -> ∅)
+  + FLOW B Electronics Capital Goods Consumption (B Capital Goods Inventory -> ∅)
+  + FLOW B Power Capital Goods Consumption (B Capital Goods Inventory -> ∅)
+  ~ FLOW A Refinery Expansion: value replaced
+  ~ FLOW A Electronics Factory Expansion: value replaced
+  ~ FLOW A Power Generation Expansion: value replaced
+  ~ FLOW B Refinery Expansion: value replaced
+  ~ FLOW B Electronics Factory Expansion: value replaced
+  ~ FLOW B Power Generation Expansion: value replaced
+  ~ VARIABLE A Effective Electronics Local Base Demand: value replaced
+  ~ VARIABLE B Effective Electronics Local Base Demand: value replaced
+  + LINK Timed Test Mode -> Test 22 Capital Goods Supply Shock Active
+  + LINK Temporary Test Window -> Test 22 Capital Goods Supply Shock Active
+  + LINK Timed Test Mode -> Test 23 Investment Boom Active
+  + LINK Reverse Advantage Window -> Test 23 Investment Boom Active
+  + LINK Test 22 Capital Goods Supply Shock Active -> A Capital Goods Production Capacity
+  + LINK A Capital Goods Base Production Capacity -> A Capital Goods Production Capacity
+  + LINK A Test 22 Capital Goods Shock Applies -> A Capital Goods Production Capacity
+  + LINK v7.5 Capital Goods Shock Multiplier -> A Capital Goods Production Capacity
+  + LINK A Refinery Gap Limited Construction -> A Refinery Desired Expansion
+  + LINK A Refinery Finance Limited Construction -> A Refinery Desired Expansion
+  + LINK Capital Lifecycle Enabled -> A Electronics Desired Expansion
+  + LINK A Electronics Gap Limited Construction -> A Electronics Desired Expansion
+  + LINK A Electronics Finance Limited Construction -> A Electronics Desired Expansion
+  + LINK Capital Lifecycle Enabled -> A Power Desired Expansion
+  + LINK A Power Gap Limited Construction -> A Power Desired Expansion
+  + LINK A Refinery Desired Expansion -> A Capital Goods Demand
+  + LINK A Refinery Capital Goods per Capacity -> A Capital Goods Demand
+  + LINK A Electronics Desired Expansion -> A Capital Goods Demand
+  + LINK A Electronics Capital Goods per Capacity -> A Capital Goods Demand
+  + LINK A Power Desired Expansion -> A Capital Goods Demand
+  + LINK A Power Capital Goods per Capacity -> A Capital Goods Demand
+  + LINK A Capital Goods Demand -> A Capital Goods Target Inventory
+  + LINK Capital Goods Target Days -> A Capital Goods Target Inventory
+  + LINK A Capital Goods Demand -> A Desired Capital Goods Production
+  + LINK A Capital Goods Target Inventory -> A Desired Capital Goods Production
+  + LINK A Capital Goods Inventory -> A Desired Capital Goods Production
+  + LINK Capital Goods Adjustment Time -> A Desired Capital Goods Production
+  + LINK Capital Goods Enabled -> A Capital Goods Production Rate
+  + LINK A Desired Capital Goods Production -> A Capital Goods Production Rate
+  + LINK A Capital Goods Production Capacity -> A Capital Goods Production Rate
+  + LINK A Metal Inventory -> A Capital Goods Production Rate
+  + LINK A Metal Buffer -> A Capital Goods Production Rate
+  + LINK A Electronics Inventory -> A Capital Goods Production Rate
+  + LINK A Electronics Buffer -> A Capital Goods Production Rate
+  + LINK Capital Goods Enabled -> A Capital Goods Fulfillment
+  + LINK A Capital Goods Inventory -> A Capital Goods Fulfillment
+  + LINK Capital Goods Buffer -> A Capital Goods Fulfillment
+  + LINK A Refinery Expansion -> A Refinery Capital Goods Expansion Ratio
+  + LINK A Refinery Desired Expansion -> A Refinery Capital Goods Expansion Ratio
+  + LINK A Capital Goods Production Rate -> A Capital Goods Production
+  + LINK A Capital Goods Production Rate -> A Capital Goods Metal Consumption
+  + LINK Metal per Capital Goods Unit -> A Capital Goods Metal Consumption
+  + LINK A Capital Goods Production Rate -> A Capital Goods Electronics Consumption
+  + LINK Electronics per Capital Goods Unit -> A Capital Goods Electronics Consumption
+  + LINK A Refinery Expansion -> A Refinery Capital Goods Consumption
+  + LINK A Refinery Capital Goods per Capacity -> A Refinery Capital Goods Consumption
+  + LINK Capital Lifecycle Enabled -> A Electronics Capital Goods Consumption
+  + LINK A Electronics Factory Expansion -> A Electronics Capital Goods Consumption
+  + LINK A Electronics Capital Goods per Capacity -> A Electronics Capital Goods Consumption
+  + LINK Capital Lifecycle Enabled -> A Power Capital Goods Consumption
+  + LINK A Power Generation Expansion -> A Power Capital Goods Consumption
+  + LINK A Power Capital Goods per Capacity -> A Power Capital Goods Consumption
+  + LINK Test 22 Capital Goods Supply Shock Active -> B Capital Goods Production Capacity
+  + LINK B Capital Goods Base Production Capacity -> B Capital Goods Production Capacity
+  + LINK B Test 22 Capital Goods Shock Applies -> B Capital Goods Production Capacity
+  + LINK v7.5 Capital Goods Shock Multiplier -> B Capital Goods Production Capacity
+  + LINK B Refinery Gap Limited Construction -> B Refinery Desired Expansion
+  + LINK B Refinery Finance Limited Construction -> B Refinery Desired Expansion
+  + LINK Capital Lifecycle Enabled -> B Electronics Desired Expansion
+  + LINK B Electronics Gap Limited Construction -> B Electronics Desired Expansion
+  + LINK B Electronics Finance Limited Construction -> B Electronics Desired Expansion
+  + LINK Capital Lifecycle Enabled -> B Power Desired Expansion
+  + LINK B Power Gap Limited Construction -> B Power Desired Expansion
+  + LINK B Refinery Desired Expansion -> B Capital Goods Demand
+  + LINK B Refinery Capital Goods per Capacity -> B Capital Goods Demand
+  + LINK B Electronics Desired Expansion -> B Capital Goods Demand
+  + LINK B Electronics Capital Goods per Capacity -> B Capital Goods Demand
+  + LINK B Power Desired Expansion -> B Capital Goods Demand
+  + LINK B Power Capital Goods per Capacity -> B Capital Goods Demand
+  + LINK B Capital Goods Demand -> B Capital Goods Target Inventory
+  + LINK Capital Goods Target Days -> B Capital Goods Target Inventory
+  + LINK B Capital Goods Demand -> B Desired Capital Goods Production
+  + LINK B Capital Goods Target Inventory -> B Desired Capital Goods Production
+  + LINK B Capital Goods Inventory -> B Desired Capital Goods Production
+  + LINK Capital Goods Adjustment Time -> B Desired Capital Goods Production
+  + LINK Capital Goods Enabled -> B Capital Goods Production Rate
+  + LINK B Desired Capital Goods Production -> B Capital Goods Production Rate
+  + LINK B Capital Goods Production Capacity -> B Capital Goods Production Rate
+  + LINK B Metal Inventory -> B Capital Goods Production Rate
+  + LINK B Metal Buffer -> B Capital Goods Production Rate
+  + LINK B Electronics Inventory -> B Capital Goods Production Rate
+  + LINK B Electronics Buffer -> B Capital Goods Production Rate
+  + LINK Capital Goods Enabled -> B Capital Goods Fulfillment
+  + LINK B Capital Goods Inventory -> B Capital Goods Fulfillment
+  + LINK Capital Goods Buffer -> B Capital Goods Fulfillment
+  + LINK B Refinery Expansion -> B Refinery Capital Goods Expansion Ratio
+  + LINK B Refinery Desired Expansion -> B Refinery Capital Goods Expansion Ratio
+  + LINK B Capital Goods Production Rate -> B Capital Goods Production
+  + LINK B Capital Goods Production Rate -> B Capital Goods Metal Consumption
+  + LINK Metal per Capital Goods Unit -> B Capital Goods Metal Consumption
+  + LINK B Capital Goods Production Rate -> B Capital Goods Electronics Consumption
+  + LINK Electronics per Capital Goods Unit -> B Capital Goods Electronics Consumption
+  + LINK B Refinery Expansion -> B Refinery Capital Goods Consumption
+  + LINK B Refinery Capital Goods per Capacity -> B Refinery Capital Goods Consumption
+  + LINK Capital Lifecycle Enabled -> B Electronics Capital Goods Consumption
+  + LINK B Electronics Factory Expansion -> B Electronics Capital Goods Consumption
+  + LINK B Electronics Capital Goods per Capacity -> B Electronics Capital Goods Consumption
+  + LINK Capital Lifecycle Enabled -> B Power Capital Goods Consumption
+  + LINK B Power Generation Expansion -> B Power Capital Goods Consumption
+  + LINK B Power Capital Goods per Capacity -> B Power Capital Goods Consumption
+  + LINK Capital Goods Enabled -> A Refinery Expansion
+  + LINK A Refinery Desired Expansion -> A Refinery Expansion
+  + LINK A Capital Goods Fulfillment -> A Refinery Expansion
+  + LINK Capital Goods Enabled -> A Electronics Factory Expansion
+  + LINK A Electronics Desired Expansion -> A Electronics Factory Expansion
+  + LINK A Capital Goods Fulfillment -> A Electronics Factory Expansion
+  + LINK Capital Goods Enabled -> A Power Generation Expansion
+  + LINK A Power Desired Expansion -> A Power Generation Expansion
+  + LINK A Capital Goods Fulfillment -> A Power Generation Expansion
+  + LINK Capital Goods Enabled -> B Refinery Expansion
+  + LINK B Refinery Desired Expansion -> B Refinery Expansion
+  + LINK B Capital Goods Fulfillment -> B Refinery Expansion
+  + LINK Capital Goods Enabled -> B Electronics Factory Expansion
+  + LINK B Electronics Desired Expansion -> B Electronics Factory Expansion
+  + LINK B Capital Goods Fulfillment -> B Electronics Factory Expansion
+  + LINK Capital Goods Enabled -> B Power Generation Expansion
+  + LINK B Power Desired Expansion -> B Power Generation Expansion
+  + LINK B Capital Goods Fulfillment -> B Power Generation Expansion
+  + LINK Test 23 Investment Boom Active -> A Effective Electronics Local Base Demand
+  + LINK A Test 23 Electronics Demand Applies -> A Effective Electronics Local Base Demand
+  + LINK v7.5 Investment Boom Multiplier -> A Effective Electronics Local Base Demand
+  + LINK Test 23 Investment Boom Active -> B Effective Electronics Local Base Demand
+  + LINK B Test 23 Electronics Demand Applies -> B Effective Electronics Local Base Demand
+  + LINK v7.5 Investment Boom Multiplier -> B Effective Electronics Local Base Demand
+  ~ scenario Mode 0: set Capital Goods Enabled
+  ~ scenario Mode 1: set Capital Goods Enabled
+  ~ scenario Mode 2: set Capital Goods Enabled
+  ~ scenario Mode 3: set Capital Goods Enabled
+  ~ scenario Mode 4: set Capital Goods Enabled
+  ~ scenario Mode 5: set Capital Goods Enabled
+  ~ scenario Mode 6: set Capital Goods Enabled
+  ~ scenario Mode 7: set Capital Goods Enabled
+  ~ scenario Mode 8: set Capital Goods Enabled
+  ~ scenario Mode 9: set Capital Goods Enabled
+  ~ scenario Mode 10: set Capital Goods Enabled
+  ~ scenario Mode 11: set Capital Goods Enabled
+  ~ scenario Mode 12: set Capital Goods Enabled
+  ~ scenario Mode 13: set Capital Goods Enabled
+  ~ scenario Mode 14: set Capital Goods Enabled
+  ~ scenario Mode 15: set Capital Goods Enabled
+  ~ scenario Mode 16: set Capital Goods Enabled
+  ~ scenario Mode 17: set Capital Goods Enabled
+  ~ scenario Mode 18: set Capital Goods Enabled
+  ~ scenario Mode 19: set Capital Goods Enabled
+  ~ scenario Mode 20: set Capital Goods Enabled
+  + scenario Mode 21: v7.5 Capital Goods Baseline
+  + scenario Mode 22: v7.5 Capital Goods Supply Shock
+  + scenario Mode 23: v7.5 Investment Boom
+Candidate written: <old-project>\_acceptance_003_r1\lab\input\model\candidate_v7_5_r1.json
+  SHA-256: 919d0bfc2de12d24ba281c77bf9ea37aaf4edc663a2df998b18bda7df01ddd70
+Elements: 2748; scenarios: 24

@@ -1,0 +1,460 @@
+{
+  "format": "orbital-economy-parameter-annotations-v1",
+  "model": "Orbital Economy v7.4.1 symmetry candidate r1",
+  "updated": "2026-09-21",
+  "parameters": {
+    "Reverse A Wage": {
+      "role": "Нейтральная A-сторона override-константа Mode 4; зеркало Reverse B Wage.",
+      "effect": "Равна A Wage = 100, поэтому введение A Effective Wage не меняет A в Mode 4; позволяет сделать cost wiring A/B структурно зеркальным.",
+      "since": "v7.4.1 symmetry r1",
+      "tags": [
+        "test-applicability",
+        "symmetry",
+        "override",
+        "labor"
+      ]
+    },
+    "Reverse A Mining Capacity": {
+      "role": "Нейтральная A-сторона override-константа mining capacity для Mode 4.",
+      "effect": "Равна A Mining Capacity = 70; симметризует ветку Reverse Advantage без изменения численного результата A.",
+      "since": "v7.4.1 symmetry r1",
+      "tags": [
+        "test-applicability",
+        "symmetry",
+        "override",
+        "metal",
+        "capacity"
+      ]
+    },
+    "Priority Stress A Ore Base Cost": {
+      "role": "Нейтральная A-сторона override-константа ore base cost для Mode 8.",
+      "effect": "Равна A Ore Base Cost = 4; позволяет A Effective Ore Base Cost иметь ту же test chain, что B, сохраняя прежний результат.",
+      "since": "v7.4.1 symmetry r1",
+      "tags": [
+        "test-applicability",
+        "symmetry",
+        "override",
+        "metal",
+        "cost"
+      ]
+    },
+    "A Test 20 Metal Demand Applies": {
+      "role": "Флаг применимости metal-demand шока Mode 20 к колонии A; значение 0.",
+      "effect": "При 1 разрешает существующий множитель v7.4 Coupled Metal Demand Growth Multiplier; при 0 заменяет его точным нейтральным ×1. Сохраняет прежнюю одностороннюю семантику при зеркальной формуле A/B.",
+      "since": "v7.4.1 symmetry r1",
+      "tags": [
+        "test-applicability",
+        "symmetry",
+        "metal-demand",
+        "mode-20"
+      ]
+    },
+    "A Test 16 Metal Demand Applies": {
+      "role": "Флаг применимости metal-demand шока Mode 16 к колонии A; значение 0.",
+      "effect": "При 1 разрешает существующий множитель v7.3 Sustained Metal Demand Growth Multiplier; при 0 заменяет его точным нейтральным ×1. Сохраняет прежнюю одностороннюю семантику при зеркальной формуле A/B.",
+      "since": "v7.4.1 symmetry r1",
+      "tags": [
+        "test-applicability",
+        "symmetry",
+        "metal-demand",
+        "mode-16"
+      ]
+    },
+    "A Test 9 Metal Demand Applies": {
+      "role": "Флаг применимости metal-demand шока Mode 9 к колонии A; значение 0.",
+      "effect": "При 1 разрешает существующий множитель Two Industry Energy Stress Demand Multiplier; при 0 заменяет его точным нейтральным ×1. Сохраняет прежнюю одностороннюю семантику при зеркальной формуле A/B.",
+      "since": "v7.4.1 symmetry r1",
+      "tags": [
+        "test-applicability",
+        "symmetry",
+        "metal-demand",
+        "mode-9"
+      ]
+    },
+    "A Test 8 Metal Demand Applies": {
+      "role": "Флаг применимости metal-demand шока Mode 8 к колонии A; значение 0.",
+      "effect": "При 1 разрешает существующий множитель Priority Stress Demand Multiplier; при 0 заменяет его точным нейтральным ×1. Сохраняет прежнюю одностороннюю семантику при зеркальной формуле A/B.",
+      "since": "v7.4.1 symmetry r1",
+      "tags": [
+        "test-applicability",
+        "symmetry",
+        "metal-demand",
+        "mode-8"
+      ]
+    },
+    "A Test 7 Metal Demand Applies": {
+      "role": "Флаг применимости metal-demand шока Mode 7 к колонии A; значение 0.",
+      "effect": "При 1 разрешает существующий множитель Two Good Demand Surge Multiplier; при 0 заменяет его точным нейтральным ×1. Сохраняет прежнюю одностороннюю семантику при зеркальной формуле A/B.",
+      "since": "v7.4.1 symmetry r1",
+      "tags": [
+        "test-applicability",
+        "symmetry",
+        "metal-demand",
+        "mode-7"
+      ]
+    },
+    "A Test 2 Metal Demand Applies": {
+      "role": "Флаг применимости metal-demand шока Mode 2 к колонии A; значение 0.",
+      "effect": "При 1 разрешает существующий множитель Transport Demand Surge Multiplier; при 0 заменяет его точным нейтральным ×1. Сохраняет прежнюю одностороннюю семантику при зеркальной формуле A/B.",
+      "since": "v7.4.1 symmetry r1",
+      "tags": [
+        "test-applicability",
+        "symmetry",
+        "metal-demand",
+        "mode-2"
+      ]
+    },
+    "A Test 3 Metal Demand Applies": {
+      "role": "Флаг применимости metal-demand шока Mode 3 к колонии A; значение 0.",
+      "effect": "При 1 разрешает существующий множитель Low Demand Multiplier; при 0 заменяет его точным нейтральным ×1. Сохраняет прежнюю одностороннюю семантику при зеркальной формуле A/B.",
+      "since": "v7.4.1 symmetry r1",
+      "tags": [
+        "test-applicability",
+        "symmetry",
+        "metal-demand",
+        "mode-3"
+      ]
+    },
+    "B Test 20 Metal Demand Applies": {
+      "role": "Флаг применимости metal-demand шока Mode 20 к колонии B; значение 1.",
+      "effect": "При 1 разрешает существующий множитель v7.4 Coupled Metal Demand Growth Multiplier; при 0 заменяет его точным нейтральным ×1. Сохраняет прежнюю одностороннюю семантику при зеркальной формуле A/B.",
+      "since": "v7.4.1 symmetry r1",
+      "tags": [
+        "test-applicability",
+        "symmetry",
+        "metal-demand",
+        "mode-20"
+      ]
+    },
+    "B Test 16 Metal Demand Applies": {
+      "role": "Флаг применимости metal-demand шока Mode 16 к колонии B; значение 1.",
+      "effect": "При 1 разрешает существующий множитель v7.3 Sustained Metal Demand Growth Multiplier; при 0 заменяет его точным нейтральным ×1. Сохраняет прежнюю одностороннюю семантику при зеркальной формуле A/B.",
+      "since": "v7.4.1 symmetry r1",
+      "tags": [
+        "test-applicability",
+        "symmetry",
+        "metal-demand",
+        "mode-16"
+      ]
+    },
+    "B Test 9 Metal Demand Applies": {
+      "role": "Флаг применимости metal-demand шока Mode 9 к колонии B; значение 1.",
+      "effect": "При 1 разрешает существующий множитель Two Industry Energy Stress Demand Multiplier; при 0 заменяет его точным нейтральным ×1. Сохраняет прежнюю одностороннюю семантику при зеркальной формуле A/B.",
+      "since": "v7.4.1 symmetry r1",
+      "tags": [
+        "test-applicability",
+        "symmetry",
+        "metal-demand",
+        "mode-9"
+      ]
+    },
+    "B Test 8 Metal Demand Applies": {
+      "role": "Флаг применимости metal-demand шока Mode 8 к колонии B; значение 1.",
+      "effect": "При 1 разрешает существующий множитель Priority Stress Demand Multiplier; при 0 заменяет его точным нейтральным ×1. Сохраняет прежнюю одностороннюю семантику при зеркальной формуле A/B.",
+      "since": "v7.4.1 symmetry r1",
+      "tags": [
+        "test-applicability",
+        "symmetry",
+        "metal-demand",
+        "mode-8"
+      ]
+    },
+    "B Test 7 Metal Demand Applies": {
+      "role": "Флаг применимости metal-demand шока Mode 7 к колонии B; значение 1.",
+      "effect": "При 1 разрешает существующий множитель Two Good Demand Surge Multiplier; при 0 заменяет его точным нейтральным ×1. Сохраняет прежнюю одностороннюю семантику при зеркальной формуле A/B.",
+      "since": "v7.4.1 symmetry r1",
+      "tags": [
+        "test-applicability",
+        "symmetry",
+        "metal-demand",
+        "mode-7"
+      ]
+    },
+    "B Test 2 Metal Demand Applies": {
+      "role": "Флаг применимости metal-demand шока Mode 2 к колонии B; значение 1.",
+      "effect": "При 1 разрешает существующий множитель Transport Demand Surge Multiplier; при 0 заменяет его точным нейтральным ×1. Сохраняет прежнюю одностороннюю семантику при зеркальной формуле A/B.",
+      "since": "v7.4.1 symmetry r1",
+      "tags": [
+        "test-applicability",
+        "symmetry",
+        "metal-demand",
+        "mode-2"
+      ]
+    },
+    "B Test 3 Metal Demand Applies": {
+      "role": "Флаг применимости metal-demand шока Mode 3 к колонии B; значение 1.",
+      "effect": "При 1 разрешает существующий множитель Low Demand Multiplier; при 0 заменяет его точным нейтральным ×1. Сохраняет прежнюю одностороннюю семантику при зеркальной формуле A/B.",
+      "since": "v7.4.1 symmetry r1",
+      "tags": [
+        "test-applicability",
+        "symmetry",
+        "metal-demand",
+        "mode-3"
+      ]
+    },
+    "A Test 19 Electronics Demand Applies": {
+      "role": "Флаг применимости electronics-demand шока Mode 19 к колонии A; значение 1.",
+      "effect": "При 1 разрешает существующий множитель v7.4 Coupled Electronics Growth Multiplier; при 0 заменяет его точным нейтральным ×1. Сохраняет прежнюю A/B-направленность теста в общей зеркальной цепочке.",
+      "since": "v7.4.1 symmetry r1",
+      "tags": [
+        "test-applicability",
+        "symmetry",
+        "electronics-demand",
+        "mode-19"
+      ]
+    },
+    "A Test 14 Electronics Demand Applies": {
+      "role": "Флаг применимости electronics-demand шока Mode 14 к колонии A; значение 1.",
+      "effect": "При 1 разрешает существующий множитель v7.3 Sustained Electronics Growth Multiplier; при 0 заменяет его точным нейтральным ×1. Сохраняет прежнюю A/B-направленность теста в общей зеркальной цепочке.",
+      "since": "v7.4.1 symmetry r1",
+      "tags": [
+        "test-applicability",
+        "symmetry",
+        "electronics-demand",
+        "mode-14"
+      ]
+    },
+    "A Test 13 Electronics Demand Applies": {
+      "role": "Флаг применимости electronics-demand шока Mode 13 к колонии A; значение 1.",
+      "effect": "При 1 разрешает существующий множитель v7.3 Temporary Electronics Demand Multiplier; при 0 заменяет его точным нейтральным ×1. Сохраняет прежнюю A/B-направленность теста в общей зеркальной цепочке.",
+      "since": "v7.4.1 symmetry r1",
+      "tags": [
+        "test-applicability",
+        "symmetry",
+        "electronics-demand",
+        "mode-13"
+      ]
+    },
+    "A Test 9 Electronics Demand Applies": {
+      "role": "Флаг применимости electronics-demand шока Mode 9 к колонии A; значение 1.",
+      "effect": "При 1 разрешает существующий множитель Two Industry Energy Stress Demand Multiplier; при 0 заменяет его точным нейтральным ×1. Сохраняет прежнюю A/B-направленность теста в общей зеркальной цепочке.",
+      "since": "v7.4.1 symmetry r1",
+      "tags": [
+        "test-applicability",
+        "symmetry",
+        "electronics-demand",
+        "mode-9"
+      ]
+    },
+    "A Test 8 Electronics Demand Applies": {
+      "role": "Флаг применимости electronics-demand шока Mode 8 к колонии A; значение 1.",
+      "effect": "При 1 разрешает существующий множитель Priority Stress Demand Multiplier; при 0 заменяет его точным нейтральным ×1. Сохраняет прежнюю A/B-направленность теста в общей зеркальной цепочке.",
+      "since": "v7.4.1 symmetry r1",
+      "tags": [
+        "test-applicability",
+        "symmetry",
+        "electronics-demand",
+        "mode-8"
+      ]
+    },
+    "A Test 5 Electronics Demand Applies": {
+      "role": "Флаг применимости electronics-demand шока Mode 5 к колонии A; значение 1.",
+      "effect": "При 1 разрешает существующий множитель Electronics Demand Surge Multiplier; при 0 заменяет его точным нейтральным ×1. Сохраняет прежнюю A/B-направленность теста в общей зеркальной цепочке.",
+      "since": "v7.4.1 symmetry r1",
+      "tags": [
+        "test-applicability",
+        "symmetry",
+        "electronics-demand",
+        "mode-5"
+      ]
+    },
+    "A Test 7 Electronics Demand Applies": {
+      "role": "Флаг применимости electronics-demand шока Mode 7 к колонии A; значение 1.",
+      "effect": "При 1 разрешает существующий множитель Two Good Demand Surge Multiplier; при 0 заменяет его точным нейтральным ×1. Сохраняет прежнюю A/B-направленность теста в общей зеркальной цепочке.",
+      "since": "v7.4.1 symmetry r1",
+      "tags": [
+        "test-applicability",
+        "symmetry",
+        "electronics-demand",
+        "mode-7"
+      ]
+    },
+    "A Test 15 Electronics Demand Applies": {
+      "role": "Флаг применимости electronics-demand шока Mode 15 к колонии A; значение 0.",
+      "effect": "При 1 разрешает существующий множитель v7.3 Electronics Demand Collapse Multiplier; при 0 заменяет его точным нейтральным ×1. Сохраняет прежнюю A/B-направленность теста в общей зеркальной цепочке.",
+      "since": "v7.4.1 symmetry r1",
+      "tags": [
+        "test-applicability",
+        "symmetry",
+        "electronics-demand",
+        "mode-15"
+      ]
+    },
+    "B Test 19 Electronics Demand Applies": {
+      "role": "Флаг применимости electronics-demand шока Mode 19 к колонии B; значение 0.",
+      "effect": "При 1 разрешает существующий множитель v7.4 Coupled Electronics Growth Multiplier; при 0 заменяет его точным нейтральным ×1. Сохраняет прежнюю A/B-направленность теста в общей зеркальной цепочке.",
+      "since": "v7.4.1 symmetry r1",
+      "tags": [
+        "test-applicability",
+        "symmetry",
+        "electronics-demand",
+        "mode-19"
+      ]
+    },
+    "B Test 14 Electronics Demand Applies": {
+      "role": "Флаг применимости electronics-demand шока Mode 14 к колонии B; значение 0.",
+      "effect": "При 1 разрешает существующий множитель v7.3 Sustained Electronics Growth Multiplier; при 0 заменяет его точным нейтральным ×1. Сохраняет прежнюю A/B-направленность теста в общей зеркальной цепочке.",
+      "since": "v7.4.1 symmetry r1",
+      "tags": [
+        "test-applicability",
+        "symmetry",
+        "electronics-demand",
+        "mode-14"
+      ]
+    },
+    "B Test 13 Electronics Demand Applies": {
+      "role": "Флаг применимости electronics-demand шока Mode 13 к колонии B; значение 0.",
+      "effect": "При 1 разрешает существующий множитель v7.3 Temporary Electronics Demand Multiplier; при 0 заменяет его точным нейтральным ×1. Сохраняет прежнюю A/B-направленность теста в общей зеркальной цепочке.",
+      "since": "v7.4.1 symmetry r1",
+      "tags": [
+        "test-applicability",
+        "symmetry",
+        "electronics-demand",
+        "mode-13"
+      ]
+    },
+    "B Test 9 Electronics Demand Applies": {
+      "role": "Флаг применимости electronics-demand шока Mode 9 к колонии B; значение 0.",
+      "effect": "При 1 разрешает существующий множитель Two Industry Energy Stress Demand Multiplier; при 0 заменяет его точным нейтральным ×1. Сохраняет прежнюю A/B-направленность теста в общей зеркальной цепочке.",
+      "since": "v7.4.1 symmetry r1",
+      "tags": [
+        "test-applicability",
+        "symmetry",
+        "electronics-demand",
+        "mode-9"
+      ]
+    },
+    "B Test 8 Electronics Demand Applies": {
+      "role": "Флаг применимости electronics-demand шока Mode 8 к колонии B; значение 0.",
+      "effect": "При 1 разрешает существующий множитель Priority Stress Demand Multiplier; при 0 заменяет его точным нейтральным ×1. Сохраняет прежнюю A/B-направленность теста в общей зеркальной цепочке.",
+      "since": "v7.4.1 symmetry r1",
+      "tags": [
+        "test-applicability",
+        "symmetry",
+        "electronics-demand",
+        "mode-8"
+      ]
+    },
+    "B Test 5 Electronics Demand Applies": {
+      "role": "Флаг применимости electronics-demand шока Mode 5 к колонии B; значение 0.",
+      "effect": "При 1 разрешает существующий множитель Electronics Demand Surge Multiplier; при 0 заменяет его точным нейтральным ×1. Сохраняет прежнюю A/B-направленность теста в общей зеркальной цепочке.",
+      "since": "v7.4.1 symmetry r1",
+      "tags": [
+        "test-applicability",
+        "symmetry",
+        "electronics-demand",
+        "mode-5"
+      ]
+    },
+    "B Test 7 Electronics Demand Applies": {
+      "role": "Флаг применимости electronics-demand шока Mode 7 к колонии B; значение 0.",
+      "effect": "При 1 разрешает существующий множитель Two Good Demand Surge Multiplier; при 0 заменяет его точным нейтральным ×1. Сохраняет прежнюю A/B-направленность теста в общей зеркальной цепочке.",
+      "since": "v7.4.1 symmetry r1",
+      "tags": [
+        "test-applicability",
+        "symmetry",
+        "electronics-demand",
+        "mode-7"
+      ]
+    },
+    "B Test 15 Electronics Demand Applies": {
+      "role": "Флаг применимости electronics-demand шока Mode 15 к колонии B; значение 1.",
+      "effect": "При 1 разрешает существующий множитель v7.3 Electronics Demand Collapse Multiplier; при 0 заменяет его точным нейтральным ×1. Сохраняет прежнюю A/B-направленность теста в общей зеркальной цепочке.",
+      "since": "v7.4.1 symmetry r1",
+      "tags": [
+        "test-applicability",
+        "symmetry",
+        "electronics-demand",
+        "mode-15"
+      ]
+    },
+    "A Test 18 Mining Shock Applies": {
+      "role": "Флаг применимости Mode 18 mining shock к колонии A; значение 1.",
+      "effect": "Сохраняет исходную семантику v7.4: supply shock действует только на A, при этом обе Effective Mining Capacity используют одну зеркальную формулу.",
+      "since": "v7.4.1 symmetry r1",
+      "tags": [
+        "test-applicability",
+        "symmetry",
+        "mining",
+        "mode-18"
+      ]
+    },
+    "B Test 18 Mining Shock Applies": {
+      "role": "Флаг применимости Mode 18 mining shock к колонии B; значение 0.",
+      "effect": "Сохраняет исходную семантику v7.4: supply shock действует только на A, при этом обе Effective Mining Capacity используют одну зеркальную формулу.",
+      "since": "v7.4.1 symmetry r1",
+      "tags": [
+        "test-applicability",
+        "symmetry",
+        "mining",
+        "mode-18"
+      ]
+    },
+    "A Test 11 Generation Shock Applies": {
+      "role": "Флаг применимости generation shock Mode 11 к колонии A; значение 1.",
+      "effect": "Оборачивает существующий общий power multiplier через IfThenElse(flag=1, multiplier, 1), сохраняя старую одностороннюю тестовую обвязку при зеркальной формуле.",
+      "since": "v7.4.1 symmetry r1",
+      "tags": [
+        "test-applicability",
+        "symmetry",
+        "power",
+        "mode-11"
+      ]
+    },
+    "B Test 11 Generation Shock Applies": {
+      "role": "Флаг применимости generation shock Mode 11 к колонии B; значение 0.",
+      "effect": "Оборачивает существующий общий power multiplier через IfThenElse(flag=1, multiplier, 1), сохраняя старую одностороннюю тестовую обвязку при зеркальной формуле.",
+      "since": "v7.4.1 symmetry r1",
+      "tags": [
+        "test-applicability",
+        "symmetry",
+        "power",
+        "mode-11"
+      ]
+    },
+    "A Test 6 Headroom Applies": {
+      "role": "Флаг применимости legacy power headroom Mode 6 к колонии A; значение 1.",
+      "effect": "Оборачивает существующий общий power multiplier через IfThenElse(flag=1, multiplier, 1), сохраняя старую одностороннюю тестовую обвязку при зеркальной формуле.",
+      "since": "v7.4.1 symmetry r1",
+      "tags": [
+        "test-applicability",
+        "symmetry",
+        "power",
+        "mode-6"
+      ]
+    },
+    "B Test 6 Headroom Applies": {
+      "role": "Флаг применимости legacy power headroom Mode 6 к колонии B; значение 0.",
+      "effect": "Оборачивает существующий общий power multiplier через IfThenElse(flag=1, multiplier, 1), сохраняя старую одностороннюю тестовую обвязку при зеркальной формуле.",
+      "since": "v7.4.1 symmetry r1",
+      "tags": [
+        "test-applicability",
+        "symmetry",
+        "power",
+        "mode-6"
+      ]
+    },
+    "A Test 4 Headroom Applies": {
+      "role": "Флаг применимости legacy power headroom Mode 4 к колонии A; значение 0.",
+      "effect": "Оборачивает существующий общий power multiplier через IfThenElse(flag=1, multiplier, 1), сохраняя старую одностороннюю тестовую обвязку при зеркальной формуле.",
+      "since": "v7.4.1 symmetry r1",
+      "tags": [
+        "test-applicability",
+        "symmetry",
+        "power",
+        "mode-4"
+      ]
+    },
+    "B Test 4 Headroom Applies": {
+      "role": "Флаг применимости legacy power headroom Mode 4 к колонии B; значение 1.",
+      "effect": "Оборачивает существующий общий power multiplier через IfThenElse(flag=1, multiplier, 1), сохраняя старую одностороннюю тестовую обвязку при зеркальной формуле.",
+      "since": "v7.4.1 symmetry r1",
+      "tags": [
+        "test-applicability",
+        "symmetry",
+        "power",
+        "mode-4"
+      ]
+    }
+  }
+}

@@ -1,0 +1,664 @@
+{
+  "format": "orbital-economy-model-patch-v1",
+  "base_sha256": "57a2a102f2b632c69c37cc00c4cd11182ca2601d2af9395560228b5fdde0f44d",
+  "name": "Orbital Economy v7.4 Intermediate Inputs candidate r1",
+  "description": "Candidate r1: Metal becomes the physical intermediate input of Electronics behind Intermediate Inputs Enabled; Modes 0-16 remain on the exact legacy branches.",
+  "add_elements": [
+    {
+      "type": "VARIABLE",
+      "name": "Intermediate Inputs Enabled",
+      "behavior": {
+        "value": 1
+      },
+      "description": "Master switch for v7.4 Metal-to-Electronics intermediate-input coupling. Modes 0-16 override to 0; Modes 17+ enable it."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "Metal per Electronics",
+      "behavior": {
+        "value": 0.25
+      },
+      "description": "Physical Metal units consumed per unit of Electronics in the v7.4 coupled branch. Initial calibration candidate r1."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "Metal Input Target Days",
+      "behavior": {
+        "value": 20
+      },
+      "description": "Target Electronics-owned Metal/feedstock buffer measured in days of coupled consumption. Initial candidate r1 value from the approved specification."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "Metal Input Adjustment Time",
+      "behavior": {
+        "value": 20
+      },
+      "description": "Adjustment time in days for the Electronics Metal input buffer demand. Initial candidate r1 value from the approved specification."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "Test 18 Metal Supply Shock Active",
+      "behavior": {
+        "value": "IfThenElse([Timed Test Mode] = 18, [Temporary Test Window], 0)"
+      },
+      "description": "v7.4 test harness only: temporary B Metal supply shock, day 360-720."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "Test 19 Coupled Electronics Growth Active",
+      "behavior": {
+        "value": "IfThenElse([Timed Test Mode] = 19, [Reverse Advantage Window], 0)"
+      },
+      "description": "v7.4 test harness only: sustained A Electronics demand growth with intermediate-input coupling."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "Test 20 Coupled Metal Demand Growth Active",
+      "behavior": {
+        "value": "IfThenElse([Timed Test Mode] = 20, [Reverse Advantage Window], 0)"
+      },
+      "description": "v7.4 test harness only: sustained B final Metal demand growth with intermediate-input coupling."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "v7.4 Metal Supply Shock Multiplier",
+      "behavior": {
+        "value": 0.5
+      },
+      "description": "Temporary B mining-capacity multiplier used only by Mode 18."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "v7.4 Coupled Electronics Growth Multiplier",
+      "behavior": {
+        "value": 4
+      },
+      "description": "Sustained A Electronics local-demand multiplier used only by Mode 19."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "v7.4 Coupled Metal Demand Growth Multiplier",
+      "behavior": {
+        "value": 2
+      },
+      "description": "Sustained B final Metal local-demand multiplier used only by Mode 20."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "A Electronics Metal Input Target Inventory",
+      "behavior": {
+        "value": "[A Electronics Feedstock Consumption Rate] * [Metal Input Target Days]"
+      },
+      "description": "Target Electronics-owned Metal buffer in A, expressed in physical Metal units."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "A Electronics Metal Input Demand",
+      "behavior": {
+        "value": "Max(0, [A Electronics Feedstock Consumption Rate] + ([A Electronics Metal Input Target Inventory] - [A Electronics Feedstock Inventory]) / [Metal Input Adjustment Time])"
+      },
+      "description": "Physical Metal input demand of Electronics in A: current consumption plus buffer adjustment."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "A Metal Available for Intermediate Use",
+      "behavior": {
+        "value": "[A Electronics Metal Input Demand] * [A Metal Inventory] / ([A Metal Inventory] + [A Metal Buffer])"
+      },
+      "description": "Metal available to Electronics in A, using the same inventory availability factor as final local Metal sales."
+    },
+    {
+      "type": "FLOW",
+      "name": "A Electronics Metal Input Delivery",
+      "from": "A Metal Inventory",
+      "to": "A Electronics Feedstock Inventory",
+      "behavior": {
+        "value": "IfThenElse([Intermediate Inputs Enabled] = 1, [A Metal Available for Intermediate Use], 0)",
+        "non_negative": true
+      },
+      "description": "Physical transfer of Metal from the A Metal sector into the Electronics-owned feedstock buffer."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "A Electronics Metal Input Fulfillment",
+      "behavior": {
+        "value": "IfThenElse([Intermediate Inputs Enabled] = 1, IfThenElse([A Electronics Metal Input Demand] > 0.001, [A Electronics Metal Input Delivery] / [A Electronics Metal Input Demand], 1), 1)"
+      },
+      "description": "Fraction of Electronics Metal input demand fulfilled in A; exactly 1 when v7.4 coupling is disabled."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "B Electronics Metal Input Target Inventory",
+      "behavior": {
+        "value": "[B Electronics Feedstock Consumption Rate] * [Metal Input Target Days]"
+      },
+      "description": "Target Electronics-owned Metal buffer in B, expressed in physical Metal units."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "B Electronics Metal Input Demand",
+      "behavior": {
+        "value": "Max(0, [B Electronics Feedstock Consumption Rate] + ([B Electronics Metal Input Target Inventory] - [B Electronics Feedstock Inventory]) / [Metal Input Adjustment Time])"
+      },
+      "description": "Physical Metal input demand of Electronics in B: current consumption plus buffer adjustment."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "B Metal Available for Intermediate Use",
+      "behavior": {
+        "value": "[B Electronics Metal Input Demand] * [B Metal Inventory] / ([B Metal Inventory] + [B Metal Buffer])"
+      },
+      "description": "Metal available to Electronics in B, using the same inventory availability factor as final local Metal sales."
+    },
+    {
+      "type": "FLOW",
+      "name": "B Electronics Metal Input Delivery",
+      "from": "B Metal Inventory",
+      "to": "B Electronics Feedstock Inventory",
+      "behavior": {
+        "value": "IfThenElse([Intermediate Inputs Enabled] = 1, [B Metal Available for Intermediate Use], 0)",
+        "non_negative": true
+      },
+      "description": "Physical transfer of Metal from the B Metal sector into the Electronics-owned feedstock buffer."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "B Electronics Metal Input Fulfillment",
+      "behavior": {
+        "value": "IfThenElse([Intermediate Inputs Enabled] = 1, IfThenElse([B Electronics Metal Input Demand] > 0.001, [B Electronics Metal Input Delivery] / [B Electronics Metal Input Demand], 1), 1)"
+      },
+      "description": "Fraction of Electronics Metal input demand fulfilled in B; exactly 1 when v7.4 coupling is disabled."
+    }
+  ],
+  "replace_formulas": [
+    {
+      "name": "A Electronics Feedstock Extraction Rate",
+      "value": "IfThenElse([Intermediate Inputs Enabled] = 1, 0, [A Positive Desired Electronics Feedstock Extraction Rate] / (1 + ([A Positive Desired Electronics Feedstock Extraction Rate] / ([A Electronics Feedstock Extraction Capacity] + 0.001)) ^ 8) ^ 0.125)"
+    },
+    {
+      "name": "A Electronics Feedstock Consumption Rate",
+      "value": "IfThenElse([Intermediate Inputs Enabled] = 1, [A Electronics Production Rate] * [Metal per Electronics], [A Electronics Production Rate] * [A Feedstock per Electronics])"
+    },
+    {
+      "name": "A Electronics Feedstock Price",
+      "value": "IfThenElse([Intermediate Inputs Enabled] = 1, [A Market Price], [A Effective Electronics Feedstock Base Cost] * (1 + [A Electronics Feedstock Scarcity Strength] * [A Electronics Feedstock Shortage] / [A Electronics Feedstock Target Inventory]))"
+    },
+    {
+      "name": "A Electronics Unit Cost",
+      "value": "IfThenElse([Intermediate Inputs Enabled] = 1, [Metal per Electronics] * [A Electronics Feedstock Price] + [A Electronics Energy per Unit] * [A Energy Price] + [A Electronics Labor per Unit] * [A Wage], [A Feedstock per Electronics] * [A Electronics Feedstock Price] + [A Electronics Energy per Unit] * [A Energy Price] + [A Electronics Labor per Unit] * [A Wage])"
+    },
+    {
+      "name": "A Electronics Feedstock Target Inventory",
+      "value": "IfThenElse([Intermediate Inputs Enabled] = 1, [A Electronics Metal Input Target Inventory], 1200)"
+    },
+    {
+      "name": "A Electronics Feedstock Buffer",
+      "value": "IfThenElse([Intermediate Inputs Enabled] = 1, [Metal per Electronics] * 40, 40)"
+    },
+    {
+      "name": "A Desired Smelting Rate",
+      "value": "IfThenElse([Intermediate Inputs Enabled] = 1, [A Local Sales] + [Shipment Rate A to B] - [Shipment Rate B to A] + ([A Metal Target Inventory] - [A Metal Inventory]) / [A Metal Adjustment Time] + [A Electronics Metal Input Delivery], [A Local Sales] + [Shipment Rate A to B] - [Shipment Rate B to A] + ([A Metal Target Inventory] - [A Metal Inventory]) / [A Metal Adjustment Time])"
+    },
+    {
+      "name": "B Electronics Feedstock Extraction Rate",
+      "value": "IfThenElse([Intermediate Inputs Enabled] = 1, 0, [B Positive Desired Electronics Feedstock Extraction Rate] / (1 + ([B Positive Desired Electronics Feedstock Extraction Rate] / ([B Electronics Feedstock Extraction Capacity] + 0.001)) ^ 8) ^ 0.125)"
+    },
+    {
+      "name": "B Electronics Feedstock Consumption Rate",
+      "value": "IfThenElse([Intermediate Inputs Enabled] = 1, [B Electronics Production Rate] * [Metal per Electronics], [B Electronics Production Rate] * [B Feedstock per Electronics])"
+    },
+    {
+      "name": "B Electronics Feedstock Price",
+      "value": "IfThenElse([Intermediate Inputs Enabled] = 1, [B Market Price], [B Effective Electronics Feedstock Base Cost] * (1 + [B Electronics Feedstock Scarcity Strength] * [B Electronics Feedstock Shortage] / [B Electronics Feedstock Target Inventory]))"
+    },
+    {
+      "name": "B Electronics Unit Cost",
+      "value": "IfThenElse([Intermediate Inputs Enabled] = 1, [Metal per Electronics] * [B Electronics Feedstock Price] + [B Electronics Energy per Unit] * [B Energy Price] + [B Electronics Labor per Unit] * [B Wage], [B Feedstock per Electronics] * [B Electronics Feedstock Price] + [B Electronics Energy per Unit] * [B Energy Price] + [B Electronics Labor per Unit] * [B Wage])"
+    },
+    {
+      "name": "B Electronics Feedstock Target Inventory",
+      "value": "IfThenElse([Intermediate Inputs Enabled] = 1, [B Electronics Metal Input Target Inventory], 1200)"
+    },
+    {
+      "name": "B Electronics Feedstock Buffer",
+      "value": "IfThenElse([Intermediate Inputs Enabled] = 1, [Metal per Electronics] * 40, 40)"
+    },
+    {
+      "name": "B Desired Smelting Rate",
+      "value": "IfThenElse([Intermediate Inputs Enabled] = 1, [B Local Sales] + [Shipment Rate B to A] - [Shipment Rate A to B] + ([B Metal Target Inventory] - [B Metal Inventory]) / [B Metal Adjustment Time] + [B Electronics Metal Input Delivery], [B Local Sales] + [Shipment Rate B to A] - [Shipment Rate A to B] + ([B Metal Target Inventory] - [B Metal Inventory]) / [B Metal Adjustment Time])"
+    },
+    {
+      "name": "A Effective Electronics Local Base Demand",
+      "value": "IfThenElse([Intermediate Inputs Enabled] = 1, IfThenElse([Test 19 Coupled Electronics Growth Active] = 1, [A Electronics Local Base Demand] * [v7.4 Coupled Electronics Growth Multiplier], IfThenElse([Test 14 Sustained Electronics Growth Active] = 1, [A Electronics Local Base Demand] * [v7.3 Sustained Electronics Growth Multiplier], IfThenElse([Test 13 Temporary Electronics Lifecycle Surge Active] = 1, [A Electronics Local Base Demand] * [v7.3 Temporary Electronics Demand Multiplier], IfThenElse([Test 9 Two Industry Energy Stress Active] = 1, [A Electronics Local Base Demand] * [Two Industry Energy Stress Demand Multiplier], IfThenElse([Test 8 Metal Priority Scarcity Active] = 1, [A Electronics Local Base Demand] * [Priority Stress Demand Multiplier], IfThenElse([Test 5 Electronics Demand Surge Active] = 1, [A Electronics Local Base Demand] * [Electronics Demand Surge Multiplier], IfThenElse([Test 7 Two Good Transport Surge Active] = 1, [A Electronics Local Base Demand] * [Two Good Demand Surge Multiplier], [A Electronics Local Base Demand]))))))), IfThenElse([Test 14 Sustained Electronics Growth Active] = 1, [A Electronics Local Base Demand] * [v7.3 Sustained Electronics Growth Multiplier], IfThenElse([Test 13 Temporary Electronics Lifecycle Surge Active] = 1, [A Electronics Local Base Demand] * [v7.3 Temporary Electronics Demand Multiplier], IfThenElse([Test 9 Two Industry Energy Stress Active] = 1, [A Electronics Local Base Demand] * [Two Industry Energy Stress Demand Multiplier], IfThenElse([Test 8 Metal Priority Scarcity Active] = 1, [A Electronics Local Base Demand] * [Priority Stress Demand Multiplier], IfThenElse([Test 5 Electronics Demand Surge Active] = 1, [A Electronics Local Base Demand] * [Electronics Demand Surge Multiplier], IfThenElse([Test 7 Two Good Transport Surge Active] = 1, [A Electronics Local Base Demand] * [Two Good Demand Surge Multiplier], [A Electronics Local Base Demand])))))))"
+    },
+    {
+      "name": "B Effective Local Base Demand",
+      "value": "IfThenElse([Intermediate Inputs Enabled] = 1, IfThenElse([Test 20 Coupled Metal Demand Growth Active] = 1, [B Local Base Demand] * [v7.4 Coupled Metal Demand Growth Multiplier], IfThenElse([Test 16 Sustained Metal Energy Growth Active] = 1, [B Local Base Demand] * [v7.3 Sustained Metal Demand Growth Multiplier], IfThenElse([Test 9 Two Industry Energy Stress Active] = 1, [B Local Base Demand] * [Two Industry Energy Stress Demand Multiplier], IfThenElse([Test 8 Metal Priority Scarcity Active] = 1, [B Local Base Demand] * [Priority Stress Demand Multiplier], IfThenElse([Test 7 Two Good Transport Surge Active] = 1, [B Local Base Demand] * [Two Good Demand Surge Multiplier], IfThenElse([Test 2 Transport Surge Active] = 1, [B Local Base Demand] * [Transport Demand Surge Multiplier], IfThenElse([Test 3 Low Demand Active] = 1, [B Local Base Demand] * [Low Demand Multiplier], [B Local Base Demand]))))))), IfThenElse([Test 16 Sustained Metal Energy Growth Active] = 1, [B Local Base Demand] * [v7.3 Sustained Metal Demand Growth Multiplier], IfThenElse([Test 9 Two Industry Energy Stress Active] = 1, [B Local Base Demand] * [Two Industry Energy Stress Demand Multiplier], IfThenElse([Test 8 Metal Priority Scarcity Active] = 1, [B Local Base Demand] * [Priority Stress Demand Multiplier], IfThenElse([Test 7 Two Good Transport Surge Active] = 1, [B Local Base Demand] * [Two Good Demand Surge Multiplier], IfThenElse([Test 2 Transport Surge Active] = 1, [B Local Base Demand] * [Transport Demand Surge Multiplier], IfThenElse([Test 3 Low Demand Active] = 1, [B Local Base Demand] * [Low Demand Multiplier], [B Local Base Demand])))))))"
+    },
+    {
+      "name": "B Effective Mining Capacity",
+      "value": "IfThenElse([Intermediate Inputs Enabled] = 1, IfThenElse([Test 18 Metal Supply Shock Active] = 1, [B Mining Capacity] * [v7.4 Metal Supply Shock Multiplier], IfThenElse([Test 4 Reverse Advantage Active] = 1, [Reverse B Mining Capacity], [B Mining Capacity])), IfThenElse([Test 4 Reverse Advantage Active] = 1, [Reverse B Mining Capacity], [B Mining Capacity]))"
+    }
+  ],
+  "add_links": [
+    {
+      "from": "Timed Test Mode",
+      "to": "Test 18 Metal Supply Shock Active"
+    },
+    {
+      "from": "Temporary Test Window",
+      "to": "Test 18 Metal Supply Shock Active"
+    },
+    {
+      "from": "Timed Test Mode",
+      "to": "Test 19 Coupled Electronics Growth Active"
+    },
+    {
+      "from": "Reverse Advantage Window",
+      "to": "Test 19 Coupled Electronics Growth Active"
+    },
+    {
+      "from": "Timed Test Mode",
+      "to": "Test 20 Coupled Metal Demand Growth Active"
+    },
+    {
+      "from": "Reverse Advantage Window",
+      "to": "Test 20 Coupled Metal Demand Growth Active"
+    },
+    {
+      "from": "A Electronics Feedstock Consumption Rate",
+      "to": "A Electronics Metal Input Target Inventory"
+    },
+    {
+      "from": "Metal Input Target Days",
+      "to": "A Electronics Metal Input Target Inventory"
+    },
+    {
+      "from": "A Electronics Feedstock Consumption Rate",
+      "to": "A Electronics Metal Input Demand"
+    },
+    {
+      "from": "A Electronics Metal Input Target Inventory",
+      "to": "A Electronics Metal Input Demand"
+    },
+    {
+      "from": "A Electronics Feedstock Inventory",
+      "to": "A Electronics Metal Input Demand"
+    },
+    {
+      "from": "Metal Input Adjustment Time",
+      "to": "A Electronics Metal Input Demand"
+    },
+    {
+      "from": "A Electronics Metal Input Demand",
+      "to": "A Metal Available for Intermediate Use"
+    },
+    {
+      "from": "A Metal Inventory",
+      "to": "A Metal Available for Intermediate Use"
+    },
+    {
+      "from": "A Metal Buffer",
+      "to": "A Metal Available for Intermediate Use"
+    },
+    {
+      "from": "Intermediate Inputs Enabled",
+      "to": "A Electronics Metal Input Delivery"
+    },
+    {
+      "from": "A Metal Available for Intermediate Use",
+      "to": "A Electronics Metal Input Delivery"
+    },
+    {
+      "from": "Intermediate Inputs Enabled",
+      "to": "A Electronics Metal Input Fulfillment"
+    },
+    {
+      "from": "A Electronics Metal Input Demand",
+      "to": "A Electronics Metal Input Fulfillment"
+    },
+    {
+      "from": "A Electronics Metal Input Delivery",
+      "to": "A Electronics Metal Input Fulfillment"
+    },
+    {
+      "from": "B Electronics Feedstock Consumption Rate",
+      "to": "B Electronics Metal Input Target Inventory"
+    },
+    {
+      "from": "Metal Input Target Days",
+      "to": "B Electronics Metal Input Target Inventory"
+    },
+    {
+      "from": "B Electronics Feedstock Consumption Rate",
+      "to": "B Electronics Metal Input Demand"
+    },
+    {
+      "from": "B Electronics Metal Input Target Inventory",
+      "to": "B Electronics Metal Input Demand"
+    },
+    {
+      "from": "B Electronics Feedstock Inventory",
+      "to": "B Electronics Metal Input Demand"
+    },
+    {
+      "from": "Metal Input Adjustment Time",
+      "to": "B Electronics Metal Input Demand"
+    },
+    {
+      "from": "B Electronics Metal Input Demand",
+      "to": "B Metal Available for Intermediate Use"
+    },
+    {
+      "from": "B Metal Inventory",
+      "to": "B Metal Available for Intermediate Use"
+    },
+    {
+      "from": "B Metal Buffer",
+      "to": "B Metal Available for Intermediate Use"
+    },
+    {
+      "from": "Intermediate Inputs Enabled",
+      "to": "B Electronics Metal Input Delivery"
+    },
+    {
+      "from": "B Metal Available for Intermediate Use",
+      "to": "B Electronics Metal Input Delivery"
+    },
+    {
+      "from": "Intermediate Inputs Enabled",
+      "to": "B Electronics Metal Input Fulfillment"
+    },
+    {
+      "from": "B Electronics Metal Input Demand",
+      "to": "B Electronics Metal Input Fulfillment"
+    },
+    {
+      "from": "B Electronics Metal Input Delivery",
+      "to": "B Electronics Metal Input Fulfillment"
+    },
+    {
+      "from": "Intermediate Inputs Enabled",
+      "to": "A Electronics Feedstock Extraction Rate"
+    },
+    {
+      "from": "Intermediate Inputs Enabled",
+      "to": "A Electronics Feedstock Consumption Rate"
+    },
+    {
+      "from": "Metal per Electronics",
+      "to": "A Electronics Feedstock Consumption Rate"
+    },
+    {
+      "from": "Intermediate Inputs Enabled",
+      "to": "A Electronics Feedstock Price"
+    },
+    {
+      "from": "A Market Price",
+      "to": "A Electronics Feedstock Price"
+    },
+    {
+      "from": "Intermediate Inputs Enabled",
+      "to": "A Electronics Unit Cost"
+    },
+    {
+      "from": "Metal per Electronics",
+      "to": "A Electronics Unit Cost"
+    },
+    {
+      "from": "Intermediate Inputs Enabled",
+      "to": "A Electronics Feedstock Target Inventory"
+    },
+    {
+      "from": "A Electronics Metal Input Target Inventory",
+      "to": "A Electronics Feedstock Target Inventory"
+    },
+    {
+      "from": "Intermediate Inputs Enabled",
+      "to": "A Electronics Feedstock Buffer"
+    },
+    {
+      "from": "Metal per Electronics",
+      "to": "A Electronics Feedstock Buffer"
+    },
+    {
+      "from": "Intermediate Inputs Enabled",
+      "to": "A Desired Smelting Rate"
+    },
+    {
+      "from": "A Electronics Metal Input Delivery",
+      "to": "A Desired Smelting Rate"
+    },
+    {
+      "from": "Intermediate Inputs Enabled",
+      "to": "B Electronics Feedstock Extraction Rate"
+    },
+    {
+      "from": "Intermediate Inputs Enabled",
+      "to": "B Electronics Feedstock Consumption Rate"
+    },
+    {
+      "from": "Metal per Electronics",
+      "to": "B Electronics Feedstock Consumption Rate"
+    },
+    {
+      "from": "Intermediate Inputs Enabled",
+      "to": "B Electronics Feedstock Price"
+    },
+    {
+      "from": "B Market Price",
+      "to": "B Electronics Feedstock Price"
+    },
+    {
+      "from": "Intermediate Inputs Enabled",
+      "to": "B Electronics Unit Cost"
+    },
+    {
+      "from": "Metal per Electronics",
+      "to": "B Electronics Unit Cost"
+    },
+    {
+      "from": "Intermediate Inputs Enabled",
+      "to": "B Electronics Feedstock Target Inventory"
+    },
+    {
+      "from": "B Electronics Metal Input Target Inventory",
+      "to": "B Electronics Feedstock Target Inventory"
+    },
+    {
+      "from": "Intermediate Inputs Enabled",
+      "to": "B Electronics Feedstock Buffer"
+    },
+    {
+      "from": "Metal per Electronics",
+      "to": "B Electronics Feedstock Buffer"
+    },
+    {
+      "from": "Intermediate Inputs Enabled",
+      "to": "B Desired Smelting Rate"
+    },
+    {
+      "from": "B Electronics Metal Input Delivery",
+      "to": "B Desired Smelting Rate"
+    },
+    {
+      "from": "Intermediate Inputs Enabled",
+      "to": "A Effective Electronics Local Base Demand"
+    },
+    {
+      "from": "Test 19 Coupled Electronics Growth Active",
+      "to": "A Effective Electronics Local Base Demand"
+    },
+    {
+      "from": "v7.4 Coupled Electronics Growth Multiplier",
+      "to": "A Effective Electronics Local Base Demand"
+    },
+    {
+      "from": "Intermediate Inputs Enabled",
+      "to": "B Effective Local Base Demand"
+    },
+    {
+      "from": "Test 20 Coupled Metal Demand Growth Active",
+      "to": "B Effective Local Base Demand"
+    },
+    {
+      "from": "v7.4 Coupled Metal Demand Growth Multiplier",
+      "to": "B Effective Local Base Demand"
+    },
+    {
+      "from": "Intermediate Inputs Enabled",
+      "to": "B Effective Mining Capacity"
+    },
+    {
+      "from": "Test 18 Metal Supply Shock Active",
+      "to": "B Effective Mining Capacity"
+    },
+    {
+      "from": "v7.4 Metal Supply Shock Multiplier",
+      "to": "B Effective Mining Capacity"
+    }
+  ],
+  "modify_scenarios": [
+    {
+      "mode": 0,
+      "set": {
+        "Intermediate Inputs Enabled": 0
+      }
+    },
+    {
+      "mode": 1,
+      "set": {
+        "Intermediate Inputs Enabled": 0
+      }
+    },
+    {
+      "mode": 2,
+      "set": {
+        "Intermediate Inputs Enabled": 0
+      }
+    },
+    {
+      "mode": 3,
+      "set": {
+        "Intermediate Inputs Enabled": 0
+      }
+    },
+    {
+      "mode": 4,
+      "set": {
+        "Intermediate Inputs Enabled": 0
+      }
+    },
+    {
+      "mode": 5,
+      "set": {
+        "Intermediate Inputs Enabled": 0
+      }
+    },
+    {
+      "mode": 6,
+      "set": {
+        "Intermediate Inputs Enabled": 0
+      }
+    },
+    {
+      "mode": 7,
+      "set": {
+        "Intermediate Inputs Enabled": 0
+      }
+    },
+    {
+      "mode": 8,
+      "set": {
+        "Intermediate Inputs Enabled": 0
+      }
+    },
+    {
+      "mode": 9,
+      "set": {
+        "Intermediate Inputs Enabled": 0
+      }
+    },
+    {
+      "mode": 10,
+      "set": {
+        "Intermediate Inputs Enabled": 0
+      }
+    },
+    {
+      "mode": 11,
+      "set": {
+        "Intermediate Inputs Enabled": 0
+      }
+    },
+    {
+      "mode": 12,
+      "set": {
+        "Intermediate Inputs Enabled": 0
+      }
+    },
+    {
+      "mode": 13,
+      "set": {
+        "Intermediate Inputs Enabled": 0
+      }
+    },
+    {
+      "mode": 14,
+      "set": {
+        "Intermediate Inputs Enabled": 0
+      }
+    },
+    {
+      "mode": 15,
+      "set": {
+        "Intermediate Inputs Enabled": 0
+      }
+    },
+    {
+      "mode": 16,
+      "set": {
+        "Intermediate Inputs Enabled": 0
+      }
+    }
+  ],
+  "add_scenarios": [
+    {
+      "name": "v7.4 Intermediate Inputs Baseline",
+      "description": "Coupled baseline with Metal as the physical Electronics intermediate input. No exogenous shock; used to verify going-concern behavior and the new physical/cost channels.",
+      "values": {
+        "Timed Test Mode": 17,
+        "Capital Lifecycle Enabled": 1,
+        "Intermediate Inputs Enabled": 1
+      }
+    },
+    {
+      "name": "v7.4 Temporary Metal Supply Shock",
+      "description": "Coupled economy. B mining capacity is reduced to 50% from day 360 to 720; the Metal shortage should propagate through Electronics input fulfillment, cost, output, and then recover.",
+      "values": {
+        "Timed Test Mode": 18,
+        "Capital Lifecycle Enabled": 1,
+        "Intermediate Inputs Enabled": 1
+      }
+    },
+    {
+      "name": "v7.4 Sustained Electronics Growth with Input Coupling",
+      "description": "Coupled economy. A Electronics local base demand rises 4x permanently from day 360, testing Metal input demand, refinery expansion and induced power-capital growth.",
+      "values": {
+        "Timed Test Mode": 19,
+        "Capital Lifecycle Enabled": 1,
+        "Intermediate Inputs Enabled": 1
+      }
+    },
+    {
+      "name": "v7.4 Coupled Metal Demand Growth",
+      "description": "Coupled economy. B final Metal local base demand doubles permanently from day 360, testing proportional competition between final and intermediate Metal demand and refinery adaptation.",
+      "values": {
+        "Timed Test Mode": 20,
+        "Capital Lifecycle Enabled": 1,
+        "Intermediate Inputs Enabled": 1
+      }
+    }
+  ]
+}
