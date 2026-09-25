@@ -70,6 +70,31 @@
 
 Дальше: вернуть `candidate/model-patch.json` к положительной пустой пробе, дождаться зелёных `candidate.yml` и `ci.yml`, завершить документацию/итоговые разделы отчёта и закрыть КТ4.
 
+### КТ4 — 2026-09-25 22:55 EEST — финальная голова снова положительная, candidate.yml и CI зелёные
+
+Сделано: `candidate/model-patch.json` возвращён байт-в-байт к положительной пустой пробе (только `name`, `format`, `base_sha256`). На commit `bca62f2ff23781401879d0fb920b328fe529b9de` завершились оба финальных запуска.
+
+Доказательство:
+- Candidate acceptance: https://github.com/Y2Kill/orbital-economy/actions/runs/36181187436 — **success**.
+- Обычный CI: https://github.com/Y2Kill/orbital-economy/actions/runs/36181187361 — **success**; `guard`, `tools-selftest`, `bench-selftests` PASS, `integrity` ожидаемо skipped на task-ветке.
+- Финальная candidate-сводка:
+  - `apply-patch PASS (0s)`
+  - `conformance PASS (1s)`
+  - `audit PASS (0s)`
+  - `validation PASS (261s)`
+  - `policy PASS (511s)`
+  - `Candidate SHA-256: 16e8ca6c5719e67422e16a6ec1ea2724b6121a062200eaf91e81389a2a180cd1`
+  - `Validation SHA-256: 1970aaea988ece5ba2524e0ca79b68a0c48864c8bf6d7e458c336b718c209ddc`
+  - `COMPARISON RESULT: BYTE_IDENTICAL`
+  - `POLICY RESULT: PASS`
+  - `Observed / Expected / Unexpected / Forbidden / Threshold exceed / Required missing / Hard blockers = 0`.
+- Артефакт: https://github.com/Y2Kill/orbital-economy/actions/runs/36181187436/artifacts/10883784974, digest `sha256:c1e554480d3110a349efcdabfd71b1e7ff7fc50783bd9a01e16f928a5638cd2d`.
+- Candidate run: 19:41:13Z → 19:54:24Z, примерно **13 мин 11 с**. CI: 19:41:13Z → 19:43:15Z, примерно **2 мин 02 с**.
+
+Не подтвердилось: расхождений с ожидаемым результатом КТ4 нет. Отрицательная проба не осталась в финальной поставке; финальный `model-patch.json` снова пустой положительный патч.
+
+Дальше: контрольные точки КТ1–КТ4 закрыты. После этой записи меняется только `REPORT_RU.md`, поэтому `candidate.yml` по своему path-filter повторно запускаться не должен; обычный CI этого journal commit используется как финальная проверка ветки.
+
 ## Устройство workflow
 
 `.github/workflows/candidate.yml` имеет два входа:
@@ -95,7 +120,9 @@
 - validation всех 27 Modes — 259 с;
 - policy accepted↔candidate по всем 27 Modes — 521 с.
 
-Отрицательный полный прогон КТ3 (run https://github.com/Y2Kill/orbital-economy/actions/runs/36178357637) занял примерно **13 мин 30 с**; validation — 272 с, policy — 519 с. Основная стоимость полного candidate-cycle ожидаемо приходится на два симуляционных этапа: validation и policy.
+Отрицательный полный прогон КТ3 (run https://github.com/Y2Kill/orbital-economy/actions/runs/36178357637) занял примерно **13 мин 30 с**; validation — 272 с, policy — 519 с.
+
+Финальный положительный прогон КТ4 (run https://github.com/Y2Kill/orbital-economy/actions/runs/36181187436) занял примерно **13 мин 11 с**; validation — 261 с, policy — 511 с. Обычный CI той же головы занял примерно **2 мин 02 с**. Основная стоимость полного candidate-cycle стабильно приходится на два симуляционных этапа: validation и policy.
 
 ## Что не запускалось / ограничения среды
 
@@ -104,3 +131,9 @@
 Не выполнялась каноническая Windows-приёмка D4 и владельческая D3-проба с намеренно нарушенной validation — это явно оставлено стороне приёмки по заданию. `workflow_dispatch` отдельно не запускался: push-путь полностью проверен КТ1–КТ4; ручной вход будет дополнительно проверен владельцами в D3 после слияния.
 
 Замечание к процессу: `scope.json.required_changes` потребовал README и MODEL_PATCH_RU.md уже на первом guard, поэтому документация была добавлена раньше КТ4. Это не меняет содержание КТ4: на финальной голове документация уже присутствует и проверяется вместе с положительной пробой.
+
+## Итог
+
+Задача 007 со стороны исполнителя завершена: КТ1–КТ4 закрыты доказательствами из GitHub Actions. Реализованный workflow проверен на положительной и отрицательной пробах, не маскирует policy-failure, сохраняет все отчёты и возвращает финальную ветку к положительному кандидату. Документация в `README.md` и `lab/docs/MODEL_PATCH_RU.md` обновлена. За пределами явно разрешённого scope изменения не вносились; model/validation/policy, `lab/src/`, существующие workflow и SHA256SUMS не изменялись.
+
+Оставшиеся D3 (владельческая validation-failure probe) и D4 (канонический Windows verdict) относятся к стороне приёмки согласно заданию.
