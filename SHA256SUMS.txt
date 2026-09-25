@@ -103,7 +103,9 @@ a0eb978e9616d1ad6a23ef8e4587f8c95502694824e0acc99a29c30ad6ec9f82  ./docs/tasks/0
 02ddb93791096162bc228f2e7c0147de4315ed2144a4b0c06850a83c6d95815b  ./docs/tasks/004-vendor-dependencies/REPORT_RU.md
 6a9bb2beea23aaa920140074a0df7285a501b876b9594360faca49807994c1c6  ./docs/tasks/004-vendor-dependencies/TASK_RU.md
 8bd60f6b50a680e9b04fcdb986c800e24cf0ed2f91f702397c9acc5edcbf661a  ./docs/tasks/004-vendor-dependencies/scope.json
-8807fb4f35fa228b5a7d77ffc945ba6c26b99be00fa551fc152211e3e30701c3  ./docs/tasks/README_RU.md
+03a09d6ccb464e24acd43a6debb1e1608aaead7c58697d6fd31ec2ff00a86d86  ./docs/tasks/005-ci/TASK_RU.md
+7a4ba17f80401d647bd004b34649ed3c18c0e10f13817c4e4a666b51db143924  ./docs/tasks/005-ci/scope.json
+66086cad4ca466e6beb7204df3a8044ff9d34aca599c856f316b6326cb5bae26  ./docs/tasks/README_RU.md
 bbf818e93b88d606b3137b1bb69d60db8c41c9df4089025a921b1ca00f473244  ./lab/APPLY_PATCH.cmd
 187b1cc987e1a2a5892fe987cb36d7838ee16b0bf960c4a47521e1d25d6bf2d9  ./lab/CHANGELOG.md
 291d9cf375a7f886f02f866b729c47960ef0c5d0af8d45704d1bd6493a4f49b1  ./lab/CHECK_CANDIDATE.cmd
@@ -185,6 +187,6 @@ a9573f5afe43d2ae2bf12fdc3066c983c264eba162e1d3fc1d5f11e3872f9e91  ./reference/v7
 cc9a3ab6cc4ca146f7ce49d5f609d812cf4357b0225733ec6f9b8d76e4ead6dc  ./reference/v7.6/policy/change-policy-v7.6-strict.json
 cbd3ff4b115b3a025e2cb54f9cbd3436ca11a5dcebdebb10cf094bfa2963acaf  ./reference/v7.6/validation/validation-v7.6.json
 39315da9cdeddebe741c3431fc205dc84c4bf6857f2fedff91376ae4b82c2424  ./tools/build_sums.mjs
-633dfd9ac7861970c947e7eb3d17a75ae61860e78348f6eaea37af1ecce12aa6  ./tools/check_branch.mjs
-ffcd50a23479e93d8a18fe1c58b5cc39ce33488ed2621893fcd9fceb2e34fca5  ./tools/selftest.sh
+50b46c132798ba2a2dc555d752f9365bf9ab677a91cda827ea74d62bb8b8fedd  ./tools/check_branch.mjs
+53622bdaa0c51d74e6627a0fd35d789ceaa13d41a457c7c351b0a9b4ea632936  ./tools/selftest.sh
 1970aaea988ece5ba2524e0ca79b68a0c48864c8bf6d7e458c336b718c209ddc  ./validation/validation-v7.6.1.json

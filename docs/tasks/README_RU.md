@@ -29,7 +29,7 @@ docs/tasks/NNN-имя/
 }
 ```
 
-Защищённые пути (без `allow_protected` не меняются никогда): `model/`, `validation/`, `policy/`, `reference/`, `lab/input/`, `lab/reference/`, `BASELINE_MANIFEST.json`, `.gitattributes`, `.gitignore`, `tools/`, `lab/vendor/`, `docs/tasks/` (кроме своего `REPORT_RU.md`), контракт исполнителя, `docs/VERSIONING_AND_AUTHORITY.md`. `SHA256SUMS.txt` и `lab/SHA256SUMS.txt` разрешены всегда — их пересобирает исполнитель.
+Защищённые пути (без `allow_protected` не меняются никогда): `model/`, `validation/`, `policy/`, `reference/`, `lab/input/`, `lab/reference/`, `BASELINE_MANIFEST.json`, `.gitattributes`, `.gitignore`, `tools/`, `lab/vendor/`, `.github/`, `docs/tasks/` (кроме своего `REPORT_RU.md`), контракт исполнителя, `docs/VERSIONING_AND_AUTHORITY.md`. `SHA256SUMS.txt` и `lab/SHA256SUMS.txt` разрешены всегда — их пересобирает исполнитель.
 
 `scope.json` читается проверкой из `main`, не из ветки: поставка не может расширить себе права.
 
@@ -64,7 +64,7 @@ docs/tasks/NNN-имя/
 - если `main` ушёл вперёд, агент делает `git rebase origin/main`, пересобирает SUMS и пушит с `--force-with-lease` — это единственный допустимый force-push, и только в свою ветку;
 - теги ставим только мы.
 
-Проверка самих инструментов: `bash tools/selftest.sh` (песочница во временной папке; 22 сценария — честная поставка и типовые нарушения; реальный репозиторий и origin не трогаются). Прогонять после любой правки в `tools/`.
+Проверка самих инструментов: `bash tools/selftest.sh` (песочница во временной папке; 23 сценария — честная поставка и типовые нарушения; реальный репозиторий и origin не трогаются). Прогонять после любой правки в `tools/`.
 
 ## Шаблоны выдачи агенту
 

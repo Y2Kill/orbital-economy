@@ -60,7 +60,7 @@ const matchAny = (f, globs = []) => globs.some(g => globRe(g).test(f));
 
 // Paths no task may touch unless its scope lists them under allow_protected.
 const PROTECTED = ['model/**', 'validation/**', 'policy/**', 'reference/**', 'lab/input/**', 'lab/reference/**',
-  'BASELINE_MANIFEST.json', '.gitattributes', '.gitignore', 'tools/**', 'docs/tasks/**', 'lab/vendor/**',
+  'BASELINE_MANIFEST.json', '.gitattributes', '.gitignore', 'tools/**', 'docs/tasks/**', 'lab/vendor/**', '.github/**',
   'docs/CONTRACTOR_DELIVERY_CONTRACT_RU.md', 'docs/VERSIONING_AND_AUTHORITY.md'];
 // Paths every task may (and usually must) touch.
 const ALWAYS = ['SHA256SUMS.txt', 'lab/SHA256SUMS.txt', `${taskDir}/REPORT_RU.md`];

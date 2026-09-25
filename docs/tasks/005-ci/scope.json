@@ -1,0 +1,29 @@
+{
+  "task": "005",
+  "title": "CI on GitHub Actions: feedback loop for task branches, first Linux run of the bench",
+  "branch": "task/005-ci",
+  "allow": [
+    "README.md",
+    "lab/README_RU.md",
+    "lab/*.cmd",
+    "lab/src/**",
+    "lab/package.json",
+    "lab/package-lock.json",
+    "lab/CHANGELOG.md",
+    "lab/QUICK_START_RU.txt",
+    "lab/ENGINE_PIN.md",
+    "lab/docs/**",
+    "docs/HISTORY_RU.md"
+  ],
+  "allow_binary": [],
+  "allow_protected": [
+    ".github/workflows/ci.yml",
+    ".github/workflows/bench-full.yml"
+  ],
+  "required_changes": [
+    ".github/workflows/ci.yml",
+    ".github/workflows/bench-full.yml",
+    "README.md"
+  ],
+  "sums_by": "reviewer"
+}

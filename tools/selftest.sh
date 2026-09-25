@@ -74,6 +74,9 @@ expect "touching the accepted model fails" FAIL 'model/.*protected path'
 fresh; mkdir -p lab/vendor; printf 'repacked\0' > lab/vendor/simulation-9.0.0.tgz; deliver vendor; publish
 expect "touching vendored dependencies fails" FAIL 'lab/vendor/simulation-9.0.0.tgz: protected path'
 
+fresh; mkdir -p .github/workflows; printf 'on: push\n' > .github/workflows/ci.yml; deliver ci; publish
+expect "touching CI workflows fails" FAIL '.github/workflows/ci.yml: protected path'
+
 fresh; node -e "const f='docs/tasks/900-test/scope.json',fs=require('fs'),s=JSON.parse(fs.readFileSync(f));s.allow.push('docs/**');fs.writeFileSync(f,JSON.stringify(s,null,2)+'\n')"
 printf 'x\n' >> docs/HISTORY_RU.md; deliver widen; publish
 expect "widening the scope inside the branch does not help" FAIL 'docs/HISTORY_RU.md: outside the task scope'
