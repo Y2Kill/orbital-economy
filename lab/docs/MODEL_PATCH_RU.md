@@ -69,3 +69,29 @@ APPLY_PATCH.cmd "delivery\model-patch.json" "input\model\candidate.json"
 ## Что делает стенд после применения
 
 Кандидат записывается как обычный ModelJSON (`elements`, `scenarios`, `name`), SHA печатается. Дальше он ничем не отличается от вручную собранной модели: те же гейты, та же policy. Patch в поставке — дополнительный, а не заменяющий артефакт: приёмка всё равно идёт по candidate ModelJSON, который собрал стенд.
+
+
+## Проверка патча в CI
+
+Для задачи в ветке `task/NNN-имя` поставка кандидата лежит рядом с заданием:
+
+```text
+docs/tasks/NNN-имя/candidate/
+  model-patch.json      обязательно
+  validation.json       необязательно
+  change-policy.json    необязательно
+```
+
+При push изменения внутри этой папки workflow `.github/workflows/candidate.yml` определяет папку задачи по номеру `NNN` из имени ветки и запускает на Ubuntu / Node 24.11.1 тот же приёмочный цикл, что используется владельцем проекта:
+
+```text
+apply-patch → conformance → audit → validation → policy
+```
+
+Если `validation.json` или `change-policy.json` в папке кандидата отсутствуют, берутся принятые `validation/` и строгая `policy/`. Зависимости стенда устанавливаются офлайн только из `lab/vendor/`.
+
+Каждый гейт имеет отдельный статус; последующие гейты выполняются и после провала предыдущего там, где входные файлы уже существуют. В конце workflow печатает сводную таблицу PASS/FAIL, SHA-256 кандидата и validation, `COMPARISON RESULT`, `POLICY RESULT`, счётчики policy и первые неожиданные события. Та же сводка попадает в job summary, а полный `lab/output/` загружается артефактом.
+
+По умолчанию выполняются все Modes. Запуск с ограниченным `modes` через `workflow_dispatch` считается **диагностическим**: строгая policy требует полного покрытия и вправе отклонить такой запуск.
+
+SHA validation, который нужен для привязки собственного `change-policy.json`, напечатан в шаге `apply-patch` и в финальной сводке как `Validation SHA-256`. Его следует копировать без изменений в поле policy `validation_sha256`.

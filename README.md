@@ -58,7 +58,9 @@ On every push to `main` and `task/**`, `.github/workflows/ci.yml` runs on Ubuntu
 - `main`: integrity-manifest check;
 - all matching pushes: repository-tools self-test and Orbital Economy Lab self-tests installed offline from `lab/vendor/`.
 
-The Actions page shows each job separately. The full 27-Mode run is intentionally not part of every push: `.github/workflows/bench-full.yml` is started manually with a `ref` input, runs `RUN_LAB`/policy equivalents for all Modes, and uploads `lab/output/` as an artifact.
+The Actions page shows each job separately. Model-task branches can also use `.github/workflows/candidate.yml`: a push that changes `docs/tasks/*/candidate/**` runs the full candidate cycle `APPLY_PATCH → conformance → audit → validation → policy` and uploads the reports. `workflow_dispatch` can run the same cycle for an explicit task ref and Mode selection.
+
+The full 27-Mode accepted-baseline run is intentionally not part of every push: `.github/workflows/bench-full.yml` is started manually with a `ref` input, runs `RUN_LAB`/policy equivalents for all Modes, and uploads `lab/output/` as an artifact.
 
 ## How a change gets in
 
