@@ -55,7 +55,22 @@
 
 ## Калибровка
 
-Пока используются skeleton-значения спецификации. Числовое обоснование каждого `[calib]` будет добавлено после первого `candidate.yml` run; до этого значения не объявляются принятыми.
+Первый полный Linux-run: https://github.com/Y2Kill/orbital-economy/actions/runs/36190086944. Пороговые проверки r1 были намеренно невозможными `[calib probe]`; стенд напечатал наблюдаемые значения. r2 использует не значения «впритык», а округлённые содержательные границы:
+
+| Проверка | Наблюдение r1 | Порог r2 | Запас / смысл |
+|---|---:|---:|---|
+| Mode 27 A CM fulfillment min [200,1080] | 0.966918 | >= 0.94 | 0.0269; спокойная механика не душит стройку |
+| Mode 28 A CM fulfillment min [360,720] | 0.360445 | < 0.50 | 0.1396; shock явно связывает |
+| Mode 28 A refinery expansion ratio min | 0.360445 | < 0.50 | 0.1396; стройка тормозится CM |
+| Mode 28 A CG fulfillment min | 0.968430 | >= 0.95 | 0.0184; CG не причина торможения |
+| Mode 28 A CM fulfillment @900 | 0.967178 | >= 0.94 | 0.0272; восстановление после shock |
+| Mode 29 A Regolith inventory min | 0.871627 | < 5 | большой запас от initial 40; сырьё почти исчерпано |
+| Mode 29 A CM fulfillment min | 0.475198 | < 0.60 | 0.1248; сырьевой shock связывает |
+| Mode 29 A CM production-rate max [360,720] | 0.706065 | < 1.0 | при capacity ровно 3; доказывает raw-material limitation |
+| Mode 29 A CM fulfillment @900 | 0.967141 | >= 0.94 | 0.0271; восстановление |
+| B CM fulfillment min Modes 27–29 | 0.999999999966667 | >= 0.999999999 | epsilon по test plan; B остаётся в покое |
+
+[calib] константы модели пока оставлены ровно на skeleton-значениях владельца: Regolith/unit=2; initial inventories=40/30; extraction capacity A/B=7/5; CM production capacity A/B=3/2; CM-per-capacity 20/12/1; shock multipliers=0.1. Первый прогон воспроизвёл ориентиры skeleton практически буквально (0.967 / 0.360 / 0.475), поэтому оснований менять эти константы нет.
 
 ## Известные ограничения
 

@@ -1,5 +1,5 @@
 {
-  "name": "Orbital Economy v7.7 validation candidate r1 — structural + qualitative + calibration probes",
+  "name": "Orbital Economy v7.7 validation candidate r2 — calibrated scenario checks",
   "mode_variable": "Timed Test Mode",
   "expected_time_step": 0.25,
   "time_step_tolerance": 1e-12,
@@ -11917,16 +11917,16 @@
         },
         {
           "type": "metric",
-          "name": "Mode 27: B construction materials fulfillment remains 1",
+          "name": "Mode 27: B construction materials fulfillment remains >= 1 - 1e-9",
           "column": "B Construction Materials Fulfillment",
           "metric": "min",
           "op": ">=",
-          "value": 1,
-          "tolerance": 1e-12
+          "value": 0.999999999,
+          "tolerance": 0
         },
         {
           "type": "metric",
-          "name": "[calib probe] Mode 27: A construction materials fulfillment min [200,1080]",
+          "name": "Mode 27: A construction materials fulfillment remains >= 0.94 after warm-up",
           "column": "A Construction Materials Fulfillment",
           "metric": "min",
           "window": [
@@ -11934,7 +11934,7 @@
             1080
           ],
           "op": ">=",
-          "value": 2
+          "value": 0.94
         },
         {
           "type": "identity",
@@ -12164,40 +12164,40 @@
       "checks": [
         {
           "type": "metric",
-          "name": "Mode 28: B construction materials fulfillment remains 1",
+          "name": "Mode 28: B construction materials fulfillment remains >= 1 - 1e-9",
           "column": "B Construction Materials Fulfillment",
           "metric": "min",
           "op": ">=",
-          "value": 1,
-          "tolerance": 1e-12
+          "value": 0.999999999,
+          "tolerance": 0
         },
         {
           "type": "metric",
-          "name": "[calib probe] Mode 28: A construction materials fulfillment min in shock window",
+          "name": "Mode 28: A construction materials fulfillment falls below 0.50 in shock window",
           "column": "A Construction Materials Fulfillment",
           "metric": "min",
           "window": [
             360,
             720
           ],
-          "op": ">=",
-          "value": 2
+          "op": "<",
+          "value": 0.5
         },
         {
           "type": "metric",
-          "name": "[calib probe] Mode 28: A refinery construction-materials expansion ratio min in shock window",
+          "name": "Mode 28: A refinery expansion ratio falls below 0.50 in shock window",
           "column": "A Refinery Construction Materials Expansion Ratio",
           "metric": "min",
           "window": [
             360,
             720
           ],
-          "op": ">=",
-          "value": 2
+          "op": "<",
+          "value": 0.5
         },
         {
           "type": "metric",
-          "name": "[calib probe] Mode 28: A capital goods fulfillment min in shock window",
+          "name": "Mode 28: A capital goods fulfillment remains >= 0.95 in shock window",
           "column": "A Capital Goods Fulfillment",
           "metric": "min",
           "window": [
@@ -12205,11 +12205,11 @@
             720
           ],
           "op": ">=",
-          "value": 2
+          "value": 0.95
         },
         {
           "type": "metric",
-          "name": "[calib probe] Mode 28: A construction materials fulfillment at day 900",
+          "name": "Mode 28: A construction materials fulfillment recovers >= 0.94 by day 900",
           "column": "A Construction Materials Fulfillment",
           "metric": "last",
           "window": [
@@ -12217,7 +12217,33 @@
             900
           ],
           "op": ">=",
-          "value": 2
+          "value": 0.94
+        },
+        {
+          "type": "event_order",
+          "name": "Mode 28: construction-materials scarcity then recovery",
+          "events": [
+            {
+              "name": "fulfillment < 0.50 during shock",
+              "column": "A Construction Materials Fulfillment",
+              "op": "<",
+              "value": 0.5,
+              "window": [
+                360,
+                720
+              ]
+            },
+            {
+              "name": "fulfillment > 0.94 after shock",
+              "column": "A Construction Materials Fulfillment",
+              "op": ">",
+              "value": 0.94,
+              "window": [
+                720,
+                1080
+              ]
+            }
+          ]
         },
         {
           "type": "identity",
@@ -12447,53 +12473,64 @@
       "checks": [
         {
           "type": "metric",
-          "name": "Mode 29: B construction materials fulfillment remains 1",
+          "name": "Mode 29: B construction materials fulfillment remains >= 1 - 1e-9",
           "column": "B Construction Materials Fulfillment",
           "metric": "min",
           "op": ">=",
-          "value": 1,
-          "tolerance": 1e-12
+          "value": 0.999999999,
+          "tolerance": 0
+        },
+        {
+          "type": "bounded",
+          "name": "Mode 29: A construction materials production capacity stays unshocked at 3",
+          "column": "A Construction Materials Production Capacity",
+          "min": 3,
+          "max": 3,
+          "tolerance": 1e-12,
+          "window": [
+            360,
+            720
+          ]
         },
         {
           "type": "metric",
-          "name": "Mode 29: A construction materials production rate does not exceed unshocked production capacity",
+          "name": "Mode 29: A construction materials production rate is raw-material limited (< 1.0)",
           "column": "A Construction Materials Production Rate",
           "metric": "max",
           "window": [
             360,
             720
           ],
-          "op": "<=",
-          "value": 3,
-          "tolerance": 1e-9
+          "op": "<",
+          "value": 1
         },
         {
           "type": "metric",
-          "name": "[calib probe] Mode 29: A regolith inventory min in shock window",
+          "name": "Mode 29: A regolith inventory is strongly depleted (< 5)",
           "column": "A Regolith Inventory",
           "metric": "min",
           "window": [
             360,
             720
           ],
-          "op": ">=",
-          "value": 1000000
+          "op": "<",
+          "value": 5
         },
         {
           "type": "metric",
-          "name": "[calib probe] Mode 29: A construction materials fulfillment min in shock window",
+          "name": "Mode 29: A construction materials fulfillment falls below 0.60 in shock window",
           "column": "A Construction Materials Fulfillment",
           "metric": "min",
           "window": [
             360,
             720
           ],
-          "op": ">=",
-          "value": 2
+          "op": "<",
+          "value": 0.6
         },
         {
           "type": "metric",
-          "name": "[calib probe] Mode 29: A construction materials fulfillment at day 900",
+          "name": "Mode 29: A construction materials fulfillment recovers >= 0.94 by day 900",
           "column": "A Construction Materials Fulfillment",
           "metric": "last",
           "window": [
@@ -12501,7 +12538,33 @@
             900
           ],
           "op": ">=",
-          "value": 2
+          "value": 0.94
+        },
+        {
+          "type": "event_order",
+          "name": "Mode 29: regolith scarcity then construction-materials recovery",
+          "events": [
+            {
+              "name": "fulfillment < 0.60 during shock",
+              "column": "A Construction Materials Fulfillment",
+              "op": "<",
+              "value": 0.6,
+              "window": [
+                360,
+                720
+              ]
+            },
+            {
+              "name": "fulfillment > 0.94 after shock",
+              "column": "A Construction Materials Fulfillment",
+              "op": ">",
+              "value": 0.94,
+              "window": [
+                720,
+                1080
+              ]
+            }
+          ]
         },
         {
           "type": "identity",
@@ -13141,6 +13204,7 @@
     "v7.7 DRAFT: structural declarations only. The executor adds: scenario checks for Modes 27-29, the regolith->construction materials and expansion->construction materials pair identities (only in Modes where the flows are enabled), switch-off checks for Modes 0-26, and kernel/colony declarations if the audit asks for them.",
     "v7.7 candidate r1: Modes 0-26 include explicit switch-off checks for Construction Materials/Regolith.",
     "v7.7 candidate r1: Modes 27-29 include exact Regolith->Construction Materials, sector expansion->Construction Materials, and legacy Capital Goods pair identities.",
-    "v7.7 candidate r1: checks named [calib probe] are intentionally impossible thresholds used only to expose observed Linux values in the first run; they are replaced by acceptance thresholds at KT3."
+    "v7.7 candidate r2 calibration from Linux candidate run 36190086944: Mode27 fulfillment min=0.9669176 -> floor 0.94; Mode28 fulfillment/ratio min=0.3604454 -> ceiling 0.50; CG fulfillment min=0.9684302 -> floor 0.95; recovery@900=0.9671779 -> floor 0.94; Mode29 regolith min=0.8716267 -> ceiling 5; CM fulfillment min=0.4751981 -> ceiling 0.60; production-rate max=0.7060652 with capacity exactly 3 -> ceiling 1.0; recovery@900=0.9671409 -> floor 0.94.",
+    "B idle fulfillment observed 0.999999999966667 due floating arithmetic; executable floor is 1-1e-9, matching the test-plan epsilon formulation rather than false exact equality."
   ]
 }
