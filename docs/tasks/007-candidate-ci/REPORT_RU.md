@@ -44,6 +44,32 @@
 
 Дальше: заменить положительную пробу на отрицательную `Power Resource Shock Factor: 0.5 → 0.6`, без собственной policy; проверить, что conformance/audit/validation PASS, а policy FAIL именно на ожидаемых событиях, затем записать КТ3.
 
+
+### КТ3 — 2026-09-25 22:35 EEST — отрицательная проба отклонена policy как ожидается
+
+Сделано: использован уже запушенный commit `a40bc721951f42565bd72da5eed461447d079954` с единственной заменой `Power Resource Shock Factor: 0.5 → 0.6`, без собственной policy. Повторный запуск отрицательной пробы не выполнялся.
+
+Доказательство:
+- Candidate acceptance run: https://github.com/Y2Kill/orbital-economy/actions/runs/36178357637 — итог job **failure**, что является ожидаемым результатом отрицательной пробы.
+- CI того же commit: https://github.com/Y2Kill/orbital-economy/actions/runs/36178357463 — **success**.
+- Гейты из финальной сводки:
+  - `apply-patch PASS (0s)`
+  - `conformance PASS (0s)`
+  - `audit PASS (1s)`
+  - `validation PASS (272s)`
+  - `policy FAIL (519s)`
+- `Candidate SHA-256: 23f5aeee9937a8598e8c09d9bb02361338dd44570f4d154923e3b9d9c440b457`.
+- `Validation SHA-256: 1970aaea988ece5ba2524e0ca79b68a0c48864c8bf6d7e458c336b718c209ddc`.
+- `COMPARISON RESULT: DIFFERENT_OUTPUTS`; `POLICY RESULT: FAIL`.
+- Счётчики: `Observed: 666; Expected: 0; Unexpected: 666; Forbidden: 0; Threshold exceed: 0; Required missing: 0; Hard blockers: 0`.
+- Первое событие сводки: `UNEXPECTED_CHANGE: definition_changed mode=- name=Power Resource Shock Factor`, далее `series_changed` для этой константы по Modes.
+- В подробном compare-логе Modes 0–24 и 26 имеют по `changed=1` — только ряд `Power Resource Shock Factor`; Mode 25 имеет `changed=639`, то есть ожидаемые downstream-изменения механики также реально обнаружены.
+- Артефакт: https://github.com/Y2Kill/orbital-economy/actions/runs/36178357637/artifacts/10883563431, digest `sha256:46537cfd34c0d63804dc4138f19c6323fee495ded1836d3ea5d790854d3b4b32`.
+
+Не подтвердилось: расхождений с ожидаемым результатом КТ3 нет. В частности, conformance/audit/validation не упали, policy не дала hard blockers и не пропустила незаявленную правку.
+
+Дальше: вернуть `candidate/model-patch.json` к положительной пустой пробе, дождаться зелёных `candidate.yml` и `ci.yml`, завершить документацию/итоговые разделы отчёта и закрыть КТ4.
+
 ## Устройство workflow
 
 Будет заполнено после КТ2–КТ4 по фактическим запускам.
