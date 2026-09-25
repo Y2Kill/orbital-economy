@@ -2,6 +2,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { readJson, sha256File, writeJson, ensureDir, nowIso } from './util.js';
 import { listScenarios } from './model.js';
+import { EXPECTED_ENGINE_VERSION } from './engine.js';
 
 function jsonFiles(dir) {
   if (!fs.existsSync(dir)) return [];
@@ -81,7 +82,7 @@ export function prepareWebBatch({ modelFile, validationFile, pendingDir, force =
     expected_modes: expectedModes,
     engine: {
       package: 'simulation',
-      version: '9.0.0'
+      version: EXPECTED_ENGINE_VERSION
     },
     note: 'Copy fresh browser-export CSV files for this exact model into this folder, then run RUN_LAB.cmd.'
   };

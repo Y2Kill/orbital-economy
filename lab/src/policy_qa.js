@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-import { ENGINE_VERSION } from './engine.js';
+import { ENGINE_VERSION, EXPECTED_ENGINE_VERSION } from './engine.js';
 import { discoverSingleJson } from './workspace.js';
 import fs from 'node:fs';
 import os from 'node:os';
@@ -24,7 +24,7 @@ const basePolicy = {
   accepted_model_sha256: acceptedSha,
   validation_sha256: validationSha,
   comparison: { abs_tolerance: 0, rel_tolerance: null, rel_floor: 1e-12 },
-  engine: { package: 'simulation', version: ENGINE_VERSION },
+  engine: { package: 'simulation', version: EXPECTED_ENGINE_VERSION },
   default_action: 'deny',
   require_full_mode_coverage: true,
   rules: []

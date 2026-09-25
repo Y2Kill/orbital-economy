@@ -38,5 +38,13 @@ export function assertEngineVersion(packageJsonFile = DEFAULT_PACKAGE_JSON) {
   return installed;
 }
 
-export const ENGINE_VERSION = assertEngineVersion();
+let installedEngineVersion;
+try {
+  installedEngineVersion = assertEngineVersion();
+} catch (e) {
+  console.error(`[ERROR] ${e?.message || e}`);
+  process.exit(2);
+}
+
+export const ENGINE_VERSION = installedEngineVersion;
 export { loadModelJSON };
