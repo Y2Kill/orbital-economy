@@ -1,0 +1,21 @@
+{
+  "task": "007",
+  "title": "Candidate acceptance cycle in CI: model patch -> conformance, audit, validation, policy",
+  "branch": "task/007-candidate-ci",
+  "allow": [
+    "README.md",
+    "lab/docs/MODEL_PATCH_RU.md"
+  ],
+  "allow_binary": [],
+  "allow_protected": [
+    ".github/workflows/candidate.yml",
+    "docs/tasks/007-candidate-ci/candidate/**"
+  ],
+  "required_changes": [
+    ".github/workflows/candidate.yml",
+    "docs/tasks/007-candidate-ci/candidate/model-patch.json",
+    "lab/docs/MODEL_PATCH_RU.md",
+    "README.md"
+  ],
+  "sums_by": "reviewer"
+}

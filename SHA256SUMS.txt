@@ -122,6 +122,8 @@ ca43b14bbdef253333efa3558d9d78be42dd54788e6becbbc776f7b102da9f46  ./docs/tasks/0
 930b762de66c40525077cc0aaacc92fc48e380027e085363e02b51204b0168a7  ./docs/tasks/006-cross-os/repro/trace-pow-context.mjs
 ef0d2cbdedf63d1f30a55897c2c727fea6384342f8462fa0cbdd8c97e17c3c30  ./docs/tasks/006-cross-os/repro/trace-pow.mjs
 091b3c14a1b10905f319ad8787b4368dea85236c81029ce1a0a39371dc97f0a9  ./docs/tasks/006-cross-os/scope.json
+9c8bc1d263ecf60054aa9494b04cb09edf97fb12ec866e26b1f21f3bc3b601b0  ./docs/tasks/007-candidate-ci/TASK_RU.md
+737483756c01ebfdb5bc499027a80989fb8f094dc31633ab7e7a72fc740b9549  ./docs/tasks/007-candidate-ci/scope.json
 c41649a065393c511f2732e790918a594e7e6c8e35d87667b97de8dee929e54b  ./docs/tasks/README_RU.md
 bbf818e93b88d606b3137b1bb69d60db8c41c9df4089025a921b1ca00f473244  ./lab/APPLY_PATCH.cmd
 8ec18e3efcaefc65c2fdca2d08b43c515028b4997bcdaeecad1fd3951236a5cd  ./lab/CHANGELOG.md
