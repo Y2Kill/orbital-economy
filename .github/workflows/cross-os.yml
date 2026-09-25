@@ -195,8 +195,8 @@ jobs:
           npm cache add ./vendor/simulation-9.0.0.tgz ./vendor/csv-parse-5.6.0.tgz --cache "${cache}"
           npm ci --offline --cache "${cache}"
           rm -rf "${cache}"
-      - name: Probe Mode 0 first 64 points
-        run: node --expose-gc docs/tasks/006-cross-os/repro/probe-mode.mjs 0 64 probe.json
+      - name: Probe Mode 0 first 128 points
+        run: node --expose-gc docs/tasks/006-cross-os/repro/probe-mode.mjs 0 128 probe.json
       - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         with:
           name: probe-${{ matrix.label }}

@@ -1,10 +1,10 @@
 #!/usr/bin/env node
 import fs from 'node:fs';
 import path from 'node:path';
-import { discoverWorkspace } from '../../../lab/src/workspace.js';
-import { readJson } from '../../../lab/src/util.js';
-import { listScenarios, modelJsonForScenario, valuedPrimitives } from '../../../lab/src/model.js';
-import { loadModelJSON } from '../../../lab/src/engine.js';
+import { discoverWorkspace } from '../../../../lab/src/workspace.js';
+import { readJson } from '../../../../lab/src/util.js';
+import { listScenarios, modelJsonForScenario, valuedPrimitives } from '../../../../lab/src/model.js';
+import { loadModelJSON } from '../../../../lab/src/engine.js';
 
 const mode=Number(process.argv[2] ?? 0);
 const count=Number(process.argv[3] ?? 64);
