@@ -19,6 +19,7 @@ policy/         strict default-deny change policy, bound to the SHA-256 of both 
 docs/           documentation aligned to the accepted model, generated audit reports, version history
 lab/            Orbital Economy Lab — the bench: run, compare, audit, policy-check, apply patches
 reference/      the previous accepted baseline (v7.5.1 r1), kept for exact regression comparison
+tools/          repository tooling: integrity manifests (build_sums), task-branch acceptance guard (check_branch)
 BASELINE_MANIFEST.json   what is accepted, with every SHA-256 and every gate result
 SHA256SUMS.txt           integrity of the whole tree (lab/ has its own for the bench)
 ```
@@ -72,6 +73,7 @@ Rules that do not bend:
 | Structure of the whole economy | `docs/ARCHITECTURE.md` |
 | How we got here, version by version (RU) | `docs/HISTORY_RU.md` |
 | Rules for an external model author (RU) | `docs/CONTRACTOR_DELIVERY_CONTRACT_RU.md` |
+| Tasks for an agent working in this repository, and how they are accepted (RU) | `docs/tasks/README_RU.md` |
 | Where the model is going | `docs/ROADMAP.md` |
 | The bench itself (RU) | `lab/README_RU.md`, `lab/docs/`, `lab/CHANGELOG.md` |
 

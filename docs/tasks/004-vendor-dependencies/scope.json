@@ -1,0 +1,33 @@
+{
+  "task": "004",
+  "title": "vendor lab dependencies, enforce the engine pin (Lab v0.9.3)",
+  "branch": "task/004-vendor-dependencies",
+  "allow": [
+    "lab/vendor/**",
+    "lab/*.cmd",
+    "lab/src/**",
+    "lab/package.json",
+    "lab/package-lock.json",
+    "lab/CHANGELOG.md",
+    "lab/README_RU.md",
+    "lab/QUICK_START_RU.txt",
+    "lab/ENGINE_PIN.md",
+    "lab/LICENSE-NOTICE.md",
+    "lab/docs/**",
+    "README.md",
+    "docs/HISTORY_RU.md"
+  ],
+  "allow_binary": [
+    "lab/vendor/simulation-9.0.0.tgz",
+    "lab/vendor/csv-parse-5.6.0.tgz"
+  ],
+  "allow_protected": [],
+  "required_changes": [
+    "lab/vendor/simulation-9.0.0.tgz",
+    "lab/vendor/csv-parse-5.6.0.tgz",
+    "lab/INSTALL.cmd",
+    "lab/src/**",
+    "lab/CHANGELOG.md",
+    "lab/LICENSE-NOTICE.md"
+  ]
+}
