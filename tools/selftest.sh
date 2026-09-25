@@ -121,6 +121,12 @@ expect "absolute local path in an added line fails" FAIL 'absolute local path'
 fresh; printf 'set NPM_TOKEN=npm_%s\n' "$(printf 'a%.0s' $(seq 1 36))" >> lab/INSTALL.cmd; deliver secret; publish
 expect "credential-like string fails" FAIL 'credential-like string'
 
+fresh; printf 'rem author: Someone <someone@example.org>\n' >> lab/INSTALL.cmd; deliver email; publish
+expect "e-mail address in an added line fails" FAIL 'e-mail address'
+
+fresh; printf 'rem base main@8c45f26, check recovery@900, 123+x@users.noreply.github.com\n' >> lab/INSTALL.cmd; deliver noemail; publish
+expect "hash@ref, value@day and a GitHub noreply address pass" PASS
+
 fresh; git checkout -q -b side main; printf 'x\n' >> lab/CHANGELOG.md; git commit -qam side; git checkout -q task/900-test
 deliver; git merge -q --no-edit --no-ff side; node tools/build_sums.mjs >/dev/null; git add -A; git commit -qm resums; publish
 expect "merge commit on the branch fails" FAIL 'merge commits on the branch'

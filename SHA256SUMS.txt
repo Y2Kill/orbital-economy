@@ -140,7 +140,7 @@ f8ae64e4ccca702d5ccd852b2a3d597f512813ff5677726e8effe35d5b516ffc  ./docs/tasks/0
 ff0fbb367b40c146cabe386e580cf1f7c8bfb85b4179354e39d9e77c272e97e5  ./docs/tasks/008-construction-materials/draft/change-policy-v7.7-draft.json
 fa908c5c0355d54a13ce893180f0116eaa3624985160684fee4c125fe11a54ef  ./docs/tasks/008-construction-materials/draft/validation-v7.7-draft.json
 acf59fe5466787fa91ee3915a3a29f79a1e6b1d4d46468c5dcb051a73f17ba25  ./docs/tasks/008-construction-materials/scope.json
-4700998ef81fad39d79373f5740376750a60609cf2bc19e211f34e2521efd27f  ./docs/tasks/README_RU.md
+943413da79f0e70a5c673d3fd505bde105ad2c74ba2e36c5a5f475aaaf2c709e  ./docs/tasks/README_RU.md
 bbf818e93b88d606b3137b1bb69d60db8c41c9df4089025a921b1ca00f473244  ./lab/APPLY_PATCH.cmd
 8ec18e3efcaefc65c2fdca2d08b43c515028b4997bcdaeecad1fd3951236a5cd  ./lab/CHANGELOG.md
 291d9cf375a7f886f02f866b729c47960ef0c5d0af8d45704d1bd6493a4f49b1  ./lab/CHECK_CANDIDATE.cmd
@@ -224,7 +224,7 @@ fbaa823cc7ea76a6f6480fad5c574db8ab48babd4f9415b49ec44cf936edcfc6  ./policy/chang
 0fec9e2542464494dc3d2820dec64733a20c2ffd2029c09c30a7f9a3c1030289  ./reference/v7.6.1/policy/change-policy-v7.6.1-strict.json
 1970aaea988ece5ba2524e0ca79b68a0c48864c8bf6d7e458c336b718c209ddc  ./reference/v7.6.1/validation/validation-v7.6.1.json
 39315da9cdeddebe741c3431fc205dc84c4bf6857f2fedff91376ae4b82c2424  ./tools/build_sums.mjs
-818bc09f9cbd187b319b545baa402267d7310d4a87ff1d7a21a6ca5030d808b2  ./tools/check_branch.mjs
-d908d78649934865cb42ec255e5aa456ba47924f1128d1d9b9899ac62c21cfc0  ./tools/selftest.sh
+69428489d59ed25b1283da0d517fc85742ab9c2a52dd295a13a9b9cfef764aef  ./tools/check_branch.mjs
+fc8ee2b8c1023eff8648d256e85784362aa3aae2a3765e3c7461058545184335  ./tools/selftest.sh
 56925cafdd5d42c93b6542de46a2deaf476118db1f1d40693ec88e21b82031c8  ./tools/verify_series.mjs
 01d8e87ca4ad216b206164db768a9888fbf5efa58f2775a50eecee02be66133c  ./validation/validation-v7.7.json

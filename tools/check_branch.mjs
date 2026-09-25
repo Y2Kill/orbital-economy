@@ -139,6 +139,9 @@ const LEAK = [
   [/\b[A-Za-z]:[\\/]{1,2}(?:Users|Documents and Settings|!!!_USER_FOLDERS)\b/i, 'absolute local path'],
   [/AppData[\\/]|\/home\/[a-z_][\w-]*\/|\/Users\/[A-Za-z][\w.-]*\//, 'absolute local path'],
   [/\bghp_[A-Za-z0-9]{20,}|\bgithub_pat_[A-Za-z0-9_]{20,}|\bnpm_[A-Za-z0-9]{30,}|_authToken|\bAKIA[0-9A-Z]{16}\b|\bsk-[A-Za-z0-9-]{20,}|-----BEGIN [A-Z ]*PRIVATE KEY-----/, 'credential-like string'],
+  // Personal data: reports quote tool output, and `git log` output carries the author's address.
+  // GitHub noreply addresses are fine; "main@8c45f26" or "recovery@900" have no domain and do not match.
+  [/\b[A-Za-z0-9._%+-]+@(?!users\.noreply\.github\.com\b)[A-Za-z0-9-]+(?:\.[A-Za-z0-9-]+)*\.[A-Za-z]{2,}\b/, 'e-mail address'],
 ];
 let byteProblems = 0;
 for (const { status, file } of changes.filter(c => c.status !== 'D')) {
