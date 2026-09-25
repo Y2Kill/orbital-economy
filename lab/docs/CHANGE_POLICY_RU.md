@@ -117,7 +117,7 @@ EVALUATE_POLICY.cmd "output\compare-...\model-comparison.json" "D:\policy\v7_4_p
 
 > Любое изменение, которое не разрешено явным правилом, является policy FAIL.
 
-Для текущего accepted v7.5.1 r1 в комплекте лежит строгий baseline:
+Для текущего accepted v7.6.1 r1 в комплекте лежит строгий baseline:
 
 ```text
 input\policy\change-policy-v7.5.1-strict.json

@@ -1,7 +1,7 @@
 CURRENT ACCEPTED BASELINE
 
-Orbital Economy v7.6 r2 — Energy Kernel v2
-Model SHA-256: a9573f5afe43d2ae2bf12fdc3066c983c264eba162e1d3fc1d5f11e3872f9e91
-Validation SHA-256: cbd3ff4b115b3a025e2cb54f9cbd3436ca11a5dcebdebb10cf094bfa2963acaf
+Orbital Economy v7.6.1 r1 — Energy Kernel v2, Mode 25 calibrated to a 50% resource-supply shock
+Model SHA-256: 16e8ca6c5719e67422e16a6ec1ea2724b6121a062200eaf91e81389a2a180cd1
+Validation SHA-256: 1970aaea988ece5ba2524e0ca79b68a0c48864c8bf6d7e458c336b718c209ddc
 
 This directory is the accepted reference used by comparison/policy tools.

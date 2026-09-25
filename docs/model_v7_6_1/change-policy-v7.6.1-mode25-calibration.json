@@ -1,0 +1,60 @@
+{
+  "format": "orbital-economy-change-policy-v1",
+  "name": "Orbital Economy v7.6.1 — Mode 25 calibration change contract r1.1",
+  "description": "Written before the candidate was built. Accepted baseline: v7.6 r2. The only authorised change is the value of Power Resource Shock Factor (0.1 -> 0.5), which acts only in Mode 25; every other Mode must reproduce v7.6 r2 exactly. Model name and descriptions are not semantic and produce no events. Rationale: docs/V7_6_1_CALIBRATION_REPORT.md. r1.1 (after the first CHECK_CANDIDATE run): the changed constant is itself an output series, so its own series changes in every Mode; rule factor-series allows exactly that one series everywhere and is placed before the regression guard. No other rule changed.",
+  "accepted_model_sha256": "a9573f5afe43d2ae2bf12fdc3066c983c264eba162e1d3fc1d5f11e3872f9e91",
+  "validation_sha256": "1970aaea988ece5ba2524e0ca79b68a0c48864c8bf6d7e458c336b718c209ddc",
+  "comparison": {
+    "abs_tolerance": 0,
+    "rel_tolerance": null,
+    "rel_floor": 1e-12
+  },
+  "engine": {
+    "package": "simulation",
+    "version": "9.0.0"
+  },
+  "default_action": "deny",
+  "require_full_mode_coverage": true,
+  "rules": [
+    {
+      "id": "factor-series",
+      "action": "allow",
+      "event": "series_changed",
+      "name": "Power Resource Shock Factor",
+      "note": "r1.1: a VARIABLE constant is also an output series; its value 0.1 -> 0.5 shows in all 27 Modes. This is the authorised change itself, not a behavioural difference."
+    },
+    {
+      "id": "regression-guard",
+      "action": "deny",
+      "event": "series_changed",
+      "modes": "0-24,26",
+      "name": "*",
+      "note": "Any numerical change outside Mode 25 is forbidden (first match wins)."
+    },
+    {
+      "id": "shock-factor-value",
+      "action": "allow",
+      "event": "definition_changed",
+      "name": "Power Resource Shock Factor",
+      "required": true,
+      "note": "The calibration itself: 0.1 -> 0.5."
+    },
+    {
+      "id": "mode25-extraction-must-change",
+      "action": "allow",
+      "event": "series_changed",
+      "modes": 25,
+      "name": "A Power Resource Extraction Multiplier",
+      "required": true,
+      "note": "Proves the new value reaches the model."
+    },
+    {
+      "id": "mode25-outputs",
+      "action": "allow",
+      "event": "series_changed",
+      "modes": 25,
+      "name": "*",
+      "note": "The shock is milder, so Mode 25 outputs change; that is the purpose."
+    }
+  ]
+}

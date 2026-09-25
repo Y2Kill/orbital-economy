@@ -1,5 +1,5 @@
 {
-  "name": "Orbital Economy v7.6 validation r2",
+  "name": "Orbital Economy v7.6.1 validation r1",
   "mode_variable": "Timed Test Mode",
   "expected_time_step": 0.25,
   "time_step_tolerance": 1e-12,
@@ -6879,6 +6879,18 @@
           ],
           "op": ">=",
           "value": 1
+        },
+        {
+          "type": "metric",
+          "name": "Mode 25: A energy is rationed, not cut off (v7.6.1 calibration)",
+          "column": "A Energy Supply",
+          "metric": "min",
+          "window": [
+            360,
+            720
+          ],
+          "op": ">=",
+          "value": 400
         }
       ],
       "notes": [

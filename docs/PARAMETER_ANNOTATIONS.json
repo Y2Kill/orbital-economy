@@ -1,6 +1,6 @@
 {
   "format": "orbital-economy-parameter-annotations-v1",
-  "model": "Orbital Economy v7.6 r2 — Energy Kernel v2",
+  "model": "Orbital Economy v7.6.1 r1 — Energy Kernel v2, Mode 25 calibrated",
   "updated": "2026-09-25",
   "policy": "Каждый внешний параметр, влияющий на структуру поведения (сравнительные преимущества, нормирование, планирование), должен иметь аннотацию: роль, что меняет, доказательство (ссылка на прогон/документ). Несимметричные пары A/B аннотируются в первую очередь. Изменение значения = изменение модели → через change-policy, с обновлением аннотации.",
   "embedded_literals": [
@@ -1353,8 +1353,8 @@
     },
     "Power Resource Shock Factor": {
       "role": "Mode-25 test multiplier.",
-      "effect": "Creates a temporary A-only resource-supply shock; test wiring only.",
-      "evidence": "v7.6 Energy Kernel v2 specification and Modes 25/26 validation contract.",
+      "effect": "Creates a temporary A-only resource-supply shock; test wiring only. 0.5 (since v7.6.1; 0.1 before) keeps A energy at ~45 % of the no-shock control over the window and leaves the same capital scar as the Mode 26 capacity control; 0.1 was a cut-off (~7 %).",
+      "evidence": "v7.6 Energy Kernel v2 specification and Modes 25/26 validation contract; calibration sweep in docs/V7_6_1_CALIBRATION_REPORT.md; Mode 25 check \"A energy is rationed, not cut off\".",
       "since": "v7.6 r1",
       "tags": [
         "energy-kernel-v2"

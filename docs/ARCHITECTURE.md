@@ -1,7 +1,7 @@
 # Architecture
 
 **Document status:** CURRENT  
-**Base:** Orbital Economy v7.6 r2  
+**Base:** Orbital Economy v7.6.1 r1  
 **Rule:** this document describes accepted code; code is authoritative on conflict.
 
 ## 1. Model character

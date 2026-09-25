@@ -1,12 +1,12 @@
 {
-  "name": "Orbital Economy v7.5.1 accepted validation r1",
+  "name": "Orbital Economy v7.6.1 validation r1",
   "mode_variable": "Timed Test Mode",
   "expected_time_step": 0.25,
   "time_step_tolerance": 1e-12,
   "finite_all": true,
   "non_negative_regex": {
     "pattern": "(Installed|Active|Inactive|Decommissioning|Retired).*(Capacity|Capital)|Unserved Demand$",
-    "tolerance": 1e-09
+    "tolerance": 1e-9
   },
   "regression_modes": [
     0,
@@ -20,7 +20,20 @@
     8,
     9,
     10,
-    11
+    11,
+    12,
+    13,
+    14,
+    15,
+    16,
+    17,
+    18,
+    19,
+    20,
+    21,
+    22,
+    23,
+    24
   ],
   "regression_tolerance": 0,
   "plugins": [
@@ -30,13 +43,13 @@
         "A",
         "B"
       ],
-      "abs_tol": 1e-08
+      "abs_tol": 1e-8
     },
     {
       "type": "capital_lifecycle_kernel",
       "format": "orbital-economy-capital-lifecycle-kernel-v1",
       "legacy_switch": "Capital Lifecycle Enabled",
-      "abs_tol": 1e-08,
+      "abs_tol": 1e-8,
       "instances": [
         {
           "name": "A Electronics",
@@ -317,6 +330,15 @@
           "reason": "primary resources enter from the planet itself"
         },
         {
+          "id": "power_resource_extraction",
+          "closed_world": true,
+          "direction": "source",
+          "name": [
+            "? Power Resource Extraction"
+          ],
+          "reason": "v7.6 primary planetary energy resource enters regional physical inventory through explicit extraction."
+        },
+        {
           "id": "final_consumption",
           "closed_world": true,
           "direction": "sink",
@@ -324,6 +346,15 @@
             "* Local Consumption"
           ],
           "reason": "final goods leave the economy as consumption"
+        },
+        {
+          "id": "power_resource_consumption",
+          "closed_world": true,
+          "direction": "sink",
+          "name": [
+            "? Power Resource Consumption"
+          ],
+          "reason": "v7.6 physical operating resource is consumed in exact proportion to actual delivered generation."
         },
         {
           "id": "unit_transformation",
@@ -515,7 +546,7 @@
     },
     {
       "type": "transport_allocator",
-      "abs_tol": 1e-08
+      "abs_tol": 1e-8
     }
   ],
   "scenarios": {
@@ -560,7 +591,7 @@
         {
           "type": "identity",
           "name": "A feedstock->electronics pair identity (per mode)",
-          "abs_tol": 1e-08,
+          "abs_tol": 1e-8,
           "terms": [
             {
               "column": "A Electronics Feedstock Consumption",
@@ -576,7 +607,7 @@
         {
           "type": "identity",
           "name": "B feedstock->electronics pair identity (per mode)",
-          "abs_tol": 1e-08,
+          "abs_tol": 1e-8,
           "terms": [
             {
               "column": "B Electronics Feedstock Consumption",
@@ -632,7 +663,7 @@
           "metric": "min",
           "op": ">=",
           "value": 30,
-          "tolerance": 1e-09
+          "tolerance": 1e-9
         },
         {
           "type": "metric",
@@ -641,7 +672,97 @@
           "metric": "min",
           "op": ">=",
           "value": 30,
-          "tolerance": 1e-09
+          "tolerance": 1e-9
+        },
+        {
+          "type": "metric",
+          "name": "Mode 0: A power resource consumption is zero (switch off)",
+          "column": "A Power Resource Consumption",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 0: A power resource extraction is zero (switch off)",
+          "column": "A Power Resource Extraction",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 0: A power resource fulfillment is 1 (switch off)",
+          "column": "A Power Resource Fulfillment",
+          "metric": "min",
+          "op": ">=",
+          "value": 1,
+          "tolerance": 1e-12
+        },
+        {
+          "type": "metric",
+          "name": "Mode 0: A power resource inventory is a dead stock (switch off)",
+          "column": "A Power Resource Inventory",
+          "metric": "min",
+          "op": ">=",
+          "value": 5000,
+          "tolerance": 1e-9
+        },
+        {
+          "type": "metric",
+          "name": "Mode 0: A power resource price stays at base (switch off)",
+          "column": "A Power Resource Price",
+          "metric": "max",
+          "op": "<=",
+          "value": 0.04,
+          "tolerance": 1e-12
+        },
+        {
+          "type": "metric",
+          "name": "Mode 0: B power resource consumption is zero (switch off)",
+          "column": "B Power Resource Consumption",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 0: B power resource extraction is zero (switch off)",
+          "column": "B Power Resource Extraction",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 0: B power resource fulfillment is 1 (switch off)",
+          "column": "B Power Resource Fulfillment",
+          "metric": "min",
+          "op": ">=",
+          "value": 1,
+          "tolerance": 1e-12
+        },
+        {
+          "type": "metric",
+          "name": "Mode 0: B power resource inventory is a dead stock (switch off)",
+          "column": "B Power Resource Inventory",
+          "metric": "min",
+          "op": ">=",
+          "value": 5000,
+          "tolerance": 1e-9
+        },
+        {
+          "type": "metric",
+          "name": "Mode 0: B power resource price stays at base (switch off)",
+          "column": "B Power Resource Price",
+          "metric": "max",
+          "op": "<=",
+          "value": 0.04,
+          "tolerance": 1e-12
         }
       ]
     },
@@ -686,7 +807,7 @@
         {
           "type": "identity",
           "name": "A feedstock->electronics pair identity (per mode)",
-          "abs_tol": 1e-08,
+          "abs_tol": 1e-8,
           "terms": [
             {
               "column": "A Electronics Feedstock Consumption",
@@ -702,7 +823,7 @@
         {
           "type": "identity",
           "name": "B feedstock->electronics pair identity (per mode)",
-          "abs_tol": 1e-08,
+          "abs_tol": 1e-8,
           "terms": [
             {
               "column": "B Electronics Feedstock Consumption",
@@ -758,7 +879,7 @@
           "metric": "min",
           "op": ">=",
           "value": 30,
-          "tolerance": 1e-09
+          "tolerance": 1e-9
         },
         {
           "type": "metric",
@@ -767,7 +888,97 @@
           "metric": "min",
           "op": ">=",
           "value": 30,
-          "tolerance": 1e-09
+          "tolerance": 1e-9
+        },
+        {
+          "type": "metric",
+          "name": "Mode 1: A power resource consumption is zero (switch off)",
+          "column": "A Power Resource Consumption",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 1: A power resource extraction is zero (switch off)",
+          "column": "A Power Resource Extraction",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 1: A power resource fulfillment is 1 (switch off)",
+          "column": "A Power Resource Fulfillment",
+          "metric": "min",
+          "op": ">=",
+          "value": 1,
+          "tolerance": 1e-12
+        },
+        {
+          "type": "metric",
+          "name": "Mode 1: A power resource inventory is a dead stock (switch off)",
+          "column": "A Power Resource Inventory",
+          "metric": "min",
+          "op": ">=",
+          "value": 5000,
+          "tolerance": 1e-9
+        },
+        {
+          "type": "metric",
+          "name": "Mode 1: A power resource price stays at base (switch off)",
+          "column": "A Power Resource Price",
+          "metric": "max",
+          "op": "<=",
+          "value": 0.04,
+          "tolerance": 1e-12
+        },
+        {
+          "type": "metric",
+          "name": "Mode 1: B power resource consumption is zero (switch off)",
+          "column": "B Power Resource Consumption",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 1: B power resource extraction is zero (switch off)",
+          "column": "B Power Resource Extraction",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 1: B power resource fulfillment is 1 (switch off)",
+          "column": "B Power Resource Fulfillment",
+          "metric": "min",
+          "op": ">=",
+          "value": 1,
+          "tolerance": 1e-12
+        },
+        {
+          "type": "metric",
+          "name": "Mode 1: B power resource inventory is a dead stock (switch off)",
+          "column": "B Power Resource Inventory",
+          "metric": "min",
+          "op": ">=",
+          "value": 5000,
+          "tolerance": 1e-9
+        },
+        {
+          "type": "metric",
+          "name": "Mode 1: B power resource price stays at base (switch off)",
+          "column": "B Power Resource Price",
+          "metric": "max",
+          "op": "<=",
+          "value": 0.04,
+          "tolerance": 1e-12
         }
       ]
     },
@@ -812,7 +1023,7 @@
         {
           "type": "identity",
           "name": "A feedstock->electronics pair identity (per mode)",
-          "abs_tol": 1e-08,
+          "abs_tol": 1e-8,
           "terms": [
             {
               "column": "A Electronics Feedstock Consumption",
@@ -828,7 +1039,7 @@
         {
           "type": "identity",
           "name": "B feedstock->electronics pair identity (per mode)",
-          "abs_tol": 1e-08,
+          "abs_tol": 1e-8,
           "terms": [
             {
               "column": "B Electronics Feedstock Consumption",
@@ -884,7 +1095,7 @@
           "metric": "min",
           "op": ">=",
           "value": 30,
-          "tolerance": 1e-09
+          "tolerance": 1e-9
         },
         {
           "type": "metric",
@@ -893,7 +1104,97 @@
           "metric": "min",
           "op": ">=",
           "value": 30,
-          "tolerance": 1e-09
+          "tolerance": 1e-9
+        },
+        {
+          "type": "metric",
+          "name": "Mode 2: A power resource consumption is zero (switch off)",
+          "column": "A Power Resource Consumption",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 2: A power resource extraction is zero (switch off)",
+          "column": "A Power Resource Extraction",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 2: A power resource fulfillment is 1 (switch off)",
+          "column": "A Power Resource Fulfillment",
+          "metric": "min",
+          "op": ">=",
+          "value": 1,
+          "tolerance": 1e-12
+        },
+        {
+          "type": "metric",
+          "name": "Mode 2: A power resource inventory is a dead stock (switch off)",
+          "column": "A Power Resource Inventory",
+          "metric": "min",
+          "op": ">=",
+          "value": 5000,
+          "tolerance": 1e-9
+        },
+        {
+          "type": "metric",
+          "name": "Mode 2: A power resource price stays at base (switch off)",
+          "column": "A Power Resource Price",
+          "metric": "max",
+          "op": "<=",
+          "value": 0.04,
+          "tolerance": 1e-12
+        },
+        {
+          "type": "metric",
+          "name": "Mode 2: B power resource consumption is zero (switch off)",
+          "column": "B Power Resource Consumption",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 2: B power resource extraction is zero (switch off)",
+          "column": "B Power Resource Extraction",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 2: B power resource fulfillment is 1 (switch off)",
+          "column": "B Power Resource Fulfillment",
+          "metric": "min",
+          "op": ">=",
+          "value": 1,
+          "tolerance": 1e-12
+        },
+        {
+          "type": "metric",
+          "name": "Mode 2: B power resource inventory is a dead stock (switch off)",
+          "column": "B Power Resource Inventory",
+          "metric": "min",
+          "op": ">=",
+          "value": 5000,
+          "tolerance": 1e-9
+        },
+        {
+          "type": "metric",
+          "name": "Mode 2: B power resource price stays at base (switch off)",
+          "column": "B Power Resource Price",
+          "metric": "max",
+          "op": "<=",
+          "value": 0.04,
+          "tolerance": 1e-12
         }
       ]
     },
@@ -938,7 +1239,7 @@
         {
           "type": "identity",
           "name": "A feedstock->electronics pair identity (per mode)",
-          "abs_tol": 1e-08,
+          "abs_tol": 1e-8,
           "terms": [
             {
               "column": "A Electronics Feedstock Consumption",
@@ -954,7 +1255,7 @@
         {
           "type": "identity",
           "name": "B feedstock->electronics pair identity (per mode)",
-          "abs_tol": 1e-08,
+          "abs_tol": 1e-8,
           "terms": [
             {
               "column": "B Electronics Feedstock Consumption",
@@ -1010,7 +1311,7 @@
           "metric": "min",
           "op": ">=",
           "value": 30,
-          "tolerance": 1e-09
+          "tolerance": 1e-9
         },
         {
           "type": "metric",
@@ -1019,7 +1320,97 @@
           "metric": "min",
           "op": ">=",
           "value": 30,
-          "tolerance": 1e-09
+          "tolerance": 1e-9
+        },
+        {
+          "type": "metric",
+          "name": "Mode 3: A power resource consumption is zero (switch off)",
+          "column": "A Power Resource Consumption",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 3: A power resource extraction is zero (switch off)",
+          "column": "A Power Resource Extraction",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 3: A power resource fulfillment is 1 (switch off)",
+          "column": "A Power Resource Fulfillment",
+          "metric": "min",
+          "op": ">=",
+          "value": 1,
+          "tolerance": 1e-12
+        },
+        {
+          "type": "metric",
+          "name": "Mode 3: A power resource inventory is a dead stock (switch off)",
+          "column": "A Power Resource Inventory",
+          "metric": "min",
+          "op": ">=",
+          "value": 5000,
+          "tolerance": 1e-9
+        },
+        {
+          "type": "metric",
+          "name": "Mode 3: A power resource price stays at base (switch off)",
+          "column": "A Power Resource Price",
+          "metric": "max",
+          "op": "<=",
+          "value": 0.04,
+          "tolerance": 1e-12
+        },
+        {
+          "type": "metric",
+          "name": "Mode 3: B power resource consumption is zero (switch off)",
+          "column": "B Power Resource Consumption",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 3: B power resource extraction is zero (switch off)",
+          "column": "B Power Resource Extraction",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 3: B power resource fulfillment is 1 (switch off)",
+          "column": "B Power Resource Fulfillment",
+          "metric": "min",
+          "op": ">=",
+          "value": 1,
+          "tolerance": 1e-12
+        },
+        {
+          "type": "metric",
+          "name": "Mode 3: B power resource inventory is a dead stock (switch off)",
+          "column": "B Power Resource Inventory",
+          "metric": "min",
+          "op": ">=",
+          "value": 5000,
+          "tolerance": 1e-9
+        },
+        {
+          "type": "metric",
+          "name": "Mode 3: B power resource price stays at base (switch off)",
+          "column": "B Power Resource Price",
+          "metric": "max",
+          "op": "<=",
+          "value": 0.04,
+          "tolerance": 1e-12
         }
       ]
     },
@@ -1064,7 +1455,7 @@
         {
           "type": "identity",
           "name": "A feedstock->electronics pair identity (per mode)",
-          "abs_tol": 1e-08,
+          "abs_tol": 1e-8,
           "terms": [
             {
               "column": "A Electronics Feedstock Consumption",
@@ -1080,7 +1471,7 @@
         {
           "type": "identity",
           "name": "B feedstock->electronics pair identity (per mode)",
-          "abs_tol": 1e-08,
+          "abs_tol": 1e-8,
           "terms": [
             {
               "column": "B Electronics Feedstock Consumption",
@@ -1136,7 +1527,7 @@
           "metric": "min",
           "op": ">=",
           "value": 30,
-          "tolerance": 1e-09
+          "tolerance": 1e-9
         },
         {
           "type": "metric",
@@ -1145,7 +1536,97 @@
           "metric": "min",
           "op": ">=",
           "value": 30,
-          "tolerance": 1e-09
+          "tolerance": 1e-9
+        },
+        {
+          "type": "metric",
+          "name": "Mode 4: A power resource consumption is zero (switch off)",
+          "column": "A Power Resource Consumption",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 4: A power resource extraction is zero (switch off)",
+          "column": "A Power Resource Extraction",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 4: A power resource fulfillment is 1 (switch off)",
+          "column": "A Power Resource Fulfillment",
+          "metric": "min",
+          "op": ">=",
+          "value": 1,
+          "tolerance": 1e-12
+        },
+        {
+          "type": "metric",
+          "name": "Mode 4: A power resource inventory is a dead stock (switch off)",
+          "column": "A Power Resource Inventory",
+          "metric": "min",
+          "op": ">=",
+          "value": 5000,
+          "tolerance": 1e-9
+        },
+        {
+          "type": "metric",
+          "name": "Mode 4: A power resource price stays at base (switch off)",
+          "column": "A Power Resource Price",
+          "metric": "max",
+          "op": "<=",
+          "value": 0.04,
+          "tolerance": 1e-12
+        },
+        {
+          "type": "metric",
+          "name": "Mode 4: B power resource consumption is zero (switch off)",
+          "column": "B Power Resource Consumption",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 4: B power resource extraction is zero (switch off)",
+          "column": "B Power Resource Extraction",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 4: B power resource fulfillment is 1 (switch off)",
+          "column": "B Power Resource Fulfillment",
+          "metric": "min",
+          "op": ">=",
+          "value": 1,
+          "tolerance": 1e-12
+        },
+        {
+          "type": "metric",
+          "name": "Mode 4: B power resource inventory is a dead stock (switch off)",
+          "column": "B Power Resource Inventory",
+          "metric": "min",
+          "op": ">=",
+          "value": 5000,
+          "tolerance": 1e-9
+        },
+        {
+          "type": "metric",
+          "name": "Mode 4: B power resource price stays at base (switch off)",
+          "column": "B Power Resource Price",
+          "metric": "max",
+          "op": "<=",
+          "value": 0.04,
+          "tolerance": 1e-12
         }
       ]
     },
@@ -1190,7 +1671,7 @@
         {
           "type": "identity",
           "name": "A feedstock->electronics pair identity (per mode)",
-          "abs_tol": 1e-08,
+          "abs_tol": 1e-8,
           "terms": [
             {
               "column": "A Electronics Feedstock Consumption",
@@ -1206,7 +1687,7 @@
         {
           "type": "identity",
           "name": "B feedstock->electronics pair identity (per mode)",
-          "abs_tol": 1e-08,
+          "abs_tol": 1e-8,
           "terms": [
             {
               "column": "B Electronics Feedstock Consumption",
@@ -1262,7 +1743,7 @@
           "metric": "min",
           "op": ">=",
           "value": 30,
-          "tolerance": 1e-09
+          "tolerance": 1e-9
         },
         {
           "type": "metric",
@@ -1271,7 +1752,97 @@
           "metric": "min",
           "op": ">=",
           "value": 30,
-          "tolerance": 1e-09
+          "tolerance": 1e-9
+        },
+        {
+          "type": "metric",
+          "name": "Mode 5: A power resource consumption is zero (switch off)",
+          "column": "A Power Resource Consumption",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 5: A power resource extraction is zero (switch off)",
+          "column": "A Power Resource Extraction",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 5: A power resource fulfillment is 1 (switch off)",
+          "column": "A Power Resource Fulfillment",
+          "metric": "min",
+          "op": ">=",
+          "value": 1,
+          "tolerance": 1e-12
+        },
+        {
+          "type": "metric",
+          "name": "Mode 5: A power resource inventory is a dead stock (switch off)",
+          "column": "A Power Resource Inventory",
+          "metric": "min",
+          "op": ">=",
+          "value": 5000,
+          "tolerance": 1e-9
+        },
+        {
+          "type": "metric",
+          "name": "Mode 5: A power resource price stays at base (switch off)",
+          "column": "A Power Resource Price",
+          "metric": "max",
+          "op": "<=",
+          "value": 0.04,
+          "tolerance": 1e-12
+        },
+        {
+          "type": "metric",
+          "name": "Mode 5: B power resource consumption is zero (switch off)",
+          "column": "B Power Resource Consumption",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 5: B power resource extraction is zero (switch off)",
+          "column": "B Power Resource Extraction",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 5: B power resource fulfillment is 1 (switch off)",
+          "column": "B Power Resource Fulfillment",
+          "metric": "min",
+          "op": ">=",
+          "value": 1,
+          "tolerance": 1e-12
+        },
+        {
+          "type": "metric",
+          "name": "Mode 5: B power resource inventory is a dead stock (switch off)",
+          "column": "B Power Resource Inventory",
+          "metric": "min",
+          "op": ">=",
+          "value": 5000,
+          "tolerance": 1e-9
+        },
+        {
+          "type": "metric",
+          "name": "Mode 5: B power resource price stays at base (switch off)",
+          "column": "B Power Resource Price",
+          "metric": "max",
+          "op": "<=",
+          "value": 0.04,
+          "tolerance": 1e-12
         }
       ]
     },
@@ -1316,7 +1887,7 @@
         {
           "type": "identity",
           "name": "A feedstock->electronics pair identity (per mode)",
-          "abs_tol": 1e-08,
+          "abs_tol": 1e-8,
           "terms": [
             {
               "column": "A Electronics Feedstock Consumption",
@@ -1332,7 +1903,7 @@
         {
           "type": "identity",
           "name": "B feedstock->electronics pair identity (per mode)",
-          "abs_tol": 1e-08,
+          "abs_tol": 1e-8,
           "terms": [
             {
               "column": "B Electronics Feedstock Consumption",
@@ -1388,7 +1959,7 @@
           "metric": "min",
           "op": ">=",
           "value": 30,
-          "tolerance": 1e-09
+          "tolerance": 1e-9
         },
         {
           "type": "metric",
@@ -1397,7 +1968,97 @@
           "metric": "min",
           "op": ">=",
           "value": 30,
-          "tolerance": 1e-09
+          "tolerance": 1e-9
+        },
+        {
+          "type": "metric",
+          "name": "Mode 6: A power resource consumption is zero (switch off)",
+          "column": "A Power Resource Consumption",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 6: A power resource extraction is zero (switch off)",
+          "column": "A Power Resource Extraction",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 6: A power resource fulfillment is 1 (switch off)",
+          "column": "A Power Resource Fulfillment",
+          "metric": "min",
+          "op": ">=",
+          "value": 1,
+          "tolerance": 1e-12
+        },
+        {
+          "type": "metric",
+          "name": "Mode 6: A power resource inventory is a dead stock (switch off)",
+          "column": "A Power Resource Inventory",
+          "metric": "min",
+          "op": ">=",
+          "value": 5000,
+          "tolerance": 1e-9
+        },
+        {
+          "type": "metric",
+          "name": "Mode 6: A power resource price stays at base (switch off)",
+          "column": "A Power Resource Price",
+          "metric": "max",
+          "op": "<=",
+          "value": 0.04,
+          "tolerance": 1e-12
+        },
+        {
+          "type": "metric",
+          "name": "Mode 6: B power resource consumption is zero (switch off)",
+          "column": "B Power Resource Consumption",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 6: B power resource extraction is zero (switch off)",
+          "column": "B Power Resource Extraction",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 6: B power resource fulfillment is 1 (switch off)",
+          "column": "B Power Resource Fulfillment",
+          "metric": "min",
+          "op": ">=",
+          "value": 1,
+          "tolerance": 1e-12
+        },
+        {
+          "type": "metric",
+          "name": "Mode 6: B power resource inventory is a dead stock (switch off)",
+          "column": "B Power Resource Inventory",
+          "metric": "min",
+          "op": ">=",
+          "value": 5000,
+          "tolerance": 1e-9
+        },
+        {
+          "type": "metric",
+          "name": "Mode 6: B power resource price stays at base (switch off)",
+          "column": "B Power Resource Price",
+          "metric": "max",
+          "op": "<=",
+          "value": 0.04,
+          "tolerance": 1e-12
         }
       ]
     },
@@ -1442,7 +2103,7 @@
         {
           "type": "identity",
           "name": "A feedstock->electronics pair identity (per mode)",
-          "abs_tol": 1e-08,
+          "abs_tol": 1e-8,
           "terms": [
             {
               "column": "A Electronics Feedstock Consumption",
@@ -1458,7 +2119,7 @@
         {
           "type": "identity",
           "name": "B feedstock->electronics pair identity (per mode)",
-          "abs_tol": 1e-08,
+          "abs_tol": 1e-8,
           "terms": [
             {
               "column": "B Electronics Feedstock Consumption",
@@ -1514,7 +2175,7 @@
           "metric": "min",
           "op": ">=",
           "value": 30,
-          "tolerance": 1e-09
+          "tolerance": 1e-9
         },
         {
           "type": "metric",
@@ -1523,7 +2184,97 @@
           "metric": "min",
           "op": ">=",
           "value": 30,
-          "tolerance": 1e-09
+          "tolerance": 1e-9
+        },
+        {
+          "type": "metric",
+          "name": "Mode 7: A power resource consumption is zero (switch off)",
+          "column": "A Power Resource Consumption",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 7: A power resource extraction is zero (switch off)",
+          "column": "A Power Resource Extraction",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 7: A power resource fulfillment is 1 (switch off)",
+          "column": "A Power Resource Fulfillment",
+          "metric": "min",
+          "op": ">=",
+          "value": 1,
+          "tolerance": 1e-12
+        },
+        {
+          "type": "metric",
+          "name": "Mode 7: A power resource inventory is a dead stock (switch off)",
+          "column": "A Power Resource Inventory",
+          "metric": "min",
+          "op": ">=",
+          "value": 5000,
+          "tolerance": 1e-9
+        },
+        {
+          "type": "metric",
+          "name": "Mode 7: A power resource price stays at base (switch off)",
+          "column": "A Power Resource Price",
+          "metric": "max",
+          "op": "<=",
+          "value": 0.04,
+          "tolerance": 1e-12
+        },
+        {
+          "type": "metric",
+          "name": "Mode 7: B power resource consumption is zero (switch off)",
+          "column": "B Power Resource Consumption",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 7: B power resource extraction is zero (switch off)",
+          "column": "B Power Resource Extraction",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 7: B power resource fulfillment is 1 (switch off)",
+          "column": "B Power Resource Fulfillment",
+          "metric": "min",
+          "op": ">=",
+          "value": 1,
+          "tolerance": 1e-12
+        },
+        {
+          "type": "metric",
+          "name": "Mode 7: B power resource inventory is a dead stock (switch off)",
+          "column": "B Power Resource Inventory",
+          "metric": "min",
+          "op": ">=",
+          "value": 5000,
+          "tolerance": 1e-9
+        },
+        {
+          "type": "metric",
+          "name": "Mode 7: B power resource price stays at base (switch off)",
+          "column": "B Power Resource Price",
+          "metric": "max",
+          "op": "<=",
+          "value": 0.04,
+          "tolerance": 1e-12
         }
       ]
     },
@@ -1568,7 +2319,7 @@
         {
           "type": "identity",
           "name": "A feedstock->electronics pair identity (per mode)",
-          "abs_tol": 1e-08,
+          "abs_tol": 1e-8,
           "terms": [
             {
               "column": "A Electronics Feedstock Consumption",
@@ -1584,7 +2335,7 @@
         {
           "type": "identity",
           "name": "B feedstock->electronics pair identity (per mode)",
-          "abs_tol": 1e-08,
+          "abs_tol": 1e-8,
           "terms": [
             {
               "column": "B Electronics Feedstock Consumption",
@@ -1640,7 +2391,7 @@
           "metric": "min",
           "op": ">=",
           "value": 30,
-          "tolerance": 1e-09
+          "tolerance": 1e-9
         },
         {
           "type": "metric",
@@ -1649,7 +2400,97 @@
           "metric": "min",
           "op": ">=",
           "value": 30,
-          "tolerance": 1e-09
+          "tolerance": 1e-9
+        },
+        {
+          "type": "metric",
+          "name": "Mode 8: A power resource consumption is zero (switch off)",
+          "column": "A Power Resource Consumption",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 8: A power resource extraction is zero (switch off)",
+          "column": "A Power Resource Extraction",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 8: A power resource fulfillment is 1 (switch off)",
+          "column": "A Power Resource Fulfillment",
+          "metric": "min",
+          "op": ">=",
+          "value": 1,
+          "tolerance": 1e-12
+        },
+        {
+          "type": "metric",
+          "name": "Mode 8: A power resource inventory is a dead stock (switch off)",
+          "column": "A Power Resource Inventory",
+          "metric": "min",
+          "op": ">=",
+          "value": 5000,
+          "tolerance": 1e-9
+        },
+        {
+          "type": "metric",
+          "name": "Mode 8: A power resource price stays at base (switch off)",
+          "column": "A Power Resource Price",
+          "metric": "max",
+          "op": "<=",
+          "value": 0.04,
+          "tolerance": 1e-12
+        },
+        {
+          "type": "metric",
+          "name": "Mode 8: B power resource consumption is zero (switch off)",
+          "column": "B Power Resource Consumption",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 8: B power resource extraction is zero (switch off)",
+          "column": "B Power Resource Extraction",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 8: B power resource fulfillment is 1 (switch off)",
+          "column": "B Power Resource Fulfillment",
+          "metric": "min",
+          "op": ">=",
+          "value": 1,
+          "tolerance": 1e-12
+        },
+        {
+          "type": "metric",
+          "name": "Mode 8: B power resource inventory is a dead stock (switch off)",
+          "column": "B Power Resource Inventory",
+          "metric": "min",
+          "op": ">=",
+          "value": 5000,
+          "tolerance": 1e-9
+        },
+        {
+          "type": "metric",
+          "name": "Mode 8: B power resource price stays at base (switch off)",
+          "column": "B Power Resource Price",
+          "metric": "max",
+          "op": "<=",
+          "value": 0.04,
+          "tolerance": 1e-12
         }
       ]
     },
@@ -1694,7 +2535,7 @@
         {
           "type": "identity",
           "name": "A feedstock->electronics pair identity (per mode)",
-          "abs_tol": 1e-08,
+          "abs_tol": 1e-8,
           "terms": [
             {
               "column": "A Electronics Feedstock Consumption",
@@ -1710,7 +2551,7 @@
         {
           "type": "identity",
           "name": "B feedstock->electronics pair identity (per mode)",
-          "abs_tol": 1e-08,
+          "abs_tol": 1e-8,
           "terms": [
             {
               "column": "B Electronics Feedstock Consumption",
@@ -1766,7 +2607,7 @@
           "metric": "min",
           "op": ">=",
           "value": 30,
-          "tolerance": 1e-09
+          "tolerance": 1e-9
         },
         {
           "type": "metric",
@@ -1775,7 +2616,97 @@
           "metric": "min",
           "op": ">=",
           "value": 30,
-          "tolerance": 1e-09
+          "tolerance": 1e-9
+        },
+        {
+          "type": "metric",
+          "name": "Mode 9: A power resource consumption is zero (switch off)",
+          "column": "A Power Resource Consumption",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 9: A power resource extraction is zero (switch off)",
+          "column": "A Power Resource Extraction",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 9: A power resource fulfillment is 1 (switch off)",
+          "column": "A Power Resource Fulfillment",
+          "metric": "min",
+          "op": ">=",
+          "value": 1,
+          "tolerance": 1e-12
+        },
+        {
+          "type": "metric",
+          "name": "Mode 9: A power resource inventory is a dead stock (switch off)",
+          "column": "A Power Resource Inventory",
+          "metric": "min",
+          "op": ">=",
+          "value": 5000,
+          "tolerance": 1e-9
+        },
+        {
+          "type": "metric",
+          "name": "Mode 9: A power resource price stays at base (switch off)",
+          "column": "A Power Resource Price",
+          "metric": "max",
+          "op": "<=",
+          "value": 0.04,
+          "tolerance": 1e-12
+        },
+        {
+          "type": "metric",
+          "name": "Mode 9: B power resource consumption is zero (switch off)",
+          "column": "B Power Resource Consumption",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 9: B power resource extraction is zero (switch off)",
+          "column": "B Power Resource Extraction",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 9: B power resource fulfillment is 1 (switch off)",
+          "column": "B Power Resource Fulfillment",
+          "metric": "min",
+          "op": ">=",
+          "value": 1,
+          "tolerance": 1e-12
+        },
+        {
+          "type": "metric",
+          "name": "Mode 9: B power resource inventory is a dead stock (switch off)",
+          "column": "B Power Resource Inventory",
+          "metric": "min",
+          "op": ">=",
+          "value": 5000,
+          "tolerance": 1e-9
+        },
+        {
+          "type": "metric",
+          "name": "Mode 9: B power resource price stays at base (switch off)",
+          "column": "B Power Resource Price",
+          "metric": "max",
+          "op": "<=",
+          "value": 0.04,
+          "tolerance": 1e-12
         }
       ]
     },
@@ -1820,7 +2751,7 @@
         {
           "type": "identity",
           "name": "A feedstock->electronics pair identity (per mode)",
-          "abs_tol": 1e-08,
+          "abs_tol": 1e-8,
           "terms": [
             {
               "column": "A Electronics Feedstock Consumption",
@@ -1836,7 +2767,7 @@
         {
           "type": "identity",
           "name": "B feedstock->electronics pair identity (per mode)",
-          "abs_tol": 1e-08,
+          "abs_tol": 1e-8,
           "terms": [
             {
               "column": "B Electronics Feedstock Consumption",
@@ -1892,7 +2823,7 @@
           "metric": "min",
           "op": ">=",
           "value": 30,
-          "tolerance": 1e-09
+          "tolerance": 1e-9
         },
         {
           "type": "metric",
@@ -1901,7 +2832,97 @@
           "metric": "min",
           "op": ">=",
           "value": 30,
-          "tolerance": 1e-09
+          "tolerance": 1e-9
+        },
+        {
+          "type": "metric",
+          "name": "Mode 10: A power resource consumption is zero (switch off)",
+          "column": "A Power Resource Consumption",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 10: A power resource extraction is zero (switch off)",
+          "column": "A Power Resource Extraction",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 10: A power resource fulfillment is 1 (switch off)",
+          "column": "A Power Resource Fulfillment",
+          "metric": "min",
+          "op": ">=",
+          "value": 1,
+          "tolerance": 1e-12
+        },
+        {
+          "type": "metric",
+          "name": "Mode 10: A power resource inventory is a dead stock (switch off)",
+          "column": "A Power Resource Inventory",
+          "metric": "min",
+          "op": ">=",
+          "value": 5000,
+          "tolerance": 1e-9
+        },
+        {
+          "type": "metric",
+          "name": "Mode 10: A power resource price stays at base (switch off)",
+          "column": "A Power Resource Price",
+          "metric": "max",
+          "op": "<=",
+          "value": 0.04,
+          "tolerance": 1e-12
+        },
+        {
+          "type": "metric",
+          "name": "Mode 10: B power resource consumption is zero (switch off)",
+          "column": "B Power Resource Consumption",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 10: B power resource extraction is zero (switch off)",
+          "column": "B Power Resource Extraction",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 10: B power resource fulfillment is 1 (switch off)",
+          "column": "B Power Resource Fulfillment",
+          "metric": "min",
+          "op": ">=",
+          "value": 1,
+          "tolerance": 1e-12
+        },
+        {
+          "type": "metric",
+          "name": "Mode 10: B power resource inventory is a dead stock (switch off)",
+          "column": "B Power Resource Inventory",
+          "metric": "min",
+          "op": ">=",
+          "value": 5000,
+          "tolerance": 1e-9
+        },
+        {
+          "type": "metric",
+          "name": "Mode 10: B power resource price stays at base (switch off)",
+          "column": "B Power Resource Price",
+          "metric": "max",
+          "op": "<=",
+          "value": 0.04,
+          "tolerance": 1e-12
         }
       ]
     },
@@ -1946,7 +2967,7 @@
         {
           "type": "identity",
           "name": "A feedstock->electronics pair identity (per mode)",
-          "abs_tol": 1e-08,
+          "abs_tol": 1e-8,
           "terms": [
             {
               "column": "A Electronics Feedstock Consumption",
@@ -1962,7 +2983,7 @@
         {
           "type": "identity",
           "name": "B feedstock->electronics pair identity (per mode)",
-          "abs_tol": 1e-08,
+          "abs_tol": 1e-8,
           "terms": [
             {
               "column": "B Electronics Feedstock Consumption",
@@ -2018,7 +3039,7 @@
           "metric": "min",
           "op": ">=",
           "value": 30,
-          "tolerance": 1e-09
+          "tolerance": 1e-9
         },
         {
           "type": "metric",
@@ -2027,7 +3048,97 @@
           "metric": "min",
           "op": ">=",
           "value": 30,
-          "tolerance": 1e-09
+          "tolerance": 1e-9
+        },
+        {
+          "type": "metric",
+          "name": "Mode 11: A power resource consumption is zero (switch off)",
+          "column": "A Power Resource Consumption",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 11: A power resource extraction is zero (switch off)",
+          "column": "A Power Resource Extraction",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 11: A power resource fulfillment is 1 (switch off)",
+          "column": "A Power Resource Fulfillment",
+          "metric": "min",
+          "op": ">=",
+          "value": 1,
+          "tolerance": 1e-12
+        },
+        {
+          "type": "metric",
+          "name": "Mode 11: A power resource inventory is a dead stock (switch off)",
+          "column": "A Power Resource Inventory",
+          "metric": "min",
+          "op": ">=",
+          "value": 5000,
+          "tolerance": 1e-9
+        },
+        {
+          "type": "metric",
+          "name": "Mode 11: A power resource price stays at base (switch off)",
+          "column": "A Power Resource Price",
+          "metric": "max",
+          "op": "<=",
+          "value": 0.04,
+          "tolerance": 1e-12
+        },
+        {
+          "type": "metric",
+          "name": "Mode 11: B power resource consumption is zero (switch off)",
+          "column": "B Power Resource Consumption",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 11: B power resource extraction is zero (switch off)",
+          "column": "B Power Resource Extraction",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 11: B power resource fulfillment is 1 (switch off)",
+          "column": "B Power Resource Fulfillment",
+          "metric": "min",
+          "op": ">=",
+          "value": 1,
+          "tolerance": 1e-12
+        },
+        {
+          "type": "metric",
+          "name": "Mode 11: B power resource inventory is a dead stock (switch off)",
+          "column": "B Power Resource Inventory",
+          "metric": "min",
+          "op": ">=",
+          "value": 5000,
+          "tolerance": 1e-9
+        },
+        {
+          "type": "metric",
+          "name": "Mode 11: B power resource price stays at base (switch off)",
+          "column": "B Power Resource Price",
+          "metric": "max",
+          "op": "<=",
+          "value": 0.04,
+          "tolerance": 1e-12
         }
       ]
     },
@@ -2043,7 +3154,7 @@
             1080
           ],
           "op": "<=",
-          "value": 1e-08
+          "value": 1e-8
         },
         {
           "type": "metric",
@@ -2055,7 +3166,7 @@
             1080
           ],
           "op": "<=",
-          "value": 1e-08
+          "value": 1e-8
         },
         {
           "type": "metric",
@@ -2096,7 +3207,7 @@
         {
           "type": "identity",
           "name": "A feedstock->electronics pair identity (per mode)",
-          "abs_tol": 1e-08,
+          "abs_tol": 1e-8,
           "terms": [
             {
               "column": "A Electronics Feedstock Consumption",
@@ -2112,7 +3223,7 @@
         {
           "type": "identity",
           "name": "B feedstock->electronics pair identity (per mode)",
-          "abs_tol": 1e-08,
+          "abs_tol": 1e-8,
           "terms": [
             {
               "column": "B Electronics Feedstock Consumption",
@@ -2168,7 +3279,7 @@
           "metric": "min",
           "op": ">=",
           "value": 30,
-          "tolerance": 1e-09
+          "tolerance": 1e-9
         },
         {
           "type": "metric",
@@ -2177,7 +3288,97 @@
           "metric": "min",
           "op": ">=",
           "value": 30,
-          "tolerance": 1e-09
+          "tolerance": 1e-9
+        },
+        {
+          "type": "metric",
+          "name": "Mode 12: A power resource consumption is zero (switch off)",
+          "column": "A Power Resource Consumption",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 12: A power resource extraction is zero (switch off)",
+          "column": "A Power Resource Extraction",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 12: A power resource fulfillment is 1 (switch off)",
+          "column": "A Power Resource Fulfillment",
+          "metric": "min",
+          "op": ">=",
+          "value": 1,
+          "tolerance": 1e-12
+        },
+        {
+          "type": "metric",
+          "name": "Mode 12: A power resource inventory is a dead stock (switch off)",
+          "column": "A Power Resource Inventory",
+          "metric": "min",
+          "op": ">=",
+          "value": 5000,
+          "tolerance": 1e-9
+        },
+        {
+          "type": "metric",
+          "name": "Mode 12: A power resource price stays at base (switch off)",
+          "column": "A Power Resource Price",
+          "metric": "max",
+          "op": "<=",
+          "value": 0.04,
+          "tolerance": 1e-12
+        },
+        {
+          "type": "metric",
+          "name": "Mode 12: B power resource consumption is zero (switch off)",
+          "column": "B Power Resource Consumption",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 12: B power resource extraction is zero (switch off)",
+          "column": "B Power Resource Extraction",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 12: B power resource fulfillment is 1 (switch off)",
+          "column": "B Power Resource Fulfillment",
+          "metric": "min",
+          "op": ">=",
+          "value": 1,
+          "tolerance": 1e-12
+        },
+        {
+          "type": "metric",
+          "name": "Mode 12: B power resource inventory is a dead stock (switch off)",
+          "column": "B Power Resource Inventory",
+          "metric": "min",
+          "op": ">=",
+          "value": 5000,
+          "tolerance": 1e-9
+        },
+        {
+          "type": "metric",
+          "name": "Mode 12: B power resource price stays at base (switch off)",
+          "column": "B Power Resource Price",
+          "metric": "max",
+          "op": "<=",
+          "value": 0.04,
+          "tolerance": 1e-12
         }
       ]
     },
@@ -2189,7 +3390,7 @@
           "event": {
             "column": "A Electronics Factory Activation",
             "op": ">",
-            "value": 1e-06,
+            "value": 0.000001,
             "window": [
               360,
               720
@@ -2202,7 +3403,7 @@
           "event": {
             "column": "A Electronics Factory Expansion",
             "op": ">",
-            "value": 1e-06,
+            "value": 0.000001,
             "window": [
               360,
               720
@@ -2248,7 +3449,7 @@
         {
           "type": "identity",
           "name": "A feedstock->electronics pair identity (per mode)",
-          "abs_tol": 1e-08,
+          "abs_tol": 1e-8,
           "terms": [
             {
               "column": "A Electronics Feedstock Consumption",
@@ -2264,7 +3465,7 @@
         {
           "type": "identity",
           "name": "B feedstock->electronics pair identity (per mode)",
-          "abs_tol": 1e-08,
+          "abs_tol": 1e-8,
           "terms": [
             {
               "column": "B Electronics Feedstock Consumption",
@@ -2320,7 +3521,7 @@
           "metric": "min",
           "op": ">=",
           "value": 30,
-          "tolerance": 1e-09
+          "tolerance": 1e-9
         },
         {
           "type": "metric",
@@ -2329,7 +3530,97 @@
           "metric": "min",
           "op": ">=",
           "value": 30,
-          "tolerance": 1e-09
+          "tolerance": 1e-9
+        },
+        {
+          "type": "metric",
+          "name": "Mode 13: A power resource consumption is zero (switch off)",
+          "column": "A Power Resource Consumption",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 13: A power resource extraction is zero (switch off)",
+          "column": "A Power Resource Extraction",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 13: A power resource fulfillment is 1 (switch off)",
+          "column": "A Power Resource Fulfillment",
+          "metric": "min",
+          "op": ">=",
+          "value": 1,
+          "tolerance": 1e-12
+        },
+        {
+          "type": "metric",
+          "name": "Mode 13: A power resource inventory is a dead stock (switch off)",
+          "column": "A Power Resource Inventory",
+          "metric": "min",
+          "op": ">=",
+          "value": 5000,
+          "tolerance": 1e-9
+        },
+        {
+          "type": "metric",
+          "name": "Mode 13: A power resource price stays at base (switch off)",
+          "column": "A Power Resource Price",
+          "metric": "max",
+          "op": "<=",
+          "value": 0.04,
+          "tolerance": 1e-12
+        },
+        {
+          "type": "metric",
+          "name": "Mode 13: B power resource consumption is zero (switch off)",
+          "column": "B Power Resource Consumption",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 13: B power resource extraction is zero (switch off)",
+          "column": "B Power Resource Extraction",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 13: B power resource fulfillment is 1 (switch off)",
+          "column": "B Power Resource Fulfillment",
+          "metric": "min",
+          "op": ">=",
+          "value": 1,
+          "tolerance": 1e-12
+        },
+        {
+          "type": "metric",
+          "name": "Mode 13: B power resource inventory is a dead stock (switch off)",
+          "column": "B Power Resource Inventory",
+          "metric": "min",
+          "op": ">=",
+          "value": 5000,
+          "tolerance": 1e-9
+        },
+        {
+          "type": "metric",
+          "name": "Mode 13: B power resource price stays at base (switch off)",
+          "column": "B Power Resource Price",
+          "metric": "max",
+          "op": "<=",
+          "value": 0.04,
+          "tolerance": 1e-12
         }
       ]
     },
@@ -2343,7 +3634,7 @@
               "name": "activation",
               "column": "A Electronics Factory Activation",
               "op": ">",
-              "value": 1e-06,
+              "value": 0.000001,
               "window": [
                 360,
                 1080
@@ -2353,7 +3644,7 @@
               "name": "construction",
               "column": "A Electronics Factory Expansion",
               "op": ">",
-              "value": 1e-06,
+              "value": 0.000001,
               "window": [
                 360,
                 1080
@@ -2409,7 +3700,7 @@
         {
           "type": "identity",
           "name": "A feedstock->electronics pair identity (per mode)",
-          "abs_tol": 1e-08,
+          "abs_tol": 1e-8,
           "terms": [
             {
               "column": "A Electronics Feedstock Consumption",
@@ -2425,7 +3716,7 @@
         {
           "type": "identity",
           "name": "B feedstock->electronics pair identity (per mode)",
-          "abs_tol": 1e-08,
+          "abs_tol": 1e-8,
           "terms": [
             {
               "column": "B Electronics Feedstock Consumption",
@@ -2481,7 +3772,7 @@
           "metric": "min",
           "op": ">=",
           "value": 30,
-          "tolerance": 1e-09
+          "tolerance": 1e-9
         },
         {
           "type": "metric",
@@ -2490,7 +3781,97 @@
           "metric": "min",
           "op": ">=",
           "value": 30,
-          "tolerance": 1e-09
+          "tolerance": 1e-9
+        },
+        {
+          "type": "metric",
+          "name": "Mode 14: A power resource consumption is zero (switch off)",
+          "column": "A Power Resource Consumption",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 14: A power resource extraction is zero (switch off)",
+          "column": "A Power Resource Extraction",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 14: A power resource fulfillment is 1 (switch off)",
+          "column": "A Power Resource Fulfillment",
+          "metric": "min",
+          "op": ">=",
+          "value": 1,
+          "tolerance": 1e-12
+        },
+        {
+          "type": "metric",
+          "name": "Mode 14: A power resource inventory is a dead stock (switch off)",
+          "column": "A Power Resource Inventory",
+          "metric": "min",
+          "op": ">=",
+          "value": 5000,
+          "tolerance": 1e-9
+        },
+        {
+          "type": "metric",
+          "name": "Mode 14: A power resource price stays at base (switch off)",
+          "column": "A Power Resource Price",
+          "metric": "max",
+          "op": "<=",
+          "value": 0.04,
+          "tolerance": 1e-12
+        },
+        {
+          "type": "metric",
+          "name": "Mode 14: B power resource consumption is zero (switch off)",
+          "column": "B Power Resource Consumption",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 14: B power resource extraction is zero (switch off)",
+          "column": "B Power Resource Extraction",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 14: B power resource fulfillment is 1 (switch off)",
+          "column": "B Power Resource Fulfillment",
+          "metric": "min",
+          "op": ">=",
+          "value": 1,
+          "tolerance": 1e-12
+        },
+        {
+          "type": "metric",
+          "name": "Mode 14: B power resource inventory is a dead stock (switch off)",
+          "column": "B Power Resource Inventory",
+          "metric": "min",
+          "op": ">=",
+          "value": 5000,
+          "tolerance": 1e-9
+        },
+        {
+          "type": "metric",
+          "name": "Mode 14: B power resource price stays at base (switch off)",
+          "column": "B Power Resource Price",
+          "metric": "max",
+          "op": "<=",
+          "value": 0.04,
+          "tolerance": 1e-12
         }
       ]
     },
@@ -2502,7 +3883,7 @@
           "event": {
             "column": "B Electronics Factory Mothballing",
             "op": ">",
-            "value": 1e-06,
+            "value": 0.000001,
             "window": [
               360,
               720
@@ -2515,7 +3896,7 @@
           "event": {
             "column": "B Electronics Factory Activation",
             "op": ">",
-            "value": 1e-06,
+            "value": 0.000001,
             "window": [
               720,
               1080
@@ -2528,7 +3909,7 @@
           "event": {
             "column": "B Power Generation Activation",
             "op": ">",
-            "value": 1e-06,
+            "value": 0.000001,
             "window": [
               720,
               1080
@@ -2574,7 +3955,7 @@
         {
           "type": "identity",
           "name": "A feedstock->electronics pair identity (per mode)",
-          "abs_tol": 1e-08,
+          "abs_tol": 1e-8,
           "terms": [
             {
               "column": "A Electronics Feedstock Consumption",
@@ -2590,7 +3971,7 @@
         {
           "type": "identity",
           "name": "B feedstock->electronics pair identity (per mode)",
-          "abs_tol": 1e-08,
+          "abs_tol": 1e-8,
           "terms": [
             {
               "column": "B Electronics Feedstock Consumption",
@@ -2646,7 +4027,7 @@
           "metric": "min",
           "op": ">=",
           "value": 30,
-          "tolerance": 1e-09
+          "tolerance": 1e-9
         },
         {
           "type": "metric",
@@ -2655,7 +4036,97 @@
           "metric": "min",
           "op": ">=",
           "value": 30,
-          "tolerance": 1e-09
+          "tolerance": 1e-9
+        },
+        {
+          "type": "metric",
+          "name": "Mode 15: A power resource consumption is zero (switch off)",
+          "column": "A Power Resource Consumption",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 15: A power resource extraction is zero (switch off)",
+          "column": "A Power Resource Extraction",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 15: A power resource fulfillment is 1 (switch off)",
+          "column": "A Power Resource Fulfillment",
+          "metric": "min",
+          "op": ">=",
+          "value": 1,
+          "tolerance": 1e-12
+        },
+        {
+          "type": "metric",
+          "name": "Mode 15: A power resource inventory is a dead stock (switch off)",
+          "column": "A Power Resource Inventory",
+          "metric": "min",
+          "op": ">=",
+          "value": 5000,
+          "tolerance": 1e-9
+        },
+        {
+          "type": "metric",
+          "name": "Mode 15: A power resource price stays at base (switch off)",
+          "column": "A Power Resource Price",
+          "metric": "max",
+          "op": "<=",
+          "value": 0.04,
+          "tolerance": 1e-12
+        },
+        {
+          "type": "metric",
+          "name": "Mode 15: B power resource consumption is zero (switch off)",
+          "column": "B Power Resource Consumption",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 15: B power resource extraction is zero (switch off)",
+          "column": "B Power Resource Extraction",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 15: B power resource fulfillment is 1 (switch off)",
+          "column": "B Power Resource Fulfillment",
+          "metric": "min",
+          "op": ">=",
+          "value": 1,
+          "tolerance": 1e-12
+        },
+        {
+          "type": "metric",
+          "name": "Mode 15: B power resource inventory is a dead stock (switch off)",
+          "column": "B Power Resource Inventory",
+          "metric": "min",
+          "op": ">=",
+          "value": 5000,
+          "tolerance": 1e-9
+        },
+        {
+          "type": "metric",
+          "name": "Mode 15: B power resource price stays at base (switch off)",
+          "column": "B Power Resource Price",
+          "metric": "max",
+          "op": "<=",
+          "value": 0.04,
+          "tolerance": 1e-12
         }
       ]
     },
@@ -2718,7 +4189,7 @@
         {
           "type": "identity",
           "name": "A feedstock->electronics pair identity (per mode)",
-          "abs_tol": 1e-08,
+          "abs_tol": 1e-8,
           "terms": [
             {
               "column": "A Electronics Feedstock Consumption",
@@ -2734,7 +4205,7 @@
         {
           "type": "identity",
           "name": "B feedstock->electronics pair identity (per mode)",
-          "abs_tol": 1e-08,
+          "abs_tol": 1e-8,
           "terms": [
             {
               "column": "B Electronics Feedstock Consumption",
@@ -2790,7 +4261,7 @@
           "metric": "min",
           "op": ">=",
           "value": 30,
-          "tolerance": 1e-09
+          "tolerance": 1e-9
         },
         {
           "type": "metric",
@@ -2799,7 +4270,97 @@
           "metric": "min",
           "op": ">=",
           "value": 30,
-          "tolerance": 1e-09
+          "tolerance": 1e-9
+        },
+        {
+          "type": "metric",
+          "name": "Mode 16: A power resource consumption is zero (switch off)",
+          "column": "A Power Resource Consumption",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 16: A power resource extraction is zero (switch off)",
+          "column": "A Power Resource Extraction",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 16: A power resource fulfillment is 1 (switch off)",
+          "column": "A Power Resource Fulfillment",
+          "metric": "min",
+          "op": ">=",
+          "value": 1,
+          "tolerance": 1e-12
+        },
+        {
+          "type": "metric",
+          "name": "Mode 16: A power resource inventory is a dead stock (switch off)",
+          "column": "A Power Resource Inventory",
+          "metric": "min",
+          "op": ">=",
+          "value": 5000,
+          "tolerance": 1e-9
+        },
+        {
+          "type": "metric",
+          "name": "Mode 16: A power resource price stays at base (switch off)",
+          "column": "A Power Resource Price",
+          "metric": "max",
+          "op": "<=",
+          "value": 0.04,
+          "tolerance": 1e-12
+        },
+        {
+          "type": "metric",
+          "name": "Mode 16: B power resource consumption is zero (switch off)",
+          "column": "B Power Resource Consumption",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 16: B power resource extraction is zero (switch off)",
+          "column": "B Power Resource Extraction",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 16: B power resource fulfillment is 1 (switch off)",
+          "column": "B Power Resource Fulfillment",
+          "metric": "min",
+          "op": ">=",
+          "value": 1,
+          "tolerance": 1e-12
+        },
+        {
+          "type": "metric",
+          "name": "Mode 16: B power resource inventory is a dead stock (switch off)",
+          "column": "B Power Resource Inventory",
+          "metric": "min",
+          "op": ">=",
+          "value": 5000,
+          "tolerance": 1e-9
+        },
+        {
+          "type": "metric",
+          "name": "Mode 16: B power resource price stays at base (switch off)",
+          "column": "B Power Resource Price",
+          "metric": "max",
+          "op": "<=",
+          "value": 0.04,
+          "tolerance": 1e-12
         }
       ]
     },
@@ -2954,7 +4515,7 @@
             1080
           ],
           "op": "<=",
-          "value": 1e-06
+          "value": 0.000001
         },
         {
           "type": "change",
@@ -2980,7 +4541,7 @@
         {
           "type": "identity",
           "name": "A feedstock->electronics pair identity (per mode)",
-          "abs_tol": 1e-08,
+          "abs_tol": 1e-8,
           "terms": [
             {
               "column": "A Electronics Feedstock Consumption",
@@ -2996,7 +4557,7 @@
         {
           "type": "identity",
           "name": "B feedstock->electronics pair identity (per mode)",
-          "abs_tol": 1e-08,
+          "abs_tol": 1e-8,
           "terms": [
             {
               "column": "B Electronics Feedstock Consumption",
@@ -3052,7 +4613,7 @@
           "metric": "min",
           "op": ">=",
           "value": 30,
-          "tolerance": 1e-09
+          "tolerance": 1e-9
         },
         {
           "type": "metric",
@@ -3061,7 +4622,97 @@
           "metric": "min",
           "op": ">=",
           "value": 30,
-          "tolerance": 1e-09
+          "tolerance": 1e-9
+        },
+        {
+          "type": "metric",
+          "name": "Mode 17: A power resource consumption is zero (switch off)",
+          "column": "A Power Resource Consumption",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 17: A power resource extraction is zero (switch off)",
+          "column": "A Power Resource Extraction",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 17: A power resource fulfillment is 1 (switch off)",
+          "column": "A Power Resource Fulfillment",
+          "metric": "min",
+          "op": ">=",
+          "value": 1,
+          "tolerance": 1e-12
+        },
+        {
+          "type": "metric",
+          "name": "Mode 17: A power resource inventory is a dead stock (switch off)",
+          "column": "A Power Resource Inventory",
+          "metric": "min",
+          "op": ">=",
+          "value": 5000,
+          "tolerance": 1e-9
+        },
+        {
+          "type": "metric",
+          "name": "Mode 17: A power resource price stays at base (switch off)",
+          "column": "A Power Resource Price",
+          "metric": "max",
+          "op": "<=",
+          "value": 0.04,
+          "tolerance": 1e-12
+        },
+        {
+          "type": "metric",
+          "name": "Mode 17: B power resource consumption is zero (switch off)",
+          "column": "B Power Resource Consumption",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 17: B power resource extraction is zero (switch off)",
+          "column": "B Power Resource Extraction",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 17: B power resource fulfillment is 1 (switch off)",
+          "column": "B Power Resource Fulfillment",
+          "metric": "min",
+          "op": ">=",
+          "value": 1,
+          "tolerance": 1e-12
+        },
+        {
+          "type": "metric",
+          "name": "Mode 17: B power resource inventory is a dead stock (switch off)",
+          "column": "B Power Resource Inventory",
+          "metric": "min",
+          "op": ">=",
+          "value": 5000,
+          "tolerance": 1e-9
+        },
+        {
+          "type": "metric",
+          "name": "Mode 17: B power resource price stays at base (switch off)",
+          "column": "B Power Resource Price",
+          "metric": "max",
+          "op": "<=",
+          "value": 0.04,
+          "tolerance": 1e-12
         }
       ],
       "notes": [
@@ -3232,7 +4883,7 @@
         {
           "type": "identity",
           "name": "A feedstock->electronics pair identity (per mode)",
-          "abs_tol": 1e-08,
+          "abs_tol": 1e-8,
           "terms": [
             {
               "column": "A Electronics Feedstock Consumption",
@@ -3248,7 +4899,7 @@
         {
           "type": "identity",
           "name": "B feedstock->electronics pair identity (per mode)",
-          "abs_tol": 1e-08,
+          "abs_tol": 1e-8,
           "terms": [
             {
               "column": "B Electronics Feedstock Consumption",
@@ -3304,7 +4955,7 @@
           "metric": "min",
           "op": ">=",
           "value": 30,
-          "tolerance": 1e-09
+          "tolerance": 1e-9
         },
         {
           "type": "metric",
@@ -3313,7 +4964,97 @@
           "metric": "min",
           "op": ">=",
           "value": 30,
-          "tolerance": 1e-09
+          "tolerance": 1e-9
+        },
+        {
+          "type": "metric",
+          "name": "Mode 18: A power resource consumption is zero (switch off)",
+          "column": "A Power Resource Consumption",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 18: A power resource extraction is zero (switch off)",
+          "column": "A Power Resource Extraction",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 18: A power resource fulfillment is 1 (switch off)",
+          "column": "A Power Resource Fulfillment",
+          "metric": "min",
+          "op": ">=",
+          "value": 1,
+          "tolerance": 1e-12
+        },
+        {
+          "type": "metric",
+          "name": "Mode 18: A power resource inventory is a dead stock (switch off)",
+          "column": "A Power Resource Inventory",
+          "metric": "min",
+          "op": ">=",
+          "value": 5000,
+          "tolerance": 1e-9
+        },
+        {
+          "type": "metric",
+          "name": "Mode 18: A power resource price stays at base (switch off)",
+          "column": "A Power Resource Price",
+          "metric": "max",
+          "op": "<=",
+          "value": 0.04,
+          "tolerance": 1e-12
+        },
+        {
+          "type": "metric",
+          "name": "Mode 18: B power resource consumption is zero (switch off)",
+          "column": "B Power Resource Consumption",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 18: B power resource extraction is zero (switch off)",
+          "column": "B Power Resource Extraction",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 18: B power resource fulfillment is 1 (switch off)",
+          "column": "B Power Resource Fulfillment",
+          "metric": "min",
+          "op": ">=",
+          "value": 1,
+          "tolerance": 1e-12
+        },
+        {
+          "type": "metric",
+          "name": "Mode 18: B power resource inventory is a dead stock (switch off)",
+          "column": "B Power Resource Inventory",
+          "metric": "min",
+          "op": ">=",
+          "value": 5000,
+          "tolerance": 1e-9
+        },
+        {
+          "type": "metric",
+          "name": "Mode 18: B power resource price stays at base (switch off)",
+          "column": "B Power Resource Price",
+          "metric": "max",
+          "op": "<=",
+          "value": 0.04,
+          "tolerance": 1e-12
         }
       ],
       "notes": [
@@ -3435,7 +5176,7 @@
         {
           "type": "identity",
           "name": "A feedstock->electronics pair identity (per mode)",
-          "abs_tol": 1e-08,
+          "abs_tol": 1e-8,
           "terms": [
             {
               "column": "A Electronics Feedstock Consumption",
@@ -3451,7 +5192,7 @@
         {
           "type": "identity",
           "name": "B feedstock->electronics pair identity (per mode)",
-          "abs_tol": 1e-08,
+          "abs_tol": 1e-8,
           "terms": [
             {
               "column": "B Electronics Feedstock Consumption",
@@ -3507,7 +5248,7 @@
           "metric": "min",
           "op": ">=",
           "value": 30,
-          "tolerance": 1e-09
+          "tolerance": 1e-9
         },
         {
           "type": "metric",
@@ -3516,7 +5257,97 @@
           "metric": "min",
           "op": ">=",
           "value": 30,
-          "tolerance": 1e-09
+          "tolerance": 1e-9
+        },
+        {
+          "type": "metric",
+          "name": "Mode 19: A power resource consumption is zero (switch off)",
+          "column": "A Power Resource Consumption",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 19: A power resource extraction is zero (switch off)",
+          "column": "A Power Resource Extraction",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 19: A power resource fulfillment is 1 (switch off)",
+          "column": "A Power Resource Fulfillment",
+          "metric": "min",
+          "op": ">=",
+          "value": 1,
+          "tolerance": 1e-12
+        },
+        {
+          "type": "metric",
+          "name": "Mode 19: A power resource inventory is a dead stock (switch off)",
+          "column": "A Power Resource Inventory",
+          "metric": "min",
+          "op": ">=",
+          "value": 5000,
+          "tolerance": 1e-9
+        },
+        {
+          "type": "metric",
+          "name": "Mode 19: A power resource price stays at base (switch off)",
+          "column": "A Power Resource Price",
+          "metric": "max",
+          "op": "<=",
+          "value": 0.04,
+          "tolerance": 1e-12
+        },
+        {
+          "type": "metric",
+          "name": "Mode 19: B power resource consumption is zero (switch off)",
+          "column": "B Power Resource Consumption",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 19: B power resource extraction is zero (switch off)",
+          "column": "B Power Resource Extraction",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 19: B power resource fulfillment is 1 (switch off)",
+          "column": "B Power Resource Fulfillment",
+          "metric": "min",
+          "op": ">=",
+          "value": 1,
+          "tolerance": 1e-12
+        },
+        {
+          "type": "metric",
+          "name": "Mode 19: B power resource inventory is a dead stock (switch off)",
+          "column": "B Power Resource Inventory",
+          "metric": "min",
+          "op": ">=",
+          "value": 5000,
+          "tolerance": 1e-9
+        },
+        {
+          "type": "metric",
+          "name": "Mode 19: B power resource price stays at base (switch off)",
+          "column": "B Power Resource Price",
+          "metric": "max",
+          "op": "<=",
+          "value": 0.04,
+          "tolerance": 1e-12
         }
       ],
       "notes": [
@@ -3543,7 +5374,7 @@
               "coef": -1
             }
           ],
-          "abs_tol": 1e-06,
+          "abs_tol": 0.000001,
           "window": [
             360,
             1080
@@ -3567,7 +5398,7 @@
           "event": {
             "column": "B Refinery Expansion",
             "op": ">",
-            "value": 1e-06,
+            "value": 0.000001,
             "window": [
               360,
               1080
@@ -3589,7 +5420,7 @@
         {
           "type": "identity",
           "name": "A feedstock->electronics pair identity (per mode)",
-          "abs_tol": 1e-08,
+          "abs_tol": 1e-8,
           "terms": [
             {
               "column": "A Electronics Feedstock Consumption",
@@ -3605,7 +5436,7 @@
         {
           "type": "identity",
           "name": "B feedstock->electronics pair identity (per mode)",
-          "abs_tol": 1e-08,
+          "abs_tol": 1e-8,
           "terms": [
             {
               "column": "B Electronics Feedstock Consumption",
@@ -3661,7 +5492,7 @@
           "metric": "min",
           "op": ">=",
           "value": 30,
-          "tolerance": 1e-09
+          "tolerance": 1e-9
         },
         {
           "type": "metric",
@@ -3670,7 +5501,97 @@
           "metric": "min",
           "op": ">=",
           "value": 30,
-          "tolerance": 1e-09
+          "tolerance": 1e-9
+        },
+        {
+          "type": "metric",
+          "name": "Mode 20: A power resource consumption is zero (switch off)",
+          "column": "A Power Resource Consumption",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 20: A power resource extraction is zero (switch off)",
+          "column": "A Power Resource Extraction",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 20: A power resource fulfillment is 1 (switch off)",
+          "column": "A Power Resource Fulfillment",
+          "metric": "min",
+          "op": ">=",
+          "value": 1,
+          "tolerance": 1e-12
+        },
+        {
+          "type": "metric",
+          "name": "Mode 20: A power resource inventory is a dead stock (switch off)",
+          "column": "A Power Resource Inventory",
+          "metric": "min",
+          "op": ">=",
+          "value": 5000,
+          "tolerance": 1e-9
+        },
+        {
+          "type": "metric",
+          "name": "Mode 20: A power resource price stays at base (switch off)",
+          "column": "A Power Resource Price",
+          "metric": "max",
+          "op": "<=",
+          "value": 0.04,
+          "tolerance": 1e-12
+        },
+        {
+          "type": "metric",
+          "name": "Mode 20: B power resource consumption is zero (switch off)",
+          "column": "B Power Resource Consumption",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 20: B power resource extraction is zero (switch off)",
+          "column": "B Power Resource Extraction",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 20: B power resource fulfillment is 1 (switch off)",
+          "column": "B Power Resource Fulfillment",
+          "metric": "min",
+          "op": ">=",
+          "value": 1,
+          "tolerance": 1e-12
+        },
+        {
+          "type": "metric",
+          "name": "Mode 20: B power resource inventory is a dead stock (switch off)",
+          "column": "B Power Resource Inventory",
+          "metric": "min",
+          "op": ">=",
+          "value": 5000,
+          "tolerance": 1e-9
+        },
+        {
+          "type": "metric",
+          "name": "Mode 20: B power resource price stays at base (switch off)",
+          "column": "B Power Resource Price",
+          "metric": "max",
+          "op": "<=",
+          "value": 0.04,
+          "tolerance": 1e-12
         }
       ],
       "notes": [
@@ -3729,7 +5650,7 @@
           ],
           "op": ">=",
           "value": 30,
-          "tolerance": 1e-09
+          "tolerance": 1e-9
         },
         {
           "type": "metric",
@@ -3741,7 +5662,7 @@
             1080
           ],
           "op": "<=",
-          "value": 1e-06
+          "value": 0.000001
         },
         {
           "type": "metric",
@@ -3863,7 +5784,7 @@
         {
           "type": "identity",
           "name": "Mode 21: A Refinery capital goods pair identity",
-          "abs_tol": 1e-08,
+          "abs_tol": 1e-8,
           "terms": [
             {
               "column": "A Refinery Capital Goods Consumption",
@@ -3879,7 +5800,7 @@
         {
           "type": "identity",
           "name": "Mode 21: A Electronics capital goods pair identity",
-          "abs_tol": 1e-08,
+          "abs_tol": 1e-8,
           "terms": [
             {
               "column": "A Electronics Capital Goods Consumption",
@@ -3895,7 +5816,7 @@
         {
           "type": "identity",
           "name": "Mode 21: A Power capital goods pair identity",
-          "abs_tol": 1e-08,
+          "abs_tol": 1e-8,
           "terms": [
             {
               "column": "A Power Capital Goods Consumption",
@@ -3911,7 +5832,7 @@
         {
           "type": "identity",
           "name": "Mode 21: B Refinery capital goods pair identity",
-          "abs_tol": 1e-08,
+          "abs_tol": 1e-8,
           "terms": [
             {
               "column": "B Refinery Capital Goods Consumption",
@@ -3927,7 +5848,7 @@
         {
           "type": "identity",
           "name": "Mode 21: B Electronics capital goods pair identity",
-          "abs_tol": 1e-08,
+          "abs_tol": 1e-8,
           "terms": [
             {
               "column": "B Electronics Capital Goods Consumption",
@@ -3943,7 +5864,7 @@
         {
           "type": "identity",
           "name": "Mode 21: B Power capital goods pair identity",
-          "abs_tol": 1e-08,
+          "abs_tol": 1e-8,
           "terms": [
             {
               "column": "B Power Capital Goods Consumption",
@@ -3955,6 +5876,96 @@
             }
           ],
           "note": "Coefficient equals -0.5, matching B Power Capital Goods per Capacity."
+        },
+        {
+          "type": "metric",
+          "name": "Mode 21: A power resource consumption is zero (switch off)",
+          "column": "A Power Resource Consumption",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 21: A power resource extraction is zero (switch off)",
+          "column": "A Power Resource Extraction",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 21: A power resource fulfillment is 1 (switch off)",
+          "column": "A Power Resource Fulfillment",
+          "metric": "min",
+          "op": ">=",
+          "value": 1,
+          "tolerance": 1e-12
+        },
+        {
+          "type": "metric",
+          "name": "Mode 21: A power resource inventory is a dead stock (switch off)",
+          "column": "A Power Resource Inventory",
+          "metric": "min",
+          "op": ">=",
+          "value": 5000,
+          "tolerance": 1e-9
+        },
+        {
+          "type": "metric",
+          "name": "Mode 21: A power resource price stays at base (switch off)",
+          "column": "A Power Resource Price",
+          "metric": "max",
+          "op": "<=",
+          "value": 0.04,
+          "tolerance": 1e-12
+        },
+        {
+          "type": "metric",
+          "name": "Mode 21: B power resource consumption is zero (switch off)",
+          "column": "B Power Resource Consumption",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 21: B power resource extraction is zero (switch off)",
+          "column": "B Power Resource Extraction",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 21: B power resource fulfillment is 1 (switch off)",
+          "column": "B Power Resource Fulfillment",
+          "metric": "min",
+          "op": ">=",
+          "value": 1,
+          "tolerance": 1e-12
+        },
+        {
+          "type": "metric",
+          "name": "Mode 21: B power resource inventory is a dead stock (switch off)",
+          "column": "B Power Resource Inventory",
+          "metric": "min",
+          "op": ">=",
+          "value": 5000,
+          "tolerance": 1e-9
+        },
+        {
+          "type": "metric",
+          "name": "Mode 21: B power resource price stays at base (switch off)",
+          "column": "B Power Resource Price",
+          "metric": "max",
+          "op": "<=",
+          "value": 0.04,
+          "tolerance": 1e-12
         }
       ]
     },
@@ -4084,7 +6095,7 @@
         {
           "type": "identity",
           "name": "Mode 22: A Refinery capital goods pair identity",
-          "abs_tol": 1e-08,
+          "abs_tol": 1e-8,
           "terms": [
             {
               "column": "A Refinery Capital Goods Consumption",
@@ -4100,7 +6111,7 @@
         {
           "type": "identity",
           "name": "Mode 22: A Electronics capital goods pair identity",
-          "abs_tol": 1e-08,
+          "abs_tol": 1e-8,
           "terms": [
             {
               "column": "A Electronics Capital Goods Consumption",
@@ -4116,7 +6127,7 @@
         {
           "type": "identity",
           "name": "Mode 22: A Power capital goods pair identity",
-          "abs_tol": 1e-08,
+          "abs_tol": 1e-8,
           "terms": [
             {
               "column": "A Power Capital Goods Consumption",
@@ -4132,7 +6143,7 @@
         {
           "type": "identity",
           "name": "Mode 22: B Refinery capital goods pair identity",
-          "abs_tol": 1e-08,
+          "abs_tol": 1e-8,
           "terms": [
             {
               "column": "B Refinery Capital Goods Consumption",
@@ -4148,7 +6159,7 @@
         {
           "type": "identity",
           "name": "Mode 22: B Electronics capital goods pair identity",
-          "abs_tol": 1e-08,
+          "abs_tol": 1e-8,
           "terms": [
             {
               "column": "B Electronics Capital Goods Consumption",
@@ -4164,7 +6175,7 @@
         {
           "type": "identity",
           "name": "Mode 22: B Power capital goods pair identity",
-          "abs_tol": 1e-08,
+          "abs_tol": 1e-8,
           "terms": [
             {
               "column": "B Power Capital Goods Consumption",
@@ -4176,6 +6187,96 @@
             }
           ],
           "note": "Coefficient equals -0.5, matching B Power Capital Goods per Capacity."
+        },
+        {
+          "type": "metric",
+          "name": "Mode 22: A power resource consumption is zero (switch off)",
+          "column": "A Power Resource Consumption",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 22: A power resource extraction is zero (switch off)",
+          "column": "A Power Resource Extraction",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 22: A power resource fulfillment is 1 (switch off)",
+          "column": "A Power Resource Fulfillment",
+          "metric": "min",
+          "op": ">=",
+          "value": 1,
+          "tolerance": 1e-12
+        },
+        {
+          "type": "metric",
+          "name": "Mode 22: A power resource inventory is a dead stock (switch off)",
+          "column": "A Power Resource Inventory",
+          "metric": "min",
+          "op": ">=",
+          "value": 5000,
+          "tolerance": 1e-9
+        },
+        {
+          "type": "metric",
+          "name": "Mode 22: A power resource price stays at base (switch off)",
+          "column": "A Power Resource Price",
+          "metric": "max",
+          "op": "<=",
+          "value": 0.04,
+          "tolerance": 1e-12
+        },
+        {
+          "type": "metric",
+          "name": "Mode 22: B power resource consumption is zero (switch off)",
+          "column": "B Power Resource Consumption",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 22: B power resource extraction is zero (switch off)",
+          "column": "B Power Resource Extraction",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 22: B power resource fulfillment is 1 (switch off)",
+          "column": "B Power Resource Fulfillment",
+          "metric": "min",
+          "op": ">=",
+          "value": 1,
+          "tolerance": 1e-12
+        },
+        {
+          "type": "metric",
+          "name": "Mode 22: B power resource inventory is a dead stock (switch off)",
+          "column": "B Power Resource Inventory",
+          "metric": "min",
+          "op": ">=",
+          "value": 5000,
+          "tolerance": 1e-9
+        },
+        {
+          "type": "metric",
+          "name": "Mode 22: B power resource price stays at base (switch off)",
+          "column": "B Power Resource Price",
+          "metric": "max",
+          "op": "<=",
+          "value": 0.04,
+          "tolerance": 1e-12
         }
       ]
     },
@@ -4329,7 +6430,7 @@
         {
           "type": "identity",
           "name": "Mode 23: A Refinery capital goods pair identity",
-          "abs_tol": 1e-08,
+          "abs_tol": 1e-8,
           "terms": [
             {
               "column": "A Refinery Capital Goods Consumption",
@@ -4345,7 +6446,7 @@
         {
           "type": "identity",
           "name": "Mode 23: A Electronics capital goods pair identity",
-          "abs_tol": 1e-08,
+          "abs_tol": 1e-8,
           "terms": [
             {
               "column": "A Electronics Capital Goods Consumption",
@@ -4361,7 +6462,7 @@
         {
           "type": "identity",
           "name": "Mode 23: A Power capital goods pair identity",
-          "abs_tol": 1e-08,
+          "abs_tol": 1e-8,
           "terms": [
             {
               "column": "A Power Capital Goods Consumption",
@@ -4377,7 +6478,7 @@
         {
           "type": "identity",
           "name": "Mode 23: B Refinery capital goods pair identity",
-          "abs_tol": 1e-08,
+          "abs_tol": 1e-8,
           "terms": [
             {
               "column": "B Refinery Capital Goods Consumption",
@@ -4393,7 +6494,7 @@
         {
           "type": "identity",
           "name": "Mode 23: B Electronics capital goods pair identity",
-          "abs_tol": 1e-08,
+          "abs_tol": 1e-8,
           "terms": [
             {
               "column": "B Electronics Capital Goods Consumption",
@@ -4409,7 +6510,7 @@
         {
           "type": "identity",
           "name": "Mode 23: B Power capital goods pair identity",
-          "abs_tol": 1e-08,
+          "abs_tol": 1e-8,
           "terms": [
             {
               "column": "B Power Capital Goods Consumption",
@@ -4421,6 +6522,96 @@
             }
           ],
           "note": "Coefficient equals -0.5, matching B Power Capital Goods per Capacity."
+        },
+        {
+          "type": "metric",
+          "name": "Mode 23: A power resource consumption is zero (switch off)",
+          "column": "A Power Resource Consumption",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 23: A power resource extraction is zero (switch off)",
+          "column": "A Power Resource Extraction",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 23: A power resource fulfillment is 1 (switch off)",
+          "column": "A Power Resource Fulfillment",
+          "metric": "min",
+          "op": ">=",
+          "value": 1,
+          "tolerance": 1e-12
+        },
+        {
+          "type": "metric",
+          "name": "Mode 23: A power resource inventory is a dead stock (switch off)",
+          "column": "A Power Resource Inventory",
+          "metric": "min",
+          "op": ">=",
+          "value": 5000,
+          "tolerance": 1e-9
+        },
+        {
+          "type": "metric",
+          "name": "Mode 23: A power resource price stays at base (switch off)",
+          "column": "A Power Resource Price",
+          "metric": "max",
+          "op": "<=",
+          "value": 0.04,
+          "tolerance": 1e-12
+        },
+        {
+          "type": "metric",
+          "name": "Mode 23: B power resource consumption is zero (switch off)",
+          "column": "B Power Resource Consumption",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 23: B power resource extraction is zero (switch off)",
+          "column": "B Power Resource Extraction",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 23: B power resource fulfillment is 1 (switch off)",
+          "column": "B Power Resource Fulfillment",
+          "metric": "min",
+          "op": ">=",
+          "value": 1,
+          "tolerance": 1e-12
+        },
+        {
+          "type": "metric",
+          "name": "Mode 23: B power resource inventory is a dead stock (switch off)",
+          "column": "B Power Resource Inventory",
+          "metric": "min",
+          "op": ">=",
+          "value": 5000,
+          "tolerance": 1e-9
+        },
+        {
+          "type": "metric",
+          "name": "Mode 23: B power resource price stays at base (switch off)",
+          "column": "B Power Resource Price",
+          "metric": "max",
+          "op": "<=",
+          "value": 0.04,
+          "tolerance": 1e-12
         }
       ]
     },
@@ -4433,7 +6624,7 @@
           "event": {
             "column": "Transport Desired Expansion",
             "op": ">",
-            "value": 1e-08,
+            "value": 1e-8,
             "window": [
               0,
               1080
@@ -4446,7 +6637,7 @@
           "event": {
             "column": "Transport Capacity Expansion",
             "op": ">",
-            "value": 1e-08,
+            "value": 1e-8,
             "window": [
               0,
               1080
@@ -4468,7 +6659,7 @@
         {
           "type": "identity",
           "name": "Mode 24: Transport Capital Goods pair identity",
-          "abs_tol": 1e-08,
+          "abs_tol": 1e-8,
           "terms": [
             {
               "column": "A Transport Capital Goods Consumption",
@@ -4510,10 +6701,276 @@
           "op": "<=",
           "value": 1,
           "tolerance": 1e-10
+        },
+        {
+          "type": "metric",
+          "name": "Mode 24: A power resource consumption is zero (switch off)",
+          "column": "A Power Resource Consumption",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 24: A power resource extraction is zero (switch off)",
+          "column": "A Power Resource Extraction",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 24: A power resource fulfillment is 1 (switch off)",
+          "column": "A Power Resource Fulfillment",
+          "metric": "min",
+          "op": ">=",
+          "value": 1,
+          "tolerance": 1e-12
+        },
+        {
+          "type": "metric",
+          "name": "Mode 24: A power resource inventory is a dead stock (switch off)",
+          "column": "A Power Resource Inventory",
+          "metric": "min",
+          "op": ">=",
+          "value": 5000,
+          "tolerance": 1e-9
+        },
+        {
+          "type": "metric",
+          "name": "Mode 24: A power resource price stays at base (switch off)",
+          "column": "A Power Resource Price",
+          "metric": "max",
+          "op": "<=",
+          "value": 0.04,
+          "tolerance": 1e-12
+        },
+        {
+          "type": "metric",
+          "name": "Mode 24: B power resource consumption is zero (switch off)",
+          "column": "B Power Resource Consumption",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 24: B power resource extraction is zero (switch off)",
+          "column": "B Power Resource Extraction",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 24: B power resource fulfillment is 1 (switch off)",
+          "column": "B Power Resource Fulfillment",
+          "metric": "min",
+          "op": ">=",
+          "value": 1,
+          "tolerance": 1e-12
+        },
+        {
+          "type": "metric",
+          "name": "Mode 24: B power resource inventory is a dead stock (switch off)",
+          "column": "B Power Resource Inventory",
+          "metric": "min",
+          "op": ">=",
+          "value": 5000,
+          "tolerance": 1e-9
+        },
+        {
+          "type": "metric",
+          "name": "Mode 24: B power resource price stays at base (switch off)",
+          "column": "B Power Resource Price",
+          "metric": "max",
+          "op": "<=",
+          "value": 0.04,
+          "tolerance": 1e-12
         }
       ],
       "notes": [
         "v7.5.1 closure scenario. Thresholds beyond structural/identity checks may be calibrated only after observing the first accepted run; no behavioral target is pre-imposed beyond actual Transport investment and physical backing."
+      ]
+    },
+    "25": {
+      "name": "v7.6 Energy Resource Supply Shock",
+      "checks": [
+        {
+          "type": "event_exists",
+          "name": "Mode 25: A resource fulfillment becomes scarce during shock",
+          "event": {
+            "column": "A Power Resource Fulfillment",
+            "op": "<",
+            "value": 0.99,
+            "window": [
+              360,
+              720
+            ]
+          }
+        },
+        {
+          "type": "event_exists",
+          "name": "Mode 25: A has resource-limited unserved energy",
+          "event": {
+            "column": "A Energy Unserved Demand",
+            "op": ">",
+            "value": 0.000001,
+            "window": [
+              360,
+              720
+            ]
+          }
+        },
+        {
+          "type": "metric",
+          "name": "Mode 25: B resource fulfillment remains high",
+          "column": "B Power Resource Fulfillment",
+          "metric": "min",
+          "window": [
+            360,
+            720
+          ],
+          "op": ">=",
+          "value": 0.95
+        },
+        {
+          "type": "identity",
+          "name": "Mode 25: A power-resource operating identity",
+          "abs_tol": 1e-8,
+          "terms": [
+            {
+              "column": "A Power Resource Consumption",
+              "coef": 1
+            },
+            {
+              "column": "A Energy Supply",
+              "coef": -1
+            }
+          ]
+        },
+        {
+          "type": "identity",
+          "name": "Mode 25: B power-resource operating identity",
+          "abs_tol": 1e-8,
+          "terms": [
+            {
+              "column": "B Power Resource Consumption",
+              "coef": 1
+            },
+            {
+              "column": "B Energy Supply",
+              "coef": -1
+            }
+          ]
+        },
+        {
+          "type": "metric",
+          "name": "Mode 25: A extraction recovers after shock",
+          "column": "A Power Resource Extraction Multiplier",
+          "metric": "last",
+          "window": [
+            1080,
+            1080
+          ],
+          "op": ">=",
+          "value": 1
+        },
+        {
+          "type": "metric",
+          "name": "Mode 25: A energy is rationed, not cut off (v7.6.1 calibration)",
+          "column": "A Energy Supply",
+          "metric": "min",
+          "window": [
+            360,
+            720
+          ],
+          "op": ">=",
+          "value": 400
+        }
+      ],
+      "notes": [
+        "Primary-resource shock test: capacity is not directly modified; any additional energy scarcity must arise through the physical operating-resource path."
+      ]
+    },
+    "26": {
+      "name": "v7.6 Energy Capacity-Only Control Shock",
+      "checks": [
+        {
+          "type": "event_exists",
+          "name": "Mode 26: A energy scarcity appears under capacity shock",
+          "event": {
+            "column": "A Energy Unserved Demand",
+            "op": ">",
+            "value": 0.000001,
+            "window": [
+              360,
+              720
+            ]
+          }
+        },
+        {
+          "type": "metric",
+          "name": "Mode 26: A resource fulfillment remains high during capacity shock",
+          "column": "A Power Resource Fulfillment",
+          "metric": "min",
+          "window": [
+            360,
+            720
+          ],
+          "op": ">=",
+          "value": 0.95
+        },
+        {
+          "type": "identity",
+          "name": "Mode 26: A power-resource operating identity",
+          "abs_tol": 1e-8,
+          "terms": [
+            {
+              "column": "A Power Resource Consumption",
+              "coef": 1
+            },
+            {
+              "column": "A Energy Supply",
+              "coef": -1
+            }
+          ]
+        },
+        {
+          "type": "identity",
+          "name": "Mode 26: B power-resource operating identity",
+          "abs_tol": 1e-8,
+          "terms": [
+            {
+              "column": "B Power Resource Consumption",
+              "coef": 1
+            },
+            {
+              "column": "B Energy Supply",
+              "coef": -1
+            }
+          ],
+          "note": "Power Resource per Energy = 1 in v7.6 r1; update coefficient if the parameter changes."
+        },
+        {
+          "type": "metric",
+          "name": "Mode 26: B resource fulfillment remains high during capacity shock",
+          "column": "B Power Resource Fulfillment",
+          "metric": "min",
+          "window": [
+            360,
+            720
+          ],
+          "op": ">=",
+          "value": 0.95
+        }
+      ],
+      "notes": [
+        "Control test: resource supply remains normal while active generation capacity is temporarily reduced."
       ]
     }
   },
@@ -4527,7 +6984,7 @@
       "column": "A Electronics Metal Input Fulfillment",
       "min": 0,
       "max": 1,
-      "tolerance": 1e-09
+      "tolerance": 1e-9
     },
     {
       "type": "relation",
@@ -4535,7 +6992,7 @@
       "left": "A Electronics Metal Input Delivery",
       "op": "<=",
       "right": "A Electronics Metal Input Demand",
-      "abs_tol": 1e-08
+      "abs_tol": 1e-8
     },
     {
       "type": "relation",
@@ -4543,42 +7000,42 @@
       "left": "A Electronics Metal Input Delivery",
       "op": "<=",
       "right": "A Metal Available for Intermediate Use",
-      "abs_tol": 1e-08
+      "abs_tol": 1e-8
     },
     {
       "type": "bounded",
       "name": "A metal input delivery >= 0",
       "column": "A Electronics Metal Input Delivery",
       "min": 0,
-      "tolerance": 1e-09
+      "tolerance": 1e-9
     },
     {
       "type": "bounded",
       "name": "A metal input demand >= 0",
       "column": "A Electronics Metal Input Demand",
       "min": 0,
-      "tolerance": 1e-09
+      "tolerance": 1e-9
     },
     {
       "type": "bounded",
       "name": "A metal inventory >= 0",
       "column": "A Metal Inventory",
       "min": 0,
-      "tolerance": 1e-09
+      "tolerance": 1e-9
     },
     {
       "type": "bounded",
       "name": "A electronics feedstock inventory >= 0",
       "column": "A Electronics Feedstock Inventory",
       "min": 0,
-      "tolerance": 1e-09
+      "tolerance": 1e-9
     },
     {
       "type": "bounded",
       "name": "A electronics inventory >= 0",
       "column": "A Electronics Inventory",
       "min": 0,
-      "tolerance": 1e-09
+      "tolerance": 1e-9
     },
     {
       "type": "bounded",
@@ -4586,7 +7043,7 @@
       "column": "B Electronics Metal Input Fulfillment",
       "min": 0,
       "max": 1,
-      "tolerance": 1e-09
+      "tolerance": 1e-9
     },
     {
       "type": "relation",
@@ -4594,7 +7051,7 @@
       "left": "B Electronics Metal Input Delivery",
       "op": "<=",
       "right": "B Electronics Metal Input Demand",
-      "abs_tol": 1e-08
+      "abs_tol": 1e-8
     },
     {
       "type": "relation",
@@ -4602,47 +7059,47 @@
       "left": "B Electronics Metal Input Delivery",
       "op": "<=",
       "right": "B Metal Available for Intermediate Use",
-      "abs_tol": 1e-08
+      "abs_tol": 1e-8
     },
     {
       "type": "bounded",
       "name": "B metal input delivery >= 0",
       "column": "B Electronics Metal Input Delivery",
       "min": 0,
-      "tolerance": 1e-09
+      "tolerance": 1e-9
     },
     {
       "type": "bounded",
       "name": "B metal input demand >= 0",
       "column": "B Electronics Metal Input Demand",
       "min": 0,
-      "tolerance": 1e-09
+      "tolerance": 1e-9
     },
     {
       "type": "bounded",
       "name": "B metal inventory >= 0",
       "column": "B Metal Inventory",
       "min": 0,
-      "tolerance": 1e-09
+      "tolerance": 1e-9
     },
     {
       "type": "bounded",
       "name": "B electronics feedstock inventory >= 0",
       "column": "B Electronics Feedstock Inventory",
       "min": 0,
-      "tolerance": 1e-09
+      "tolerance": 1e-9
     },
     {
       "type": "bounded",
       "name": "B electronics inventory >= 0",
       "column": "B Electronics Inventory",
       "min": 0,
-      "tolerance": 1e-09
+      "tolerance": 1e-9
     },
     {
       "type": "identity",
       "name": "A ore->metal pair identity",
-      "abs_tol": 1e-08,
+      "abs_tol": 1e-8,
       "terms": [
         {
           "column": "A Ore Consumption",
@@ -4658,7 +7115,7 @@
     {
       "type": "identity",
       "name": "B ore->metal pair identity",
-      "abs_tol": 1e-08,
+      "abs_tol": 1e-8,
       "terms": [
         {
           "column": "B Ore Consumption",
@@ -4677,26 +7134,26 @@
       "column": "A Capital Goods Fulfillment",
       "min": 0,
       "max": 1,
-      "tolerance": 1e-09
+      "tolerance": 1e-9
     },
     {
       "type": "bounded",
       "name": "A capital goods inventory >= 0",
       "column": "A Capital Goods Inventory",
       "min": 0,
-      "tolerance": 1e-09
+      "tolerance": 1e-9
     },
     {
       "type": "bounded",
       "name": "A capital goods production rate >= 0",
       "column": "A Capital Goods Production Rate",
       "min": 0,
-      "tolerance": 1e-09
+      "tolerance": 1e-9
     },
     {
       "type": "identity",
       "name": "A capital goods production pair identities (metal)",
-      "abs_tol": 1e-08,
+      "abs_tol": 1e-8,
       "terms": [
         {
           "column": "A Capital Goods Metal Consumption",
@@ -4712,7 +7169,7 @@
     {
       "type": "identity",
       "name": "A capital goods production pair identities (electronics)",
-      "abs_tol": 1e-08,
+      "abs_tol": 1e-8,
       "terms": [
         {
           "column": "A Capital Goods Electronics Consumption",
@@ -4731,7 +7188,7 @@
       "left": "A Refinery Expansion",
       "op": "<=",
       "right": "A Refinery Desired Expansion",
-      "abs_tol": 1e-08
+      "abs_tol": 1e-8
     },
     {
       "type": "relation",
@@ -4739,7 +7196,7 @@
       "left": "A Electronics Factory Expansion",
       "op": "<=",
       "right": "A Electronics Desired Expansion",
-      "abs_tol": 1e-08
+      "abs_tol": 1e-8
     },
     {
       "type": "relation",
@@ -4747,7 +7204,7 @@
       "left": "A Power Generation Expansion",
       "op": "<=",
       "right": "A Power Desired Expansion",
-      "abs_tol": 1e-08
+      "abs_tol": 1e-8
     },
     {
       "type": "bounded",
@@ -4755,26 +7212,26 @@
       "column": "B Capital Goods Fulfillment",
       "min": 0,
       "max": 1,
-      "tolerance": 1e-09
+      "tolerance": 1e-9
     },
     {
       "type": "bounded",
       "name": "B capital goods inventory >= 0",
       "column": "B Capital Goods Inventory",
       "min": 0,
-      "tolerance": 1e-09
+      "tolerance": 1e-9
     },
     {
       "type": "bounded",
       "name": "B capital goods production rate >= 0",
       "column": "B Capital Goods Production Rate",
       "min": 0,
-      "tolerance": 1e-09
+      "tolerance": 1e-9
     },
     {
       "type": "identity",
       "name": "B capital goods production pair identities (metal)",
-      "abs_tol": 1e-08,
+      "abs_tol": 1e-8,
       "terms": [
         {
           "column": "B Capital Goods Metal Consumption",
@@ -4790,7 +7247,7 @@
     {
       "type": "identity",
       "name": "B capital goods production pair identities (electronics)",
-      "abs_tol": 1e-08,
+      "abs_tol": 1e-8,
       "terms": [
         {
           "column": "B Capital Goods Electronics Consumption",
@@ -4809,7 +7266,7 @@
       "left": "B Refinery Expansion",
       "op": "<=",
       "right": "B Refinery Desired Expansion",
-      "abs_tol": 1e-08
+      "abs_tol": 1e-8
     },
     {
       "type": "relation",
@@ -4817,7 +7274,7 @@
       "left": "B Electronics Factory Expansion",
       "op": "<=",
       "right": "B Electronics Desired Expansion",
-      "abs_tol": 1e-08
+      "abs_tol": 1e-8
     },
     {
       "type": "relation",
@@ -4825,7 +7282,53 @@
       "left": "B Power Generation Expansion",
       "op": "<=",
       "right": "B Power Desired Expansion",
-      "abs_tol": 1e-08
+      "abs_tol": 1e-8
+    },
+    {
+      "type": "bounded",
+      "name": "A power-resource inventory >= 0",
+      "column": "A Power Resource Inventory",
+      "min": 0,
+      "tolerance": 1e-9
+    },
+    {
+      "type": "bounded",
+      "name": "A power-resource fulfillment in [0,1]",
+      "column": "A Power Resource Fulfillment",
+      "min": 0,
+      "max": 1,
+      "tolerance": 1e-9
+    },
+    {
+      "type": "relation",
+      "name": "A available generation <= active generation capacity",
+      "left": "A Available Generation",
+      "op": "<=",
+      "right": "A Power Active Generation Capacity",
+      "abs_tol": 1e-8
+    },
+    {
+      "type": "bounded",
+      "name": "B power-resource inventory >= 0",
+      "column": "B Power Resource Inventory",
+      "min": 0,
+      "tolerance": 1e-9
+    },
+    {
+      "type": "bounded",
+      "name": "B power-resource fulfillment in [0,1]",
+      "column": "B Power Resource Fulfillment",
+      "min": 0,
+      "max": 1,
+      "tolerance": 1e-9
+    },
+    {
+      "type": "relation",
+      "name": "B available generation <= active generation capacity",
+      "left": "B Available Generation",
+      "op": "<=",
+      "right": "B Power Active Generation Capacity",
+      "abs_tol": 1e-8
     }
   ],
   "notes": [
@@ -4833,6 +7336,10 @@
     "Scale-free fulfillment: X Capital Goods Fulfillment = Inv / (Inv + Capital Goods Buffer Days * Max(Demand, 1e-9)); the unit-based Capital Goods Buffer is withdrawn.",
     "Sector capital-goods pair identities moved from global_checks to Modes 21-23: consumption flows are gated by [Capital Goods Enabled] in r2, so the identity holds only when the mechanic is on.",
     "Legacy validation coverage for Modes 0-20 is retained unchanged in the accepted v7.5 contract.",
-    "v7.5.1: Transport Capacity Expansion is physically backed by Capital Goods from both A/B regional inventories. Modes 0-23 explicitly disable Transport Capital Goods Enabled for exact regression; Mode 24 enables it."
+    "v7.5.1: Transport Capacity Expansion is physically backed by Capital Goods from both A/B regional inventories. Modes 0-23 explicitly disable Transport Capital Goods Enabled for exact regression; Mode 24 enables it.",
+    "v7.6 Energy Kernel v2: Modes 0-24 are legacy-regression scope and must remain exact versus accepted v7.5.1 when Power Resource Enabled=0.",
+    "Modes 25-26 validate two distinct scarcity mechanisms: physical operating-resource shortage and generation-capacity shortage.",
+    "r2 (2026-09-25): the power-resource operating identity (Consumption = Energy Supply x Power Resource per Energy) is scoped to Modes 25-26. The consumption flow is gated by [Power Resource Enabled], so in Modes 0-24 it is 0 while Energy Supply is not; as a global check it failed every legacy mode. Modes 0-24 instead assert the switch-off state: consumption 0, extraction 0, fulfillment 1, inventory a dead stock at 5000, price at base.",
+    "r2: the price channel reads [X Perceived Power Resource Fulfillment] (inventory coverage of the smoothed demand signal), not the physical rationing ratio, which closed an algebraic loop price -> demand -> rationing -> price in Modes 25-26."
   ]
 }

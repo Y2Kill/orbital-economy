@@ -1,15 +1,15 @@
 {
   "status": "ACCEPTED",
-  "model_name": "Orbital Economy v7.6 r2 — Energy Kernel v2",
-  "model_file": "orbital_economy_v7_6_r2_modeljson.json",
-  "model_sha256": "a9573f5afe43d2ae2bf12fdc3066c983c264eba162e1d3fc1d5f11e3872f9e91",
-  "validation_file": "validation-v7.6.json",
-  "validation_sha256": "cbd3ff4b115b3a025e2cb54f9cbd3436ca11a5dcebdebb10cf094bfa2963acaf",
+  "model_name": "Orbital Economy v7.6.1 r1 — Energy Kernel v2, Mode 25 calibrated to a 50% resource-supply shock",
+  "model_file": "orbital_economy_v7_6_1_r1_modeljson.json",
+  "model_sha256": "16e8ca6c5719e67422e16a6ec1ea2724b6121a062200eaf91e81389a2a180cd1",
+  "validation_file": "validation-v7.6.1.json",
+  "validation_sha256": "1970aaea988ece5ba2524e0ca79b68a0c48864c8bf6d7e458c336b718c209ddc",
   "accepted_date": "2026-09-25",
   "engine": "simulation@9.0.0",
   "notes": [
-    "v7.6 adds Energy Kernel v2: generation needs a physical operating resource (Power Resource Enabled).",
-    "Modes 0-24 are exact-regression protected against v7.5.1 r1; Modes 25-26 exercise the resource-supply and capacity-only shocks.",
-    "r2 fixes the r1 runtime defects: perceived (state-based) scarcity in the price channel, and the operating identity scoped to Modes 25-26. See docs/V7_6_R1_TO_R2_FIX_REPORT.md."
+    "v7.6.1 calibrates the Mode 25 resource-supply shock: Power Resource Shock Factor 0.1 -> 0.5, impact-matched to the Mode 26 capacity control. See docs/V7_6_1_CALIBRATION_REPORT.md.",
+    "Modes 0-24 and 26 reproduce v7.6 r2 exactly in every series except the changed constant's own series; Mode 25 changes by design.",
+    "v7.6 (Energy Kernel v2): generation needs a physical operating resource (Power Resource Enabled); r2 fixed the r1 runtime defects, see docs/V7_6_R1_TO_R2_FIX_REPORT.md."
   ]
 }

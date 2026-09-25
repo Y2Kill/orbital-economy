@@ -1,7 +1,7 @@
 # Roadmap
 
 **Document status:** CURRENT  
-**Base:** Orbital Economy v7.6 r2 Energy Kernel v2 (accepted 2026-09-25)  
+**Base:** Orbital Economy v7.6.1 r1 — Energy Kernel v2, Mode 25 calibrated (accepted 2026-09-25)  
 **Rule:** roadmap describes intent; executable accepted code remains authoritative for accepted behavior.
 
 ## Current implementation — v7.6 Energy Kernel v2
@@ -15,7 +15,7 @@ The approved energy-kernel refactor is implemented:
 - separate resource-shock and capacity-shock acceptance modes;
 - old v7.5.1 path retained under `Power Resource Enabled = 0`.
 
-Promotion completed: the pinned executable validation (Modes 0–26 PASS) and the exact Modes 0–24 comparison against v7.5.1 r1 were run on 2026-09-25 — see `ACCEPTANCE_STATUS.md` and `V7_6_R1_TO_R2_FIX_REPORT.md`.
+Mode 25 calibrated in v7.6.1 (resource-supply shock at 50 % of extraction instead of a 10 % cut-off; `V7_6_1_CALIBRATION_REPORT.md`). v7.6 promotion: the pinned executable validation (Modes 0–26 PASS) and the exact Modes 0–24 comparison against v7.5.1 r1 were run on 2026-09-25 — see `ACCEPTANCE_STATUS.md` and `V7_6_R1_TO_R2_FIX_REPORT.md`.
 
 ## Next design phase — broader planetary industries
 

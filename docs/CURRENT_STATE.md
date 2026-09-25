@@ -1,9 +1,9 @@
 # Current State
 
 **Document status:** CURRENT  
-**Describes code:** Orbital Economy v7.6 r2 — Energy Kernel v2  
-**Base:** accepted v7.5.1 r1  
-**Model SHA-256:** `a9573f5afe43d2ae2bf12fdc3066c983c264eba162e1d3fc1d5f11e3872f9e91`
+**Describes code:** Orbital Economy v7.6.1 r1 — Energy Kernel v2, Mode 25 calibrated  
+**Base:** accepted v7.6 r2 (itself built on v7.5.1 r1)  
+**Model SHA-256:** `16e8ca6c5719e67422e16a6ec1ea2724b6121a062200eaf91e81389a2a180cd1`
 
 ## 1. Checkpoint
 
@@ -98,23 +98,23 @@ Extraction adjusts toward current resource demand plus a target-inventory correc
 - `0`: all new resource flows are inert; `Available Generation` falls back to the accepted active-capacity path; generation cost falls back to the accepted v7.5.1 expression.
 - `1`: Energy Kernel v2 operates.
 
-Modes **0–24** are designated exact-regression scope against v7.5.1. Modes **25–26** are new.
+In v7.6, Modes **0–24** were the exact-regression scope against v7.5.1 and Modes **25–26** were new. In v7.6.1, Modes **0–24** and **26** reproduce v7.6 r2 exactly (every series except the recalibrated constant's own series); Mode 25 changes by design.
 
 ## 5. New scenarios
 
 ### Mode 25 — Energy Resource Supply Shock
 
-A-only primary resource extraction is temporarily reduced during the standard shock window. Generation capital is not directly damaged. The scenario is intended to demonstrate resource-limited generation, physical stock drawdown, higher scarcity cost and recovery.
+A-only primary resource extraction is temporarily reduced to **50 %** (`Power Resource Shock Factor = 0.5`, since v7.6.1; 0.1 before) during the standard shock window. Generation capital is not directly damaged. The scenario demonstrates resource-limited generation, physical stock drawdown, higher scarcity cost and recovery: A energy stays at ~45 % of the no-shock control over the window (validated: never below 400 against a pre-shock 1373), and the lasting damage to A generation capital matches the Mode 26 control. At 0.1 the scenario was a cut-off (~7 % of control energy) and exercised a restart rather than a recovery — see `V7_6_1_CALIBRATION_REPORT.md`.
 
 ### Mode 26 — Energy Capacity-Only Control Shock
 
-A-only active generation capacity is temporarily reduced while resource extraction remains normal. This control scenario separates **capacity scarcity** from **operating-resource scarcity**.
+A-only active generation capacity is temporarily reduced (factor 0.6) while resource extraction remains normal. This control scenario separates **capacity scarcity** from **operating-resource scarcity**; since v7.6.1 the two shocks are impact-matched, so the pair differs in mechanism rather than in severity.
 
-Both shock wirings use symmetric A/B applicability flags; A=1 and B=0. This preserves the structural symmetry audit while deliberately applying the experiment to A.
+Both shock wirings use symmetric A/B applicability flags; A=1 and B=0. This preserves the structural symmetry audit while deliberately applying the experiment to A. B is not shocked, but it is not unaffected: through trade its electronics output moves by up to ~40 % (Mode 25) and ~70 % (Mode 26) against the no-shock control.
 
 ## 6. Static QA
 
-| Metric | v7.6 r2 |
+| Metric | v7.6.1 r1 (= v7.6 r2) |
 |---|---:|
 | FLOW | 139 |
 | Boundary flows | 108 |
@@ -127,7 +127,7 @@ Both shock wirings use symmetric A/B applicability flags; A=1 and B=0. This pres
 | Capital lifecycle instances | 7 |
 | Capital lifecycle non-conforming | **0** |
 
-Executable validation Modes 0–26 (`validation/validation-v7.6.json`) was run locally on 2026-09-25: **27/27 PASS**, and Modes 0–24 reproduce accepted v7.5.1 r1 exactly (25 x `common=963, changed=0, maxAbs=0`, 41 added series). See `ACCEPTANCE_STATUS.md`.
+Executable validation Modes 0–26 (`validation/validation-v7.6.1.json`, one new Mode 25 check) was run locally on 2026-09-25: **27/27 PASS**; Modes 0–24 and 26 reproduce v7.6 r2 exactly apart from the recalibrated constant's own series (26 × `common=1004, changed=1`). v7.6 r2 in its turn reproduced v7.5.1 r1 exactly in Modes 0–24 (25 × `common=963, changed=0, maxAbs=0`, 41 added series). See `ACCEPTANCE_STATUS.md`.
 
 ## 7. What v7.6 deliberately does not implement
 

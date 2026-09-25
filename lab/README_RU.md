@@ -4,7 +4,7 @@
 
 ## Подтверждённая база
 
-Текущий accepted baseline стенда — **Orbital Economy v7.6 r2 — Energy Kernel v2**, SHA `a9573f5afe43d2ae2bf12fdc3066c983c264eba162e1d3fc1d5f11e3872f9e91`, Modes 0–26. Engine `simulation@9.0.0` pinned.
+Текущий accepted baseline стенда — **Orbital Economy v7.6.1 r1 — Energy Kernel v2, Mode 25 calibrated**, SHA `16e8ca6c5719e67422e16a6ec1ea2724b6121a062200eaf91e81389a2a180cd1`, Modes 0–26. Engine `simulation@9.0.0` pinned.
 
 На promotion v7.6 подтверждено:
 
@@ -13,7 +13,8 @@
 - structure audit — PASS, 108 граничных потоков, unclassified 0, closed-world violations 0, пары 13 (unpaired 0);
 - A/B symmetry — mismatches 0, exceptions 0;
 - parameter registry — 325 parameters, 159 annotated, asymmetric unannotated 0;
-- legacy Modes 0–24 — exact regression against accepted v7.5.1 r1 (`changed=0`, `maxAbs=0`, added 41);
+- v7.6.1: Modes 0–24 и 26 воспроизводят accepted v7.6 r2 точно во всех рядах, кроме ряда самой изменённой константы `Power Resource Shock Factor`; Mode 25 откалиброван (`../docs/V7_6_1_CALIBRATION_REPORT.md`);
+- v7.6 r2: legacy Modes 0–24 — exact regression against accepted v7.5.1 r1 (`changed=0`, `maxAbs=0`, added 41);
 - self-policy на нетронутой области — `BYTE_IDENTICAL`, 1004 ряда × 27 Modes, blockers 0.
 
 Подробности приёмки и воспроизведение — `../docs/ACCEPTANCE_STATUS.md`; что было сломано в v7.6 r1 — `../docs/V7_6_R1_TO_R2_FIX_REPORT.md`.
@@ -43,17 +44,17 @@ STRUCTURE_AUDIT.cmd        открытые границы + A/B-симметр�
 STRUCTURE_SELF_TEST.cmd    QA аудитов (20 случаев)
 ```
 
-`open_boundaries`: каждый FLOW из ∅ / в ∅ классифицируется; категории с `closed_world: false` — то, что должно исчезнуть к «планете». В current v7.6 r2: 108 граничных потоков, все классифицированы, **0 нарушений declared closed-world expansion contract**. Неклассифицированный поток = FAIL. Нулевой счётчик относится только к объявленным физическим boundary-contracts и не означает завершённую Planet v1.
+`open_boundaries`: каждый FLOW из ∅ / в ∅ классифицируется; категории с `closed_world: false` — то, что должно исчезнуть к «планете». В current v7.6.1 r1: 108 граничных потоков, все классифицированы, **0 нарушений declared closed-world expansion contract**. Неклассифицированный поток = FAIL. Нулевой счётчик относится только к объявленным физическим boundary-contracts и не означает завершённую Planet v1.
 
-`colony_symmetry`: для каждого элемента с токеном колонии проверяется зеркальный элемент (тип, формула, endpoints, LINK). Числовые параметры могут отличаться (в v7.6 r2 — 94 различия, все в реестре). Исключений с v7.4.1 нет: тестовая обвязка выражена флагами применимости. Структурных расхождений: 0.
+`colony_symmetry`: для каждого элемента с токеном колонии проверяется зеркальный элемент (тип, формула, endpoints, LINK). Числовые параметры могут отличаться (в v7.6.1 r1 — 94 различия, все в реестре). Исключений с v7.4.1 нет: тестовая обвязка выражена флагами применимости. Структурных расхождений: 0.
 
 Оба аудита — HARD-блокеры в `RUN_LAB` / `COMPARE_MODELS` / `CHECK_CANDIDATE`. Подробно: `docs\STRUCTURE_AUDIT_RU.md`.
 
 Поставка:
 
 ```text
-input\validation\validation-v7.6.json            (kernel-v2 + open_boundaries + пары + colony_symmetry + Modes 0-26)
-input\policy\change-policy-v7.6-strict.json     (привязана к SHA модели и validation-v7.6)
+input\validation\validation-v7.6.1.json          (kernel-v2 + open_boundaries + пары + colony_symmetry + Modes 0-26)
+input\policy\change-policy-v7.6.1-strict.json   (привязана к SHA модели и validation-v7.6.1)
 ```
 
 ---
@@ -188,8 +189,8 @@ output\
 В текущем accepted baseline:
 
 ```text
-Orbital Economy v7.6 r2 — Energy Kernel v2
-SHA-256 a9573f5afe43d2ae2bf12fdc3066c983c264eba162e1d3fc1d5f11e3872f9e91
+Orbital Economy v7.6.1 r1 — Energy Kernel v2, Mode 25 calibrated
+SHA-256 16e8ca6c5719e67422e16a6ec1ea2724b6121a062200eaf91e81389a2a180cd1
 ```
 
 `reference\accepted\model\` нельзя автоматически заменять текущим candidate. Это проектная контрольная точка.
@@ -197,10 +198,10 @@ SHA-256 a9573f5afe43d2ae2bf12fdc3066c983c264eba162e1d3fc1d5f11e3872f9e91
 Поставляемая baseline policy:
 
 ```text
-input\policy\change-policy-v7.6-strict.json
+input\policy\change-policy-v7.6.1-strict.json
 ```
 
-Она привязана к принятой v7.6 r2, использует `default_action: deny` и требует **полного покрытия всех Modes**. Для новой задачи исполнитель должен получить отдельную explicit change-policy, сформированную до реализации.
+Она привязана к принятой v7.6.1 r1, использует `default_action: deny` и требует **полного покрытия всех Modes**. Для новой задачи исполнитель должен получить отдельную explicit change-policy, сформированную до реализации.
 
 ---
 
@@ -623,7 +624,7 @@ CONFORMANCE_SELF_TEST.cmd
 STRUCTURE_AUDIT.cmd
 ```
 
-Ожидаемый итог на поставляемой модели (v7.6 r2):
+Ожидаемый итог на поставляемой модели (v7.6.1 r1):
 
 ```text
 Open boundaries: 108; unclassified=0; closed-world violations=0
@@ -734,7 +735,7 @@ Policy должна описывать намерение **до** реализ�
 
 # 19. Что считать нормальным результатом
 
-Неизменённая accepted v7.6 r2 + strict policy:
+Неизменённая accepted v7.6.1 r1 + strict policy:
 
 ```text
 COMPARISON RESULT: BYTE_IDENTICAL

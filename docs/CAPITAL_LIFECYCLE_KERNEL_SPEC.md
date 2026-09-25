@@ -1,8 +1,8 @@
 # Capital Lifecycle Kernel — формальная спецификация
 
-Статус: **CURRENT / current lifecycle contract carried into v7.6 r2** (обновлено 2026-09-25). Kernel-v1 remains the common lifecycle foundation; all seven accepted instances now use kernel-v2 physical Capital Goods backing.
-Модель: `Orbital Economy v7.6 r2 — Energy Kernel v2`, SHA-256 `a9573f5afe43d2ae2bf12fdc3066c983c264eba162e1d3fc1d5f11e3872f9e91`. Capital Lifecycle structure is inherited from accepted v7.5.1.
-Машинная форма контракта: plugin `capital_lifecycle_kernel` в `validation/validation-v7.6.json`; проверяющий код `lab/src/lifecycle_conformance.js` (static) и `lab/src/checks.js` (runtime). При расхождении машинная форма и accepted code имеют приоритет.
+Статус: **CURRENT / current lifecycle contract carried into v7.6.1 r1** (обновлено 2026-09-25). Kernel-v1 remains the common lifecycle foundation; all seven accepted instances now use kernel-v2 physical Capital Goods backing.
+Модель: `Orbital Economy v7.6.1 r1 — Energy Kernel v2, Mode 25 calibrated`, SHA-256 `16e8ca6c5719e67422e16a6ec1ea2724b6121a062200eaf91e81389a2a180cd1`. Capital Lifecycle structure is inherited from accepted v7.5.1.
+Машинная форма контракта: plugin `capital_lifecycle_kernel` в `validation/validation-v7.6.1.json`; проверяющий код `lab/src/lifecycle_conformance.js` (static) и `lab/src/checks.js` (runtime). При расхождении машинная форма и accepted code имеют приоритет.
 
 ## 1. Зачем
 

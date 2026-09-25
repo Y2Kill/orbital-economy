@@ -1,8 +1,8 @@
 # Orbital Economy — реестр внешних параметров
 
-- generated: 2026-09-25T10:55:15.379Z
-- model: Orbital Economy v7.6 r2 — Energy Kernel v2 (perceived resource scarcity in the price channel) — SHA-256 `a9573f5afe43d2ae2bf12fdc3066c983c264eba162e1d3fc1d5f11e3872f9e91`
-- annotations: docs/PARAMETER_ANNOTATIONS.json (SHA-256 `b8550c7ceb78193c56d0dd30e478113059e9b56b9602c3839a9a690dca5baa01`)
+- generated: 2026-09-25T15:15:20.766Z
+- model: Orbital Economy v7.6.1 r1 — Energy Kernel v2, Mode 25 calibrated to a 50% resource-supply shock — SHA-256 `16e8ca6c5719e67422e16a6ec1ea2724b6121a062200eaf91e81389a2a180cd1`
+- annotations: docs/PARAMETER_ANNOTATIONS.json (SHA-256 `f6c01659c09ca9d7c824646e988b0fdf32c52bdd238d4f930d9bbd1144989663`)
 
 Всё, что модель не выводит сама: числовые константы, начальные запасы, переключатели, тестовые множители. Инвентарь сгенерирован из ModelJSON; аннотации («роль / что меняет / доказательство») ведутся вручную и версионируются вместе с baseline.
 
@@ -216,7 +216,7 @@
 | Power Resource Extraction Headroom | constant | 1.1 | Normal extraction headroom. | Allows replenishment above instantaneous demand and rebuilding of inventory. | v7.6 Energy Kernel v2 specification and Modes 25/26 validation contract. |
 | Power Resource per Energy | constant | 1 | Physical intensity of the Energy Kernel v2 operating resource. | Scales resource demand and actual physical consumption per delivered energy unit. | v7.6 Energy Kernel v2 specification and Modes 25/26 validation contract. |
 | Power Resource Scarcity Price Strength | constant | 4 | Resource scarcity price sensitivity. | Raises physical resource price as fulfillment falls. | v7.6 Energy Kernel v2 specification and Modes 25/26 validation contract. |
-| Power Resource Shock Factor | constant | 0.1 | Mode-25 test multiplier. | Creates a temporary A-only resource-supply shock; test wiring only. | v7.6 Energy Kernel v2 specification and Modes 25/26 validation contract. |
+| Power Resource Shock Factor | constant | 0.5 | Mode-25 test multiplier. | Creates a temporary A-only resource-supply shock; test wiring only. 0.5 (since v7.6.1; 0.1 before) keeps A energy at ~45 % of the no-shock control over the window and leaves the same capital scar as the Mode 26 capacity control; 0.1 was a cut-off (~7 %). | v7.6 Energy Kernel v2 specification and Modes 25/26 validation contract; calibration sweep in docs/V7_6_1_CALIBRATION_REPORT.md; Mode 25 check "A energy is rationed, not cut off". |
 | Power Strategic Reserve Fraction | constant | 0.05 | Отраслевая policy kernel капитала (0.05). | Не часть kernel-контракта — отраслевая параметризация (KERNEL_SPEC §4.3). Сравнение секторов: CAPITAL_LIFECYCLE_SECTOR_MAPPING, последняя таблица. |  |
 | Capital Goods Enabled | switch | 1 | Master switch for v7.5 physical backing of Refinery / Electronics / Power expansion. | 0 preserves accepted v7.4.1 behavior exactly; 1 enables local capital-goods production, inventory fulfillment and physical consumption. | Architecture control parameter from V7_5_ARCHITECTURE_SPEC §0/§2; Modes 0–20 explicitly set 0, Modes 21–23 set 1. |
 | Capital Lifecycle Enabled | switch | 1 | Переключатель v7.3 (1 в сыром файле; 0 в Modes 0–11; 1 в 12–20). | При 0 — Electronics/Power используют фиксированные legacy-мощности (v7.2 r4 бит-в-бит); при 1 — полный kernel капитала для Electronics и Power. К Refinery/Transport не применяется и применяться не должен (KERNEL_SPEC §5). | V7_3_R2_VALIDATION_REPORT §2. |
@@ -508,7 +508,7 @@
 | Power Resource Extraction Headroom | constant | global | 1.1 |  | Normal extraction headroom multiplier applied after inventory correction. | ✓ |
 | Power Resource per Energy | constant | global | 1 |  | Physical operating-resource units consumed per delivered energy unit in Energy Kernel v2. | ✓ |
 | Power Resource Scarcity Price Strength | constant | global | 4 |  | Scarcity premium strength applied to the power-resource price. | ✓ |
-| Power Resource Shock Factor | constant | global | 0.1 |  | Mode 25 temporary multiplier on A power-resource extraction. | ✓ |
+| Power Resource Shock Factor | constant | global | 0.5 |  | Mode 25 temporary multiplier on A power-resource extraction. 0.5 since v7.6.1 (was 0.1): impact-matched to the Mode 26 capacity control; see docs/V7_6_1_CALIBRATION_REPORT.md. | ✓ |
 | Power Strategic Reserve Fraction | constant | global | 0.05 |  | Share of installed inactive generation that may be retained as long-lived strategic reserve. | ✓ |
 | Power Surplus Disposal Decision Time | constant | global | 1440 |  | Slow decision time before structurally surplus generation is committed to retirement. |  |
 | Transport Expansion Utilization Power | constant | global | 2 |  | Prevents profitable but mostly idle capacity from expanding aggressively. |  |

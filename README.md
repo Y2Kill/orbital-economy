@@ -2,11 +2,11 @@
 
 A deterministic System Dynamics model of a two-region planetary economy, together with the bench that accepts changes to it.
 
-**Accepted baseline:** v7.6 r2 — Energy Kernel v2
-**Model SHA-256:** `a9573f5afe43d2ae2bf12fdc3066c983c264eba162e1d3fc1d5f11e3872f9e91`
+**Accepted baseline:** v7.6.1 r1 — Energy Kernel v2, Mode 25 calibrated
+**Model SHA-256:** `16e8ca6c5719e67422e16a6ec1ea2724b6121a062200eaf91e81389a2a180cd1`
 **Engine contract:** `simulation@9.0.0` (pinned)
 **Scenarios:** Modes 0–26 · 0..1080 days · dt 0.25 · RK1
-**Accepted:** 2026-09-25 — validation 27/27 PASS, Modes 0–24 bit-identical to the previous accepted baseline
+**Accepted:** 2026-09-25 — validation 27/27 PASS; Modes 0–24 and 26 identical to the previous accepted baseline (v7.6 r2) in every series except the recalibrated constant itself
 
 Two regions (A and B) each run ore → metal → electronics, a power sector, and a capital-goods sector that physically backs capacity expansion; they trade over shared transport with endogenous prices. Capital has an explicit lifecycle (installed / active / mothballed / decommissioned), expansion consumes capital goods, and — since v7.6 — generation consumes a physical operating resource.
 
@@ -18,7 +18,7 @@ validation/     executable validation contract (HARD invariants, plugins, per-Mo
 policy/         strict default-deny change policy, bound to the SHA-256 of both files above
 docs/           documentation aligned to the accepted model, generated audit reports, version history
 lab/            Orbital Economy Lab — the bench: run, compare, audit, policy-check, apply patches
-reference/      the previous accepted baseline (v7.5.1 r1), kept for exact regression comparison
+reference/      the previous accepted baseline (v7.6 r2), kept for exact regression comparison
 tools/          repository tooling: integrity manifests (build_sums), task-branch acceptance guard (check_branch)
 BASELINE_MANIFEST.json   what is accepted, with every SHA-256 and every gate result
 SHA256SUMS.txt           integrity of the whole tree (lab/ has its own for the bench)
@@ -37,14 +37,14 @@ RUN_LAB.cmd
 Everything else is one command:
 
 ```bat
-RUN_TESTS.cmd ..\model\orbital_economy_v7_6_r2_modeljson.json ..\validation\validation-v7.6.json all
-COMPARE_MODELS.cmd ..\reference\v7.5.1\model\orbital_economy_v7_5_1_r1_modeljson.json ..\model\orbital_economy_v7_6_r2_modeljson.json ..\validation\validation-v7.6.json 0-24
+RUN_TESTS.cmd ..\model\orbital_economy_v7_6_1_r1_modeljson.json ..\validation\validation-v7.6.1.json all
+COMPARE_MODELS.cmd ..\reference\v7.6\model\orbital_economy_v7_6_r2_modeljson.json ..\model\orbital_economy_v7_6_1_r1_modeljson.json ..\validation\validation-v7.6.1.json 0-24,26
 LIFECYCLE_CONFORMANCE.cmd   STRUCTURE_AUDIT.cmd   PARAMETER_REGISTRY.cmd
 CHECK_CANDIDATE.cmd         (accepted vs candidate + change policy — the acceptance gate)
 QA_SELF_TEST.cmd  POLICY_SELF_TEST.cmd  CONFORMANCE_SELF_TEST.cmd  STRUCTURE_SELF_TEST.cmd  COMPARE_SELF_TEST.cmd
 ```
 
-On a clean checkout `CHECK_CANDIDATE.cmd` reports `BYTE_IDENTICAL` and `POLICY RESULT: PASS`: the accepted model is its own candidate.
+On a clean checkout `CHECK_CANDIDATE.cmd` reports `BYTE_IDENTICAL` and `POLICY RESULT: PASS`: the accepted model is its own candidate. The `COMPARE_MODELS` line above reports one changed series per Mode — the recalibrated constant `Power Resource Shock Factor` itself; every other series of Modes 0–24 and 26 is identical to v7.6 r2.
 
 ## How a change gets in
 
@@ -69,6 +69,7 @@ Rules that do not bend:
 | What exists in the model right now | `docs/CURRENT_STATE.md` |
 | How the energy kernel works | `docs/ENERGY_KERNEL_V2_SPEC.md` |
 | What went wrong in v7.6 r1 and how it was fixed | `docs/V7_6_R1_TO_R2_FIX_REPORT.md` |
+| Why Mode 25 is a 50 % shock (v7.6.1 calibration) | `docs/V7_6_1_CALIBRATION_REPORT.md` |
 | Capital lifecycle contract and role mapping | `docs/CAPITAL_LIFECYCLE_KERNEL_SPEC.md`, `docs/CAPITAL_LIFECYCLE_SECTOR_MAPPING.md` |
 | Structure of the whole economy | `docs/ARCHITECTURE.md` |
 | How we got here, version by version (RU) | `docs/HISTORY_RU.md` |
@@ -81,7 +82,7 @@ Documentation is mixed-language by history: model documentation is English, proc
 
 ## Versioning
 
-One accepted baseline lives in the tree; earlier ones are commits and tags (`v7.6-r2`), not directories. `reference/` carries only the immediately previous accepted model, because exact regression is measured against it. Model, validation and policy are rewritten together at acceptance, and `BASELINE_MANIFEST.json` plus both `SHA256SUMS.txt` are regenerated in the same commit.
+One accepted baseline lives in the tree; earlier ones are commits and tags (`v7.6-r2`, `v7.6.1-r1`), not directories. `reference/` carries only the immediately previous accepted model, because exact regression is measured against it. Model, validation and policy are rewritten together at acceptance, and `BASELINE_MANIFEST.json` plus both `SHA256SUMS.txt` are regenerated in the same commit.
 
 The engine is frozen at `simulation@9.0.0`; upgrading it requires a new golden cross-check, not a dependency bump (`lab/ENGINE_PIN.md`).
 

@@ -1,6 +1,6 @@
-# Capital Lifecycle Kernel — отображение ролей на примитивы v7.6 r2
+# Capital Lifecycle Kernel — отображение ролей на примитивы v7.6.1 r1
 
-Основано на current `validation/validation-v7.6.json` (plugin `capital_lifecycle_kernel`) и current ModelJSON v7.6 r2. Это человекочитаемая копия machine mapping; при расхождении источником истины является current validation JSON вместе с accepted code.
+Основано на current `validation/validation-v7.6.1.json` (plugin `capital_lifecycle_kernel`) и current ModelJSON v7.6.1 r1. Это человекочитаемая копия machine mapping; при расхождении источником истины является current validation JSON вместе с accepted code.
 
 Экземпляров: 7. Legacy-switch: `Capital Lifecycle Enabled`.
 

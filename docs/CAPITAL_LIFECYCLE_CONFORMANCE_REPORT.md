@@ -1,10 +1,10 @@
 # Orbital Economy Lab — Capital Lifecycle Kernel conformance
 
-- generated: 2026-09-25T09:05:16.296Z
-- model: Orbital Economy v7.6 r2 — Energy Kernel v2 (perceived resource scarcity in the price channel)
-- model SHA-256: `a9573f5afe43d2ae2bf12fdc3066c983c264eba162e1d3fc1d5f11e3872f9e91`
-- validation: Orbital Economy v7.6 validation r2
-- validation SHA-256: `cbd3ff4b115b3a025e2cb54f9cbd3436ca11a5dcebdebb10cf094bfa2963acaf`
+- generated: 2026-09-25T15:07:11.071Z
+- model: Orbital Economy v7.6.1 r1 — Energy Kernel v2, Mode 25 calibrated to a 50% resource-supply shock
+- model SHA-256: `16e8ca6c5719e67422e16a6ec1ea2724b6121a062200eaf91e81389a2a180cd1`
+- validation: Orbital Economy v7.6.1 validation r1
+- validation SHA-256: `1970aaea988ece5ba2524e0ca79b68a0c48864c8bf6d7e458c336b718c209ddc`
 - kernel format: orbital-economy-capital-lifecycle-kernel-v1
 - status: **PASS**
 

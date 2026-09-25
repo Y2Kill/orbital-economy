@@ -90,7 +90,7 @@ This is the rule already recorded for the v7.5 capital-goods pairs in `validatio
 | Energy Price | 0.158 | 0.261 | 0.503 | 0.120 |
 | Smelting Rate | 38.6 | 2.0 | 5.8 | 28.7 |
 
-The two scenarios separate the intended way. Mode 25: capital survives (installed generation capital 1379 → 1285, −7 %) while the resource runs out and energy collapses — a resource-limited outage. Mode 26: the resource stays whole (fulfillment 1.000, price at base) and the outage is capacity-limited. B is untouched in both.
+The two scenarios separate the intended way. Mode 25: capital survives (installed generation capital 1379 → 1285, −7 %) while the resource runs out and energy collapses — a resource-limited outage. Mode 26: the resource stays whole (fulfillment 1.000, price at base) and the outage is capacity-limited. B is not shocked in either — but it is not unaffected: through trade its electronics output deviates from the no-shock control by up to ~40 % (Mode 25) and ~70 % (Mode 26); see `V7_6_1_CALIBRATION_REPORT.md` (sentence corrected in v7.6.1).
 
 ## Observation not fixed here (calibration, not a defect)
 

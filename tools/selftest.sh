@@ -68,7 +68,7 @@ expect() {
 fresh; deliver; publish
 expect "honest delivery passes" PASS
 
-fresh; deliver; printf ' ' >> model/orbital_economy_v7_6_r2_modeljson.json; node tools/build_sums.mjs >/dev/null; git add -A; git commit -qm model; publish
+fresh; deliver; printf ' ' >> "$(ls model/*.json | head -1)"; node tools/build_sums.mjs >/dev/null; git add -A; git commit -qm model; publish
 expect "touching the accepted model fails" FAIL 'model/.*protected path'
 
 fresh; mkdir -p lab/vendor; printf 'repacked\0' > lab/vendor/simulation-9.0.0.tgz; deliver vendor; publish

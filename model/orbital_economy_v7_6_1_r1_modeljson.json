@@ -1,7 +1,7 @@
 {
   "engine": "SIMULATION_PACKAGE",
-  "name": "Orbital Economy v7.6 r2 — Energy Kernel v2 (perceived resource scarcity in the price channel)",
-  "description": "Accepted v7.5 Capital Goods baseline: local Capital Goods physically back Refinery, Electronics and Power expansion in A/B; scale-free fulfillment buffer in days of demand; legacy Modes 0-20 preserve accepted behavior exactly when Capital Goods Enabled = 0. v7.5.1 closes Transport Capacity Expansion with physical Capital Goods sourced symmetrically from A/B regional inventories. v7.6 adds switch-gated physical operating-resource constraints to power generation while preserving v7.5.1 behavior when disabled.",
+  "name": "Orbital Economy v7.6.1 r1 — Energy Kernel v2, Mode 25 calibrated to a 50% resource-supply shock",
+  "description": "Accepted v7.5 Capital Goods baseline: local Capital Goods physically back Refinery, Electronics and Power expansion in A/B; scale-free fulfillment buffer in days of demand; legacy Modes 0-20 preserve accepted behavior exactly when Capital Goods Enabled = 0. v7.5.1 closes Transport Capacity Expansion with physical Capital Goods sourced symmetrically from A/B regional inventories. v7.6 adds switch-gated physical operating-resource constraints to power generation while preserving v7.5.1 behavior when disabled. v7.6.1 calibrates the Mode 25 resource shock to 50% of extraction (was 10%), so that it is a supply shock of the same impact as the Mode 26 capacity control rather than a cut-off.",
   "simulation": {
     "algorithm": "RK1",
     "time_start": 0,
@@ -24597,9 +24597,9 @@
       "type": "VARIABLE",
       "name": "Power Resource Shock Factor",
       "behavior": {
-        "value": 0.1
+        "value": 0.5
       },
-      "description": "Mode 25 temporary multiplier on A power-resource extraction.",
+      "description": "Mode 25 temporary multiplier on A power-resource extraction. 0.5 since v7.6.1 (was 0.1): impact-matched to the Mode 26 capacity control; see docs/V7_6_1_CALIBRATION_REPORT.md.",
       "display": {
         "interactive": true,
         "interactive_min": 0,
@@ -26353,7 +26353,7 @@
     },
     {
       "name": "v7.6 Energy Resource Supply Shock",
-      "description": "Energy Kernel v2 enabled. A primary power-resource extraction is cut during the standard temporary test window while generation capital remains intact; validates resource-limited generation and recovery.",
+      "description": "Energy Kernel v2 enabled. A primary power-resource extraction is reduced to 50% during the standard temporary test window while generation capital remains intact; validates resource-limited generation and recovery.",
       "values": {
         "Timed Test Mode": 25,
         "Capital Lifecycle Enabled": 1,

@@ -1,7 +1,7 @@
 {
   "engine": "SIMULATION_PACKAGE",
-  "name": "Orbital Economy v7.5.1 r1",
-  "description": "Accepted v7.5 Capital Goods baseline: local Capital Goods physically back Refinery, Electronics and Power expansion in A/B; scale-free fulfillment buffer in days of demand; legacy Modes 0-20 preserve accepted behavior exactly when Capital Goods Enabled = 0. v7.5.1 closes Transport Capacity Expansion with physical Capital Goods sourced symmetrically from A/B regional inventories.",
+  "name": "Orbital Economy v7.6.1 r1 — Energy Kernel v2, Mode 25 calibrated to a 50% resource-supply shock",
+  "description": "Accepted v7.5 Capital Goods baseline: local Capital Goods physically back Refinery, Electronics and Power expansion in A/B; scale-free fulfillment buffer in days of demand; legacy Modes 0-20 preserve accepted behavior exactly when Capital Goods Enabled = 0. v7.5.1 closes Transport Capacity Expansion with physical Capital Goods sourced symmetrically from A/B regional inventories. v7.6 adds switch-gated physical operating-resource constraints to power generation while preserving v7.5.1 behavior when disabled. v7.6.1 calibrates the Mode 25 resource shock to 50% of extraction (was 10%), so that it is a supply shock of the same impact as the Mode 26 capacity control rather than a cut-off.",
   "simulation": {
     "algorithm": "RK1",
     "time_start": 0,
@@ -1261,7 +1261,7 @@
       "type": "VARIABLE",
       "name": "Electronics Depreciation Rate",
       "behavior": {
-        "value": 5e-05
+        "value": 0.00005
       },
       "display": {
         "coordinates": [
@@ -1495,7 +1495,7 @@
       "type": "VARIABLE",
       "name": "Power Depreciation Rate",
       "behavior": {
-        "value": 3e-05
+        "value": 0.00003
       },
       "display": {
         "coordinates": [
@@ -9463,9 +9463,9 @@
         ],
         "interactive": true,
         "interactive_min": 0,
-        "interactive_max": 11
+        "interactive_max": 26
       },
-      "description": "0=Baseline multi-good countertrade; 1=B metal reactivation freight shock; 2=metal demand surge / v7.2 metal-energy stress; 3=metal low-demand rationalization; 4=metal reverse advantage; 5=electronics demand surge / v7.2 electronics-energy stress; 6=reverse electronics advantage; 7=two-good transport surge; 8=metal-priority transport scarcity; 9=two-industry local energy stress; 10=cheap-energy comparative-advantage shift; 11=A generation-capacity shock/recovery."
+      "description": "0=Baseline multi-good countertrade; 1=B metal reactivation freight shock; 2=metal demand surge / v7.2 metal-energy stress; 3=metal low-demand rationalization; 4=metal reverse advantage; 5=electronics demand surge / v7.2 electronics-energy stress; 6=reverse electronics advantage; 7=two-good transport surge; 8=metal-priority transport scarcity; 9=two-industry local energy stress; 10=cheap-energy comparative-advantage shift; 11=A generation-capacity shock/recovery.; 25=Energy Kernel v2 resource-supply shock; 26=Energy Kernel v2 capacity-only control shock."
     },
     {
       "type": "VARIABLE",
@@ -18818,7 +18818,7 @@
       "type": "VARIABLE",
       "name": "A Effective Power Generation Cost",
       "behavior": {
-        "value": "IfThenElse([Test 10 Cheap Energy Advantage Active] = 1, [Cheap Energy A Generation Cost], [A Power Generation Cost])"
+        "value": "IfThenElse([Power Resource Enabled] = 1, (IfThenElse([Test 10 Cheap Energy Advantage Active] = 1, [Cheap Energy A Generation Cost], [A Power Generation Cost])) + [A Power Resource Price] * [Power Resource per Energy], IfThenElse([Test 10 Cheap Energy Advantage Active] = 1, [Cheap Energy A Generation Cost], [A Power Generation Cost]))"
       },
       "display": {
         "coordinates": [
@@ -18829,7 +18829,8 @@
           240,
           45
         ]
-      }
+      },
+      "description": "v7.6 effective variable generation cost. Legacy v7.5.1 cost path is exact when Power Resource Enabled=0; Energy Kernel v2 adds physical resource cost when enabled."
     },
     {
       "type": "VARIABLE",
@@ -18856,7 +18857,7 @@
       "type": "VARIABLE",
       "name": "A Power Active Generation Capacity",
       "behavior": {
-        "value": "IfThenElse([Capital Lifecycle Enabled] = 1, [A Power Active Generation Capital], [A Power Installed Generation Capacity]) * IfThenElse([Test 11 Generation Capacity Shock Active] = 1, IfThenElse([A Test 11 Generation Shock Applies] = 1, [Generation Capacity Shock Factor], 1), IfThenElse([Test 6 Electronics Reverse Advantage Active] = 1, IfThenElse([A Test 6 Headroom Applies] = 1, [Legacy Advantage Test Power Headroom Multiplier], 1), IfThenElse([Test 4 Reverse Advantage Active] = 1, IfThenElse([A Test 4 Headroom Applies] = 1, [Legacy Advantage Test Power Headroom Multiplier], 1), 1)))"
+        "value": "(IfThenElse([Capital Lifecycle Enabled] = 1, [A Power Active Generation Capital], [A Power Installed Generation Capacity]) * IfThenElse([Test 11 Generation Capacity Shock Active] = 1, IfThenElse([A Test 11 Generation Shock Applies] = 1, [Generation Capacity Shock Factor], 1), IfThenElse([Test 6 Electronics Reverse Advantage Active] = 1, IfThenElse([A Test 6 Headroom Applies] = 1, [Legacy Advantage Test Power Headroom Multiplier], 1), IfThenElse([Test 4 Reverse Advantage Active] = 1, IfThenElse([A Test 4 Headroom Applies] = 1, [Legacy Advantage Test Power Headroom Multiplier], 1), 1)))) * IfThenElse([Test 26 Energy Kernel Capacity Shock Active] = 1, IfThenElse([A Test 26 Energy Kernel Capacity Shock Applies] = 1, [Energy Kernel Capacity Shock Factor], 1), 1)"
       },
       "display": {
         "coordinates": [
@@ -18962,7 +18963,7 @@
       "type": "VARIABLE",
       "name": "A Energy Fulfillment Ratio",
       "behavior": {
-        "value": "IfThenElse([A Total Requested Energy] > [A Power Active Generation Capacity], [A Power Active Generation Capacity] / ([A Total Requested Energy] + 0.001), 1)"
+        "value": "IfThenElse([A Total Requested Energy] > [A Available Generation], [A Available Generation] / ([A Total Requested Energy] + 0.001), 1)"
       },
       "display": {
         "coordinates": [
@@ -18974,7 +18975,7 @@
           45
         ]
       },
-      "description": "Common proportional physical fulfillment factor under energy scarcity."
+      "description": "Common proportional energy fulfillment in A; v7.6 uses generation available after capacity and operating-resource constraints."
     },
     {
       "type": "VARIABLE",
@@ -19082,7 +19083,7 @@
       "type": "VARIABLE",
       "name": "A Power Utilization",
       "behavior": {
-        "value": "[A Energy Supply] / ([A Power Active Generation Capacity] + 0.001)"
+        "value": "[A Energy Supply] / ([A Available Generation] + 0.001)"
       },
       "display": {
         "coordinates": [
@@ -19099,7 +19100,7 @@
       "type": "VARIABLE",
       "name": "A Instant Energy Scarcity Ratio",
       "behavior": {
-        "value": "IfThenElse([A Total Requested Energy] > [A Power Active Generation Capacity], ([A Total Requested Energy] - [A Power Active Generation Capacity]) / ([A Power Active Generation Capacity] + 0.001), 0)"
+        "value": "IfThenElse([A Total Requested Energy] > [A Available Generation], ([A Total Requested Energy] - [A Available Generation]) / ([A Available Generation] + 0.001), 0)"
       },
       "display": {
         "coordinates": [
@@ -19195,7 +19196,7 @@
       "type": "VARIABLE",
       "name": "B Effective Power Generation Cost",
       "behavior": {
-        "value": "IfThenElse([Test 10 Cheap Energy Advantage Active] = 1, [Cheap Energy B Generation Cost], [B Power Generation Cost])"
+        "value": "IfThenElse([Power Resource Enabled] = 1, (IfThenElse([Test 10 Cheap Energy Advantage Active] = 1, [Cheap Energy B Generation Cost], [B Power Generation Cost])) + [B Power Resource Price] * [Power Resource per Energy], IfThenElse([Test 10 Cheap Energy Advantage Active] = 1, [Cheap Energy B Generation Cost], [B Power Generation Cost]))"
       },
       "display": {
         "coordinates": [
@@ -19206,7 +19207,8 @@
           240,
           45
         ]
-      }
+      },
+      "description": "v7.6 effective variable generation cost. Legacy v7.5.1 cost path is exact when Power Resource Enabled=0; Energy Kernel v2 adds physical resource cost when enabled."
     },
     {
       "type": "VARIABLE",
@@ -19233,7 +19235,7 @@
       "type": "VARIABLE",
       "name": "B Power Active Generation Capacity",
       "behavior": {
-        "value": "IfThenElse([Capital Lifecycle Enabled] = 1, [B Power Active Generation Capital], [B Power Installed Generation Capacity]) * IfThenElse([Test 11 Generation Capacity Shock Active] = 1, IfThenElse([B Test 11 Generation Shock Applies] = 1, [Generation Capacity Shock Factor], 1), IfThenElse([Test 6 Electronics Reverse Advantage Active] = 1, IfThenElse([B Test 6 Headroom Applies] = 1, [Legacy Advantage Test Power Headroom Multiplier], 1), IfThenElse([Test 4 Reverse Advantage Active] = 1, IfThenElse([B Test 4 Headroom Applies] = 1, [Legacy Advantage Test Power Headroom Multiplier], 1), 1)))"
+        "value": "(IfThenElse([Capital Lifecycle Enabled] = 1, [B Power Active Generation Capital], [B Power Installed Generation Capacity]) * IfThenElse([Test 11 Generation Capacity Shock Active] = 1, IfThenElse([B Test 11 Generation Shock Applies] = 1, [Generation Capacity Shock Factor], 1), IfThenElse([Test 6 Electronics Reverse Advantage Active] = 1, IfThenElse([B Test 6 Headroom Applies] = 1, [Legacy Advantage Test Power Headroom Multiplier], 1), IfThenElse([Test 4 Reverse Advantage Active] = 1, IfThenElse([B Test 4 Headroom Applies] = 1, [Legacy Advantage Test Power Headroom Multiplier], 1), 1)))) * IfThenElse([Test 26 Energy Kernel Capacity Shock Active] = 1, IfThenElse([B Test 26 Energy Kernel Capacity Shock Applies] = 1, [Energy Kernel Capacity Shock Factor], 1), 1)"
       },
       "display": {
         "coordinates": [
@@ -19339,7 +19341,7 @@
       "type": "VARIABLE",
       "name": "B Energy Fulfillment Ratio",
       "behavior": {
-        "value": "IfThenElse([B Total Requested Energy] > [B Power Active Generation Capacity], [B Power Active Generation Capacity] / ([B Total Requested Energy] + 0.001), 1)"
+        "value": "IfThenElse([B Total Requested Energy] > [B Available Generation], [B Available Generation] / ([B Total Requested Energy] + 0.001), 1)"
       },
       "display": {
         "coordinates": [
@@ -19351,7 +19353,7 @@
           45
         ]
       },
-      "description": "Common proportional physical fulfillment factor under energy scarcity."
+      "description": "Common proportional energy fulfillment in B; v7.6 uses generation available after capacity and operating-resource constraints."
     },
     {
       "type": "VARIABLE",
@@ -19459,7 +19461,7 @@
       "type": "VARIABLE",
       "name": "B Power Utilization",
       "behavior": {
-        "value": "[B Energy Supply] / ([B Power Active Generation Capacity] + 0.001)"
+        "value": "[B Energy Supply] / ([B Available Generation] + 0.001)"
       },
       "display": {
         "coordinates": [
@@ -19476,7 +19478,7 @@
       "type": "VARIABLE",
       "name": "B Instant Energy Scarcity Ratio",
       "behavior": {
-        "value": "IfThenElse([B Total Requested Energy] > [B Power Active Generation Capacity], ([B Total Requested Energy] - [B Power Active Generation Capacity]) / ([B Power Active Generation Capacity] + 0.001), 0)"
+        "value": "IfThenElse([B Total Requested Energy] > [B Available Generation], ([B Total Requested Energy] - [B Available Generation]) / ([B Available Generation] + 0.001), 0)"
       },
       "display": {
         "coordinates": [
@@ -24504,6 +24506,888 @@
       "type": "LINK",
       "from": "B Transport Capital Goods Source Share",
       "to": "Transport Capital Goods Source Share Sum"
+    },
+    {
+      "type": "VARIABLE",
+      "name": "Power Resource Enabled",
+      "behavior": {
+        "value": 0
+      },
+      "description": "v7.6 master switch. When 0, the accepted v7.5.1 energy path is reproduced; when 1, generation requires a physical operating resource."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "Power Resource per Energy",
+      "behavior": {
+        "value": 1
+      },
+      "description": "Physical operating-resource units consumed per delivered energy unit in Energy Kernel v2.",
+      "display": {
+        "interactive": true,
+        "interactive_min": 0.01,
+        "interactive_max": 10
+      }
+    },
+    {
+      "type": "VARIABLE",
+      "name": "Power Resource Buffer Days",
+      "behavior": {
+        "value": 2
+      },
+      "description": "Target operating-resource inventory coverage used by extraction planning and fulfillment.",
+      "display": {
+        "interactive": true,
+        "interactive_min": 0.1,
+        "interactive_max": 30
+      }
+    },
+    {
+      "type": "VARIABLE",
+      "name": "Power Resource Extraction Adjustment Time",
+      "behavior": {
+        "value": 30
+      },
+      "description": "Days over which primary-resource extraction adjusts toward demand plus target-inventory correction.",
+      "display": {
+        "interactive": true,
+        "interactive_min": 1,
+        "interactive_max": 365
+      }
+    },
+    {
+      "type": "VARIABLE",
+      "name": "Power Resource Extraction Headroom",
+      "behavior": {
+        "value": 1.1
+      },
+      "description": "Normal extraction headroom multiplier applied after inventory correction.",
+      "display": {
+        "interactive": true,
+        "interactive_min": 0.1,
+        "interactive_max": 3
+      }
+    },
+    {
+      "type": "VARIABLE",
+      "name": "Base Power Resource Price",
+      "behavior": {
+        "value": 0.04
+      },
+      "description": "Base price per physical power-resource unit before scarcity premium.",
+      "display": {
+        "interactive": true,
+        "interactive_min": 0.0001,
+        "interactive_max": 2
+      }
+    },
+    {
+      "type": "VARIABLE",
+      "name": "Power Resource Scarcity Price Strength",
+      "behavior": {
+        "value": 4
+      },
+      "description": "Scarcity premium strength applied to the power-resource price.",
+      "display": {
+        "interactive": true,
+        "interactive_min": 0,
+        "interactive_max": 20
+      }
+    },
+    {
+      "type": "VARIABLE",
+      "name": "Power Resource Shock Factor",
+      "behavior": {
+        "value": 0.5
+      },
+      "description": "Mode 25 temporary multiplier on A power-resource extraction. 0.5 since v7.6.1 (was 0.1): impact-matched to the Mode 26 capacity control; see docs/V7_6_1_CALIBRATION_REPORT.md.",
+      "display": {
+        "interactive": true,
+        "interactive_min": 0,
+        "interactive_max": 1
+      }
+    },
+    {
+      "type": "VARIABLE",
+      "name": "Energy Kernel Capacity Shock Factor",
+      "behavior": {
+        "value": 0.6
+      },
+      "description": "Mode 26 temporary multiplier on A active generation capacity.",
+      "display": {
+        "interactive": true,
+        "interactive_min": 0.1,
+        "interactive_max": 1
+      }
+    },
+    {
+      "type": "VARIABLE",
+      "name": "Test 25 Power Resource Shock Active",
+      "behavior": {
+        "value": "IfThenElse([Timed Test Mode] = 25, [Temporary Test Window], 0)"
+      },
+      "description": "1 during the Mode-25 temporary A power-resource extraction shock."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "Test 26 Energy Kernel Capacity Shock Active",
+      "behavior": {
+        "value": "IfThenElse([Timed Test Mode] = 26, [Temporary Test Window], 0)"
+      },
+      "description": "1 during the Mode-26 temporary A generation-capacity shock."
+    },
+    {
+      "type": "STOCK",
+      "name": "A Power Resource Inventory",
+      "behavior": {
+        "initial_value": 5000,
+        "non_negative": true
+      },
+      "description": "Physical operating-resource inventory used by power generation in colony A."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "A Desired Generation",
+      "behavior": {
+        "value": "IfThenElse([A Total Requested Energy] < [A Power Active Generation Capacity], [A Total Requested Energy], [A Power Active Generation Capacity])"
+      },
+      "description": "Capacity-limited generation desired before operating-resource fulfillment in colony A."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "A Power Resource Demand",
+      "behavior": {
+        "value": "[Power Resource Enabled] * [A Desired Generation] * [Power Resource per Energy]"
+      },
+      "description": "Operating-resource demand implied by desired generation in colony A."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "A Power Resource Target Inventory",
+      "behavior": {
+        "value": "[Power Resource Buffer Days] * [A Power Resource Demand]"
+      },
+      "description": "Target operating-resource inventory for colony A."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "A Power Resource Extraction Multiplier",
+      "behavior": {
+        "value": "IfThenElse([Test 25 Power Resource Shock Active] = 1, IfThenElse([A Test 25 Power Resource Shock Applies] = 1, [Power Resource Shock Factor], 1), 1)"
+      },
+      "description": "Test-aware extraction multiplier for colony A; normally 1."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "A Power Resource Extraction Rate",
+      "behavior": {
+        "value": "IfThenElse([Power Resource Enabled] = 1, Max(0, ([A Power Resource Demand] + ([A Power Resource Target Inventory] - [A Power Resource Inventory]) / [Power Resource Extraction Adjustment Time]) * [Power Resource Extraction Headroom] * [A Power Resource Extraction Multiplier]), 0)"
+      },
+      "description": "Primary power-resource extraction plan for colony A."
+    },
+    {
+      "type": "FLOW",
+      "name": "A Power Resource Extraction",
+      "from": null,
+      "to": "A Power Resource Inventory",
+      "behavior": {
+        "value": "[A Power Resource Extraction Rate]",
+        "non_negative": true
+      },
+      "description": "Primary planetary resource inflow feeding the A power-resource inventory."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "A Power Resource Fulfillment",
+      "behavior": {
+        "value": "IfThenElse([Power Resource Enabled] = 1, IfThenElse([A Power Resource Demand] > 0.000000001, Min(1, [A Power Resource Inventory] / ([Power Resource Buffer Days] * [A Power Resource Demand] + 0.000000001)), 1), 1)"
+      },
+      "description": "Fraction of capacity-limited desired generation supportable by the physical operating-resource inventory in colony A."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "A Available Generation",
+      "behavior": {
+        "value": "IfThenElse([Power Resource Enabled] = 1, [A Desired Generation] * [A Power Resource Fulfillment], [A Power Active Generation Capacity])"
+      },
+      "description": "Energy actually available to serve demand after both capacity and operating-resource constraints in colony A."
+    },
+    {
+      "type": "FLOW",
+      "name": "A Power Resource Consumption",
+      "from": "A Power Resource Inventory",
+      "to": null,
+      "behavior": {
+        "value": "IfThenElse([Power Resource Enabled] = 1, [A Energy Supply] * [Power Resource per Energy], 0)",
+        "non_negative": true
+      },
+      "description": "Physical operating resource consumed by actual delivered generation in colony A."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "A Perceived Power Resource Demand",
+      "behavior": {
+        "value": "IfThenElse([A Energy Demand Signal] < [A Power Active Generation Capacity], [A Energy Demand Signal], [A Power Active Generation Capacity]) * [Power Resource per Energy]"
+      },
+      "description": "v7.6 r2: perceived (state-based) power-resource demand — desired generation computed from the smoothed energy demand signal instead of this tick's requested energy. Used only by the price channel, so that scarcity pricing does not depend on price-driven demand within the same tick."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "A Perceived Power Resource Fulfillment",
+      "behavior": {
+        "value": "IfThenElse([Power Resource Enabled] = 1, IfThenElse([A Perceived Power Resource Demand] > 0.000000001, Min(1, [A Power Resource Inventory] / ([Power Resource Buffer Days] * [A Perceived Power Resource Demand] + 0.000000001)), 1), 1)"
+      },
+      "description": "v7.6 r2: inventory coverage of the perceived power-resource demand; the scarcity signal of the price channel. The physical rationing ratio stays [X Power Resource Fulfillment]."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "B Perceived Power Resource Demand",
+      "behavior": {
+        "value": "IfThenElse([B Energy Demand Signal] < [B Power Active Generation Capacity], [B Energy Demand Signal], [B Power Active Generation Capacity]) * [Power Resource per Energy]"
+      },
+      "description": "v7.6 r2: perceived (state-based) power-resource demand — desired generation computed from the smoothed energy demand signal instead of this tick's requested energy. Used only by the price channel, so that scarcity pricing does not depend on price-driven demand within the same tick."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "B Perceived Power Resource Fulfillment",
+      "behavior": {
+        "value": "IfThenElse([Power Resource Enabled] = 1, IfThenElse([B Perceived Power Resource Demand] > 0.000000001, Min(1, [B Power Resource Inventory] / ([Power Resource Buffer Days] * [B Perceived Power Resource Demand] + 0.000000001)), 1), 1)"
+      },
+      "description": "v7.6 r2: inventory coverage of the perceived power-resource demand; the scarcity signal of the price channel. The physical rationing ratio stays [X Power Resource Fulfillment]."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "A Power Resource Price",
+      "behavior": {
+        "value": "[Base Power Resource Price] * (1 + [Power Resource Scarcity Price Strength] * (1 - [A Perceived Power Resource Fulfillment]))"
+      },
+      "description": "Power-resource price in colony A, with a scarcity premium from physical fulfillment."
+    },
+    {
+      "type": "STOCK",
+      "name": "B Power Resource Inventory",
+      "behavior": {
+        "initial_value": 5000,
+        "non_negative": true
+      },
+      "description": "Physical operating-resource inventory used by power generation in colony B."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "B Desired Generation",
+      "behavior": {
+        "value": "IfThenElse([B Total Requested Energy] < [B Power Active Generation Capacity], [B Total Requested Energy], [B Power Active Generation Capacity])"
+      },
+      "description": "Capacity-limited generation desired before operating-resource fulfillment in colony B."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "B Power Resource Demand",
+      "behavior": {
+        "value": "[Power Resource Enabled] * [B Desired Generation] * [Power Resource per Energy]"
+      },
+      "description": "Operating-resource demand implied by desired generation in colony B."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "B Power Resource Target Inventory",
+      "behavior": {
+        "value": "[Power Resource Buffer Days] * [B Power Resource Demand]"
+      },
+      "description": "Target operating-resource inventory for colony B."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "B Power Resource Extraction Multiplier",
+      "behavior": {
+        "value": "IfThenElse([Test 25 Power Resource Shock Active] = 1, IfThenElse([B Test 25 Power Resource Shock Applies] = 1, [Power Resource Shock Factor], 1), 1)"
+      },
+      "description": "Test-aware extraction multiplier for colony B; normally 1."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "B Power Resource Extraction Rate",
+      "behavior": {
+        "value": "IfThenElse([Power Resource Enabled] = 1, Max(0, ([B Power Resource Demand] + ([B Power Resource Target Inventory] - [B Power Resource Inventory]) / [Power Resource Extraction Adjustment Time]) * [Power Resource Extraction Headroom] * [B Power Resource Extraction Multiplier]), 0)"
+      },
+      "description": "Primary power-resource extraction plan for colony B."
+    },
+    {
+      "type": "FLOW",
+      "name": "B Power Resource Extraction",
+      "from": null,
+      "to": "B Power Resource Inventory",
+      "behavior": {
+        "value": "[B Power Resource Extraction Rate]",
+        "non_negative": true
+      },
+      "description": "Primary planetary resource inflow feeding the B power-resource inventory."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "B Power Resource Fulfillment",
+      "behavior": {
+        "value": "IfThenElse([Power Resource Enabled] = 1, IfThenElse([B Power Resource Demand] > 0.000000001, Min(1, [B Power Resource Inventory] / ([Power Resource Buffer Days] * [B Power Resource Demand] + 0.000000001)), 1), 1)"
+      },
+      "description": "Fraction of capacity-limited desired generation supportable by the physical operating-resource inventory in colony B."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "B Available Generation",
+      "behavior": {
+        "value": "IfThenElse([Power Resource Enabled] = 1, [B Desired Generation] * [B Power Resource Fulfillment], [B Power Active Generation Capacity])"
+      },
+      "description": "Energy actually available to serve demand after both capacity and operating-resource constraints in colony B."
+    },
+    {
+      "type": "FLOW",
+      "name": "B Power Resource Consumption",
+      "from": "B Power Resource Inventory",
+      "to": null,
+      "behavior": {
+        "value": "IfThenElse([Power Resource Enabled] = 1, [B Energy Supply] * [Power Resource per Energy], 0)",
+        "non_negative": true
+      },
+      "description": "Physical operating resource consumed by actual delivered generation in colony B."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "B Power Resource Price",
+      "behavior": {
+        "value": "[Base Power Resource Price] * (1 + [Power Resource Scarcity Price Strength] * (1 - [B Perceived Power Resource Fulfillment]))"
+      },
+      "description": "Power-resource price in colony B, with a scarcity premium from physical fulfillment."
+    },
+    {
+      "type": "LINK",
+      "from": "Power Resource Enabled",
+      "to": "A Available Generation"
+    },
+    {
+      "type": "LINK",
+      "from": "A Desired Generation",
+      "to": "A Available Generation"
+    },
+    {
+      "type": "LINK",
+      "from": "A Power Resource Fulfillment",
+      "to": "A Available Generation"
+    },
+    {
+      "type": "LINK",
+      "from": "A Power Active Generation Capacity",
+      "to": "A Available Generation"
+    },
+    {
+      "type": "LINK",
+      "from": "A Total Requested Energy",
+      "to": "A Desired Generation"
+    },
+    {
+      "type": "LINK",
+      "from": "A Power Active Generation Capacity",
+      "to": "A Desired Generation"
+    },
+    {
+      "type": "LINK",
+      "from": "Power Resource Enabled",
+      "to": "A Effective Power Generation Cost"
+    },
+    {
+      "type": "LINK",
+      "from": "A Power Resource Price",
+      "to": "A Effective Power Generation Cost"
+    },
+    {
+      "type": "LINK",
+      "from": "Power Resource per Energy",
+      "to": "A Effective Power Generation Cost"
+    },
+    {
+      "type": "LINK",
+      "from": "A Available Generation",
+      "to": "A Energy Fulfillment Ratio"
+    },
+    {
+      "type": "LINK",
+      "from": "A Available Generation",
+      "to": "A Instant Energy Scarcity Ratio"
+    },
+    {
+      "type": "LINK",
+      "from": "Test 26 Energy Kernel Capacity Shock Active",
+      "to": "A Power Active Generation Capacity"
+    },
+    {
+      "type": "LINK",
+      "from": "Energy Kernel Capacity Shock Factor",
+      "to": "A Power Active Generation Capacity"
+    },
+    {
+      "type": "LINK",
+      "from": "Power Resource Enabled",
+      "to": "A Power Resource Consumption"
+    },
+    {
+      "type": "LINK",
+      "from": "A Energy Supply",
+      "to": "A Power Resource Consumption"
+    },
+    {
+      "type": "LINK",
+      "from": "Power Resource per Energy",
+      "to": "A Power Resource Consumption"
+    },
+    {
+      "type": "LINK",
+      "from": "Power Resource Enabled",
+      "to": "A Power Resource Demand"
+    },
+    {
+      "type": "LINK",
+      "from": "A Desired Generation",
+      "to": "A Power Resource Demand"
+    },
+    {
+      "type": "LINK",
+      "from": "Power Resource per Energy",
+      "to": "A Power Resource Demand"
+    },
+    {
+      "type": "LINK",
+      "from": "A Power Resource Extraction Rate",
+      "to": "A Power Resource Extraction"
+    },
+    {
+      "type": "LINK",
+      "from": "Test 25 Power Resource Shock Active",
+      "to": "A Power Resource Extraction Multiplier"
+    },
+    {
+      "type": "LINK",
+      "from": "Power Resource Shock Factor",
+      "to": "A Power Resource Extraction Multiplier"
+    },
+    {
+      "type": "LINK",
+      "from": "Power Resource Enabled",
+      "to": "A Power Resource Extraction Rate"
+    },
+    {
+      "type": "LINK",
+      "from": "A Power Resource Demand",
+      "to": "A Power Resource Extraction Rate"
+    },
+    {
+      "type": "LINK",
+      "from": "A Power Resource Target Inventory",
+      "to": "A Power Resource Extraction Rate"
+    },
+    {
+      "type": "LINK",
+      "from": "A Power Resource Inventory",
+      "to": "A Power Resource Extraction Rate"
+    },
+    {
+      "type": "LINK",
+      "from": "Power Resource Extraction Adjustment Time",
+      "to": "A Power Resource Extraction Rate"
+    },
+    {
+      "type": "LINK",
+      "from": "Power Resource Extraction Headroom",
+      "to": "A Power Resource Extraction Rate"
+    },
+    {
+      "type": "LINK",
+      "from": "A Power Resource Extraction Multiplier",
+      "to": "A Power Resource Extraction Rate"
+    },
+    {
+      "type": "LINK",
+      "from": "Power Resource Enabled",
+      "to": "A Power Resource Fulfillment"
+    },
+    {
+      "type": "LINK",
+      "from": "A Power Resource Demand",
+      "to": "A Power Resource Fulfillment"
+    },
+    {
+      "type": "LINK",
+      "from": "A Power Resource Inventory",
+      "to": "A Power Resource Fulfillment"
+    },
+    {
+      "type": "LINK",
+      "from": "Power Resource Buffer Days",
+      "to": "A Power Resource Fulfillment"
+    },
+    {
+      "type": "LINK",
+      "from": "Base Power Resource Price",
+      "to": "A Power Resource Price"
+    },
+    {
+      "type": "LINK",
+      "from": "Power Resource Scarcity Price Strength",
+      "to": "A Power Resource Price"
+    },
+    {
+      "type": "LINK",
+      "from": "Power Resource Buffer Days",
+      "to": "A Power Resource Target Inventory"
+    },
+    {
+      "type": "LINK",
+      "from": "A Power Resource Demand",
+      "to": "A Power Resource Target Inventory"
+    },
+    {
+      "type": "LINK",
+      "from": "A Available Generation",
+      "to": "A Power Utilization"
+    },
+    {
+      "type": "LINK",
+      "from": "Power Resource Enabled",
+      "to": "B Available Generation"
+    },
+    {
+      "type": "LINK",
+      "from": "B Desired Generation",
+      "to": "B Available Generation"
+    },
+    {
+      "type": "LINK",
+      "from": "B Power Resource Fulfillment",
+      "to": "B Available Generation"
+    },
+    {
+      "type": "LINK",
+      "from": "B Power Active Generation Capacity",
+      "to": "B Available Generation"
+    },
+    {
+      "type": "LINK",
+      "from": "B Total Requested Energy",
+      "to": "B Desired Generation"
+    },
+    {
+      "type": "LINK",
+      "from": "B Power Active Generation Capacity",
+      "to": "B Desired Generation"
+    },
+    {
+      "type": "LINK",
+      "from": "Power Resource Enabled",
+      "to": "B Effective Power Generation Cost"
+    },
+    {
+      "type": "LINK",
+      "from": "B Power Resource Price",
+      "to": "B Effective Power Generation Cost"
+    },
+    {
+      "type": "LINK",
+      "from": "Power Resource per Energy",
+      "to": "B Effective Power Generation Cost"
+    },
+    {
+      "type": "LINK",
+      "from": "B Available Generation",
+      "to": "B Energy Fulfillment Ratio"
+    },
+    {
+      "type": "LINK",
+      "from": "B Available Generation",
+      "to": "B Instant Energy Scarcity Ratio"
+    },
+    {
+      "type": "LINK",
+      "from": "Power Resource Enabled",
+      "to": "B Power Resource Consumption"
+    },
+    {
+      "type": "LINK",
+      "from": "B Energy Supply",
+      "to": "B Power Resource Consumption"
+    },
+    {
+      "type": "LINK",
+      "from": "Power Resource per Energy",
+      "to": "B Power Resource Consumption"
+    },
+    {
+      "type": "LINK",
+      "from": "Power Resource Enabled",
+      "to": "B Power Resource Demand"
+    },
+    {
+      "type": "LINK",
+      "from": "B Desired Generation",
+      "to": "B Power Resource Demand"
+    },
+    {
+      "type": "LINK",
+      "from": "Power Resource per Energy",
+      "to": "B Power Resource Demand"
+    },
+    {
+      "type": "LINK",
+      "from": "B Power Resource Extraction Rate",
+      "to": "B Power Resource Extraction"
+    },
+    {
+      "type": "LINK",
+      "from": "Power Resource Enabled",
+      "to": "B Power Resource Extraction Rate"
+    },
+    {
+      "type": "LINK",
+      "from": "B Power Resource Demand",
+      "to": "B Power Resource Extraction Rate"
+    },
+    {
+      "type": "LINK",
+      "from": "B Power Resource Target Inventory",
+      "to": "B Power Resource Extraction Rate"
+    },
+    {
+      "type": "LINK",
+      "from": "B Power Resource Inventory",
+      "to": "B Power Resource Extraction Rate"
+    },
+    {
+      "type": "LINK",
+      "from": "Power Resource Extraction Adjustment Time",
+      "to": "B Power Resource Extraction Rate"
+    },
+    {
+      "type": "LINK",
+      "from": "Power Resource Extraction Headroom",
+      "to": "B Power Resource Extraction Rate"
+    },
+    {
+      "type": "LINK",
+      "from": "B Power Resource Extraction Multiplier",
+      "to": "B Power Resource Extraction Rate"
+    },
+    {
+      "type": "LINK",
+      "from": "Power Resource Enabled",
+      "to": "B Power Resource Fulfillment"
+    },
+    {
+      "type": "LINK",
+      "from": "B Power Resource Demand",
+      "to": "B Power Resource Fulfillment"
+    },
+    {
+      "type": "LINK",
+      "from": "B Power Resource Inventory",
+      "to": "B Power Resource Fulfillment"
+    },
+    {
+      "type": "LINK",
+      "from": "Power Resource Buffer Days",
+      "to": "B Power Resource Fulfillment"
+    },
+    {
+      "type": "LINK",
+      "from": "Base Power Resource Price",
+      "to": "B Power Resource Price"
+    },
+    {
+      "type": "LINK",
+      "from": "Power Resource Scarcity Price Strength",
+      "to": "B Power Resource Price"
+    },
+    {
+      "type": "LINK",
+      "from": "Power Resource Buffer Days",
+      "to": "B Power Resource Target Inventory"
+    },
+    {
+      "type": "LINK",
+      "from": "B Power Resource Demand",
+      "to": "B Power Resource Target Inventory"
+    },
+    {
+      "type": "LINK",
+      "from": "B Available Generation",
+      "to": "B Power Utilization"
+    },
+    {
+      "type": "LINK",
+      "from": "Timed Test Mode",
+      "to": "Test 25 Power Resource Shock Active"
+    },
+    {
+      "type": "LINK",
+      "from": "Temporary Test Window",
+      "to": "Test 25 Power Resource Shock Active"
+    },
+    {
+      "type": "LINK",
+      "from": "Timed Test Mode",
+      "to": "Test 26 Energy Kernel Capacity Shock Active"
+    },
+    {
+      "type": "LINK",
+      "from": "Temporary Test Window",
+      "to": "Test 26 Energy Kernel Capacity Shock Active"
+    },
+    {
+      "type": "VARIABLE",
+      "name": "A Test 25 Power Resource Shock Applies",
+      "behavior": {
+        "value": 1
+      },
+      "description": "Applicability flag for symmetric Energy Kernel v2 resource-shock wiring."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "B Test 25 Power Resource Shock Applies",
+      "behavior": {
+        "value": 0
+      },
+      "description": "Applicability flag for symmetric Energy Kernel v2 resource-shock wiring."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "A Test 26 Energy Kernel Capacity Shock Applies",
+      "behavior": {
+        "value": 1
+      },
+      "description": "Applicability flag for symmetric Energy Kernel v2 capacity-shock wiring."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "B Test 26 Energy Kernel Capacity Shock Applies",
+      "behavior": {
+        "value": 0
+      },
+      "description": "Applicability flag for symmetric Energy Kernel v2 capacity-shock wiring."
+    },
+    {
+      "type": "LINK",
+      "from": "A Test 25 Power Resource Shock Applies",
+      "to": "A Power Resource Extraction Multiplier"
+    },
+    {
+      "type": "LINK",
+      "from": "A Test 26 Energy Kernel Capacity Shock Applies",
+      "to": "A Power Active Generation Capacity"
+    },
+    {
+      "type": "LINK",
+      "from": "Test 25 Power Resource Shock Active",
+      "to": "B Power Resource Extraction Multiplier"
+    },
+    {
+      "type": "LINK",
+      "from": "B Test 25 Power Resource Shock Applies",
+      "to": "B Power Resource Extraction Multiplier"
+    },
+    {
+      "type": "LINK",
+      "from": "Power Resource Shock Factor",
+      "to": "B Power Resource Extraction Multiplier"
+    },
+    {
+      "type": "LINK",
+      "from": "Test 26 Energy Kernel Capacity Shock Active",
+      "to": "B Power Active Generation Capacity"
+    },
+    {
+      "type": "LINK",
+      "from": "B Test 26 Energy Kernel Capacity Shock Applies",
+      "to": "B Power Active Generation Capacity"
+    },
+    {
+      "type": "LINK",
+      "from": "Energy Kernel Capacity Shock Factor",
+      "to": "B Power Active Generation Capacity"
+    },
+    {
+      "type": "LINK",
+      "from": "A Energy Demand Signal",
+      "to": "A Perceived Power Resource Demand"
+    },
+    {
+      "type": "LINK",
+      "from": "A Power Active Generation Capacity",
+      "to": "A Perceived Power Resource Demand"
+    },
+    {
+      "type": "LINK",
+      "from": "Power Resource per Energy",
+      "to": "A Perceived Power Resource Demand"
+    },
+    {
+      "type": "LINK",
+      "from": "Power Resource Enabled",
+      "to": "A Perceived Power Resource Fulfillment"
+    },
+    {
+      "type": "LINK",
+      "from": "A Perceived Power Resource Demand",
+      "to": "A Perceived Power Resource Fulfillment"
+    },
+    {
+      "type": "LINK",
+      "from": "A Power Resource Inventory",
+      "to": "A Perceived Power Resource Fulfillment"
+    },
+    {
+      "type": "LINK",
+      "from": "Power Resource Buffer Days",
+      "to": "A Perceived Power Resource Fulfillment"
+    },
+    {
+      "type": "LINK",
+      "from": "A Perceived Power Resource Fulfillment",
+      "to": "A Power Resource Price"
+    },
+    {
+      "type": "LINK",
+      "from": "B Energy Demand Signal",
+      "to": "B Perceived Power Resource Demand"
+    },
+    {
+      "type": "LINK",
+      "from": "B Power Active Generation Capacity",
+      "to": "B Perceived Power Resource Demand"
+    },
+    {
+      "type": "LINK",
+      "from": "Power Resource per Energy",
+      "to": "B Perceived Power Resource Demand"
+    },
+    {
+      "type": "LINK",
+      "from": "Power Resource Enabled",
+      "to": "B Perceived Power Resource Fulfillment"
+    },
+    {
+      "type": "LINK",
+      "from": "B Perceived Power Resource Demand",
+      "to": "B Perceived Power Resource Fulfillment"
+    },
+    {
+      "type": "LINK",
+      "from": "B Power Resource Inventory",
+      "to": "B Perceived Power Resource Fulfillment"
+    },
+    {
+      "type": "LINK",
+      "from": "Power Resource Buffer Days",
+      "to": "B Perceived Power Resource Fulfillment"
+    },
+    {
+      "type": "LINK",
+      "from": "B Perceived Power Resource Fulfillment",
+      "to": "B Power Resource Price"
     }
   ],
   "visualizations": [
@@ -25175,7 +26059,8 @@
         "Capital Lifecycle Enabled": 0,
         "Intermediate Inputs Enabled": 0,
         "Capital Goods Enabled": 0,
-        "Transport Capital Goods Enabled": 0
+        "Transport Capital Goods Enabled": 0,
+        "Power Resource Enabled": 0
       }
     },
     {
@@ -25186,7 +26071,8 @@
         "Capital Lifecycle Enabled": 0,
         "Intermediate Inputs Enabled": 0,
         "Capital Goods Enabled": 0,
-        "Transport Capital Goods Enabled": 0
+        "Transport Capital Goods Enabled": 0,
+        "Power Resource Enabled": 0
       }
     },
     {
@@ -25197,7 +26083,8 @@
         "Capital Lifecycle Enabled": 0,
         "Intermediate Inputs Enabled": 0,
         "Capital Goods Enabled": 0,
-        "Transport Capital Goods Enabled": 0
+        "Transport Capital Goods Enabled": 0,
+        "Power Resource Enabled": 0
       }
     },
     {
@@ -25208,7 +26095,8 @@
         "Capital Lifecycle Enabled": 0,
         "Intermediate Inputs Enabled": 0,
         "Capital Goods Enabled": 0,
-        "Transport Capital Goods Enabled": 0
+        "Transport Capital Goods Enabled": 0,
+        "Power Resource Enabled": 0
       }
     },
     {
@@ -25219,7 +26107,8 @@
         "Capital Lifecycle Enabled": 0,
         "Intermediate Inputs Enabled": 0,
         "Capital Goods Enabled": 0,
-        "Transport Capital Goods Enabled": 0
+        "Transport Capital Goods Enabled": 0,
+        "Power Resource Enabled": 0
       }
     },
     {
@@ -25230,7 +26119,8 @@
         "Capital Lifecycle Enabled": 0,
         "Intermediate Inputs Enabled": 0,
         "Capital Goods Enabled": 0,
-        "Transport Capital Goods Enabled": 0
+        "Transport Capital Goods Enabled": 0,
+        "Power Resource Enabled": 0
       }
     },
     {
@@ -25241,7 +26131,8 @@
         "Capital Lifecycle Enabled": 0,
         "Intermediate Inputs Enabled": 0,
         "Capital Goods Enabled": 0,
-        "Transport Capital Goods Enabled": 0
+        "Transport Capital Goods Enabled": 0,
+        "Power Resource Enabled": 0
       }
     },
     {
@@ -25252,7 +26143,8 @@
         "Capital Lifecycle Enabled": 0,
         "Intermediate Inputs Enabled": 0,
         "Capital Goods Enabled": 0,
-        "Transport Capital Goods Enabled": 0
+        "Transport Capital Goods Enabled": 0,
+        "Power Resource Enabled": 0
       }
     },
     {
@@ -25263,7 +26155,8 @@
         "Capital Lifecycle Enabled": 0,
         "Intermediate Inputs Enabled": 0,
         "Capital Goods Enabled": 0,
-        "Transport Capital Goods Enabled": 0
+        "Transport Capital Goods Enabled": 0,
+        "Power Resource Enabled": 0
       }
     },
     {
@@ -25274,7 +26167,8 @@
         "Capital Lifecycle Enabled": 0,
         "Intermediate Inputs Enabled": 0,
         "Capital Goods Enabled": 0,
-        "Transport Capital Goods Enabled": 0
+        "Transport Capital Goods Enabled": 0,
+        "Power Resource Enabled": 0
       }
     },
     {
@@ -25285,7 +26179,8 @@
         "Capital Lifecycle Enabled": 0,
         "Intermediate Inputs Enabled": 0,
         "Capital Goods Enabled": 0,
-        "Transport Capital Goods Enabled": 0
+        "Transport Capital Goods Enabled": 0,
+        "Power Resource Enabled": 0
       }
     },
     {
@@ -25296,7 +26191,8 @@
         "Capital Lifecycle Enabled": 0,
         "Intermediate Inputs Enabled": 0,
         "Capital Goods Enabled": 0,
-        "Transport Capital Goods Enabled": 0
+        "Transport Capital Goods Enabled": 0,
+        "Power Resource Enabled": 0
       }
     },
     {
@@ -25307,7 +26203,8 @@
         "Capital Lifecycle Enabled": 1,
         "Intermediate Inputs Enabled": 0,
         "Capital Goods Enabled": 0,
-        "Transport Capital Goods Enabled": 0
+        "Transport Capital Goods Enabled": 0,
+        "Power Resource Enabled": 0
       }
     },
     {
@@ -25318,7 +26215,8 @@
         "Capital Lifecycle Enabled": 1,
         "Intermediate Inputs Enabled": 0,
         "Capital Goods Enabled": 0,
-        "Transport Capital Goods Enabled": 0
+        "Transport Capital Goods Enabled": 0,
+        "Power Resource Enabled": 0
       }
     },
     {
@@ -25329,7 +26227,8 @@
         "Capital Lifecycle Enabled": 1,
         "Intermediate Inputs Enabled": 0,
         "Capital Goods Enabled": 0,
-        "Transport Capital Goods Enabled": 0
+        "Transport Capital Goods Enabled": 0,
+        "Power Resource Enabled": 0
       }
     },
     {
@@ -25340,7 +26239,8 @@
         "Capital Lifecycle Enabled": 1,
         "Intermediate Inputs Enabled": 0,
         "Capital Goods Enabled": 0,
-        "Transport Capital Goods Enabled": 0
+        "Transport Capital Goods Enabled": 0,
+        "Power Resource Enabled": 0
       }
     },
     {
@@ -25351,7 +26251,8 @@
         "Capital Lifecycle Enabled": 1,
         "Intermediate Inputs Enabled": 0,
         "Capital Goods Enabled": 0,
-        "Transport Capital Goods Enabled": 0
+        "Transport Capital Goods Enabled": 0,
+        "Power Resource Enabled": 0
       }
     },
     {
@@ -25362,7 +26263,8 @@
         "Capital Lifecycle Enabled": 1,
         "Intermediate Inputs Enabled": 1,
         "Capital Goods Enabled": 0,
-        "Transport Capital Goods Enabled": 0
+        "Transport Capital Goods Enabled": 0,
+        "Power Resource Enabled": 0
       }
     },
     {
@@ -25373,7 +26275,8 @@
         "Capital Lifecycle Enabled": 1,
         "Intermediate Inputs Enabled": 1,
         "Capital Goods Enabled": 0,
-        "Transport Capital Goods Enabled": 0
+        "Transport Capital Goods Enabled": 0,
+        "Power Resource Enabled": 0
       }
     },
     {
@@ -25384,7 +26287,8 @@
         "Capital Lifecycle Enabled": 1,
         "Intermediate Inputs Enabled": 1,
         "Capital Goods Enabled": 0,
-        "Transport Capital Goods Enabled": 0
+        "Transport Capital Goods Enabled": 0,
+        "Power Resource Enabled": 0
       }
     },
     {
@@ -25395,7 +26299,8 @@
         "Capital Lifecycle Enabled": 1,
         "Intermediate Inputs Enabled": 1,
         "Capital Goods Enabled": 0,
-        "Transport Capital Goods Enabled": 0
+        "Transport Capital Goods Enabled": 0,
+        "Power Resource Enabled": 0
       }
     },
     {
@@ -25406,7 +26311,8 @@
         "Capital Lifecycle Enabled": 1,
         "Intermediate Inputs Enabled": 1,
         "Capital Goods Enabled": 1,
-        "Transport Capital Goods Enabled": 0
+        "Transport Capital Goods Enabled": 0,
+        "Power Resource Enabled": 0
       }
     },
     {
@@ -25417,7 +26323,8 @@
         "Capital Lifecycle Enabled": 1,
         "Intermediate Inputs Enabled": 1,
         "Capital Goods Enabled": 1,
-        "Transport Capital Goods Enabled": 0
+        "Transport Capital Goods Enabled": 0,
+        "Power Resource Enabled": 0
       }
     },
     {
@@ -25428,7 +26335,8 @@
         "Capital Lifecycle Enabled": 1,
         "Intermediate Inputs Enabled": 1,
         "Capital Goods Enabled": 1,
-        "Transport Capital Goods Enabled": 0
+        "Transport Capital Goods Enabled": 0,
+        "Power Resource Enabled": 0
       }
     },
     {
@@ -25439,7 +26347,32 @@
         "Capital Lifecycle Enabled": 1,
         "Intermediate Inputs Enabled": 1,
         "Capital Goods Enabled": 1,
-        "Transport Capital Goods Enabled": 1
+        "Transport Capital Goods Enabled": 1,
+        "Power Resource Enabled": 0
+      }
+    },
+    {
+      "name": "v7.6 Energy Resource Supply Shock",
+      "description": "Energy Kernel v2 enabled. A primary power-resource extraction is reduced to 50% during the standard temporary test window while generation capital remains intact; validates resource-limited generation and recovery.",
+      "values": {
+        "Timed Test Mode": 25,
+        "Capital Lifecycle Enabled": 1,
+        "Intermediate Inputs Enabled": 1,
+        "Capital Goods Enabled": 1,
+        "Transport Capital Goods Enabled": 1,
+        "Power Resource Enabled": 1
+      }
+    },
+    {
+      "name": "v7.6 Energy Capacity-Only Control Shock",
+      "description": "Energy Kernel v2 enabled. A active generation capacity is temporarily reduced while primary resource extraction remains normal; distinguishes capacity scarcity from operating-resource scarcity.",
+      "values": {
+        "Timed Test Mode": 26,
+        "Capital Lifecycle Enabled": 1,
+        "Intermediate Inputs Enabled": 1,
+        "Capital Goods Enabled": 1,
+        "Transport Capital Goods Enabled": 1,
+        "Power Resource Enabled": 1
       }
     }
   ]
