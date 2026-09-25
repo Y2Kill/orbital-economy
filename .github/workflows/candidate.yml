@@ -1,0 +1,333 @@
+name: Candidate acceptance
+
+on:
+  push:
+    branches:
+      - 'task/**'
+    paths:
+      - 'docs/tasks/*/candidate/**'
+  workflow_dispatch:
+    inputs:
+      ref:
+        description: Task branch/ref containing docs/tasks/NNN-*/candidate/
+        required: true
+        default: main
+        type: string
+      modes:
+        description: Modes to run (all for acceptance; subsets are diagnostic)
+        required: true
+        default: all
+        type: string
+
+permissions:
+  contents: read
+
+concurrency:
+  group: candidate-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  candidate:
+    name: candidate
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    env:
+      MODES: ${{ github.event_name == 'workflow_dispatch' && inputs.modes || 'all' }}
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          fetch-depth: 0
+          ref: ${{ github.event_name == 'workflow_dispatch' && inputs.ref || github.ref }}
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+        with:
+          node-version: '24.11.1'
+
+      - name: Resolve candidate inputs
+        id: inputs
+        shell: bash
+        run: |
+          set -euo pipefail
+          target_ref="${{ github.event_name == 'workflow_dispatch' && inputs.ref || github.ref_name }}"
+          target_ref="${target_ref#refs/heads/}"
+          if [[ ! "${target_ref}" =~ ^task/([0-9]{3})- ]]; then
+            echo "::error::Candidate workflow requires a task/NNN-name ref; got ${target_ref}"
+            exit 2
+          fi
+          number="${BASH_REMATCH[1]}"
+          mapfile -t task_dirs < <(find docs/tasks -mindepth 1 -maxdepth 1 -type d -name "${number}-*" -print | sort)
+          if [[ "${#task_dirs[@]}" -ne 1 ]]; then
+            echo "::error::Expected exactly one docs/tasks/${number}-* directory; found ${#task_dirs[@]}"
+            printf '  %s\n' "${task_dirs[@]:-<none>}"
+            exit 2
+          fi
+          task_dir="${task_dirs[0]}"
+          candidate_dir="${task_dir}/candidate"
+          patch="${candidate_dir}/model-patch.json"
+          if [[ ! -f "${patch}" ]]; then
+            echo "::error::Missing required ${patch}"
+            exit 2
+          fi
+
+          single_json() {
+            local dir="$1" label="$2"
+            mapfile -t found < <(find "${dir}" -maxdepth 1 -type f -name '*.json' -print | sort)
+            if [[ "${#found[@]}" -ne 1 ]]; then
+              echo "::error::Expected exactly one ${label} JSON in ${dir}; found ${#found[@]}" >&2
+              printf '  %s\n' "${found[@]:-<none>}" >&2
+              return 2
+            fi
+            printf '%s' "${found[0]}"
+          }
+
+          accepted_model="$(single_json model 'accepted model')"
+          accepted_validation="$(single_json validation 'accepted validation')"
+          accepted_policy="$(single_json policy 'accepted policy')"
+
+          validation="${candidate_dir}/validation.json"
+          if [[ ! -f "${validation}" ]]; then validation="${accepted_validation}"; fi
+          policy="${candidate_dir}/change-policy.json"
+          if [[ ! -f "${policy}" ]]; then policy="${accepted_policy}"; fi
+
+          mkdir -p lab/output/candidate
+          echo "task_dir=${GITHUB_WORKSPACE}/${task_dir}" >> "${GITHUB_OUTPUT}"
+          echo "patch=${GITHUB_WORKSPACE}/${patch}" >> "${GITHUB_OUTPUT}"
+          echo "accepted_model=${GITHUB_WORKSPACE}/${accepted_model}" >> "${GITHUB_OUTPUT}"
+          echo "validation=${GITHUB_WORKSPACE}/${validation}" >> "${GITHUB_OUTPUT}"
+          echo "policy=${GITHUB_WORKSPACE}/${policy}" >> "${GITHUB_OUTPUT}"
+          echo "candidate=${GITHUB_WORKSPACE}/lab/output/candidate/candidate-model.json" >> "${GITHUB_OUTPUT}"
+          if [[ "${MODES}" == "all" ]]; then
+            echo "diagnostic=no" >> "${GITHUB_OUTPUT}"
+          else
+            echo "diagnostic=yes" >> "${GITHUB_OUTPUT}"
+            echo "::notice::Modes=${MODES}: diagnostic run only. Strict policy is expected to reject incomplete coverage."
+          fi
+
+          echo "Task:       ${task_dir}"
+          echo "Patch:      ${patch}"
+          echo "Validation: ${validation}"
+          echo "Policy:     ${policy}"
+          echo "Modes:      ${MODES}"
+
+      - name: Install bench dependencies offline from vendor
+        id: install
+        working-directory: lab
+        shell: bash
+        continue-on-error: true
+        run: |
+          set -euo pipefail
+          cache="${RUNNER_TEMP}/orbital-economy-npm-cache"
+          rm -rf "${cache}"
+          mkdir -p "${cache}"
+          npm cache add ./vendor/simulation-9.0.0.tgz ./vendor/csv-parse-5.6.0.tgz --cache "${cache}"
+          npm ci --offline --cache "${cache}"
+          rm -rf "${cache}"
+
+      - name: Gate 1 - apply-patch
+        id: apply
+        if: always() && steps.install.outcome == 'success'
+        working-directory: lab
+        shell: bash
+        continue-on-error: true
+        run: |
+          set -uo pipefail
+          start=${SECONDS}
+          echo "Validation SHA-256: $(sha256sum "${{ steps.inputs.outputs.validation }}" | awk '{print $1}')"
+          set +e
+          node src/cli.js apply-patch "${{ steps.inputs.outputs.patch }}" "${{ steps.inputs.outputs.accepted_model }}" --out="${{ steps.inputs.outputs.candidate }}" 2>&1 | tee output/candidate/apply-patch.log
+          rc=${PIPESTATUS[0]}
+          set -e
+          if [[ -f "${{ steps.inputs.outputs.candidate }}" ]]; then
+            echo "Candidate SHA-256: $(sha256sum "${{ steps.inputs.outputs.candidate }}" | awk '{print $1}')"
+          fi
+          echo "$((SECONDS-start))" > output/candidate/apply-patch.seconds
+          exit "${rc}"
+
+      - name: Gate 2 - conformance
+        id: conformance
+        if: always() && steps.install.outcome == 'success'
+        working-directory: lab
+        shell: bash
+        continue-on-error: true
+        run: |
+          set -uo pipefail
+          start=${SECONDS}
+          mkdir -p output/candidate/conformance
+          set +e
+          node src/cli.js conformance "${{ steps.inputs.outputs.candidate }}" "${{ steps.inputs.outputs.validation }}" --out=output/candidate/conformance 2>&1 | tee output/candidate/conformance.log
+          rc=${PIPESTATUS[0]}
+          set -e
+          echo "$((SECONDS-start))" > output/candidate/conformance.seconds
+          exit "${rc}"
+
+      - name: Gate 3 - audit
+        id: audit
+        if: always() && steps.install.outcome == 'success'
+        working-directory: lab
+        shell: bash
+        continue-on-error: true
+        run: |
+          set -uo pipefail
+          start=${SECONDS}
+          mkdir -p output/candidate/audit
+          set +e
+          node src/cli.js audit "${{ steps.inputs.outputs.candidate }}" "${{ steps.inputs.outputs.validation }}" --out=output/candidate/audit 2>&1 | tee output/candidate/audit.log
+          rc=${PIPESTATUS[0]}
+          set -e
+          echo "$((SECONDS-start))" > output/candidate/audit.seconds
+          exit "${rc}"
+
+      - name: Gate 4 - validation
+        id: validation
+        if: always() && steps.install.outcome == 'success'
+        working-directory: lab
+        shell: bash
+        continue-on-error: true
+        run: |
+          set -uo pipefail
+          start=${SECONDS}
+          mkdir -p output/candidate/validation
+          if [[ "${MODES}" != "all" ]]; then
+            echo "[DIAGNOSTIC] Partial Modes: ${MODES}; this is not an acceptance run."
+          fi
+          set +e
+          node --expose-gc src/cli.js test "${{ steps.inputs.outputs.candidate }}" "${{ steps.inputs.outputs.validation }}" --modes="${MODES}" --out=output/candidate/validation 2>&1 | tee output/candidate/validation.log
+          rc=${PIPESTATUS[0]}
+          set -e
+          echo "$((SECONDS-start))" > output/candidate/validation.seconds
+          exit "${rc}"
+
+      - name: Gate 5 - policy
+        id: policy
+        if: always() && steps.install.outcome == 'success'
+        working-directory: lab
+        shell: bash
+        continue-on-error: true
+        run: |
+          set -uo pipefail
+          start=${SECONDS}
+          mkdir -p output/candidate/policy
+          if [[ "${MODES}" != "all" ]]; then
+            echo "[DIAGNOSTIC] Partial Modes: ${MODES}; strict full-coverage policy failure is expected."
+          fi
+          set +e
+          node --expose-gc src/cli.js policy "${{ steps.inputs.outputs.accepted_model }}" "${{ steps.inputs.outputs.candidate }}" "${{ steps.inputs.outputs.validation }}" "${{ steps.inputs.outputs.policy }}" --modes="${MODES}" --out=output/candidate/policy 2>&1 | tee output/candidate/policy.log
+          rc=${PIPESTATUS[0]}
+          set -e
+          echo "$((SECONDS-start))" > output/candidate/policy.seconds
+          exit "${rc}"
+
+      - name: Candidate summary
+        if: always()
+        working-directory: lab
+        shell: bash
+        env:
+          INSTALL_OUTCOME: ${{ steps.install.outcome }}
+          APPLY_OUTCOME: ${{ steps.apply.outcome }}
+          CONFORMANCE_OUTCOME: ${{ steps.conformance.outcome }}
+          AUDIT_OUTCOME: ${{ steps.audit.outcome }}
+          VALIDATION_OUTCOME: ${{ steps.validation.outcome }}
+          POLICY_OUTCOME: ${{ steps.policy.outcome }}
+          CANDIDATE_FILE: ${{ steps.inputs.outputs.candidate }}
+          VALIDATION_FILE: ${{ steps.inputs.outputs.validation }}
+          DIAGNOSTIC: ${{ steps.inputs.outputs.diagnostic }}
+        run: |
+          set -euo pipefail
+          mkdir -p output/candidate
+          summary=output/candidate/SUMMARY.md
+          candidate_sha="unavailable"
+          validation_sha="unavailable"
+          [[ -f "${CANDIDATE_FILE}" ]] && candidate_sha="$(sha256sum "${CANDIDATE_FILE}" | awk '{print $1}')"
+          [[ -f "${VALIDATION_FILE}" ]] && validation_sha="$(sha256sum "${VALIDATION_FILE}" | awk '{print $1}')"
+          gate() {
+            case "$1" in
+              success) echo PASS ;;
+              failure) echo FAIL ;;
+              skipped) echo SKIPPED ;;
+              *) echo "${1:-UNKNOWN}" | tr '[:lower:]' '[:upper:]' ;;
+            esac
+          }
+          duration() {
+            local f="output/candidate/$1.seconds"
+            [[ -f "${f}" ]] && printf '%ss' "$(cat "${f}")" || printf -- '-'
+          }
+          {
+            echo "# Candidate acceptance summary"
+            echo
+            if [[ "${DIAGNOSTIC:-no}" == "yes" ]]; then
+              echo "**DIAGNOSTIC RUN** — partial Modes=`${MODES}`; not an acceptance result."
+              echo
+            fi
+            echo "| Gate | Result | Time |"
+            echo "|---|:---:|---:|"
+            echo "| apply-patch | $(gate "${APPLY_OUTCOME}") | $(duration apply-patch) |"
+            echo "| conformance | $(gate "${CONFORMANCE_OUTCOME}") | $(duration conformance) |"
+            echo "| audit | $(gate "${AUDIT_OUTCOME}") | $(duration audit) |"
+            echo "| validation | $(gate "${VALIDATION_OUTCOME}") | $(duration validation) |"
+            echo "| policy | $(gate "${POLICY_OUTCOME}") | $(duration policy) |"
+            echo
+            echo "Candidate SHA-256: `${candidate_sha}`"
+            echo "Validation SHA-256: `${validation_sha}`"
+            echo
+          } > "${summary}"
+
+          if [[ -f output/candidate/policy/change-policy.json ]]; then
+            CANDIDATE_SHA="${candidate_sha}" VALIDATION_SHA="${validation_sha}" node --input-type=module - <<'NODE' >> "${summary}"
+          import fs from 'node:fs';
+          const p=JSON.parse(fs.readFileSync('output/candidate/policy/change-policy.json','utf8'));
+          const c=p.counts || {};
+          console.log(`COMPARISON RESULT: ${p.comparison?.result ?? 'unavailable'}`);
+          console.log(`POLICY RESULT: ${p.result ?? 'unavailable'}`);
+          console.log(`Observed: ${c.observedEvents ?? 'unavailable'}`);
+          console.log(`Expected: ${c.expected ?? 'unavailable'}`);
+          console.log(`Unexpected: ${c.unexpected ?? 'unavailable'}`);
+          console.log(`Forbidden: ${c.forbidden ?? 'unavailable'}`);
+          console.log(`Required missing: ${c.requiredMissing ?? 'unavailable'}`);
+          console.log(`Hard blockers: ${c.hardBlockers ?? 'unavailable'}`);
+          const bad=(p.events || []).filter(e => ['UNEXPECTED_CHANGE','FORBIDDEN_CHANGE','THRESHOLD_EXCEEDED'].includes(e.classification));
+          if (bad.length) {
+            console.log('');
+            console.log('First unexpected/failing events:');
+            for (const e of bad.slice(0,10)) console.log(`- ${e.classification}: ${e.type} mode=${e.mode ?? '-'} name=${e.name ?? '-'}`);
+          }
+          NODE
+          else
+            {
+              echo "COMPARISON RESULT: unavailable"
+              echo "POLICY RESULT: unavailable"
+              echo "Observed: unavailable"
+              echo "Expected: unavailable"
+              echo "Unexpected: unavailable"
+              echo "Forbidden: unavailable"
+              echo "Required missing: unavailable"
+              echo "Hard blockers: unavailable"
+            } >> "${summary}"
+          fi
+
+          cat "${summary}"
+          cat "${summary}" >> "${GITHUB_STEP_SUMMARY}"
+
+      - name: Upload candidate reports
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: candidate-${{ github.run_id }}
+          path: lab/output/
+          if-no-files-found: error
+          retention-days: 14
+
+      - name: Final gate result
+        if: always()
+        shell: bash
+        env:
+          INSTALL_OUTCOME: ${{ steps.install.outcome }}
+          APPLY_OUTCOME: ${{ steps.apply.outcome }}
+          CONFORMANCE_OUTCOME: ${{ steps.conformance.outcome }}
+          AUDIT_OUTCOME: ${{ steps.audit.outcome }}
+          VALIDATION_OUTCOME: ${{ steps.validation.outcome }}
+          POLICY_OUTCOME: ${{ steps.policy.outcome }}
+        run: |
+          set -euo pipefail
+          for outcome in "${INSTALL_OUTCOME}" "${APPLY_OUTCOME}" "${CONFORMANCE_OUTCOME}" "${AUDIT_OUTCOME}" "${VALIDATION_OUTCOME}" "${POLICY_OUTCOME}"; do
+            [[ "${outcome}" == "success" ]] || exit 1
+          done
+          echo "All five candidate gates PASS."
