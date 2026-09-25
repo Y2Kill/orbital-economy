@@ -7,7 +7,7 @@ ebbb88bc8ed9bcbf23b22667a5bf025b4ff504ba021106ee225540f53de919fc  ./docs/ARCHITE
 cc427184363522354e41a0207039e81aee9655865901144732de139b0447c4ad  ./docs/CAPITAL_LIFECYCLE_CONFORMANCE_REPORT.md
 3e215ceb26ae88f69be2415409602225f29c63ae0a0eb08f8489313f662cff1d  ./docs/CAPITAL_LIFECYCLE_KERNEL_SPEC.md
 b83b3aaab6ef0cc9277fa2883203355baedcd83a466d0d380d2fc70c406e6cf6  ./docs/CAPITAL_LIFECYCLE_SECTOR_MAPPING.md
-9647b2e3c0e86c97a7dd7cb438e73da44820da98d56a7c42df1bb5c56fb8ce68  ./docs/CONTRACTOR_DELIVERY_CONTRACT_RU.md
+a5b1bef228c1331f64960946c213f3feb27d6ca9e1919669d423fdcf2aaac518  ./docs/CONTRACTOR_DELIVERY_CONTRACT_RU.md
 a7bf66f79453c7044d95644e70f2911bc02553f56b3aa5b644c93e3becf788bd  ./docs/CURRENT_STATE.md
 321ac069312b1643e7c36e5e3cbb82b62230bba1598eab661b89a6998e4be73f  ./docs/ENERGY_KERNEL_V2_SPEC.md
 ebfdd67a9f35ec4025cb1e6d9e98aecc59b59b6818bbee2f752de2acf653bf5c  ./docs/HISTORY_RU.md
@@ -20,9 +20,9 @@ b8550c7ceb78193c56d0dd30e478113059e9b56b9602c3839a9a690dca5baa01  ./docs/PARAMET
 54d11b501d27decc737c360e45e44cc4bde6b0babcf1242d084239da48494c03  ./docs/VERSIONING_AND_AUTHORITY.md
 2fec3259985bd1e9b0d8b3b0d4474c524ca37e6ca20d26d5cb2a0a6aaa531035  ./docs/model_v7_6_r1/RUN_TESTS_r1_FAIL_report.md
 aa087cbd9b9074aa9fab7a3ab082aeb011cf096cbcabf0476b0b275a2b557095  ./docs/model_v7_6_r1/orbital_economy_v7_6_r1_modeljson.json
-00cdc7eb1f61f2c66ca32480095daee2fee44bc7fa8a4ef7d8a4e636c9ffb2d6  ./docs/tasks/004-vendor-dependencies/TASK_RU.md
-0163a174c122ec27abb823354d2b80f3ad3e00aabfcac5d6cd7216c9b07bb342  ./docs/tasks/004-vendor-dependencies/scope.json
-a6e3b9fcb5b5dd1175ba2965bdeecfc46c0faa46ce7cf2cc7d09d64e7225c633  ./docs/tasks/README_RU.md
+6a9bb2beea23aaa920140074a0df7285a501b876b9594360faca49807994c1c6  ./docs/tasks/004-vendor-dependencies/TASK_RU.md
+8bd60f6b50a680e9b04fcdb986c800e24cf0ed2f91f702397c9acc5edcbf661a  ./docs/tasks/004-vendor-dependencies/scope.json
+38ea662894b8b1d719314b52c501d01045d0ec8d9f955940c1d69e918d80428c  ./docs/tasks/README_RU.md
 96e45f17b86e91379d9ae28a3574e07eebe359a5658a6ee1aca8384cc6128a0d  ./lab/APPLY_PATCH.cmd
 4531b0e9bd80d389c1ed85ec6ccd259bbb81cdf0e49b08e06fff951151fefa29  ./lab/CHANGELOG.md
 3e3689bc6b7e04759619e2aff4cdda1a4170b696298d6f098c38dfc46e3f40ac  ./lab/CHECK_CANDIDATE.cmd
@@ -45,7 +45,7 @@ f00833e935e7f6ac393022646bdacf143f576f65968e8bccd28810bd8a0c1e27  ./lab/README_R
 cd08b7c5314b97d1c9a39b3f67f45f96dce43b3b9896f1402e733c42b99fd9e8  ./lab/RUN_LAB.cmd
 35700e9588fb2eaa5e5916c315e5d4d59a7a60858d69504e17afc7c2080668ff  ./lab/RUN_TESTS.cmd
 24d0e97933ddd0c4d77c870c2cb65a0064daa444afa97e9ede2f79caf09a8b90  ./lab/SELF_TEST.cmd
-a93e92b83e95892e8848fe581b57ea3e50d18c6ad52bdebfd0d410d616ab735f  ./lab/SHA256SUMS.txt
+3f456eda1af8ee813d686095e0c37ce0e75938a9133fb76f209c32879c8502fa  ./lab/SHA256SUMS.txt
 1c2f5686b6ec917e983e27cdb588f601947f3adc64541e30a0d215f8cbcc6122  ./lab/STRUCTURE_AUDIT.cmd
 b0a67c70399c47fb0ea2126a6cd6277f1381db7ff783c07d0c628057cdf1e6d3  ./lab/STRUCTURE_SELF_TEST.cmd
 e8981fea20563bfc84d918db381f511505fedbd5bbb0ae7746a329f88777fd0d  ./lab/docs/ARCHITECTURE_RU.md
@@ -92,6 +92,9 @@ add7fafe8aa883f25a23280acb677d621536f1232d593ec7820768a9cc2a7fb9  ./lab/src/stru
 fb3b0a2e9645c772ebf144d9f04a06947e64f0a41a62474567b32cce6952b132  ./lab/src/structure_qa.js
 7709d7f3183853792ce5d77277d68c8d0499b3504a5329b3e1987af19bf3da18  ./lab/src/util.js
 0789be1deb50349699475c37e8b51dc22342a9ff043cae480709c6f08c0a2144  ./lab/src/workspace.js
+dde50493cfcce4c72fba4f1b1ca418b44de04c16efe02ce185b368a927e8467c  ./lab/vendor/README.md
+2c11496fd2d83a23f0274bf6b9a27096d937a6ba958ca1ec92052268e889c071  ./lab/vendor/csv-parse-5.6.0.tgz
+82b4d2528851baa9b7281aa0364b56a2114c02e2e5be6331adf0ae43a03dac12  ./lab/vendor/simulation-9.0.0.tgz
 a9573f5afe43d2ae2bf12fdc3066c983c264eba162e1d3fc1d5f11e3872f9e91  ./model/orbital_economy_v7_6_r2_modeljson.json
 cc9a3ab6cc4ca146f7ce49d5f609d812cf4357b0225733ec6f9b8d76e4ead6dc  ./policy/change-policy-v7.6-strict.json
 7383fc73f63834e015bd7aaba5c2765fe7d17b665af043527aad70bc16b05c49  ./reference/v7.5.1/BASELINE_MANIFEST.json
@@ -100,6 +103,6 @@ cc9a3ab6cc4ca146f7ce49d5f609d812cf4357b0225733ec6f9b8d76e4ead6dc  ./policy/chang
 30287762cfa2e3a1492be4b530c3363807fa072d7414516e9e3fa4833be023b7  ./reference/v7.5.1/policy/change-policy-v7.5.1-strict.json
 0411f58beb0303150c34fb0392bc811cc8b79ad45751797087482ea587ecef84  ./reference/v7.5.1/validation/validation-v7.5.1.json
 39315da9cdeddebe741c3431fc205dc84c4bf6857f2fedff91376ae4b82c2424  ./tools/build_sums.mjs
-cd3a89046e8c52514f6a5e0e9c9218ba26795b4afaa642f5d3ceabe1195749a0  ./tools/check_branch.mjs
-e5f137c79f1fa385435b08891c1c48e71d0178902c8146e6327080bd766dd879  ./tools/selftest.sh
+633dfd9ac7861970c947e7eb3d17a75ae61860e78348f6eaea37af1ecce12aa6  ./tools/check_branch.mjs
+de050b40565dc513ce61fac9f69709fbc4eb62c1ddab95252c310495f12b8849  ./tools/selftest.sh
 cbd3ff4b115b3a025e2cb54f9cbd3436ca11a5dcebdebb10cf094bfa2963acaf  ./validation/validation-v7.6.json

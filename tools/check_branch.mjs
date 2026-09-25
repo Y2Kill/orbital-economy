@@ -60,7 +60,7 @@ const matchAny = (f, globs = []) => globs.some(g => globRe(g).test(f));
 
 // Paths no task may touch unless its scope lists them under allow_protected.
 const PROTECTED = ['model/**', 'validation/**', 'policy/**', 'reference/**', 'lab/input/**', 'lab/reference/**',
-  'BASELINE_MANIFEST.json', '.gitattributes', '.gitignore', 'tools/**', 'docs/tasks/**',
+  'BASELINE_MANIFEST.json', '.gitattributes', '.gitignore', 'tools/**', 'docs/tasks/**', 'lab/vendor/**',
   'docs/CONTRACTOR_DELIVERY_CONTRACT_RU.md', 'docs/VERSIONING_AND_AUTHORITY.md'];
 // Paths every task may (and usually must) touch.
 const ALWAYS = ['SHA256SUMS.txt', 'lab/SHA256SUMS.txt', `${taskDir}/REPORT_RU.md`];
@@ -106,6 +106,13 @@ if (!commits.length) fail('no commits on the branch');
 const merges = commits.filter(c => c[1].includes(' '));
 merges.length ? fail(`merge commits on the branch: ${merges.map(c => c[0].slice(0, 7)).join(', ')} — history must be linear`) : pass(`${commits.length} commit(s), linear`);
 for (const c of commits.reverse()) info(`${c[0].slice(0, 7)} ${c[2]} — ${c[3]}`);
+// Attribution lives in the message, not in the author field: an agent pushing through an API
+// connector cannot choose the author, but it can always write the trailer.
+const bodies = git(['log', '--format=%H%x00%B%x1e', `${forkSha}..${headSha}`]).toString('utf8').split('\x1e').map(s => s.trim()).filter(Boolean).map(s => s.split('\0'));
+const unattributed = bodies.filter(([, body]) => !/^Agent:[ \t]*\S/m.test(body || ''));
+const agents = [...new Set(bodies.flatMap(([, body]) => [...(body || '').matchAll(/^Agent:[ \t]*(.+)$/gm)].map(m => m[1].trim())))];
+unattributed.length ? fail(`commit(s) without an "Agent: <name>" line: ${unattributed.map(([h]) => h.slice(0, 7)).join(', ')}`)
+  : commits.length && pass(`every commit is attributed (Agent: ${agents.join(', ')})`);
 
 // ---- 3. scope ------------------------------------------------------------------------------
 const changes = gitText(['diff', '--name-status', '--no-renames', forkSha, headSha]).split('\n').filter(Boolean).map(l => { const [s, ...p] = l.split('\t'); return { status: s, file: p.join('\t') }; });
@@ -163,7 +170,8 @@ for (const [sums, prefix, strip] of [['lab/SHA256SUMS.txt', 'lab/', 4], ['SHA256
     else if (listed.get(key) !== sha256(f)) problems.push(`hash mismatch ${f}`);
   }
   for (const k of listed.keys()) if (!expected.includes(prefix + k)) problems.push(`listed but not in tree: ${k}`);
-  problems.length ? fail(`${sums}: ${problems.length} problem(s) — ${problems.slice(0, 6).join('; ')} (rebuild with node tools/build_sums.mjs)`)
+  const sumsByReviewer = scope.sums_by === 'reviewer';
+  problems.length ? (sumsByReviewer ? warn : fail)(`${sums}: ${problems.length} problem(s) — ${problems.slice(0, 6).join('; ')}${sumsByReviewer ? ' (sums_by=reviewer: rebuilt by us at acceptance)' : ' (rebuild with node tools/build_sums.mjs)'}`)
     : pass(`${sums}: ${expected.length} entries, all match the head tree`);
 }
 

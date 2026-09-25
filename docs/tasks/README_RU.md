@@ -24,22 +24,27 @@ docs/tasks/NNN-имя/
   "allow": ["glob", "…"],
   "allow_binary": ["glob — бинарные файлы и файлы > 1 МБ, которые задача разрешает"],
   "allow_protected": ["glob — защищённые пути, если задача действительно должна их менять"],
-  "required_changes": ["glob — без изменения этих путей поставка неполна"]
+  "required_changes": ["glob — без изменения этих путей поставка неполна"],
+  "sums_by": "agent | reviewer — кто пересобирает SHA256SUMS (reviewer — для агента без локального git, §9.4)"
 }
 ```
 
-Защищённые пути (без `allow_protected` не меняются никогда): `model/`, `validation/`, `policy/`, `reference/`, `lab/input/`, `lab/reference/`, `BASELINE_MANIFEST.json`, `.gitattributes`, `.gitignore`, `tools/`, `docs/tasks/` (кроме своего `REPORT_RU.md`), контракт исполнителя, `docs/VERSIONING_AND_AUTHORITY.md`. `SHA256SUMS.txt` и `lab/SHA256SUMS.txt` разрешены всегда — их пересобирает исполнитель.
+Защищённые пути (без `allow_protected` не меняются никогда): `model/`, `validation/`, `policy/`, `reference/`, `lab/input/`, `lab/reference/`, `BASELINE_MANIFEST.json`, `.gitattributes`, `.gitignore`, `tools/`, `lab/vendor/`, `docs/tasks/` (кроме своего `REPORT_RU.md`), контракт исполнителя, `docs/VERSIONING_AND_AUTHORITY.md`. `SHA256SUMS.txt` и `lab/SHA256SUMS.txt` разрешены всегда — их пересобирает исполнитель.
 
 `scope.json` читается проверкой из `main`, не из ветки: поставка не может расширить себе права.
 
 ## Цикл
 
 ```text
-мы         1. TASK_RU.md + scope.json → коммит в main, push
+мы         0. выяснить среду агента: локальный git с сетью? только API-коннектор? запускает ли стенд (Node, Windows)?
+              от ответа зависят sums_by, объём самопроверки и шаблон выдачи; входные файлы, которые агент
+              не может получить сам, кладём в main заранее (§9.4)
+           1. TASK_RU.md + scope.json → коммит в main, push
            2. выдаём агенту короткий текст (шаблон ниже)
 агент      3. ветка task/NNN-имя от текущего main; работа; node tools/build_sums.mjs
            4. самопроверка: node tools/check_branch.mjs --scope=… --head=HEAD --base=origin/main --no-remote
                             + стенд — в объёме раздела «Приёмка» задания
+              (агент без локального git этот шаг пропускает — §9.4; первый раунд тогда наш)
            5. REPORT_RU.md; push ветки; PR в main, если может (описание = краткий отчёт)
 мы         6. node tools/check_branch.mjs --scope=docs/tasks/NNN-имя/scope.json
                  guard: origin/main и теги на месте, ветка — fast-forward от main, линейна,
@@ -59,16 +64,32 @@ docs/tasks/NNN-имя/
 - если `main` ушёл вперёд, агент делает `git rebase origin/main`, пересобирает SUMS и пушит с `--force-with-lease` — это единственный допустимый force-push, и только в свою ветку;
 - теги ставим только мы.
 
-Проверка самих инструментов: `bash tools/selftest.sh` (песочница во временной папке; 19 сценариев — честная поставка и типовые нарушения; реальный репозиторий и origin не трогаются). Прогонять после любой правки в `tools/`.
+Проверка самих инструментов: `bash tools/selftest.sh` (песочница во временной папке; 22 сценария — честная поставка и типовые нарушения; реальный репозиторий и origin не трогаются). Прогонять после любой правки в `tools/`.
 
-## Шаблон выдачи агенту
+## Шаблоны выдачи агенту
+
+Агент с локальным git и сетью:
 
 ```text
 Репозиторий: https://github.com/Y2Kill/orbital-economy (ветка main).
 Задание: docs/tasks/NNN-имя/TASK_RU.md — прочитай его целиком, затем docs/CONTRACTOR_DELIVERY_CONTRACT_RU.md §9.
 Работай только в ветке task/NNN-имя, созданной от текущего main. main и теги не трогай.
+В каждом сообщении коммита — строка "Agent: <твоё имя>".
 Перед push: node tools/build_sums.mjs, затем
   node tools/check_branch.mjs --scope=docs/tasks/NNN-имя/scope.json --head=HEAD --base=origin/main --no-remote
 — должно быть BRANCH CHECK: PASS. Отчёт — docs/tasks/NNN-имя/REPORT_RU.md.
+Если что-то в задании неясно или кажется неверным — напиши об этом в отчёте с аргументами, не обходи молча.
+```
+
+Агент только с API-коннектором (без локального git / без стенда):
+
+```text
+Репозиторий: https://github.com/Y2Kill/orbital-economy (ветка main).
+Задание: docs/tasks/NNN-имя/TASK_RU.md — прочитай его целиком, затем docs/CONTRACTOR_DELIVERY_CONTRACT_RU.md §9, особенно §9.4.
+Работай только в ветке task/NNN-имя от текущего main (если ветка уже есть — сначала подвинь её на текущий main).
+main и теги не трогай. В каждом сообщении коммита — строка "Agent: <твоё имя>".
+Самопроверку check_branch и стенд не запускаешь — первый прогон делаем мы. SHA256SUMS не пересобирай, если в scope.json стоит "sums_by": "reviewer".
+Сохраняй окончания строк изменяемых файлов (CRLF остаётся CRLF), новые файлы — LF.
+Отчёт — docs/tasks/NNN-имя/REPORT_RU.md; в нём перечисли, что не запускалось.
 Если что-то в задании неясно или кажется неверным — напиши об этом в отчёте с аргументами, не обходи молча.
 ```
