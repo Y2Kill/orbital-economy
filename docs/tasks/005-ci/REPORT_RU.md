@@ -26,13 +26,18 @@ SHA256SUMS не изменяются (`sums_by: reviewer`).
 
 ## Linux / переносимость
 
-Ожидается по результатам Actions; если падение окажется дефектом стенда, здесь будет записан лог, причина и исправление. До такого сигнала `lab/src/` не меняется.
+Linux-прогон не выявил дефектов стенда. На Ubuntu 24.04 / Node 24.11.1 без изменений `lab/src/` прошли offline install, QA 30/30, STRUCTURE 21/21, CONFORMANCE 18/18, POLICY 10/10, COMPARE, Modes 0/12 и полный прогон всех 27 Modes. Поэтому Lab остаётся v0.9.3; оснований для v0.9.4 нет.
+
+Единственная найденная Linux/Actions-специфика была не в Lab, а в окружении `tools/selftest.sh`: task checkout имел `origin/main`, но не локальную ветку `main`. Это исправлено только в workflow материализацией локальной `main` перед selftest; `tools/` не изменялся.
 
 ## Запуски
 
-- Проверка среды: https://github.com/Y2Kill/orbital-economy/actions/runs/36156914140 — success.
-- Финальный push CI: будет добавлен после прогона.
-- Bench full: будет добавлен после прогона.
+- Проверка среды: https://github.com/Y2Kill/orbital-economy/actions/runs/36156914140 — **success**; подтверждены run → job → steps → decoded logs.
+- Push CI после исправления окружения: https://github.com/Y2Kill/orbital-economy/actions/runs/36157360138 — **success**, примерно 2 мин 15 с. Guard PASS; tools self-test 23/23; QA 30/30; STRUCTURE 21/21; CONFORMANCE 18/18; POLICY 10/10; COMPARE PASS; Modes 0/12 `OVERALL: PASS`.
+- Bench full: https://github.com/Y2Kill/orbital-economy/actions/runs/36157360135 — **success**, примерно 8 мин 50 с. `OVERALL: PASS` (27/27), `COMPARISON RESULT: BYTE_IDENTICAL`, `POLICY RESULT: PASS`.
+- Artifact полного прогона: https://github.com/Y2Kill/orbital-economy/actions/runs/36157360135/artifacts/10875155033 — `bench-full-36157360135`, 68 057 байт, digest `sha256:22c70512c1ac9dbc44a18d0772ca2625f1e582023ca4ee0cd1556cd391efca67`.
+
+После подтверждения полного прогона временный bootstrap-trigger `push: task/005-ci` из `bench-full.yml` удалён. Финальная версия этого workflow запускается только вручную через `workflow_dispatch` с параметром `ref`.
 
 ## Что не запускалось локально
 

@@ -8,11 +8,6 @@ on:
         required: true
         default: main
         type: string
-  # Task 005 bootstrap only: removed after the first branch run.
-  push:
-    branches:
-      - task/005-ci
-
 permissions:
   contents: read
 
@@ -28,7 +23,7 @@ jobs:
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
         with:
           fetch-depth: 0
-          ref: ${{ github.event_name == 'workflow_dispatch' && inputs.ref || github.ref }}
+          ref: ${{ inputs.ref }}
       - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
         with:
           node-version: '24.11.1'
