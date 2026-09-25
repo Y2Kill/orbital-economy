@@ -1,5 +1,12 @@
 # Changelog
 
+## v0.9.4 — bit-exact series digest for cross-platform diagnosis
+
+- new `series` CLI command hashes every simulated series as canonical little-endian Float64 bytes, hashes the time axis separately and emits a deterministic per-Mode digest;
+- `--dump=MODE` writes exact IEEE-754 hexadecimal values; `--plan=file.json` dumps only selected differing series for diagnosis;
+- QA contains a fixed SHA-256 vector for `[0, -0, 1, pi]`; changing byte order or value encoding makes the case fail;
+- instrumentation only: model, validation, policy and simulation-engine behavior are unchanged.
+
 ## v0.9.3 — vendored offline install + enforced engine pin
 
 - `INSTALL.cmd`: installation now uses only the repository's `vendor/*.tgz`: a separate temporary npm cache is seeded from the two tarballs, then `npm ci --offline` installs strictly from `package-lock.json`; the user's normal npm cache and network are not required;

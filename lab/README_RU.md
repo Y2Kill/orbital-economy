@@ -1,6 +1,6 @@
-# Orbital Economy Lab v0.9.3
+# Orbital Economy Lab v0.9.4
 
-Локальный стенд для запуска, проверки, regression-анализа, policy-gating, проверки соответствия Capital Lifecycle Kernel и статических аудитов структуры (открытые границы, A/B-симметрия) для ModelJSON экономической модели Orbital Economy.
+Локальный стенд для запуска, проверки, regression-анализа, policy-gating, проверки соответствия Capital Lifecycle Kernel и статических аудитов структуры (открытые границы, A/B-симметрия) для ModelJSON экономической модели Orbital Economy. v0.9.4 добавляет `node src/cli.js series` для бит-точной межплатформенной диагностики рядов.
 
 ## Подтверждённая база
 

@@ -11,6 +11,7 @@ import { runGenericCheck } from './checks.js';
 import { applyPatch, validatePatch, PATCH_FORMAT } from './patch.js';
 import { inventory, buildRegistry, validateAnnotations } from './parameters.js';
 import { loadModelJSON, assertEngineVersion, EXPECTED_ENGINE_VERSION } from './engine.js';
+import { hashFloat64LE, doubleHex } from './series.js';
 
 const root = path.resolve(process.cwd());
 const sourceModel = discoverSingleJson(path.join(root, 'input', 'model'), 'accepted ModelJSON');
@@ -294,6 +295,14 @@ try {
   await expect('model patch: schema validation catches malformed entries', async () => {
     const e = validatePatch({ format: PATCH_FORMAT, add_elements: [{ type: 'FLOW', name: 'X', behavior: { value: 1 } }], add_links: [{ from: 'A' }], modify_scenarios: [{ mode: 'x' }] });
     return e.length >= 3;
+  });
+
+  // ---- bit-exact series hashing (v0.9.4)
+  await expect('series hashing is fixed to little-endian Float64 bytes', async () => {
+    const got = hashFloat64LE([0, -0, 1, Math.PI]);
+    return got === 'f660036682207a50f5a0a3c3edb53f72349d608d68705aa6f3fdfe2d421deb23'
+      && doubleHex(-0) === '8000000000000000'
+      && doubleHex(Math.PI) === '400921fb54442d18';
   });
 
   // ---- parameter registry (v0.8.0)

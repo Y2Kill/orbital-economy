@@ -1,0 +1,185 @@
+name: Cross-OS diagnosis
+
+on:
+  workflow_dispatch:
+    inputs:
+      ref:
+        description: Git ref to diagnose
+        required: true
+        default: main
+        type: string
+      modes:
+        description: Modes to hash
+        required: true
+        default: all
+        type: string
+  push:
+    branches:
+      - task/006-cross-os
+
+permissions:
+  contents: read
+
+concurrency:
+  group: cross-os-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  series:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: ubuntu-latest
+            label: ubuntu
+          - os: windows-latest
+            label: windows
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 35
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          fetch-depth: 0
+          ref: ${{ github.event_name == 'workflow_dispatch' && inputs.ref || github.ref }}
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+        with:
+          node-version: '24.11.1'
+      - name: Machine information
+        run: node -e "const os=require('os'); console.log(JSON.stringify({platform:os.platform(),release:os.release(),version:os.version(),arch:os.arch(),cpu:os.cpus()[0]?.model,node:process.version},null,2))"
+      - name: Install bench dependencies offline from vendor
+        working-directory: lab
+        shell: bash
+        run: |
+          set -euo pipefail
+          cache="${RUNNER_TEMP}/orbital-economy-npm-cache"
+          rm -rf "${cache}"
+          mkdir -p "${cache}"
+          npm cache add ./vendor/simulation-9.0.0.tgz ./vendor/csv-parse-5.6.0.tgz --cache "${cache}"
+          npm ci --offline --cache "${cache}"
+          rm -rf "${cache}"
+      - name: Hash selected series
+        working-directory: lab
+        shell: bash
+        run: node --expose-gc src/cli.js series --modes="${{ github.event_name == 'workflow_dispatch' && inputs.modes || 'all' }}" --out="output/cross-os"
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: series-${{ matrix.label }}
+          path: lab/output/cross-os/series-digest.json
+          if-no-files-found: error
+          retention-days: 14
+
+  compare-digests:
+    needs: series
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    outputs:
+      changed: ${{ steps.plan.outputs.changed }}
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+      - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093
+        with:
+          pattern: series-*
+          path: artifacts
+      - name: Compare digests
+        run: node docs/tasks/006-cross-os/repro/compare-digests.mjs artifacts/series-ubuntu/series-digest.json artifacts/series-windows/series-digest.json cross-os-plan.json
+      - id: plan
+        shell: bash
+        run: |
+          changed="$(node -e "const p=require('./cross-os-plan.json'); process.stdout.write(p.changed_modes.length ? 'yes' : 'no')")"
+          echo "changed=${changed}" >> "${GITHUB_OUTPUT}"
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: cross-os-plan
+          path: cross-os-plan.json
+          if-no-files-found: error
+          retention-days: 14
+
+  targeted:
+    needs: compare-digests
+    if: needs.compare-digests.outputs.changed == 'yes'
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: ubuntu-latest
+            label: ubuntu
+          - os: windows-latest
+            label: windows
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          ref: ${{ github.event_name == 'workflow_dispatch' && inputs.ref || github.ref }}
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+        with:
+          node-version: '24.11.1'
+      - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093
+        with:
+          name: cross-os-plan
+          path: plan
+      - name: Install bench dependencies offline from vendor
+        working-directory: lab
+        shell: bash
+        run: |
+          set -euo pipefail
+          cache="${RUNNER_TEMP}/orbital-economy-npm-cache"
+          rm -rf "${cache}"
+          mkdir -p "${cache}"
+          npm cache add ./vendor/simulation-9.0.0.tgz ./vendor/csv-parse-5.6.0.tgz --cache "${cache}"
+          npm ci --offline --cache "${cache}"
+          rm -rf "${cache}"
+      - name: Dump differing series only
+        working-directory: lab
+        run: node --expose-gc src/cli.js series --plan="../plan/cross-os-plan.json" --out="output/cross-os-targeted"
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: targeted-${{ matrix.label }}
+          path: lab/output/cross-os-targeted/*-targeted.json
+          if-no-files-found: error
+          retention-days: 14
+
+  compare:
+    needs: [compare-digests, targeted]
+    if: always() && needs.compare-digests.result == 'success'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+      - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093
+        with:
+          pattern: cross-os-plan
+          path: artifacts
+      - name: Download targeted artifacts
+        if: needs.compare-digests.outputs.changed == 'yes'
+        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093
+        with:
+          pattern: targeted-*
+          path: artifacts
+      - name: Final comparison
+        shell: bash
+        run: |
+          if [[ "${{ needs.compare-digests.outputs.changed }}" == "yes" ]]; then
+            node docs/tasks/006-cross-os/repro/compare-targeted.mjs artifacts/cross-os-plan/cross-os-plan.json artifacts/targeted-ubuntu artifacts/targeted-windows
+          else
+            echo "All selected Modes are bit-identical."
+          fi
+
+  repro:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          ref: ${{ github.event_name == 'workflow_dispatch' && inputs.ref || github.ref }}
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+        with:
+          node-version: '24.11.1'
+      - name: Machine information
+        run: node -e "const os=require('os'); console.log(JSON.stringify({platform:os.platform(),release:os.release(),version:os.version(),arch:os.arch(),cpu:os.cpus()[0]?.model,node:process.version},null,2))"
+      - name: Minimal reproduction
+        run: node docs/tasks/006-cross-os/repro/repro.mjs

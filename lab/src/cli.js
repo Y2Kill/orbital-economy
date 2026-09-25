@@ -11,6 +11,7 @@ import { runConformanceCommand } from './conformance_run.js';
 import { runAuditCommand } from './audit_run.js';
 import { applyPatch } from './patch.js';
 import { runParametersCommand } from './parameters.js';
+import { runSeriesCommand } from './series.js';
 
 function defaultOutDir() {
   return path.resolve('output', `run-${new Date().toISOString().replace(/[:.]/g, '-')}`);
@@ -18,7 +19,7 @@ function defaultOutDir() {
 
 function usage() {
   console.log(`
-Orbital Economy Lab v0.9.3
+Orbital Economy Lab v0.9.4
 
 Recommended workspace commands:
   lab [--input=input] [--modes=all] [--out=DIR]
@@ -30,6 +31,7 @@ Recommended workspace commands:
   audit [model.json] [validation.json] [--out=DIR]
   apply-patch <patch.json> [base.json] [--out=candidate.json]
   parameters [model.json] [--annotations=file.json] [--out=DIR]
+  series [model.json] [--modes=all] [--out=DIR] [--dump=MODE] [--plan=file.json]
 
 Advanced commands:
   inspect <model.json>
@@ -47,6 +49,7 @@ Examples:
   node src/cli.js audit
   node src/cli.js apply-patch delivery/model-patch.json --out=input/model/candidate.json
   node src/cli.js parameters --annotations=../docs/PARAMETER_ANNOTATIONS.json
+  node src/cli.js series --modes=all --out=output/series
   node src/cli.js inspect input/model/orbital_economy_v7_3_modeljson.json
   node src/cli.js test model.json validation.json --modes=all --web-reference=input/web_reference/pending
 `);
@@ -178,6 +181,17 @@ try {
     const annotationsFile = options.annotations ? path.resolve(options.annotations) : null;
     const outDir = ensureDir(options.out || path.resolve('output', `parameters-${new Date().toISOString().replace(/[:.]/g, '-')}`));
     runParametersCommand({ modelFile, annotationsFile, outDir });
+  } else if (cmd === 'series') {
+    let modelFile = positional[1] || null;
+    if (!modelFile) modelFile = discoverWorkspace(options.input || path.resolve('input')).modelFile;
+    const modes = parseModeList(options.modes || 'all');
+    const outDir = ensureDir(options.out || path.resolve('output', `series-${new Date().toISOString().replace(/[:.]/g, '-')}`));
+    const dumpModes = new Set();
+    if (options.dump != null) {
+      const parsed = parseModeList(String(options.dump));
+      if (parsed) for (const x of parsed) dumpModes.add(x);
+    }
+    await runSeriesCommand({ modelFile, modes, outDir, dumpModes, dumpPlanFile: options.plan || null });
   } else if (cmd === 'apply-patch') {
     if (!positional[1]) throw new Error('Need a path to patch.json');
     const patchFile = positional[1];
