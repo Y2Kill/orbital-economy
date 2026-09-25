@@ -1,7 +1,7 @@
 # Architecture
 
 **Document status:** CURRENT  
-**Base:** Orbital Economy v7.6.1 r1  
+**Base:** Orbital Economy v7.7 r1  
 **Rule:** this document describes accepted code; code is authoritative on conflict.
 
 ## 1. Model character
@@ -45,8 +45,9 @@ Physical chains currently represented:
 2. Ore → Metal;
 3. Metal → Electronics;
 4. Metal + Electronics → Capital Goods;
-5. Capital Goods → installed Refinery/Electronics/Power capital;
-6. Capital Goods → shared installed Transport capacity.
+5. Capital Goods + Construction Materials → installed Refinery/Electronics/Power capital (v7.7);
+6. Capital Goods → shared installed Transport capacity;
+7. Regolith extraction → Construction Materials (v7.7).
 
 ## 4. Capital Goods layer
 
@@ -85,6 +86,16 @@ A Transport CG Consumption
 ```
 
 The fulfillment buffer reuses the scale-free `Capital Goods Buffer Days` mechanism.
+
+## 4a. Construction Materials layer (v7.7)
+
+Each colony extracts **regolith** (a second, bulk raw resource) into a regional inventory and processes it into **Construction Materials** at a fixed processing capacity; no energy is used in v7.7. Colonial Refinery/Electronics/Power expansion requires both physical inputs:
+
+```text
+expansion = desired expansion × Min(Capital Goods fulfillment, Construction Materials fulfillment)
+```
+
+and consumes both, each by its own per-capacity norm. Both fulfillments are scale-free (buffer in days of demand). Shared Transport does not use construction materials yet (planned v7.7.1). In the accepted dynamics colony B does not expand, so its construction-materials sector is idle. Switch: `Construction Materials Enabled` (Modes 0–26 = 0). Details: `docs/tasks/008-construction-materials/V7_7_ARCHITECTURE_SPEC.md`.
 
 ## 5. Capital Lifecycle kernel
 

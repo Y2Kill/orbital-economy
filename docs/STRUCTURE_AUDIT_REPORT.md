@@ -1,30 +1,32 @@
 # Orbital Economy Lab — structure audit
 
-- generated: 2026-09-25T15:07:11.377Z
-- model: Orbital Economy v7.6.1 r1 — Energy Kernel v2, Mode 25 calibrated to a 50% resource-supply shock
-- model SHA-256: `16e8ca6c5719e67422e16a6ec1ea2724b6121a062200eaf91e81389a2a180cd1`
-- validation: Orbital Economy v7.6.1 validation r1
-- validation SHA-256: `1970aaea988ece5ba2524e0ca79b68a0c48864c8bf6d7e458c336b718c209ddc`
+- generated: 2026-09-25T22:31:57.672Z
+- model: Orbital Economy v7.7 r1 — Construction Materials
+- model SHA-256: `5bbc29b6e18caa64ec22267892b6cd0669649722c8fc029d8dba43a77a34d5a1`
+- validation: Orbital Economy v7.7 validation r1
+- validation SHA-256: `01d8e87ca4ad216b206164db768a9888fbf5efa58f2775a50eecee02be66133c`
 - status: **PASS**
 
 ## Open boundaries (declared physical-boundary meter)
 
-- flows total: 139; crossing the model boundary: 108; classified: 108; unclassified: 0
+- flows total: 151; crossing the model boundary: 120; classified: 120; unclassified: 0
 - closed-world violations: **0** (mode: `classify`) — zero means the currently declared closed-world boundary contract is satisfied; it is not a Planet v1 completeness claim
-- declared transformation pairs: 13; transformation flows without a pair: 0
+- declared transformation pairs: 15; transformation flows without a pair: 0
 
 | Category | closed-world | Flows | Reason |
 |---|:---:|---:|---|
 | primary_extraction | yes | 4 | primary resources enter from the planet itself |
 | power_resource_extraction | yes | 2 | v7.6 primary planetary energy resource enters regional physical inventory through explicit extraction. |
+| regolith_extraction | yes | 2 | v7.7 primary bulk resource (regolith) enters regional physical inventory through explicit extraction. |
 | final_consumption | yes | 4 | final goods leave the economy as consumption |
 | power_resource_consumption | yes | 2 | v7.6 physical operating resource is consumed in exact proportion to actual delivered generation. |
 | unit_transformation | yes | 8 | input stock -> output stock conversion modelled as a sink/source pair (different units); every flow here must belong to a declared transformation pair whose numeric identity is checked at runtime |
 | information_signal | yes | 30 | smoothing / information stocks, not matter |
 | financial_accounting | yes | 16 | money bookkeeping, not matter |
 | capital_state_accounting | yes | 21 | Active is an operational-state sub-account of Installed; these flows change state, not physical capital |
-| capital_transformation | yes | 15 | v7.5/v7.5.1: installed capital expansion is a unit transformation of Capital Goods; regional sectors use one local sink, shared Transport uses two A/B regional sinks whose total identity is checked at runtime. |
+| capital_transformation | yes | 21 | v7.5/v7.5.1: installed capital expansion is a unit transformation of Capital Goods; regional sectors use one local sink, shared Transport uses two A/B regional sinks whose total identity is checked at runtime. v7.7: colonial sector expansion is additionally backed by a local Construction Materials sink. |
 | capital_goods_transformation | yes | 6 | metal + electronics -> capital goods (declared pair; identity checked at runtime) |
+| construction_materials_transformation | yes | 4 | v7.7: regolith -> construction materials (declared pair; identity checked at runtime) |
 | external_capital | **no** | 0 | capital created without physical goods; expected count is zero from v7.5.1 onward for the currently declared expansion-boundary audit |
 
 
@@ -36,15 +38,17 @@ Declared unit-transformation pairs (source flow physically backed by sink flows;
 | A Electronics Production | A Electronics Feedstock Consumption | A feedstock->electronics pair identity (per mode) | ok |
 | B Metal Production | B Ore Consumption | B ore->metal pair identity | ok |
 | B Electronics Production | B Electronics Feedstock Consumption | B feedstock->electronics pair identity (per mode) | ok |
-| A Refinery Expansion | A Refinery Capital Goods Consumption | A Refinery capital goods pair identity | ok |
-| A Electronics Factory Expansion | A Electronics Capital Goods Consumption | A Electronics capital goods pair identity | ok |
-| A Power Generation Expansion | A Power Capital Goods Consumption | A Power capital goods pair identity | ok |
+| A Refinery Expansion | A Refinery Capital Goods Consumption, A Refinery Construction Materials Consumption | A Refinery capital goods pair identity | ok |
+| A Electronics Factory Expansion | A Electronics Capital Goods Consumption, A Electronics Construction Materials Consumption | A Electronics capital goods pair identity | ok |
+| A Power Generation Expansion | A Power Capital Goods Consumption, A Power Construction Materials Consumption | A Power capital goods pair identity | ok |
 | A Capital Goods Production | A Capital Goods Metal Consumption, A Capital Goods Electronics Consumption | A capital goods production pair identities | ok |
-| B Refinery Expansion | B Refinery Capital Goods Consumption | B Refinery capital goods pair identity | ok |
-| B Electronics Factory Expansion | B Electronics Capital Goods Consumption | B Electronics capital goods pair identity | ok |
-| B Power Generation Expansion | B Power Capital Goods Consumption | B Power capital goods pair identity | ok |
+| B Refinery Expansion | B Refinery Capital Goods Consumption, B Refinery Construction Materials Consumption | B Refinery capital goods pair identity | ok |
+| B Electronics Factory Expansion | B Electronics Capital Goods Consumption, B Electronics Construction Materials Consumption | B Electronics capital goods pair identity | ok |
+| B Power Generation Expansion | B Power Capital Goods Consumption, B Power Construction Materials Consumption | B Power capital goods pair identity | ok |
 | B Capital Goods Production | B Capital Goods Metal Consumption, B Capital Goods Electronics Consumption | B capital goods production pair identities | ok |
 | Transport Capacity Expansion | A Transport Capital Goods Consumption, B Transport Capital Goods Consumption | Transport capital goods pair identity | ok |
+| A Construction Materials Production | A Construction Materials Regolith Consumption | A construction materials production pair identity | ok |
+| B Construction Materials Production | B Construction Materials Regolith Consumption | B construction materials production pair identity | ok |
 
 <details><summary>All boundary flows by category</summary>
 
@@ -59,6 +63,11 @@ Declared unit-transformation pairs (source flow physically backed by sink flows;
 
 - A Power Resource Extraction
 - B Power Resource Extraction
+
+**regolith_extraction** (2)
+
+- A Regolith Extraction
+- B Regolith Extraction
 
 **final_consumption** (4)
 
@@ -159,7 +168,7 @@ Declared unit-transformation pairs (source flow physically backed by sink flows;
 - Transport Capacity Mothballing
 - Transport Active Capacity Depreciation
 
-**capital_transformation** (15)
+**capital_transformation** (21)
 
 - A Refinery Expansion
 - A Electronics Factory Expansion
@@ -176,6 +185,12 @@ Declared unit-transformation pairs (source flow physically backed by sink flows;
 - B Power Capital Goods Consumption
 - A Transport Capital Goods Consumption
 - B Transport Capital Goods Consumption
+- A Refinery Construction Materials Consumption
+- A Electronics Construction Materials Consumption
+- A Power Construction Materials Consumption
+- B Refinery Construction Materials Consumption
+- B Electronics Construction Materials Consumption
+- B Power Construction Materials Consumption
 
 **capital_goods_transformation** (6)
 
@@ -186,6 +201,13 @@ Declared unit-transformation pairs (source flow physically backed by sink flows;
 - B Capital Goods Metal Consumption
 - B Capital Goods Electronics Consumption
 
+**construction_materials_transformation** (4)
+
+- A Construction Materials Production
+- A Construction Materials Regolith Consumption
+- B Construction Materials Production
+- B Construction Materials Regolith Consumption
+
 **external_capital** (0)
 
 
@@ -194,8 +216,8 @@ Declared unit-transformation pairs (source flow physically backed by sink flows;
 ## Colony symmetry
 
 - tokens: A ↔ B
-- mirrored pairs checked: 800; mirrored links checked: 1762
-- structural mismatches: **0**; numeric parameter differences (allowed): 94; elements under exceptions: 0
+- mirrored pairs checked: 854; mirrored links checked: 1890
+- structural mismatches: **0**; numeric parameter differences (allowed): 102; elements under exceptions: 0
 
 <details><summary>Numeric parameter differences between colonies (allowed)</summary>
 
@@ -248,5 +270,9 @@ Declared unit-transformation pairs (source flow physically backed by sink flows;
 | value | A Test 23 Electronics Demand Applies | 1 | B Test 23 Electronics Demand Applies | 0 |
 | value | A Test 25 Power Resource Shock Applies | 1 | B Test 25 Power Resource Shock Applies | 0 |
 | value | A Test 26 Energy Kernel Capacity Shock Applies | 1 | B Test 26 Energy Kernel Capacity Shock Applies | 0 |
+| value | A Test 28 Construction Materials Shock Applies | 1 | B Test 28 Construction Materials Shock Applies | 0 |
+| value | A Test 29 Regolith Shock Applies | 1 | B Test 29 Regolith Shock Applies | 0 |
+| value | A Regolith Base Extraction Capacity | 7 | B Regolith Base Extraction Capacity | 5 |
+| value | A Construction Materials Base Production Capacity | 3 | B Construction Materials Base Production Capacity | 2 |
 
 </details>

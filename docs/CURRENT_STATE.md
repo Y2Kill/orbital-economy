@@ -1,21 +1,21 @@
 # Current State
 
 **Document status:** CURRENT  
-**Describes code:** Orbital Economy v7.6.1 r1 — Energy Kernel v2, Mode 25 calibrated  
-**Base:** accepted v7.6 r2 (itself built on v7.5.1 r1)  
-**Model SHA-256:** `16e8ca6c5719e67422e16a6ec1ea2724b6121a062200eaf91e81389a2a180cd1`
+**Describes code:** Orbital Economy v7.7 r1 — Construction Materials  
+**Base:** accepted v7.6.1 r1 (Energy Kernel v2, Mode 25 calibrated)  
+**Model SHA-256:** `5bbc29b6e18caa64ec22267892b6cd0669649722c8fc029d8dba43a77a34d5a1`
 
 ## 1. Checkpoint
 
 | Property | Value |
 |---|---:|
-| ModelJSON elements | 2944 |
-| VARIABLE | 798 |
-| STOCK | 67 |
-| FLOW | 139 |
-| LINK | 1940 |
-| Named primitives | 1004 |
-| Scenarios | 27 |
+| ModelJSON elements | 3142 |
+| VARIABLE | 848 |
+| STOCK | 71 |
+| FLOW | 151 |
+| LINK | 2072 |
+| Named primitives | 1070 |
+| Scenarios | 30 |
 | Simulation | 0..1080 days |
 | Time step | 0.25 day |
 | Engine | `simulation@9.0.0` |
@@ -23,17 +23,27 @@
 
 ## 2. Existing material economy
 
-The accepted v7.5.1 production graph is preserved:
+The v7.5.1 production graph is preserved and, since v7.7, extended by a second raw-material chain:
 
 ```text
-Ore → Metal → Electronics
-          ↘       ↙
-          Capital Goods
-               ↓
-Refinery / Electronics / Power / Transport expansion
+Ore → Metal → Electronics          Regolith → Construction Materials
+          ↘       ↙                                  │
+          Capital Goods ─────────────┬───────────────┘
+               ↓                     ↓
+   Transport expansion     Refinery / Electronics / Power expansion
 ```
 
 Capital expansion remains physically backed. The declared external-capital expansion audit remains at zero violations.
+
+### 2a. Construction Materials (v7.7)
+
+Each colony extracts regolith into a regional inventory and processes it into construction materials at a fixed capacity (no energy in v7.7). Colonial expansion needs both physical inputs:
+
+```text
+X <Sector> Expansion = X <Sector> Desired Expansion × Min(X Capital Goods Fulfillment, X Construction Materials Fulfillment)
+```
+
+and consumes construction materials by its own per-capacity norm (Refinery 20, Electronics 12, Power 1 — calibration parameters). Fulfillment and raw-material availability are scale-free (buffers in days of demand). Transport does not use construction materials yet (v7.7.1). Colony B does not expand in the accepted dynamics, so its construction-materials sector is idle in every Mode. Switch `Construction Materials Enabled`: Modes 0–26 = 0 (exact regression), Modes 27–29 = 1. Spec, test plan, delivery and acceptance: `docs/tasks/008-construction-materials/`.
 
 ## 3. Energy Kernel v2
 
@@ -99,7 +109,7 @@ Extraction adjusts toward current resource demand plus a target-inventory correc
 - `0`: all new resource flows are inert; `Available Generation` falls back to the accepted active-capacity path; generation cost falls back to the accepted v7.5.1 expression.
 - `1`: Energy Kernel v2 operates.
 
-In v7.6, Modes **0–24** were the exact-regression scope against v7.5.1 and Modes **25–26** were new. In v7.6.1, Modes **0–24** and **26** reproduce v7.6 r2 exactly (every series except the recalibrated constant's own series); Mode 25 changes by design.
+In v7.6, Modes **0–24** were the exact-regression scope against v7.5.1 and Modes **25–26** were new. In v7.6.1, Modes **0–24** and **26** reproduced v7.6 r2 exactly (every series except the recalibrated constant's own series). In v7.7, Modes **0–26** set `Construction Materials Enabled = 0` and reproduce v7.6.1 r1 bit for bit on the canonical platform; Modes **27–29** are new.
 
 ## 5. New scenarios
 
@@ -113,22 +123,34 @@ A-only active generation capacity is temporarily reduced (factor 0.6) while reso
 
 Both shock wirings use symmetric A/B applicability flags; A=1 and B=0. This preserves the structural symmetry audit while deliberately applying the experiment to A. B is not shocked, but it is not unaffected: through trade its electronics output moves by up to ~40 % (Mode 25) and ~70 % (Mode 26) against the no-shock control.
 
+### Mode 27 — Construction Materials Baseline
+
+The full model with every switch on. A extracts regolith and produces construction materials; A construction-materials fulfillment stays at ≈ 0.97, on a par with capital goods — construction materials do not choke expansion in calm conditions.
+
+### Mode 28 — Construction Materials Supply Shock
+
+A processing capacity × 0.1 during the standard window. A construction-materials fulfillment falls to ≈ 0.36 and A Refinery expansion to ≈ 36 % of desired, while capital goods stay available (≈ 0.97) — the brake is construction materials; full recovery after the window.
+
+### Mode 29 — Regolith Supply Shock
+
+A regolith extraction × 0.1 during the same window. The regolith stock is drained (≈ 0.9 of an initial 40), processing is raw-material-limited below its unshocked capacity, fulfillment falls to ≈ 0.48; recovery after the window. The 28/29 pair separates processing scarcity from raw-material scarcity, like 26/25 for energy.
+
 ## 6. Static QA
 
-| Metric | v7.6.1 r1 (= v7.6 r2) |
+| Metric | v7.7 r1 |
 |---|---:|
-| FLOW | 139 |
-| Boundary flows | 108 |
+| FLOW | 151 |
+| Boundary flows | 120 |
 | Unclassified boundary flows | 0 |
-| Declared transformation pairs | 13 |
+| Declared transformation pairs | 15 |
 | Unpaired transformation flows | 0 |
 | Declared external-capital violations | **0** |
 | A/B symmetry mismatches | **0** |
-| A/B parameter differences | 94 |
+| A/B parameter differences | 102 |
 | Capital lifecycle instances | 7 |
 | Capital lifecycle non-conforming | **0** |
 
-Executable validation Modes 0–26 (`validation/validation-v7.6.1.json`, one new Mode 25 check) was run locally on 2026-09-25: **27/27 PASS**; Modes 0–24 and 26 reproduce v7.6 r2 exactly apart from the recalibrated constant's own series (26 × `common=1004, changed=1`). v7.6 r2 in its turn reproduced v7.5.1 r1 exactly in Modes 0–24 (25 × `common=963, changed=0, maxAbs=0`, 41 added series). See `ACCEPTANCE_STATUS.md`.
+Executable validation Modes 0–29 (`validation/validation-v7.7.json`) was run on the canonical platform on 2026-09-26: **30/30 PASS**; Modes 0–26 reproduce v7.6.1 r1 exactly (27 × `common=1004, changed=0, maxAbs=0`, 66 added series). v7.6.1 had reproduced v7.6 r2 in Modes 0–24 and 26 apart from the recalibrated constant's own series. v7.6 r2 in its turn reproduced v7.5.1 r1 exactly in Modes 0–24 (25 × `common=963, changed=0, maxAbs=0`, 41 added series). See `ACCEPTANCE_STATUS.md`.
 
 ## 7. What v7.6 deliberately does not implement
 

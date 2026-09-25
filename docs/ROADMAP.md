@@ -1,10 +1,18 @@
 # Roadmap
 
 **Document status:** CURRENT  
-**Base:** Orbital Economy v7.6.1 r1 — Energy Kernel v2, Mode 25 calibrated (accepted 2026-09-25)  
+**Base:** Orbital Economy v7.7 r1 — Construction Materials (accepted 2026-09-26)  
 **Rule:** roadmap describes intent; executable accepted code remains authoritative for accepted behavior.
 
-## Current implementation — v7.6 Energy Kernel v2
+## Current implementation — v7.7 Construction Materials
+
+A second raw-material chain: regional regolith extraction → construction materials → colonial Refinery/Electronics/Power expansion, which now needs both capital goods and construction materials (`Min` of the two fulfillments). No energy use, no interregional trade, fixed sector capacities. Modes 27–29; Modes 0–26 exact. First model version delivered by the repository agent through `candidate.yml` (task 008). Next increments on this layer:
+
+- **v7.7.1 — Transport on construction materials**: shared transport expansion drawing on A and B inventories, as v7.5.1 did for capital goods;
+- construction materials using energy (the allocator change is the risky part — see the v7.4 lesson);
+- a situation where colony B builds: today B never expands, so half of every new sector stays idle.
+
+## Previous layer — v7.6 Energy Kernel v2
 
 The approved energy-kernel refactor is implemented:
 

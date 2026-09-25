@@ -1,7 +1,7 @@
 {
   "format": "orbital-economy-parameter-annotations-v1",
-  "model": "Orbital Economy v7.6.1 r1 — Energy Kernel v2, Mode 25 calibrated",
-  "updated": "2026-09-25",
+  "model": "Orbital Economy v7.7 r1 — Construction Materials",
+  "updated": "2026-09-26",
   "policy": "Каждый внешний параметр, влияющий на структуру поведения (сравнительные преимущества, нормирование, планирование), должен иметь аннотацию: роль, что меняет, доказательство (ссылка на прогон/документ). Несимметричные пары A/B аннотируются в первую очередь. Изменение значения = изменение модели → через change-policy, с обновлением аннотации.",
   "embedded_literals": [
     {
@@ -1415,6 +1415,325 @@
         "test",
         "mode-26",
         "applicability"
+      ]
+    },
+    "Construction Materials Enabled": {
+      "role": "v7.7 master switch.",
+      "effect": "0 preserves Modes 0-26 exactly; 1 makes colonial expansion require both Capital Goods and Construction Materials.",
+      "evidence": "V7_7_ARCHITECTURE_SPEC §0–§3.",
+      "since": "v7.7 r1",
+      "tags": [
+        "construction-materials",
+        "switch"
+      ]
+    },
+    "Regolith per Construction Materials Unit": {
+      "role": "[calib] material intensity, skeleton value 2.",
+      "effect": "Scales Regolith requirement and exact production/consumption identity.",
+      "evidence": "Owner skeleton feasibility value; numerical behaviour to be confirmed in candidate runs.",
+      "since": "v7.7 r1",
+      "tags": [
+        "construction-materials",
+        "calibration",
+        "coupling"
+      ]
+    },
+    "Construction Materials Target Days": {
+      "role": "Construction Materials inventory target, days of desired demand.",
+      "effect": "Higher value raises desired stock coverage.",
+      "evidence": "V7_7_ARCHITECTURE_SPEC §2; owner-defined non-[calib] value.",
+      "since": "v7.7 r1",
+      "tags": [
+        "construction-materials",
+        "buffer"
+      ]
+    },
+    "Construction Materials Adjustment Time": {
+      "role": "Construction Materials inventory correction time.",
+      "effect": "Higher value slows production response to inventory gaps.",
+      "evidence": "V7_7_ARCHITECTURE_SPEC §2; owner-defined non-[calib] value.",
+      "since": "v7.7 r1",
+      "tags": [
+        "construction-materials",
+        "buffer"
+      ]
+    },
+    "Construction Materials Buffer Days": {
+      "role": "Scale-free fulfillment buffer, days of demand.",
+      "effect": "Higher value lowers fulfillment for the same inventory coverage.",
+      "evidence": "V7_7_ARCHITECTURE_SPEC §2; owner-defined non-[calib] value.",
+      "since": "v7.7 r1",
+      "tags": [
+        "construction-materials",
+        "buffer"
+      ]
+    },
+    "Regolith Target Days": {
+      "role": "Regolith target inventory, days of requirement.",
+      "effect": "Higher value raises raw-resource stock target.",
+      "evidence": "V7_7_ARCHITECTURE_SPEC §2; owner-defined non-[calib] value.",
+      "since": "v7.7 r1",
+      "tags": [
+        "construction-materials",
+        "buffer"
+      ]
+    },
+    "Regolith Adjustment Time": {
+      "role": "Regolith inventory correction time.",
+      "effect": "Higher value slows extraction response.",
+      "evidence": "V7_7_ARCHITECTURE_SPEC §2; owner-defined non-[calib] value.",
+      "since": "v7.7 r1",
+      "tags": [
+        "construction-materials",
+        "buffer"
+      ]
+    },
+    "Regolith Buffer Days": {
+      "role": "Scale-free Regolith availability buffer, days of requirement.",
+      "effect": "Higher value makes raw-resource limitation bind sooner.",
+      "evidence": "V7_7_ARCHITECTURE_SPEC §2; owner-defined non-[calib] value.",
+      "since": "v7.7 r1",
+      "tags": [
+        "construction-materials",
+        "buffer"
+      ]
+    },
+    "v7.7 Construction Materials Shock Multiplier": {
+      "role": "[calib] Mode 28 processing-capacity shock, value 0.1.",
+      "effect": "Controls severity of temporary A Construction Materials capacity shock.",
+      "evidence": "Owner skeleton feasibility value; candidate run calibrates behavioural thresholds.",
+      "since": "v7.7 r1",
+      "tags": [
+        "construction-materials",
+        "calibration",
+        "test-only"
+      ]
+    },
+    "v7.7 Regolith Shock Multiplier": {
+      "role": "[calib] Mode 29 extraction-capacity shock, value 0.1.",
+      "effect": "Controls severity of temporary A Regolith extraction shock.",
+      "evidence": "Owner skeleton feasibility value; candidate run calibrates behavioural thresholds.",
+      "since": "v7.7 r1",
+      "tags": [
+        "construction-materials",
+        "calibration",
+        "test-only"
+      ]
+    },
+    "A Test 28 Construction Materials Shock Applies": {
+      "role": "Test-only applicability flag (1).",
+      "effect": "Keeps Mode 28 shock wiring structurally symmetric while selecting A only.",
+      "evidence": "V7_7_ARCHITECTURE_SPEC §4.",
+      "since": "v7.7 r1",
+      "applies_to_mirror": true,
+      "tags": [
+        "construction-materials",
+        "test-only"
+      ]
+    },
+    "A Test 29 Regolith Shock Applies": {
+      "role": "Test-only applicability flag (1).",
+      "effect": "Keeps Mode 29 shock wiring structurally symmetric while selecting A only.",
+      "evidence": "V7_7_ARCHITECTURE_SPEC §4.",
+      "since": "v7.7 r1",
+      "applies_to_mirror": true,
+      "tags": [
+        "construction-materials",
+        "test-only"
+      ]
+    },
+    "A Regolith Inventory": {
+      "role": "[calib] initial Regolith stock, value 40.",
+      "effect": "Sets initial raw-resource buffer before endogenous extraction settles.",
+      "evidence": "Owner skeleton feasibility value; candidate run to confirm no artificial startup failure.",
+      "since": "v7.7 r1",
+      "applies_to_mirror": true,
+      "tags": [
+        "construction-materials",
+        "calibration",
+        "initial",
+        "regolith"
+      ]
+    },
+    "A Regolith Base Extraction Capacity": {
+      "role": "[calib] fixed extraction capacity (7).",
+      "effect": "Caps Regolith extraction through the standard soft-cap function.",
+      "evidence": "Owner skeleton feasibility value; candidate run to confirm baseline and shock behaviour.",
+      "since": "v7.7 r1",
+      "applies_to_mirror": true,
+      "tags": [
+        "construction-materials",
+        "calibration",
+        "capacity",
+        "regolith"
+      ]
+    },
+    "A Construction Materials Inventory": {
+      "role": "[calib] initial Construction Materials stock, value 30.",
+      "effect": "Sets initial construction buffer before local production settles.",
+      "evidence": "Owner skeleton feasibility value; candidate run to confirm baseline fulfillment.",
+      "since": "v7.7 r1",
+      "applies_to_mirror": true,
+      "tags": [
+        "construction-materials",
+        "calibration",
+        "initial"
+      ]
+    },
+    "A Construction Materials Base Production Capacity": {
+      "role": "[calib] fixed Construction Materials production capacity (3).",
+      "effect": "Caps local processing through the standard soft-cap function.",
+      "evidence": "Owner skeleton feasibility value; candidate run to confirm baseline and Mode 28 shock.",
+      "since": "v7.7 r1",
+      "applies_to_mirror": true,
+      "tags": [
+        "construction-materials",
+        "calibration",
+        "capacity"
+      ]
+    },
+    "A Refinery Construction Materials per Capacity": {
+      "role": "[calib] physical-material norm, value 20.",
+      "effect": "Scales Refinery Construction Materials demand and sink flow.",
+      "evidence": "Order-of-magnitude matched to Capital Goods norm 17 per spec; candidate run checks consequences.",
+      "since": "v7.7 r1",
+      "applies_to_mirror": true,
+      "tags": [
+        "construction-materials",
+        "calibration",
+        "intensity"
+      ]
+    },
+    "A Electronics Construction Materials per Capacity": {
+      "role": "[calib] physical-material norm, value 12.",
+      "effect": "Scales Electronics Construction Materials demand and sink flow.",
+      "evidence": "Order-of-magnitude matched to Capital Goods norm 11.5 per spec; candidate run checks consequences.",
+      "since": "v7.7 r1",
+      "applies_to_mirror": true,
+      "tags": [
+        "construction-materials",
+        "calibration",
+        "intensity"
+      ]
+    },
+    "A Power Construction Materials per Capacity": {
+      "role": "[calib] physical-material norm, value 1.",
+      "effect": "Scales Power Construction Materials demand and sink flow.",
+      "evidence": "Order-of-magnitude matched to Capital Goods norm 0.5 per spec; candidate run checks consequences.",
+      "since": "v7.7 r1",
+      "applies_to_mirror": true,
+      "tags": [
+        "construction-materials",
+        "calibration",
+        "intensity"
+      ]
+    },
+    "B Test 28 Construction Materials Shock Applies": {
+      "role": "Test-only applicability flag (0).",
+      "effect": "Keeps Mode 28 shock wiring structurally symmetric while selecting A only.",
+      "evidence": "V7_7_ARCHITECTURE_SPEC §4.",
+      "since": "v7.7 r1",
+      "applies_to_mirror": true,
+      "tags": [
+        "construction-materials",
+        "test-only"
+      ]
+    },
+    "B Test 29 Regolith Shock Applies": {
+      "role": "Test-only applicability flag (0).",
+      "effect": "Keeps Mode 29 shock wiring structurally symmetric while selecting A only.",
+      "evidence": "V7_7_ARCHITECTURE_SPEC §4.",
+      "since": "v7.7 r1",
+      "applies_to_mirror": true,
+      "tags": [
+        "construction-materials",
+        "test-only"
+      ]
+    },
+    "B Regolith Inventory": {
+      "role": "[calib] initial Regolith stock, value 40.",
+      "effect": "Sets initial raw-resource buffer before endogenous extraction settles.",
+      "evidence": "Owner skeleton feasibility value; candidate run to confirm no artificial startup failure.",
+      "since": "v7.7 r1",
+      "applies_to_mirror": true,
+      "tags": [
+        "construction-materials",
+        "calibration",
+        "initial",
+        "regolith"
+      ]
+    },
+    "B Regolith Base Extraction Capacity": {
+      "role": "[calib] fixed extraction capacity (5).",
+      "effect": "Caps Regolith extraction through the standard soft-cap function.",
+      "evidence": "Owner skeleton feasibility value; candidate run to confirm baseline and shock behaviour.",
+      "since": "v7.7 r1",
+      "applies_to_mirror": true,
+      "tags": [
+        "construction-materials",
+        "calibration",
+        "capacity",
+        "regolith"
+      ]
+    },
+    "B Construction Materials Inventory": {
+      "role": "[calib] initial Construction Materials stock, value 30.",
+      "effect": "Sets initial construction buffer before local production settles.",
+      "evidence": "Owner skeleton feasibility value; candidate run to confirm baseline fulfillment.",
+      "since": "v7.7 r1",
+      "applies_to_mirror": true,
+      "tags": [
+        "construction-materials",
+        "calibration",
+        "initial"
+      ]
+    },
+    "B Construction Materials Base Production Capacity": {
+      "role": "[calib] fixed Construction Materials production capacity (2).",
+      "effect": "Caps local processing through the standard soft-cap function.",
+      "evidence": "Owner skeleton feasibility value; candidate run to confirm baseline and Mode 28 shock.",
+      "since": "v7.7 r1",
+      "applies_to_mirror": true,
+      "tags": [
+        "construction-materials",
+        "calibration",
+        "capacity"
+      ]
+    },
+    "B Refinery Construction Materials per Capacity": {
+      "role": "[calib] physical-material norm, value 20.",
+      "effect": "Scales Refinery Construction Materials demand and sink flow.",
+      "evidence": "Order-of-magnitude matched to Capital Goods norm 17 per spec; candidate run checks consequences.",
+      "since": "v7.7 r1",
+      "applies_to_mirror": true,
+      "tags": [
+        "construction-materials",
+        "calibration",
+        "intensity"
+      ]
+    },
+    "B Electronics Construction Materials per Capacity": {
+      "role": "[calib] physical-material norm, value 12.",
+      "effect": "Scales Electronics Construction Materials demand and sink flow.",
+      "evidence": "Order-of-magnitude matched to Capital Goods norm 11.5 per spec; candidate run checks consequences.",
+      "since": "v7.7 r1",
+      "applies_to_mirror": true,
+      "tags": [
+        "construction-materials",
+        "calibration",
+        "intensity"
+      ]
+    },
+    "B Power Construction Materials per Capacity": {
+      "role": "[calib] physical-material norm, value 1.",
+      "effect": "Scales Power Construction Materials demand and sink flow.",
+      "evidence": "Order-of-magnitude matched to Capital Goods norm 0.5 per spec; candidate run checks consequences.",
+      "since": "v7.7 r1",
+      "applies_to_mirror": true,
+      "tags": [
+        "construction-materials",
+        "calibration",
+        "intensity"
       ]
     }
   }

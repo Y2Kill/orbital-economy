@@ -47,7 +47,7 @@ Previously accepted behavior is a hard development constraint unless an intentio
 
 Where a new feature is switch-gated, legacy scenarios should preserve the old execution path exactly. The project prefers `maxAbs = 0` exact comparison over tolerance-based similarity whenever technically possible.
 
-For v7.6.1, Modes 0–24 and 26 reproduce v7.6 r2 exactly (every series except the recalibrated constant's own) and Mode 25 owns the change. Exact means bit-exact **on the canonical platform** (§8).
+For v7.7, Modes 0–26 reproduce v7.6.1 r1 exactly (switch `Construction Materials Enabled` = 0) and Modes 27–29 own the new behaviour. Exact means bit-exact **on the canonical platform** (§8).
 
 ## 5. Validation vs policy
 
