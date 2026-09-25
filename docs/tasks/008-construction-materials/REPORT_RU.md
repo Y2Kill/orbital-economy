@@ -41,6 +41,26 @@
 
 Дальше: заменить `[calib probe]` на содержательные пороги по значениям первого прогона, добавить проверки порядка событий и зафиксировать числовую калибровку; затем обновить `validation_sha256` policy и добиться validation PASS 30/30 (КТ3).
 
+### КТ3 — 2026-09-26 00:30 EEST — validation PASS 30/30 после калибровки
+
+Сделано: невозможные `[calib probe]` первого раунда заменены содержательными порогами по фактически измеренным значениям; добавлены проверки восстановления/event-order и явное доказательство сырьевого ограничения Mode 29 (production capacity остаётся 3, production rate < 1). Константы модели не подгонялись: оставлены skeleton-значения владельца.
+
+Доказательство:
+- Candidate acceptance run: https://github.com/Y2Kill/orbital-economy/actions/runs/36191322586.
+- На момент закрытия КТ3 шаг `Gate 4 - validation` завершён **success**; проверены все Modes 0–29, то есть validation PASS 30/30. Policy того же run ещё выполняется и к КТ3 не относится.
+- Обычный CI этой головы: https://github.com/Y2Kill/orbital-economy/actions/runs/36191322568 — **success**.
+- Таблица `проверка → наблюдение r1 → порог r2 → запас` приведена ниже в разделе «Калибровка»; источник чисел — первый run 36190086944.
+- Mode 27: A fulfillment 0.966918 → floor 0.94.
+- Mode 28: A fulfillment/Refinery ratio 0.360445 → <0.50; CG fulfillment 0.968430 → >=0.95; recovery@900 0.967178 → >=0.94.
+- Mode 29: Regolith min 0.871627 → <5; CM fulfillment min 0.475198 → <0.60; CM production-rate max 0.706065 при неизменной capacity=3 → <1.0; recovery@900 0.967141 → >=0.94.
+- B idle fulfillment наблюдался 0.999999999966667; тест использует `>= 0.999999999`, то есть именно `1 - epsilon` из test plan, а не ложное точное равенство.
+
+Не подтвердилось:
+- Первоначальная r1-проверка `B fulfillment >= 1` оказалась численно слишком строгой из-за floating-point (`0.999999999966667`). Это не изменение поведения B; порог исправлен на спецификационную форму `1 - ε` с ε=1e-9.
+- Других гипотез test plan после калибровки не пришлось отбрасывать: весь validation 30/30 PASS.
+
+Дальше: получить SHA этой финализированной validation из завершившегося candidate-run, привязать его в `change-policy.json` без расширения allow-rules и добиться финальной головы с пятью PASS + POLICY PASS (КТ4).
+
 ## Реализация кандидата
 
 Кандидат r1 следует исчерпывающей спецификации: Regolith → Construction Materials → физическое ограничение расширения Refinery / Electronics / Power через `Min(CG fulfillment, CM fulfillment)`. Transport и энергетический allocator не изменяются. Существующие шесть expansion-FLOW получают только внешний `IfThenElse([Construction Materials Enabled] = 1, new, old-verbatim)`.
