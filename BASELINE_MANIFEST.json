@@ -29,6 +29,16 @@
     "version": "9.0.0",
     "pinned": true
   },
+  "canonical_platform": {
+    "rule": "docs/VERSIONING_AND_AUTHORITY.md section 8 — bit-exact numbers are defined on this platform only",
+    "os": "Windows x64",
+    "node": "24.11.1",
+    "engine": "simulation 9.0.0 (lab/vendor, enforced by lab/src/engine.js)",
+    "golden": "lab/reference/accepted/series-digest.windows.json",
+    "golden_sha256": "bf2089075c13f8c63d80417f3ce7da2db455c1b3c1fc985f70b2f959046a5696",
+    "verify": "cd lab && node --expose-gc src/cli.js series --modes=all --out=output/series && cd .. && node tools/verify_series.mjs lab/output/series/series-digest.json",
+    "reason": "the model's ^ runs as Math.pow; Node's Math.pow rounds differently on Windows and Linux for some arguments (docs/tasks/006-cross-os/ACCEPTANCE_RU.md)"
+  },
   "validation": {
     "file": "validation/validation-v7.6.1.json",
     "sha256": "1970aaea988ece5ba2524e0ca79b68a0c48864c8bf6d7e458c336b718c209ddc",

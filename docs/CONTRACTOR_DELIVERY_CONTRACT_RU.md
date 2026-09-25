@@ -1,6 +1,6 @@
 # Контракт поставки модели сторонним исполнителем
 
-Версия: 1.7 (baseline v7.6.1 r1 / Lab v0.9.3, 2026-09-25) — §9: исполнитель-агент с доступом к репозиторию; §9.4: агент без локального git; §9.2 п. 9: контрольные точки и журнал
+Версия: 1.8 (baseline v7.6.1 r1 / Lab v0.9.4, 2026-09-25) — §6 п. 6: каноническая платформа; §9: исполнитель-агент с доступом к репозиторию; §9.4: агент без локального git; §9.2 п. 9: контрольные точки и журнал
 
 ## 1. Распределение ролей
 
@@ -111,6 +111,7 @@ CHECK_CANDIDATE.cmd         → POLICY RESULT: PASS
 3. Перегенерируются `docs\PARAMETER_REGISTRY.md`, `docs\STRUCTURE_AUDIT_REPORT.md`, `docs\CAPITAL_LIFECYCLE_CONFORMANCE_REPORT.md`, обе `SHA256SUMS.txt`; отчёт приёмки и артефакты предыдущей ревизии — в `docs\`.
 4. Обновляются `CURRENT_STATE.md`, `HISTORY_RU.md`, `ROADMAP.md`, `lab\docs\TEST_STATUS_RU.md`.
 5. С переходом проекта в git «архив предыдущего baseline» — это коммит и тег (`vX.Y-rN`), а не новая директория: в дереве живёт одна принятая версия.
+6. **Эталон канонической платформы.** Все точные гейты приёмки прогоняются на канонической платформе (Windows x64 · Node 24.11.1 · `simulation` 9.0.0 — `docs/VERSIONING_AND_AUTHORITY.md` §8). Там же заново снимается `lab/reference/accepted/series-digest.windows.json` (`node --expose-gc src/cli.js series --modes=all`) и его SHA-256 записывается в `BASELINE_MANIFEST.json` → `canonical_platform`. Числа с другой ОС бит-в-бит с эталоном не сравниваются.
 
 ## 7. Вариант: исполнитель не может запускать стенд
 

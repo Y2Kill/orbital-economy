@@ -162,6 +162,8 @@ STRUCTURE_SELF_TEST.cmd
 
 COMPARE / POLICY / CONFORMANCE реально запускают simulation, поэтому занимают некоторое время.
 
+Точные числа принятой модели определены на канонической платформе Windows x64 · Node 24.11.1 (`../docs/VERSIONING_AND_AUTHORITY.md` §8): на Linux ряды отличаются в последних битах. Сверка машины с эталоном: `node --expose-gc src\cli.js series --modes=all --out=output\series`, затем из корня `node tools\verify_series.mjs lab\output\series\series-digest.json`.
+
 Для быстрых проверок веток те же self-tests запускаются на Linux через GitHub Actions (`.github/workflows/ci.yml`); полный 27-Mode прогон доступен отдельным `bench-full` workflow. CI помогает исполнителю увидеть проблему раньше, но не заменяет локальную приёмку владельцами проекта.
 
 ---

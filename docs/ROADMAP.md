@@ -31,6 +31,22 @@ With Energy Kernel v2 accepted, the main roadmap returns to expanding the materi
 
 The decomposition rule remains: do not split a sector merely for detail. Split it when resource base, technology, geography, investment logic or strategic role produces different behavior.
 
+## Open technical item — platform-independent arithmetic
+
+**Status:** open, not scheduled. Decided 2026-09-25 to live with it for now (canonical platform, `VERSIONING_AND_AUTHORITY.md` §8) and remove it later.
+
+**Problem.** Accepted numbers are bit-exact only on Windows. The engine executes the model's `^` as `Math.pow`; Node's `Math.pow` rounds differently on Windows and Linux for some arguments (1 ULP, near-halfway cases), and the model's feedback loops amplify it — every Mode differs bitwise between the two OSes, Mode 19 by up to 4.35 % at day 1080. Browsers are unverified and may differ again. Found in tasks 005/006; evidence in `docs/tasks/006-cross-os/`.
+
+**Where it bites.** 198 formulas use `^`. Both integer and fractional exponents are affected: the first platform-dependent call found was `x ^ 8`, the first one that propagated was `x ^ 0.125`, both inside the smooth saturation `x / (1 + (x / cap) ^ 8) ^ 0.125` used by the production rates.
+
+**Directions to evaluate (a separate task each, with full re-acceptance of all Modes):**
+
+1. **Model side** — express integer powers as products (`y * y` …) where the engine evaluates them exactly, and replace fractional powers in saturations with a formulation that needs no transcendental function; check whether the engine's other functions used by the model are platform-stable.
+2. **Engine side** — route `^` through a deterministic, platform-independent `pow`; the engine is pinned (`lab/ENGINE_PIN.md`), so this means a patched engine and a new golden cross-check.
+3. **Verification** — whichever route: `tools/verify_series.mjs` on Windows and Linux (CI `cross-os.yml`) must report bit-identical series in every Mode; then, and only then, §8 of `VERSIONING_AND_AUTHORITY.md` can be relaxed.
+
+Any of these changes the model's numbers everywhere (by 1 ULP and whatever the feedback makes of it), so it is a new model version, not a bench fix.
+
 ## Planet v1 acceptance concept
 
 Planet v1 needs a multi-part contract rather than a single violation counter:

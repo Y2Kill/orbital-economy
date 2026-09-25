@@ -45,7 +45,7 @@ Parameter registry      325 external values, 159 annotated, 41 asymmetric A/B pa
 
 ## Reproduce
 
-From `lab/`:
+On the canonical platform (Windows x64 · Node 24.11.1 — `VERSIONING_AND_AUTHORITY.md` §8); on another OS the gates still pass but the numbers differ in the last bits. From `lab/`:
 
 ```bat
 INSTALL.cmd
@@ -53,6 +53,9 @@ RUN_LAB.cmd
 CHECK_CANDIDATE.cmd
 RUN_TESTS.cmd ..\model\orbital_economy_v7_6_1_r1_modeljson.json ..\validation\validation-v7.6.1.json all
 CHECK_CANDIDATE.cmd ..\reference\v7.6\model\orbital_economy_v7_6_r2_modeljson.json ..\model\orbital_economy_v7_6_1_r1_modeljson.json ..\validation\validation-v7.6.1.json ..\docs\model_v7_6_1\change-policy-v7.6.1-mode25-calibration.json all
+node --expose-gc src\cli.js series --modes=all --out=output\series
+cd ..
+node tools\verify_series.mjs lab\output\series\series-digest.json      (bit-exact against the canonical golden)
 ```
 
 ## Previous acceptance — v7.6 r2 (2026-09-25)

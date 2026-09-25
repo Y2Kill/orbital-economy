@@ -5,6 +5,7 @@ A deterministic System Dynamics model of a two-region planetary economy, togethe
 **Accepted baseline:** v7.6.1 r1 — Energy Kernel v2, Mode 25 calibrated
 **Model SHA-256:** `16e8ca6c5719e67422e16a6ec1ea2724b6121a062200eaf91e81389a2a180cd1`
 **Engine contract:** `simulation@9.0.0` (pinned)
+**Canonical platform:** Windows x64 · Node 24.11.1 — bit-exact numbers are defined here only; Linux differs in the last bits (`docs/VERSIONING_AND_AUTHORITY.md` §8)
 **Scenarios:** Modes 0–26 · 0..1080 days · dt 0.25 · RK1
 **Accepted:** 2026-09-25 — validation 27/27 PASS; Modes 0–24 and 26 identical to the previous accepted baseline (v7.6 r2) in every series except the recalibrated constant itself
 
@@ -98,6 +99,8 @@ Documentation is mixed-language by history: model documentation is English, proc
 One accepted baseline lives in the tree; earlier ones are commits and tags (`v7.6-r2`, `v7.6.1-r1`), not directories. `reference/` carries only the immediately previous accepted model, because exact regression is measured against it. Model, validation and policy are rewritten together at acceptance, and `BASELINE_MANIFEST.json` plus both `SHA256SUMS.txt` are regenerated in the same commit.
 
 The engine is frozen at `simulation@9.0.0`; upgrading it requires a new golden cross-check, not a dependency bump (`lab/ENGINE_PIN.md`).
+
+**Exact means exact on the canonical platform.** Node's `Math.pow` (the model's `^`) rounds differently on Windows and Linux for some arguments, so the same model gives bit-different series on the two OSes. Accepted numbers are defined on Windows x64 · Node 24.11.1; `lab/reference/accepted/series-digest.windows.json` is the bit-exact reference, and `node tools/verify_series.mjs <digest>` tells whether a machine reproduces it. Rule and reasons: `docs/VERSIONING_AND_AUTHORITY.md` §8; removing the dependence is an open roadmap item.
 
 ## Licence note
 

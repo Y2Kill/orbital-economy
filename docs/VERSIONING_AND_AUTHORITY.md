@@ -47,7 +47,7 @@ Previously accepted behavior is a hard development constraint unless an intentio
 
 Where a new feature is switch-gated, legacy scenarios should preserve the old execution path exactly. The project prefers `maxAbs = 0` exact comparison over tolerance-based similarity whenever technically possible.
 
-For v7.6, Modes 0–23 are exact-regression protected against v7.5 and Mode 24 owns the new behavior.
+For v7.6.1, Modes 0–24 and 26 reproduce v7.6 r2 exactly (every series except the recalibrated constant's own) and Mode 25 owns the change. Exact means bit-exact **on the canonical platform** (§8).
 
 ## 5. Validation vs policy
 
@@ -76,3 +76,23 @@ A clean baseline package contains only what is sufficient to continue work:
 - reproducible tools and only the fixtures they require.
 
 Old task deliveries, errata, candidate archives and superseded specifications are not duplicated into the clean package.
+
+## 8. Canonical platform — where "exact" is defined
+
+**Rule (decided 2026-09-25).** Bit-exact numbers of an accepted model are defined on one platform:
+
+```text
+Windows x64 · Node 24.11.1 · simulation 9.0.0 (lab/vendor/, enforced by lab/src/engine.js)
+```
+
+- **Acceptance runs on the canonical platform.** Every gate that compares numbers exactly — `RUN_LAB`, `COMPARE_MODELS`, `CHECK_CANDIDATE`, the regression claims in `BASELINE_MANIFEST.json` — is authoritative only when run there.
+- **The golden digest is the reference.** `lab/reference/accepted/series-digest.windows.json` holds the bit-exact SHA-256 of every series of every Mode of the accepted model, produced on the canonical platform. `BASELINE_MANIFEST.json` → `canonical_platform` records its SHA-256. It is regenerated at every acceptance (contract §6).
+- **Any machine can be checked against it:** in `lab/`, `node --expose-gc src/cli.js series --modes=all --out=output/series`, then from the repo root `node tools/verify_series.mjs lab/output/series/series-digest.json`. PASS = this machine reproduces the accepted numbers bit for bit.
+- **Other platforms are not wrong, they are different.** On Linux (and possibly in browsers) the same model gives series that differ in the last bits in every Mode, amplified by feedback loops up to 4.35 % (Mode 19, day 1080); every validation check passes on both. Such a run may be used for self-consistent work — `COMPARE_MODELS` / `CHECK_CANDIDATE` compute both models on the same machine, so their exact verdicts hold there — but its numbers must not be compared bit-for-bit with numbers from the canonical platform. The Linux CI (`.github/workflows/ci.yml`) is a hint, not an acceptance.
+- **Do not paper over the difference** with rounding or tolerances in the bench or the comparator: that would weaken every exact gate and hide the cause.
+
+**Why.** The model's `^` operator is executed by the engine as `Math.pow`, 198 formulas use it, and Node's `Math.pow` rounds differently on Windows and Linux for some arguments: `Math.pow(0x401368263c9d9065, 0.125)` is `0x3ff37df4ef6ab79d` on Windows (correctly rounded, error 0.499 ULP) and `0x3ff37df4ef6ab79e` on Linux (0.501 ULP). It depends on the OS, not the CPU — an Intel and an AMD machine on Windows agree bit for bit. Evidence: `docs/tasks/005-ci/ACCEPTANCE_RU.md`, `docs/tasks/006-cross-os/ACCEPTANCE_RU.md`, `lab/ENGINE_PIN.md`.
+
+**Changing the canonical platform** (another OS, another Node) is a deliberate decision recorded here, followed by regenerating the golden digest and re-running the acceptance gates on the new platform. It is not a side effect of upgrading a machine.
+
+**Removing the dependence** (making the numbers identical on every OS) is an open roadmap item — `ROADMAP.md`, "Platform-independent arithmetic". Until it is done, this section stands.

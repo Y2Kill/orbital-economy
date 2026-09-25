@@ -19,6 +19,7 @@
 | Simulation | 0..1080 days |
 | Time step | 0.25 day |
 | Engine | `simulation@9.0.0` |
+| Canonical platform (bit-exact numbers) | Windows x64 · Node 24.11.1 — `VERSIONING_AND_AUTHORITY.md` §8 |
 
 ## 2. Existing material economy
 
