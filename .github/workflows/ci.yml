@@ -1,0 +1,17 @@
+name: Task 005 environment probe
+
+on:
+  push:
+    branches:
+      - 'task/**'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Environment probe
+        run: echo "Task 005 Actions environment probe"
