@@ -46,6 +46,19 @@ QA_SELF_TEST.cmd  POLICY_SELF_TEST.cmd  CONFORMANCE_SELF_TEST.cmd  STRUCTURE_SEL
 
 On a clean checkout `CHECK_CANDIDATE.cmd` reports `BYTE_IDENTICAL` and `POLICY RESULT: PASS`: the accepted model is its own candidate. The `COMPARE_MODELS` line above reports one changed series per Mode — the recalibrated constant `Power Resource Shock Factor` itself; every other series of Modes 0–24 and 26 is identical to v7.6 r2.
 
+
+## CI
+
+GitHub Actions gives task branches a fast feedback loop; it is **a hint, not acceptance**. The final acceptance still uses the repository guard and bench from the owner's clean checkout, because a task branch can change its own workflow.
+
+On every push to `main` and `task/**`, `.github/workflows/ci.yml` runs on Ubuntu with exactly Node 24.11.1:
+
+- task branches: repository `guard`, with the task scope resolved by the `NNN` in `task/NNN-name`;
+- `main`: integrity-manifest check;
+- all matching pushes: repository-tools self-test and Orbital Economy Lab self-tests installed offline from `lab/vendor/`.
+
+The Actions page shows each job separately. The full 27-Mode run is intentionally not part of every push: `.github/workflows/bench-full.yml` is started manually with a `ref` input, runs `RUN_LAB`/policy equivalents for all Modes, and uploads `lab/output/` as an artifact.
+
 ## How a change gets in
 
 ```text

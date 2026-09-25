@@ -162,6 +162,8 @@ STRUCTURE_SELF_TEST.cmd
 
 COMPARE / POLICY / CONFORMANCE реально запускают simulation, поэтому занимают некоторое время.
 
+Для быстрых проверок веток те же self-tests запускаются на Linux через GitHub Actions (`.github/workflows/ci.yml`); полный 27-Mode прогон доступен отдельным `bench-full` workflow. CI помогает исполнителю увидеть проблему раньше, но не заменяет локальную приёмку владельцами проекта.
+
 ---
 
 # 3. Основные папки

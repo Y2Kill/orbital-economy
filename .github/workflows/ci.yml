@@ -1,17 +1,120 @@
-name: Task 005 environment probe
+name: CI
 
 on:
   push:
     branches:
+      - main
       - 'task/**'
   workflow_dispatch:
 
 permissions:
   contents: read
 
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
-  probe:
+  guard:
+    name: guard
+    if: startsWith(github.ref_name, 'task/')
     runs-on: ubuntu-latest
     steps:
-      - name: Environment probe
-        run: echo "Task 005 Actions environment probe"
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+        with:
+          node-version: '24.11.1'
+      - name: Resolve task scope from origin/main
+        id: scope
+        shell: bash
+        run: |
+          set -euo pipefail
+          branch="${GITHUB_REF_NAME}"
+          if [[ ! "${branch}" =~ ^task/([0-9]{3})- ]]; then
+            echo "::error::Task branch must match task/NNN-name; got ${branch}"
+            exit 2
+          fi
+          number="${BASH_REMATCH[1]}"
+          git fetch --quiet --no-tags origin main:refs/remotes/origin/main
+          mapfile -t matches < <(
+            git ls-tree -r --name-only origin/main docs/tasks |
+              grep -E "^docs/tasks/${number}-[^/]+/scope\.json$" || true
+          )
+          if [[ "${#matches[@]}" -ne 1 ]]; then
+            echo "::error::Expected exactly one docs/tasks/${number}-*/scope.json in origin/main; found ${#matches[@]}"
+            printf '  %s\n' "${matches[@]:-<none>}"
+            exit 2
+          fi
+          echo "scope=${matches[0]}" >> "${GITHUB_OUTPUT}"
+          echo "Resolved scope: ${matches[0]}"
+      - name: Repository branch guard
+        run: node tools/check_branch.mjs --scope="${{ steps.scope.outputs.scope }}" --head=HEAD --base=origin/main --no-remote
+
+  integrity:
+    name: integrity
+    if: github.ref_name == 'main'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+        with:
+          node-version: '24.11.1'
+      - name: Verify integrity manifests
+        run: node tools/build_sums.mjs --check
+
+  tools-selftest:
+    name: tools-selftest
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+        with:
+          node-version: '24.11.1'
+      - name: Repository tools self-test
+        run: bash tools/selftest.sh
+
+  bench-selftests:
+    name: bench-selftests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+        with:
+          node-version: '24.11.1'
+      - name: Install bench dependencies offline from vendor
+        working-directory: lab
+        shell: bash
+        run: |
+          set -euo pipefail
+          cache="${RUNNER_TEMP}/orbital-economy-npm-cache"
+          rm -rf "${cache}"
+          mkdir -p "${cache}"
+          npm cache add ./vendor/simulation-9.0.0.tgz ./vendor/csv-parse-5.6.0.tgz --cache "${cache}"
+          npm ci --offline --cache "${cache}"
+          rm -rf "${cache}"
+      - name: QA self-test
+        working-directory: lab
+        run: node --expose-gc src/qa.js
+      - name: Structure self-test
+        working-directory: lab
+        run: node --expose-gc src/structure_qa.js
+      - name: Conformance self-test
+        working-directory: lab
+        run: node --expose-gc src/conformance_qa.js
+      - name: Policy self-test
+        working-directory: lab
+        run: node --expose-gc src/policy_qa.js
+      - name: Compare self-test
+        working-directory: lab
+        run: node --expose-gc src/compare_qa.js
+      - name: Bench self-test (Modes 0,12)
+        working-directory: lab
+        run: node --expose-gc src/cli.js lab --input=input --modes=0,12
