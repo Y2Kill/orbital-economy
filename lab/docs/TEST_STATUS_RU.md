@@ -25,12 +25,12 @@
 
 ## Self-tests стенда
 
-Последний подтверждённый полный прогон относится к Lab v0.9.2 (2026-09-25), результаты те же, что на v0.9.1. Для v0.9.3 полный прогон выполняется владельцами при приёмке задачи 004.
+Полный прогон Lab v0.9.3 на чистом checkout при приёмке задачи 004 (2026-09-25, офлайн-установка из `vendor/`): результаты те же, что на v0.9.2, плюс новый случай QA. Там же: `RUN_LAB` Modes 0–26 `OVERALL: PASS`, `CHECK_CANDIDATE` `BYTE_IDENTICAL` + `POLICY RESULT: PASS` — см. `docs/tasks/004-vendor-dependencies/ACCEPTANCE_RU.md`.
 
 | Скрипт | Результат |
 |---|---|
 | `SELF_TEST.cmd` (Modes 0, 12) | **PASS** |
-| `QA_SELF_TEST.cmd` | v0.9.2: **PASS** 29/29; v0.9.3: ожидается 30/30, подтверждается при приёмке задачи 004 |
+| `QA_SELF_TEST.cmd` | **PASS** 30/30 (новый случай: подменённая версия движка отвергается) |
 | `POLICY_SELF_TEST.cmd` | **PASS** 10/10 |
 | `CONFORMANCE_SELF_TEST.cmd` | **PASS** 18/18 |
 | `STRUCTURE_SELF_TEST.cmd` | **PASS** 21/21 |
