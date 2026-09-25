@@ -10,7 +10,7 @@ import { compareModelStructure } from './compare_models.js';
 import { runGenericCheck } from './checks.js';
 import { applyPatch, validatePatch, PATCH_FORMAT } from './patch.js';
 import { inventory, buildRegistry, validateAnnotations } from './parameters.js';
-import { loadModelJSON, assertEngineVersion } from './engine.js';
+import { loadModelJSON, assertEngineVersion, EXPECTED_ENGINE_VERSION } from './engine.js';
 
 const root = path.resolve(process.cwd());
 const sourceModel = discoverSingleJson(path.join(root, 'input', 'model'), 'accepted ModelJSON');
@@ -204,7 +204,7 @@ try {
       assertEngineVersion(fakePackage);
       return false;
     } catch (e) {
-      return String(e?.message || e).includes('requires simulation@9.0.0') && String(e?.message || e).includes('found 9.0.1');
+      return String(e?.message || e).includes(`requires simulation@${EXPECTED_ENGINE_VERSION}`) && String(e?.message || e).includes('found 9.0.1');
     }
   });
 
