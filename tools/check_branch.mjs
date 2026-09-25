@@ -13,7 +13,9 @@
 //   node tools/check_branch.mjs --scope=... --head=HEAD --base=origin/main --no-remote
 //                                                                              the agent, before pushing
 // Options: --head=<rev> (default: origin/<scope.branch>, fetched), --base=<rev> (default: main),
-//          --no-fetch, --no-remote (skip the origin main/tags guard).
+//          --no-fetch, --no-remote (skip the origin main/tags guard),
+//          --in-progress (CI on an unfinished branch: a missing report, a required change not made yet
+//          or an empty branch is a WARN, not a FAIL; everything else stays strict. Acceptance never uses it).
 // Exit code: 0 = PASS, 2 = FAIL.
 import crypto from 'node:crypto';
 import { execFileSync } from 'node:child_process';
@@ -102,7 +104,9 @@ if (forkSha !== baseSha) fail(`${head} forked from ${forkSha.slice(0, 7)}, not f
 else pass(`${head} is a fast-forward of ${base}`);
 
 const commits = gitText(['log', '--format=%H%x09%P%x09%an <%ae>%x09%s', `${forkSha}..${headSha}`]).split('\n').filter(Boolean).map(l => l.split('\t'));
-if (!commits.length) fail('no commits on the branch');
+// Completeness is judged at delivery; an unfinished branch in CI only gets reminded.
+const incomplete = args['in-progress'] ? warn : fail;
+if (!commits.length) incomplete('no commits on the branch');
 const merges = commits.filter(c => c[1].includes(' '));
 merges.length ? fail(`merge commits on the branch: ${merges.map(c => c[0].slice(0, 7)).join(', ')} — history must be linear`) : pass(`${commits.length} commit(s), linear`);
 for (const c of commits.reverse()) info(`${c[0].slice(0, 7)} ${c[2]} — ${c[3]}`);
@@ -125,8 +129,8 @@ for (const { status, file } of changes) {
 }
 if (!scopeProblems) pass('every changed path is inside the task scope');
 const report = `${taskDir}/REPORT_RU.md`;
-changes.some(c => c.file === report && c.status !== 'D') ? pass(`${report} delivered`) : fail(`${report} missing — the agent's report is part of the delivery`);
-for (const r of scope.required_changes || []) changes.some(c => matchAny(c.file, [r])) ? pass(`required change present: ${r}`) : fail(`required change missing: ${r}`);
+changes.some(c => c.file === report && c.status !== 'D') ? pass(`${report} delivered`) : incomplete(`${report} missing — the agent's report is part of the delivery`);
+for (const r of scope.required_changes || []) changes.some(c => matchAny(c.file, [r])) ? pass(`required change present: ${r}`) : incomplete(`required change missing: ${r}`);
 
 // ---- 4. bytes: line endings, binaries, size, leaks ----------------------------------------
 const blob = (rev, f) => git(['cat-file', 'blob', `${rev}:${f}`]);

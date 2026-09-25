@@ -44,9 +44,13 @@ jobs:
       - name: Resolve candidate inputs
         id: inputs
         shell: bash
+        env:
+          # Passed through the environment, never interpolated into the script text: a dispatch
+          # input is free text, and ${{ }} inside `run:` would execute whatever it contains.
+          TARGET_REF: ${{ github.event_name == 'workflow_dispatch' && inputs.ref || github.ref_name }}
         run: |
           set -euo pipefail
-          target_ref="${{ github.event_name == 'workflow_dispatch' && inputs.ref || github.ref_name }}"
+          target_ref="${TARGET_REF}"
           target_ref="${target_ref#refs/heads/}"
           if [[ ! "${target_ref}" =~ ^task/([0-9]{3})- ]]; then
             echo "::error::Candidate workflow requires a task/NNN-name ref; got ${target_ref}"

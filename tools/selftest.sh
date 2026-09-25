@@ -100,6 +100,11 @@ expect "missing agent report fails" FAIL 'REPORT_RU.md missing'
 
 fresh; printf '# r\n' > docs/tasks/900-test/REPORT_RU.md; printf 'x\n' >> lab/CHANGELOG.md; node tools/build_sums.mjs >/dev/null; git add -A; git commit -qm norequired; publish
 expect "missing required change fails" FAIL 'required change missing: lab/INSTALL.cmd'
+out="$($CHECK --in-progress 2>&1)"
+if printf '%s\n' "$out" | grep -q '^BRANCH CHECK: PASS' && printf '%s\n' "$out" | grep -q '^\[WARN\] required change missing: lab/INSTALL.cmd'; then ok "--in-progress: a required change not made yet is a WARN"; else bad "--in-progress required change" "$out"; fi
+git checkout -q main; git branch -q -D task/900-test; git push -q origin --delete task/900-test 2>/dev/null; git checkout -q -b task/900-test; publish
+out="$($CHECK --in-progress 2>&1)"
+if printf '%s\n' "$out" | grep -q '^BRANCH CHECK: PASS' && printf '%s\n' "$out" | grep -q '^\[WARN\] no commits on the branch'; then ok "--in-progress: an empty new branch is a WARN"; else bad "--in-progress empty branch" "$out"; fi
 
 fresh; printf 'rem x\n' >> lab/INSTALL.cmd; printf '# r\n' > docs/tasks/900-test/REPORT_RU.md; node tools/build_sums.mjs >/dev/null; git add -A; NO_AGENT=1 git commit -qm unattributed; publish
 expect "commit without an Agent: line fails" FAIL 'without an "Agent: <name>" line'

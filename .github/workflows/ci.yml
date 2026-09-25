@@ -51,7 +51,11 @@ jobs:
           echo "scope=${matches[0]}" >> "${GITHUB_OUTPUT}"
           echo "Resolved scope: ${matches[0]}"
       - name: Repository branch guard
-        run: node tools/check_branch.mjs --scope="${{ steps.scope.outputs.scope }}" --head=HEAD --base=origin/main --no-remote
+        # --in-progress: an unfinished branch is reminded (WARN) about a missing report or required
+        # change; our acceptance runs the guard strictly. Values reach the script through env only.
+        env:
+          SCOPE: ${{ steps.scope.outputs.scope }}
+        run: node tools/check_branch.mjs --scope="${SCOPE}" --head=HEAD --base=origin/main --no-remote --in-progress
 
   integrity:
     name: integrity
