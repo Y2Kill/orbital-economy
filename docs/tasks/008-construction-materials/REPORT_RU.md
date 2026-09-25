@@ -25,6 +25,22 @@
 
 Дальше: зафиксировать КТ2 по compare/policy части этого же запуска (Modes 0–26), затем заменить calibration probes содержательными порогами по измеренным значениям и финализировать validation/policy для КТ3.
 
+### КТ2 — 2026-09-26 00:22 EEST — Modes 0–26 воспроизводятся точно, неожиданных событий нет
+
+Доказательство — тот же полный candidate run: https://github.com/Y2Kill/orbital-economy/actions/runs/36190086944.
+
+- Comparator последовательно прогнал Modes 0–26; **каждый** дал `common=1004, changed=0, added=66, removed=0, maxAbs=0`.
+- Это подтверждает требование спецификации: при `Construction Materials Enabled = 0` старые 1004 ряда v7.6.1 r1 не меняются; 66 новых рядов только добавлены.
+- Итог policy-счётчиков первого раунда: `Unexpected=0`, `Forbidden=0`, `Threshold exceed=0`, `Required missing=0`.
+- `COMPARISON RESULT: OUTPUTS_IDENTICAL_BUT_SCENARIO_CONTRACT_CHANGED` — ожидаемо: значения legacy outputs идентичны, но сценарии 0–26 получили новый выключенный switch, а Modes 27–29 добавлены.
+
+Не подтвердилось / почему общий policy пока FAIL:
+- `Hard blockers: 3` соответствуют Modes 27, 28, 29: `comparisonHardBlockers()` создаёт по blocker на Mode с `candidateValidation.status = FAIL`; эти три Mode намеренно содержат calibration probes первого раунда.
+- `change-policy.json` r1 всё ещё содержит временный placeholder `validation_sha256`; он будет заменён SHA финальной validation, без расширения allow-rules.
+- Неожиданных модельных событий policy не нашла; owner-draft rules расширять постфактум не требуется.
+
+Дальше: заменить `[calib probe]` на содержательные пороги по значениям первого прогона, добавить проверки порядка событий и зафиксировать числовую калибровку; затем обновить `validation_sha256` policy и добиться validation PASS 30/30 (КТ3).
+
 ## Реализация кандидата
 
 Кандидат r1 следует исчерпывающей спецификации: Regolith → Construction Materials → физическое ограничение расширения Refinery / Electronics / Power через `Min(CG fulfillment, CM fulfillment)`. Transport и энергетический allocator не изменяются. Существующие шесть expansion-FLOW получают только внешний `IfThenElse([Construction Materials Enabled] = 1, new, old-verbatim)`.
