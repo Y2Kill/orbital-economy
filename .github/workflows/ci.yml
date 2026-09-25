@@ -76,6 +76,12 @@ jobs:
       - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
         with:
           node-version: '24.11.1'
+      - name: Materialize local main for tools sandbox
+        shell: bash
+        run: |
+          if ! git show-ref --verify --quiet refs/heads/main; then
+            git branch main origin/main
+          fi
       - name: Repository tools self-test
         run: bash tools/selftest.sh
 

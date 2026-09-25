@@ -37,3 +37,8 @@ SHA256SUMS не изменяются (`sums_by: reviewer`).
 ## Что не запускалось локально
 
 Локального checkout/Node у агента по-прежнему нет; все исполняемые проверки этой задачи выполняются GitHub Actions. SUMS не пересобирались (`sums_by: reviewer`).
+
+
+### Первый CI-прогон: найдено и исправлено
+
+Run https://github.com/Y2Kill/orbital-economy/actions/runs/36157251993: `guard` прошёл, offline install и первые bench self-tests прошли, но `tools-selftest` упал. Лог показал первопричину: sandbox внутри `tools/selftest.sh` клонирует текущий checkout и ожидает локальную ветку `main`; checkout task-ветки имел `origin/main`, но не `refs/heads/main`, поэтому sandbox получал пустую/nonexistent main и каскад ENOENT. `tools/` не менялся. В job добавлена подготовка локальной `main` из `origin/main` перед запуском штатного selftest.
