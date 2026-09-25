@@ -1,0 +1,72 @@
+Orbital Economy Lab v0.9.1 — быстрый старт
+===========================================
+
+ПЕРВАЯ УСТАНОВКА
+1. INSTALL.cmd
+2. SELF_TEST.cmd
+3. QA_SELF_TEST.cmd
+4. COMPARE_SELF_TEST.cmd
+5. POLICY_SELF_TEST.cmd
+6. CONFORMANCE_SELF_TEST.cmd
+7. STRUCTURE_SELF_TEST.cmd
+
+ОБЫЧНАЯ ПРОВЕРКА ТЕКУЩЕЙ МОДЕЛИ
+- положить ровно один ModelJSON в input\model\
+- RUN_LAB.cmd
+
+ФАКТИЧЕСКОЕ СРАВНЕНИЕ ACCEPTED ↔ CANDIDATE
+- COMPARE_MODELS.cmd
+- отвечает: ЧТО изменилось
+
+ПРОВЕРКА СООТВЕТСТВИЯ CAPITAL LIFECYCLE KERNEL (статика, без simulation)
+- LIFECYCLE_CONFORMANCE.cmd
+- отвечает: реализует ли каждый сектор общий lifecycle-контракт
+- NON_CONFORMING = HARD-блокер, policy не разрешает
+
+АУДИТ СТРУКТУРЫ (статика, без simulation)
+- STRUCTURE_AUDIT.cmd
+- открытые границы: сколько потоков ещё создают капитал из ничего (объявленный closed-world контракт, сейчас 0)
+- A/B-симметрия: зеркальность колоний (сейчас 0 расхождений, 0 исключений)
+
+СБОРКА CANDIDATE ИЗ ПАТЧА (поставка исполнителя без стенда)
+- APPLY_PATCH.cmd "delivery\model-patch.json" "input\model\candidate.json"
+- база всегда reference\accepted\model\; см. docs\MODEL_PATCH_RU.md
+
+РЕЕСТР ВНЕШНИХ ПАРАМЕТРОВ
+- PARAMETER_REGISTRY.cmd  (аннотации: ..\docs\PARAMETER_ANNOTATIONS.json)
+- что задано извне, какие пары A/B несимметричны, что аннотировано
+
+ПРОВЕРКА CANDIDATE ПО CHANGE CONTRACT
+- policy = единственный JSON в input\policy\
+- CHECK_CANDIDATE.cmd
+- отвечает: РАЗРЕШЕНЫ ЛИ обнаруженные изменения
+
+Результаты:
+output\policy-...\model-comparison.md/.json
+output\policy-...\change-policy.md/.json
+
+БЫСТРО ПЕРЕОЦЕНИТЬ УЖЕ ГОТОВЫЙ DIFF БЕЗ НОВОЙ SIMULATION
+EVALUATE_POLICY.cmd "output\compare-...\model-comparison.json"
+
+Поставляемый `change-policy-v7.5.1-strict.json` — default deny:
+любое незаявленное изменение относительно accepted v7.5.1 r1 => POLICY FAIL.
+
+Web CSV для обычной разработки НЕ нужны.
+Для периодической web-проверки:
+1. PREPARE_WEB_CHECK.cmd
+2. экспортировать web CSV в input\web_reference\pending\
+3. RUN_LAB.cmd
+
+ВАЖНО
+- simulation зафиксирован на 9.0.0
+- reference\accepted\model\ — замороженный accepted baseline
+- input\policy\ — versioned explicit change contract
+- HARD/static/physics validation не отключается policy
+- default_action=deny рекомендуется сохранять
+
+Подробно:
+README_RU.md
+docs\MODEL_COMPARISON_RU.md
+docs\CHANGE_POLICY_RU.md
+docs\LIFECYCLE_CONFORMANCE_RU.md
+docs\STRUCTURE_AUDIT_RU.md

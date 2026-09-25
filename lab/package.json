@@ -1,0 +1,33 @@
+{
+  "name": "orbital-economy-lab",
+  "version": "0.9.1",
+  "private": true,
+  "type": "module",
+  "description": "Local ModelJSON test runner, validator, web cross-check harness, accepted-vs-candidate comparator, explicit change-policy gate, Capital Lifecycle Kernel conformance checker, and static structure audits (open boundaries, colony symmetry) for Orbital Economy using simulation@9.0.0.",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "inspect": "node src/cli.js inspect",
+    "list": "node src/cli.js list",
+    "test": "node src/cli.js test",
+    "lab": "node src/cli.js lab",
+    "prepare-web": "node src/cli.js prepare-web",
+    "qa": "node src/qa.js",
+    "compare": "node --expose-gc src/cli.js compare",
+    "compare-qa": "node --expose-gc src/compare_qa.js",
+    "policy": "node --expose-gc src/cli.js policy",
+    "evaluate-policy": "node src/cli.js evaluate-policy",
+    "policy-qa": "node --expose-gc src/policy_qa.js",
+    "conformance": "node src/cli.js conformance",
+    "conformance-qa": "node --expose-gc src/conformance_qa.js",
+    "audit": "node src/cli.js audit",
+    "structure-qa": "node --expose-gc src/structure_qa.js",
+    "apply-patch": "node src/cli.js apply-patch",
+    "parameters": "node src/cli.js parameters"
+  },
+  "dependencies": {
+    "csv-parse": "5.6.0",
+    "simulation": "9.0.0"
+  }
+}

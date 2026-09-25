@@ -1,0 +1,3370 @@
+# Orbital Economy Lab report
+
+- generated: 2026-09-24T20:49:43.027Z
+- model: Orbital Economy v7.6 r1 — Energy Kernel v2
+- model SHA-256: `aa087cbd9b9074aa9fab7a3ab082aeb011cf096cbcabf0476b0b275a2b557095`
+- engine: simulation 9.0.0
+- overall: **FAIL**
+
+## Static validation
+
+- status: **PASS**
+
+## Capital Lifecycle Kernel conformance (static)
+
+- status: **PASS**
+- **PASS** duplicate primitive names
+- **PASS** unresolved formula references
+- **PASS** formula dependencies without LINK
+
+| Instance | Sector | Classification | Checks | Failures |
+|---|---|---|---:|---:|
+| A Electronics | Electronics | **CONFORMING_WITH_VARIATION** | 70 | 0 |
+| B Electronics | Electronics | **CONFORMING_WITH_VARIATION** | 70 | 0 |
+| A Power | Power | **CONFORMING_WITH_VARIATION** | 69 | 0 |
+| B Power | Power | **CONFORMING_WITH_VARIATION** | 69 | 0 |
+| A Refinery | Refinery | **CONFORMING_WITH_VARIATION** | 70 | 0 |
+| B Refinery | Refinery | **CONFORMING_WITH_VARIATION** | 70 | 0 |
+| Transport | Transport | **CONFORMING_WITH_VARIATION** | 73 | 0 |
+
+- A Electronics:
+  - variation: optional role "capital_goods_consumption_secondary" not present
+  - variation: all kernel flows are gated by [Capital Lifecycle Enabled] (v7.3 regression switch)
+  - variation: kernel-v2: expansion physically backed by capital goods
+
+- B Electronics:
+  - variation: optional role "capital_goods_consumption_secondary" not present
+  - variation: all kernel flows are gated by [Capital Lifecycle Enabled] (v7.3 regression switch)
+  - variation: kernel-v2: expansion physically backed by capital goods
+
+- A Power:
+  - variation: optional role "finance_limited_construction" not present
+  - variation: optional role "capital_goods_consumption_secondary" not present
+  - variation: all kernel flows are gated by [Capital Lifecycle Enabled] (v7.3 regression switch)
+  - variation: kernel-v2: expansion physically backed by capital goods
+
+- B Power:
+  - variation: optional role "finance_limited_construction" not present
+  - variation: optional role "capital_goods_consumption_secondary" not present
+  - variation: all kernel flows are gated by [Capital Lifecycle Enabled] (v7.3 regression switch)
+  - variation: kernel-v2: expansion physically backed by capital goods
+
+- A Refinery:
+  - variation: optional role "capital_goods_consumption_secondary" not present
+  - variation: kernel-v2: expansion physically backed by capital goods
+
+- B Refinery:
+  - variation: optional role "capital_goods_consumption_secondary" not present
+  - variation: kernel-v2: expansion physically backed by capital goods
+
+- Transport:
+  - variation: v7.5.1 shared-infrastructure variation: Transport draws Capital Goods from both regional inventories; the primary and secondary consumption roles are both physically paired to one global expansion flow.
+  - variation: kernel-v2: expansion physically backed by capital goods
+
+## Structure audits (static)
+
+- status: **PASS**
+- open boundaries: 108 of 139 flows cross the model boundary; unclassified: 0; closed-world violations: **0** (mode: classify)
+
+| Category | closed-world | Flows |
+|---|:---:|---:|
+| primary_extraction | yes | 4 |
+| power_resource_extraction | yes | 2 |
+| final_consumption | yes | 4 |
+| power_resource_consumption | yes | 2 |
+| unit_transformation | yes | 8 |
+| information_signal | yes | 30 |
+| financial_accounting | yes | 16 |
+| capital_state_accounting | yes | 21 |
+| capital_transformation | yes | 15 |
+| capital_goods_transformation | yes | 6 |
+| external_capital | **no** | 0 |
+
+- colony symmetry (A↔B): pairs 796, links 1748, mismatches **0**, parameter differences 94, exceptions 0
+
+## Web cross-check
+
+- status: **SKIPPED**
+- no web CSV reference batch was supplied; local validation is independent of web exports.
+
+## Scenario results
+
+| Mode | Scenario | Status | Runtime | Web cross-check | Max abs diff |
+|---:|---|:---:|---:|:---:|---:|
+| 0 | Baseline Control | **FAIL** | 11.3726766 s | - | - |
+| 1 | Timed B Reactivation | **FAIL** | 11.3571995 s | - | - |
+| 2 | Timed Transport Demand Surge | **FAIL** | 11.2543321 s | - | - |
+| 3 | Timed Low Demand Rationalization | **FAIL** | 11.4372578 s | - | - |
+| 4 | Timed Reverse Advantage | **FAIL** | 11.2540281 s | - | - |
+| 5 | Timed Electronics Demand Surge | **FAIL** | 11.1907055 s | - | - |
+| 6 | Timed Reverse Electronics Advantage | **FAIL** | 12.2180528 s | - | - |
+| 7 | Timed Two-Good Transport Surge | **FAIL** | 11.5630766 s | - | - |
+| 8 | Timed Metal Priority Scarcity | **FAIL** | 10.7865219 s | - | - |
+| 9 | v7.2 Simultaneous Two-Industry Energy Shortage | **FAIL** | 10.7242504 s | - | - |
+| 10 | v7.2 Cheap-Energy Comparative Advantage | **FAIL** | 11.5569098 s | - | - |
+| 11 | v7.2 Generation Capacity Shock Recovery | **FAIL** | 10.9382598 s | - | - |
+| 12 | v7.3 Lifecycle Baseline | **FAIL** | 11.4189452 s | - | - |
+| 13 | v7.3 Temporary Electronics Reactivation | **FAIL** | 10.6731569 s | - | - |
+| 14 | v7.3 Sustained Electronics Growth | **FAIL** | 11.3874749 s | - | - |
+| 15 | v7.3 Electronics Collapse and Recovery | **FAIL** | 11.1328737 s | - | - |
+| 16 | v7.3 Sustained Metal Driven Power Growth | **FAIL** | 12.231598 s | - | - |
+| 17 | v7.4 Intermediate Inputs Baseline | **FAIL** | 12.0222273 s | - | - |
+| 18 | v7.4 Temporary Metal Supply Shock | **FAIL** | 11.5675148 s | - | - |
+| 19 | v7.4 Sustained Electronics Growth with Input Coupling | **FAIL** | 11.9021811 s | - | - |
+| 20 | v7.4 Coupled Metal Demand Growth | **FAIL** | 11.1715278 s | - | - |
+| 21 | v7.5 Capital Goods Baseline | **FAIL** | 11.0682668 s | - | - |
+| 22 | v7.5 Capital Goods Supply Shock | **FAIL** | 10.9550724 s | - | - |
+| 23 | v7.5 Investment Boom | **FAIL** | 10.9537573 s | - | - |
+| 24 | v7.5.1 Transport Capital Goods Closure | **FAIL** | 10.8758326 s | - | - |
+| 25 | v7.6 Energy Resource Supply Shock | **FAIL** | 0.8987586 s | - | - |
+| 26 | v7.6 Energy Capacity-Only Control Shock | **FAIL** | 0.8458158 s | - | - |
+
+### Mode 0 — Baseline Control
+
+- **PASS** time_axis
+- **PASS** finite_all
+- **PASS** non_negative_regex
+- **PASS** A Metal allocated <= requested
+- **PASS** A Electronics allocated <= requested
+- **PASS** A Energy supply <= active generation
+- **PASS** A supply allocation identity
+- **PASS** A unserved identity
+- **PASS** B Metal allocated <= requested
+- **PASS** B Electronics allocated <= requested
+- **PASS** B Energy supply <= active generation
+- **PASS** B supply allocation identity
+- **PASS** B unserved identity
+- **PASS** A Electronics: Active <= Installed
+- **PASS** A Electronics: Inactive identity
+- **PASS** A Electronics: Lifetime account identity
+- **PASS** A Electronics: Target Active <= Installed
+- **PASS** A Electronics: Target Active <= Required Active
+- **PASS** A Electronics: kernel stocks >= 0
+- **PASS** A Electronics: kernel flows >= 0
+- **PASS** A Electronics: Expansion <= Desired Expansion (kernel-v2)
+- **PASS** B Electronics: Active <= Installed
+- **PASS** B Electronics: Inactive identity
+- **PASS** B Electronics: Lifetime account identity
+- **PASS** B Electronics: Target Active <= Installed
+- **PASS** B Electronics: Target Active <= Required Active
+- **PASS** B Electronics: kernel stocks >= 0
+- **PASS** B Electronics: kernel flows >= 0
+- **PASS** B Electronics: Expansion <= Desired Expansion (kernel-v2)
+- **PASS** A Power: Active <= Installed
+- **PASS** A Power: Inactive identity
+- **PASS** A Power: Lifetime account identity
+- **PASS** A Power: Target Active <= Installed
+- **PASS** A Power: Target Active <= Required Active
+- **PASS** A Power: kernel stocks >= 0
+- **PASS** A Power: kernel flows >= 0
+- **PASS** A Power: Expansion <= Desired Expansion (kernel-v2)
+- **PASS** B Power: Active <= Installed
+- **PASS** B Power: Inactive identity
+- **PASS** B Power: Lifetime account identity
+- **PASS** B Power: Target Active <= Installed
+- **PASS** B Power: Target Active <= Required Active
+- **PASS** B Power: kernel stocks >= 0
+- **PASS** B Power: kernel flows >= 0
+- **PASS** B Power: Expansion <= Desired Expansion (kernel-v2)
+- **PASS** A Refinery: Active <= Installed
+- **PASS** A Refinery: Inactive identity
+- **PASS** A Refinery: Lifetime account identity
+- **PASS** A Refinery: Target Active <= Installed
+- **PASS** A Refinery: Target Active <= Required Active
+- **PASS** A Refinery: kernel stocks >= 0
+- **PASS** A Refinery: kernel flows >= 0
+- **PASS** A Refinery: Expansion <= Desired Expansion (kernel-v2)
+- **PASS** B Refinery: Active <= Installed
+- **PASS** B Refinery: Inactive identity
+- **PASS** B Refinery: Lifetime account identity
+- **PASS** B Refinery: Target Active <= Installed
+- **PASS** B Refinery: Target Active <= Required Active
+- **PASS** B Refinery: kernel stocks >= 0
+- **PASS** B Refinery: kernel flows >= 0
+- **PASS** B Refinery: Expansion <= Desired Expansion (kernel-v2)
+- **PASS** Transport: Active <= Installed
+- **PASS** Transport: Inactive identity
+- **PASS** Transport: Lifetime account identity
+- **PASS** Transport: Target Active <= Installed
+- **PASS** Transport: Target Active <= Required Active
+- **PASS** Transport: kernel stocks >= 0
+- **PASS** Transport: kernel flows >= 0
+- **PASS** Transport: Expansion <= Desired Expansion (kernel-v2)
+- **PASS** Transport priority allocation identity
+- **PASS** Transport allocated <= capacity-limited load
+- **PASS** A metal input fulfillment in [0,1]
+- **PASS** A metal input delivery <= demand
+- **PASS** A metal input delivery <= available
+- **PASS** A metal input delivery >= 0
+- **PASS** A metal input demand >= 0
+- **PASS** A metal inventory >= 0
+- **PASS** A electronics feedstock inventory >= 0
+- **PASS** A electronics inventory >= 0
+- **PASS** B metal input fulfillment in [0,1]
+- **PASS** B metal input delivery <= demand
+- **PASS** B metal input delivery <= available
+- **PASS** B metal input delivery >= 0
+- **PASS** B metal input demand >= 0
+- **PASS** B metal inventory >= 0
+- **PASS** B electronics feedstock inventory >= 0
+- **PASS** B electronics inventory >= 0
+- **PASS** A ore->metal pair identity
+- **PASS** B ore->metal pair identity
+- **PASS** A capital goods fulfillment in [0,1]
+- **PASS** A capital goods inventory >= 0
+- **PASS** A capital goods production rate >= 0
+- **PASS** A capital goods production pair identities (metal)
+- **PASS** A capital goods production pair identities (electronics)
+- **PASS** A Refinery expansion <= desired expansion
+- **PASS** A Electronics expansion <= desired expansion
+- **PASS** A Power expansion <= desired expansion
+- **PASS** B capital goods fulfillment in [0,1]
+- **PASS** B capital goods inventory >= 0
+- **PASS** B capital goods production rate >= 0
+- **PASS** B capital goods production pair identities (metal)
+- **PASS** B capital goods production pair identities (electronics)
+- **PASS** B Refinery expansion <= desired expansion
+- **PASS** B Electronics expansion <= desired expansion
+- **PASS** B Power expansion <= desired expansion
+- **PASS** A power-resource inventory >= 0
+- **PASS** A power-resource fulfillment in [0,1]
+- **PASS** A available generation <= active generation capacity
+- **FAIL** A power-resource operating identity — max abs error 1316.93010822307 > 1e-8 at day 364.75
+- **PASS** B power-resource inventory >= 0
+- **PASS** B power-resource fulfillment in [0,1]
+- **PASS** B available generation <= active generation capacity
+- **FAIL** B power-resource operating identity — max abs error 549.999346183482 > 1e-8 at day 12.5
+- **PASS** Mode 0: A intermediate delivery is zero (switch off)
+- **PASS** Mode 0: A intermediate fulfillment is 1 (switch off)
+- **PASS** Mode 0: B intermediate delivery is zero (switch off)
+- **PASS** Mode 0: B intermediate fulfillment is 1 (switch off)
+- **PASS** A feedstock->electronics pair identity (per mode)
+- **PASS** B feedstock->electronics pair identity (per mode)
+- **PASS** Mode 0: A capital goods production is zero (switch off)
+- **PASS** Mode 0: A capital goods fulfillment is 1 (switch off)
+- **PASS** Mode 0: B capital goods production is zero (switch off)
+- **PASS** Mode 0: B capital goods fulfillment is 1 (switch off)
+- **PASS** Mode 0: A capital goods inventory is a dead stock (switch off)
+- **PASS** Mode 0: B capital goods inventory is a dead stock (switch off)
+
+### Mode 1 — Timed B Reactivation
+
+- **PASS** time_axis
+- **PASS** finite_all
+- **PASS** non_negative_regex
+- **PASS** A Metal allocated <= requested
+- **PASS** A Electronics allocated <= requested
+- **PASS** A Energy supply <= active generation
+- **PASS** A supply allocation identity
+- **PASS** A unserved identity
+- **PASS** B Metal allocated <= requested
+- **PASS** B Electronics allocated <= requested
+- **PASS** B Energy supply <= active generation
+- **PASS** B supply allocation identity
+- **PASS** B unserved identity
+- **PASS** A Electronics: Active <= Installed
+- **PASS** A Electronics: Inactive identity
+- **PASS** A Electronics: Lifetime account identity
+- **PASS** A Electronics: Target Active <= Installed
+- **PASS** A Electronics: Target Active <= Required Active
+- **PASS** A Electronics: kernel stocks >= 0
+- **PASS** A Electronics: kernel flows >= 0
+- **PASS** A Electronics: Expansion <= Desired Expansion (kernel-v2)
+- **PASS** B Electronics: Active <= Installed
+- **PASS** B Electronics: Inactive identity
+- **PASS** B Electronics: Lifetime account identity
+- **PASS** B Electronics: Target Active <= Installed
+- **PASS** B Electronics: Target Active <= Required Active
+- **PASS** B Electronics: kernel stocks >= 0
+- **PASS** B Electronics: kernel flows >= 0
+- **PASS** B Electronics: Expansion <= Desired Expansion (kernel-v2)
+- **PASS** A Power: Active <= Installed
+- **PASS** A Power: Inactive identity
+- **PASS** A Power: Lifetime account identity
+- **PASS** A Power: Target Active <= Installed
+- **PASS** A Power: Target Active <= Required Active
+- **PASS** A Power: kernel stocks >= 0
+- **PASS** A Power: kernel flows >= 0
+- **PASS** A Power: Expansion <= Desired Expansion (kernel-v2)
+- **PASS** B Power: Active <= Installed
+- **PASS** B Power: Inactive identity
+- **PASS** B Power: Lifetime account identity
+- **PASS** B Power: Target Active <= Installed
+- **PASS** B Power: Target Active <= Required Active
+- **PASS** B Power: kernel stocks >= 0
+- **PASS** B Power: kernel flows >= 0
+- **PASS** B Power: Expansion <= Desired Expansion (kernel-v2)
+- **PASS** A Refinery: Active <= Installed
+- **PASS** A Refinery: Inactive identity
+- **PASS** A Refinery: Lifetime account identity
+- **PASS** A Refinery: Target Active <= Installed
+- **PASS** A Refinery: Target Active <= Required Active
+- **PASS** A Refinery: kernel stocks >= 0
+- **PASS** A Refinery: kernel flows >= 0
+- **PASS** A Refinery: Expansion <= Desired Expansion (kernel-v2)
+- **PASS** B Refinery: Active <= Installed
+- **PASS** B Refinery: Inactive identity
+- **PASS** B Refinery: Lifetime account identity
+- **PASS** B Refinery: Target Active <= Installed
+- **PASS** B Refinery: Target Active <= Required Active
+- **PASS** B Refinery: kernel stocks >= 0
+- **PASS** B Refinery: kernel flows >= 0
+- **PASS** B Refinery: Expansion <= Desired Expansion (kernel-v2)
+- **PASS** Transport: Active <= Installed
+- **PASS** Transport: Inactive identity
+- **PASS** Transport: Lifetime account identity
+- **PASS** Transport: Target Active <= Installed
+- **PASS** Transport: Target Active <= Required Active
+- **PASS** Transport: kernel stocks >= 0
+- **PASS** Transport: kernel flows >= 0
+- **PASS** Transport: Expansion <= Desired Expansion (kernel-v2)
+- **PASS** Transport priority allocation identity
+- **PASS** Transport allocated <= capacity-limited load
+- **PASS** A metal input fulfillment in [0,1]
+- **PASS** A metal input delivery <= demand
+- **PASS** A metal input delivery <= available
+- **PASS** A metal input delivery >= 0
+- **PASS** A metal input demand >= 0
+- **PASS** A metal inventory >= 0
+- **PASS** A electronics feedstock inventory >= 0
+- **PASS** A electronics inventory >= 0
+- **PASS** B metal input fulfillment in [0,1]
+- **PASS** B metal input delivery <= demand
+- **PASS** B metal input delivery <= available
+- **PASS** B metal input delivery >= 0
+- **PASS** B metal input demand >= 0
+- **PASS** B metal inventory >= 0
+- **PASS** B electronics feedstock inventory >= 0
+- **PASS** B electronics inventory >= 0
+- **PASS** A ore->metal pair identity
+- **PASS** B ore->metal pair identity
+- **PASS** A capital goods fulfillment in [0,1]
+- **PASS** A capital goods inventory >= 0
+- **PASS** A capital goods production rate >= 0
+- **PASS** A capital goods production pair identities (metal)
+- **PASS** A capital goods production pair identities (electronics)
+- **PASS** A Refinery expansion <= desired expansion
+- **PASS** A Electronics expansion <= desired expansion
+- **PASS** A Power expansion <= desired expansion
+- **PASS** B capital goods fulfillment in [0,1]
+- **PASS** B capital goods inventory >= 0
+- **PASS** B capital goods production rate >= 0
+- **PASS** B capital goods production pair identities (metal)
+- **PASS** B capital goods production pair identities (electronics)
+- **PASS** B Refinery expansion <= desired expansion
+- **PASS** B Electronics expansion <= desired expansion
+- **PASS** B Power expansion <= desired expansion
+- **PASS** A power-resource inventory >= 0
+- **PASS** A power-resource fulfillment in [0,1]
+- **PASS** A available generation <= active generation capacity
+- **FAIL** A power-resource operating identity — max abs error 1316.95101686706 > 1e-8 at day 1015.5
+- **PASS** B power-resource inventory >= 0
+- **PASS** B power-resource fulfillment in [0,1]
+- **PASS** B available generation <= active generation capacity
+- **FAIL** B power-resource operating identity — max abs error 549.999364062997 > 1e-8 at day 548.5
+- **PASS** Mode 1: A intermediate delivery is zero (switch off)
+- **PASS** Mode 1: A intermediate fulfillment is 1 (switch off)
+- **PASS** Mode 1: B intermediate delivery is zero (switch off)
+- **PASS** Mode 1: B intermediate fulfillment is 1 (switch off)
+- **PASS** A feedstock->electronics pair identity (per mode)
+- **PASS** B feedstock->electronics pair identity (per mode)
+- **PASS** Mode 1: A capital goods production is zero (switch off)
+- **PASS** Mode 1: A capital goods fulfillment is 1 (switch off)
+- **PASS** Mode 1: B capital goods production is zero (switch off)
+- **PASS** Mode 1: B capital goods fulfillment is 1 (switch off)
+- **PASS** Mode 1: A capital goods inventory is a dead stock (switch off)
+- **PASS** Mode 1: B capital goods inventory is a dead stock (switch off)
+
+### Mode 2 — Timed Transport Demand Surge
+
+- **PASS** time_axis
+- **PASS** finite_all
+- **PASS** non_negative_regex
+- **PASS** A Metal allocated <= requested
+- **PASS** A Electronics allocated <= requested
+- **PASS** A Energy supply <= active generation
+- **PASS** A supply allocation identity
+- **PASS** A unserved identity
+- **PASS** B Metal allocated <= requested
+- **PASS** B Electronics allocated <= requested
+- **PASS** B Energy supply <= active generation
+- **PASS** B supply allocation identity
+- **PASS** B unserved identity
+- **PASS** A Electronics: Active <= Installed
+- **PASS** A Electronics: Inactive identity
+- **PASS** A Electronics: Lifetime account identity
+- **PASS** A Electronics: Target Active <= Installed
+- **PASS** A Electronics: Target Active <= Required Active
+- **PASS** A Electronics: kernel stocks >= 0
+- **PASS** A Electronics: kernel flows >= 0
+- **PASS** A Electronics: Expansion <= Desired Expansion (kernel-v2)
+- **PASS** B Electronics: Active <= Installed
+- **PASS** B Electronics: Inactive identity
+- **PASS** B Electronics: Lifetime account identity
+- **PASS** B Electronics: Target Active <= Installed
+- **PASS** B Electronics: Target Active <= Required Active
+- **PASS** B Electronics: kernel stocks >= 0
+- **PASS** B Electronics: kernel flows >= 0
+- **PASS** B Electronics: Expansion <= Desired Expansion (kernel-v2)
+- **PASS** A Power: Active <= Installed
+- **PASS** A Power: Inactive identity
+- **PASS** A Power: Lifetime account identity
+- **PASS** A Power: Target Active <= Installed
+- **PASS** A Power: Target Active <= Required Active
+- **PASS** A Power: kernel stocks >= 0
+- **PASS** A Power: kernel flows >= 0
+- **PASS** A Power: Expansion <= Desired Expansion (kernel-v2)
+- **PASS** B Power: Active <= Installed
+- **PASS** B Power: Inactive identity
+- **PASS** B Power: Lifetime account identity
+- **PASS** B Power: Target Active <= Installed
+- **PASS** B Power: Target Active <= Required Active
+- **PASS** B Power: kernel stocks >= 0
+- **PASS** B Power: kernel flows >= 0
+- **PASS** B Power: Expansion <= Desired Expansion (kernel-v2)
+- **PASS** A Refinery: Active <= Installed
+- **PASS** A Refinery: Inactive identity
+- **PASS** A Refinery: Lifetime account identity
+- **PASS** A Refinery: Target Active <= Installed
+- **PASS** A Refinery: Target Active <= Required Active
+- **PASS** A Refinery: kernel stocks >= 0
+- **PASS** A Refinery: kernel flows >= 0
+- **PASS** A Refinery: Expansion <= Desired Expansion (kernel-v2)
+- **PASS** B Refinery: Active <= Installed
+- **PASS** B Refinery: Inactive identity
+- **PASS** B Refinery: Lifetime account identity
+- **PASS** B Refinery: Target Active <= Installed
+- **PASS** B Refinery: Target Active <= Required Active
+- **PASS** B Refinery: kernel stocks >= 0
+- **PASS** B Refinery: kernel flows >= 0
+- **PASS** B Refinery: Expansion <= Desired Expansion (kernel-v2)
+- **PASS** Transport: Active <= Installed
+- **PASS** Transport: Inactive identity
+- **PASS** Transport: Lifetime account identity
+- **PASS** Transport: Target Active <= Installed
+- **PASS** Transport: Target Active <= Required Active
+- **PASS** Transport: kernel stocks >= 0
+- **PASS** Transport: kernel flows >= 0
+- **PASS** Transport: Expansion <= Desired Expansion (kernel-v2)
+- **PASS** Transport priority allocation identity
+- **PASS** Transport allocated <= capacity-limited load
+- **PASS** A metal input fulfillment in [0,1]
+- **PASS** A metal input delivery <= demand
+- **PASS** A metal input delivery <= available
+- **PASS** A metal input delivery >= 0
+- **PASS** A metal input demand >= 0
+- **PASS** A metal inventory >= 0
+- **PASS** A electronics feedstock inventory >= 0
+- **PASS** A electronics inventory >= 0
+- **PASS** B metal input fulfillment in [0,1]
+- **PASS** B metal input delivery <= demand
+- **PASS** B metal input delivery <= available
+- **PASS** B metal input delivery >= 0
+- **PASS** B metal input demand >= 0
+- **PASS** B metal inventory >= 0
+- **PASS** B electronics feedstock inventory >= 0
+- **PASS** B electronics inventory >= 0
+- **PASS** A ore->metal pair identity
+- **PASS** B ore->metal pair identity
+- **PASS** A capital goods fulfillment in [0,1]
+- **PASS** A capital goods inventory >= 0
+- **PASS** A capital goods production rate >= 0
+- **PASS** A capital goods production pair identities (metal)
+- **PASS** A capital goods production pair identities (electronics)
+- **PASS** A Refinery expansion <= desired expansion
+- **PASS** A Electronics expansion <= desired expansion
+- **PASS** A Power expansion <= desired expansion
+- **PASS** B capital goods fulfillment in [0,1]
+- **PASS** B capital goods inventory >= 0
+- **PASS** B capital goods production rate >= 0
+- **PASS** B capital goods production pair identities (metal)
+- **PASS** B capital goods production pair identities (electronics)
+- **PASS** B Refinery expansion <= desired expansion
+- **PASS** B Electronics expansion <= desired expansion
+- **PASS** B Power expansion <= desired expansion
+- **PASS** A power-resource inventory >= 0
+- **PASS** A power-resource fulfillment in [0,1]
+- **PASS** A available generation <= active generation capacity
+- **FAIL** A power-resource operating identity — max abs error 1349.99913587006 > 1e-8 at day 706
+- **PASS** B power-resource inventory >= 0
+- **PASS** B power-resource fulfillment in [0,1]
+- **PASS** B available generation <= active generation capacity
+- **FAIL** B power-resource operating identity — max abs error 549.999413088726 > 1e-8 at day 719.75
+- **PASS** Mode 2: A intermediate delivery is zero (switch off)
+- **PASS** Mode 2: A intermediate fulfillment is 1 (switch off)
+- **PASS** Mode 2: B intermediate delivery is zero (switch off)
+- **PASS** Mode 2: B intermediate fulfillment is 1 (switch off)
+- **PASS** A feedstock->electronics pair identity (per mode)
+- **PASS** B feedstock->electronics pair identity (per mode)
+- **PASS** Mode 2: A capital goods production is zero (switch off)
+- **PASS** Mode 2: A capital goods fulfillment is 1 (switch off)
+- **PASS** Mode 2: B capital goods production is zero (switch off)
+- **PASS** Mode 2: B capital goods fulfillment is 1 (switch off)
+- **PASS** Mode 2: A capital goods inventory is a dead stock (switch off)
+- **PASS** Mode 2: B capital goods inventory is a dead stock (switch off)
+
+### Mode 3 — Timed Low Demand Rationalization
+
+- **PASS** time_axis
+- **PASS** finite_all
+- **PASS** non_negative_regex
+- **PASS** A Metal allocated <= requested
+- **PASS** A Electronics allocated <= requested
+- **PASS** A Energy supply <= active generation
+- **PASS** A supply allocation identity
+- **PASS** A unserved identity
+- **PASS** B Metal allocated <= requested
+- **PASS** B Electronics allocated <= requested
+- **PASS** B Energy supply <= active generation
+- **PASS** B supply allocation identity
+- **PASS** B unserved identity
+- **PASS** A Electronics: Active <= Installed
+- **PASS** A Electronics: Inactive identity
+- **PASS** A Electronics: Lifetime account identity
+- **PASS** A Electronics: Target Active <= Installed
+- **PASS** A Electronics: Target Active <= Required Active
+- **PASS** A Electronics: kernel stocks >= 0
+- **PASS** A Electronics: kernel flows >= 0
+- **PASS** A Electronics: Expansion <= Desired Expansion (kernel-v2)
+- **PASS** B Electronics: Active <= Installed
+- **PASS** B Electronics: Inactive identity
+- **PASS** B Electronics: Lifetime account identity
+- **PASS** B Electronics: Target Active <= Installed
+- **PASS** B Electronics: Target Active <= Required Active
+- **PASS** B Electronics: kernel stocks >= 0
+- **PASS** B Electronics: kernel flows >= 0
+- **PASS** B Electronics: Expansion <= Desired Expansion (kernel-v2)
+- **PASS** A Power: Active <= Installed
+- **PASS** A Power: Inactive identity
+- **PASS** A Power: Lifetime account identity
+- **PASS** A Power: Target Active <= Installed
+- **PASS** A Power: Target Active <= Required Active
+- **PASS** A Power: kernel stocks >= 0
+- **PASS** A Power: kernel flows >= 0
+- **PASS** A Power: Expansion <= Desired Expansion (kernel-v2)
+- **PASS** B Power: Active <= Installed
+- **PASS** B Power: Inactive identity
+- **PASS** B Power: Lifetime account identity
+- **PASS** B Power: Target Active <= Installed
+- **PASS** B Power: Target Active <= Required Active
+- **PASS** B Power: kernel stocks >= 0
+- **PASS** B Power: kernel flows >= 0
+- **PASS** B Power: Expansion <= Desired Expansion (kernel-v2)
+- **PASS** A Refinery: Active <= Installed
+- **PASS** A Refinery: Inactive identity
+- **PASS** A Refinery: Lifetime account identity
+- **PASS** A Refinery: Target Active <= Installed
+- **PASS** A Refinery: Target Active <= Required Active
+- **PASS** A Refinery: kernel stocks >= 0
+- **PASS** A Refinery: kernel flows >= 0
+- **PASS** A Refinery: Expansion <= Desired Expansion (kernel-v2)
+- **PASS** B Refinery: Active <= Installed
+- **PASS** B Refinery: Inactive identity
+- **PASS** B Refinery: Lifetime account identity
+- **PASS** B Refinery: Target Active <= Installed
+- **PASS** B Refinery: Target Active <= Required Active
+- **PASS** B Refinery: kernel stocks >= 0
+- **PASS** B Refinery: kernel flows >= 0
+- **PASS** B Refinery: Expansion <= Desired Expansion (kernel-v2)
+- **PASS** Transport: Active <= Installed
+- **PASS** Transport: Inactive identity
+- **PASS** Transport: Lifetime account identity
+- **PASS** Transport: Target Active <= Installed
+- **PASS** Transport: Target Active <= Required Active
+- **PASS** Transport: kernel stocks >= 0
+- **PASS** Transport: kernel flows >= 0
+- **PASS** Transport: Expansion <= Desired Expansion (kernel-v2)
+- **PASS** Transport priority allocation identity
+- **PASS** Transport allocated <= capacity-limited load
+- **PASS** A metal input fulfillment in [0,1]
+- **PASS** A metal input delivery <= demand
+- **PASS** A metal input delivery <= available
+- **PASS** A metal input delivery >= 0
+- **PASS** A metal input demand >= 0
+- **PASS** A metal inventory >= 0
+- **PASS** A electronics feedstock inventory >= 0
+- **PASS** A electronics inventory >= 0
+- **PASS** B metal input fulfillment in [0,1]
+- **PASS** B metal input delivery <= demand
+- **PASS** B metal input delivery <= available
+- **PASS** B metal input delivery >= 0
+- **PASS** B metal input demand >= 0
+- **PASS** B metal inventory >= 0
+- **PASS** B electronics feedstock inventory >= 0
+- **PASS** B electronics inventory >= 0
+- **PASS** A ore->metal pair identity
+- **PASS** B ore->metal pair identity
+- **PASS** A capital goods fulfillment in [0,1]
+- **PASS** A capital goods inventory >= 0
+- **PASS** A capital goods production rate >= 0
+- **PASS** A capital goods production pair identities (metal)
+- **PASS** A capital goods production pair identities (electronics)
+- **PASS** A Refinery expansion <= desired expansion
+- **PASS** A Electronics expansion <= desired expansion
+- **PASS** A Power expansion <= desired expansion
+- **PASS** B capital goods fulfillment in [0,1]
+- **PASS** B capital goods inventory >= 0
+- **PASS** B capital goods production rate >= 0
+- **PASS** B capital goods production pair identities (metal)
+- **PASS** B capital goods production pair identities (electronics)
+- **PASS** B Refinery expansion <= desired expansion
+- **PASS** B Electronics expansion <= desired expansion
+- **PASS** B Power expansion <= desired expansion
+- **PASS** A power-resource inventory >= 0
+- **PASS** A power-resource fulfillment in [0,1]
+- **PASS** A available generation <= active generation capacity
+- **FAIL** A power-resource operating identity — max abs error 1317.41927207019 > 1e-8 at day 888.25
+- **PASS** B power-resource inventory >= 0
+- **PASS** B power-resource fulfillment in [0,1]
+- **PASS** B available generation <= active generation capacity
+- **FAIL** B power-resource operating identity — max abs error 549.999346183482 > 1e-8 at day 12.5
+- **PASS** Mode 3: A intermediate delivery is zero (switch off)
+- **PASS** Mode 3: A intermediate fulfillment is 1 (switch off)
+- **PASS** Mode 3: B intermediate delivery is zero (switch off)
+- **PASS** Mode 3: B intermediate fulfillment is 1 (switch off)
+- **PASS** A feedstock->electronics pair identity (per mode)
+- **PASS** B feedstock->electronics pair identity (per mode)
+- **PASS** Mode 3: A capital goods production is zero (switch off)
+- **PASS** Mode 3: A capital goods fulfillment is 1 (switch off)
+- **PASS** Mode 3: B capital goods production is zero (switch off)
+- **PASS** Mode 3: B capital goods fulfillment is 1 (switch off)
+- **PASS** Mode 3: A capital goods inventory is a dead stock (switch off)
+- **PASS** Mode 3: B capital goods inventory is a dead stock (switch off)
+
+### Mode 4 — Timed Reverse Advantage
+
+- **PASS** time_axis
+- **PASS** finite_all
+- **PASS** non_negative_regex
+- **PASS** A Metal allocated <= requested
+- **PASS** A Electronics allocated <= requested
+- **PASS** A Energy supply <= active generation
+- **PASS** A supply allocation identity
+- **PASS** A unserved identity
+- **PASS** B Metal allocated <= requested
+- **PASS** B Electronics allocated <= requested
+- **PASS** B Energy supply <= active generation
+- **PASS** B supply allocation identity
+- **PASS** B unserved identity
+- **PASS** A Electronics: Active <= Installed
+- **PASS** A Electronics: Inactive identity
+- **PASS** A Electronics: Lifetime account identity
+- **PASS** A Electronics: Target Active <= Installed
+- **PASS** A Electronics: Target Active <= Required Active
+- **PASS** A Electronics: kernel stocks >= 0
+- **PASS** A Electronics: kernel flows >= 0
+- **PASS** A Electronics: Expansion <= Desired Expansion (kernel-v2)
+- **PASS** B Electronics: Active <= Installed
+- **PASS** B Electronics: Inactive identity
+- **PASS** B Electronics: Lifetime account identity
+- **PASS** B Electronics: Target Active <= Installed
+- **PASS** B Electronics: Target Active <= Required Active
+- **PASS** B Electronics: kernel stocks >= 0
+- **PASS** B Electronics: kernel flows >= 0
+- **PASS** B Electronics: Expansion <= Desired Expansion (kernel-v2)
+- **PASS** A Power: Active <= Installed
+- **PASS** A Power: Inactive identity
+- **PASS** A Power: Lifetime account identity
+- **PASS** A Power: Target Active <= Installed
+- **PASS** A Power: Target Active <= Required Active
+- **PASS** A Power: kernel stocks >= 0
+- **PASS** A Power: kernel flows >= 0
+- **PASS** A Power: Expansion <= Desired Expansion (kernel-v2)
+- **PASS** B Power: Active <= Installed
+- **PASS** B Power: Inactive identity
+- **PASS** B Power: Lifetime account identity
+- **PASS** B Power: Target Active <= Installed
+- **PASS** B Power: Target Active <= Required Active
+- **PASS** B Power: kernel stocks >= 0
+- **PASS** B Power: kernel flows >= 0
+- **PASS** B Power: Expansion <= Desired Expansion (kernel-v2)
+- **PASS** A Refinery: Active <= Installed
+- **PASS** A Refinery: Inactive identity
+- **PASS** A Refinery: Lifetime account identity
+- **PASS** A Refinery: Target Active <= Installed
+- **PASS** A Refinery: Target Active <= Required Active
+- **PASS** A Refinery: kernel stocks >= 0
+- **PASS** A Refinery: kernel flows >= 0
+- **PASS** A Refinery: Expansion <= Desired Expansion (kernel-v2)
+- **PASS** B Refinery: Active <= Installed
+- **PASS** B Refinery: Inactive identity
+- **PASS** B Refinery: Lifetime account identity
+- **PASS** B Refinery: Target Active <= Installed
+- **PASS** B Refinery: Target Active <= Required Active
+- **PASS** B Refinery: kernel stocks >= 0
+- **PASS** B Refinery: kernel flows >= 0
+- **PASS** B Refinery: Expansion <= Desired Expansion (kernel-v2)
+- **PASS** Transport: Active <= Installed
+- **PASS** Transport: Inactive identity
+- **PASS** Transport: Lifetime account identity
+- **PASS** Transport: Target Active <= Installed
+- **PASS** Transport: Target Active <= Required Active
+- **PASS** Transport: kernel stocks >= 0
+- **PASS** Transport: kernel flows >= 0
+- **PASS** Transport: Expansion <= Desired Expansion (kernel-v2)
+- **PASS** Transport priority allocation identity
+- **PASS** Transport allocated <= capacity-limited load
+- **PASS** A metal input fulfillment in [0,1]
+- **PASS** A metal input delivery <= demand
+- **PASS** A metal input delivery <= available
+- **PASS** A metal input delivery >= 0
+- **PASS** A metal input demand >= 0
+- **PASS** A metal inventory >= 0
+- **PASS** A electronics feedstock inventory >= 0
+- **PASS** A electronics inventory >= 0
+- **PASS** B metal input fulfillment in [0,1]
+- **PASS** B metal input delivery <= demand
+- **PASS** B metal input delivery <= available
+- **PASS** B metal input delivery >= 0
+- **PASS** B metal input demand >= 0
+- **PASS** B metal inventory >= 0
+- **PASS** B electronics feedstock inventory >= 0
+- **PASS** B electronics inventory >= 0
+- **PASS** A ore->metal pair identity
+- **PASS** B ore->metal pair identity
+- **PASS** A capital goods fulfillment in [0,1]
+- **PASS** A capital goods inventory >= 0
+- **PASS** A capital goods production rate >= 0
+- **PASS** A capital goods production pair identities (metal)
+- **PASS** A capital goods production pair identities (electronics)
+- **PASS** A Refinery expansion <= desired expansion
+- **PASS** A Electronics expansion <= desired expansion
+- **PASS** A Power expansion <= desired expansion
+- **PASS** B capital goods fulfillment in [0,1]
+- **PASS** B capital goods inventory >= 0
+- **PASS** B capital goods production rate >= 0
+- **PASS** B capital goods production pair identities (metal)
+- **PASS** B capital goods production pair identities (electronics)
+- **PASS** B Refinery expansion <= desired expansion
+- **PASS** B Electronics expansion <= desired expansion
+- **PASS** B Power expansion <= desired expansion
+- **PASS** A power-resource inventory >= 0
+- **PASS** A power-resource fulfillment in [0,1]
+- **PASS** A available generation <= active generation capacity
+- **FAIL** A power-resource operating identity — max abs error 1316.92480743383 > 1e-8 at day 359.75
+- **PASS** B power-resource inventory >= 0
+- **PASS** B power-resource fulfillment in [0,1]
+- **PASS** B available generation <= active generation capacity
+- **FAIL** B power-resource operating identity — max abs error 1879.14791143809 > 1e-8 at day 1022.5
+- **PASS** Mode 4: A intermediate delivery is zero (switch off)
+- **PASS** Mode 4: A intermediate fulfillment is 1 (switch off)
+- **PASS** Mode 4: B intermediate delivery is zero (switch off)
+- **PASS** Mode 4: B intermediate fulfillment is 1 (switch off)
+- **PASS** A feedstock->electronics pair identity (per mode)
+- **PASS** B feedstock->electronics pair identity (per mode)
+- **PASS** Mode 4: A capital goods production is zero (switch off)
+- **PASS** Mode 4: A capital goods fulfillment is 1 (switch off)
+- **PASS** Mode 4: B capital goods production is zero (switch off)
+- **PASS** Mode 4: B capital goods fulfillment is 1 (switch off)
+- **PASS** Mode 4: A capital goods inventory is a dead stock (switch off)
+- **PASS** Mode 4: B capital goods inventory is a dead stock (switch off)
+
+### Mode 5 — Timed Electronics Demand Surge
+
+- **PASS** time_axis
+- **PASS** finite_all
+- **PASS** non_negative_regex
+- **PASS** A Metal allocated <= requested
+- **PASS** A Electronics allocated <= requested
+- **PASS** A Energy supply <= active generation
+- **PASS** A supply allocation identity
+- **PASS** A unserved identity
+- **PASS** B Metal allocated <= requested
+- **PASS** B Electronics allocated <= requested
+- **PASS** B Energy supply <= active generation
+- **PASS** B supply allocation identity
+- **PASS** B unserved identity
+- **PASS** A Electronics: Active <= Installed
+- **PASS** A Electronics: Inactive identity
+- **PASS** A Electronics: Lifetime account identity
+- **PASS** A Electronics: Target Active <= Installed
+- **PASS** A Electronics: Target Active <= Required Active
+- **PASS** A Electronics: kernel stocks >= 0
+- **PASS** A Electronics: kernel flows >= 0
+- **PASS** A Electronics: Expansion <= Desired Expansion (kernel-v2)
+- **PASS** B Electronics: Active <= Installed
+- **PASS** B Electronics: Inactive identity
+- **PASS** B Electronics: Lifetime account identity
+- **PASS** B Electronics: Target Active <= Installed
+- **PASS** B Electronics: Target Active <= Required Active
+- **PASS** B Electronics: kernel stocks >= 0
+- **PASS** B Electronics: kernel flows >= 0
+- **PASS** B Electronics: Expansion <= Desired Expansion (kernel-v2)
+- **PASS** A Power: Active <= Installed
+- **PASS** A Power: Inactive identity
+- **PASS** A Power: Lifetime account identity
+- **PASS** A Power: Target Active <= Installed
+- **PASS** A Power: Target Active <= Required Active
+- **PASS** A Power: kernel stocks >= 0
+- **PASS** A Power: kernel flows >= 0
+- **PASS** A Power: Expansion <= Desired Expansion (kernel-v2)
+- **PASS** B Power: Active <= Installed
+- **PASS** B Power: Inactive identity
+- **PASS** B Power: Lifetime account identity
+- **PASS** B Power: Target Active <= Installed
+- **PASS** B Power: Target Active <= Required Active
+- **PASS** B Power: kernel stocks >= 0
+- **PASS** B Power: kernel flows >= 0
+- **PASS** B Power: Expansion <= Desired Expansion (kernel-v2)
+- **PASS** A Refinery: Active <= Installed
+- **PASS** A Refinery: Inactive identity
+- **PASS** A Refinery: Lifetime account identity
+- **PASS** A Refinery: Target Active <= Installed
+- **PASS** A Refinery: Target Active <= Required Active
+- **PASS** A Refinery: kernel stocks >= 0
+- **PASS** A Refinery: kernel flows >= 0
+- **PASS** A Refinery: Expansion <= Desired Expansion (kernel-v2)
+- **PASS** B Refinery: Active <= Installed
+- **PASS** B Refinery: Inactive identity
+- **PASS** B Refinery: Lifetime account identity
+- **PASS** B Refinery: Target Active <= Installed
+- **PASS** B Refinery: Target Active <= Required Active
+- **PASS** B Refinery: kernel stocks >= 0
+- **PASS** B Refinery: kernel flows >= 0
+- **PASS** B Refinery: Expansion <= Desired Expansion (kernel-v2)
+- **PASS** Transport: Active <= Installed
+- **PASS** Transport: Inactive identity
+- **PASS** Transport: Lifetime account identity
+- **PASS** Transport: Target Active <= Installed
+- **PASS** Transport: Target Active <= Required Active
+- **PASS** Transport: kernel stocks >= 0
+- **PASS** Transport: kernel flows >= 0
+- **PASS** Transport: Expansion <= Desired Expansion (kernel-v2)
+- **PASS** Transport priority allocation identity
+- **PASS** Transport allocated <= capacity-limited load
+- **PASS** A metal input fulfillment in [0,1]
+- **PASS** A metal input delivery <= demand
+- **PASS** A metal input delivery <= available
+- **PASS** A metal input delivery >= 0
+- **PASS** A metal input demand >= 0
+- **PASS** A metal inventory >= 0
+- **PASS** A electronics feedstock inventory >= 0
+- **PASS** A electronics inventory >= 0
+- **PASS** B metal input fulfillment in [0,1]
+- **PASS** B metal input delivery <= demand
+- **PASS** B metal input delivery <= available
+- **PASS** B metal input delivery >= 0
+- **PASS** B metal input demand >= 0
+- **PASS** B metal inventory >= 0
+- **PASS** B electronics feedstock inventory >= 0
+- **PASS** B electronics inventory >= 0
+- **PASS** A ore->metal pair identity
+- **PASS** B ore->metal pair identity
+- **PASS** A capital goods fulfillment in [0,1]
+- **PASS** A capital goods inventory >= 0
+- **PASS** A capital goods production rate >= 0
+- **PASS** A capital goods production pair identities (metal)
+- **PASS** A capital goods production pair identities (electronics)
+- **PASS** A Refinery expansion <= desired expansion
+- **PASS** A Electronics expansion <= desired expansion
+- **PASS** A Power expansion <= desired expansion
+- **PASS** B capital goods fulfillment in [0,1]
+- **PASS** B capital goods inventory >= 0
+- **PASS** B capital goods production rate >= 0
+- **PASS** B capital goods production pair identities (metal)
+- **PASS** B capital goods production pair identities (electronics)
+- **PASS** B Refinery expansion <= desired expansion
+- **PASS** B Electronics expansion <= desired expansion
+- **PASS** B Power expansion <= desired expansion
+- **PASS** A power-resource inventory >= 0
+- **PASS** A power-resource fulfillment in [0,1]
+- **PASS** A available generation <= active generation capacity
+- **FAIL** A power-resource operating identity — max abs error 1349.99909039205 > 1e-8 at day 368
+- **PASS** B power-resource inventory >= 0
+- **PASS** B power-resource fulfillment in [0,1]
+- **PASS** B available generation <= active generation capacity
+- **FAIL** B power-resource operating identity — max abs error 549.999346183482 > 1e-8 at day 12.5
+- **PASS** Mode 5: A intermediate delivery is zero (switch off)
+- **PASS** Mode 5: A intermediate fulfillment is 1 (switch off)
+- **PASS** Mode 5: B intermediate delivery is zero (switch off)
+- **PASS** Mode 5: B intermediate fulfillment is 1 (switch off)
+- **PASS** A feedstock->electronics pair identity (per mode)
+- **PASS** B feedstock->electronics pair identity (per mode)
+- **PASS** Mode 5: A capital goods production is zero (switch off)
+- **PASS** Mode 5: A capital goods fulfillment is 1 (switch off)
+- **PASS** Mode 5: B capital goods production is zero (switch off)
+- **PASS** Mode 5: B capital goods fulfillment is 1 (switch off)
+- **PASS** Mode 5: A capital goods inventory is a dead stock (switch off)
+- **PASS** Mode 5: B capital goods inventory is a dead stock (switch off)
+
+### Mode 6 — Timed Reverse Electronics Advantage
+
+- **PASS** time_axis
+- **PASS** finite_all
+- **PASS** non_negative_regex
+- **PASS** A Metal allocated <= requested
+- **PASS** A Electronics allocated <= requested
+- **PASS** A Energy supply <= active generation
+- **PASS** A supply allocation identity
+- **PASS** A unserved identity
+- **PASS** B Metal allocated <= requested
+- **PASS** B Electronics allocated <= requested
+- **PASS** B Energy supply <= active generation
+- **PASS** B supply allocation identity
+- **PASS** B unserved identity
+- **PASS** A Electronics: Active <= Installed
+- **PASS** A Electronics: Inactive identity
+- **PASS** A Electronics: Lifetime account identity
+- **PASS** A Electronics: Target Active <= Installed
+- **PASS** A Electronics: Target Active <= Required Active
+- **PASS** A Electronics: kernel stocks >= 0
+- **PASS** A Electronics: kernel flows >= 0
+- **PASS** A Electronics: Expansion <= Desired Expansion (kernel-v2)
+- **PASS** B Electronics: Active <= Installed
+- **PASS** B Electronics: Inactive identity
+- **PASS** B Electronics: Lifetime account identity
+- **PASS** B Electronics: Target Active <= Installed
+- **PASS** B Electronics: Target Active <= Required Active
+- **PASS** B Electronics: kernel stocks >= 0
+- **PASS** B Electronics: kernel flows >= 0
+- **PASS** B Electronics: Expansion <= Desired Expansion (kernel-v2)
+- **PASS** A Power: Active <= Installed
+- **PASS** A Power: Inactive identity
+- **PASS** A Power: Lifetime account identity
+- **PASS** A Power: Target Active <= Installed
+- **PASS** A Power: Target Active <= Required Active
+- **PASS** A Power: kernel stocks >= 0
+- **PASS** A Power: kernel flows >= 0
+- **PASS** A Power: Expansion <= Desired Expansion (kernel-v2)
+- **PASS** B Power: Active <= Installed
+- **PASS** B Power: Inactive identity
+- **PASS** B Power: Lifetime account identity
+- **PASS** B Power: Target Active <= Installed
+- **PASS** B Power: Target Active <= Required Active
+- **PASS** B Power: kernel stocks >= 0
+- **PASS** B Power: kernel flows >= 0
+- **PASS** B Power: Expansion <= Desired Expansion (kernel-v2)
+- **PASS** A Refinery: Active <= Installed
+- **PASS** A Refinery: Inactive identity
+- **PASS** A Refinery: Lifetime account identity
+- **PASS** A Refinery: Target Active <= Installed
+- **PASS** A Refinery: Target Active <= Required Active
+- **PASS** A Refinery: kernel stocks >= 0
+- **PASS** A Refinery: kernel flows >= 0
+- **PASS** A Refinery: Expansion <= Desired Expansion (kernel-v2)
+- **PASS** B Refinery: Active <= Installed
+- **PASS** B Refinery: Inactive identity
+- **PASS** B Refinery: Lifetime account identity
+- **PASS** B Refinery: Target Active <= Installed
+- **PASS** B Refinery: Target Active <= Required Active
+- **PASS** B Refinery: kernel stocks >= 0
+- **PASS** B Refinery: kernel flows >= 0
+- **PASS** B Refinery: Expansion <= Desired Expansion (kernel-v2)
+- **PASS** Transport: Active <= Installed
+- **PASS** Transport: Inactive identity
+- **PASS** Transport: Lifetime account identity
+- **PASS** Transport: Target Active <= Installed
+- **PASS** Transport: Target Active <= Required Active
+- **PASS** Transport: kernel stocks >= 0
+- **PASS** Transport: kernel flows >= 0
+- **PASS** Transport: Expansion <= Desired Expansion (kernel-v2)
+- **PASS** Transport priority allocation identity
+- **PASS** Transport allocated <= capacity-limited load
+- **PASS** A metal input fulfillment in [0,1]
+- **PASS** A metal input delivery <= demand
+- **PASS** A metal input delivery <= available
+- **PASS** A metal input delivery >= 0
+- **PASS** A metal input demand >= 0
+- **PASS** A metal inventory >= 0
+- **PASS** A electronics feedstock inventory >= 0
+- **PASS** A electronics inventory >= 0
+- **PASS** B metal input fulfillment in [0,1]
+- **PASS** B metal input delivery <= demand
+- **PASS** B metal input delivery <= available
+- **PASS** B metal input delivery >= 0
+- **PASS** B metal input demand >= 0
+- **PASS** B metal inventory >= 0
+- **PASS** B electronics feedstock inventory >= 0
+- **PASS** B electronics inventory >= 0
+- **PASS** A ore->metal pair identity
+- **PASS** B ore->metal pair identity
+- **PASS** A capital goods fulfillment in [0,1]
+- **PASS** A capital goods inventory >= 0
+- **PASS** A capital goods production rate >= 0
+- **PASS** A capital goods production pair identities (metal)
+- **PASS** A capital goods production pair identities (electronics)
+- **PASS** A Refinery expansion <= desired expansion
+- **PASS** A Electronics expansion <= desired expansion
+- **PASS** A Power expansion <= desired expansion
+- **PASS** B capital goods fulfillment in [0,1]
+- **PASS** B capital goods inventory >= 0
+- **PASS** B capital goods production rate >= 0
+- **PASS** B capital goods production pair identities (metal)
+- **PASS** B capital goods production pair identities (electronics)
+- **PASS** B Refinery expansion <= desired expansion
+- **PASS** B Electronics expansion <= desired expansion
+- **PASS** B Power expansion <= desired expansion
+- **PASS** A power-resource inventory >= 0
+- **PASS** A power-resource fulfillment in [0,1]
+- **PASS** A available generation <= active generation capacity
+- **FAIL** A power-resource operating identity — max abs error 1822.03257860601 > 1e-8 at day 390.25
+- **PASS** B power-resource inventory >= 0
+- **PASS** B power-resource fulfillment in [0,1]
+- **PASS** B available generation <= active generation capacity
+- **FAIL** B power-resource operating identity — max abs error 549.999346183482 > 1e-8 at day 12.5
+- **PASS** Mode 6: A intermediate delivery is zero (switch off)
+- **PASS** Mode 6: A intermediate fulfillment is 1 (switch off)
+- **PASS** Mode 6: B intermediate delivery is zero (switch off)
+- **PASS** Mode 6: B intermediate fulfillment is 1 (switch off)
+- **PASS** A feedstock->electronics pair identity (per mode)
+- **PASS** B feedstock->electronics pair identity (per mode)
+- **PASS** Mode 6: A capital goods production is zero (switch off)
+- **PASS** Mode 6: A capital goods fulfillment is 1 (switch off)
+- **PASS** Mode 6: B capital goods production is zero (switch off)
+- **PASS** Mode 6: B capital goods fulfillment is 1 (switch off)
+- **PASS** Mode 6: A capital goods inventory is a dead stock (switch off)
+- **PASS** Mode 6: B capital goods inventory is a dead stock (switch off)
+
+### Mode 7 — Timed Two-Good Transport Surge
+
+- **PASS** time_axis
+- **PASS** finite_all
+- **PASS** non_negative_regex
+- **PASS** A Metal allocated <= requested
+- **PASS** A Electronics allocated <= requested
+- **PASS** A Energy supply <= active generation
+- **PASS** A supply allocation identity
+- **PASS** A unserved identity
+- **PASS** B Metal allocated <= requested
+- **PASS** B Electronics allocated <= requested
+- **PASS** B Energy supply <= active generation
+- **PASS** B supply allocation identity
+- **PASS** B unserved identity
+- **PASS** A Electronics: Active <= Installed
+- **PASS** A Electronics: Inactive identity
+- **PASS** A Electronics: Lifetime account identity
+- **PASS** A Electronics: Target Active <= Installed
+- **PASS** A Electronics: Target Active <= Required Active
+- **PASS** A Electronics: kernel stocks >= 0
+- **PASS** A Electronics: kernel flows >= 0
+- **PASS** A Electronics: Expansion <= Desired Expansion (kernel-v2)
+- **PASS** B Electronics: Active <= Installed
+- **PASS** B Electronics: Inactive identity
+- **PASS** B Electronics: Lifetime account identity
+- **PASS** B Electronics: Target Active <= Installed
+- **PASS** B Electronics: Target Active <= Required Active
+- **PASS** B Electronics: kernel stocks >= 0
+- **PASS** B Electronics: kernel flows >= 0
+- **PASS** B Electronics: Expansion <= Desired Expansion (kernel-v2)
+- **PASS** A Power: Active <= Installed
+- **PASS** A Power: Inactive identity
+- **PASS** A Power: Lifetime account identity
+- **PASS** A Power: Target Active <= Installed
+- **PASS** A Power: Target Active <= Required Active
+- **PASS** A Power: kernel stocks >= 0
+- **PASS** A Power: kernel flows >= 0
+- **PASS** A Power: Expansion <= Desired Expansion (kernel-v2)
+- **PASS** B Power: Active <= Installed
+- **PASS** B Power: Inactive identity
+- **PASS** B Power: Lifetime account identity
+- **PASS** B Power: Target Active <= Installed
+- **PASS** B Power: Target Active <= Required Active
+- **PASS** B Power: kernel stocks >= 0
+- **PASS** B Power: kernel flows >= 0
+- **PASS** B Power: Expansion <= Desired Expansion (kernel-v2)
+- **PASS** A Refinery: Active <= Installed
+- **PASS** A Refinery: Inactive identity
+- **PASS** A Refinery: Lifetime account identity
+- **PASS** A Refinery: Target Active <= Installed
+- **PASS** A Refinery: Target Active <= Required Active
+- **PASS** A Refinery: kernel stocks >= 0
+- **PASS** A Refinery: kernel flows >= 0
+- **PASS** A Refinery: Expansion <= Desired Expansion (kernel-v2)
+- **PASS** B Refinery: Active <= Installed
+- **PASS** B Refinery: Inactive identity
+- **PASS** B Refinery: Lifetime account identity
+- **PASS** B Refinery: Target Active <= Installed
+- **PASS** B Refinery: Target Active <= Required Active
+- **PASS** B Refinery: kernel stocks >= 0
+- **PASS** B Refinery: kernel flows >= 0
+- **PASS** B Refinery: Expansion <= Desired Expansion (kernel-v2)
+- **PASS** Transport: Active <= Installed
+- **PASS** Transport: Inactive identity
+- **PASS** Transport: Lifetime account identity
+- **PASS** Transport: Target Active <= Installed
+- **PASS** Transport: Target Active <= Required Active
+- **PASS** Transport: kernel stocks >= 0
+- **PASS** Transport: kernel flows >= 0
+- **PASS** Transport: Expansion <= Desired Expansion (kernel-v2)
+- **PASS** Transport priority allocation identity
+- **PASS** Transport allocated <= capacity-limited load
+- **PASS** A metal input fulfillment in [0,1]
+- **PASS** A metal input delivery <= demand
+- **PASS** A metal input delivery <= available
+- **PASS** A metal input delivery >= 0
+- **PASS** A metal input demand >= 0
+- **PASS** A metal inventory >= 0
+- **PASS** A electronics feedstock inventory >= 0
+- **PASS** A electronics inventory >= 0
+- **PASS** B metal input fulfillment in [0,1]
+- **PASS** B metal input delivery <= demand
+- **PASS** B metal input delivery <= available
+- **PASS** B metal input delivery >= 0
+- **PASS** B metal input demand >= 0
+- **PASS** B metal inventory >= 0
+- **PASS** B electronics feedstock inventory >= 0
+- **PASS** B electronics inventory >= 0
+- **PASS** A ore->metal pair identity
+- **PASS** B ore->metal pair identity
+- **PASS** A capital goods fulfillment in [0,1]
+- **PASS** A capital goods inventory >= 0
+- **PASS** A capital goods production rate >= 0
+- **PASS** A capital goods production pair identities (metal)
+- **PASS** A capital goods production pair identities (electronics)
+- **PASS** A Refinery expansion <= desired expansion
+- **PASS** A Electronics expansion <= desired expansion
+- **PASS** A Power expansion <= desired expansion
+- **PASS** B capital goods fulfillment in [0,1]
+- **PASS** B capital goods inventory >= 0
+- **PASS** B capital goods production rate >= 0
+- **PASS** B capital goods production pair identities (metal)
+- **PASS** B capital goods production pair identities (electronics)
+- **PASS** B Refinery expansion <= desired expansion
+- **PASS** B Electronics expansion <= desired expansion
+- **PASS** B Power expansion <= desired expansion
+- **PASS** A power-resource inventory >= 0
+- **PASS** A power-resource fulfillment in [0,1]
+- **PASS** A available generation <= active generation capacity
+- **FAIL** A power-resource operating identity — max abs error 1349.99920366289 > 1e-8 at day 373.75
+- **PASS** B power-resource inventory >= 0
+- **PASS** B power-resource fulfillment in [0,1]
+- **PASS** B available generation <= active generation capacity
+- **FAIL** B power-resource operating identity — max abs error 549.999400178176 > 1e-8 at day 702.5
+- **PASS** Mode 7: A intermediate delivery is zero (switch off)
+- **PASS** Mode 7: A intermediate fulfillment is 1 (switch off)
+- **PASS** Mode 7: B intermediate delivery is zero (switch off)
+- **PASS** Mode 7: B intermediate fulfillment is 1 (switch off)
+- **PASS** A feedstock->electronics pair identity (per mode)
+- **PASS** B feedstock->electronics pair identity (per mode)
+- **PASS** Mode 7: A capital goods production is zero (switch off)
+- **PASS** Mode 7: A capital goods fulfillment is 1 (switch off)
+- **PASS** Mode 7: B capital goods production is zero (switch off)
+- **PASS** Mode 7: B capital goods fulfillment is 1 (switch off)
+- **PASS** Mode 7: A capital goods inventory is a dead stock (switch off)
+- **PASS** Mode 7: B capital goods inventory is a dead stock (switch off)
+
+### Mode 8 — Timed Metal Priority Scarcity
+
+- **PASS** time_axis
+- **PASS** finite_all
+- **PASS** non_negative_regex
+- **PASS** A Metal allocated <= requested
+- **PASS** A Electronics allocated <= requested
+- **PASS** A Energy supply <= active generation
+- **PASS** A supply allocation identity
+- **PASS** A unserved identity
+- **PASS** B Metal allocated <= requested
+- **PASS** B Electronics allocated <= requested
+- **PASS** B Energy supply <= active generation
+- **PASS** B supply allocation identity
+- **PASS** B unserved identity
+- **PASS** A Electronics: Active <= Installed
+- **PASS** A Electronics: Inactive identity
+- **PASS** A Electronics: Lifetime account identity
+- **PASS** A Electronics: Target Active <= Installed
+- **PASS** A Electronics: Target Active <= Required Active
+- **PASS** A Electronics: kernel stocks >= 0
+- **PASS** A Electronics: kernel flows >= 0
+- **PASS** A Electronics: Expansion <= Desired Expansion (kernel-v2)
+- **PASS** B Electronics: Active <= Installed
+- **PASS** B Electronics: Inactive identity
+- **PASS** B Electronics: Lifetime account identity
+- **PASS** B Electronics: Target Active <= Installed
+- **PASS** B Electronics: Target Active <= Required Active
+- **PASS** B Electronics: kernel stocks >= 0
+- **PASS** B Electronics: kernel flows >= 0
+- **PASS** B Electronics: Expansion <= Desired Expansion (kernel-v2)
+- **PASS** A Power: Active <= Installed
+- **PASS** A Power: Inactive identity
+- **PASS** A Power: Lifetime account identity
+- **PASS** A Power: Target Active <= Installed
+- **PASS** A Power: Target Active <= Required Active
+- **PASS** A Power: kernel stocks >= 0
+- **PASS** A Power: kernel flows >= 0
+- **PASS** A Power: Expansion <= Desired Expansion (kernel-v2)
+- **PASS** B Power: Active <= Installed
+- **PASS** B Power: Inactive identity
+- **PASS** B Power: Lifetime account identity
+- **PASS** B Power: Target Active <= Installed
+- **PASS** B Power: Target Active <= Required Active
+- **PASS** B Power: kernel stocks >= 0
+- **PASS** B Power: kernel flows >= 0
+- **PASS** B Power: Expansion <= Desired Expansion (kernel-v2)
+- **PASS** A Refinery: Active <= Installed
+- **PASS** A Refinery: Inactive identity
+- **PASS** A Refinery: Lifetime account identity
+- **PASS** A Refinery: Target Active <= Installed
+- **PASS** A Refinery: Target Active <= Required Active
+- **PASS** A Refinery: kernel stocks >= 0
+- **PASS** A Refinery: kernel flows >= 0
+- **PASS** A Refinery: Expansion <= Desired Expansion (kernel-v2)
+- **PASS** B Refinery: Active <= Installed
+- **PASS** B Refinery: Inactive identity
+- **PASS** B Refinery: Lifetime account identity
+- **PASS** B Refinery: Target Active <= Installed
+- **PASS** B Refinery: Target Active <= Required Active
+- **PASS** B Refinery: kernel stocks >= 0
+- **PASS** B Refinery: kernel flows >= 0
+- **PASS** B Refinery: Expansion <= Desired Expansion (kernel-v2)
+- **PASS** Transport: Active <= Installed
+- **PASS** Transport: Inactive identity
+- **PASS** Transport: Lifetime account identity
+- **PASS** Transport: Target Active <= Installed
+- **PASS** Transport: Target Active <= Required Active
+- **PASS** Transport: kernel stocks >= 0
+- **PASS** Transport: kernel flows >= 0
+- **PASS** Transport: Expansion <= Desired Expansion (kernel-v2)
+- **PASS** Transport priority allocation identity
+- **PASS** Transport allocated <= capacity-limited load
+- **PASS** A metal input fulfillment in [0,1]
+- **PASS** A metal input delivery <= demand
+- **PASS** A metal input delivery <= available
+- **PASS** A metal input delivery >= 0
+- **PASS** A metal input demand >= 0
+- **PASS** A metal inventory >= 0
+- **PASS** A electronics feedstock inventory >= 0
+- **PASS** A electronics inventory >= 0
+- **PASS** B metal input fulfillment in [0,1]
+- **PASS** B metal input delivery <= demand
+- **PASS** B metal input delivery <= available
+- **PASS** B metal input delivery >= 0
+- **PASS** B metal input demand >= 0
+- **PASS** B metal inventory >= 0
+- **PASS** B electronics feedstock inventory >= 0
+- **PASS** B electronics inventory >= 0
+- **PASS** A ore->metal pair identity
+- **PASS** B ore->metal pair identity
+- **PASS** A capital goods fulfillment in [0,1]
+- **PASS** A capital goods inventory >= 0
+- **PASS** A capital goods production rate >= 0
+- **PASS** A capital goods production pair identities (metal)
+- **PASS** A capital goods production pair identities (electronics)
+- **PASS** A Refinery expansion <= desired expansion
+- **PASS** A Electronics expansion <= desired expansion
+- **PASS** A Power expansion <= desired expansion
+- **PASS** B capital goods fulfillment in [0,1]
+- **PASS** B capital goods inventory >= 0
+- **PASS** B capital goods production rate >= 0
+- **PASS** B capital goods production pair identities (metal)
+- **PASS** B capital goods production pair identities (electronics)
+- **PASS** B Refinery expansion <= desired expansion
+- **PASS** B Electronics expansion <= desired expansion
+- **PASS** B Power expansion <= desired expansion
+- **PASS** A power-resource inventory >= 0
+- **PASS** A power-resource fulfillment in [0,1]
+- **PASS** A available generation <= active generation capacity
+- **FAIL** A power-resource operating identity — max abs error 1349.99923501491 > 1e-8 at day 360
+- **PASS** B power-resource inventory >= 0
+- **PASS** B power-resource fulfillment in [0,1]
+- **PASS** B available generation <= active generation capacity
+- **FAIL** B power-resource operating identity — max abs error 549.999346183482 > 1e-8 at day 12.5
+- **PASS** Mode 8: A intermediate delivery is zero (switch off)
+- **PASS** Mode 8: A intermediate fulfillment is 1 (switch off)
+- **PASS** Mode 8: B intermediate delivery is zero (switch off)
+- **PASS** Mode 8: B intermediate fulfillment is 1 (switch off)
+- **PASS** A feedstock->electronics pair identity (per mode)
+- **PASS** B feedstock->electronics pair identity (per mode)
+- **PASS** Mode 8: A capital goods production is zero (switch off)
+- **PASS** Mode 8: A capital goods fulfillment is 1 (switch off)
+- **PASS** Mode 8: B capital goods production is zero (switch off)
+- **PASS** Mode 8: B capital goods fulfillment is 1 (switch off)
+- **PASS** Mode 8: A capital goods inventory is a dead stock (switch off)
+- **PASS** Mode 8: B capital goods inventory is a dead stock (switch off)
+
+### Mode 9 — v7.2 Simultaneous Two-Industry Energy Shortage
+
+- **PASS** time_axis
+- **PASS** finite_all
+- **PASS** non_negative_regex
+- **PASS** A Metal allocated <= requested
+- **PASS** A Electronics allocated <= requested
+- **PASS** A Energy supply <= active generation
+- **PASS** A supply allocation identity
+- **PASS** A unserved identity
+- **PASS** B Metal allocated <= requested
+- **PASS** B Electronics allocated <= requested
+- **PASS** B Energy supply <= active generation
+- **PASS** B supply allocation identity
+- **PASS** B unserved identity
+- **PASS** A Electronics: Active <= Installed
+- **PASS** A Electronics: Inactive identity
+- **PASS** A Electronics: Lifetime account identity
+- **PASS** A Electronics: Target Active <= Installed
+- **PASS** A Electronics: Target Active <= Required Active
+- **PASS** A Electronics: kernel stocks >= 0
+- **PASS** A Electronics: kernel flows >= 0
+- **PASS** A Electronics: Expansion <= Desired Expansion (kernel-v2)
+- **PASS** B Electronics: Active <= Installed
+- **PASS** B Electronics: Inactive identity
+- **PASS** B Electronics: Lifetime account identity
+- **PASS** B Electronics: Target Active <= Installed
+- **PASS** B Electronics: Target Active <= Required Active
+- **PASS** B Electronics: kernel stocks >= 0
+- **PASS** B Electronics: kernel flows >= 0
+- **PASS** B Electronics: Expansion <= Desired Expansion (kernel-v2)
+- **PASS** A Power: Active <= Installed
+- **PASS** A Power: Inactive identity
+- **PASS** A Power: Lifetime account identity
+- **PASS** A Power: Target Active <= Installed
+- **PASS** A Power: Target Active <= Required Active
+- **PASS** A Power: kernel stocks >= 0
+- **PASS** A Power: kernel flows >= 0
+- **PASS** A Power: Expansion <= Desired Expansion (kernel-v2)
+- **PASS** B Power: Active <= Installed
+- **PASS** B Power: Inactive identity
+- **PASS** B Power: Lifetime account identity
+- **PASS** B Power: Target Active <= Installed
+- **PASS** B Power: Target Active <= Required Active
+- **PASS** B Power: kernel stocks >= 0
+- **PASS** B Power: kernel flows >= 0
+- **PASS** B Power: Expansion <= Desired Expansion (kernel-v2)
+- **PASS** A Refinery: Active <= Installed
+- **PASS** A Refinery: Inactive identity
+- **PASS** A Refinery: Lifetime account identity
+- **PASS** A Refinery: Target Active <= Installed
+- **PASS** A Refinery: Target Active <= Required Active
+- **PASS** A Refinery: kernel stocks >= 0
+- **PASS** A Refinery: kernel flows >= 0
+- **PASS** A Refinery: Expansion <= Desired Expansion (kernel-v2)
+- **PASS** B Refinery: Active <= Installed
+- **PASS** B Refinery: Inactive identity
+- **PASS** B Refinery: Lifetime account identity
+- **PASS** B Refinery: Target Active <= Installed
+- **PASS** B Refinery: Target Active <= Required Active
+- **PASS** B Refinery: kernel stocks >= 0
+- **PASS** B Refinery: kernel flows >= 0
+- **PASS** B Refinery: Expansion <= Desired Expansion (kernel-v2)
+- **PASS** Transport: Active <= Installed
+- **PASS** Transport: Inactive identity
+- **PASS** Transport: Lifetime account identity
+- **PASS** Transport: Target Active <= Installed
+- **PASS** Transport: Target Active <= Required Active
+- **PASS** Transport: kernel stocks >= 0
+- **PASS** Transport: kernel flows >= 0
+- **PASS** Transport: Expansion <= Desired Expansion (kernel-v2)
+- **PASS** Transport priority allocation identity
+- **PASS** Transport allocated <= capacity-limited load
+- **PASS** A metal input fulfillment in [0,1]
+- **PASS** A metal input delivery <= demand
+- **PASS** A metal input delivery <= available
+- **PASS** A metal input delivery >= 0
+- **PASS** A metal input demand >= 0
+- **PASS** A metal inventory >= 0
+- **PASS** A electronics feedstock inventory >= 0
+- **PASS** A electronics inventory >= 0
+- **PASS** B metal input fulfillment in [0,1]
+- **PASS** B metal input delivery <= demand
+- **PASS** B metal input delivery <= available
+- **PASS** B metal input delivery >= 0
+- **PASS** B metal input demand >= 0
+- **PASS** B metal inventory >= 0
+- **PASS** B electronics feedstock inventory >= 0
+- **PASS** B electronics inventory >= 0
+- **PASS** A ore->metal pair identity
+- **PASS** B ore->metal pair identity
+- **PASS** A capital goods fulfillment in [0,1]
+- **PASS** A capital goods inventory >= 0
+- **PASS** A capital goods production rate >= 0
+- **PASS** A capital goods production pair identities (metal)
+- **PASS** A capital goods production pair identities (electronics)
+- **PASS** A Refinery expansion <= desired expansion
+- **PASS** A Electronics expansion <= desired expansion
+- **PASS** A Power expansion <= desired expansion
+- **PASS** B capital goods fulfillment in [0,1]
+- **PASS** B capital goods inventory >= 0
+- **PASS** B capital goods production rate >= 0
+- **PASS** B capital goods production pair identities (metal)
+- **PASS** B capital goods production pair identities (electronics)
+- **PASS** B Refinery expansion <= desired expansion
+- **PASS** B Electronics expansion <= desired expansion
+- **PASS** B Power expansion <= desired expansion
+- **PASS** A power-resource inventory >= 0
+- **PASS** A power-resource fulfillment in [0,1]
+- **PASS** A available generation <= active generation capacity
+- **FAIL** A power-resource operating identity — max abs error 1349.99928351923 > 1e-8 at day 370.5
+- **PASS** B power-resource inventory >= 0
+- **PASS** B power-resource fulfillment in [0,1]
+- **PASS** B available generation <= active generation capacity
+- **FAIL** B power-resource operating identity — max abs error 549.999511849779 > 1e-8 at day 719.75
+- **PASS** Mode 9: A intermediate delivery is zero (switch off)
+- **PASS** Mode 9: A intermediate fulfillment is 1 (switch off)
+- **PASS** Mode 9: B intermediate delivery is zero (switch off)
+- **PASS** Mode 9: B intermediate fulfillment is 1 (switch off)
+- **PASS** A feedstock->electronics pair identity (per mode)
+- **PASS** B feedstock->electronics pair identity (per mode)
+- **PASS** Mode 9: A capital goods production is zero (switch off)
+- **PASS** Mode 9: A capital goods fulfillment is 1 (switch off)
+- **PASS** Mode 9: B capital goods production is zero (switch off)
+- **PASS** Mode 9: B capital goods fulfillment is 1 (switch off)
+- **PASS** Mode 9: A capital goods inventory is a dead stock (switch off)
+- **PASS** Mode 9: B capital goods inventory is a dead stock (switch off)
+
+### Mode 10 — v7.2 Cheap-Energy Comparative Advantage
+
+- **PASS** time_axis
+- **PASS** finite_all
+- **PASS** non_negative_regex
+- **PASS** A Metal allocated <= requested
+- **PASS** A Electronics allocated <= requested
+- **PASS** A Energy supply <= active generation
+- **PASS** A supply allocation identity
+- **PASS** A unserved identity
+- **PASS** B Metal allocated <= requested
+- **PASS** B Electronics allocated <= requested
+- **PASS** B Energy supply <= active generation
+- **PASS** B supply allocation identity
+- **PASS** B unserved identity
+- **PASS** A Electronics: Active <= Installed
+- **PASS** A Electronics: Inactive identity
+- **PASS** A Electronics: Lifetime account identity
+- **PASS** A Electronics: Target Active <= Installed
+- **PASS** A Electronics: Target Active <= Required Active
+- **PASS** A Electronics: kernel stocks >= 0
+- **PASS** A Electronics: kernel flows >= 0
+- **PASS** A Electronics: Expansion <= Desired Expansion (kernel-v2)
+- **PASS** B Electronics: Active <= Installed
+- **PASS** B Electronics: Inactive identity
+- **PASS** B Electronics: Lifetime account identity
+- **PASS** B Electronics: Target Active <= Installed
+- **PASS** B Electronics: Target Active <= Required Active
+- **PASS** B Electronics: kernel stocks >= 0
+- **PASS** B Electronics: kernel flows >= 0
+- **PASS** B Electronics: Expansion <= Desired Expansion (kernel-v2)
+- **PASS** A Power: Active <= Installed
+- **PASS** A Power: Inactive identity
+- **PASS** A Power: Lifetime account identity
+- **PASS** A Power: Target Active <= Installed
+- **PASS** A Power: Target Active <= Required Active
+- **PASS** A Power: kernel stocks >= 0
+- **PASS** A Power: kernel flows >= 0
+- **PASS** A Power: Expansion <= Desired Expansion (kernel-v2)
+- **PASS** B Power: Active <= Installed
+- **PASS** B Power: Inactive identity
+- **PASS** B Power: Lifetime account identity
+- **PASS** B Power: Target Active <= Installed
+- **PASS** B Power: Target Active <= Required Active
+- **PASS** B Power: kernel stocks >= 0
+- **PASS** B Power: kernel flows >= 0
+- **PASS** B Power: Expansion <= Desired Expansion (kernel-v2)
+- **PASS** A Refinery: Active <= Installed
+- **PASS** A Refinery: Inactive identity
+- **PASS** A Refinery: Lifetime account identity
+- **PASS** A Refinery: Target Active <= Installed
+- **PASS** A Refinery: Target Active <= Required Active
+- **PASS** A Refinery: kernel stocks >= 0
+- **PASS** A Refinery: kernel flows >= 0
+- **PASS** A Refinery: Expansion <= Desired Expansion (kernel-v2)
+- **PASS** B Refinery: Active <= Installed
+- **PASS** B Refinery: Inactive identity
+- **PASS** B Refinery: Lifetime account identity
+- **PASS** B Refinery: Target Active <= Installed
+- **PASS** B Refinery: Target Active <= Required Active
+- **PASS** B Refinery: kernel stocks >= 0
+- **PASS** B Refinery: kernel flows >= 0
+- **PASS** B Refinery: Expansion <= Desired Expansion (kernel-v2)
+- **PASS** Transport: Active <= Installed
+- **PASS** Transport: Inactive identity
+- **PASS** Transport: Lifetime account identity
+- **PASS** Transport: Target Active <= Installed
+- **PASS** Transport: Target Active <= Required Active
+- **PASS** Transport: kernel stocks >= 0
+- **PASS** Transport: kernel flows >= 0
+- **PASS** Transport: Expansion <= Desired Expansion (kernel-v2)
+- **PASS** Transport priority allocation identity
+- **PASS** Transport allocated <= capacity-limited load
+- **PASS** A metal input fulfillment in [0,1]
+- **PASS** A metal input delivery <= demand
+- **PASS** A metal input delivery <= available
+- **PASS** A metal input delivery >= 0
+- **PASS** A metal input demand >= 0
+- **PASS** A metal inventory >= 0
+- **PASS** A electronics feedstock inventory >= 0
+- **PASS** A electronics inventory >= 0
+- **PASS** B metal input fulfillment in [0,1]
+- **PASS** B metal input delivery <= demand
+- **PASS** B metal input delivery <= available
+- **PASS** B metal input delivery >= 0
+- **PASS** B metal input demand >= 0
+- **PASS** B metal inventory >= 0
+- **PASS** B electronics feedstock inventory >= 0
+- **PASS** B electronics inventory >= 0
+- **PASS** A ore->metal pair identity
+- **PASS** B ore->metal pair identity
+- **PASS** A capital goods fulfillment in [0,1]
+- **PASS** A capital goods inventory >= 0
+- **PASS** A capital goods production rate >= 0
+- **PASS** A capital goods production pair identities (metal)
+- **PASS** A capital goods production pair identities (electronics)
+- **PASS** A Refinery expansion <= desired expansion
+- **PASS** A Electronics expansion <= desired expansion
+- **PASS** A Power expansion <= desired expansion
+- **PASS** B capital goods fulfillment in [0,1]
+- **PASS** B capital goods inventory >= 0
+- **PASS** B capital goods production rate >= 0
+- **PASS** B capital goods production pair identities (metal)
+- **PASS** B capital goods production pair identities (electronics)
+- **PASS** B Refinery expansion <= desired expansion
+- **PASS** B Electronics expansion <= desired expansion
+- **PASS** B Power expansion <= desired expansion
+- **PASS** A power-resource inventory >= 0
+- **PASS** A power-resource fulfillment in [0,1]
+- **PASS** A available generation <= active generation capacity
+- **FAIL** A power-resource operating identity — max abs error 1349.9992596674 > 1e-8 at day 373.5
+- **PASS** B power-resource inventory >= 0
+- **PASS** B power-resource fulfillment in [0,1]
+- **PASS** B available generation <= active generation capacity
+- **FAIL** B power-resource operating identity — max abs error 549.999346183482 > 1e-8 at day 12.5
+- **PASS** Mode 10: A intermediate delivery is zero (switch off)
+- **PASS** Mode 10: A intermediate fulfillment is 1 (switch off)
+- **PASS** Mode 10: B intermediate delivery is zero (switch off)
+- **PASS** Mode 10: B intermediate fulfillment is 1 (switch off)
+- **PASS** A feedstock->electronics pair identity (per mode)
+- **PASS** B feedstock->electronics pair identity (per mode)
+- **PASS** Mode 10: A capital goods production is zero (switch off)
+- **PASS** Mode 10: A capital goods fulfillment is 1 (switch off)
+- **PASS** Mode 10: B capital goods production is zero (switch off)
+- **PASS** Mode 10: B capital goods fulfillment is 1 (switch off)
+- **PASS** Mode 10: A capital goods inventory is a dead stock (switch off)
+- **PASS** Mode 10: B capital goods inventory is a dead stock (switch off)
+
+### Mode 11 — v7.2 Generation Capacity Shock Recovery
+
+- **PASS** time_axis
+- **PASS** finite_all
+- **PASS** non_negative_regex
+- **PASS** A Metal allocated <= requested
+- **PASS** A Electronics allocated <= requested
+- **PASS** A Energy supply <= active generation
+- **PASS** A supply allocation identity
+- **PASS** A unserved identity
+- **PASS** B Metal allocated <= requested
+- **PASS** B Electronics allocated <= requested
+- **PASS** B Energy supply <= active generation
+- **PASS** B supply allocation identity
+- **PASS** B unserved identity
+- **PASS** A Electronics: Active <= Installed
+- **PASS** A Electronics: Inactive identity
+- **PASS** A Electronics: Lifetime account identity
+- **PASS** A Electronics: Target Active <= Installed
+- **PASS** A Electronics: Target Active <= Required Active
+- **PASS** A Electronics: kernel stocks >= 0
+- **PASS** A Electronics: kernel flows >= 0
+- **PASS** A Electronics: Expansion <= Desired Expansion (kernel-v2)
+- **PASS** B Electronics: Active <= Installed
+- **PASS** B Electronics: Inactive identity
+- **PASS** B Electronics: Lifetime account identity
+- **PASS** B Electronics: Target Active <= Installed
+- **PASS** B Electronics: Target Active <= Required Active
+- **PASS** B Electronics: kernel stocks >= 0
+- **PASS** B Electronics: kernel flows >= 0
+- **PASS** B Electronics: Expansion <= Desired Expansion (kernel-v2)
+- **PASS** A Power: Active <= Installed
+- **PASS** A Power: Inactive identity
+- **PASS** A Power: Lifetime account identity
+- **PASS** A Power: Target Active <= Installed
+- **PASS** A Power: Target Active <= Required Active
+- **PASS** A Power: kernel stocks >= 0
+- **PASS** A Power: kernel flows >= 0
+- **PASS** A Power: Expansion <= Desired Expansion (kernel-v2)
+- **PASS** B Power: Active <= Installed
+- **PASS** B Power: Inactive identity
+- **PASS** B Power: Lifetime account identity
+- **PASS** B Power: Target Active <= Installed
+- **PASS** B Power: Target Active <= Required Active
+- **PASS** B Power: kernel stocks >= 0
+- **PASS** B Power: kernel flows >= 0
+- **PASS** B Power: Expansion <= Desired Expansion (kernel-v2)
+- **PASS** A Refinery: Active <= Installed
+- **PASS** A Refinery: Inactive identity
+- **PASS** A Refinery: Lifetime account identity
+- **PASS** A Refinery: Target Active <= Installed
+- **PASS** A Refinery: Target Active <= Required Active
+- **PASS** A Refinery: kernel stocks >= 0
+- **PASS** A Refinery: kernel flows >= 0
+- **PASS** A Refinery: Expansion <= Desired Expansion (kernel-v2)
+- **PASS** B Refinery: Active <= Installed
+- **PASS** B Refinery: Inactive identity
+- **PASS** B Refinery: Lifetime account identity
+- **PASS** B Refinery: Target Active <= Installed
+- **PASS** B Refinery: Target Active <= Required Active
+- **PASS** B Refinery: kernel stocks >= 0
+- **PASS** B Refinery: kernel flows >= 0
+- **PASS** B Refinery: Expansion <= Desired Expansion (kernel-v2)
+- **PASS** Transport: Active <= Installed
+- **PASS** Transport: Inactive identity
+- **PASS** Transport: Lifetime account identity
+- **PASS** Transport: Target Active <= Installed
+- **PASS** Transport: Target Active <= Required Active
+- **PASS** Transport: kernel stocks >= 0
+- **PASS** Transport: kernel flows >= 0
+- **PASS** Transport: Expansion <= Desired Expansion (kernel-v2)
+- **PASS** Transport priority allocation identity
+- **PASS** Transport allocated <= capacity-limited load
+- **PASS** A metal input fulfillment in [0,1]
+- **PASS** A metal input delivery <= demand
+- **PASS** A metal input delivery <= available
+- **PASS** A metal input delivery >= 0
+- **PASS** A metal input demand >= 0
+- **PASS** A metal inventory >= 0
+- **PASS** A electronics feedstock inventory >= 0
+- **PASS** A electronics inventory >= 0
+- **PASS** B metal input fulfillment in [0,1]
+- **PASS** B metal input delivery <= demand
+- **PASS** B metal input delivery <= available
+- **PASS** B metal input delivery >= 0
+- **PASS** B metal input demand >= 0
+- **PASS** B metal inventory >= 0
+- **PASS** B electronics feedstock inventory >= 0
+- **PASS** B electronics inventory >= 0
+- **PASS** A ore->metal pair identity
+- **PASS** B ore->metal pair identity
+- **PASS** A capital goods fulfillment in [0,1]
+- **PASS** A capital goods inventory >= 0
+- **PASS** A capital goods production rate >= 0
+- **PASS** A capital goods production pair identities (metal)
+- **PASS** A capital goods production pair identities (electronics)
+- **PASS** A Refinery expansion <= desired expansion
+- **PASS** A Electronics expansion <= desired expansion
+- **PASS** A Power expansion <= desired expansion
+- **PASS** B capital goods fulfillment in [0,1]
+- **PASS** B capital goods inventory >= 0
+- **PASS** B capital goods production rate >= 0
+- **PASS** B capital goods production pair identities (metal)
+- **PASS** B capital goods production pair identities (electronics)
+- **PASS** B Refinery expansion <= desired expansion
+- **PASS** B Electronics expansion <= desired expansion
+- **PASS** B Power expansion <= desired expansion
+- **PASS** A power-resource inventory >= 0
+- **PASS** A power-resource fulfillment in [0,1]
+- **PASS** A available generation <= active generation capacity
+- **FAIL** A power-resource operating identity — max abs error 1317.14893614507 > 1e-8 at day 926.5
+- **PASS** B power-resource inventory >= 0
+- **PASS** B power-resource fulfillment in [0,1]
+- **PASS** B available generation <= active generation capacity
+- **FAIL** B power-resource operating identity — max abs error 549.999346183482 > 1e-8 at day 12.5
+- **PASS** Mode 11: A intermediate delivery is zero (switch off)
+- **PASS** Mode 11: A intermediate fulfillment is 1 (switch off)
+- **PASS** Mode 11: B intermediate delivery is zero (switch off)
+- **PASS** Mode 11: B intermediate fulfillment is 1 (switch off)
+- **PASS** A feedstock->electronics pair identity (per mode)
+- **PASS** B feedstock->electronics pair identity (per mode)
+- **PASS** Mode 11: A capital goods production is zero (switch off)
+- **PASS** Mode 11: A capital goods fulfillment is 1 (switch off)
+- **PASS** Mode 11: B capital goods production is zero (switch off)
+- **PASS** Mode 11: B capital goods fulfillment is 1 (switch off)
+- **PASS** Mode 11: A capital goods inventory is a dead stock (switch off)
+- **PASS** Mode 11: B capital goods inventory is a dead stock (switch off)
+
+### Mode 12 — v7.3 Lifecycle Baseline
+
+- **PASS** time_axis
+- **PASS** finite_all
+- **PASS** non_negative_regex
+- **PASS** A Metal allocated <= requested
+- **PASS** A Electronics allocated <= requested
+- **PASS** A Energy supply <= active generation
+- **PASS** A supply allocation identity
+- **PASS** A unserved identity
+- **PASS** B Metal allocated <= requested
+- **PASS** B Electronics allocated <= requested
+- **PASS** B Energy supply <= active generation
+- **PASS** B supply allocation identity
+- **PASS** B unserved identity
+- **PASS** A Electronics: Active <= Installed
+- **PASS** A Electronics: Inactive identity
+- **PASS** A Electronics: Lifetime account identity
+- **PASS** A Electronics: Target Active <= Installed
+- **PASS** A Electronics: Target Active <= Required Active
+- **PASS** A Electronics: kernel stocks >= 0
+- **PASS** A Electronics: kernel flows >= 0
+- **PASS** A Electronics: Expansion <= Desired Expansion (kernel-v2)
+- **PASS** B Electronics: Active <= Installed
+- **PASS** B Electronics: Inactive identity
+- **PASS** B Electronics: Lifetime account identity
+- **PASS** B Electronics: Target Active <= Installed
+- **PASS** B Electronics: Target Active <= Required Active
+- **PASS** B Electronics: kernel stocks >= 0
+- **PASS** B Electronics: kernel flows >= 0
+- **PASS** B Electronics: Expansion <= Desired Expansion (kernel-v2)
+- **PASS** A Power: Active <= Installed
+- **PASS** A Power: Inactive identity
+- **PASS** A Power: Lifetime account identity
+- **PASS** A Power: Target Active <= Installed
+- **PASS** A Power: Target Active <= Required Active
+- **PASS** A Power: kernel stocks >= 0
+- **PASS** A Power: kernel flows >= 0
+- **PASS** A Power: Expansion <= Desired Expansion (kernel-v2)
+- **PASS** B Power: Active <= Installed
+- **PASS** B Power: Inactive identity
+- **PASS** B Power: Lifetime account identity
+- **PASS** B Power: Target Active <= Installed
+- **PASS** B Power: Target Active <= Required Active
+- **PASS** B Power: kernel stocks >= 0
+- **PASS** B Power: kernel flows >= 0
+- **PASS** B Power: Expansion <= Desired Expansion (kernel-v2)
+- **PASS** A Refinery: Active <= Installed
+- **PASS** A Refinery: Inactive identity
+- **PASS** A Refinery: Lifetime account identity
+- **PASS** A Refinery: Target Active <= Installed
+- **PASS** A Refinery: Target Active <= Required Active
+- **PASS** A Refinery: kernel stocks >= 0
+- **PASS** A Refinery: kernel flows >= 0
+- **PASS** A Refinery: Expansion <= Desired Expansion (kernel-v2)
+- **PASS** B Refinery: Active <= Installed
+- **PASS** B Refinery: Inactive identity
+- **PASS** B Refinery: Lifetime account identity
+- **PASS** B Refinery: Target Active <= Installed
+- **PASS** B Refinery: Target Active <= Required Active
+- **PASS** B Refinery: kernel stocks >= 0
+- **PASS** B Refinery: kernel flows >= 0
+- **PASS** B Refinery: Expansion <= Desired Expansion (kernel-v2)
+- **PASS** Transport: Active <= Installed
+- **PASS** Transport: Inactive identity
+- **PASS** Transport: Lifetime account identity
+- **PASS** Transport: Target Active <= Installed
+- **PASS** Transport: Target Active <= Required Active
+- **PASS** Transport: kernel stocks >= 0
+- **PASS** Transport: kernel flows >= 0
+- **PASS** Transport: Expansion <= Desired Expansion (kernel-v2)
+- **PASS** Transport priority allocation identity
+- **PASS** Transport allocated <= capacity-limited load
+- **PASS** A metal input fulfillment in [0,1]
+- **PASS** A metal input delivery <= demand
+- **PASS** A metal input delivery <= available
+- **PASS** A metal input delivery >= 0
+- **PASS** A metal input demand >= 0
+- **PASS** A metal inventory >= 0
+- **PASS** A electronics feedstock inventory >= 0
+- **PASS** A electronics inventory >= 0
+- **PASS** B metal input fulfillment in [0,1]
+- **PASS** B metal input delivery <= demand
+- **PASS** B metal input delivery <= available
+- **PASS** B metal input delivery >= 0
+- **PASS** B metal input demand >= 0
+- **PASS** B metal inventory >= 0
+- **PASS** B electronics feedstock inventory >= 0
+- **PASS** B electronics inventory >= 0
+- **PASS** A ore->metal pair identity
+- **PASS** B ore->metal pair identity
+- **PASS** A capital goods fulfillment in [0,1]
+- **PASS** A capital goods inventory >= 0
+- **PASS** A capital goods production rate >= 0
+- **PASS** A capital goods production pair identities (metal)
+- **PASS** A capital goods production pair identities (electronics)
+- **PASS** A Refinery expansion <= desired expansion
+- **PASS** A Electronics expansion <= desired expansion
+- **PASS** A Power expansion <= desired expansion
+- **PASS** B capital goods fulfillment in [0,1]
+- **PASS** B capital goods inventory >= 0
+- **PASS** B capital goods production rate >= 0
+- **PASS** B capital goods production pair identities (metal)
+- **PASS** B capital goods production pair identities (electronics)
+- **PASS** B Refinery expansion <= desired expansion
+- **PASS** B Electronics expansion <= desired expansion
+- **PASS** B Power expansion <= desired expansion
+- **PASS** A power-resource inventory >= 0
+- **PASS** A power-resource fulfillment in [0,1]
+- **PASS** A available generation <= active generation capacity
+- **FAIL** A power-resource operating identity — max abs error 1317.76281835551 > 1e-8 at day 432.5
+- **PASS** B power-resource inventory >= 0
+- **PASS** B power-resource fulfillment in [0,1]
+- **PASS** B available generation <= active generation capacity
+- **FAIL** B power-resource operating identity — max abs error 563.305606078595 > 1e-8 at day 114.5
+- **PASS** Mode 12 late A energy scarcity is zero
+- **PASS** Mode 12 late B energy scarcity is zero
+- **PASS** Mode 12: A intermediate delivery is zero (switch off)
+- **PASS** Mode 12: A intermediate fulfillment is 1 (switch off)
+- **PASS** Mode 12: B intermediate delivery is zero (switch off)
+- **PASS** Mode 12: B intermediate fulfillment is 1 (switch off)
+- **PASS** A feedstock->electronics pair identity (per mode)
+- **PASS** B feedstock->electronics pair identity (per mode)
+- **PASS** Mode 12: A capital goods production is zero (switch off)
+- **PASS** Mode 12: A capital goods fulfillment is 1 (switch off)
+- **PASS** Mode 12: B capital goods production is zero (switch off)
+- **PASS** Mode 12: B capital goods fulfillment is 1 (switch off)
+- **PASS** Mode 12: A capital goods inventory is a dead stock (switch off)
+- **PASS** Mode 12: B capital goods inventory is a dead stock (switch off)
+
+### Mode 13 — v7.3 Temporary Electronics Reactivation
+
+- **PASS** time_axis
+- **PASS** finite_all
+- **PASS** non_negative_regex
+- **PASS** A Metal allocated <= requested
+- **PASS** A Electronics allocated <= requested
+- **PASS** A Energy supply <= active generation
+- **PASS** A supply allocation identity
+- **PASS** A unserved identity
+- **PASS** B Metal allocated <= requested
+- **PASS** B Electronics allocated <= requested
+- **PASS** B Energy supply <= active generation
+- **PASS** B supply allocation identity
+- **PASS** B unserved identity
+- **PASS** A Electronics: Active <= Installed
+- **PASS** A Electronics: Inactive identity
+- **PASS** A Electronics: Lifetime account identity
+- **PASS** A Electronics: Target Active <= Installed
+- **PASS** A Electronics: Target Active <= Required Active
+- **PASS** A Electronics: kernel stocks >= 0
+- **PASS** A Electronics: kernel flows >= 0
+- **PASS** A Electronics: Expansion <= Desired Expansion (kernel-v2)
+- **PASS** B Electronics: Active <= Installed
+- **PASS** B Electronics: Inactive identity
+- **PASS** B Electronics: Lifetime account identity
+- **PASS** B Electronics: Target Active <= Installed
+- **PASS** B Electronics: Target Active <= Required Active
+- **PASS** B Electronics: kernel stocks >= 0
+- **PASS** B Electronics: kernel flows >= 0
+- **PASS** B Electronics: Expansion <= Desired Expansion (kernel-v2)
+- **PASS** A Power: Active <= Installed
+- **PASS** A Power: Inactive identity
+- **PASS** A Power: Lifetime account identity
+- **PASS** A Power: Target Active <= Installed
+- **PASS** A Power: Target Active <= Required Active
+- **PASS** A Power: kernel stocks >= 0
+- **PASS** A Power: kernel flows >= 0
+- **PASS** A Power: Expansion <= Desired Expansion (kernel-v2)
+- **PASS** B Power: Active <= Installed
+- **PASS** B Power: Inactive identity
+- **PASS** B Power: Lifetime account identity
+- **PASS** B Power: Target Active <= Installed
+- **PASS** B Power: Target Active <= Required Active
+- **PASS** B Power: kernel stocks >= 0
+- **PASS** B Power: kernel flows >= 0
+- **PASS** B Power: Expansion <= Desired Expansion (kernel-v2)
+- **PASS** A Refinery: Active <= Installed
+- **PASS** A Refinery: Inactive identity
+- **PASS** A Refinery: Lifetime account identity
+- **PASS** A Refinery: Target Active <= Installed
+- **PASS** A Refinery: Target Active <= Required Active
+- **PASS** A Refinery: kernel stocks >= 0
+- **PASS** A Refinery: kernel flows >= 0
+- **PASS** A Refinery: Expansion <= Desired Expansion (kernel-v2)
+- **PASS** B Refinery: Active <= Installed
+- **PASS** B Refinery: Inactive identity
+- **PASS** B Refinery: Lifetime account identity
+- **PASS** B Refinery: Target Active <= Installed
+- **PASS** B Refinery: Target Active <= Required Active
+- **PASS** B Refinery: kernel stocks >= 0
+- **PASS** B Refinery: kernel flows >= 0
+- **PASS** B Refinery: Expansion <= Desired Expansion (kernel-v2)
+- **PASS** Transport: Active <= Installed
+- **PASS** Transport: Inactive identity
+- **PASS** Transport: Lifetime account identity
+- **PASS** Transport: Target Active <= Installed
+- **PASS** Transport: Target Active <= Required Active
+- **PASS** Transport: kernel stocks >= 0
+- **PASS** Transport: kernel flows >= 0
+- **PASS** Transport: Expansion <= Desired Expansion (kernel-v2)
+- **PASS** Transport priority allocation identity
+- **PASS** Transport allocated <= capacity-limited load
+- **PASS** A metal input fulfillment in [0,1]
+- **PASS** A metal input delivery <= demand
+- **PASS** A metal input delivery <= available
+- **PASS** A metal input delivery >= 0
+- **PASS** A metal input demand >= 0
+- **PASS** A metal inventory >= 0
+- **PASS** A electronics feedstock inventory >= 0
+- **PASS** A electronics inventory >= 0
+- **PASS** B metal input fulfillment in [0,1]
+- **PASS** B metal input delivery <= demand
+- **PASS** B metal input delivery <= available
+- **PASS** B metal input delivery >= 0
+- **PASS** B metal input demand >= 0
+- **PASS** B metal inventory >= 0
+- **PASS** B electronics feedstock inventory >= 0
+- **PASS** B electronics inventory >= 0
+- **PASS** A ore->metal pair identity
+- **PASS** B ore->metal pair identity
+- **PASS** A capital goods fulfillment in [0,1]
+- **PASS** A capital goods inventory >= 0
+- **PASS** A capital goods production rate >= 0
+- **PASS** A capital goods production pair identities (metal)
+- **PASS** A capital goods production pair identities (electronics)
+- **PASS** A Refinery expansion <= desired expansion
+- **PASS** A Electronics expansion <= desired expansion
+- **PASS** A Power expansion <= desired expansion
+- **PASS** B capital goods fulfillment in [0,1]
+- **PASS** B capital goods inventory >= 0
+- **PASS** B capital goods production rate >= 0
+- **PASS** B capital goods production pair identities (metal)
+- **PASS** B capital goods production pair identities (electronics)
+- **PASS** B Refinery expansion <= desired expansion
+- **PASS** B Electronics expansion <= desired expansion
+- **PASS** B Power expansion <= desired expansion
+- **PASS** A power-resource inventory >= 0
+- **PASS** A power-resource fulfillment in [0,1]
+- **PASS** A available generation <= active generation capacity
+- **FAIL** A power-resource operating identity — max abs error 1380.00235351883 > 1e-8 at day 719.75
+- **PASS** B power-resource inventory >= 0
+- **PASS** B power-resource fulfillment in [0,1]
+- **PASS** B available generation <= active generation capacity
+- **FAIL** B power-resource operating identity — max abs error 566.6041599062 > 1e-8 at day 698.25
+- **PASS** Mode 13 A Electronics reactivation occurs
+- **PASS** Mode 13 no A Electronics construction during temporary shock
+- **PASS** Mode 13: A intermediate delivery is zero (switch off)
+- **PASS** Mode 13: A intermediate fulfillment is 1 (switch off)
+- **PASS** Mode 13: B intermediate delivery is zero (switch off)
+- **PASS** Mode 13: B intermediate fulfillment is 1 (switch off)
+- **PASS** A feedstock->electronics pair identity (per mode)
+- **PASS** B feedstock->electronics pair identity (per mode)
+- **PASS** Mode 13: A capital goods production is zero (switch off)
+- **PASS** Mode 13: A capital goods fulfillment is 1 (switch off)
+- **PASS** Mode 13: B capital goods production is zero (switch off)
+- **PASS** Mode 13: B capital goods fulfillment is 1 (switch off)
+- **PASS** Mode 13: A capital goods inventory is a dead stock (switch off)
+- **PASS** Mode 13: B capital goods inventory is a dead stock (switch off)
+
+### Mode 14 — v7.3 Sustained Electronics Growth
+
+- **PASS** time_axis
+- **PASS** finite_all
+- **PASS** non_negative_regex
+- **PASS** A Metal allocated <= requested
+- **PASS** A Electronics allocated <= requested
+- **PASS** A Energy supply <= active generation
+- **PASS** A supply allocation identity
+- **PASS** A unserved identity
+- **PASS** B Metal allocated <= requested
+- **PASS** B Electronics allocated <= requested
+- **PASS** B Energy supply <= active generation
+- **PASS** B supply allocation identity
+- **PASS** B unserved identity
+- **PASS** A Electronics: Active <= Installed
+- **PASS** A Electronics: Inactive identity
+- **PASS** A Electronics: Lifetime account identity
+- **PASS** A Electronics: Target Active <= Installed
+- **PASS** A Electronics: Target Active <= Required Active
+- **PASS** A Electronics: kernel stocks >= 0
+- **PASS** A Electronics: kernel flows >= 0
+- **PASS** A Electronics: Expansion <= Desired Expansion (kernel-v2)
+- **PASS** B Electronics: Active <= Installed
+- **PASS** B Electronics: Inactive identity
+- **PASS** B Electronics: Lifetime account identity
+- **PASS** B Electronics: Target Active <= Installed
+- **PASS** B Electronics: Target Active <= Required Active
+- **PASS** B Electronics: kernel stocks >= 0
+- **PASS** B Electronics: kernel flows >= 0
+- **PASS** B Electronics: Expansion <= Desired Expansion (kernel-v2)
+- **PASS** A Power: Active <= Installed
+- **PASS** A Power: Inactive identity
+- **PASS** A Power: Lifetime account identity
+- **PASS** A Power: Target Active <= Installed
+- **PASS** A Power: Target Active <= Required Active
+- **PASS** A Power: kernel stocks >= 0
+- **PASS** A Power: kernel flows >= 0
+- **PASS** A Power: Expansion <= Desired Expansion (kernel-v2)
+- **PASS** B Power: Active <= Installed
+- **PASS** B Power: Inactive identity
+- **PASS** B Power: Lifetime account identity
+- **PASS** B Power: Target Active <= Installed
+- **PASS** B Power: Target Active <= Required Active
+- **PASS** B Power: kernel stocks >= 0
+- **PASS** B Power: kernel flows >= 0
+- **PASS** B Power: Expansion <= Desired Expansion (kernel-v2)
+- **PASS** A Refinery: Active <= Installed
+- **PASS** A Refinery: Inactive identity
+- **PASS** A Refinery: Lifetime account identity
+- **PASS** A Refinery: Target Active <= Installed
+- **PASS** A Refinery: Target Active <= Required Active
+- **PASS** A Refinery: kernel stocks >= 0
+- **PASS** A Refinery: kernel flows >= 0
+- **PASS** A Refinery: Expansion <= Desired Expansion (kernel-v2)
+- **PASS** B Refinery: Active <= Installed
+- **PASS** B Refinery: Inactive identity
+- **PASS** B Refinery: Lifetime account identity
+- **PASS** B Refinery: Target Active <= Installed
+- **PASS** B Refinery: Target Active <= Required Active
+- **PASS** B Refinery: kernel stocks >= 0
+- **PASS** B Refinery: kernel flows >= 0
+- **PASS** B Refinery: Expansion <= Desired Expansion (kernel-v2)
+- **PASS** Transport: Active <= Installed
+- **PASS** Transport: Inactive identity
+- **PASS** Transport: Lifetime account identity
+- **PASS** Transport: Target Active <= Installed
+- **PASS** Transport: Target Active <= Required Active
+- **PASS** Transport: kernel stocks >= 0
+- **PASS** Transport: kernel flows >= 0
+- **PASS** Transport: Expansion <= Desired Expansion (kernel-v2)
+- **PASS** Transport priority allocation identity
+- **PASS** Transport allocated <= capacity-limited load
+- **PASS** A metal input fulfillment in [0,1]
+- **PASS** A metal input delivery <= demand
+- **PASS** A metal input delivery <= available
+- **PASS** A metal input delivery >= 0
+- **PASS** A metal input demand >= 0
+- **PASS** A metal inventory >= 0
+- **PASS** A electronics feedstock inventory >= 0
+- **PASS** A electronics inventory >= 0
+- **PASS** B metal input fulfillment in [0,1]
+- **PASS** B metal input delivery <= demand
+- **PASS** B metal input delivery <= available
+- **PASS** B metal input delivery >= 0
+- **PASS** B metal input demand >= 0
+- **PASS** B metal inventory >= 0
+- **PASS** B electronics feedstock inventory >= 0
+- **PASS** B electronics inventory >= 0
+- **PASS** A ore->metal pair identity
+- **PASS** B ore->metal pair identity
+- **PASS** A capital goods fulfillment in [0,1]
+- **PASS** A capital goods inventory >= 0
+- **PASS** A capital goods production rate >= 0
+- **PASS** A capital goods production pair identities (metal)
+- **PASS** A capital goods production pair identities (electronics)
+- **PASS** A Refinery expansion <= desired expansion
+- **PASS** A Electronics expansion <= desired expansion
+- **PASS** A Power expansion <= desired expansion
+- **PASS** B capital goods fulfillment in [0,1]
+- **PASS** B capital goods inventory >= 0
+- **PASS** B capital goods production rate >= 0
+- **PASS** B capital goods production pair identities (metal)
+- **PASS** B capital goods production pair identities (electronics)
+- **PASS** B Refinery expansion <= desired expansion
+- **PASS** B Electronics expansion <= desired expansion
+- **PASS** B Power expansion <= desired expansion
+- **PASS** A power-resource inventory >= 0
+- **PASS** A power-resource fulfillment in [0,1]
+- **PASS** A available generation <= active generation capacity
+- **FAIL** A power-resource operating identity — max abs error 1552.3869077692 > 1e-8 at day 1080
+- **PASS** B power-resource inventory >= 0
+- **PASS** B power-resource fulfillment in [0,1]
+- **PASS** B available generation <= active generation capacity
+- **FAIL** B power-resource operating identity — max abs error 596.584648334232 > 1e-8 at day 943.25
+- **PASS** Mode 14 reactivation precedes new Electronics construction
+- **PASS** Mode 14 A generation capital expands materially
+- **PASS** Mode 14: A intermediate delivery is zero (switch off)
+- **PASS** Mode 14: A intermediate fulfillment is 1 (switch off)
+- **PASS** Mode 14: B intermediate delivery is zero (switch off)
+- **PASS** Mode 14: B intermediate fulfillment is 1 (switch off)
+- **PASS** A feedstock->electronics pair identity (per mode)
+- **PASS** B feedstock->electronics pair identity (per mode)
+- **PASS** Mode 14: A capital goods production is zero (switch off)
+- **PASS** Mode 14: A capital goods fulfillment is 1 (switch off)
+- **PASS** Mode 14: B capital goods production is zero (switch off)
+- **PASS** Mode 14: B capital goods fulfillment is 1 (switch off)
+- **PASS** Mode 14: A capital goods inventory is a dead stock (switch off)
+- **PASS** Mode 14: B capital goods inventory is a dead stock (switch off)
+
+### Mode 15 — v7.3 Electronics Collapse and Recovery
+
+- **PASS** time_axis
+- **PASS** finite_all
+- **PASS** non_negative_regex
+- **PASS** A Metal allocated <= requested
+- **PASS** A Electronics allocated <= requested
+- **PASS** A Energy supply <= active generation
+- **PASS** A supply allocation identity
+- **PASS** A unserved identity
+- **PASS** B Metal allocated <= requested
+- **PASS** B Electronics allocated <= requested
+- **PASS** B Energy supply <= active generation
+- **PASS** B supply allocation identity
+- **PASS** B unserved identity
+- **PASS** A Electronics: Active <= Installed
+- **PASS** A Electronics: Inactive identity
+- **PASS** A Electronics: Lifetime account identity
+- **PASS** A Electronics: Target Active <= Installed
+- **PASS** A Electronics: Target Active <= Required Active
+- **PASS** A Electronics: kernel stocks >= 0
+- **PASS** A Electronics: kernel flows >= 0
+- **PASS** A Electronics: Expansion <= Desired Expansion (kernel-v2)
+- **PASS** B Electronics: Active <= Installed
+- **PASS** B Electronics: Inactive identity
+- **PASS** B Electronics: Lifetime account identity
+- **PASS** B Electronics: Target Active <= Installed
+- **PASS** B Electronics: Target Active <= Required Active
+- **PASS** B Electronics: kernel stocks >= 0
+- **PASS** B Electronics: kernel flows >= 0
+- **PASS** B Electronics: Expansion <= Desired Expansion (kernel-v2)
+- **PASS** A Power: Active <= Installed
+- **PASS** A Power: Inactive identity
+- **PASS** A Power: Lifetime account identity
+- **PASS** A Power: Target Active <= Installed
+- **PASS** A Power: Target Active <= Required Active
+- **PASS** A Power: kernel stocks >= 0
+- **PASS** A Power: kernel flows >= 0
+- **PASS** A Power: Expansion <= Desired Expansion (kernel-v2)
+- **PASS** B Power: Active <= Installed
+- **PASS** B Power: Inactive identity
+- **PASS** B Power: Lifetime account identity
+- **PASS** B Power: Target Active <= Installed
+- **PASS** B Power: Target Active <= Required Active
+- **PASS** B Power: kernel stocks >= 0
+- **PASS** B Power: kernel flows >= 0
+- **PASS** B Power: Expansion <= Desired Expansion (kernel-v2)
+- **PASS** A Refinery: Active <= Installed
+- **PASS** A Refinery: Inactive identity
+- **PASS** A Refinery: Lifetime account identity
+- **PASS** A Refinery: Target Active <= Installed
+- **PASS** A Refinery: Target Active <= Required Active
+- **PASS** A Refinery: kernel stocks >= 0
+- **PASS** A Refinery: kernel flows >= 0
+- **PASS** A Refinery: Expansion <= Desired Expansion (kernel-v2)
+- **PASS** B Refinery: Active <= Installed
+- **PASS** B Refinery: Inactive identity
+- **PASS** B Refinery: Lifetime account identity
+- **PASS** B Refinery: Target Active <= Installed
+- **PASS** B Refinery: Target Active <= Required Active
+- **PASS** B Refinery: kernel stocks >= 0
+- **PASS** B Refinery: kernel flows >= 0
+- **PASS** B Refinery: Expansion <= Desired Expansion (kernel-v2)
+- **PASS** Transport: Active <= Installed
+- **PASS** Transport: Inactive identity
+- **PASS** Transport: Lifetime account identity
+- **PASS** Transport: Target Active <= Installed
+- **PASS** Transport: Target Active <= Required Active
+- **PASS** Transport: kernel stocks >= 0
+- **PASS** Transport: kernel flows >= 0
+- **PASS** Transport: Expansion <= Desired Expansion (kernel-v2)
+- **PASS** Transport priority allocation identity
+- **PASS** Transport allocated <= capacity-limited load
+- **PASS** A metal input fulfillment in [0,1]
+- **PASS** A metal input delivery <= demand
+- **PASS** A metal input delivery <= available
+- **PASS** A metal input delivery >= 0
+- **PASS** A metal input demand >= 0
+- **PASS** A metal inventory >= 0
+- **PASS** A electronics feedstock inventory >= 0
+- **PASS** A electronics inventory >= 0
+- **PASS** B metal input fulfillment in [0,1]
+- **PASS** B metal input delivery <= demand
+- **PASS** B metal input delivery <= available
+- **PASS** B metal input delivery >= 0
+- **PASS** B metal input demand >= 0
+- **PASS** B metal inventory >= 0
+- **PASS** B electronics feedstock inventory >= 0
+- **PASS** B electronics inventory >= 0
+- **PASS** A ore->metal pair identity
+- **PASS** B ore->metal pair identity
+- **PASS** A capital goods fulfillment in [0,1]
+- **PASS** A capital goods inventory >= 0
+- **PASS** A capital goods production rate >= 0
+- **PASS** A capital goods production pair identities (metal)
+- **PASS** A capital goods production pair identities (electronics)
+- **PASS** A Refinery expansion <= desired expansion
+- **PASS** A Electronics expansion <= desired expansion
+- **PASS** A Power expansion <= desired expansion
+- **PASS** B capital goods fulfillment in [0,1]
+- **PASS** B capital goods inventory >= 0
+- **PASS** B capital goods production rate >= 0
+- **PASS** B capital goods production pair identities (metal)
+- **PASS** B capital goods production pair identities (electronics)
+- **PASS** B Refinery expansion <= desired expansion
+- **PASS** B Electronics expansion <= desired expansion
+- **PASS** B Power expansion <= desired expansion
+- **PASS** A power-resource inventory >= 0
+- **PASS** A power-resource fulfillment in [0,1]
+- **PASS** A available generation <= active generation capacity
+- **FAIL** A power-resource operating identity — max abs error 1333.93713310574 > 1e-8 at day 940
+- **PASS** B power-resource inventory >= 0
+- **PASS** B power-resource fulfillment in [0,1]
+- **PASS** B available generation <= active generation capacity
+- **FAIL** B power-resource operating identity — max abs error 563.305606078595 > 1e-8 at day 114.5
+- **PASS** Mode 15 B Electronics mothballs during collapse
+- **PASS** Mode 15 B Electronics reactivates after recovery
+- **PASS** Mode 15 B Power reactivates after recovery
+- **PASS** Mode 15: A intermediate delivery is zero (switch off)
+- **PASS** Mode 15: A intermediate fulfillment is 1 (switch off)
+- **PASS** Mode 15: B intermediate delivery is zero (switch off)
+- **PASS** Mode 15: B intermediate fulfillment is 1 (switch off)
+- **PASS** A feedstock->electronics pair identity (per mode)
+- **PASS** B feedstock->electronics pair identity (per mode)
+- **PASS** Mode 15: A capital goods production is zero (switch off)
+- **PASS** Mode 15: A capital goods fulfillment is 1 (switch off)
+- **PASS** Mode 15: B capital goods production is zero (switch off)
+- **PASS** Mode 15: B capital goods fulfillment is 1 (switch off)
+- **PASS** Mode 15: A capital goods inventory is a dead stock (switch off)
+- **PASS** Mode 15: B capital goods inventory is a dead stock (switch off)
+
+### Mode 16 — v7.3 Sustained Metal Driven Power Growth
+
+- **PASS** time_axis
+- **PASS** finite_all
+- **PASS** non_negative_regex
+- **PASS** A Metal allocated <= requested
+- **PASS** A Electronics allocated <= requested
+- **PASS** A Energy supply <= active generation
+- **PASS** A supply allocation identity
+- **PASS** A unserved identity
+- **PASS** B Metal allocated <= requested
+- **PASS** B Electronics allocated <= requested
+- **PASS** B Energy supply <= active generation
+- **PASS** B supply allocation identity
+- **PASS** B unserved identity
+- **PASS** A Electronics: Active <= Installed
+- **PASS** A Electronics: Inactive identity
+- **PASS** A Electronics: Lifetime account identity
+- **PASS** A Electronics: Target Active <= Installed
+- **PASS** A Electronics: Target Active <= Required Active
+- **PASS** A Electronics: kernel stocks >= 0
+- **PASS** A Electronics: kernel flows >= 0
+- **PASS** A Electronics: Expansion <= Desired Expansion (kernel-v2)
+- **PASS** B Electronics: Active <= Installed
+- **PASS** B Electronics: Inactive identity
+- **PASS** B Electronics: Lifetime account identity
+- **PASS** B Electronics: Target Active <= Installed
+- **PASS** B Electronics: Target Active <= Required Active
+- **PASS** B Electronics: kernel stocks >= 0
+- **PASS** B Electronics: kernel flows >= 0
+- **PASS** B Electronics: Expansion <= Desired Expansion (kernel-v2)
+- **PASS** A Power: Active <= Installed
+- **PASS** A Power: Inactive identity
+- **PASS** A Power: Lifetime account identity
+- **PASS** A Power: Target Active <= Installed
+- **PASS** A Power: Target Active <= Required Active
+- **PASS** A Power: kernel stocks >= 0
+- **PASS** A Power: kernel flows >= 0
+- **PASS** A Power: Expansion <= Desired Expansion (kernel-v2)
+- **PASS** B Power: Active <= Installed
+- **PASS** B Power: Inactive identity
+- **PASS** B Power: Lifetime account identity
+- **PASS** B Power: Target Active <= Installed
+- **PASS** B Power: Target Active <= Required Active
+- **PASS** B Power: kernel stocks >= 0
+- **PASS** B Power: kernel flows >= 0
+- **PASS** B Power: Expansion <= Desired Expansion (kernel-v2)
+- **PASS** A Refinery: Active <= Installed
+- **PASS** A Refinery: Inactive identity
+- **PASS** A Refinery: Lifetime account identity
+- **PASS** A Refinery: Target Active <= Installed
+- **PASS** A Refinery: Target Active <= Required Active
+- **PASS** A Refinery: kernel stocks >= 0
+- **PASS** A Refinery: kernel flows >= 0
+- **PASS** A Refinery: Expansion <= Desired Expansion (kernel-v2)
+- **PASS** B Refinery: Active <= Installed
+- **PASS** B Refinery: Inactive identity
+- **PASS** B Refinery: Lifetime account identity
+- **PASS** B Refinery: Target Active <= Installed
+- **PASS** B Refinery: Target Active <= Required Active
+- **PASS** B Refinery: kernel stocks >= 0
+- **PASS** B Refinery: kernel flows >= 0
+- **PASS** B Refinery: Expansion <= Desired Expansion (kernel-v2)
+- **PASS** Transport: Active <= Installed
+- **PASS** Transport: Inactive identity
+- **PASS** Transport: Lifetime account identity
+- **PASS** Transport: Target Active <= Installed
+- **PASS** Transport: Target Active <= Required Active
+- **PASS** Transport: kernel stocks >= 0
+- **PASS** Transport: kernel flows >= 0
+- **PASS** Transport: Expansion <= Desired Expansion (kernel-v2)
+- **PASS** Transport priority allocation identity
+- **PASS** Transport allocated <= capacity-limited load
+- **PASS** A metal input fulfillment in [0,1]
+- **PASS** A metal input delivery <= demand
+- **PASS** A metal input delivery <= available
+- **PASS** A metal input delivery >= 0
+- **PASS** A metal input demand >= 0
+- **PASS** A metal inventory >= 0
+- **PASS** A electronics feedstock inventory >= 0
+- **PASS** A electronics inventory >= 0
+- **PASS** B metal input fulfillment in [0,1]
+- **PASS** B metal input delivery <= demand
+- **PASS** B metal input delivery <= available
+- **PASS** B metal input delivery >= 0
+- **PASS** B metal input demand >= 0
+- **PASS** B metal inventory >= 0
+- **PASS** B electronics feedstock inventory >= 0
+- **PASS** B electronics inventory >= 0
+- **PASS** A ore->metal pair identity
+- **PASS** B ore->metal pair identity
+- **PASS** A capital goods fulfillment in [0,1]
+- **PASS** A capital goods inventory >= 0
+- **PASS** A capital goods production rate >= 0
+- **PASS** A capital goods production pair identities (metal)
+- **PASS** A capital goods production pair identities (electronics)
+- **PASS** A Refinery expansion <= desired expansion
+- **PASS** A Electronics expansion <= desired expansion
+- **PASS** A Power expansion <= desired expansion
+- **PASS** B capital goods fulfillment in [0,1]
+- **PASS** B capital goods inventory >= 0
+- **PASS** B capital goods production rate >= 0
+- **PASS** B capital goods production pair identities (metal)
+- **PASS** B capital goods production pair identities (electronics)
+- **PASS** B Refinery expansion <= desired expansion
+- **PASS** B Electronics expansion <= desired expansion
+- **PASS** B Power expansion <= desired expansion
+- **PASS** A power-resource inventory >= 0
+- **PASS** A power-resource fulfillment in [0,1]
+- **PASS** A available generation <= active generation capacity
+- **FAIL** A power-resource operating identity — max abs error 1560.40663167956 > 1e-8 at day 1080
+- **PASS** B power-resource inventory >= 0
+- **PASS** B power-resource fulfillment in [0,1]
+- **PASS** B available generation <= active generation capacity
+- **FAIL** B power-resource operating identity — max abs error 750.847689369115 > 1e-8 at day 1047.75
+- **PASS** Mode 16 A Power expands from Metal demand
+- **PASS** Mode 16 B Power expands from Metal demand
+- **PASS** Mode 16: A intermediate delivery is zero (switch off)
+- **PASS** Mode 16: A intermediate fulfillment is 1 (switch off)
+- **PASS** Mode 16: B intermediate delivery is zero (switch off)
+- **PASS** Mode 16: B intermediate fulfillment is 1 (switch off)
+- **PASS** A feedstock->electronics pair identity (per mode)
+- **PASS** B feedstock->electronics pair identity (per mode)
+- **PASS** Mode 16: A capital goods production is zero (switch off)
+- **PASS** Mode 16: A capital goods fulfillment is 1 (switch off)
+- **PASS** Mode 16: B capital goods production is zero (switch off)
+- **PASS** Mode 16: B capital goods fulfillment is 1 (switch off)
+- **PASS** Mode 16: A capital goods inventory is a dead stock (switch off)
+- **PASS** Mode 16: B capital goods inventory is a dead stock (switch off)
+
+### Mode 17 — v7.4 Intermediate Inputs Baseline
+
+- **PASS** time_axis
+- **PASS** finite_all
+- **PASS** non_negative_regex
+- **PASS** A Metal allocated <= requested
+- **PASS** A Electronics allocated <= requested
+- **PASS** A Energy supply <= active generation
+- **PASS** A supply allocation identity
+- **PASS** A unserved identity
+- **PASS** B Metal allocated <= requested
+- **PASS** B Electronics allocated <= requested
+- **PASS** B Energy supply <= active generation
+- **PASS** B supply allocation identity
+- **PASS** B unserved identity
+- **PASS** A Electronics: Active <= Installed
+- **PASS** A Electronics: Inactive identity
+- **PASS** A Electronics: Lifetime account identity
+- **PASS** A Electronics: Target Active <= Installed
+- **PASS** A Electronics: Target Active <= Required Active
+- **PASS** A Electronics: kernel stocks >= 0
+- **PASS** A Electronics: kernel flows >= 0
+- **PASS** A Electronics: Expansion <= Desired Expansion (kernel-v2)
+- **PASS** B Electronics: Active <= Installed
+- **PASS** B Electronics: Inactive identity
+- **PASS** B Electronics: Lifetime account identity
+- **PASS** B Electronics: Target Active <= Installed
+- **PASS** B Electronics: Target Active <= Required Active
+- **PASS** B Electronics: kernel stocks >= 0
+- **PASS** B Electronics: kernel flows >= 0
+- **PASS** B Electronics: Expansion <= Desired Expansion (kernel-v2)
+- **PASS** A Power: Active <= Installed
+- **PASS** A Power: Inactive identity
+- **PASS** A Power: Lifetime account identity
+- **PASS** A Power: Target Active <= Installed
+- **PASS** A Power: Target Active <= Required Active
+- **PASS** A Power: kernel stocks >= 0
+- **PASS** A Power: kernel flows >= 0
+- **PASS** A Power: Expansion <= Desired Expansion (kernel-v2)
+- **PASS** B Power: Active <= Installed
+- **PASS** B Power: Inactive identity
+- **PASS** B Power: Lifetime account identity
+- **PASS** B Power: Target Active <= Installed
+- **PASS** B Power: Target Active <= Required Active
+- **PASS** B Power: kernel stocks >= 0
+- **PASS** B Power: kernel flows >= 0
+- **PASS** B Power: Expansion <= Desired Expansion (kernel-v2)
+- **PASS** A Refinery: Active <= Installed
+- **PASS** A Refinery: Inactive identity
+- **PASS** A Refinery: Lifetime account identity
+- **PASS** A Refinery: Target Active <= Installed
+- **PASS** A Refinery: Target Active <= Required Active
+- **PASS** A Refinery: kernel stocks >= 0
+- **PASS** A Refinery: kernel flows >= 0
+- **PASS** A Refinery: Expansion <= Desired Expansion (kernel-v2)
+- **PASS** B Refinery: Active <= Installed
+- **PASS** B Refinery: Inactive identity
+- **PASS** B Refinery: Lifetime account identity
+- **PASS** B Refinery: Target Active <= Installed
+- **PASS** B Refinery: Target Active <= Required Active
+- **PASS** B Refinery: kernel stocks >= 0
+- **PASS** B Refinery: kernel flows >= 0
+- **PASS** B Refinery: Expansion <= Desired Expansion (kernel-v2)
+- **PASS** Transport: Active <= Installed
+- **PASS** Transport: Inactive identity
+- **PASS** Transport: Lifetime account identity
+- **PASS** Transport: Target Active <= Installed
+- **PASS** Transport: Target Active <= Required Active
+- **PASS** Transport: kernel stocks >= 0
+- **PASS** Transport: kernel flows >= 0
+- **PASS** Transport: Expansion <= Desired Expansion (kernel-v2)
+- **PASS** Transport priority allocation identity
+- **PASS** Transport allocated <= capacity-limited load
+- **PASS** A metal input fulfillment in [0,1]
+- **PASS** A metal input delivery <= demand
+- **PASS** A metal input delivery <= available
+- **PASS** A metal input delivery >= 0
+- **PASS** A metal input demand >= 0
+- **PASS** A metal inventory >= 0
+- **PASS** A electronics feedstock inventory >= 0
+- **PASS** A electronics inventory >= 0
+- **PASS** B metal input fulfillment in [0,1]
+- **PASS** B metal input delivery <= demand
+- **PASS** B metal input delivery <= available
+- **PASS** B metal input delivery >= 0
+- **PASS** B metal input demand >= 0
+- **PASS** B metal inventory >= 0
+- **PASS** B electronics feedstock inventory >= 0
+- **PASS** B electronics inventory >= 0
+- **PASS** A ore->metal pair identity
+- **PASS** B ore->metal pair identity
+- **PASS** A capital goods fulfillment in [0,1]
+- **PASS** A capital goods inventory >= 0
+- **PASS** A capital goods production rate >= 0
+- **PASS** A capital goods production pair identities (metal)
+- **PASS** A capital goods production pair identities (electronics)
+- **PASS** A Refinery expansion <= desired expansion
+- **PASS** A Electronics expansion <= desired expansion
+- **PASS** A Power expansion <= desired expansion
+- **PASS** B capital goods fulfillment in [0,1]
+- **PASS** B capital goods inventory >= 0
+- **PASS** B capital goods production rate >= 0
+- **PASS** B capital goods production pair identities (metal)
+- **PASS** B capital goods production pair identities (electronics)
+- **PASS** B Refinery expansion <= desired expansion
+- **PASS** B Electronics expansion <= desired expansion
+- **PASS** B Power expansion <= desired expansion
+- **PASS** A power-resource inventory >= 0
+- **PASS** A power-resource fulfillment in [0,1]
+- **PASS** A available generation <= active generation capacity
+- **FAIL** A power-resource operating identity — max abs error 1604.66865267136 > 1e-8 at day 1080
+- **PASS** B power-resource inventory >= 0
+- **PASS** B power-resource fulfillment in [0,1]
+- **PASS** B available generation <= active generation capacity
+- **FAIL** B power-resource operating identity — max abs error 521.024824695441 > 1e-8 at day 28.5
+- **PASS** Mode 17: A feedstock extraction is off
+- **PASS** Mode 17: A metal input delivery is positive after warm-up
+- **PASS** Mode 17: A metal input fulfillment >= 0.95 after day 200
+- **PASS** Mode 17: A electronics production not collapsed
+- **PASS** Mode 17: B feedstock extraction is off
+- **PASS** Mode 17: B metal input delivery is positive after warm-up
+- **PASS** Mode 17: B metal input fulfillment >= 0.95 after day 200
+- **PASS** Mode 17: B electronics production not collapsed
+- **PASS** Mode 17: planet electronics production within [0.5, 2.0] x Mode 12 (42.06) — lower
+- **PASS** Mode 17: planet electronics production within [0.5, 2.0] x Mode 12 (42.06) — upper
+- **PASS** Mode 17: planet smelting within [0.5, 2.0] x Mode 12 (44.78) — lower
+- **PASS** Mode 17: planet smelting within [0.5, 2.0] x Mode 12 (44.78) — upper
+- **PASS** Mode 17: B late energy scarcity is zero
+- **PASS** Mode 17: A energy scarcity declines by >= 20/day between day 720 and 1080
+- **PASS** Mode 17: A energy scarcity at day 1080 <= 100
+- **PASS** A feedstock->electronics pair identity (per mode)
+- **PASS** B feedstock->electronics pair identity (per mode)
+- **PASS** Mode 17: A capital goods production is zero (switch off)
+- **PASS** Mode 17: A capital goods fulfillment is 1 (switch off)
+- **PASS** Mode 17: B capital goods production is zero (switch off)
+- **PASS** Mode 17: B capital goods fulfillment is 1 (switch off)
+- **PASS** Mode 17: A capital goods inventory is a dead stock (switch off)
+- **PASS** Mode 17: B capital goods inventory is a dead stock (switch off)
+
+### Mode 18 — v7.4 Temporary Metal Supply Shock
+
+- **PASS** time_axis
+- **PASS** finite_all
+- **PASS** non_negative_regex
+- **PASS** A Metal allocated <= requested
+- **PASS** A Electronics allocated <= requested
+- **PASS** A Energy supply <= active generation
+- **PASS** A supply allocation identity
+- **PASS** A unserved identity
+- **PASS** B Metal allocated <= requested
+- **PASS** B Electronics allocated <= requested
+- **PASS** B Energy supply <= active generation
+- **PASS** B supply allocation identity
+- **PASS** B unserved identity
+- **PASS** A Electronics: Active <= Installed
+- **PASS** A Electronics: Inactive identity
+- **PASS** A Electronics: Lifetime account identity
+- **PASS** A Electronics: Target Active <= Installed
+- **PASS** A Electronics: Target Active <= Required Active
+- **PASS** A Electronics: kernel stocks >= 0
+- **PASS** A Electronics: kernel flows >= 0
+- **PASS** A Electronics: Expansion <= Desired Expansion (kernel-v2)
+- **PASS** B Electronics: Active <= Installed
+- **PASS** B Electronics: Inactive identity
+- **PASS** B Electronics: Lifetime account identity
+- **PASS** B Electronics: Target Active <= Installed
+- **PASS** B Electronics: Target Active <= Required Active
+- **PASS** B Electronics: kernel stocks >= 0
+- **PASS** B Electronics: kernel flows >= 0
+- **PASS** B Electronics: Expansion <= Desired Expansion (kernel-v2)
+- **PASS** A Power: Active <= Installed
+- **PASS** A Power: Inactive identity
+- **PASS** A Power: Lifetime account identity
+- **PASS** A Power: Target Active <= Installed
+- **PASS** A Power: Target Active <= Required Active
+- **PASS** A Power: kernel stocks >= 0
+- **PASS** A Power: kernel flows >= 0
+- **PASS** A Power: Expansion <= Desired Expansion (kernel-v2)
+- **PASS** B Power: Active <= Installed
+- **PASS** B Power: Inactive identity
+- **PASS** B Power: Lifetime account identity
+- **PASS** B Power: Target Active <= Installed
+- **PASS** B Power: Target Active <= Required Active
+- **PASS** B Power: kernel stocks >= 0
+- **PASS** B Power: kernel flows >= 0
+- **PASS** B Power: Expansion <= Desired Expansion (kernel-v2)
+- **PASS** A Refinery: Active <= Installed
+- **PASS** A Refinery: Inactive identity
+- **PASS** A Refinery: Lifetime account identity
+- **PASS** A Refinery: Target Active <= Installed
+- **PASS** A Refinery: Target Active <= Required Active
+- **PASS** A Refinery: kernel stocks >= 0
+- **PASS** A Refinery: kernel flows >= 0
+- **PASS** A Refinery: Expansion <= Desired Expansion (kernel-v2)
+- **PASS** B Refinery: Active <= Installed
+- **PASS** B Refinery: Inactive identity
+- **PASS** B Refinery: Lifetime account identity
+- **PASS** B Refinery: Target Active <= Installed
+- **PASS** B Refinery: Target Active <= Required Active
+- **PASS** B Refinery: kernel stocks >= 0
+- **PASS** B Refinery: kernel flows >= 0
+- **PASS** B Refinery: Expansion <= Desired Expansion (kernel-v2)
+- **PASS** Transport: Active <= Installed
+- **PASS** Transport: Inactive identity
+- **PASS** Transport: Lifetime account identity
+- **PASS** Transport: Target Active <= Installed
+- **PASS** Transport: Target Active <= Required Active
+- **PASS** Transport: kernel stocks >= 0
+- **PASS** Transport: kernel flows >= 0
+- **PASS** Transport: Expansion <= Desired Expansion (kernel-v2)
+- **PASS** Transport priority allocation identity
+- **PASS** Transport allocated <= capacity-limited load
+- **PASS** A metal input fulfillment in [0,1]
+- **PASS** A metal input delivery <= demand
+- **PASS** A metal input delivery <= available
+- **PASS** A metal input delivery >= 0
+- **PASS** A metal input demand >= 0
+- **PASS** A metal inventory >= 0
+- **PASS** A electronics feedstock inventory >= 0
+- **PASS** A electronics inventory >= 0
+- **PASS** B metal input fulfillment in [0,1]
+- **PASS** B metal input delivery <= demand
+- **PASS** B metal input delivery <= available
+- **PASS** B metal input delivery >= 0
+- **PASS** B metal input demand >= 0
+- **PASS** B metal inventory >= 0
+- **PASS** B electronics feedstock inventory >= 0
+- **PASS** B electronics inventory >= 0
+- **PASS** A ore->metal pair identity
+- **PASS** B ore->metal pair identity
+- **PASS** A capital goods fulfillment in [0,1]
+- **PASS** A capital goods inventory >= 0
+- **PASS** A capital goods production rate >= 0
+- **PASS** A capital goods production pair identities (metal)
+- **PASS** A capital goods production pair identities (electronics)
+- **PASS** A Refinery expansion <= desired expansion
+- **PASS** A Electronics expansion <= desired expansion
+- **PASS** A Power expansion <= desired expansion
+- **PASS** B capital goods fulfillment in [0,1]
+- **PASS** B capital goods inventory >= 0
+- **PASS** B capital goods production rate >= 0
+- **PASS** B capital goods production pair identities (metal)
+- **PASS** B capital goods production pair identities (electronics)
+- **PASS** B Refinery expansion <= desired expansion
+- **PASS** B Electronics expansion <= desired expansion
+- **PASS** B Power expansion <= desired expansion
+- **PASS** A power-resource inventory >= 0
+- **PASS** A power-resource fulfillment in [0,1]
+- **PASS** A available generation <= active generation capacity
+- **FAIL** A power-resource operating identity — max abs error 1450.80909178758 > 1e-8 at day 1080
+- **PASS** B power-resource inventory >= 0
+- **PASS** B power-resource fulfillment in [0,1]
+- **PASS** B available generation <= active generation capacity
+- **FAIL** B power-resource operating identity — max abs error 561.170496293829 > 1e-8 at day 769.75
+- **PASS** Mode 18: shock binds physically — A ore inventory drained below 500
+- **PASS** Mode 18: A metal price rises >= 25% (pre-shock 33.96)
+- **PASS** Mode 18: shock propagates through trade — B metal price rises >= 25% (pre-shock 40.44)
+- **PASS** Mode 18: cost channel — B electronics unit cost rises >= 15% (pre-shock 17.47)
+- **PASS** Mode 18: physical channel — A metal input fulfillment dips below 0.95
+- **PASS** Mode 18: B electronics output falls to <= 70% (pre-shock 16.59)
+- **PASS** Mode 18: ore depletion -> A price -> B electronics cost
+- **PASS** Mode 18: recovery — A metal price back within 5% by day 1080
+- **PASS** Mode 18: recovery — B electronics output >= 85% of pre-shock by day 1080
+- **PASS** Mode 18: recovery — A metal input fulfillment >= 0.95 late
+- **PASS** Mode 18: A refinery expansion does not overbuild during supply shock
+- **PASS** A feedstock->electronics pair identity (per mode)
+- **PASS** B feedstock->electronics pair identity (per mode)
+- **PASS** Mode 18: A capital goods production is zero (switch off)
+- **PASS** Mode 18: A capital goods fulfillment is 1 (switch off)
+- **PASS** Mode 18: B capital goods production is zero (switch off)
+- **PASS** Mode 18: B capital goods fulfillment is 1 (switch off)
+- **PASS** Mode 18: A capital goods inventory is a dead stock (switch off)
+- **PASS** Mode 18: B capital goods inventory is a dead stock (switch off)
+
+### Mode 19 — v7.4 Sustained Electronics Growth with Input Coupling
+
+- **PASS** time_axis
+- **PASS** finite_all
+- **PASS** non_negative_regex
+- **PASS** A Metal allocated <= requested
+- **PASS** A Electronics allocated <= requested
+- **PASS** A Energy supply <= active generation
+- **PASS** A supply allocation identity
+- **PASS** A unserved identity
+- **PASS** B Metal allocated <= requested
+- **PASS** B Electronics allocated <= requested
+- **PASS** B Energy supply <= active generation
+- **PASS** B supply allocation identity
+- **PASS** B unserved identity
+- **PASS** A Electronics: Active <= Installed
+- **PASS** A Electronics: Inactive identity
+- **PASS** A Electronics: Lifetime account identity
+- **PASS** A Electronics: Target Active <= Installed
+- **PASS** A Electronics: Target Active <= Required Active
+- **PASS** A Electronics: kernel stocks >= 0
+- **PASS** A Electronics: kernel flows >= 0
+- **PASS** A Electronics: Expansion <= Desired Expansion (kernel-v2)
+- **PASS** B Electronics: Active <= Installed
+- **PASS** B Electronics: Inactive identity
+- **PASS** B Electronics: Lifetime account identity
+- **PASS** B Electronics: Target Active <= Installed
+- **PASS** B Electronics: Target Active <= Required Active
+- **PASS** B Electronics: kernel stocks >= 0
+- **PASS** B Electronics: kernel flows >= 0
+- **PASS** B Electronics: Expansion <= Desired Expansion (kernel-v2)
+- **PASS** A Power: Active <= Installed
+- **PASS** A Power: Inactive identity
+- **PASS** A Power: Lifetime account identity
+- **PASS** A Power: Target Active <= Installed
+- **PASS** A Power: Target Active <= Required Active
+- **PASS** A Power: kernel stocks >= 0
+- **PASS** A Power: kernel flows >= 0
+- **PASS** A Power: Expansion <= Desired Expansion (kernel-v2)
+- **PASS** B Power: Active <= Installed
+- **PASS** B Power: Inactive identity
+- **PASS** B Power: Lifetime account identity
+- **PASS** B Power: Target Active <= Installed
+- **PASS** B Power: Target Active <= Required Active
+- **PASS** B Power: kernel stocks >= 0
+- **PASS** B Power: kernel flows >= 0
+- **PASS** B Power: Expansion <= Desired Expansion (kernel-v2)
+- **PASS** A Refinery: Active <= Installed
+- **PASS** A Refinery: Inactive identity
+- **PASS** A Refinery: Lifetime account identity
+- **PASS** A Refinery: Target Active <= Installed
+- **PASS** A Refinery: Target Active <= Required Active
+- **PASS** A Refinery: kernel stocks >= 0
+- **PASS** A Refinery: kernel flows >= 0
+- **PASS** A Refinery: Expansion <= Desired Expansion (kernel-v2)
+- **PASS** B Refinery: Active <= Installed
+- **PASS** B Refinery: Inactive identity
+- **PASS** B Refinery: Lifetime account identity
+- **PASS** B Refinery: Target Active <= Installed
+- **PASS** B Refinery: Target Active <= Required Active
+- **PASS** B Refinery: kernel stocks >= 0
+- **PASS** B Refinery: kernel flows >= 0
+- **PASS** B Refinery: Expansion <= Desired Expansion (kernel-v2)
+- **PASS** Transport: Active <= Installed
+- **PASS** Transport: Inactive identity
+- **PASS** Transport: Lifetime account identity
+- **PASS** Transport: Target Active <= Installed
+- **PASS** Transport: Target Active <= Required Active
+- **PASS** Transport: kernel stocks >= 0
+- **PASS** Transport: kernel flows >= 0
+- **PASS** Transport: Expansion <= Desired Expansion (kernel-v2)
+- **PASS** Transport priority allocation identity
+- **PASS** Transport allocated <= capacity-limited load
+- **PASS** A metal input fulfillment in [0,1]
+- **PASS** A metal input delivery <= demand
+- **PASS** A metal input delivery <= available
+- **PASS** A metal input delivery >= 0
+- **PASS** A metal input demand >= 0
+- **PASS** A metal inventory >= 0
+- **PASS** A electronics feedstock inventory >= 0
+- **PASS** A electronics inventory >= 0
+- **PASS** B metal input fulfillment in [0,1]
+- **PASS** B metal input delivery <= demand
+- **PASS** B metal input delivery <= available
+- **PASS** B metal input delivery >= 0
+- **PASS** B metal input demand >= 0
+- **PASS** B metal inventory >= 0
+- **PASS** B electronics feedstock inventory >= 0
+- **PASS** B electronics inventory >= 0
+- **PASS** A ore->metal pair identity
+- **PASS** B ore->metal pair identity
+- **PASS** A capital goods fulfillment in [0,1]
+- **PASS** A capital goods inventory >= 0
+- **PASS** A capital goods production rate >= 0
+- **PASS** A capital goods production pair identities (metal)
+- **PASS** A capital goods production pair identities (electronics)
+- **PASS** A Refinery expansion <= desired expansion
+- **PASS** A Electronics expansion <= desired expansion
+- **PASS** A Power expansion <= desired expansion
+- **PASS** B capital goods fulfillment in [0,1]
+- **PASS** B capital goods inventory >= 0
+- **PASS** B capital goods production rate >= 0
+- **PASS** B capital goods production pair identities (metal)
+- **PASS** B capital goods production pair identities (electronics)
+- **PASS** B Refinery expansion <= desired expansion
+- **PASS** B Electronics expansion <= desired expansion
+- **PASS** B Power expansion <= desired expansion
+- **PASS** A power-resource inventory >= 0
+- **PASS** A power-resource fulfillment in [0,1]
+- **PASS** A available generation <= active generation capacity
+- **FAIL** A power-resource operating identity — max abs error 1796.88085234022 > 1e-8 at day 1080
+- **PASS** B power-resource inventory >= 0
+- **PASS** B power-resource fulfillment in [0,1]
+- **PASS** B available generation <= active generation capacity
+- **FAIL** B power-resource operating identity — max abs error 644.120313589457 > 1e-8 at day 1080
+- **PASS** Mode 19: A metal input demand at day 1080 >= 1.5 x pre-shock
+- **PASS** Mode 19: A refinery installed capacity remains below 3 x day-360 level
+- **PASS** Mode 19: input demand rise precedes generation build-up (r1.2)
+- **PASS** Mode 19: generation expansion accelerates >= 1.5 x pre-shock (r1.2)
+- **PASS** Mode 19: coupling adds refinery capital — A Refinery Installed @1080 >= 58.3 (Mode 14 uncoupled: 53.0, +10%) (r1.2)
+- **PASS** Mode 19: A input fulfillment dips under sustained growth (< pre-shock 0.9664) (r1.2)
+- **PASS** Mode 19: A input fulfillment stays >= 0.90 (physical channel soft by design) (r1.2)
+- **PASS** Mode 19: A input fulfillment recovering — rises >= 0.005 from day 720 to 1080 (r1.2)
+- **PASS** A feedstock->electronics pair identity (per mode)
+- **PASS** B feedstock->electronics pair identity (per mode)
+- **PASS** Mode 19: A capital goods production is zero (switch off)
+- **PASS** Mode 19: A capital goods fulfillment is 1 (switch off)
+- **PASS** Mode 19: B capital goods production is zero (switch off)
+- **PASS** Mode 19: B capital goods fulfillment is 1 (switch off)
+- **PASS** Mode 19: A capital goods inventory is a dead stock (switch off)
+- **PASS** Mode 19: B capital goods inventory is a dead stock (switch off)
+
+### Mode 20 — v7.4 Coupled Metal Demand Growth
+
+- **PASS** time_axis
+- **PASS** finite_all
+- **PASS** non_negative_regex
+- **PASS** A Metal allocated <= requested
+- **PASS** A Electronics allocated <= requested
+- **PASS** A Energy supply <= active generation
+- **PASS** A supply allocation identity
+- **PASS** A unserved identity
+- **PASS** B Metal allocated <= requested
+- **PASS** B Electronics allocated <= requested
+- **PASS** B Energy supply <= active generation
+- **PASS** B supply allocation identity
+- **PASS** B unserved identity
+- **PASS** A Electronics: Active <= Installed
+- **PASS** A Electronics: Inactive identity
+- **PASS** A Electronics: Lifetime account identity
+- **PASS** A Electronics: Target Active <= Installed
+- **PASS** A Electronics: Target Active <= Required Active
+- **PASS** A Electronics: kernel stocks >= 0
+- **PASS** A Electronics: kernel flows >= 0
+- **PASS** A Electronics: Expansion <= Desired Expansion (kernel-v2)
+- **PASS** B Electronics: Active <= Installed
+- **PASS** B Electronics: Inactive identity
+- **PASS** B Electronics: Lifetime account identity
+- **PASS** B Electronics: Target Active <= Installed
+- **PASS** B Electronics: Target Active <= Required Active
+- **PASS** B Electronics: kernel stocks >= 0
+- **PASS** B Electronics: kernel flows >= 0
+- **PASS** B Electronics: Expansion <= Desired Expansion (kernel-v2)
+- **PASS** A Power: Active <= Installed
+- **PASS** A Power: Inactive identity
+- **PASS** A Power: Lifetime account identity
+- **PASS** A Power: Target Active <= Installed
+- **PASS** A Power: Target Active <= Required Active
+- **PASS** A Power: kernel stocks >= 0
+- **PASS** A Power: kernel flows >= 0
+- **PASS** A Power: Expansion <= Desired Expansion (kernel-v2)
+- **PASS** B Power: Active <= Installed
+- **PASS** B Power: Inactive identity
+- **PASS** B Power: Lifetime account identity
+- **PASS** B Power: Target Active <= Installed
+- **PASS** B Power: Target Active <= Required Active
+- **PASS** B Power: kernel stocks >= 0
+- **PASS** B Power: kernel flows >= 0
+- **PASS** B Power: Expansion <= Desired Expansion (kernel-v2)
+- **PASS** A Refinery: Active <= Installed
+- **PASS** A Refinery: Inactive identity
+- **PASS** A Refinery: Lifetime account identity
+- **PASS** A Refinery: Target Active <= Installed
+- **PASS** A Refinery: Target Active <= Required Active
+- **PASS** A Refinery: kernel stocks >= 0
+- **PASS** A Refinery: kernel flows >= 0
+- **PASS** A Refinery: Expansion <= Desired Expansion (kernel-v2)
+- **PASS** B Refinery: Active <= Installed
+- **PASS** B Refinery: Inactive identity
+- **PASS** B Refinery: Lifetime account identity
+- **PASS** B Refinery: Target Active <= Installed
+- **PASS** B Refinery: Target Active <= Required Active
+- **PASS** B Refinery: kernel stocks >= 0
+- **PASS** B Refinery: kernel flows >= 0
+- **PASS** B Refinery: Expansion <= Desired Expansion (kernel-v2)
+- **PASS** Transport: Active <= Installed
+- **PASS** Transport: Inactive identity
+- **PASS** Transport: Lifetime account identity
+- **PASS** Transport: Target Active <= Installed
+- **PASS** Transport: Target Active <= Required Active
+- **PASS** Transport: kernel stocks >= 0
+- **PASS** Transport: kernel flows >= 0
+- **PASS** Transport: Expansion <= Desired Expansion (kernel-v2)
+- **PASS** Transport priority allocation identity
+- **PASS** Transport allocated <= capacity-limited load
+- **PASS** A metal input fulfillment in [0,1]
+- **PASS** A metal input delivery <= demand
+- **PASS** A metal input delivery <= available
+- **PASS** A metal input delivery >= 0
+- **PASS** A metal input demand >= 0
+- **PASS** A metal inventory >= 0
+- **PASS** A electronics feedstock inventory >= 0
+- **PASS** A electronics inventory >= 0
+- **PASS** B metal input fulfillment in [0,1]
+- **PASS** B metal input delivery <= demand
+- **PASS** B metal input delivery <= available
+- **PASS** B metal input delivery >= 0
+- **PASS** B metal input demand >= 0
+- **PASS** B metal inventory >= 0
+- **PASS** B electronics feedstock inventory >= 0
+- **PASS** B electronics inventory >= 0
+- **PASS** A ore->metal pair identity
+- **PASS** B ore->metal pair identity
+- **PASS** A capital goods fulfillment in [0,1]
+- **PASS** A capital goods inventory >= 0
+- **PASS** A capital goods production rate >= 0
+- **PASS** A capital goods production pair identities (metal)
+- **PASS** A capital goods production pair identities (electronics)
+- **PASS** A Refinery expansion <= desired expansion
+- **PASS** A Electronics expansion <= desired expansion
+- **PASS** A Power expansion <= desired expansion
+- **PASS** B capital goods fulfillment in [0,1]
+- **PASS** B capital goods inventory >= 0
+- **PASS** B capital goods production rate >= 0
+- **PASS** B capital goods production pair identities (metal)
+- **PASS** B capital goods production pair identities (electronics)
+- **PASS** B Refinery expansion <= desired expansion
+- **PASS** B Electronics expansion <= desired expansion
+- **PASS** B Power expansion <= desired expansion
+- **PASS** A power-resource inventory >= 0
+- **PASS** A power-resource fulfillment in [0,1]
+- **PASS** A available generation <= active generation capacity
+- **FAIL** A power-resource operating identity — max abs error 1751.88820829751 > 1e-8 at day 1080
+- **PASS** B power-resource inventory >= 0
+- **PASS** B power-resource fulfillment in [0,1]
+- **PASS** B available generation <= active generation capacity
+- **FAIL** B power-resource operating identity — max abs error 692.865351487204 > 1e-8 at day 917.25
+- **PASS** Mode 20: B intermediate and final Metal fulfillment use the same availability factor
+- **PASS** Mode 20: B intermediate fulfillment is rationed
+- **PASS** Mode 20: B refinery expands
+- **PASS** Mode 20: B intermediate fulfillment recovers to >= 0.95 by day 1080
+- **PASS** A feedstock->electronics pair identity (per mode)
+- **PASS** B feedstock->electronics pair identity (per mode)
+- **PASS** Mode 20: A capital goods production is zero (switch off)
+- **PASS** Mode 20: A capital goods fulfillment is 1 (switch off)
+- **PASS** Mode 20: B capital goods production is zero (switch off)
+- **PASS** Mode 20: B capital goods fulfillment is 1 (switch off)
+- **PASS** Mode 20: A capital goods inventory is a dead stock (switch off)
+- **PASS** Mode 20: B capital goods inventory is a dead stock (switch off)
+
+### Mode 21 — v7.5 Capital Goods Baseline
+
+- **PASS** time_axis
+- **PASS** finite_all
+- **PASS** non_negative_regex
+- **PASS** A Metal allocated <= requested
+- **PASS** A Electronics allocated <= requested
+- **PASS** A Energy supply <= active generation
+- **PASS** A supply allocation identity
+- **PASS** A unserved identity
+- **PASS** B Metal allocated <= requested
+- **PASS** B Electronics allocated <= requested
+- **PASS** B Energy supply <= active generation
+- **PASS** B supply allocation identity
+- **PASS** B unserved identity
+- **PASS** A Electronics: Active <= Installed
+- **PASS** A Electronics: Inactive identity
+- **PASS** A Electronics: Lifetime account identity
+- **PASS** A Electronics: Target Active <= Installed
+- **PASS** A Electronics: Target Active <= Required Active
+- **PASS** A Electronics: kernel stocks >= 0
+- **PASS** A Electronics: kernel flows >= 0
+- **PASS** A Electronics: Expansion <= Desired Expansion (kernel-v2)
+- **PASS** B Electronics: Active <= Installed
+- **PASS** B Electronics: Inactive identity
+- **PASS** B Electronics: Lifetime account identity
+- **PASS** B Electronics: Target Active <= Installed
+- **PASS** B Electronics: Target Active <= Required Active
+- **PASS** B Electronics: kernel stocks >= 0
+- **PASS** B Electronics: kernel flows >= 0
+- **PASS** B Electronics: Expansion <= Desired Expansion (kernel-v2)
+- **PASS** A Power: Active <= Installed
+- **PASS** A Power: Inactive identity
+- **PASS** A Power: Lifetime account identity
+- **PASS** A Power: Target Active <= Installed
+- **PASS** A Power: Target Active <= Required Active
+- **PASS** A Power: kernel stocks >= 0
+- **PASS** A Power: kernel flows >= 0
+- **PASS** A Power: Expansion <= Desired Expansion (kernel-v2)
+- **PASS** B Power: Active <= Installed
+- **PASS** B Power: Inactive identity
+- **PASS** B Power: Lifetime account identity
+- **PASS** B Power: Target Active <= Installed
+- **PASS** B Power: Target Active <= Required Active
+- **PASS** B Power: kernel stocks >= 0
+- **PASS** B Power: kernel flows >= 0
+- **PASS** B Power: Expansion <= Desired Expansion (kernel-v2)
+- **PASS** A Refinery: Active <= Installed
+- **PASS** A Refinery: Inactive identity
+- **PASS** A Refinery: Lifetime account identity
+- **PASS** A Refinery: Target Active <= Installed
+- **PASS** A Refinery: Target Active <= Required Active
+- **PASS** A Refinery: kernel stocks >= 0
+- **PASS** A Refinery: kernel flows >= 0
+- **PASS** A Refinery: Expansion <= Desired Expansion (kernel-v2)
+- **PASS** B Refinery: Active <= Installed
+- **PASS** B Refinery: Inactive identity
+- **PASS** B Refinery: Lifetime account identity
+- **PASS** B Refinery: Target Active <= Installed
+- **PASS** B Refinery: Target Active <= Required Active
+- **PASS** B Refinery: kernel stocks >= 0
+- **PASS** B Refinery: kernel flows >= 0
+- **PASS** B Refinery: Expansion <= Desired Expansion (kernel-v2)
+- **PASS** Transport: Active <= Installed
+- **PASS** Transport: Inactive identity
+- **PASS** Transport: Lifetime account identity
+- **PASS** Transport: Target Active <= Installed
+- **PASS** Transport: Target Active <= Required Active
+- **PASS** Transport: kernel stocks >= 0
+- **PASS** Transport: kernel flows >= 0
+- **PASS** Transport: Expansion <= Desired Expansion (kernel-v2)
+- **PASS** Transport priority allocation identity
+- **PASS** Transport allocated <= capacity-limited load
+- **PASS** A metal input fulfillment in [0,1]
+- **PASS** A metal input delivery <= demand
+- **PASS** A metal input delivery <= available
+- **PASS** A metal input delivery >= 0
+- **PASS** A metal input demand >= 0
+- **PASS** A metal inventory >= 0
+- **PASS** A electronics feedstock inventory >= 0
+- **PASS** A electronics inventory >= 0
+- **PASS** B metal input fulfillment in [0,1]
+- **PASS** B metal input delivery <= demand
+- **PASS** B metal input delivery <= available
+- **PASS** B metal input delivery >= 0
+- **PASS** B metal input demand >= 0
+- **PASS** B metal inventory >= 0
+- **PASS** B electronics feedstock inventory >= 0
+- **PASS** B electronics inventory >= 0
+- **PASS** A ore->metal pair identity
+- **PASS** B ore->metal pair identity
+- **PASS** A capital goods fulfillment in [0,1]
+- **PASS** A capital goods inventory >= 0
+- **PASS** A capital goods production rate >= 0
+- **PASS** A capital goods production pair identities (metal)
+- **PASS** A capital goods production pair identities (electronics)
+- **PASS** A Refinery expansion <= desired expansion
+- **PASS** A Electronics expansion <= desired expansion
+- **PASS** A Power expansion <= desired expansion
+- **PASS** B capital goods fulfillment in [0,1]
+- **PASS** B capital goods inventory >= 0
+- **PASS** B capital goods production rate >= 0
+- **PASS** B capital goods production pair identities (metal)
+- **PASS** B capital goods production pair identities (electronics)
+- **PASS** B Refinery expansion <= desired expansion
+- **PASS** B Electronics expansion <= desired expansion
+- **PASS** B Power expansion <= desired expansion
+- **PASS** A power-resource inventory >= 0
+- **PASS** A power-resource fulfillment in [0,1]
+- **PASS** A available generation <= active generation capacity
+- **FAIL** A power-resource operating identity — max abs error 1584.57454346679 > 1e-8 at day 1080
+- **PASS** B power-resource inventory >= 0
+- **PASS** B power-resource fulfillment in [0,1]
+- **PASS** B available generation <= active generation capacity
+- **FAIL** B power-resource operating identity — max abs error 529.374326721802 > 1e-8 at day 157
+- **PASS** Mode 21: A capital goods are produced
+- **PASS** Mode 21: A capital goods fulfillment >= 0.9 after warm-up
+- **PASS** Mode 21: B has no expansion demand (B contracts in the accepted baseline)
+- **PASS** Mode 21: B capital goods inventory stays at its initial value
+- **PASS** Mode 21: B late energy scarcity is zero
+- **PASS** Mode 21: going concern - planet electronics production @1080 within +-15% of Mode 17 (37.04)
+- **PASS** Mode 21: going concern - planet electronics production @1080 not above +15% of Mode 17
+- **PASS** Mode 21: going concern - planet smelting @1080 within +-15% of Mode 17 (50.09)
+- **PASS** Mode 21: going concern - planet smelting @1080 not above +15% of Mode 17
+- **PASS** Mode 21: A refinery capital @1080 within 0.9..1.0 x Mode 17 (61.28)
+- **PASS** Mode 21: A refinery capital @1080 not above Mode 17
+- **PASS** Mode 21: A power capital @1080 within 0.9..1.0 x Mode 17 (1610.1)
+- **PASS** Mode 21: A power capital @1080 not above Mode 17
+- **PASS** Mode 21: A energy scarcity declines late (720 -> 1080 change <= -20)
+- **PASS** Mode 21: capital goods take a small share of A metal (metal consumption <= 2.5/day after day 60)
+- **PASS** Mode 21: A Refinery capital goods pair identity
+- **PASS** Mode 21: A Electronics capital goods pair identity
+- **PASS** Mode 21: A Power capital goods pair identity
+- **PASS** Mode 21: B Refinery capital goods pair identity
+- **PASS** Mode 21: B Electronics capital goods pair identity
+- **PASS** Mode 21: B Power capital goods pair identity
+
+### Mode 22 — v7.5 Capital Goods Supply Shock
+
+- **PASS** time_axis
+- **PASS** finite_all
+- **PASS** non_negative_regex
+- **PASS** A Metal allocated <= requested
+- **PASS** A Electronics allocated <= requested
+- **PASS** A Energy supply <= active generation
+- **PASS** A supply allocation identity
+- **PASS** A unserved identity
+- **PASS** B Metal allocated <= requested
+- **PASS** B Electronics allocated <= requested
+- **PASS** B Energy supply <= active generation
+- **PASS** B supply allocation identity
+- **PASS** B unserved identity
+- **PASS** A Electronics: Active <= Installed
+- **PASS** A Electronics: Inactive identity
+- **PASS** A Electronics: Lifetime account identity
+- **PASS** A Electronics: Target Active <= Installed
+- **PASS** A Electronics: Target Active <= Required Active
+- **PASS** A Electronics: kernel stocks >= 0
+- **PASS** A Electronics: kernel flows >= 0
+- **PASS** A Electronics: Expansion <= Desired Expansion (kernel-v2)
+- **PASS** B Electronics: Active <= Installed
+- **PASS** B Electronics: Inactive identity
+- **PASS** B Electronics: Lifetime account identity
+- **PASS** B Electronics: Target Active <= Installed
+- **PASS** B Electronics: Target Active <= Required Active
+- **PASS** B Electronics: kernel stocks >= 0
+- **PASS** B Electronics: kernel flows >= 0
+- **PASS** B Electronics: Expansion <= Desired Expansion (kernel-v2)
+- **PASS** A Power: Active <= Installed
+- **PASS** A Power: Inactive identity
+- **PASS** A Power: Lifetime account identity
+- **PASS** A Power: Target Active <= Installed
+- **PASS** A Power: Target Active <= Required Active
+- **PASS** A Power: kernel stocks >= 0
+- **PASS** A Power: kernel flows >= 0
+- **PASS** A Power: Expansion <= Desired Expansion (kernel-v2)
+- **PASS** B Power: Active <= Installed
+- **PASS** B Power: Inactive identity
+- **PASS** B Power: Lifetime account identity
+- **PASS** B Power: Target Active <= Installed
+- **PASS** B Power: Target Active <= Required Active
+- **PASS** B Power: kernel stocks >= 0
+- **PASS** B Power: kernel flows >= 0
+- **PASS** B Power: Expansion <= Desired Expansion (kernel-v2)
+- **PASS** A Refinery: Active <= Installed
+- **PASS** A Refinery: Inactive identity
+- **PASS** A Refinery: Lifetime account identity
+- **PASS** A Refinery: Target Active <= Installed
+- **PASS** A Refinery: Target Active <= Required Active
+- **PASS** A Refinery: kernel stocks >= 0
+- **PASS** A Refinery: kernel flows >= 0
+- **PASS** A Refinery: Expansion <= Desired Expansion (kernel-v2)
+- **PASS** B Refinery: Active <= Installed
+- **PASS** B Refinery: Inactive identity
+- **PASS** B Refinery: Lifetime account identity
+- **PASS** B Refinery: Target Active <= Installed
+- **PASS** B Refinery: Target Active <= Required Active
+- **PASS** B Refinery: kernel stocks >= 0
+- **PASS** B Refinery: kernel flows >= 0
+- **PASS** B Refinery: Expansion <= Desired Expansion (kernel-v2)
+- **PASS** Transport: Active <= Installed
+- **PASS** Transport: Inactive identity
+- **PASS** Transport: Lifetime account identity
+- **PASS** Transport: Target Active <= Installed
+- **PASS** Transport: Target Active <= Required Active
+- **PASS** Transport: kernel stocks >= 0
+- **PASS** Transport: kernel flows >= 0
+- **PASS** Transport: Expansion <= Desired Expansion (kernel-v2)
+- **PASS** Transport priority allocation identity
+- **PASS** Transport allocated <= capacity-limited load
+- **PASS** A metal input fulfillment in [0,1]
+- **PASS** A metal input delivery <= demand
+- **PASS** A metal input delivery <= available
+- **PASS** A metal input delivery >= 0
+- **PASS** A metal input demand >= 0
+- **PASS** A metal inventory >= 0
+- **PASS** A electronics feedstock inventory >= 0
+- **PASS** A electronics inventory >= 0
+- **PASS** B metal input fulfillment in [0,1]
+- **PASS** B metal input delivery <= demand
+- **PASS** B metal input delivery <= available
+- **PASS** B metal input delivery >= 0
+- **PASS** B metal input demand >= 0
+- **PASS** B metal inventory >= 0
+- **PASS** B electronics feedstock inventory >= 0
+- **PASS** B electronics inventory >= 0
+- **PASS** A ore->metal pair identity
+- **PASS** B ore->metal pair identity
+- **PASS** A capital goods fulfillment in [0,1]
+- **PASS** A capital goods inventory >= 0
+- **PASS** A capital goods production rate >= 0
+- **PASS** A capital goods production pair identities (metal)
+- **PASS** A capital goods production pair identities (electronics)
+- **PASS** A Refinery expansion <= desired expansion
+- **PASS** A Electronics expansion <= desired expansion
+- **PASS** A Power expansion <= desired expansion
+- **PASS** B capital goods fulfillment in [0,1]
+- **PASS** B capital goods inventory >= 0
+- **PASS** B capital goods production rate >= 0
+- **PASS** B capital goods production pair identities (metal)
+- **PASS** B capital goods production pair identities (electronics)
+- **PASS** B Refinery expansion <= desired expansion
+- **PASS** B Electronics expansion <= desired expansion
+- **PASS** B Power expansion <= desired expansion
+- **PASS** A power-resource inventory >= 0
+- **PASS** A power-resource fulfillment in [0,1]
+- **PASS** A available generation <= active generation capacity
+- **FAIL** A power-resource operating identity — max abs error 1533.26285475493 > 1e-8 at day 1080
+- **PASS** B power-resource inventory >= 0
+- **PASS** B power-resource fulfillment in [0,1]
+- **PASS** B available generation <= active generation capacity
+- **FAIL** B power-resource operating identity — max abs error 529.374326721802 > 1e-8 at day 157
+- **PASS** Mode 22: A capital goods fulfillment drops below 0.7 during the shock
+- **PASS** Mode 22: A capital goods fulfillment stays above 0.2 (no total collapse)
+- **PASS** Mode 22: A refinery construction throttled to <= 0.5 x desired in the shock core
+- **PASS** Mode 22: A refinery capital @720 lags Mode 21 (57.88) by >= 3%
+- **PASS** Mode 22: A power capital @720 lags Mode 21 (1503.8) by >= 3%
+- **PASS** Mode 22: A capital goods fulfillment recovers >= 0.9 late
+- **PASS** Mode 22: B unaffected
+- **PASS** Mode 22: shock -> fulfillment collapse -> recovery
+- **PASS** Mode 22: A Refinery capital goods pair identity
+- **PASS** Mode 22: A Electronics capital goods pair identity
+- **PASS** Mode 22: A Power capital goods pair identity
+- **PASS** Mode 22: B Refinery capital goods pair identity
+- **PASS** Mode 22: B Electronics capital goods pair identity
+- **PASS** Mode 22: B Power capital goods pair identity
+
+### Mode 23 — v7.5 Investment Boom
+
+- **PASS** time_axis
+- **PASS** finite_all
+- **PASS** non_negative_regex
+- **PASS** A Metal allocated <= requested
+- **PASS** A Electronics allocated <= requested
+- **PASS** A Energy supply <= active generation
+- **PASS** A supply allocation identity
+- **PASS** A unserved identity
+- **PASS** B Metal allocated <= requested
+- **PASS** B Electronics allocated <= requested
+- **PASS** B Energy supply <= active generation
+- **PASS** B supply allocation identity
+- **PASS** B unserved identity
+- **PASS** A Electronics: Active <= Installed
+- **PASS** A Electronics: Inactive identity
+- **PASS** A Electronics: Lifetime account identity
+- **PASS** A Electronics: Target Active <= Installed
+- **PASS** A Electronics: Target Active <= Required Active
+- **PASS** A Electronics: kernel stocks >= 0
+- **PASS** A Electronics: kernel flows >= 0
+- **PASS** A Electronics: Expansion <= Desired Expansion (kernel-v2)
+- **PASS** B Electronics: Active <= Installed
+- **PASS** B Electronics: Inactive identity
+- **PASS** B Electronics: Lifetime account identity
+- **PASS** B Electronics: Target Active <= Installed
+- **PASS** B Electronics: Target Active <= Required Active
+- **PASS** B Electronics: kernel stocks >= 0
+- **PASS** B Electronics: kernel flows >= 0
+- **PASS** B Electronics: Expansion <= Desired Expansion (kernel-v2)
+- **PASS** A Power: Active <= Installed
+- **PASS** A Power: Inactive identity
+- **PASS** A Power: Lifetime account identity
+- **PASS** A Power: Target Active <= Installed
+- **PASS** A Power: Target Active <= Required Active
+- **PASS** A Power: kernel stocks >= 0
+- **PASS** A Power: kernel flows >= 0
+- **PASS** A Power: Expansion <= Desired Expansion (kernel-v2)
+- **PASS** B Power: Active <= Installed
+- **PASS** B Power: Inactive identity
+- **PASS** B Power: Lifetime account identity
+- **PASS** B Power: Target Active <= Installed
+- **PASS** B Power: Target Active <= Required Active
+- **PASS** B Power: kernel stocks >= 0
+- **PASS** B Power: kernel flows >= 0
+- **PASS** B Power: Expansion <= Desired Expansion (kernel-v2)
+- **PASS** A Refinery: Active <= Installed
+- **PASS** A Refinery: Inactive identity
+- **PASS** A Refinery: Lifetime account identity
+- **PASS** A Refinery: Target Active <= Installed
+- **PASS** A Refinery: Target Active <= Required Active
+- **PASS** A Refinery: kernel stocks >= 0
+- **PASS** A Refinery: kernel flows >= 0
+- **PASS** A Refinery: Expansion <= Desired Expansion (kernel-v2)
+- **PASS** B Refinery: Active <= Installed
+- **PASS** B Refinery: Inactive identity
+- **PASS** B Refinery: Lifetime account identity
+- **PASS** B Refinery: Target Active <= Installed
+- **PASS** B Refinery: Target Active <= Required Active
+- **PASS** B Refinery: kernel stocks >= 0
+- **PASS** B Refinery: kernel flows >= 0
+- **PASS** B Refinery: Expansion <= Desired Expansion (kernel-v2)
+- **PASS** Transport: Active <= Installed
+- **PASS** Transport: Inactive identity
+- **PASS** Transport: Lifetime account identity
+- **PASS** Transport: Target Active <= Installed
+- **PASS** Transport: Target Active <= Required Active
+- **PASS** Transport: kernel stocks >= 0
+- **PASS** Transport: kernel flows >= 0
+- **PASS** Transport: Expansion <= Desired Expansion (kernel-v2)
+- **PASS** Transport priority allocation identity
+- **PASS** Transport allocated <= capacity-limited load
+- **PASS** A metal input fulfillment in [0,1]
+- **PASS** A metal input delivery <= demand
+- **PASS** A metal input delivery <= available
+- **PASS** A metal input delivery >= 0
+- **PASS** A metal input demand >= 0
+- **PASS** A metal inventory >= 0
+- **PASS** A electronics feedstock inventory >= 0
+- **PASS** A electronics inventory >= 0
+- **PASS** B metal input fulfillment in [0,1]
+- **PASS** B metal input delivery <= demand
+- **PASS** B metal input delivery <= available
+- **PASS** B metal input delivery >= 0
+- **PASS** B metal input demand >= 0
+- **PASS** B metal inventory >= 0
+- **PASS** B electronics feedstock inventory >= 0
+- **PASS** B electronics inventory >= 0
+- **PASS** A ore->metal pair identity
+- **PASS** B ore->metal pair identity
+- **PASS** A capital goods fulfillment in [0,1]
+- **PASS** A capital goods inventory >= 0
+- **PASS** A capital goods production rate >= 0
+- **PASS** A capital goods production pair identities (metal)
+- **PASS** A capital goods production pair identities (electronics)
+- **PASS** A Refinery expansion <= desired expansion
+- **PASS** A Electronics expansion <= desired expansion
+- **PASS** A Power expansion <= desired expansion
+- **PASS** B capital goods fulfillment in [0,1]
+- **PASS** B capital goods inventory >= 0
+- **PASS** B capital goods production rate >= 0
+- **PASS** B capital goods production pair identities (metal)
+- **PASS** B capital goods production pair identities (electronics)
+- **PASS** B Refinery expansion <= desired expansion
+- **PASS** B Electronics expansion <= desired expansion
+- **PASS** B Power expansion <= desired expansion
+- **PASS** A power-resource inventory >= 0
+- **PASS** A power-resource fulfillment in [0,1]
+- **PASS** A available generation <= active generation capacity
+- **FAIL** A power-resource operating identity — max abs error 1762.67990468789 > 1e-8 at day 1080
+- **PASS** B power-resource inventory >= 0
+- **PASS** B power-resource fulfillment in [0,1]
+- **PASS** B available generation <= active generation capacity
+- **FAIL** B power-resource operating identity — max abs error 659.351640911737 > 1e-8 at day 1080
+- **PASS** Mode 23: A capital goods demand rises >= 1.2 x pre-shock (0.602 @359.75)
+- **PASS** Mode 23: A capital goods production follows demand (>= 1.2 x pre-shock 0.552)
+- **PASS** Mode 23: A capital goods fulfillment dips below Mode 21 level (<= 0.95) in the boom
+- **PASS** Mode 23: A capital goods fulfillment never collapses (>= 0.85)
+- **PASS** Mode 23: demand rise -> fulfillment dip -> production rise
+- **PASS** Mode 23: A electronics factory expansion appears (0 pre-shock)
+- **PASS** Mode 23: A power expansion >= 1.5 x pre-shock (0.356 @359.75)
+- **PASS** Mode 23: A refinery expansion holds (>= 0.9 x pre-shock 0.024)
+- **PASS** Mode 23: B is pulled into the boom (B power expansion appears; 0 in Mode 21)
+- **PASS** Mode 23: B capital goods fulfillment stays >= 0.85 (scale-free buffer)
+- **PASS** Mode 23: A Refinery capital goods pair identity
+- **PASS** Mode 23: A Electronics capital goods pair identity
+- **PASS** Mode 23: A Power capital goods pair identity
+- **PASS** Mode 23: B Refinery capital goods pair identity
+- **PASS** Mode 23: B Electronics capital goods pair identity
+- **PASS** Mode 23: B Power capital goods pair identity
+
+### Mode 24 — v7.5.1 Transport Capital Goods Closure
+
+- **PASS** time_axis
+- **PASS** finite_all
+- **PASS** non_negative_regex
+- **PASS** A Metal allocated <= requested
+- **PASS** A Electronics allocated <= requested
+- **PASS** A Energy supply <= active generation
+- **PASS** A supply allocation identity
+- **PASS** A unserved identity
+- **PASS** B Metal allocated <= requested
+- **PASS** B Electronics allocated <= requested
+- **PASS** B Energy supply <= active generation
+- **PASS** B supply allocation identity
+- **PASS** B unserved identity
+- **PASS** A Electronics: Active <= Installed
+- **PASS** A Electronics: Inactive identity
+- **PASS** A Electronics: Lifetime account identity
+- **PASS** A Electronics: Target Active <= Installed
+- **PASS** A Electronics: Target Active <= Required Active
+- **PASS** A Electronics: kernel stocks >= 0
+- **PASS** A Electronics: kernel flows >= 0
+- **PASS** A Electronics: Expansion <= Desired Expansion (kernel-v2)
+- **PASS** B Electronics: Active <= Installed
+- **PASS** B Electronics: Inactive identity
+- **PASS** B Electronics: Lifetime account identity
+- **PASS** B Electronics: Target Active <= Installed
+- **PASS** B Electronics: Target Active <= Required Active
+- **PASS** B Electronics: kernel stocks >= 0
+- **PASS** B Electronics: kernel flows >= 0
+- **PASS** B Electronics: Expansion <= Desired Expansion (kernel-v2)
+- **PASS** A Power: Active <= Installed
+- **PASS** A Power: Inactive identity
+- **PASS** A Power: Lifetime account identity
+- **PASS** A Power: Target Active <= Installed
+- **PASS** A Power: Target Active <= Required Active
+- **PASS** A Power: kernel stocks >= 0
+- **PASS** A Power: kernel flows >= 0
+- **PASS** A Power: Expansion <= Desired Expansion (kernel-v2)
+- **PASS** B Power: Active <= Installed
+- **PASS** B Power: Inactive identity
+- **PASS** B Power: Lifetime account identity
+- **PASS** B Power: Target Active <= Installed
+- **PASS** B Power: Target Active <= Required Active
+- **PASS** B Power: kernel stocks >= 0
+- **PASS** B Power: kernel flows >= 0
+- **PASS** B Power: Expansion <= Desired Expansion (kernel-v2)
+- **PASS** A Refinery: Active <= Installed
+- **PASS** A Refinery: Inactive identity
+- **PASS** A Refinery: Lifetime account identity
+- **PASS** A Refinery: Target Active <= Installed
+- **PASS** A Refinery: Target Active <= Required Active
+- **PASS** A Refinery: kernel stocks >= 0
+- **PASS** A Refinery: kernel flows >= 0
+- **PASS** A Refinery: Expansion <= Desired Expansion (kernel-v2)
+- **PASS** B Refinery: Active <= Installed
+- **PASS** B Refinery: Inactive identity
+- **PASS** B Refinery: Lifetime account identity
+- **PASS** B Refinery: Target Active <= Installed
+- **PASS** B Refinery: Target Active <= Required Active
+- **PASS** B Refinery: kernel stocks >= 0
+- **PASS** B Refinery: kernel flows >= 0
+- **PASS** B Refinery: Expansion <= Desired Expansion (kernel-v2)
+- **PASS** Transport: Active <= Installed
+- **PASS** Transport: Inactive identity
+- **PASS** Transport: Lifetime account identity
+- **PASS** Transport: Target Active <= Installed
+- **PASS** Transport: Target Active <= Required Active
+- **PASS** Transport: kernel stocks >= 0
+- **PASS** Transport: kernel flows >= 0
+- **PASS** Transport: Expansion <= Desired Expansion (kernel-v2)
+- **PASS** Transport priority allocation identity
+- **PASS** Transport allocated <= capacity-limited load
+- **PASS** A metal input fulfillment in [0,1]
+- **PASS** A metal input delivery <= demand
+- **PASS** A metal input delivery <= available
+- **PASS** A metal input delivery >= 0
+- **PASS** A metal input demand >= 0
+- **PASS** A metal inventory >= 0
+- **PASS** A electronics feedstock inventory >= 0
+- **PASS** A electronics inventory >= 0
+- **PASS** B metal input fulfillment in [0,1]
+- **PASS** B metal input delivery <= demand
+- **PASS** B metal input delivery <= available
+- **PASS** B metal input delivery >= 0
+- **PASS** B metal input demand >= 0
+- **PASS** B metal inventory >= 0
+- **PASS** B electronics feedstock inventory >= 0
+- **PASS** B electronics inventory >= 0
+- **PASS** A ore->metal pair identity
+- **PASS** B ore->metal pair identity
+- **PASS** A capital goods fulfillment in [0,1]
+- **PASS** A capital goods inventory >= 0
+- **PASS** A capital goods production rate >= 0
+- **PASS** A capital goods production pair identities (metal)
+- **PASS** A capital goods production pair identities (electronics)
+- **PASS** A Refinery expansion <= desired expansion
+- **PASS** A Electronics expansion <= desired expansion
+- **PASS** A Power expansion <= desired expansion
+- **PASS** B capital goods fulfillment in [0,1]
+- **PASS** B capital goods inventory >= 0
+- **PASS** B capital goods production rate >= 0
+- **PASS** B capital goods production pair identities (metal)
+- **PASS** B capital goods production pair identities (electronics)
+- **PASS** B Refinery expansion <= desired expansion
+- **PASS** B Electronics expansion <= desired expansion
+- **PASS** B Power expansion <= desired expansion
+- **PASS** A power-resource inventory >= 0
+- **PASS** A power-resource fulfillment in [0,1]
+- **PASS** A available generation <= active generation capacity
+- **FAIL** A power-resource operating identity — max abs error 1669.05012106762 > 1e-8 at day 1080
+- **PASS** B power-resource inventory >= 0
+- **PASS** B power-resource fulfillment in [0,1]
+- **PASS** B available generation <= active generation capacity
+- **FAIL** B power-resource operating identity — max abs error 639.87554129053 > 1e-8 at day 719.75
+- **PASS** Mode 24: Transport desired expansion appears
+- **PASS** Mode 24: Transport actual expansion appears
+- **PASS** Mode 24: Transport Capital Goods fulfillment remains physical
+- **PASS** Mode 24: Transport Capital Goods pair identity
+- **PASS** Mode 24: Transport source shares sum >= 1
+- **PASS** Mode 24: Transport source shares sum <= 1
+
+### Mode 25 — v7.6 Energy Resource Supply Shock
+
+- **FAIL** simulation — Circular equation loop identified including the primitives: A Energy Price, A Effective Power Generation Cost, Power Resource Enabled, Test 10 Cheap Energy Advantage Active, Timed Test Mode, A Power Generation Cost, A Power Resource Price, Base Power Resource Price, Power Resource Scarcity Price Strength, A Power Resource Fulfillment, A Power Resource Demand, A Desired Generation, A Total Requested Energy, A Metal Requested Energy, A Pre Energy Smelting Rate, A Positive Desired Smelting Rate, A Desired Smelting Rate, A Local Sales, A Local Demand, A Effective Local Base Demand, Test 20 Coupled Metal Demand Growth Active, Test 16 Sustained Metal Energy Growth Active, Test 9 Two Industry Energy Stress Active, Test 8 Metal Priority Scarcity Active, Test 7 Two Good Transport Surge Active, Test 2 Transport Surge Active, Test 3 Low Demand Active, A Local Base Demand, A Demand Elasticity, A Reference Metal Price, A Market Price, A Realized Import Share from B, A Import Supply Signal, A Domestic Supply Signal, A Domestic Offer Price, A Metal Unit Cost, A Ore per Metal, A Ore Price, A Effective Ore Base Cost, Test 4 Reverse Advantage Active, A Ore Scarcity Strength, A Ore Shortage, A Ore Target Inventory, A Energy per Metal, A Effective Energy Price
+
+### Mode 26 — v7.6 Energy Capacity-Only Control Shock
+
+- **FAIL** simulation — Circular equation loop identified including the primitives: A Energy Price, A Effective Power Generation Cost, Power Resource Enabled, Test 10 Cheap Energy Advantage Active, Timed Test Mode, A Power Generation Cost, A Power Resource Price, Base Power Resource Price, Power Resource Scarcity Price Strength, A Power Resource Fulfillment, A Power Resource Demand, A Desired Generation, A Total Requested Energy, A Metal Requested Energy, A Pre Energy Smelting Rate, A Positive Desired Smelting Rate, A Desired Smelting Rate, A Local Sales, A Local Demand, A Effective Local Base Demand, Test 20 Coupled Metal Demand Growth Active, Test 16 Sustained Metal Energy Growth Active, Test 9 Two Industry Energy Stress Active, Test 8 Metal Priority Scarcity Active, Test 7 Two Good Transport Surge Active, Test 2 Transport Surge Active, Test 3 Low Demand Active, A Local Base Demand, A Demand Elasticity, A Reference Metal Price, A Market Price, A Realized Import Share from B, A Import Supply Signal, A Domestic Supply Signal, A Domestic Offer Price, A Metal Unit Cost, A Ore per Metal, A Ore Price, A Effective Ore Base Cost, Test 4 Reverse Advantage Active, A Ore Scarcity Strength, A Ore Shortage, A Ore Target Inventory, A Energy per Metal, A Effective Energy Price

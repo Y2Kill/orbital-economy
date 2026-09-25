@@ -1,0 +1,15 @@
+# Pre-git project history (old accepted models, contractor deliveries, task packages 001-003).
+# Kept on disk on purpose, deliberately out of git: ~42 MB of archives would otherwise live in
+# the history forever. See docs/HISTORY_RU.md for the summary that IS versioned.
+ARCHIVE/
+
+# Orbital Economy Lab dependencies: pinned by lab/package-lock.json, installed with lab/INSTALL.cmd
+lab/node_modules/
+
+# Bench run artefacts. Shipped reports live in docs/ and are regenerated at acceptance.
+lab/output/
+
+# Local / OS noise
+*.log
+Thumbs.db
+.DS_Store

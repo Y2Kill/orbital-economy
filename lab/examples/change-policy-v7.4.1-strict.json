@@ -1,0 +1,19 @@
+{
+  "format": "orbital-economy-change-policy-v1",
+  "name": "Orbital Economy v7.4.1 strict accepted-baseline policy",
+  "description": "Default-deny change contract for the accepted v7.4.1 r1 baseline (v7.4 Intermediate Inputs + symmetrized test wiring). Any structural, scenario, time-axis, or output-series change is unapproved unless an explicit rule is added. HARD/static/physics validation failures are never waivable. Bound to validation-v7.4.1.json.",
+  "accepted_model_sha256": "07ce33e004597ef485e47e3a95026b584197824468382e28daa80950a45fb08e",
+  "validation_sha256": "2c0e5fd42aa143aaaea4bc695d46b778d1a98ef3277e115d13b72aceecfbdf33",
+  "comparison": {
+    "abs_tolerance": 0,
+    "rel_tolerance": null,
+    "rel_floor": 1e-12
+  },
+  "default_action": "deny",
+  "rules": [],
+  "require_full_mode_coverage": true,
+  "engine": {
+    "package": "simulation",
+    "version": "9.0.0"
+  }
+}

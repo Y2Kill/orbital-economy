@@ -1,0 +1,5 @@
+# This repository ships artefacts whose SHA-256 is their identity: the ModelJSON, the validation
+# contract, the change policy, and the two SHA256SUMS.txt files that pin them. Git must never
+# rewrite line endings here — a normalised file has a different hash and every checksum, manifest
+# and policy binding in the tree would stop matching.
+* -text
