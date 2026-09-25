@@ -1,0 +1,17 @@
+{
+  "task": "008",
+  "title": "v7.7 Construction Materials: regolith -> construction materials -> colonial capacity expansion",
+  "branch": "task/008-construction-materials",
+  "allow": [],
+  "allow_binary": [],
+  "allow_protected": [
+    "docs/tasks/008-construction-materials/candidate/**"
+  ],
+  "required_changes": [
+    "docs/tasks/008-construction-materials/candidate/model-patch.json",
+    "docs/tasks/008-construction-materials/candidate/validation.json",
+    "docs/tasks/008-construction-materials/candidate/change-policy.json",
+    "docs/tasks/008-construction-materials/candidate/PARAMETER_ANNOTATIONS_fragment.json"
+  ],
+  "sums_by": "reviewer"
+}

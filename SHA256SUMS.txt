@@ -128,6 +128,12 @@ fc94639760db33124b64526fc42304a00fa8ba03f302f8ed54fe4706a451b943  ./docs/tasks/0
 9c8bc1d263ecf60054aa9494b04cb09edf97fb12ec866e26b1f21f3bc3b601b0  ./docs/tasks/007-candidate-ci/TASK_RU.md
 682c5fc7f9769b0ef5408688e472965cada76ec4e08f98886e164b6394943411  ./docs/tasks/007-candidate-ci/candidate/model-patch.json
 737483756c01ebfdb5bc499027a80989fb8f094dc31633ab7e7a72fc740b9549  ./docs/tasks/007-candidate-ci/scope.json
+6cf94fd380eb22e6a9ddf5355f6033529343c847771b3711c361d803647a6030  ./docs/tasks/008-construction-materials/TASK_RU.md
+557e0e26c8b74af7c480fd8dff3b2a664841ced5cef5e9d495ba3ff2e482b83d  ./docs/tasks/008-construction-materials/V7_7_ARCHITECTURE_SPEC.md
+87071d8e81cf2dd635098064ddfa59e9e1eafa45981e615e8bb469576ac2ad8d  ./docs/tasks/008-construction-materials/V7_7_TEST_PLAN.md
+ff0fbb367b40c146cabe386e580cf1f7c8bfb85b4179354e39d9e77c272e97e5  ./docs/tasks/008-construction-materials/draft/change-policy-v7.7-draft.json
+fa908c5c0355d54a13ce893180f0116eaa3624985160684fee4c125fe11a54ef  ./docs/tasks/008-construction-materials/draft/validation-v7.7-draft.json
+acf59fe5466787fa91ee3915a3a29f79a1e6b1d4d46468c5dcb051a73f17ba25  ./docs/tasks/008-construction-materials/scope.json
 4700998ef81fad39d79373f5740376750a60609cf2bc19e211f34e2521efd27f  ./docs/tasks/README_RU.md
 bbf818e93b88d606b3137b1bb69d60db8c41c9df4089025a921b1ca00f473244  ./lab/APPLY_PATCH.cmd
 8ec18e3efcaefc65c2fdca2d08b43c515028b4997bcdaeecad1fd3951236a5cd  ./lab/CHANGELOG.md
