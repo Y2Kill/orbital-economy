@@ -61,6 +61,27 @@
 
 Дальше: получить SHA этой финализированной validation из завершившегося candidate-run, привязать его в `change-policy.json` без расширения allow-rules и добиться финальной головы с пятью PASS + POLICY PASS (КТ4).
 
+### КТ4 — 2026-09-26 01:06 EEST — поставка полная, все candidate-гейты и CI зелёные
+
+Сделано:
+- В `candidate/change-policy.json` заменён только placeholder `validation_sha256` на `954b6b4d1bdaa198c7eed5e34ba9e7d3d39ad23d77cfe27b884962af73e54a42`; правила policy не менялись.
+- Финальные candidate-артефакты, validation r2 и аннотации оставлены без иных изменений.
+- Раздел «Что не запускалось локально» дополнен фактическими ограничениями среды и заменяющими CI-проверками.
+
+Доказательство:
+- Финальный Candidate acceptance: https://github.com/Y2Kill/orbital-economy/actions/runs/36194034844 — **success**.
+- Все пять гейтов: `apply-patch PASS`, `conformance PASS`, `audit PASS`, `validation PASS`, `policy PASS`.
+- Candidate SHA-256: `fe9f0f4a8cd82da0d6bac0598008f91a6605eb1f36ee2626c854d9cd2d9dd201`.
+- Validation SHA-256: `954b6b4d1bdaa198c7eed5e34ba9e7d3d39ad23d77cfe27b884962af73e54a42`.
+- Policy: `Observed=2016`, `Expected=2016`, `Unexpected=0`, `Forbidden=0`, `Threshold exceed=0`, `Required missing=0`, `Hard blockers=0`.
+- Итог лога: `All five candidate gates PASS.`
+- CI для той же головы с привязкой policy: https://github.com/Y2Kill/orbital-economy/actions/runs/36194034800 — **success**.
+
+Не подтвердилось:
+- После привязки validation SHA никаких дополнительных policy-расхождений не появилось; прежний FAIL действительно был только следствием placeholder-привязки.
+
+Дальше: поставка КТ4 завершена; канонический Windows-прогон и решение о приёмке остаются за reviewer по контракту.
+
 ## Реализация кандидата
 
 Кандидат r1 следует исчерпывающей спецификации: Regolith → Construction Materials → физическое ограничение расширения Refinery / Electronics / Power через `Min(CG fulfillment, CM fulfillment)`. Transport и энергетический allocator не изменяются. Существующие шесть expansion-FLOW получают только внешний `IfThenElse([Construction Materials Enabled] = 1, new, old-verbatim)`.
@@ -101,3 +122,10 @@
 ## Что не запускалось локально
 
 Локального git/Node у агента нет. Проверки выполняются через `candidate.yml` и обычный CI; SHA256SUMS не пересобираются (`sums_by: reviewer`).
+
+Локально не запускались:
+- `node tools/check_branch.mjs`, bench/selftests и полный стенд — вместо этого использованы GitHub Actions: финальный `candidate.yml` https://github.com/Y2Kill/orbital-economy/actions/runs/36194034844 и `ci.yml` https://github.com/Y2Kill/orbital-economy/actions/runs/36194034800;
+- канонический Windows x64 прогон — Linux CI используется только для совпадающих вердиктов гейтов, без заявления о бит-в-бит совпадении чисел;
+- пересборка `SHA256SUMS.txt` и `lab/SHA256SUMS.txt` — намеренно не выполнялась, так как для задачи установлен `sums_by: reviewer`.
+
+Непроверенное локально не выдаётся за локально проверенное; финальная каноническая приёмка остаётся за reviewer.
