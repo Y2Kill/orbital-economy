@@ -29,6 +29,8 @@ https://github.com/Y2Kill/orbital-economy/actions/runs/36163542292
 
 Финальная версия `.github/workflows/cross-os.yml` оставлена только с `workflow_dispatch`, входами `ref` и `modes`, pinned official actions, `contents: read`, timeout у каждого job и без node_modules cache.
 
+CI после финального cleanup workflow/report: https://github.com/Y2Kill/orbital-economy/actions/runs/36169783631 — **success** (guard, tools-selftest, bench-selftests).
+
 ## 2. Карта расхождений
 
 Результат полного побитового сравнения оказался сильнее исходной таблицы из задания: **полностью bit-identical Modes нет — хотя бы один из 1004 рядов отличается во всех Modes 0–26**.
