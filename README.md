@@ -87,4 +87,6 @@ The engine is frozen at `simulation@9.0.0`; upgrading it requires a new golden c
 
 ## Licence note
 
-The bench depends on the `simulation` package; see `lab/LICENSE-NOTICE.md`. The model, contracts and documentation in this repository are the project's own work.
+The project's own work — model, validation contracts, change policies, documentation, the Orbital Economy Lab bench and the repository tooling — is free to use, copy and modify under the MIT License (`LICENSE`).
+
+The bench runs on the third-party `simulation` engine (AGPL-3.0-or-later), vendored unmodified in `lab/vendor/` together with `csv-parse` (MIT). The bench's own code stays MIT; distributing or network-deploying the bench together with `simulation` must also satisfy the AGPL for that engine. Details: `lab/LICENSE-NOTICE.md`.

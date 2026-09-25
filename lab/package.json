@@ -2,6 +2,7 @@
   "name": "orbital-economy-lab",
   "version": "0.9.3",
   "private": true,
+  "license": "MIT",
   "type": "module",
   "description": "Local ModelJSON test runner, validator, web cross-check harness, accepted-vs-candidate comparator, explicit change-policy gate, Capital Lifecycle Kernel conformance checker, and static structure audits (open boundaries, colony symmetry) for Orbital Economy using simulation@9.0.0.",
   "engines": {
