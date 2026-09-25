@@ -26,6 +26,7 @@ concurrency:
 
 jobs:
   series:
+    if: github.event_name == 'workflow_dispatch' || (!contains(github.event.head_commit.message, '[probe]') && !contains(github.event.head_commit.message, '[repro-only]'))
     strategy:
       fail-fast: false
       matrix:
@@ -69,6 +70,7 @@ jobs:
           retention-days: 14
 
   compare-digests:
+    if: github.event_name == 'workflow_dispatch' || (!contains(github.event.head_commit.message, '[probe]') && !contains(github.event.head_commit.message, '[repro-only]'))
     needs: series
     runs-on: ubuntu-latest
     timeout-minutes: 10
@@ -95,8 +97,8 @@ jobs:
           retention-days: 14
 
   targeted:
+    if: (github.event_name == 'workflow_dispatch' || (!contains(github.event.head_commit.message, '[probe]') && !contains(github.event.head_commit.message, '[repro-only]'))) && needs.compare-digests.outputs.changed == 'yes'
     needs: compare-digests
-    if: needs.compare-digests.outputs.changed == 'yes'
     strategy:
       fail-fast: false
       matrix:
@@ -141,7 +143,7 @@ jobs:
 
   compare:
     needs: [compare-digests, targeted]
-    if: always() && needs.compare-digests.result == 'success'
+    if: always() && (github.event_name == 'workflow_dispatch' || (!contains(github.event.head_commit.message, '[probe]') && !contains(github.event.head_commit.message, '[repro-only]'))) && needs.compare-digests.result == 'success'
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
@@ -164,6 +166,57 @@ jobs:
           else
             echo "All selected Modes are bit-identical."
           fi
+
+  probe:
+    if: github.event_name == 'push' && contains(github.event.head_commit.message, '[probe]')
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: ubuntu-latest
+            label: ubuntu
+          - os: windows-latest
+            label: windows
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+        with:
+          node-version: '24.11.1'
+      - name: Install bench dependencies offline from vendor
+        working-directory: lab
+        shell: bash
+        run: |
+          set -euo pipefail
+          cache="${RUNNER_TEMP}/orbital-economy-npm-cache"
+          rm -rf "${cache}"
+          mkdir -p "${cache}"
+          npm cache add ./vendor/simulation-9.0.0.tgz ./vendor/csv-parse-5.6.0.tgz --cache "${cache}"
+          npm ci --offline --cache "${cache}"
+          rm -rf "${cache}"
+      - name: Probe Mode 0 first 64 points
+        run: node --expose-gc docs/tasks/006-cross-os/repro/probe-mode.mjs 0 64 probe.json
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: probe-${{ matrix.label }}
+          path: probe.json
+          if-no-files-found: error
+          retention-days: 14
+
+  compare-probe:
+    if: github.event_name == 'push' && contains(github.event.head_commit.message, '[probe]')
+    needs: probe
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+      - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093
+        with:
+          pattern: probe-*
+          path: probe-artifacts
+      - name: Find earliest differing primitive
+        run: node docs/tasks/006-cross-os/repro/compare-probe.mjs probe-artifacts/probe-ubuntu/probe.json probe-artifacts/probe-windows/probe.json
 
   repro:
     strategy:
