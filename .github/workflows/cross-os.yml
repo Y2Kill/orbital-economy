@@ -167,8 +167,31 @@ jobs:
             echo "All selected Modes are bit-identical."
           fi
 
+  context-probe:
+    if: github.event_name == 'push' && contains(github.event.head_commit.message, '[context]')
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+        with:
+          node-version: '24.11.1'
+      - name: Install bench dependencies offline from vendor
+        working-directory: lab
+        shell: bash
+        run: |
+          set -euo pipefail
+          cache="${RUNNER_TEMP}/orbital-economy-npm-cache"
+          rm -rf "${cache}"
+          mkdir -p "${cache}"
+          npm cache add ./vendor/simulation-9.0.0.tgz ./vendor/csv-parse-5.6.0.tgz --cache "${cache}"
+          npm ci --offline --cache "${cache}"
+          rm -rf "${cache}"
+      - name: Identify primitive around first divergent Math.pow
+        run: node --expose-gc docs/tasks/006-cross-os/repro/trace-pow-context.mjs 1014 0
+
   probe:
-    if: github.event_name == 'push' && contains(github.event.head_commit.message, '[probe]')
+    if: github.event_name == 'push' && contains(github.event.head_commit.message, '[probe]') && !contains(github.event.head_commit.message, '[context]')
     strategy:
       fail-fast: false
       matrix:
@@ -205,7 +228,7 @@ jobs:
           retention-days: 14
 
   compare-probe:
-    if: github.event_name == 'push' && contains(github.event.head_commit.message, '[probe]')
+    if: github.event_name == 'push' && contains(github.event.head_commit.message, '[probe]') && !contains(github.event.head_commit.message, '[context]')
     needs: probe
     runs-on: ubuntu-latest
     timeout-minutes: 5
@@ -270,7 +293,7 @@ jobs:
         run: node docs/tasks/006-cross-os/repro/compare-pow-trace.mjs pow-traces/pow-trace-ubuntu/pow-trace.json pow-traces/pow-trace-windows/pow-trace.json
 
   repro:
-    if: github.event_name != 'push' || !contains(github.event.head_commit.message, '[pow-probe]')
+    if: github.event_name != 'push' || (!contains(github.event.head_commit.message, '[pow-probe]') && !contains(github.event.head_commit.message, '[probe]'))
     strategy:
       fail-fast: false
       matrix:
