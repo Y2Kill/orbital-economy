@@ -72,12 +72,35 @@
 
 ## Устройство workflow
 
-Будет заполнено после КТ2–КТ4 по фактическим запускам.
+`.github/workflows/candidate.yml` имеет два входа:
+
+- push в `task/**`, но только при изменении `docs/tasks/*/candidate/**`;
+- `workflow_dispatch` с явным `ref` и `modes` (по умолчанию `all`).
+
+Папка задачи определяется по `NNN` из `task/NNN-name`. Обязателен `candidate/model-patch.json`; при отсутствии собственных `validation.json` и `change-policy.json` workflow использует единственные принятые JSON из корневых `validation/` и `policy/`.
+
+Среда совпадает с остальным CI: `ubuntu-latest`, Node 24.11.1, `contents: read`, без secrets и npm/node_modules cache. `actions/checkout`, `actions/setup-node` и `actions/upload-artifact` закреплены теми же commit SHA, что действующие workflow. Зависимости устанавливаются офлайн из `lab/vendor/simulation-9.0.0.tgz` и `lab/vendor/csv-parse-5.6.0.tgz` через временный npm cache + `npm ci --offline`.
+
+Пять приёмочных гейтов — отдельные steps: `apply-patch`, `conformance`, `audit`, `validation`, `policy`. Каждый сохраняет собственный outcome и время. Gate-steps используют `continue-on-error`, поэтому провал одного не скрывает информацию остальных; финальный step печатает сводку и завершает job с ошибкой, если хоть один gate не PASS. Отрицательная КТ3 доказала, что policy FAIL действительно делает job красным, хотя остальные гейты успевают завершиться.
+
+Сводка содержит SHA кандидата и validation, `COMPARISON RESULT`, `POLICY RESULT`, счётчики Observed / Expected / Unexpected / Forbidden / Threshold exceed / Required missing / Hard blockers и первые failing events; та же сводка записывается в `GITHUB_STEP_SUMMARY`. `lab/output/` всегда загружается артефактом. При `modes != all` вывод явно помечается `DIAGNOSTIC RUN`; строгая policy при неполном покрытии ожидаемо может дать FAIL.
 
 ## Время полного запуска
 
-Будет заполнено по фактическим логам Actions.
+Положительный полный прогон КТ2 (run https://github.com/Y2Kill/orbital-economy/actions/runs/36176629922) занял от создания run до завершения примерно **13 мин 18 с**. В самой сводке гейтов:
+
+- apply-patch — 1 с;
+- conformance — 0 с;
+- audit — 0 с;
+- validation всех 27 Modes — 259 с;
+- policy accepted↔candidate по всем 27 Modes — 521 с.
+
+Отрицательный полный прогон КТ3 (run https://github.com/Y2Kill/orbital-economy/actions/runs/36178357637) занял примерно **13 мин 30 с**; validation — 272 с, policy — 519 с. Основная стоимость полного candidate-cycle ожидаемо приходится на два симуляционных этапа: validation и policy.
 
 ## Что не запускалось / ограничения среды
 
-Исполнитель работает через GitHub API-коннектор без локального checkout. Локальный `check_branch` и стенд до push не запускались; по контракту §9.4 их заменяет CI ветки. `SHA256SUMS.txt` и `lab/SHA256SUMS.txt` не изменяются (`sums_by: reviewer`).
+Исполнитель работает через GitHub API-коннектор без локального checkout. Локальный `check_branch` и стенд до push не запускались; по контракту §9.4 их заменял обычный CI ветки и собственный candidate workflow. `SHA256SUMS.txt` и `lab/SHA256SUMS.txt` не изменялись (`sums_by: reviewer`).
+
+Не выполнялась каноническая Windows-приёмка D4 и владельческая D3-проба с намеренно нарушенной validation — это явно оставлено стороне приёмки по заданию. `workflow_dispatch` отдельно не запускался: push-путь полностью проверен КТ1–КТ4; ручной вход будет дополнительно проверен владельцами в D3 после слияния.
+
+Замечание к процессу: `scope.json.required_changes` потребовал README и MODEL_PATCH_RU.md уже на первом guard, поэтому документация была добавлена раньше КТ4. Это не меняет содержание КТ4: на финальной голове документация уже присутствует и проверяется вместе с положительной пробой.

@@ -1,11 +1,5 @@
 {
-  "format": "orbital-economy-model-patch-v1",
-  "base_sha256": "16e8ca6c5719e67422e16a6ec1ea2724b6121a062200eaf91e81389a2a180cd1",
   "name": "Orbital Economy v7.6.1 r1 — Energy Kernel v2, Mode 25 calibrated to a 50% resource-supply shock",
-  "replace_formulas": [
-    {
-      "name": "Power Resource Shock Factor",
-      "value": 0.6
-    }
-  ]
+  "format": "orbital-economy-model-patch-v1",
+  "base_sha256": "16e8ca6c5719e67422e16a6ec1ea2724b6121a062200eaf91e81389a2a180cd1"
 }
