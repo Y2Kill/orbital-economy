@@ -20,6 +20,30 @@
 
 Дальше: исправить формирование финальной сводки (SHA без shell command substitution), сделать её действительно последним шагом job, затем повторить положительную пробу для КТ2.
 
+### КТ2 — 2026-09-25 22:10 EEST — положительная проба полностью PASS
+
+Сделано: исправлено формирование финальной сводки (SHA больше не интерпретируются shell как command substitution), сводка объединена с финальным verdict в последний содержательный шаг job; положительная проба повторена на всех Modes.
+
+Доказательство:
+- Candidate acceptance run: https://github.com/Y2Kill/orbital-economy/actions/runs/36176629922 — success.
+- CI того же commit: https://github.com/Y2Kill/orbital-economy/actions/runs/36176629881 — success.
+- Финальная сводка:
+  - `apply-patch PASS (1s)`
+  - `conformance PASS (0s)`
+  - `audit PASS (0s)`
+  - `validation PASS (259s)`
+  - `policy PASS (521s)`
+  - `Candidate SHA-256: 16e8ca6c5719e67422e16a6ec1ea2724b6121a062200eaf91e81389a2a180cd1`
+  - `Validation SHA-256: 1970aaea988ece5ba2524e0ca79b68a0c48864c8bf6d7e458c336b718c209ddc`
+  - `COMPARISON RESULT: BYTE_IDENTICAL`
+  - `POLICY RESULT: PASS`
+  - `Observed: 0; Expected: 0; Unexpected: 0; Forbidden: 0; Threshold exceed: 0; Required missing: 0; Hard blockers: 0`.
+- Полный job от старта workflow до завершения занял примерно 13 мин 15 с; основное время — validation и policy.
+
+Не подтвердилось: дефект первой положительной пробы с пустыми SHA в Markdown-сводке после исправления не воспроизводится. Других расхождений с ожидаемым результатом КТ2 нет.
+
+Дальше: заменить положительную пробу на отрицательную `Power Resource Shock Factor: 0.5 → 0.6`, без собственной policy; проверить, что conformance/audit/validation PASS, а policy FAIL именно на ожидаемых событиях, затем записать КТ3.
+
 ## Устройство workflow
 
 Будет заполнено после КТ2–КТ4 по фактическим запускам.
