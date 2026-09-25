@@ -74,7 +74,7 @@ b73d0477140636b906fa8ecc65f6eb3491da9022db7900f864236cca9cd84732  ./docs/tasks/0
 6eef9cb9b4e024c2d3676c0db41835e731129b832571d1e78d83e68c2b25cc64  ./docs/tasks/002-v7.4.1-symmetry/r1-delivery/change-policy-v7.4.1-symmetry-r1.json
 50f7c1d1d1c865044f3ef4d3ffcd6f12551567f0b193b1763552d7e9e9998fdf  ./docs/tasks/002-v7.4.1-symmetry/r1-delivery/model-patch.json
 bfef4fee71668d28758c91777588dcd5e40ab5fb2b3fe2a7c628ba41eecd449b  ./docs/tasks/002-v7.4.1-symmetry/r1-delivery/validation-v7.4.1.json
-db36069320d2c54c4f69f709404aa8ffe9865854b9c2f94f407643a53ece8b67  ./docs/tasks/003-v7.5-capital-goods/INDEX_RU.md
+4c361295af15e5ec164364fc46d616069f1bcdbca2df894fc05545f3f228bc99  ./docs/tasks/003-v7.5-capital-goods/INDEX_RU.md
 2a135caaeb88e0b99664747296cc91a5e830f83da7cdec337fb95aac9150a7f4  ./docs/tasks/003-v7.5-capital-goods/issue/README_RU.md
 f6831b5bef01f9170f0f510855ef54ec8bb04a0729e56ea2c897e83c2f4b66ac  ./docs/tasks/003-v7.5-capital-goods/issue/TASK_003_RU.md
 588847b5b1f84905cad50afcf6c1a2ace6ea2da48abd56427c48108257f76d1d  ./docs/tasks/003-v7.5-capital-goods/issue/V7_5_ARCHITECTURE_SPEC.md
@@ -94,6 +94,11 @@ a022b04feab8f4fa77a24ad3c1dad319d61592e2f0bfba1fa7b58eb9eae84138  ./docs/tasks/0
 b8fc60d2224b49af83b2988fd55e40671e7dada1aadb118c1c1d4f31728db81a  ./docs/tasks/003-v7.5-capital-goods/r1-review/r2_drafts/change-policy-v7.5-capital-goods-r1.1-draft.json
 1618d865c1e9d76c642dff3c236d28d20c487af633bcad7c87e242e6804a3d13  ./docs/tasks/003-v7.5-capital-goods/r1-review/r2_drafts/r2_formula_reference.json
 b6eec8cf13e668820ed30cd9d67531c8cfcf4f126bd0eb9a9e254fd1f38e21e7  ./docs/tasks/003-v7.5-capital-goods/r1-review/r2_drafts/validation-v7.5-r2-draft.json
+bf7b282785fb8cc716c304fc330432ba71ec720833998e36354c5592c169b13a  ./docs/tasks/003-v7.5-capital-goods/r2-acceptance/PARAMETER_ANNOTATIONS_fragment.json
+8426dc826ef83518b782444ccd7a8e351150a94c42013a9eab24d4342e0257d1  ./docs/tasks/003-v7.5-capital-goods/r2-acceptance/PROMOTION_RECORD.md
+b8fc60d2224b49af83b2988fd55e40671e7dada1aadb118c1c1d4f31728db81a  ./docs/tasks/003-v7.5-capital-goods/r2-acceptance/change-policy-v7.5-capital-goods-r2.json
+29171740acc8f26348dbc5b0b665fc9d9f806d491d4314abe9049f6990260589  ./docs/tasks/003-v7.5-capital-goods/r2-acceptance/model-patch.json
+b6eec8cf13e668820ed30cd9d67531c8cfcf4f126bd0eb9a9e254fd1f38e21e7  ./docs/tasks/003-v7.5-capital-goods/r2-acceptance/validation-v7.5-r2.json
 a0eb978e9616d1ad6a23ef8e4587f8c95502694824e0acc99a29c30ad6ec9f82  ./docs/tasks/004-vendor-dependencies/ACCEPTANCE_RU.md
 02ddb93791096162bc228f2e7c0147de4315ed2144a4b0c06850a83c6d95815b  ./docs/tasks/004-vendor-dependencies/REPORT_RU.md
 6a9bb2beea23aaa920140074a0df7285a501b876b9594360faca49807994c1c6  ./docs/tasks/004-vendor-dependencies/TASK_RU.md

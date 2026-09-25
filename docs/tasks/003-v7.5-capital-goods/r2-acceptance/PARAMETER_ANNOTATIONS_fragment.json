@@ -1,0 +1,263 @@
+{
+  "format": "orbital-economy-parameter-annotations-v1",
+  "model": "Orbital Economy v7.5 Capital Goods candidate r1",
+  "updated": "2026-09-21",
+  "parameters": {
+    "Capital Goods Enabled": {
+      "role": "Master switch for v7.5 physical backing of Refinery / Electronics / Power expansion.",
+      "effect": "0 preserves accepted v7.4.1 behavior exactly; 1 enables local capital-goods production, inventory fulfillment and physical consumption.",
+      "evidence": "Architecture control parameter from V7_5_ARCHITECTURE_SPEC §0/§2; Modes 0–20 explicitly set 0, Modes 21–23 set 1.",
+      "since": "v7.5 candidate r1",
+      "tags": [
+        "capital-goods",
+        "switch"
+      ]
+    },
+    "Metal per Capital Goods Unit": {
+      "role": "Metal input coefficient of one abstract capital-goods unit.",
+      "effect": "Scales metal withdrawn from local Metal Inventory by the capital-goods production rate.",
+      "evidence": "Start value 1 is specified by V7_5_ARCHITECTURE_SPEC §2; calibration parameter, no physical justification at this aggregation level.",
+      "since": "v7.5 candidate r1",
+      "tags": [
+        "capital-goods",
+        "input-coefficient",
+        "calibration"
+      ]
+    },
+    "Electronics per Capital Goods Unit": {
+      "role": "Electronics input coefficient of one abstract capital-goods unit.",
+      "effect": "Scales electronics withdrawn from local Electronics Inventory by the capital-goods production rate.",
+      "evidence": "Start value 0.5 is specified by V7_5_ARCHITECTURE_SPEC §2; calibration parameter, no physical justification at this aggregation level.",
+      "since": "v7.5 candidate r1",
+      "tags": [
+        "capital-goods",
+        "input-coefficient",
+        "calibration"
+      ]
+    },
+    "Capital Goods Target Days": {
+      "role": "Target inventory coverage for the capital-goods sector.",
+      "effect": "Raises or lowers desired equipment inventory relative to current desired construction demand.",
+      "evidence": "Start value 30 days from V7_5_ARCHITECTURE_SPEC §2; calibration parameter, no physical justification at this stage.",
+      "since": "v7.5 candidate r1",
+      "tags": [
+        "capital-goods",
+        "inventory",
+        "planning",
+        "calibration"
+      ]
+    },
+    "Capital Goods Adjustment Time": {
+      "role": "First-order inventory correction time for desired capital-goods production.",
+      "effect": "Controls how quickly production responds to the gap between target and actual capital-goods inventory.",
+      "evidence": "Start value 20 days from V7_5_ARCHITECTURE_SPEC §2; calibration parameter.",
+      "since": "v7.5 candidate r1",
+      "tags": [
+        "capital-goods",
+        "inventory",
+        "response-time",
+        "calibration"
+      ]
+    },
+    "Capital Goods Buffer": {
+      "role": "Soft-normalization buffer in Capital Goods Fulfillment = Inventory/(Inventory+Buffer).",
+      "effect": "Larger values reduce fulfillment for a given inventory and therefore slow all three local construction sectors proportionally.",
+      "evidence": "Value 0.5 is explicitly fixed by V7_5_ARCHITECTURE_SPEC §2 after the skeleton showed Buffer=2 capped normal fulfillment near 0.86.",
+      "since": "v7.5 candidate r1",
+      "tags": [
+        "capital-goods",
+        "fulfillment",
+        "normalization",
+        "calibration"
+      ]
+    },
+    "v7.5 Capital Goods Shock Multiplier": {
+      "role": "Mode 22 test-only multiplier for capital-goods production capacity.",
+      "effect": "During day 360–720 it reduces the selected colony's effective capital-goods production capacity.",
+      "evidence": "Test parameter fixed to 0.3 by V7_5_ARCHITECTURE_SPEC §4; not a physical world parameter.",
+      "since": "v7.5 candidate r1",
+      "tags": [
+        "capital-goods",
+        "test",
+        "mode-22"
+      ]
+    },
+    "v7.5 Investment Boom Multiplier": {
+      "role": "Mode 23 test-only multiplier for electronics local demand.",
+      "effect": "Creates sustained A electronics demand growth and therefore simultaneous demand for equipment from expanding sectors.",
+      "evidence": "Test parameter fixed to 4 by V7_5_ARCHITECTURE_SPEC §4, matching the intended sustained-growth stress scale.",
+      "since": "v7.5 candidate r1",
+      "tags": [
+        "capital-goods",
+        "test",
+        "mode-23"
+      ]
+    },
+    "A Capital Goods Inventory": {
+      "role": "Initial local stock of abstract capital goods in colony A.",
+      "effect": "Provides initial working inventory before endogenous production and construction consumption settle.",
+      "evidence": "Initial value 30 from the verified skeleton; calibration initial condition without physical justification at this stage.",
+      "since": "v7.5 candidate r1",
+      "tags": [
+        "capital-goods",
+        "initial",
+        "inventory",
+        "calibration"
+      ]
+    },
+    "A Capital Goods Base Production Capacity": {
+      "role": "Baseline maximum production scale of the A capital-goods sector.",
+      "effect": "Enters the soft production-capacity cap and is the quantity reduced by Mode 22 test wiring.",
+      "evidence": "Start value 2 from V7_5_ARCHITECTURE_SPEC §2; calibration parameter without physical justification at this stage.",
+      "since": "v7.5 candidate r1",
+      "tags": [
+        "capital-goods",
+        "capacity",
+        "calibration"
+      ]
+    },
+    "A Refinery Capital Goods per Capacity": {
+      "role": "Capital-goods units required for one unit of new refinery installed capacity in colony A.",
+      "effect": "Scales both total equipment demand and physical equipment consumption generated by sector expansion.",
+      "evidence": "Start value 17 from V7_5_ARCHITECTURE_SPEC §2. It is a calibration coefficient; the refinery/electronics starts are heuristically tied to legacy financial capital-cost scale, not a physical measurement.",
+      "since": "v7.5 candidate r1",
+      "tags": [
+        "capital-goods",
+        "capital-intensity",
+        "refinery",
+        "calibration"
+      ]
+    },
+    "A Electronics Capital Goods per Capacity": {
+      "role": "Capital-goods units required for one unit of new electronics installed capacity in colony A.",
+      "effect": "Scales both total equipment demand and physical equipment consumption generated by sector expansion.",
+      "evidence": "Start value 11.5 from V7_5_ARCHITECTURE_SPEC §2. It is a calibration coefficient; the refinery/electronics starts are heuristically tied to legacy financial capital-cost scale, not a physical measurement.",
+      "since": "v7.5 candidate r1",
+      "tags": [
+        "capital-goods",
+        "capital-intensity",
+        "electronics",
+        "calibration"
+      ]
+    },
+    "A Power Capital Goods per Capacity": {
+      "role": "Capital-goods units required for one unit of new power installed capacity in colony A.",
+      "effect": "Scales both total equipment demand and physical equipment consumption generated by sector expansion.",
+      "evidence": "Start value 0.5 from V7_5_ARCHITECTURE_SPEC §2. It is a calibration coefficient; the refinery/electronics starts are heuristically tied to legacy financial capital-cost scale, not a physical measurement.",
+      "since": "v7.5 candidate r1",
+      "tags": [
+        "capital-goods",
+        "capital-intensity",
+        "power",
+        "calibration"
+      ]
+    },
+    "A Test 22 Capital Goods Shock Applies": {
+      "role": "Applicability flag for Mode 22 capital-goods supply shock in colony A.",
+      "effect": "1 applies the shared 0.3 production-capacity multiplier; 0 substitutes exact neutral multiplier 1.",
+      "evidence": "Scenario wiring from V7_5_ARCHITECTURE_SPEC §4: A=1, B=0; test-only parameter.",
+      "since": "v7.5 candidate r1",
+      "tags": [
+        "capital-goods",
+        "test",
+        "mode-22",
+        "applicability"
+      ]
+    },
+    "A Test 23 Electronics Demand Applies": {
+      "role": "Applicability flag for Mode 23 electronics-demand shock in colony A.",
+      "effect": "1 applies the shared ×4 demand multiplier; 0 substitutes exact neutral multiplier 1.",
+      "evidence": "Scenario wiring from V7_5_ARCHITECTURE_SPEC §4: A=1, B=0; test-only parameter.",
+      "since": "v7.5 candidate r1",
+      "tags": [
+        "capital-goods",
+        "test",
+        "mode-23",
+        "applicability"
+      ]
+    },
+    "B Capital Goods Inventory": {
+      "role": "Initial local stock of abstract capital goods in colony B.",
+      "effect": "Provides initial working inventory before endogenous production and construction consumption settle.",
+      "evidence": "Initial value 30 from the verified skeleton; calibration initial condition without physical justification at this stage.",
+      "since": "v7.5 candidate r1",
+      "tags": [
+        "capital-goods",
+        "initial",
+        "inventory",
+        "calibration"
+      ]
+    },
+    "B Capital Goods Base Production Capacity": {
+      "role": "Baseline maximum production scale of the B capital-goods sector.",
+      "effect": "Enters the soft production-capacity cap and is the quantity reduced by Mode 22 test wiring.",
+      "evidence": "Start value 1 from V7_5_ARCHITECTURE_SPEC §2; calibration parameter without physical justification at this stage.",
+      "since": "v7.5 candidate r1",
+      "tags": [
+        "capital-goods",
+        "capacity",
+        "calibration"
+      ]
+    },
+    "B Refinery Capital Goods per Capacity": {
+      "role": "Capital-goods units required for one unit of new refinery installed capacity in colony B.",
+      "effect": "Scales both total equipment demand and physical equipment consumption generated by sector expansion.",
+      "evidence": "Start value 17 from V7_5_ARCHITECTURE_SPEC §2. It is a calibration coefficient; the refinery/electronics starts are heuristically tied to legacy financial capital-cost scale, not a physical measurement.",
+      "since": "v7.5 candidate r1",
+      "tags": [
+        "capital-goods",
+        "capital-intensity",
+        "refinery",
+        "calibration"
+      ]
+    },
+    "B Electronics Capital Goods per Capacity": {
+      "role": "Capital-goods units required for one unit of new electronics installed capacity in colony B.",
+      "effect": "Scales both total equipment demand and physical equipment consumption generated by sector expansion.",
+      "evidence": "Start value 11.5 from V7_5_ARCHITECTURE_SPEC §2. It is a calibration coefficient; the refinery/electronics starts are heuristically tied to legacy financial capital-cost scale, not a physical measurement.",
+      "since": "v7.5 candidate r1",
+      "tags": [
+        "capital-goods",
+        "capital-intensity",
+        "electronics",
+        "calibration"
+      ]
+    },
+    "B Power Capital Goods per Capacity": {
+      "role": "Capital-goods units required for one unit of new power installed capacity in colony B.",
+      "effect": "Scales both total equipment demand and physical equipment consumption generated by sector expansion.",
+      "evidence": "Start value 0.5 from V7_5_ARCHITECTURE_SPEC §2. It is a calibration coefficient; the refinery/electronics starts are heuristically tied to legacy financial capital-cost scale, not a physical measurement.",
+      "since": "v7.5 candidate r1",
+      "tags": [
+        "capital-goods",
+        "capital-intensity",
+        "power",
+        "calibration"
+      ]
+    },
+    "B Test 22 Capital Goods Shock Applies": {
+      "role": "Applicability flag for Mode 22 capital-goods supply shock in colony B.",
+      "effect": "1 applies the shared 0.3 production-capacity multiplier; 0 substitutes exact neutral multiplier 1.",
+      "evidence": "Scenario wiring from V7_5_ARCHITECTURE_SPEC §4: A=1, B=0; test-only parameter.",
+      "since": "v7.5 candidate r1",
+      "tags": [
+        "capital-goods",
+        "test",
+        "mode-22",
+        "applicability"
+      ]
+    },
+    "B Test 23 Electronics Demand Applies": {
+      "role": "Applicability flag for Mode 23 electronics-demand shock in colony B.",
+      "effect": "1 applies the shared ×4 demand multiplier; 0 substitutes exact neutral multiplier 1.",
+      "evidence": "Scenario wiring from V7_5_ARCHITECTURE_SPEC §4: A=1, B=0; test-only parameter.",
+      "since": "v7.5 candidate r1",
+      "tags": [
+        "capital-goods",
+        "test",
+        "mode-23",
+        "applicability"
+      ]
+    }
+  }
+}

@@ -1,0 +1,1218 @@
+{
+  "format": "orbital-economy-model-patch-v1",
+  "base_sha256": "07ce33e004597ef485e47e3a95026b584197824468382e28daa80950a45fb08e",
+  "name": "Orbital Economy v7.5 Capital Goods candidate r2",
+  "description": "v7.5 Capital Goods / kernel-v2 candidate r2 against accepted v7.4.1 r1: r1 mechanics plus switch-gated capital-goods consumption, scale-free fulfillment buffer in days of demand, and calibrated Mode 22 shock multiplier 0.1. Modes 0-20 switch it off for exact regression.",
+  "add_elements": [
+    {
+      "type": "VARIABLE",
+      "name": "Capital Goods Enabled",
+      "behavior": {
+        "value": 1
+      },
+      "description": "v7.5 master switch: capital expansion is fulfilled from locally produced capital goods."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "Metal per Capital Goods Unit",
+      "behavior": {
+        "value": 1
+      },
+      "description": "Physical metal input per abstract capital-goods unit."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "Electronics per Capital Goods Unit",
+      "behavior": {
+        "value": 0.5
+      },
+      "description": "Physical electronics input per abstract capital-goods unit."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "Capital Goods Target Days",
+      "behavior": {
+        "value": 30
+      },
+      "description": "Target inventory coverage for the capital-goods sector, in days of desired demand."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "Capital Goods Adjustment Time",
+      "behavior": {
+        "value": 20
+      },
+      "description": "First-order inventory correction time for desired capital-goods production."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "Capital Goods Buffer Days",
+      "behavior": {
+        "value": 1
+      },
+      "description": "v7.5 scale-free fulfillment half-saturation buffer, expressed in days of current capital-goods demand."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "Test 22 Capital Goods Supply Shock Active",
+      "behavior": {
+        "value": "IfThenElse([Timed Test Mode] = 22, [Temporary Test Window], 0)"
+      },
+      "description": "Mode 22 temporary capital-goods production-capacity shock window."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "Test 23 Investment Boom Active",
+      "behavior": {
+        "value": "IfThenElse([Timed Test Mode] = 23, [Reverse Advantage Window], 0)"
+      },
+      "description": "Mode 23 sustained investment-boom demand shock from Test Shock Start Day onward."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "v7.5 Capital Goods Shock Multiplier",
+      "behavior": {
+        "value": 0.1
+      },
+      "description": "Mode 22 test-only multiplier applied to the selected colony capital-goods production capacity; calibrated to create a binding temporary supply shock."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "v7.5 Investment Boom Multiplier",
+      "behavior": {
+        "value": 4
+      },
+      "description": "Mode 23 multiplier applied to selected colony electronics local base demand."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "A Refinery Capital Goods per Capacity",
+      "behavior": {
+        "value": 17
+      },
+      "description": "Capital-goods units consumed per unit of new A refinery installed capacity."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "A Electronics Capital Goods per Capacity",
+      "behavior": {
+        "value": 11.5
+      },
+      "description": "Capital-goods units consumed per unit of new A electronics factory installed capacity."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "A Power Capital Goods per Capacity",
+      "behavior": {
+        "value": 0.5
+      },
+      "description": "Capital-goods units consumed per unit of new A power generation installed capital."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "A Capital Goods Base Production Capacity",
+      "behavior": {
+        "value": 2
+      },
+      "description": "Baseline production capacity of the A capital-goods sector."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "A Test 22 Capital Goods Shock Applies",
+      "behavior": {
+        "value": 1
+      },
+      "description": "Applicability flag for Mode 22 capital-goods supply shock in colony A."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "A Test 23 Electronics Demand Applies",
+      "behavior": {
+        "value": 1
+      },
+      "description": "Applicability flag for Mode 23 electronics demand shock in colony A."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "A Capital Goods Production Capacity",
+      "behavior": {
+        "value": "IfThenElse([Test 22 Capital Goods Supply Shock Active] = 1, [A Capital Goods Base Production Capacity] * IfThenElse([A Test 22 Capital Goods Shock Applies] = 1, [v7.5 Capital Goods Shock Multiplier], 1), [A Capital Goods Base Production Capacity])"
+      },
+      "description": "Effective A capital-goods production capacity after Mode 22 test wiring."
+    },
+    {
+      "type": "STOCK",
+      "name": "A Capital Goods Inventory",
+      "behavior": {
+        "initial_value": 30,
+        "non_negative": true
+      },
+      "description": "Local inventory of abstract capital goods in colony A; initial calibration value."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "A Refinery Desired Expansion",
+      "behavior": {
+        "value": "(([A Refinery Gap Limited Construction]) + ([A Refinery Finance Limited Construction]) - (((([A Refinery Gap Limited Construction]) - ([A Refinery Finance Limited Construction])) ^ 2) ^ 0.5)) / 2"
+      },
+      "description": "Unconstrained desired refinery expansion in colony A; verbatim accepted v7.4.1 expansion formula."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "A Electronics Desired Expansion",
+      "behavior": {
+        "value": "[Capital Lifecycle Enabled] * (([A Electronics Gap Limited Construction]) + ([A Electronics Finance Limited Construction]) - (((([A Electronics Gap Limited Construction]) - ([A Electronics Finance Limited Construction])) ^ 2) ^ 0.5)) / 2"
+      },
+      "description": "Unconstrained desired electronics expansion in colony A; verbatim accepted v7.4.1 expansion formula."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "A Power Desired Expansion",
+      "behavior": {
+        "value": "[Capital Lifecycle Enabled] * [A Power Gap Limited Construction]"
+      },
+      "description": "Unconstrained desired power expansion in colony A; verbatim accepted v7.4.1 expansion formula."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "A Capital Goods Demand",
+      "behavior": {
+        "value": "[A Refinery Desired Expansion] * [A Refinery Capital Goods per Capacity] + [A Electronics Desired Expansion] * [A Electronics Capital Goods per Capacity] + [A Power Desired Expansion] * [A Power Capital Goods per Capacity]"
+      },
+      "description": "Total desired local demand for capital goods generated by the three capital-expanding sectors in colony A."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "A Capital Goods Target Inventory",
+      "behavior": {
+        "value": "[A Capital Goods Demand] * [Capital Goods Target Days]"
+      },
+      "description": "Target capital-goods inventory in colony A."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "A Desired Capital Goods Production",
+      "behavior": {
+        "value": "Max(0, [A Capital Goods Demand] + ([A Capital Goods Target Inventory] - [A Capital Goods Inventory]) / [Capital Goods Adjustment Time])"
+      },
+      "description": "Desired capital-goods production in colony A, including inventory correction."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "A Capital Goods Production Rate",
+      "behavior": {
+        "value": "IfThenElse([Capital Goods Enabled] = 1, [A Desired Capital Goods Production] / (1 + ([A Desired Capital Goods Production] / ([A Capital Goods Production Capacity] + 0.001)) ^ 8) ^ 0.125 * [A Metal Inventory] / ([A Metal Inventory] + [A Metal Buffer]) * [A Electronics Inventory] / ([A Electronics Inventory] + [A Electronics Buffer]), 0)"
+      },
+      "description": "Actual A capital-goods production rate after capacity and input-inventory soft constraints."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "A Capital Goods Fulfillment",
+      "behavior": {
+        "value": "IfThenElse([Capital Goods Enabled] = 1, [A Capital Goods Inventory] / ([A Capital Goods Inventory] + [Capital Goods Buffer Days] * Max([A Capital Goods Demand], 0.000000001)), 1)"
+      },
+      "description": "Common capital-goods fulfillment factor applied proportionally to all three expanding sectors in colony A."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "A Refinery Capital Goods Expansion Ratio",
+      "behavior": {
+        "value": "[A Refinery Expansion] / Max([A Refinery Desired Expansion], 0.000000001)"
+      },
+      "description": "Diagnostic ratio of actual to desired refinery expansion for v7.5 capital-goods tests."
+    },
+    {
+      "type": "FLOW",
+      "name": "A Capital Goods Production",
+      "from": null,
+      "to": "A Capital Goods Inventory",
+      "behavior": {
+        "value": "[A Capital Goods Production Rate]",
+        "non_negative": true
+      },
+      "description": "Production of local capital goods in colony A."
+    },
+    {
+      "type": "FLOW",
+      "name": "A Capital Goods Metal Consumption",
+      "from": "A Metal Inventory",
+      "to": null,
+      "behavior": {
+        "value": "[A Capital Goods Production Rate] * [Metal per Capital Goods Unit]",
+        "non_negative": true
+      },
+      "description": "Metal physically consumed to produce capital goods in colony A."
+    },
+    {
+      "type": "FLOW",
+      "name": "A Capital Goods Electronics Consumption",
+      "from": "A Electronics Inventory",
+      "to": null,
+      "behavior": {
+        "value": "[A Capital Goods Production Rate] * [Electronics per Capital Goods Unit]",
+        "non_negative": true
+      },
+      "description": "Electronics physically consumed to produce capital goods in colony A."
+    },
+    {
+      "type": "FLOW",
+      "name": "A Refinery Capital Goods Consumption",
+      "from": "A Capital Goods Inventory",
+      "to": null,
+      "behavior": {
+        "value": "IfThenElse([Capital Goods Enabled] = 1, [A Refinery Expansion] * [A Refinery Capital Goods per Capacity], 0)",
+        "non_negative": true
+      },
+      "description": "Capital goods consumed by refinery expansion in colony A."
+    },
+    {
+      "type": "FLOW",
+      "name": "A Electronics Capital Goods Consumption",
+      "from": "A Capital Goods Inventory",
+      "to": null,
+      "behavior": {
+        "value": "IfThenElse([Capital Goods Enabled] = 1, [Capital Lifecycle Enabled] * [A Electronics Factory Expansion] * [A Electronics Capital Goods per Capacity], 0)",
+        "non_negative": true
+      },
+      "description": "Capital goods consumed by electronics factory expansion in colony A."
+    },
+    {
+      "type": "FLOW",
+      "name": "A Power Capital Goods Consumption",
+      "from": "A Capital Goods Inventory",
+      "to": null,
+      "behavior": {
+        "value": "IfThenElse([Capital Goods Enabled] = 1, [Capital Lifecycle Enabled] * [A Power Generation Expansion] * [A Power Capital Goods per Capacity], 0)",
+        "non_negative": true
+      },
+      "description": "Capital goods consumed by power generation expansion in colony A."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "B Refinery Capital Goods per Capacity",
+      "behavior": {
+        "value": 17
+      },
+      "description": "Capital-goods units consumed per unit of new B refinery installed capacity."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "B Electronics Capital Goods per Capacity",
+      "behavior": {
+        "value": 11.5
+      },
+      "description": "Capital-goods units consumed per unit of new B electronics factory installed capacity."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "B Power Capital Goods per Capacity",
+      "behavior": {
+        "value": 0.5
+      },
+      "description": "Capital-goods units consumed per unit of new B power generation installed capital."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "B Capital Goods Base Production Capacity",
+      "behavior": {
+        "value": 1
+      },
+      "description": "Baseline production capacity of the B capital-goods sector."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "B Test 22 Capital Goods Shock Applies",
+      "behavior": {
+        "value": 0
+      },
+      "description": "Applicability flag for Mode 22 capital-goods supply shock in colony B."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "B Test 23 Electronics Demand Applies",
+      "behavior": {
+        "value": 0
+      },
+      "description": "Applicability flag for Mode 23 electronics demand shock in colony B."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "B Capital Goods Production Capacity",
+      "behavior": {
+        "value": "IfThenElse([Test 22 Capital Goods Supply Shock Active] = 1, [B Capital Goods Base Production Capacity] * IfThenElse([B Test 22 Capital Goods Shock Applies] = 1, [v7.5 Capital Goods Shock Multiplier], 1), [B Capital Goods Base Production Capacity])"
+      },
+      "description": "Effective B capital-goods production capacity after Mode 22 test wiring."
+    },
+    {
+      "type": "STOCK",
+      "name": "B Capital Goods Inventory",
+      "behavior": {
+        "initial_value": 30,
+        "non_negative": true
+      },
+      "description": "Local inventory of abstract capital goods in colony B; initial calibration value."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "B Refinery Desired Expansion",
+      "behavior": {
+        "value": "(([B Refinery Gap Limited Construction]) + ([B Refinery Finance Limited Construction]) - (((([B Refinery Gap Limited Construction]) - ([B Refinery Finance Limited Construction])) ^ 2) ^ 0.5)) / 2"
+      },
+      "description": "Unconstrained desired refinery expansion in colony B; verbatim accepted v7.4.1 expansion formula."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "B Electronics Desired Expansion",
+      "behavior": {
+        "value": "[Capital Lifecycle Enabled] * (([B Electronics Gap Limited Construction]) + ([B Electronics Finance Limited Construction]) - (((([B Electronics Gap Limited Construction]) - ([B Electronics Finance Limited Construction])) ^ 2) ^ 0.5)) / 2"
+      },
+      "description": "Unconstrained desired electronics expansion in colony B; verbatim accepted v7.4.1 expansion formula."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "B Power Desired Expansion",
+      "behavior": {
+        "value": "[Capital Lifecycle Enabled] * [B Power Gap Limited Construction]"
+      },
+      "description": "Unconstrained desired power expansion in colony B; verbatim accepted v7.4.1 expansion formula."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "B Capital Goods Demand",
+      "behavior": {
+        "value": "[B Refinery Desired Expansion] * [B Refinery Capital Goods per Capacity] + [B Electronics Desired Expansion] * [B Electronics Capital Goods per Capacity] + [B Power Desired Expansion] * [B Power Capital Goods per Capacity]"
+      },
+      "description": "Total desired local demand for capital goods generated by the three capital-expanding sectors in colony B."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "B Capital Goods Target Inventory",
+      "behavior": {
+        "value": "[B Capital Goods Demand] * [Capital Goods Target Days]"
+      },
+      "description": "Target capital-goods inventory in colony B."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "B Desired Capital Goods Production",
+      "behavior": {
+        "value": "Max(0, [B Capital Goods Demand] + ([B Capital Goods Target Inventory] - [B Capital Goods Inventory]) / [Capital Goods Adjustment Time])"
+      },
+      "description": "Desired capital-goods production in colony B, including inventory correction."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "B Capital Goods Production Rate",
+      "behavior": {
+        "value": "IfThenElse([Capital Goods Enabled] = 1, [B Desired Capital Goods Production] / (1 + ([B Desired Capital Goods Production] / ([B Capital Goods Production Capacity] + 0.001)) ^ 8) ^ 0.125 * [B Metal Inventory] / ([B Metal Inventory] + [B Metal Buffer]) * [B Electronics Inventory] / ([B Electronics Inventory] + [B Electronics Buffer]), 0)"
+      },
+      "description": "Actual B capital-goods production rate after capacity and input-inventory soft constraints."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "B Capital Goods Fulfillment",
+      "behavior": {
+        "value": "IfThenElse([Capital Goods Enabled] = 1, [B Capital Goods Inventory] / ([B Capital Goods Inventory] + [Capital Goods Buffer Days] * Max([B Capital Goods Demand], 0.000000001)), 1)"
+      },
+      "description": "Common capital-goods fulfillment factor applied proportionally to all three expanding sectors in colony B."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "B Refinery Capital Goods Expansion Ratio",
+      "behavior": {
+        "value": "[B Refinery Expansion] / Max([B Refinery Desired Expansion], 0.000000001)"
+      },
+      "description": "Diagnostic ratio of actual to desired refinery expansion for v7.5 capital-goods tests."
+    },
+    {
+      "type": "FLOW",
+      "name": "B Capital Goods Production",
+      "from": null,
+      "to": "B Capital Goods Inventory",
+      "behavior": {
+        "value": "[B Capital Goods Production Rate]",
+        "non_negative": true
+      },
+      "description": "Production of local capital goods in colony B."
+    },
+    {
+      "type": "FLOW",
+      "name": "B Capital Goods Metal Consumption",
+      "from": "B Metal Inventory",
+      "to": null,
+      "behavior": {
+        "value": "[B Capital Goods Production Rate] * [Metal per Capital Goods Unit]",
+        "non_negative": true
+      },
+      "description": "Metal physically consumed to produce capital goods in colony B."
+    },
+    {
+      "type": "FLOW",
+      "name": "B Capital Goods Electronics Consumption",
+      "from": "B Electronics Inventory",
+      "to": null,
+      "behavior": {
+        "value": "[B Capital Goods Production Rate] * [Electronics per Capital Goods Unit]",
+        "non_negative": true
+      },
+      "description": "Electronics physically consumed to produce capital goods in colony B."
+    },
+    {
+      "type": "FLOW",
+      "name": "B Refinery Capital Goods Consumption",
+      "from": "B Capital Goods Inventory",
+      "to": null,
+      "behavior": {
+        "value": "IfThenElse([Capital Goods Enabled] = 1, [B Refinery Expansion] * [B Refinery Capital Goods per Capacity], 0)",
+        "non_negative": true
+      },
+      "description": "Capital goods consumed by refinery expansion in colony B."
+    },
+    {
+      "type": "FLOW",
+      "name": "B Electronics Capital Goods Consumption",
+      "from": "B Capital Goods Inventory",
+      "to": null,
+      "behavior": {
+        "value": "IfThenElse([Capital Goods Enabled] = 1, [Capital Lifecycle Enabled] * [B Electronics Factory Expansion] * [B Electronics Capital Goods per Capacity], 0)",
+        "non_negative": true
+      },
+      "description": "Capital goods consumed by electronics factory expansion in colony B."
+    },
+    {
+      "type": "FLOW",
+      "name": "B Power Capital Goods Consumption",
+      "from": "B Capital Goods Inventory",
+      "to": null,
+      "behavior": {
+        "value": "IfThenElse([Capital Goods Enabled] = 1, [Capital Lifecycle Enabled] * [B Power Generation Expansion] * [B Power Capital Goods per Capacity], 0)",
+        "non_negative": true
+      },
+      "description": "Capital goods consumed by power generation expansion in colony B."
+    }
+  ],
+  "replace_formulas": [
+    {
+      "name": "A Refinery Expansion",
+      "value": "IfThenElse([Capital Goods Enabled] = 1, [A Refinery Desired Expansion] * [A Capital Goods Fulfillment], (([A Refinery Gap Limited Construction]) + ([A Refinery Finance Limited Construction]) - (((([A Refinery Gap Limited Construction]) - ([A Refinery Finance Limited Construction])) ^ 2) ^ 0.5)) / 2)"
+    },
+    {
+      "name": "A Electronics Factory Expansion",
+      "value": "IfThenElse([Capital Goods Enabled] = 1, [A Electronics Desired Expansion] * [A Capital Goods Fulfillment], [Capital Lifecycle Enabled] * (([A Electronics Gap Limited Construction]) + ([A Electronics Finance Limited Construction]) - (((([A Electronics Gap Limited Construction]) - ([A Electronics Finance Limited Construction])) ^ 2) ^ 0.5)) / 2)"
+    },
+    {
+      "name": "A Power Generation Expansion",
+      "value": "IfThenElse([Capital Goods Enabled] = 1, [A Power Desired Expansion] * [A Capital Goods Fulfillment], [Capital Lifecycle Enabled] * [A Power Gap Limited Construction])"
+    },
+    {
+      "name": "B Refinery Expansion",
+      "value": "IfThenElse([Capital Goods Enabled] = 1, [B Refinery Desired Expansion] * [B Capital Goods Fulfillment], (([B Refinery Gap Limited Construction]) + ([B Refinery Finance Limited Construction]) - (((([B Refinery Gap Limited Construction]) - ([B Refinery Finance Limited Construction])) ^ 2) ^ 0.5)) / 2)"
+    },
+    {
+      "name": "B Electronics Factory Expansion",
+      "value": "IfThenElse([Capital Goods Enabled] = 1, [B Electronics Desired Expansion] * [B Capital Goods Fulfillment], [Capital Lifecycle Enabled] * (([B Electronics Gap Limited Construction]) + ([B Electronics Finance Limited Construction]) - (((([B Electronics Gap Limited Construction]) - ([B Electronics Finance Limited Construction])) ^ 2) ^ 0.5)) / 2)"
+    },
+    {
+      "name": "B Power Generation Expansion",
+      "value": "IfThenElse([Capital Goods Enabled] = 1, [B Power Desired Expansion] * [B Capital Goods Fulfillment], [Capital Lifecycle Enabled] * [B Power Gap Limited Construction])"
+    },
+    {
+      "name": "A Effective Electronics Local Base Demand",
+      "value": "IfThenElse([Intermediate Inputs Enabled] = 1, IfThenElse([Test 23 Investment Boom Active] = 1, [A Electronics Local Base Demand] * IfThenElse([A Test 23 Electronics Demand Applies] = 1, [v7.5 Investment Boom Multiplier], 1), IfThenElse([Test 19 Coupled Electronics Growth Active] = 1, [A Electronics Local Base Demand] * IfThenElse([A Test 19 Electronics Demand Applies] = 1, [v7.4 Coupled Electronics Growth Multiplier], 1), IfThenElse([Test 14 Sustained Electronics Growth Active] = 1, [A Electronics Local Base Demand] * IfThenElse([A Test 14 Electronics Demand Applies] = 1, [v7.3 Sustained Electronics Growth Multiplier], 1), IfThenElse([Test 13 Temporary Electronics Lifecycle Surge Active] = 1, [A Electronics Local Base Demand] * IfThenElse([A Test 13 Electronics Demand Applies] = 1, [v7.3 Temporary Electronics Demand Multiplier], 1), IfThenElse([Test 9 Two Industry Energy Stress Active] = 1, [A Electronics Local Base Demand] * IfThenElse([A Test 9 Electronics Demand Applies] = 1, [Two Industry Energy Stress Demand Multiplier], 1), IfThenElse([Test 8 Metal Priority Scarcity Active] = 1, [A Electronics Local Base Demand] * IfThenElse([A Test 8 Electronics Demand Applies] = 1, [Priority Stress Demand Multiplier], 1), IfThenElse([Test 5 Electronics Demand Surge Active] = 1, [A Electronics Local Base Demand] * IfThenElse([A Test 5 Electronics Demand Applies] = 1, [Electronics Demand Surge Multiplier], 1), IfThenElse([Test 7 Two Good Transport Surge Active] = 1, [A Electronics Local Base Demand] * IfThenElse([A Test 7 Electronics Demand Applies] = 1, [Two Good Demand Surge Multiplier], 1), IfThenElse([Test 15 Electronics Collapse Recovery Active] = 1, [A Electronics Local Base Demand] * IfThenElse([A Test 15 Electronics Demand Applies] = 1, [v7.3 Electronics Demand Collapse Multiplier], 1), [A Electronics Local Base Demand]))))))))), IfThenElse([Test 14 Sustained Electronics Growth Active] = 1, [A Electronics Local Base Demand] * IfThenElse([A Test 14 Electronics Demand Applies] = 1, [v7.3 Sustained Electronics Growth Multiplier], 1), IfThenElse([Test 13 Temporary Electronics Lifecycle Surge Active] = 1, [A Electronics Local Base Demand] * IfThenElse([A Test 13 Electronics Demand Applies] = 1, [v7.3 Temporary Electronics Demand Multiplier], 1), IfThenElse([Test 9 Two Industry Energy Stress Active] = 1, [A Electronics Local Base Demand] * IfThenElse([A Test 9 Electronics Demand Applies] = 1, [Two Industry Energy Stress Demand Multiplier], 1), IfThenElse([Test 8 Metal Priority Scarcity Active] = 1, [A Electronics Local Base Demand] * IfThenElse([A Test 8 Electronics Demand Applies] = 1, [Priority Stress Demand Multiplier], 1), IfThenElse([Test 5 Electronics Demand Surge Active] = 1, [A Electronics Local Base Demand] * IfThenElse([A Test 5 Electronics Demand Applies] = 1, [Electronics Demand Surge Multiplier], 1), IfThenElse([Test 7 Two Good Transport Surge Active] = 1, [A Electronics Local Base Demand] * IfThenElse([A Test 7 Electronics Demand Applies] = 1, [Two Good Demand Surge Multiplier], 1), IfThenElse([Test 15 Electronics Collapse Recovery Active] = 1, [A Electronics Local Base Demand] * IfThenElse([A Test 15 Electronics Demand Applies] = 1, [v7.3 Electronics Demand Collapse Multiplier], 1), [A Electronics Local Base Demand]))))))))"
+    },
+    {
+      "name": "B Effective Electronics Local Base Demand",
+      "value": "IfThenElse([Intermediate Inputs Enabled] = 1, IfThenElse([Test 23 Investment Boom Active] = 1, [B Electronics Local Base Demand] * IfThenElse([B Test 23 Electronics Demand Applies] = 1, [v7.5 Investment Boom Multiplier], 1), IfThenElse([Test 19 Coupled Electronics Growth Active] = 1, [B Electronics Local Base Demand] * IfThenElse([B Test 19 Electronics Demand Applies] = 1, [v7.4 Coupled Electronics Growth Multiplier], 1), IfThenElse([Test 14 Sustained Electronics Growth Active] = 1, [B Electronics Local Base Demand] * IfThenElse([B Test 14 Electronics Demand Applies] = 1, [v7.3 Sustained Electronics Growth Multiplier], 1), IfThenElse([Test 13 Temporary Electronics Lifecycle Surge Active] = 1, [B Electronics Local Base Demand] * IfThenElse([B Test 13 Electronics Demand Applies] = 1, [v7.3 Temporary Electronics Demand Multiplier], 1), IfThenElse([Test 9 Two Industry Energy Stress Active] = 1, [B Electronics Local Base Demand] * IfThenElse([B Test 9 Electronics Demand Applies] = 1, [Two Industry Energy Stress Demand Multiplier], 1), IfThenElse([Test 8 Metal Priority Scarcity Active] = 1, [B Electronics Local Base Demand] * IfThenElse([B Test 8 Electronics Demand Applies] = 1, [Priority Stress Demand Multiplier], 1), IfThenElse([Test 5 Electronics Demand Surge Active] = 1, [B Electronics Local Base Demand] * IfThenElse([B Test 5 Electronics Demand Applies] = 1, [Electronics Demand Surge Multiplier], 1), IfThenElse([Test 7 Two Good Transport Surge Active] = 1, [B Electronics Local Base Demand] * IfThenElse([B Test 7 Electronics Demand Applies] = 1, [Two Good Demand Surge Multiplier], 1), IfThenElse([Test 15 Electronics Collapse Recovery Active] = 1, [B Electronics Local Base Demand] * IfThenElse([B Test 15 Electronics Demand Applies] = 1, [v7.3 Electronics Demand Collapse Multiplier], 1), [B Electronics Local Base Demand]))))))))), IfThenElse([Test 14 Sustained Electronics Growth Active] = 1, [B Electronics Local Base Demand] * IfThenElse([B Test 14 Electronics Demand Applies] = 1, [v7.3 Sustained Electronics Growth Multiplier], 1), IfThenElse([Test 13 Temporary Electronics Lifecycle Surge Active] = 1, [B Electronics Local Base Demand] * IfThenElse([B Test 13 Electronics Demand Applies] = 1, [v7.3 Temporary Electronics Demand Multiplier], 1), IfThenElse([Test 9 Two Industry Energy Stress Active] = 1, [B Electronics Local Base Demand] * IfThenElse([B Test 9 Electronics Demand Applies] = 1, [Two Industry Energy Stress Demand Multiplier], 1), IfThenElse([Test 8 Metal Priority Scarcity Active] = 1, [B Electronics Local Base Demand] * IfThenElse([B Test 8 Electronics Demand Applies] = 1, [Priority Stress Demand Multiplier], 1), IfThenElse([Test 5 Electronics Demand Surge Active] = 1, [B Electronics Local Base Demand] * IfThenElse([B Test 5 Electronics Demand Applies] = 1, [Electronics Demand Surge Multiplier], 1), IfThenElse([Test 7 Two Good Transport Surge Active] = 1, [B Electronics Local Base Demand] * IfThenElse([B Test 7 Electronics Demand Applies] = 1, [Two Good Demand Surge Multiplier], 1), IfThenElse([Test 15 Electronics Collapse Recovery Active] = 1, [B Electronics Local Base Demand] * IfThenElse([B Test 15 Electronics Demand Applies] = 1, [v7.3 Electronics Demand Collapse Multiplier], 1), [B Electronics Local Base Demand]))))))))"
+    }
+  ],
+  "add_links": [
+    {
+      "from": "Timed Test Mode",
+      "to": "Test 22 Capital Goods Supply Shock Active"
+    },
+    {
+      "from": "Temporary Test Window",
+      "to": "Test 22 Capital Goods Supply Shock Active"
+    },
+    {
+      "from": "Timed Test Mode",
+      "to": "Test 23 Investment Boom Active"
+    },
+    {
+      "from": "Reverse Advantage Window",
+      "to": "Test 23 Investment Boom Active"
+    },
+    {
+      "from": "Test 22 Capital Goods Supply Shock Active",
+      "to": "A Capital Goods Production Capacity"
+    },
+    {
+      "from": "A Capital Goods Base Production Capacity",
+      "to": "A Capital Goods Production Capacity"
+    },
+    {
+      "from": "A Test 22 Capital Goods Shock Applies",
+      "to": "A Capital Goods Production Capacity"
+    },
+    {
+      "from": "v7.5 Capital Goods Shock Multiplier",
+      "to": "A Capital Goods Production Capacity"
+    },
+    {
+      "from": "A Refinery Gap Limited Construction",
+      "to": "A Refinery Desired Expansion"
+    },
+    {
+      "from": "A Refinery Finance Limited Construction",
+      "to": "A Refinery Desired Expansion"
+    },
+    {
+      "from": "Capital Lifecycle Enabled",
+      "to": "A Electronics Desired Expansion"
+    },
+    {
+      "from": "A Electronics Gap Limited Construction",
+      "to": "A Electronics Desired Expansion"
+    },
+    {
+      "from": "A Electronics Finance Limited Construction",
+      "to": "A Electronics Desired Expansion"
+    },
+    {
+      "from": "Capital Lifecycle Enabled",
+      "to": "A Power Desired Expansion"
+    },
+    {
+      "from": "A Power Gap Limited Construction",
+      "to": "A Power Desired Expansion"
+    },
+    {
+      "from": "A Refinery Desired Expansion",
+      "to": "A Capital Goods Demand"
+    },
+    {
+      "from": "A Refinery Capital Goods per Capacity",
+      "to": "A Capital Goods Demand"
+    },
+    {
+      "from": "A Electronics Desired Expansion",
+      "to": "A Capital Goods Demand"
+    },
+    {
+      "from": "A Electronics Capital Goods per Capacity",
+      "to": "A Capital Goods Demand"
+    },
+    {
+      "from": "A Power Desired Expansion",
+      "to": "A Capital Goods Demand"
+    },
+    {
+      "from": "A Power Capital Goods per Capacity",
+      "to": "A Capital Goods Demand"
+    },
+    {
+      "from": "A Capital Goods Demand",
+      "to": "A Capital Goods Target Inventory"
+    },
+    {
+      "from": "Capital Goods Target Days",
+      "to": "A Capital Goods Target Inventory"
+    },
+    {
+      "from": "A Capital Goods Demand",
+      "to": "A Desired Capital Goods Production"
+    },
+    {
+      "from": "A Capital Goods Target Inventory",
+      "to": "A Desired Capital Goods Production"
+    },
+    {
+      "from": "A Capital Goods Inventory",
+      "to": "A Desired Capital Goods Production"
+    },
+    {
+      "from": "Capital Goods Adjustment Time",
+      "to": "A Desired Capital Goods Production"
+    },
+    {
+      "from": "Capital Goods Enabled",
+      "to": "A Capital Goods Production Rate"
+    },
+    {
+      "from": "A Desired Capital Goods Production",
+      "to": "A Capital Goods Production Rate"
+    },
+    {
+      "from": "A Capital Goods Production Capacity",
+      "to": "A Capital Goods Production Rate"
+    },
+    {
+      "from": "A Metal Inventory",
+      "to": "A Capital Goods Production Rate"
+    },
+    {
+      "from": "A Metal Buffer",
+      "to": "A Capital Goods Production Rate"
+    },
+    {
+      "from": "A Electronics Inventory",
+      "to": "A Capital Goods Production Rate"
+    },
+    {
+      "from": "A Electronics Buffer",
+      "to": "A Capital Goods Production Rate"
+    },
+    {
+      "from": "Capital Goods Enabled",
+      "to": "A Capital Goods Fulfillment"
+    },
+    {
+      "from": "A Capital Goods Inventory",
+      "to": "A Capital Goods Fulfillment"
+    },
+    {
+      "from": "A Refinery Expansion",
+      "to": "A Refinery Capital Goods Expansion Ratio"
+    },
+    {
+      "from": "A Refinery Desired Expansion",
+      "to": "A Refinery Capital Goods Expansion Ratio"
+    },
+    {
+      "from": "A Capital Goods Production Rate",
+      "to": "A Capital Goods Production"
+    },
+    {
+      "from": "A Capital Goods Production Rate",
+      "to": "A Capital Goods Metal Consumption"
+    },
+    {
+      "from": "Metal per Capital Goods Unit",
+      "to": "A Capital Goods Metal Consumption"
+    },
+    {
+      "from": "A Capital Goods Production Rate",
+      "to": "A Capital Goods Electronics Consumption"
+    },
+    {
+      "from": "Electronics per Capital Goods Unit",
+      "to": "A Capital Goods Electronics Consumption"
+    },
+    {
+      "from": "A Refinery Expansion",
+      "to": "A Refinery Capital Goods Consumption"
+    },
+    {
+      "from": "A Refinery Capital Goods per Capacity",
+      "to": "A Refinery Capital Goods Consumption"
+    },
+    {
+      "from": "Capital Lifecycle Enabled",
+      "to": "A Electronics Capital Goods Consumption"
+    },
+    {
+      "from": "A Electronics Factory Expansion",
+      "to": "A Electronics Capital Goods Consumption"
+    },
+    {
+      "from": "A Electronics Capital Goods per Capacity",
+      "to": "A Electronics Capital Goods Consumption"
+    },
+    {
+      "from": "Capital Lifecycle Enabled",
+      "to": "A Power Capital Goods Consumption"
+    },
+    {
+      "from": "A Power Generation Expansion",
+      "to": "A Power Capital Goods Consumption"
+    },
+    {
+      "from": "A Power Capital Goods per Capacity",
+      "to": "A Power Capital Goods Consumption"
+    },
+    {
+      "from": "Test 22 Capital Goods Supply Shock Active",
+      "to": "B Capital Goods Production Capacity"
+    },
+    {
+      "from": "B Capital Goods Base Production Capacity",
+      "to": "B Capital Goods Production Capacity"
+    },
+    {
+      "from": "B Test 22 Capital Goods Shock Applies",
+      "to": "B Capital Goods Production Capacity"
+    },
+    {
+      "from": "v7.5 Capital Goods Shock Multiplier",
+      "to": "B Capital Goods Production Capacity"
+    },
+    {
+      "from": "B Refinery Gap Limited Construction",
+      "to": "B Refinery Desired Expansion"
+    },
+    {
+      "from": "B Refinery Finance Limited Construction",
+      "to": "B Refinery Desired Expansion"
+    },
+    {
+      "from": "Capital Lifecycle Enabled",
+      "to": "B Electronics Desired Expansion"
+    },
+    {
+      "from": "B Electronics Gap Limited Construction",
+      "to": "B Electronics Desired Expansion"
+    },
+    {
+      "from": "B Electronics Finance Limited Construction",
+      "to": "B Electronics Desired Expansion"
+    },
+    {
+      "from": "Capital Lifecycle Enabled",
+      "to": "B Power Desired Expansion"
+    },
+    {
+      "from": "B Power Gap Limited Construction",
+      "to": "B Power Desired Expansion"
+    },
+    {
+      "from": "B Refinery Desired Expansion",
+      "to": "B Capital Goods Demand"
+    },
+    {
+      "from": "B Refinery Capital Goods per Capacity",
+      "to": "B Capital Goods Demand"
+    },
+    {
+      "from": "B Electronics Desired Expansion",
+      "to": "B Capital Goods Demand"
+    },
+    {
+      "from": "B Electronics Capital Goods per Capacity",
+      "to": "B Capital Goods Demand"
+    },
+    {
+      "from": "B Power Desired Expansion",
+      "to": "B Capital Goods Demand"
+    },
+    {
+      "from": "B Power Capital Goods per Capacity",
+      "to": "B Capital Goods Demand"
+    },
+    {
+      "from": "B Capital Goods Demand",
+      "to": "B Capital Goods Target Inventory"
+    },
+    {
+      "from": "Capital Goods Target Days",
+      "to": "B Capital Goods Target Inventory"
+    },
+    {
+      "from": "B Capital Goods Demand",
+      "to": "B Desired Capital Goods Production"
+    },
+    {
+      "from": "B Capital Goods Target Inventory",
+      "to": "B Desired Capital Goods Production"
+    },
+    {
+      "from": "B Capital Goods Inventory",
+      "to": "B Desired Capital Goods Production"
+    },
+    {
+      "from": "Capital Goods Adjustment Time",
+      "to": "B Desired Capital Goods Production"
+    },
+    {
+      "from": "Capital Goods Enabled",
+      "to": "B Capital Goods Production Rate"
+    },
+    {
+      "from": "B Desired Capital Goods Production",
+      "to": "B Capital Goods Production Rate"
+    },
+    {
+      "from": "B Capital Goods Production Capacity",
+      "to": "B Capital Goods Production Rate"
+    },
+    {
+      "from": "B Metal Inventory",
+      "to": "B Capital Goods Production Rate"
+    },
+    {
+      "from": "B Metal Buffer",
+      "to": "B Capital Goods Production Rate"
+    },
+    {
+      "from": "B Electronics Inventory",
+      "to": "B Capital Goods Production Rate"
+    },
+    {
+      "from": "B Electronics Buffer",
+      "to": "B Capital Goods Production Rate"
+    },
+    {
+      "from": "Capital Goods Enabled",
+      "to": "B Capital Goods Fulfillment"
+    },
+    {
+      "from": "B Capital Goods Inventory",
+      "to": "B Capital Goods Fulfillment"
+    },
+    {
+      "from": "B Refinery Expansion",
+      "to": "B Refinery Capital Goods Expansion Ratio"
+    },
+    {
+      "from": "B Refinery Desired Expansion",
+      "to": "B Refinery Capital Goods Expansion Ratio"
+    },
+    {
+      "from": "B Capital Goods Production Rate",
+      "to": "B Capital Goods Production"
+    },
+    {
+      "from": "B Capital Goods Production Rate",
+      "to": "B Capital Goods Metal Consumption"
+    },
+    {
+      "from": "Metal per Capital Goods Unit",
+      "to": "B Capital Goods Metal Consumption"
+    },
+    {
+      "from": "B Capital Goods Production Rate",
+      "to": "B Capital Goods Electronics Consumption"
+    },
+    {
+      "from": "Electronics per Capital Goods Unit",
+      "to": "B Capital Goods Electronics Consumption"
+    },
+    {
+      "from": "B Refinery Expansion",
+      "to": "B Refinery Capital Goods Consumption"
+    },
+    {
+      "from": "B Refinery Capital Goods per Capacity",
+      "to": "B Refinery Capital Goods Consumption"
+    },
+    {
+      "from": "Capital Lifecycle Enabled",
+      "to": "B Electronics Capital Goods Consumption"
+    },
+    {
+      "from": "B Electronics Factory Expansion",
+      "to": "B Electronics Capital Goods Consumption"
+    },
+    {
+      "from": "B Electronics Capital Goods per Capacity",
+      "to": "B Electronics Capital Goods Consumption"
+    },
+    {
+      "from": "Capital Lifecycle Enabled",
+      "to": "B Power Capital Goods Consumption"
+    },
+    {
+      "from": "B Power Generation Expansion",
+      "to": "B Power Capital Goods Consumption"
+    },
+    {
+      "from": "B Power Capital Goods per Capacity",
+      "to": "B Power Capital Goods Consumption"
+    },
+    {
+      "from": "Capital Goods Enabled",
+      "to": "A Refinery Expansion"
+    },
+    {
+      "from": "A Refinery Desired Expansion",
+      "to": "A Refinery Expansion"
+    },
+    {
+      "from": "A Capital Goods Fulfillment",
+      "to": "A Refinery Expansion"
+    },
+    {
+      "from": "Capital Goods Enabled",
+      "to": "A Electronics Factory Expansion"
+    },
+    {
+      "from": "A Electronics Desired Expansion",
+      "to": "A Electronics Factory Expansion"
+    },
+    {
+      "from": "A Capital Goods Fulfillment",
+      "to": "A Electronics Factory Expansion"
+    },
+    {
+      "from": "Capital Goods Enabled",
+      "to": "A Power Generation Expansion"
+    },
+    {
+      "from": "A Power Desired Expansion",
+      "to": "A Power Generation Expansion"
+    },
+    {
+      "from": "A Capital Goods Fulfillment",
+      "to": "A Power Generation Expansion"
+    },
+    {
+      "from": "Capital Goods Enabled",
+      "to": "B Refinery Expansion"
+    },
+    {
+      "from": "B Refinery Desired Expansion",
+      "to": "B Refinery Expansion"
+    },
+    {
+      "from": "B Capital Goods Fulfillment",
+      "to": "B Refinery Expansion"
+    },
+    {
+      "from": "Capital Goods Enabled",
+      "to": "B Electronics Factory Expansion"
+    },
+    {
+      "from": "B Electronics Desired Expansion",
+      "to": "B Electronics Factory Expansion"
+    },
+    {
+      "from": "B Capital Goods Fulfillment",
+      "to": "B Electronics Factory Expansion"
+    },
+    {
+      "from": "Capital Goods Enabled",
+      "to": "B Power Generation Expansion"
+    },
+    {
+      "from": "B Power Desired Expansion",
+      "to": "B Power Generation Expansion"
+    },
+    {
+      "from": "B Capital Goods Fulfillment",
+      "to": "B Power Generation Expansion"
+    },
+    {
+      "from": "Test 23 Investment Boom Active",
+      "to": "A Effective Electronics Local Base Demand"
+    },
+    {
+      "from": "A Test 23 Electronics Demand Applies",
+      "to": "A Effective Electronics Local Base Demand"
+    },
+    {
+      "from": "v7.5 Investment Boom Multiplier",
+      "to": "A Effective Electronics Local Base Demand"
+    },
+    {
+      "from": "Test 23 Investment Boom Active",
+      "to": "B Effective Electronics Local Base Demand"
+    },
+    {
+      "from": "B Test 23 Electronics Demand Applies",
+      "to": "B Effective Electronics Local Base Demand"
+    },
+    {
+      "from": "v7.5 Investment Boom Multiplier",
+      "to": "B Effective Electronics Local Base Demand"
+    },
+    {
+      "from": "A Capital Goods Demand",
+      "to": "A Capital Goods Fulfillment"
+    },
+    {
+      "from": "B Capital Goods Demand",
+      "to": "B Capital Goods Fulfillment"
+    },
+    {
+      "from": "Capital Goods Buffer Days",
+      "to": "A Capital Goods Fulfillment"
+    },
+    {
+      "from": "Capital Goods Buffer Days",
+      "to": "B Capital Goods Fulfillment"
+    },
+    {
+      "from": "Capital Goods Enabled",
+      "to": "A Electronics Capital Goods Consumption"
+    },
+    {
+      "from": "Capital Goods Enabled",
+      "to": "A Power Capital Goods Consumption"
+    },
+    {
+      "from": "Capital Goods Enabled",
+      "to": "A Refinery Capital Goods Consumption"
+    },
+    {
+      "from": "Capital Goods Enabled",
+      "to": "B Electronics Capital Goods Consumption"
+    },
+    {
+      "from": "Capital Goods Enabled",
+      "to": "B Power Capital Goods Consumption"
+    },
+    {
+      "from": "Capital Goods Enabled",
+      "to": "B Refinery Capital Goods Consumption"
+    }
+  ],
+  "modify_scenarios": [
+    {
+      "mode": 0,
+      "set": {
+        "Capital Goods Enabled": 0
+      }
+    },
+    {
+      "mode": 1,
+      "set": {
+        "Capital Goods Enabled": 0
+      }
+    },
+    {
+      "mode": 2,
+      "set": {
+        "Capital Goods Enabled": 0
+      }
+    },
+    {
+      "mode": 3,
+      "set": {
+        "Capital Goods Enabled": 0
+      }
+    },
+    {
+      "mode": 4,
+      "set": {
+        "Capital Goods Enabled": 0
+      }
+    },
+    {
+      "mode": 5,
+      "set": {
+        "Capital Goods Enabled": 0
+      }
+    },
+    {
+      "mode": 6,
+      "set": {
+        "Capital Goods Enabled": 0
+      }
+    },
+    {
+      "mode": 7,
+      "set": {
+        "Capital Goods Enabled": 0
+      }
+    },
+    {
+      "mode": 8,
+      "set": {
+        "Capital Goods Enabled": 0
+      }
+    },
+    {
+      "mode": 9,
+      "set": {
+        "Capital Goods Enabled": 0
+      }
+    },
+    {
+      "mode": 10,
+      "set": {
+        "Capital Goods Enabled": 0
+      }
+    },
+    {
+      "mode": 11,
+      "set": {
+        "Capital Goods Enabled": 0
+      }
+    },
+    {
+      "mode": 12,
+      "set": {
+        "Capital Goods Enabled": 0
+      }
+    },
+    {
+      "mode": 13,
+      "set": {
+        "Capital Goods Enabled": 0
+      }
+    },
+    {
+      "mode": 14,
+      "set": {
+        "Capital Goods Enabled": 0
+      }
+    },
+    {
+      "mode": 15,
+      "set": {
+        "Capital Goods Enabled": 0
+      }
+    },
+    {
+      "mode": 16,
+      "set": {
+        "Capital Goods Enabled": 0
+      }
+    },
+    {
+      "mode": 17,
+      "set": {
+        "Capital Goods Enabled": 0
+      }
+    },
+    {
+      "mode": 18,
+      "set": {
+        "Capital Goods Enabled": 0
+      }
+    },
+    {
+      "mode": 19,
+      "set": {
+        "Capital Goods Enabled": 0
+      }
+    },
+    {
+      "mode": 20,
+      "set": {
+        "Capital Goods Enabled": 0
+      }
+    }
+  ],
+  "add_scenarios": [
+    {
+      "name": "v7.5 Capital Goods Baseline",
+      "description": "Coupled economy with capital goods enabled. Refinery, Electronics and Power expansion in both colonies consume locally produced capital goods.",
+      "values": {
+        "Timed Test Mode": 21,
+        "Capital Lifecycle Enabled": 1,
+        "Intermediate Inputs Enabled": 1,
+        "Capital Goods Enabled": 1
+      }
+    },
+    {
+      "name": "v7.5 Capital Goods Supply Shock",
+      "description": "Capital-goods sector enabled. Colony A capital-goods production capacity is multiplied by 0.3 from day 360 through 720; B remains unshocked.",
+      "values": {
+        "Timed Test Mode": 22,
+        "Capital Lifecycle Enabled": 1,
+        "Intermediate Inputs Enabled": 1,
+        "Capital Goods Enabled": 1
+      }
+    },
+    {
+      "name": "v7.5 Investment Boom",
+      "description": "Capital-goods sector enabled. Colony A electronics local demand is multiplied by 4 from day 360 onward, creating simultaneous capital-goods demand from expansion.",
+      "values": {
+        "Timed Test Mode": 23,
+        "Capital Lifecycle Enabled": 1,
+        "Intermediate Inputs Enabled": 1,
+        "Capital Goods Enabled": 1
+      }
+    }
+  ]
+}
