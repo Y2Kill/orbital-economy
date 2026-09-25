@@ -1,4 +1,4 @@
-# Статус проверок Orbital Economy Lab v0.9.1 — baseline v7.6 r2
+# Статус проверок Orbital Economy Lab v0.9.2 — baseline v7.6 r2
 
 ## Принятая основа
 
@@ -25,8 +25,11 @@
 
 ## Self-tests стенда
 
+Перепрогнаны на Lab v0.9.2 (2026-09-25), результаты те же, что на v0.9.1.
+
 | Скрипт | Результат |
 |---|---|
+| `SELF_TEST.cmd` (Modes 0, 12) | **PASS** |
 | `QA_SELF_TEST.cmd` | **PASS** 29/29 |
 | `POLICY_SELF_TEST.cmd` | **PASS** 10/10 |
 | `CONFORMANCE_SELF_TEST.cmd` | **PASS** 18/18 |

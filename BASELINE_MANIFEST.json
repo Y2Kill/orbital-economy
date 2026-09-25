@@ -89,8 +89,9 @@
     },
     "not_in_git": [
       "lab/node_modules (pinned by lab/package-lock.json, installed with lab/INSTALL.cmd)",
-      "lab/output (bench run artefacts)"
+      "lab/output (bench run artefacts)",
+      "ARCHIVE (pre-git history: old baselines, contractor deliveries, task packages 001-003)"
     ],
-    "zero_commit": "v7.6 r2, 2026-09-25"
+    "zero_commit": "v7.6 r2, 2026-09-25, commit f067f7e, tag v7.6-r2"
   }
 }

@@ -4,7 +4,7 @@ setlocal EnableExtensions
 cd /d "%~dp0"
 
 echo ============================================================
-echo Orbital Economy Lab v0.9.1 - prepare web cross-check batch
+echo Orbital Economy Lab v0.9.2 - prepare web cross-check batch
 echo ============================================================
 
 if not exist "node_modules\simulation" (

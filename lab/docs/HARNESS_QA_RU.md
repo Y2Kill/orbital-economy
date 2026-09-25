@@ -1,4 +1,4 @@
-# QA самого Orbital Economy Lab v0.9.1
+# QA самого Orbital Economy Lab v0.9.2
 
 ## 1. Operational QA
 

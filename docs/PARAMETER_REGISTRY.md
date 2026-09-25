@@ -1,8 +1,8 @@
 # Orbital Economy — реестр внешних параметров
 
-- generated: 2026-09-25T09:05:16.055Z
+- generated: 2026-09-25T10:55:15.379Z
 - model: Orbital Economy v7.6 r2 — Energy Kernel v2 (perceived resource scarcity in the price channel) — SHA-256 `a9573f5afe43d2ae2bf12fdc3066c983c264eba162e1d3fc1d5f11e3872f9e91`
-- annotations: D:\!!!_USER_FOLDERS\General_projects_folder\space_economy\NEW\orbital-economy-baseline-v7.6\docs\PARAMETER_ANNOTATIONS.json (SHA-256 `b8550c7ceb78193c56d0dd30e478113059e9b56b9602c3839a9a690dca5baa01`)
+- annotations: docs/PARAMETER_ANNOTATIONS.json (SHA-256 `b8550c7ceb78193c56d0dd30e478113059e9b56b9602c3839a9a690dca5baa01`)
 
 Всё, что модель не выводит сама: числовые константы, начальные запасы, переключатели, тестовые множители. Инвентарь сгенерирован из ModelJSON; аннотации («роль / что меняет / доказательство») ведутся вручную и версионируются вместе с baseline.
 

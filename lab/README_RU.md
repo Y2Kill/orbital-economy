@@ -1,4 +1,4 @@
-# Orbital Economy Lab v0.9.1
+# Orbital Economy Lab v0.9.2
 
 Локальный стенд для запуска, проверки, regression-анализа, policy-gating, проверки соответствия Capital Lifecycle Kernel и статических аудитов структуры (открытые границы, A/B-симметрия) для ModelJSON экономической модели Orbital Economy.
 
@@ -18,7 +18,7 @@
 
 Подробности приёмки и воспроизведение — `../docs/ACCEPTANCE_STATUS.md`; что было сломано в v7.6 r1 — `../docs/V7_6_R1_TO_R2_FIX_REPORT.md`.
 
-Старые модели в `examples/` используются только как test fixtures для self-tests и не являются current baseline.
+Исторических моделей в стенде нет: самотесты работают на текущем accepted (`reference/accepted/`, `input/`), предыдущий accepted лежит в `../reference/`, более ранние — в архиве проекта (вне git).
 
 ---
 
@@ -527,7 +527,7 @@ policy     = разрешённость version changes
 
 # 13. Быстро изменить policy без повторного расчёта
 
-Полный 17-Mode comparison дорогой по времени. Поэтому policy можно переоценить отдельно.
+Полный comparison всех Modes (сейчас 27) дорогой по времени. Поэтому policy можно переоценить отдельно.
 
 Если уже есть:
 
@@ -609,7 +609,7 @@ QA checker'а:
 CONFORMANCE_SELF_TEST.cmd
 ```
 
-Ожидается `CONFORMANCE QA RESULT: PASS (17 passed, 0 failed)`.
+Ожидается `CONFORMANCE QA RESULT: PASS (18 passed, 0 failed)`.
 
 ---
 
@@ -730,7 +730,7 @@ Policy должна описывать намерение **до** реализ�
 
 # 19. Что считать нормальным результатом
 
-Неизменённая accepted v7.3 r2 + strict policy:
+Неизменённая accepted v7.6 r2 + strict policy:
 
 ```text
 COMPARISON RESULT: BYTE_IDENTICAL

@@ -1,4 +1,4 @@
-# Архитектура Orbital Economy Lab v0.9.1
+# Архитектура Orbital Economy Lab v0.9.2
 
 ## 1. Основной локальный путь
 

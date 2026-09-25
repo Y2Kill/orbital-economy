@@ -1,6 +1,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import crypto from 'node:crypto';
+import { fileURLToPath } from 'node:url';
 
 export function readJson(file) {
   return JSON.parse(fs.readFileSync(file, 'utf8'));
@@ -76,4 +77,15 @@ export function sanitizeFileName(name) {
 
 export function nowIso() {
   return new Date().toISOString();
+}
+
+// Repository root (lab/src/ -> lab/ -> repo). Reports that end up in docs/ are versioned, so they
+// must not carry machine-local absolute paths: a file inside the repo is shown relative to its root,
+// a file outside it by its name only.
+const REPO_ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..', '..');
+
+export function repoPath(file) {
+  const rel = path.relative(REPO_ROOT, path.resolve(file));
+  if (!rel || rel.startsWith('..') || path.isAbsolute(rel)) return path.basename(file);
+  return rel.split(path.sep).join('/');
 }

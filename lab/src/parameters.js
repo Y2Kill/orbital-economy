@@ -8,7 +8,7 @@
 // they are what defines comparative advantage between the colonies.
 import fs from 'node:fs';
 import path from 'node:path';
-import { readJson, sha256File, nowIso, writeJson, ensureDir } from './util.js';
+import { readJson, sha256File, nowIso, writeJson, ensureDir, repoPath } from './util.js';
 
 const NUM_RE = /^\s*-?\d+(\.\d+)?([eE][-+]?\d+)?\s*$/;
 export function isNumeric(v) { return typeof v === 'number' || (typeof v === 'string' && NUM_RE.test(v)); }
@@ -186,8 +186,8 @@ export function runParametersCommand({ modelFile, annotationsFile = null, outDir
     const errs = validateAnnotations(annotations);
     if (errs.length) throw new Error(`Invalid annotations file:\n  - ${errs.join('\n  - ')}`);
   }
-  const report = { generated: nowIso(), model: { file: path.resolve(modelFile), name: raw.name || null, sha256: sha256File(modelFile) },
-    annotations: annotationsFile ? { file: path.resolve(annotationsFile), sha256: sha256File(annotationsFile) } : null,
+  const report = { generated: nowIso(), model: { file: repoPath(modelFile), name: raw.name || null, sha256: sha256File(modelFile) },
+    annotations: annotationsFile ? { file: repoPath(annotationsFile), sha256: sha256File(annotationsFile) } : null,
     ...buildRegistry(raw, annotations) };
   writeRegistryReports(outDir, report);
   const s = report.summary;

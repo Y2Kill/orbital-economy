@@ -9,7 +9,9 @@ lab/node_modules/
 # Bench run artefacts. Shipped reports live in docs/ and are regenerated at acceptance.
 lab/output/
 
-# Local / OS noise
-*.log
+# Local / OS noise. Logs are ignored only inside the bench: elsewhere a .log can be acceptance
+# evidence (task packages shipped apply-patch.log as proof the patch was applied) and must not
+# silently drop out of a commit.
+lab/**/*.log
 Thumbs.db
 .DS_Store
