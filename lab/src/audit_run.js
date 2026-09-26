@@ -21,8 +21,7 @@ export function writeAuditReports(outDir, report) {
   l.push('');
   if (report.status === 'SKIPPED') {
     l.push(`- ${esc(report.message)}`);
-    fs.writeFileSync(path.join(outDir, 'structure-audit.md'), l.join('\n'), 'utf8');
-    return;
+    l.push('');
   }
 
   const ob = report.openBoundaries;
