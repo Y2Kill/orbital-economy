@@ -1,0 +1,38 @@
+{
+  "task": "011",
+  "title": "planet_closure validation plugin: Planet v1 per-process counters (report mode), declaration checked against the model",
+  "branch": "task/011-planet-closure",
+  "allow": [
+    "lab/src/planet_closure.js",
+    "lab/src/planet_qa.js",
+    "lab/src/structure_audit.js",
+    "lab/src/audit_run.js",
+    "lab/src/report.js",
+    "lab/src/checks.js",
+    "lab/src/cli.js",
+    "lab/package.json",
+    "lab/package-lock.json",
+    "lab/PLANET_SELF_TEST.cmd",
+    "lab/docs/STRUCTURE_AUDIT_RU.md",
+    "lab/docs/VALIDATION_FORMAT_RU.md",
+    "lab/docs/HARNESS_QA_RU.md",
+    "lab/docs/TEST_STATUS_RU.md",
+    "lab/README_RU.md",
+    "lab/CHANGELOG.md"
+  ],
+  "allow_binary": [],
+  "allow_protected": [
+    ".github/workflows/ci.yml",
+    "docs/tasks/011-planet-closure/planet_closure-v7.7.1.json"
+  ],
+  "required_changes": [
+    "lab/src/planet_closure.js",
+    "lab/src/planet_qa.js",
+    "lab/src/structure_audit.js",
+    "lab/src/checks.js",
+    ".github/workflows/ci.yml",
+    "lab/docs/STRUCTURE_AUDIT_RU.md",
+    "lab/CHANGELOG.md"
+  ],
+  "sums_by": "reviewer"
+}

@@ -158,6 +158,10 @@ ce44095d666a54c9ef848a39d3da1a3b142f4a8f090096460adf0abd9051b2fc  ./docs/tasks/0
 437e436e03d62b098cde881f44497ab85840a55911bcf8a5e27de8517381a432  ./docs/tasks/010-algebraic-loop-audit/TASK_RU.md
 c43e8328cc209448f4eaf0931779ff97657899df64b0113c536a1d3433c27f36  ./docs/tasks/010-algebraic-loop-audit/reference/loops_prototype.mjs
 a4f854395437c5677d8c63bcb2d230e4a0a7142f3ee09aa0a0b00025b35a615c  ./docs/tasks/010-algebraic-loop-audit/scope.json
+b16df599256fbcda69bc74d8f201d84548e663f82e4fc237444a6abcca869c9a  ./docs/tasks/011-planet-closure/TASK_RU.md
+782964c9717c29a6466af65380125322addf22fe31a391b9d759853da0dde8da  ./docs/tasks/011-planet-closure/planet_closure-v7.7.1.json
+f32b665c2278b0c169965b7a504611b07cd9a139f999edadf85d7ac07dcc152e  ./docs/tasks/011-planet-closure/reference/planet_closure_prototype.mjs
+1f5c691005bbdc8bf6960c5950fe7ef605a9a59c5f4f6e0388b3c2bfeb707478  ./docs/tasks/011-planet-closure/scope.json
 a42535af038db26d7a48c06426e9030153a8563ddff5a78cfa11f0f18b0912a7  ./docs/tasks/README_RU.md
 bbf818e93b88d606b3137b1bb69d60db8c41c9df4089025a921b1ca00f473244  ./lab/APPLY_PATCH.cmd
 8ffbf1161fc5091964c2639f6d4406eb0ceab6f39aa67a18a8beaf09f291bf38  ./lab/CHANGELOG.md
