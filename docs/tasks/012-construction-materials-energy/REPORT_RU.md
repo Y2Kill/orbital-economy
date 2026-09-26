@@ -43,6 +43,25 @@
 
 Дальше: калибровать только три заранее объявленных `[calib]` ожидания по первому Linux-run, не меняя модельные константы.
 
+### КТ3 — 2026-09-27 01:48 EEST — validation PASS 34/34, энергетическое ограничение Construction Materials подтверждено
+
+Сделано: три r1 `[calib probe]` заменены на округлённые пороги с запасом; модельные формулы и константы не менялись. Validation r2 проверяет все legacy Modes 0–31 и новые Modes 32–33.
+
+Доказательство — Candidate acceptance r2: https://github.com/Y2Kill/orbital-economy/actions/runs/36276471073, commit `502fdf2cd9b1ab847f196f3660879be971ecb58e`.
+- `OVERALL: PASS`; summary: `validation | PASS`; пройдены все 34 Mode.
+- Validation SHA-256: `0a61e3cffedcb9b2ded506f321526221e52d315dc7afe38dbdf91177883c4f54`.
+- Candidate SHA-256 неизменён относительно r1: `a993dbb5966eebc36c1a7a4a468c1debf0dcecbaba5012a08b8e246889042795`.
+- Mode 32: requested-energy identity, allocated-energy/actual-production consequence, `actual <= pre-energy plan`, Regolith pair identity — PASS для A и B; A requests energy — PASS; A fulfillment `<0.95` — PASS; terminal signal tracking error `<=0.002` — PASS.
+- Mode 33: те же энергетические/материальные инварианты — PASS; B requests energy — PASS; B CM energy fulfillment `<0.80` — PASS; B CM production active — PASS; B Power Generation Expansion active — PASS.
+- Mode 33: отсутствие B energy-scarcity до shock — PASS; event-order `capacity shock -> B Construction Materials energy scarcity` — PASS.
+- Policy/comparator той же итерации снова подтверждает Modes 0–31 точно: `common=1082, changed=0, added=17, removed=0, maxAbs=0`; `Unexpected=0`, `Forbidden=0`, `Threshold exceed=0`, `Required missing=0`, `Hard blockers=0`.
+
+Не подтвердилось:
+- Не понадобилась подгонка `Construction Materials Energy per Unit=10`, signal adjustment time=3 или начальных signals=0.14.
+- Policy r2 ещё FAIL, но не из-за содержательного расхождения: финальная validation имеет новый SHA, который ещё не записан в `change-policy.json.validation_sha256`. Это последний ожидаемый технический шаг перед КТ4.
+
+Дальше: привязать owner policy к финальному SHA validation без изменения rules и получить финальный candidate 5/5 PASS + зелёный CI.
+
 ## Реализация кандидата
 
 Candidate r1 следует исчерпывающей спецификации: переработка реголита в Construction Materials становится третьим потребителем общего энергетического аллокатора колонии, а план, питающий запрос энергии, читает сглаженный сток `X Construction Materials Demand Signal`, а не мгновенный спрос.
