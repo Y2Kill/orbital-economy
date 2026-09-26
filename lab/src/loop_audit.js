@@ -12,6 +12,10 @@
 const IF_CALL = 'IfThenElse(';
 const REF_RE = /\[([^\]]+)\]/g;
 
+function nameKey(name) {
+  return String(name ?? '').trim().toLowerCase();
+}
+
 function literal01(value) {
   if (value === 0 || value === 1) return value;
   if (typeof value === 'string') {
@@ -119,11 +123,12 @@ function renderTemplate(parts, env) {
 function decideCondition(condition, env) {
   let unknown = false;
   const replaced = condition.replace(/\[([^\]]+)\]/g, (_m, name) => {
-    if (!Object.prototype.hasOwnProperty.call(env, name)) {
+    const key = nameKey(name);
+    if (!env.has(key)) {
       unknown = true;
       return '@';
     }
-    const v = numericLiteral(env[name]);
+    const v = numericLiteral(env.get(key));
     if (v === undefined) {
       unknown = true;
       return '@';
@@ -148,56 +153,79 @@ function decideCondition(condition, env) {
 
 function prepare(raw) {
   const elements = Array.isArray(raw?.elements) ? raw.elements : [];
-  const byName = new Map();
+  const byKey = new Map();
   const order = new Map();
   for (let i = 0; i < elements.length; i++) {
     const e = elements[i];
     if (!e?.name || e.type === 'LINK') continue;
-    if (!byName.has(e.name)) {
-      byName.set(e.name, e);
+    const key = nameKey(e.name);
+    if (!byKey.has(key)) {
+      byKey.set(key, e);
       order.set(e.name, i);
     }
   }
 
   const sameStepNames = [];
-  const sameStep = new Set();
+  const sameStepByKey = new Map();
   const formulas = new Map();
   const errors = [];
   for (const e of elements) {
     if (!e?.name || (e.type !== 'VARIABLE' && e.type !== 'FLOW')) continue;
-    if (!sameStep.has(e.name)) sameStepNames.push(e.name);
-    sameStep.add(e.name);
+    const key = nameKey(e.name);
+    if (!sameStepByKey.has(key)) {
+      sameStepNames.push(e.name);
+      sameStepByKey.set(key, e.name);
+    }
+
     const text = String(e.behavior?.value ?? '');
     try {
       formulas.set(e.name, parseTemplate(text));
     } catch (err) {
       errors.push({ element: e.name, message: err?.message || String(err) });
     }
+
+    const unresolved = new Set();
+    REF_RE.lastIndex = 0;
+    for (const match of text.matchAll(REF_RE)) {
+      const reference = match[1];
+      const refKey = nameKey(reference);
+      if (byKey.has(refKey) || unresolved.has(refKey)) continue;
+      unresolved.add(refKey);
+      errors.push({
+        element: e.name,
+        reference,
+        message: `unresolved reference [${reference}]`
+      });
+    }
   }
 
-  const scenarioNames = [];
+  const scenarioKeys = [];
   const scenarioSeen = new Set();
   const scenarioValues = new Map();
-  for (const s of raw?.scenarios || []) {
-    for (const [name, value] of Object.entries(s?.values || {})) {
-      if (!scenarioSeen.has(name)) {
-        scenarioSeen.add(name);
-        scenarioNames.push(name);
+  for (const scenario of raw?.scenarios || []) {
+    for (const [name, value] of Object.entries(scenario?.values || {})) {
+      const key = nameKey(name);
+      if (!byKey.has(key)) continue;
+      if (!scenarioSeen.has(key)) {
+        scenarioSeen.add(key);
+        scenarioKeys.push(key);
       }
-      if (!scenarioValues.has(name)) scenarioValues.set(name, []);
-      scenarioValues.get(name).push(value);
+      if (!scenarioValues.has(key)) scenarioValues.set(key, []);
+      scenarioValues.get(key).push(value);
     }
   }
 
   const switches = [];
   for (const e of elements) {
-    if (e?.type !== 'VARIABLE' || !e.name || !scenarioValues.has(e.name)) continue;
+    if (e?.type !== 'VARIABLE' || !e.name) continue;
+    const key = nameKey(e.name);
+    if (!scenarioValues.has(key)) continue;
     if (literal01(e.behavior?.value) == null) continue;
-    const values = scenarioValues.get(e.name);
+    const values = scenarioValues.get(key);
     if (values.length > 0 && values.every(v => literal01(v) != null)) switches.push(e.name);
   }
 
-  return { byName, order, sameStepNames, sameStep, formulas, errors, scenarioNames, switches };
+  return { byKey, order, sameStepNames, sameStepByKey, formulas, errors, scenarioKeys, switches };
 }
 
 function graphForEnv(prepared, env) {
@@ -210,8 +238,8 @@ function graphForEnv(prepared, env) {
     const pruned = renderTemplate(template, env);
     REF_RE.lastIndex = 0;
     for (const match of pruned.matchAll(REF_RE)) {
-      const source = match[1];
-      if (!prepared.sameStep.has(source)) continue;
+      const source = prepared.sameStepByKey.get(nameKey(match[1]));
+      if (!source) continue;
       edgeSets.get(source).add(target);
     }
   }
@@ -326,21 +354,30 @@ function componentsForEnv(prepared, env) {
   });
 }
 
+function scenarioValueMap(scenario) {
+  const values = new Map();
+  for (const [name, value] of Object.entries(scenario?.values || {})) {
+    values.set(nameKey(name), value);
+  }
+  return values;
+}
+
 function scenarioEnv(prepared, scenario) {
-  const env = {};
-  for (const name of prepared.scenarioNames) {
-    if (Object.prototype.hasOwnProperty.call(scenario?.values || {}, name)) {
-      env[name] = scenario.values[name];
+  const values = scenarioValueMap(scenario);
+  const env = new Map();
+  for (const key of prepared.scenarioKeys) {
+    if (values.has(key)) {
+      env.set(key, values.get(key));
       continue;
     }
-    const d = numericLiteral(prepared.byName.get(name)?.behavior?.value);
-    if (d !== undefined) env[name] = d;
+    const d = numericLiteral(prepared.byKey.get(key)?.behavior?.value);
+    if (d !== undefined) env.set(key, d);
   }
   return env;
 }
 
 function modeOf(scenario, index) {
-  const v = scenario?.values?.['Timed Test Mode'];
+  const v = scenarioValueMap(scenario).get(nameKey('Timed Test Mode'));
   return typeof v === 'number' && Number.isFinite(v) ? v : index;
 }
 
@@ -350,8 +387,8 @@ function analyzePrepared(raw, prepared) {
   let combinationsWithLoops = 0;
 
   for (let mask = 0; mask < total; mask++) {
-    const env = {};
-    for (let i = 0; i < prepared.switches.length; i++) env[prepared.switches[i]] = (mask >> i) & 1;
+    const env = new Map();
+    for (let i = 0; i < prepared.switches.length; i++) env.set(nameKey(prepared.switches[i]), (mask >> i) & 1);
     const components = componentsForEnv(prepared, env);
     if (components.length) combinationsWithLoops++;
     for (const c of components) {
@@ -363,7 +400,7 @@ function analyzePrepared(raw, prepared) {
           members: c.members,
           shortestCycle: c.shortestCycle,
           combinations: 0,
-          example: prepared.switches.filter(name => env[name] === 1)
+          example: prepared.switches.filter(name => env.get(nameKey(name)) === 1)
         };
         merged.set(key, item);
       }
@@ -426,11 +463,11 @@ export function algebraicLoopCombinationDetails(raw) {
   const bad = [];
   const total = 2 ** prepared.switches.length;
   for (let mask = 0; mask < total; mask++) {
-    const env = {};
-    for (let i = 0; i < prepared.switches.length; i++) env[prepared.switches[i]] = (mask >> i) & 1;
+    const env = new Map();
+    for (let i = 0; i < prepared.switches.length; i++) env.set(nameKey(prepared.switches[i]), (mask >> i) & 1);
     const components = componentsForEnv(prepared, env);
     if (components.length) bad.push({
-      enabled: prepared.switches.filter(name => env[name] === 1),
+      enabled: prepared.switches.filter(name => env.get(nameKey(name)) === 1),
       components: components.map(c => c.members)
     });
   }
