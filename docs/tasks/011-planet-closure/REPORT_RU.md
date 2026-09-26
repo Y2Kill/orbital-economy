@@ -96,6 +96,30 @@
 Дальше: документация v0.9.6 и финализация отчёта; затем финальная голова должна пройти полный CI (КТ4).
 
 
+
+### КТ4 — 2026-09-26 16:59 EEST — документация завершена, финальная содержательная голова CI PASS
+
+Сделано:
+- обновлены все шесть требуемых документов: `STRUCTURE_AUDIT_RU.md`, `VALIDATION_FORMAT_RU.md`, `HARNESS_QA_RU.md`, `TEST_STATUS_RU.md`, `README_RU.md`, `CHANGELOG.md`;
+- описаны формат `planet_closure`, P2–P6, правило `reads = shortest path <= max_hops`, причины ограничения, enforce modes, counters/exceptions, CLI override и 16 QA cases;
+- `REPORT_RU.md` завершён: устройство модуля, отличия от прототипа, декларация, ограничения и перечень не запущенного локально;
+- accepted model/validation/policy и `planet_closure-v7.7.1.json` не менялись.
+
+Доказательство:
+- интеграционный CI КТ3: https://github.com/Y2Kill/orbital-economy/actions/runs/36246369792 — **success**, `PLANET QA RESULT: PASS (16 passed, 0 failed)`;
+- документационная/содержательная голова: https://github.com/Y2Kill/orbital-economy/actions/runs/36246768662 — **success**; guard, tools-selftest и весь `bench-selftests` PASS;
+- `lab/package.json`: 37 CRLF, 0 bare LF, без завершающего newline;
+- `main` остаётся `b9c81e8fa2f2f43049c13ea7f4713c52a8241f86`, то есть ветка не требует перемещения на новый main.
+
+Итог:
+- эталон §4 воспроизводится точно;
+- L1–L5 и все дополнительные негативные проверки работают;
+- `planet_closure` встроен как static-only hard gate при соответствующем `enforce`;
+- Planet v1 debt текущей accepted модели остаётся явно видимым, а не маскируется нулём старого closed-world boundary counter.
+
+Дальше: этот journal-коммит запускает обязательный CI без `[skip ci]`. После его зелёного завершения поставка задачи 011 готова к reviewer acceptance/promotion.
+
+
 ## Устройство модуля и отличия от прототипа
 
 Production-модуль разделён на четыре слоя:
