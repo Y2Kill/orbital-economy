@@ -1,4 +1,4 @@
-# Orbital Economy Lab v0.9.6
+# Orbital Economy Lab v0.9.7
 
 Локальный стенд для запуска, проверки, regression-анализа, policy-gating, Capital Lifecycle Kernel и статических аудитов структуры для ModelJSON Orbital Economy. v0.9.6 добавляет `planet_closure`: декларативную per-process карту критериев Planet v1 P2–P6 с dependency paths, exceptions/debt counters и режимами `report/classify/planet_v1/planet_strict`.
 

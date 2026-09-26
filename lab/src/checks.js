@@ -245,20 +245,19 @@ export function checkPlugin(plugin, ctx) {
   if (STATIC_ONLY_PLUGINS.has(plugin.type)) return results;
   if (plugin.type === 'energy_balance') {
     const tol = plugin.abs_tol ?? 1e-8;
+    // consumers: energy users sharing the colony allocator; default = the two v7.2 industries.
+    const consumers = plugin.consumers || ['Metal', 'Electronics'];
     for (const c of plugin.colonies || ['A', 'B']) {
-      const reqM = `${c} Metal Requested Energy`;
-      const reqE = `${c} Electronics Requested Energy`;
-      const allocM = `${c} Metal Allocated Energy`;
-      const allocE = `${c} Electronics Allocated Energy`;
       const supply = `${c} Energy Supply`;
       const total = `${c} Total Requested Energy`;
       const unserved = `${c} Energy Unserved Demand`;
       const active = `${c} Power Active Generation Capacity`;
-      results.push(checkRelation(ctx, { name: `${c} Metal allocated <= requested`, left: allocM, right: reqM, op: '<=', abs_tol: tol }));
-      results.push(checkRelation(ctx, { name: `${c} Electronics allocated <= requested`, left: allocE, right: reqE, op: '<=', abs_tol: tol }));
+      for (const k of consumers) {
+        results.push(checkRelation(ctx, { name: `${c} ${k} allocated <= requested`, left: `${c} ${k} Allocated Energy`, right: `${c} ${k} Requested Energy`, op: '<=', abs_tol: tol }));
+      }
       results.push(checkRelation(ctx, { name: `${c} Energy supply <= active generation`, left: supply, right: active, op: '<=', abs_tol: tol }));
       results.push(checkLinearIdentity(ctx, { name: `${c} supply allocation identity`, abs_tol: tol, terms: [
-        { column: supply, coef: 1 }, { column: allocM, coef: -1 }, { column: allocE, coef: -1 }
+        { column: supply, coef: 1 }, ...consumers.map(k => ({ column: `${c} ${k} Allocated Energy`, coef: -1 }))
       ]}));
       results.push(checkLinearIdentity(ctx, { name: `${c} unserved identity`, abs_tol: tol, terms: [
         { column: unserved, coef: 1 }, { column: total, coef: -1 }, { column: supply, coef: 1 }

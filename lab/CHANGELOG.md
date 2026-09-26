@@ -1,5 +1,11 @@
 # Changelog
 
+## v0.9.7 — energy_balance: список потребителей энергии
+
+- плагин validation `energy_balance` принимает `consumers` — потребителей общего аллокатора колонии (`X K Requested Energy` / `X K Allocated Energy`); по умолчанию `["Metal", "Electronics"]`, при котором проверки, их имена и порядок прежние;
+- нужно для v7.7.2 (стройматериалы потребляют энергию): тождество `Supply = Σ Allocated` иначе ложно по построению;
+- QA: +1 случай (три потребителя — PASS; по умолчанию на тех же данных тождество FAIL); QA 32/32.
+
 ## v0.9.6 — Planet v1 per-process closure audit
 
 - new `src/planet_closure.js`: declarative static P2–P6 process audit over accepted ModelJSON, with canonical case-insensitive/trim name resolution and deterministic dependency paths;

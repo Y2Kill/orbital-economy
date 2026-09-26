@@ -1,4 +1,4 @@
-# Validation format — Lab v0.9.6
+# Validation format — Lab v0.9.7
 
 `validation.json` — изменяемый контракт проверки конкретной версии модели. Ядро runner должно меняться реже, чем этот файл.
 
@@ -36,11 +36,12 @@
 
 Проверяет для указанных колоний:
 
-- Metal allocated <= requested;
-- Electronics allocated <= requested;
+- для каждого потребителя `K` из `consumers`: `X K Allocated Energy <= X K Requested Energy`;
 - Energy Supply <= Active Generation Capacity;
-- Supply = Metal allocation + Electronics allocation;
+- Supply = сумма `X K Allocated Energy` по всем `consumers`;
 - Unserved = Total requested - Supply.
+
+`consumers` (с v0.9.7) — потребители общего аллокатора колонии; по умолчанию `["Metal", "Electronics"]` (как до v0.9.7: те же проверки, те же имена). Новый потребитель энергии (например, `"Construction Materials"` в v7.7.2) добавляется в validation, а не в код стенда.
 
 ### `capital_lifecycle_kernel` (v0.5.0, основной)
 

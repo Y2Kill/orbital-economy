@@ -7,7 +7,7 @@ import { discoverWorkspace, prepareWebBatch, archiveProcessedWebBatch } from './
 import { inspectWebReferenceBatch } from './regression.js';
 import { ensureDir, readJson, writeJson } from './util.js';
 import { compareModelStructure } from './compare_models.js';
-import { runGenericCheck } from './checks.js';
+import { runGenericCheck, checkPlugin } from './checks.js';
 import { applyPatch, validatePatch, PATCH_FORMAT } from './patch.js';
 import { inventory, buildRegistry, validateAnnotations } from './parameters.js';
 import { loadModelJSON, assertEngineVersion, EXPECTED_ENGINE_VERSION } from './engine.js';
@@ -326,6 +326,19 @@ try {
     const reg = buildRegistry(raw, ann);
     const a = reg.items.find(i => i.name === 'A Ore Base Cost'), b = reg.items.find(i => i.name === 'B Ore Base Cost'), t = reg.items.find(i => i.name === 'Travel Time');
     return !!a.annotation && !!b.annotation && !!t.annotation && reg.summary.annotated === 3 && reg.unknownAnnotations.includes('No Such Parameter') && reg.asymmetricPairs.some(p => p.name === 'Ore Base Cost' && p.annotated);
+  });
+  await expect('energy_balance: consumers list extends the supply identity; default keeps the two v7.2 industries', async () => {
+    const times = [0, 1];
+    const s = { 'A Metal Requested Energy': [10, 10], 'A Metal Allocated Energy': [10, 8], 'A Electronics Requested Energy': [5, 5], 'A Electronics Allocated Energy': [5, 4],
+      'A Construction Materials Requested Energy': [2, 2], 'A Construction Materials Allocated Energy': [2, 1.6], 'A Energy Supply': [17, 13.6],
+      'A Total Requested Energy': [17, 17], 'A Energy Unserved Demand': [0, 3.4], 'A Power Active Generation Capacity': [20, 13.6] };
+    const ctx = { times, get(n) { if (!(n in s)) throw new Error(`unknown series ${n}`); return s[n]; }, has: n => n in s };
+    const three = checkPlugin({ type: 'energy_balance', colonies: ['A'], consumers: ['Metal', 'Electronics', 'Construction Materials'] }, ctx);
+    const two = checkPlugin({ type: 'energy_balance', colonies: ['A'] }, ctx);
+    const id = r => r.find(x => x.name === 'A supply allocation identity');
+    if (three.length !== 6 || three.some(r => r.status !== 'PASS')) throw new Error(JSON.stringify(three.map(r => [r.name, r.status])));
+    if (two.length !== 5 || id(two).status !== 'FAIL' || !two.some(r => r.name === 'A Metal allocated <= requested')) throw new Error(JSON.stringify(two.map(r => [r.name, r.status])));
+    return 'three consumers: 6 PASS; default two: supply identity FAIL (construction materials unaccounted)';
   });
   await expect('parameter registry: malformed annotations are rejected', async () => {
     return validateAnnotations({ format: 'x', parameters: { 'A Wage': { role: 'only role' } } }).length >= 2;

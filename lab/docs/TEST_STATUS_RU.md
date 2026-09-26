@@ -1,4 +1,4 @@
-# Статус проверок Orbital Economy Lab v0.9.6 — baseline v7.7.1 r1
+# Статус проверок Orbital Economy Lab v0.9.7 — baseline v7.7.1 r1
 
 ## Принятая основа
 
@@ -32,7 +32,7 @@
 | Скрипт | Результат |
 |---|---|
 | `SELF_TEST.cmd` (Modes 0, 12) | **PASS** |
-| `QA_SELF_TEST.cmd` | **PASS** 31/31 с Lab v0.9.4 (случаи v0.9.3: подменённая версия движка отвергается; v0.9.4: побитовое хеширование рядов) |
+| `QA_SELF_TEST.cmd` | **PASS** 32/32 с Lab v0.9.7 (v0.9.7: `energy_balance` со списком `consumers`) (случаи v0.9.3: подменённая версия движка отвергается; v0.9.4: побитовое хеширование рядов) |
 | `POLICY_SELF_TEST.cmd` | **PASS** 10/10 |
 | `CONFORMANCE_SELF_TEST.cmd` | **PASS** 18/18 |
 | `STRUCTURE_SELF_TEST.cmd` | **PASS** 21/21 |
