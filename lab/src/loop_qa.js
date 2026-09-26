@@ -248,7 +248,31 @@ try {
     if (cli.status !== 1 || !fs.existsSync(path.join(loopsDir, 'algebraic-loops.json'))) {
       throw new Error(`loops CLI expected exit 1, got ${cli.status}; stderr=${cli.stderr}`);
     }
-    return `NOT_COMPARED; shortest cycle: ${cycle.join(' -> ')}; loops CLI exit=1`;
+
+    // Validation plugins are not required for the unconditional loop audit;
+    // the Markdown report must still show it even when the legacy structure
+    // audits make the aggregate status SKIPPED.
+    const noPluginsFile = path.join(tmp, 'validation-no-structure-plugins.json');
+    writeJson(noPluginsFile, { name: 'QA no structure plugins', plugins: [] });
+    const noPluginsDir = ensureDir(path.join(tmp, 'audit-no-plugins'));
+    console.log = () => {};
+    console.error = () => {};
+    let noPluginsReport;
+    try {
+      noPluginsReport = runAuditCommand({ modelFile: acceptedFile, validationFile: noPluginsFile, outDir: noPluginsDir });
+    } finally {
+      console.log = oldLog;
+      console.error = oldErr;
+    }
+    const noPluginsMd = fs.readFileSync(path.join(noPluginsDir, 'structure-audit.md'), 'utf8');
+    if (noPluginsReport.status !== 'SKIPPED'
+      || noPluginsReport.algebraicLoops?.status !== 'PASS'
+      || !noPluginsMd.includes('## Algebraic loops')
+      || !noPluginsMd.includes('combinations: 128; with loops: **0**')) {
+      throw new Error('validation-independent loop report is missing/incomplete');
+    }
+
+    return `NOT_COMPARED; shortest cycle: ${cycle.join(' -> ')}; loops CLI exit=1; no-plugin report includes loop PASS`;
   });
 
   await expect('13 audit JSON is deterministic for the same input', () => {
