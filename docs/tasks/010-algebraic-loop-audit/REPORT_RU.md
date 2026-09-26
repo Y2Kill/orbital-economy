@@ -92,6 +92,28 @@
 Дальше: этот journal/report-коммит сам запускает CI, поскольку `[skip ci]` запрещён. Перед передачей результата исполнитель обязан дождаться его зелёного завершения; новых функциональных изменений после КТ4 не планируется.
 
 
+
+## Раунд 2
+
+### КТ5 — 2026-09-26 15:34 EEST — case-insensitive/trim resolution и unresolved-reference FAIL
+
+Исправлено ровно замечание приёмки:
+- все имена ссылок `[...]`, ключи `scenario.values` и подстановка значений в `IfThenElse` разрешаются через единый ключ `trim().toLowerCase()`, как в стенде/движке;
+- граф строится по нормализованному ключу, но `switches`, SCC, shortest cycle и ошибки используют канонические имена элементов из ModelJSON;
+- ссылка, не разрешившаяся ни в один элемент, теперь даёт `FAIL` с полями `element`, `reference` и сообщением `unresolved reference [...]`; команда `loops` видит это без validation;
+- cases 1–13 оставлены без изменения; добавлены cases 14–15;
+- в CHANGELOG и `STRUCTURE_AUDIT_RU.md` добавлено правило разрешения имён и unresolved-reference FAIL.
+
+Доказательство:
+- CI: https://github.com/Y2Kill/orbital-economy/actions/runs/36242218467 — **success**; guard, tools-selftest и весь `bench-selftests` PASS.
+- `LOOP QA RESULT: PASS (15 passed, 0 failed) in 28.080 s`.
+- Case 14: lower-case ссылка `[b refinery construction materials consumption]` на канонический `B Refinery Construction Materials Consumption` → **64/128**, все плохие комбинации с `Construction Materials Enabled = 1`, Modes **27–31**; Mode 26 считается, Mode 27 движок бросает `Circular equation loop`.
+- Case 15: ссылка `[ definitely missing element ]` → `FAIL` с именем `A Wage` и исходной ссылкой, без исключения наружу.
+- Accepted cases 1–13 продолжают проходить без изменения ожидаемых результатов.
+
+Замечание: нормализация применяется только к идентификации имён. В отчётах и циклах регистр/написание ModelJSON не теряются — выводятся канонические `element.name`.
+
+
 ## Устройство модуля и отличия от прототипа
 
 Production-модуль предварительно разбирает каждую формулу в шаблон из текстовых фрагментов и узлов `IfThenElse`, после чего один и тот же шаблон рендерится для разных switch/scenario environments. Это уменьшает повторный parsing при переборе комбинаций.
