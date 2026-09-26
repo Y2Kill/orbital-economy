@@ -61,17 +61,39 @@
 
 Дальше: привязать `change-policy.json.validation_sha256` к SHA validation без изменения rules и добиться 5/5 PASS + зелёного CI (КТ4).
 
+### КТ4 — 2026-09-26 13:18 EEST — поставка полная, candidate 5/5 PASS и CI зелёный
+
+Сделано:
+- `change-policy.json.validation_sha256` привязан к финальной validation SHA `5aba67ef5ef4b60a095ffe2005112de13cf04feafcdce3fa30ce018016116daa` отдельным коммитом `580c8f37e933cb1dd84ea80d3db915eed621c862`; rules не менялись.
+- Финальная поставка содержит полный candidate r1, validation r2 с калиброванными порогами, owner-policy с привязанной validation и аннотации новых параметров.
+- Новых модельных правок после КТ3 не потребовалось.
+
+Доказательство:
+- Финальный Candidate acceptance: https://github.com/Y2Kill/orbital-economy/actions/runs/36234471956 — **success**.
+- Все пять гейтов: `apply-patch PASS`, `conformance PASS`, `audit PASS`, `validation PASS`, `policy PASS`.
+- Candidate SHA-256: `a3c371395bd930a865359da6c8a0a0c8eb6a29736056651492211d4dacc6f60a`.
+- Validation SHA-256: `5aba67ef5ef4b60a095ffe2005112de13cf04feafcdce3fa30ce018016116daa`.
+- `POLICY RESULT: PASS`: `Observed=441`, `Expected=441`, `Unexpected=0`, `Forbidden=0`, `Threshold exceed=0`, `Required missing=0`, `Hard blockers=0`.
+- Итог лога: `All five candidate gates PASS.`
+- CI той же головы: https://github.com/Y2Kill/orbital-economy/actions/runs/36234471931 — **success**.
+
+Не подтвердилось:
+- После привязки validation SHA не появилось ни одного нового policy-расхождения; предыдущий POLICY FAIL действительно был только следствием непривязанного SHA.
+- Дополнительная корректировка калибровки или модельной константы `Transport Construction Materials per Capacity = 3` не потребовалась.
+
+Дальше: поставка задачи 009 завершена со стороны исполнителя. Канонический Windows-прогон и решение о приёмке остаются за reviewer по контракту.
+
 ## Реализация кандидата
 
 Candidate r1 следует исчерпывающей спецификации: shared Transport получает второй физический ресурс — Construction Materials — по дословной схеме принятого Transport Capital Goods: половинное планирование спроса по A/B, фактическое списание пропорционально текущим региональным запасам.
 
 Структурная самопроверка перед первым push: **12 новых элементов, 4 replace-formulas, 33 новых LINK, 30 scenario switch-off изменений и 2 новых Modes**. `old`-ветки трёх изменяемых экономических формул извлечены дословно из accepted v7.7 r1; `Test 2 Transport Surge Active` расширен только веткой Mode 31.
 
-Первая validation сохраняет draft/accepted v7.7 без ослабления, добавляет switch-off проверки Modes 0–29, тождества Modes 30–31 и три намеренно невозможных `[calib probe]`: Mode 30 Transport CM fulfillment; Mode 31 B Construction Materials Production; Mode 31 B Construction Materials Fulfillment. Пороговые значения будут выбраны только после первого полного `candidate.yml` по контракту §8.
+Validation сохраняет draft/accepted v7.7 без ослабления. В r1 были добавлены switch-off проверки Modes 0–29, тождества Modes 30–31 и три намеренно невозможных `[calib probe]`; после первого полного прогона они заменены в r2 на обоснованные пороги с запасом. Финальная validation проходит 32/32, включая обязательное производство Construction Materials в B в Mode 31.
 
 ## Отклонения от спецификации
 
-На старте отклонений нет. В Mode 31 для требования «B строит Refinery или Power» executable-проверка использует `B Power Generation Expansion > 0`; skeleton спецификации подтверждает этот путь (≈0.45/день), поэтому это более конкретная, не более слабая проверка исходного дизъюнкта.
+Отклонений от спецификации не выявлено. В Mode 31 для требования «B строит Refinery или Power» executable-проверка использует `B Power Generation Expansion > 0`; skeleton спецификации подтверждает этот путь (≈0.45/день), поэтому это более конкретная, не более слабая проверка исходного дизъюнкта.
 
 ## Калибровка
 
@@ -90,6 +112,10 @@ Candidate r1 следует исчерпывающей спецификации:
 - Mode 30 не требует производства Construction Materials в B: по спецификации ей хватает стартового запаса.
 - Energy, торговля Construction Materials и lifecycle новых секторов остаются вне v7.7.1.
 - Канонические числовые значения снимаются reviewer на Windows; Linux CI используется для гейтов и калибровочных ориентиров, не для бит-в-бит эталона.
+
+## Итог поставки
+
+Финальная голова кандидата перед отчётным коммитом — `580c8f37e933cb1dd84ea80d3db915eed621c862`. На ней `candidate.yml` полностью зелёный (5/5 PASS, POLICY PASS), `ci.yml` зелёный, validation 32/32, а Modes 0–29 сохраняют accepted v7.7 r1 точно (`changed=0`, `maxAbs=0`). Поставка готова к канонической приёмке reviewer.
 
 ## Что не запускалось локально
 
