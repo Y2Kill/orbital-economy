@@ -298,6 +298,16 @@ export function auditPlanetClosure(raw, plugin, openBoundariesPlugin) {
     return path;
   };
   const within = (from, to) => shortestPath(index, graph, from, to, maxHops);
+  const shortestEvidence = (record, field, from, to) => {
+    const path = shortestPath(index, graph, from, to, Infinity);
+    if (path) record.paths[field] = path;
+    return path;
+  };
+  const readsError = (record, subject, from, to) => {
+    const path = shortestEvidence(record, `${subject}_shortest`, from, to);
+    if (!path) return `${from} does not read ${to}`;
+    return `${from} reads ${to} only in ${path.length - 1} hops (> max_hops ${maxHops}): ${path.join(' -> ')}`;
+  };
 
   for (const { p, colony } of instances) {
     const record = {
@@ -361,7 +371,7 @@ export function auditPlanetClosure(raw, plugin, openBoundariesPlugin) {
       else if (stock.type !== 'STOCK') processError(errors, record, `capacity stock ${stock.name} is not a STOCK`);
       else {
         const path = addPath(record, 'capacity', within(output.name, stock.name));
-        if (!path) processError(errors, record, `output does not read capacity stock ${stock.name} within ${maxHops} references`);
+        if (!path) processError(errors, record, readsError(record, 'capacity', output.name, stock.name));
         else counters.P2.kernel++;
       }
     } else if (cap.kind === 'constant') {
@@ -372,7 +382,7 @@ export function auditPlanetClosure(raw, plugin, openBoundariesPlugin) {
       else if (hasStock(index, closure(index, graph, parameter.name))) processError(errors, record, `capacity parameter ${parameter.name} depends on a STOCK`);
       else {
         const path = addPath(record, 'capacity', within(output.name, parameter.name));
-        if (!path) processError(errors, record, `output does not read capacity parameter ${parameter.name} within ${maxHops} references`);
+        if (!path) processError(errors, record, readsError(record, 'capacity', output.name, parameter.name));
         else {
           counters.P2.exceptions++;
           exceptions.push({ dimension: 'P2', process: record.id, colony, instance: record.instance, kind: 'constant', value: parameter.name, reason: cap.reason });
@@ -410,8 +420,8 @@ export function auditPlanetClosure(raw, plugin, openBoundariesPlugin) {
       if (request && total && fulfillment) {
         const requestPath = addPath(record, 'energy_total_to_request', within(total.name, request.name));
         const fulfillmentPath = addPath(record, 'energy_output_to_fulfillment', within(output.name, fulfillment.name));
-        if (!requestPath) processError(errors, record, `${request.name} is not read by ${total.name} within ${maxHops} references`);
-        if (!fulfillmentPath) processError(errors, record, `output does not read ${fulfillment.name} within ${maxHops} references`);
+        if (!requestPath) processError(errors, record, readsError(record, 'energy_total_to_request', total.name, request.name));
+        if (!fulfillmentPath) processError(errors, record, readsError(record, 'energy_output_to_fulfillment', output.name, fulfillment.name));
 
         if (requestPath && fulfillmentPath) {
           const fromRequest = near(index, graph, request.name, maxHops);
