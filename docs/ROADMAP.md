@@ -81,16 +81,21 @@ Why not now: it replaces the project's central guarantee (old Modes bit-exact on
 
 **Trigger:** the first model change for which an exact algebraic fallback at `switch = 0` is impossible or would distort the design. The next planned increment, construction materials using energy, still has a clean fallback.
 
-## Planet v1 acceptance concept
+## Planet v1 acceptance contract
 
-Planet v1 needs a multi-part contract rather than a single violation counter:
+Defined 2026-09-26: `docs/PLANET_V1_CONTRACT_RU.md`. The single boundary counter reached zero (all 122 boundary flows classified, `external_capital` = 0), so Planet v1 is now a set of parts, each with its own counter measured per **process** rather than per boundary flow:
 
-- declared physical production chains complete at the chosen abstraction level;
-- explicit essential energy/resource dependencies;
-- capital expansion/replacement physically backed;
-- life-support flows represented if population is active;
-- no hidden external boundary presented as internal production;
-- deterministic, reproducible validation and regression.
+| Part | Now (v7.7.1, per colony) | v1 target |
+|---|---|---|
+| P1 capital-backed expansion | 0 external | 0 (closed) |
+| P2 capacity from capital, not a constant | 5 constant/unbounded | 0 undeclared; exceptions with reason, counted separately |
+| P3 declared energy use | 5 of 7 processes + transport without energy | 0 undeclared; exceptions with reason |
+| P4 finite deposits | 3 extractions from nothing | deposit stock from a named parameter (v8: derived from planet formation) |
+| P5 declared labor | 2 of 9 | all declared; no labor pool (v2) |
+| P6 final demand | constants | explicit external driver (population and life support: v2) |
+| P7 reproducibility | closed on the canonical platform | platform independence before going public |
+
+Order: first a bench task — `planet_closure` validation plugin in `report` mode (counters only, model unchanged); then model steps under the counter, starting with construction materials using energy.
 
 ## v8 — replicated regions/colonies/planets
 
