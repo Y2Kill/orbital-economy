@@ -4,6 +4,23 @@
 
 Работа начата с `main@ae7005158f8b9f6a9991064f74513e0da9b7e576`. Контрольные точки пока не закрыты.
 
+### КТ1 — 2026-09-26 12:25 EEST — patch/conformance/audit PASS
+
+Сделано: candidate r1 применился к accepted v7.7 r1; conformance и structure audit прошли без ошибок. Структурный объём кандидата соответствует skeleton-спецификации: 12 новых элементов, 4 замены формул, 33 LINK, 30 legacy-сценариев с явным switch-off и 2 новых Mode.
+
+Доказательство:
+- Candidate acceptance: https://github.com/Y2Kill/orbital-economy/actions/runs/36232699114.
+- `Gate 1 - apply-patch` — **success**.
+- `Gate 2 - conformance` — **success**.
+- `Gate 3 - audit` — **success**.
+- Коммит кандидата: `5e15ca433d5784956f17f2d225eabf2a25d9d500`.
+
+Не подтвердилось:
+- Структурных ошибок, нарушений conformance или audit на первом кандидате не обнаружено.
+- Полный лог job на момент закрытия КТ1 ещё не завершён, поэтому числовые audit-выдержки будут добавлены только если понадобятся в следующих КТ; статус трёх гейтов уже финальный `success`.
+
+Дальше: дождаться полного первого candidate-run и проверить comparator/policy для Modes 0–29 (КТ2), затем использовать intentional calibration probes Modes 30–31 для порогов КТ3.
+
 ## Реализация кандидата
 
 Candidate r1 следует исчерпывающей спецификации: shared Transport получает второй физический ресурс — Construction Materials — по дословной схеме принятого Transport Capital Goods: половинное планирование спроса по A/B, фактическое списание пропорционально текущим региональным запасам.
