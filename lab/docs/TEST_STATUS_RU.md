@@ -1,4 +1,4 @@
-# Статус проверок Orbital Economy Lab v0.9.5 — baseline v7.7.1 r1
+# Статус проверок Orbital Economy Lab v0.9.6 — baseline v7.7.1 r1
 
 ## Принятая основа
 
@@ -37,6 +37,7 @@
 | `CONFORMANCE_SELF_TEST.cmd` | **PASS** 18/18 |
 | `STRUCTURE_SELF_TEST.cmd` | **PASS** 21/21 |
 | `LOOP_SELF_TEST.cmd` | **PASS (Linux CI задачи 010)** 13/13; v7.6 r1 = 16/32, mutation 001 = 64/128 |
+| `PLANET_SELF_TEST.cmd` | **PASS (Linux CI задачи 011)** 16/16; baseline P2=7/10/0, P3=4/2/11/0, P4=0/6, P5=4/13, P6=4 |
 | `COMPARE_SELF_TEST.cmd` | **PASS** |
 
 ## Рабочая область
@@ -59,3 +60,20 @@
 - остальные bench self-tests остаются PASS.
 
 Это **не** запись канонической приёмки Windows: её добавляет reviewer после собственного прогона по TASK 010 §5.
+
+
+## Lab v0.9.6 — Planet v1 process closure (задача 011)
+
+На ветке задачи 011 GitHub Actions подтверждает новый статический `planet_closure`:
+
+- accepted v7.7.1 r1 в `report`: processes 17, legacy 2, expected source outputs 16;
+- P2 capacity = 7 kernel / 10 exceptions / 0 undeclared;
+- P3 energy = 4 requests / 2 producers / 11 exceptions / 0 undeclared;
+- P4 deposits = 0 with / 6 without;
+- P5 labor = 4 declared / 13 undeclared;
+- P6 demand drivers = 4; reversibility violations = 0;
+- L1–L5 ложные декларации отвергаются по реальным reference paths;
+- `planet_v1` на текущей модели FAIL ровно по P4=6 и P5=13; `planet_strict` дополнительно по P2 exceptions=10 и P3 exceptions=11;
+- все 16 Planet QA cases PASS; остальные bench self-tests остаются PASS.
+
+Это запись Linux CI разработки, а не каноническая Windows-приёмка. Accepted validation v7.7.1 на ветке исполнителя не изменён; декларация проверяется через `--planet-closure` до решения reviewer о promotion.
