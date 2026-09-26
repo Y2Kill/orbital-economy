@@ -4,10 +4,11 @@
 
 - new `src/loop_audit.js`: deterministic same-step dependency graph over VARIABLE/FLOW; STOCK cuts dependencies; Tarjan SCC plus deterministic shortest-cycle extraction;
 - switch recognition is data-driven (model literal 0/1 + scenario coverage + only 0/1 scenario values); accepted v7.7.1 r1 has 7 switches / 128 combinations;
+- round 2: formula/scenario names are resolved like the bench/engine with `trim().toLowerCase()` while reports retain canonical ModelJSON names; unresolved `[Name]` references are a static FAIL instead of being ignored;
 - nested `IfThenElse` is pruned only for decidable substituted numeric conditions; state/time/unknown conditions conservatively retain both branches; malformed delimiters fail with the element name;
 - audit runs unconditionally inside `runStructureAudits`; any possible loop is a HARD static failure and makes model comparison `NOT_COMPARED` before simulation;
 - reports added to `structure-audit.md/.json`, RUN_LAB report, and standalone `loops` CLI (`algebraic-loops.md/.json`, exit 1 on loop);
-- `LOOP_SELF_TEST.cmd` / `loop-qa`: 13 cases including v7.6 r1 (16/32), mutation 001 r1 (64/128), runtime engine agreement, STOCK/FLOW/self-loop, parser failure, integration and determinism;
+- `LOOP_SELF_TEST.cmd` / `loop-qa`: 15 cases including v7.6 r1 (16/32), mutation 001 r1 (64/128), case-insensitive construction-materials mutation (64/128, Modes 27–31), unresolved-reference failure, runtime engine agreement, STOCK/FLOW/self-loop, parser failure, integration and determinism;
 - package/lab version bumped to v0.9.5; model, validation, policy and engine behavior are unchanged.
 
 
