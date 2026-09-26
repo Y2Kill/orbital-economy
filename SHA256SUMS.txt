@@ -140,6 +140,12 @@ f8ae64e4ccca702d5ccd852b2a3d597f512813ff5677726e8effe35d5b516ffc  ./docs/tasks/0
 ff0fbb367b40c146cabe386e580cf1f7c8bfb85b4179354e39d9e77c272e97e5  ./docs/tasks/008-construction-materials/draft/change-policy-v7.7-draft.json
 fa908c5c0355d54a13ce893180f0116eaa3624985160684fee4c125fe11a54ef  ./docs/tasks/008-construction-materials/draft/validation-v7.7-draft.json
 acf59fe5466787fa91ee3915a3a29f79a1e6b1d4d46468c5dcb051a73f17ba25  ./docs/tasks/008-construction-materials/scope.json
+1672947bede1fad2b7faf114c87b0946183b1a1ef55b2ddec0b041ff2538df2a  ./docs/tasks/009-transport-construction-materials/TASK_RU.md
+5bc8d4cbf7d04d15841a4d99261a47b8f046b739e8690583b95a695ca469a3fd  ./docs/tasks/009-transport-construction-materials/V7_7_1_ARCHITECTURE_SPEC.md
+60659ee7f9fa9e9c5a2126300e0840528f988e5ed86812a7695fdf8d4f57592c  ./docs/tasks/009-transport-construction-materials/V7_7_1_TEST_PLAN.md
+4c317b5c78dfb1bcb768520eb7ae3d812ca1532c453fb2600b5737d36b1a2861  ./docs/tasks/009-transport-construction-materials/draft/change-policy-v7.7.1-draft.json
+ce44095d666a54c9ef848a39d3da1a3b142f4a8f090096460adf0abd9051b2fc  ./docs/tasks/009-transport-construction-materials/draft/validation-v7.7.1-draft.json
+869a5c5946da5a18914477ba068f664fa58200b61fe632e4a6db89933c424911  ./docs/tasks/009-transport-construction-materials/scope.json
 943413da79f0e70a5c673d3fd505bde105ad2c74ba2e36c5a5f475aaaf2c709e  ./docs/tasks/README_RU.md
 bbf818e93b88d606b3137b1bb69d60db8c41c9df4089025a921b1ca00f473244  ./lab/APPLY_PATCH.cmd
 8ec18e3efcaefc65c2fdca2d08b43c515028b4997bcdaeecad1fd3951236a5cd  ./lab/CHANGELOG.md

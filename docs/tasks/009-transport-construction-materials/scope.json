@@ -1,0 +1,17 @@
+{
+  "task": "009",
+  "title": "v7.7.1 Transport on Construction Materials: shared transport expansion backed by construction materials from A and B",
+  "branch": "task/009-transport-construction-materials",
+  "allow": [],
+  "allow_binary": [],
+  "allow_protected": [
+    "docs/tasks/009-transport-construction-materials/candidate/**"
+  ],
+  "required_changes": [
+    "docs/tasks/009-transport-construction-materials/candidate/model-patch.json",
+    "docs/tasks/009-transport-construction-materials/candidate/validation.json",
+    "docs/tasks/009-transport-construction-materials/candidate/change-policy.json",
+    "docs/tasks/009-transport-construction-materials/candidate/PARAMETER_ANNOTATIONS_fragment.json"
+  ],
+  "sums_by": "reviewer"
+}
