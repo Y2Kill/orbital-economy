@@ -63,6 +63,39 @@
 Дальше: интеграция `planet_closure` в structure gate/report/CLI, `STATIC_ONLY_PLUGINS`, cases 15–16, v0.9.6 и полный зелёный bench-selftests (КТ3).
 
 
+
+### КТ3 — 2026-09-26 16:51 EEST — интеграция, CLI override и cases 15–16 PASS
+
+Сделано:
+- `planet_closure` встроен в `runStructureAudits`; его FAIL-пункты попадают в `structureAuditErrors`, а report-only метрики сами по себе hard FAIL не создают;
+- `checks.js`: `planet_closure` добавлен в `STATIC_ONLY_PLUGINS`, поэтому runtime Modes не получают `Неизвестный plugin`;
+- `structure-audit.md/.json`, console audit и RUN_LAB report показывают P2–P6, exceptions с причинами, undeclared, reversibility и dependency paths;
+- команда `audit` получила `--planet-closure=<file>`: декларация заменяет плагин validation, если он есть, либо добавляется только в in-memory validation для этого запуска;
+- добавлены `PLANET_SELF_TEST.cmd`, package script `planet-qa`, версия Lab поднята до **0.9.6**;
+- cases 15–16 проверяют интеграцию и побайтовую детерминированность JSON.
+
+Доказательство:
+- CI: https://github.com/Y2Kill/orbital-economy/actions/runs/36246369792 — **success**; guard, tools-selftest и весь `bench-selftests` PASS.
+- `PLANET QA RESULT: PASS (16 passed, 0 failed) in 1.273 s`.
+- Case 15: `runStructureAudits` с plugin → PASS и эталонные счётчики; `checkPlugin(planet_closure, null) → []`; `audit --planet-closure=...` → exit 0.
+- Case 15 проверяет в созданном `structure-audit.md` как минимум:
+  - `processes: 17; legacy: 2; expected source outputs: 16`;
+  - `P2 capacity: kernel 7 / exceptions 10 / undeclared 0`;
+  - `P3 energy: requests 4 / producer 2 / exceptions 11 / undeclared 0`;
+  - `P4 deposits: with 0 / without 6`;
+  - `P5 labor: declared 4 / undeclared 13`;
+  - `P6 demand drivers: 4`.
+- Case 16: два `JSON.stringify(auditPlanetClosure(...))` побайтно совпадают.
+- Циклический ESM dependency `structure_audit.js ↔ planet_closure.js` проверен реальным Node CI и работает: `planet_closure` переиспользует экспортированную функцию `auditOpenBoundaries`, не выполняя её во время инициализации модуля.
+- `lab/package.json`: **37 CRLF, 0 bare LF, без завершающего newline**.
+
+Не подтвердилось:
+- Интеграция нового static-only plugin не вызвала регрессий старых Structure/Loop/Conformance/Policy/Compare/Bench self-tests.
+- Для CLI override не потребовалось менять accepted validation на ветке исполнителя.
+
+Дальше: документация v0.9.6 и финализация отчёта; затем финальная голова должна пройти полный CI (КТ4).
+
+
 ## Устройство модуля и отличия от прототипа
 
 Будет дополнено после завершения интеграции.
