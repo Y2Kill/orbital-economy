@@ -1,6 +1,6 @@
-# Orbital Economy Lab v0.9.4
+# Orbital Economy Lab v0.9.5
 
-Локальный стенд для запуска, проверки, regression-анализа, policy-gating, проверки соответствия Capital Lifecycle Kernel и статических аудитов структуры (открытые границы, A/B-симметрия) для ModelJSON экономической модели Orbital Economy. v0.9.4 добавляет `node src/cli.js series` для бит-точной межплатформенной диагностики рядов.
+Локальный стенд для запуска, проверки, regression-анализа, policy-gating, Capital Lifecycle Kernel и статических аудитов структуры для ModelJSON Orbital Economy. v0.9.5 добавляет безусловный switch-aware аудит алгебраических петель: он перебирает все бинарные сценарные переключатели и блокирует candidate до simulation, если петля возможна хотя бы в одной комбинации.
 
 ## Подтверждённая база
 
@@ -22,6 +22,26 @@
 Подробности приёмки и воспроизведение — `../docs/ACCEPTANCE_STATUS.md`; что было сломано в v7.6 r1 — `../docs/V7_6_R1_TO_R2_FIX_REPORT.md`.
 
 Исторических моделей в стенде нет: самотесты работают на текущем accepted (`reference/accepted/`, `input/`), предыдущий accepted лежит в `../reference/`, более ранние — в архиве проекта (вне git).
+
+---
+
+
+# 0d. Что изменилось в v0.9.5
+
+```cmd
+node src\cli.js loops <model.json> --out=output\loops
+LOOP_SELF_TEST.cmd
+```
+
+- `algebraic_loops` строит same-step graph по ссылкам формул VARIABLE/FLOW; STOCK разрывает граф;
+- 0/1-переключатели распознаются по значениям модели и сценариев, без соглашения об именах;
+- все комбинации переключателей и реальные Modes проверяются до simulation;
+- `IfThenElse` отсеивает ветвь только при полностью решаемом condition; иначе обе ветви сохраняются;
+- SCC объединяются между комбинациями, а человеку показывается shortest cycle;
+- петля — HARD: `audit`, RUN_LAB, `compare` и `CHECK_CANDIDATE` получают статический FAIL; comparator возвращает `NOT_COMPARED`;
+- `LOOP_SELF_TEST.cmd` содержит 13 случаев, включая исторические дефекты 001 r1 / v7.6 r1 и согласие с `simulation@9.0.0`.
+
+Подробно: `docs\STRUCTURE_AUDIT_RU.md`, раздел `algebraic_loops`.
 
 ---
 
@@ -160,6 +180,7 @@ COMPARE_SELF_TEST.cmd
 POLICY_SELF_TEST.cmd
 CONFORMANCE_SELF_TEST.cmd
 STRUCTURE_SELF_TEST.cmd
+LOOP_SELF_TEST.cmd
 ```
 
 COMPARE / POLICY / CONFORMANCE реально запускают simulation, поэтому занимают некоторое время.

@@ -1,4 +1,4 @@
-# QA самого Orbital Economy Lab v0.9.3
+# QA самого Orbital Economy Lab v0.9.5
 
 ## 1. Operational QA
 
@@ -102,11 +102,33 @@ STRUCTURE_SELF_TEST.cmd
 
 Ожидаемый итог: **21 passed, 0 failed** (v0.9.0: + пары преобразования).
 
+
+## 3c. Algebraic-loop QA (v0.9.5)
+
+Запуск:
+
+```text
+LOOP_SELF_TEST.cmd
+```
+
+13 случаев на accepted и мутированных копиях:
+
+- accepted v7.7.1 r1: 7 переключателей, 128 комбинаций, 0 петель;
+- исторический v7.6 r1: 16/32 комбинаций, только при `Power Resource Enabled=1`, Modes 25–26;
+- мутация задачи 001 r1: 64/128, только при `Intermediate Inputs Enabled=1`, Modes 17–31;
+- runtime agreement: Mode 16 считается, Mode 17 падает у `simulation@9.0.0` с `Circular equation loop`;
+- безусловная/условная петля, STOCK как разрыв, FLOW как same-step узел, self-reference;
+- строгий parser failure с именем элемента;
+- static integration: `runStructureAudits → FAIL`, comparator → `NOT_COMPARED` без simulation;
+- детерминированность JSON и CLI `loops` с exit code 1 на петле.
+
+Linux CI задачи 010: **13 passed, 0 failed**, около 17 s. Каноническая Windows-проверка выполняется владельцем при приёмке.
+
 ## 4. Fail-fast
 
 Если web-reference batch не проходит preflight, длительные simulation не запускаются.
 
-Если accepted или candidate не проходит static validation в model comparator, numerical comparison не запускается. С v0.5.0 в static validation входит Capital Lifecycle Kernel conformance, с v0.6.0 — structure audits: неконформный или асимметричный candidate даёт `NOT_COMPARED` без единой симуляции.
+Если accepted или candidate не проходит static validation в model comparator, numerical comparison не запускается. С v0.5.0 в static validation входит Capital Lifecycle Kernel conformance, с v0.6.0 — structure audits, а с v0.9.5 — безусловный switch-aware algebraic-loop audit. Неконформный, асимметричный или содержащий возможную алгебраическую петлю candidate даёт `NOT_COMPARED` без единой сценарной симуляции.
 
 Policy preflight отдельно проверяет:
 

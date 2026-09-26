@@ -1,6 +1,6 @@
-# Structure audits — открытые границы и A/B-симметрия (Lab v0.6.0)
+# Structure audits — границы, A/B-симметрия и алгебраические петли (Lab v0.9.5)
 
-Две статические проверки структуры ModelJSON, объявляемые как плагины validation JSON и выполняемые до симуляции. Обе не вычисляют формулы; работают с именами, типами, endpoints потоков и LINK.
+Три статические проверки структуры ModelJSON, выполняемые до симуляции. `open_boundaries` и `colony_symmetry` объявляются как плагины validation JSON. `algebraic_loops` с v0.9.5 выполняется **всегда**, независимо от validation: он анализирует формулы VARIABLE/FLOW и все комбинации бинарных сценарных переключателей.
 
 ```text
 STRUCTURE_AUDIT.cmd  → output\audit-<timestamp>\structure-audit.md/.json
@@ -120,7 +120,74 @@ pairs=646, links=1252, mismatches=0, parameter differences=42, exceptions=17
 
 ---
 
-## 3. QA — `STRUCTURE_SELF_TEST.cmd`
+
+## 3. `algebraic_loops` — скрытые алгебраические петли
+
+### Что проверяется
+
+Граф строится на одном шаге интегрирования:
+
+- узлы — только `VARIABLE` и `FLOW`;
+- `STOCK` разрывает граф: его текущее значение считается состоянием прошлого шага;
+- ребро `X → Y` создаётся по ссылке `[X]` в формуле `Y`; визуальные `LINK` для этого аудита не являются источником истины;
+- self-reference считается петлёй.
+
+Переключатель распознаётся **по данным**, а не по имени: VARIABLE имеет literal `0` или `1` в модели, задаётся хотя бы одним сценарием, и все сценарные значения этой переменной — только `0/1`. На accepted v7.7.1 r1 это даёт 7 переключателей и 128 комбинаций; `Timed Test Mode` не подходит, потому что принимает 0…31.
+
+### Условные формулы
+
+Для `IfThenElse(condition, yes, no)` ветка отсекается только когда condition можно вычислить исключительно из подставленных сценарных значений/переключателей, числовых литералов, скобок и сравнений `= < > <= >=`. Если условие зависит от состояния (`STOCK`), времени (`Days()`) или иной непонятной конструкции, сохраняются обе ветки.
+
+Это намеренно консервативно: возможна лишняя находка, но условная петля не должна быть пропущена. Несбалансированные скобки и незакрытый `IfThenElse` — не «неизвестная формула», а **FAIL parser** с именем элемента.
+
+### Два отчётных слоя
+
+1. Все `2^N` комбинаций переключателей — поиск скрытых петель, которых пока нет ни в одном Mode.
+2. Реальные Modes — подстановка всех scenario values (для пропущенных значений берётся числовой default модели). Это прогноз, в каких сценариях движок откажется считать.
+
+Петли ищутся как SCC. Одинаковый состав SCC из разных комбинаций объединяется; в отчёте сохраняются размер, число комбинаций, первая комбинация и **кратчайший цикл внутри компоненты**. Исправлять следует именно этот путь, а не пытаться читать весь SCC.
+
+Пример дефекта задачи 001 r1:
+
+```text
+A Desired Smelting Rate
+→ A Positive Desired Smelting Rate
+→ A Pre Energy Smelting Rate
+→ A Metal Requested Energy
+→ A Total Requested Energy
+→ A Energy Fulfillment Ratio
+→ A Electronics Allocated Energy
+→ A Electronics Energy Fulfillment Ratio
+→ A Electronics Production Rate
+→ A Electronics Feedstock Consumption Rate
+→ A Electronics Metal Input Target Inventory
+→ A Electronics Metal Input Demand
+→ A Metal Available for Intermediate Use
+→ A Electronics Metal Input Delivery
+→ A Desired Smelting Rate
+```
+
+### Команды и fail-fast
+
+```cmd
+node src\cli.js loops <model.json> --out=output\loops
+LOOP_SELF_TEST.cmd
+```
+
+`loops` не требует validation. Exit code: 0 — петель нет, 1 — петля/parser FAIL, 2 — ошибка запуска/аргументов.
+
+Аудит также входит в `runStructureAudits`, поэтому loop FAIL попадает в `structureAuditErrors`: `COMPARE_MODELS` / `CHECK_CANDIDATE` возвращают `NOT_COMPARED` **до simulation**.
+
+Совместимость со старым API: если validation не содержит `open_boundaries` и `colony_symmetry`, общий `runStructureAudits.status` остаётся `SKIPPED` только при **PASS** безусловного loop audit. Любая петля или parser failure всё равно даёт `FAIL`.
+
+### Ограничения
+
+- Аудит знает синтаксис ссылок `[Name]` и `IfThenElse`, но не пытается быть полным интерпретатором языка формул.
+- Нерешаемое условие не отбрасывает ветви, поэтому false positive допустим по дизайну.
+- Это аудит алгебраических зависимостей одного шага, не анализ динамической устойчивости и не поиск циклов через STOCK во времени.
+
+---
+## 4. QA — `STRUCTURE_SELF_TEST.cmd` + `LOOP_SELF_TEST.cmd`
 
 20 случаев на мутированных копиях реальной модели; ожидаемый итог **21 passed, 0 failed**:
 
@@ -128,12 +195,16 @@ pairs=646, links=1252, mismatches=0, parameter differences=42, exceptions=17
 
 `colony_symmetry`: baseline 0 mismatches; без исключений тестовая обвязка **видна**, а не спрятана; структурное изменение формулы на одной стороне → mismatch; числовой параметр → не mismatch; удалённый элемент / retarget потока / удалённый LINK / смена типа → mismatch; исключение без reason → spec error; `enforce: false` → WARN.
 
-Интеграция: `runStructureAudits` объединяет оба и даёт SKIPPED без плагинов; статические плагины не порождают runtime-записей (регресс-тест на «Неизвестный plugin» WARN); `compareModels` с асимметричным candidate → `NOT_COMPARED` без симуляции.
+Интеграция старых plugin-аудитов: `runStructureAudits` объединяет их; статические плагины не порождают runtime-записей (регресс-тест на «Неизвестный plugin» WARN); `compareModels` с асимметричным candidate → `NOT_COMPARED` без симуляции.
+
+`LOOP_SELF_TEST.cmd`: 13 случаев. Accepted v7.7.1 r1 → 7 switches / 128 combinations / 0 loops; v7.6 r1 → 16/32 loop combinations и Modes 25–26; мутация задачи 001 r1 → 64/128 и Modes 17–31; дополнительно engine agreement, STOCK/FLOW/self-loop, parser FAIL, static compare gate и deterministic JSON.
 
 ---
 
-## 4. Что делать при FAIL
+## 5. Что делать при FAIL
 
 - **Неклассифицированный граничный поток**: добавить категорию или расширить существующую — с `reason` и честным `closed_world`. Не ставить `closed_world: true` только чтобы метрика не росла.
 - **Асимметрия**: либо это ошибка (исправить модель), либо намеренная тестовая обвязка (добавить исключение с reason), либо новая экономическая асимметрия — тогда её надо описать в спецификации версии, а не в исключениях.
 - Любое изменение validation JSON → новая ревизия change-policy (`validation_sha256`).
+
+- **Алгебраическая петля**: читать `shortestCycle` и разрывать same-step зависимость архитектурно (обычно через state/signal или изменение направления зависимости). Не добавлять allow-list «разрешённых» петель: loop audit — HARD.

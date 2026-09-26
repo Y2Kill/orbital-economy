@@ -1,4 +1,4 @@
-# Статус проверок Orbital Economy Lab v0.9.4 — baseline v7.7.1 r1
+# Статус проверок Orbital Economy Lab v0.9.5 — baseline v7.7.1 r1
 
 ## Принятая основа
 
@@ -18,6 +18,7 @@
 | Capital Lifecycle conformance | **PASS** — 7 instances, 0 NON_CONFORMING |
 | Structure audit | **PASS** — 153 FLOW, 122 boundary, unclassified 0, closed-world 0, пары 15 |
 | A/B symmetry | **PASS** — mismatches 0, exceptions 0 |
+| Algebraic loop audit | **PASS (Linux CI задачи 010)** — 7 switches, 128 combinations, loops 0; каноническая Windows-проверка — при приёмке |
 | Parameter registry | 355 параметров; 189 аннотировано; 45 несимметричных пар; 0 без аннотации |
 | Regression Modes 0–29 vs v7.7 r1 | **IDENTICAL** — 30 × `common=1070, changed=0, added=12, maxAbs=0` |
 | Policy задачи 009 | **PASS** — 441 событие, неожиданных 0 |
@@ -35,6 +36,7 @@
 | `POLICY_SELF_TEST.cmd` | **PASS** 10/10 |
 | `CONFORMANCE_SELF_TEST.cmd` | **PASS** 18/18 |
 | `STRUCTURE_SELF_TEST.cmd` | **PASS** 21/21 |
+| `LOOP_SELF_TEST.cmd` | **PASS (Linux CI задачи 010)** 13/13; v7.6 r1 = 16/32, mutation 001 = 64/128 |
 | `COMPARE_SELF_TEST.cmd` | **PASS** |
 
 ## Рабочая область
@@ -44,3 +46,16 @@
 Канонический разбор дефектов r1 и того, что именно изменено в r2, — `docs/V7_6_R1_TO_R2_FIX_REPORT.md`; порядок команд воспроизведения — `docs/ACCEPTANCE_STATUS.md`.
 
 `closed-world = 0` относится к объявленному контракту границы расширения капитала и не означает, что Planet v1 закончена.
+
+## Lab v0.9.5 — algebraic-loop audit (задача 010)
+
+На ветке задачи 010 GitHub Actions подтверждает новый статический gate до simulation:
+
+- accepted v7.7.1 r1: 7 switches / 128 combinations / 0 loops / Modes none;
+- historical v7.6 r1: 16 из 32 комбинаций, Modes 25–26;
+- defect mutation 001 r1: 64 из 128 комбинаций, Modes 17–31;
+- все 13 loop QA случаев PASS;
+- comparator на loop candidate возвращает `NOT_COMPARED` до scenario simulation;
+- остальные bench self-tests остаются PASS.
+
+Это **не** запись канонической приёмки Windows: её добавляет reviewer после собственного прогона по TASK 010 §5.
