@@ -1,5 +1,18 @@
 # Changelog
 
+## v0.9.6 — Planet v1 per-process closure audit
+
+- new `src/planet_closure.js`: declarative static P2–P6 process audit over accepted ModelJSON, with canonical case-insensitive/trim name resolution and deterministic dependency paths;
+- process completeness reuses the existing `open_boundaries` classification instead of maintaining a second source-flow list;
+- capacity checks support kernel STOCK, documented constant/unbounded exceptions and constant-parameter reversibility; energy checks prove request aggregation, fulfillment and a shared planned-rate dependency;
+- extraction deposits, labor intensity and external demand drivers are reported separately so Planet v1 debt is not hidden behind a single boundary counter;
+- enforce modes: `report`, `classify`, `planet_v1`, `planet_strict`; current v7.7.1 r1 report is P2=7/10/0, P3=4/2/11/0, P4=0/6, P5=4/13, P6=4, reversibility=0;
+- `audit --planet-closure=<file>` lets a declaration be tested before promotion into accepted validation; structure-audit and RUN_LAB reports include counters, exception reasons and paths;
+- `planet_closure` is static-only in runtime checks and participates in the common structure gate when configured;
+- `PLANET_SELF_TEST.cmd` / `planet-qa`: 16 cases, including L1–L5 false declarations, enforce modes, reversibility, deposits, demand/labor negatives, normalized names, CLI integration and deterministic JSON;
+- package/Lab version bumped to v0.9.6; model, accepted validation, policy and simulation-engine behavior are unchanged.
+
+
 ## v0.9.5 — switch-aware static algebraic-loop audit
 
 - new `src/loop_audit.js`: deterministic same-step dependency graph over VARIABLE/FLOW; STOCK cuts dependencies; Tarjan SCC plus deterministic shortest-cycle extraction;
