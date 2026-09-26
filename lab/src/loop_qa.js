@@ -80,7 +80,7 @@ const mut001 = mutation001(accepted);
 const tmp = fs.mkdtempSync(path.join(os.tmpdir(), 'orbital-economy-loop-qa-'));
 
 console.log('Orbital Economy Lab algebraic-loop QA');
-console.log('13 switch-aware static-audit cases.\n');
+console.log('15 switch-aware static-audit cases.\n');
 
 try {
   await expect('1 accepted model has no algebraic loops', () => {
@@ -279,6 +279,72 @@ try {
     const a = JSON.stringify(auditAlgebraicLoops(mut001));
     const b = JSON.stringify(auditAlgebraicLoops(mut001));
     return a === b;
+  });
+
+  await expect('14 case-insensitive reference resolution matches engine on construction-materials loop', () => {
+    const raw = structuredClone(accepted);
+    const target = raw.elements.find(e => e?.name === 'B Construction Materials Fulfillment' && e.type === 'VARIABLE');
+    if (!target) throw new Error('fixture B Construction Materials Fulfillment not found');
+    target.behavior.value = target.behavior.value.replace(
+      'Max([B Construction Materials Demand], 0.000000001)',
+      'Max([b refinery construction materials consumption], 0.000000001)'
+    );
+    if (!target.behavior.value.includes('[b refinery construction materials consumption]')) {
+      throw new Error('case 14 mutation was not applied');
+    }
+    raw.elements.push({
+      type: 'LINK',
+      from: 'B Refinery Construction Materials Consumption',
+      to: 'B Construction Materials Fulfillment'
+    });
+
+    const r = auditAlgebraicLoops(raw);
+    const details = algebraicLoopCombinationDetails(raw);
+    const everyCmOn = details.bad.length === 64
+      && details.bad.every(x => x.enabled.includes('Construction Materials Enabled'));
+    const expectedModes = '27,28,29,30,31';
+    if (!(r.status === 'FAIL'
+      && r.switches.length === 7
+      && r.combinations === 128
+      && r.combinationsWithLoops === 64
+      && r.modesWithLoops.join(',') === expectedModes
+      && everyCmOn
+      && r.loops.some(x => x.members.includes('B Construction Materials Fulfillment')
+        && x.members.includes('B Refinery Construction Materials Consumption')))) {
+      throw new Error(JSON.stringify({ audit: r, everyCmOn, bad: details.bad.length }));
+    }
+
+    const scenarios = new Map(listScenarios(raw).map(s => [s.mode, s]));
+    const m26 = loadModelJSON(modelJsonForScenario(raw, scenarios.get(26)));
+    const errs26 = m26.check();
+    if (errs26.length) throw new Error('Mode 26 model.check failed: ' + errs26.map(e => e.message || e).join('; '));
+    m26.simulate();
+
+    let mode27Loop = false;
+    try {
+      const m27 = loadModelJSON(modelJsonForScenario(raw, scenarios.get(27)));
+      const errs27 = m27.check();
+      if (errs27.length) throw new Error('Mode 27 model.check failed: ' + errs27.map(e => e.message || e).join('; '));
+      m27.simulate();
+    } catch (e) {
+      mode27Loop = /Circular equation loop/i.test(e?.message || String(e));
+      if (!mode27Loop) throw e;
+    }
+    if (!mode27Loop) return false;
+    return '64/128, all Construction Materials Enabled=1, Modes=27-31; Mode 26 simulates, Mode 27 throws Circular equation loop';
+  });
+
+  await expect('15 unresolved formula reference is FAIL with element and reference, no outward exception', () => {
+    const raw = structuredClone(accepted);
+    const e = raw.elements.find(x => x?.name === 'A Wage' && x.type === 'VARIABLE');
+    if (!e) throw new Error('fixture A Wage not found');
+    e.behavior.value = '[ definitely missing element ] + 1';
+    const r = auditAlgebraicLoops(raw);
+    return r.status === 'FAIL'
+      && r.errors.some(x => x.element === 'A Wage'
+        && x.reference === ' definitely missing element '
+        && /unresolved reference/i.test(x.message)
+        && /definitely missing element/i.test(x.message));
   });
 } catch (e) {
   console.error('[FAIL] loop QA crashed:', e?.message || e);
