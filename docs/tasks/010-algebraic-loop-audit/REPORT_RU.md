@@ -43,6 +43,30 @@
 
 Дальше: завершить пользовательскую обвязку — `audit`/RUN_LAB reports, отдельную CLI-команду `loops`, markdown/json вывод и package/cmd wiring; затем доказать это на мутации 001 (КТ3).
 
+### КТ3 — 2026-09-26 14:55 EEST — audit/RUN_LAB/compare/loops интегрированы, CI PASS
+
+Сделано:
+- algebraic-loop audit встроен в `runStructureAudits` как безусловная статическая проверка;
+- `structureAuditErrors` передаёт loop/parser FAIL в comparator, поэтому `compare` блокируется до simulation;
+- `structure-audit.md/.json` и RUN_LAB `report.md` получили раздел Algebraic loops;
+- добавлена отдельная команда `node src/cli.js loops <model.json> [--out=DIR]`, JSON/Markdown отчёты и exit code 1 при найденных петлях;
+- Lab поднят до v0.9.5; добавлены package scripts `loops`, `loop-qa` и `LOOP_SELF_TEST.cmd`;
+- `lab/package.json` сохранён как CRLF без завершающего перевода строки.
+
+Доказательство:
+- CI: https://github.com/Y2Kill/orbital-economy/actions/runs/36240233643 — **success**; `bench-selftests` полностью PASS.
+- `LOOP QA RESULT: PASS (13 passed, 0 failed) in 17.386 s`.
+- Case 12: `compare → NOT_COMPARED`, CLI `loops` → exit code 1, `structure-audit.md` содержит shortest cycle.
+- Выдержка shortest cycle из отчёта на мутации 001 r1:
+  `A Desired Smelting Rate -> A Positive Desired Smelting Rate -> A Pre Energy Smelting Rate -> A Metal Requested Energy -> A Total Requested Energy -> A Energy Fulfillment Ratio -> A Electronics Allocated Energy -> A Electronics Energy Fulfillment Ratio -> A Electronics Production Rate -> A Electronics Feedstock Consumption Rate -> A Electronics Metal Input Target Inventory -> A Electronics Metal Input Demand -> A Metal Available for Intermediate Use -> A Electronics Metal Input Delivery -> A Desired Smelting Rate`
+- Это 15 уникальных участников до возврата в начало, а не полный большой SCC; требование «короткий цикл» выполнено.
+
+Не подтвердилось:
+- После интеграции не возникло регрессий в Structure/Conformance/Policy/Compare/Bench self-tests.
+- Для отдельной CLI-команды validation не нужен; accepted model даёт PASS, loop mutation — FAIL/exit 1.
+
+Дальше: обновить документацию v0.9.5 и итоговый отчёт, затем дождаться зелёного CI финальной головы (КТ4).
+
 ## Устройство модуля и отличия от прототипа
 
 В работе. Для production-модуля выбран предварительный разбор формул в шаблон с узлами `IfThenElse`, чтобы не разбирать каждую формулу заново для каждой комбинации переключателей. Граф строится только по ссылкам `[Name]` в формулах VARIABLE/FLOW; LINK игнорируются, STOCK разрывает зависимость.
@@ -55,7 +79,7 @@
 
 ## Время
 
-Будет заполнено по CI после полного самотеста.
+Полный `loop_qa.js` на Linux CI run 36240233643: **17.386 s** для всех 13 случаев. Из них case 4 включает две реальные попытки simulation (Mode 16 успешен, Mode 17 ожидаемо падает на circular loop), case 12 — полный static compare gate, генерацию structure-audit report и отдельный CLI `loops`.
 
 ## Ограничения и замечания к заданию
 
