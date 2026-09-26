@@ -1,15 +1,15 @@
 # Orbital Economy Lab — structure audit
 
-- generated: 2026-09-25T22:31:57.672Z
-- model: Orbital Economy v7.7 r1 — Construction Materials
-- model SHA-256: `5bbc29b6e18caa64ec22267892b6cd0669649722c8fc029d8dba43a77a34d5a1`
-- validation: Orbital Economy v7.7 validation r1
-- validation SHA-256: `01d8e87ca4ad216b206164db768a9888fbf5efa58f2775a50eecee02be66133c`
+- generated: 2026-09-26T10:39:35.104Z
+- model: Orbital Economy v7.7.1 r1 — Transport on Construction Materials
+- model SHA-256: `d53d014d727a439694e103aafb49f87d4dbbb362e581414cbf4dc71a19646f93`
+- validation: Orbital Economy v7.7.1 validation r1
+- validation SHA-256: `23928c3abab5b4609cf963a5646e89fe551cadc046d5b49d3b69adbe6a02b70f`
 - status: **PASS**
 
 ## Open boundaries (declared physical-boundary meter)
 
-- flows total: 151; crossing the model boundary: 120; classified: 120; unclassified: 0
+- flows total: 153; crossing the model boundary: 122; classified: 122; unclassified: 0
 - closed-world violations: **0** (mode: `classify`) — zero means the currently declared closed-world boundary contract is satisfied; it is not a Planet v1 completeness claim
 - declared transformation pairs: 15; transformation flows without a pair: 0
 
@@ -24,7 +24,7 @@
 | information_signal | yes | 30 | smoothing / information stocks, not matter |
 | financial_accounting | yes | 16 | money bookkeeping, not matter |
 | capital_state_accounting | yes | 21 | Active is an operational-state sub-account of Installed; these flows change state, not physical capital |
-| capital_transformation | yes | 21 | v7.5/v7.5.1: installed capital expansion is a unit transformation of Capital Goods; regional sectors use one local sink, shared Transport uses two A/B regional sinks whose total identity is checked at runtime. v7.7: colonial sector expansion is additionally backed by a local Construction Materials sink. |
+| capital_transformation | yes | 23 | v7.5/v7.5.1: installed capital expansion is a unit transformation of Capital Goods; regional sectors use one local sink, shared Transport uses two A/B regional sinks whose total identity is checked at runtime. v7.7: colonial sector expansion is additionally backed by a local Construction Materials sink. v7.7.1: shared Transport expansion is additionally backed by construction materials from both A and B inventories (two legs). |
 | capital_goods_transformation | yes | 6 | metal + electronics -> capital goods (declared pair; identity checked at runtime) |
 | construction_materials_transformation | yes | 4 | v7.7: regolith -> construction materials (declared pair; identity checked at runtime) |
 | external_capital | **no** | 0 | capital created without physical goods; expected count is zero from v7.5.1 onward for the currently declared expansion-boundary audit |
@@ -46,7 +46,7 @@ Declared unit-transformation pairs (source flow physically backed by sink flows;
 | B Electronics Factory Expansion | B Electronics Capital Goods Consumption, B Electronics Construction Materials Consumption | B Electronics capital goods pair identity | ok |
 | B Power Generation Expansion | B Power Capital Goods Consumption, B Power Construction Materials Consumption | B Power capital goods pair identity | ok |
 | B Capital Goods Production | B Capital Goods Metal Consumption, B Capital Goods Electronics Consumption | B capital goods production pair identities | ok |
-| Transport Capacity Expansion | A Transport Capital Goods Consumption, B Transport Capital Goods Consumption | Transport capital goods pair identity | ok |
+| Transport Capacity Expansion | A Transport Capital Goods Consumption, B Transport Capital Goods Consumption, A Transport Construction Materials Consumption, B Transport Construction Materials Consumption | Transport capital goods pair identity | ok |
 | A Construction Materials Production | A Construction Materials Regolith Consumption | A construction materials production pair identity | ok |
 | B Construction Materials Production | B Construction Materials Regolith Consumption | B construction materials production pair identity | ok |
 
@@ -168,7 +168,7 @@ Declared unit-transformation pairs (source flow physically backed by sink flows;
 - Transport Capacity Mothballing
 - Transport Active Capacity Depreciation
 
-**capital_transformation** (21)
+**capital_transformation** (23)
 
 - A Refinery Expansion
 - A Electronics Factory Expansion
@@ -191,6 +191,8 @@ Declared unit-transformation pairs (source flow physically backed by sink flows;
 - B Refinery Construction Materials Consumption
 - B Electronics Construction Materials Consumption
 - B Power Construction Materials Consumption
+- A Transport Construction Materials Consumption
+- B Transport Construction Materials Consumption
 
 **capital_goods_transformation** (6)
 
@@ -216,7 +218,7 @@ Declared unit-transformation pairs (source flow physically backed by sink flows;
 ## Colony symmetry
 
 - tokens: A ↔ B
-- mirrored pairs checked: 854; mirrored links checked: 1890
+- mirrored pairs checked: 860; mirrored links checked: 1914
 - structural mismatches: **0**; numeric parameter differences (allowed): 102; elements under exceptions: 0
 
 <details><summary>Numeric parameter differences between colonies (allowed)</summary>

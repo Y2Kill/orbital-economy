@@ -49,7 +49,7 @@ output\policy-...\change-policy.md/.json
 EVALUATE_POLICY.cmd "output\compare-...\model-comparison.json"
 
 Поставляемый `change-policy-v7.5.1-strict.json` — default deny:
-любое незаявленное изменение относительно accepted v7.7 r1 => POLICY FAIL.
+любое незаявленное изменение относительно accepted v7.7.1 r1 => POLICY FAIL.
 
 Web CSV для обычной разработки НЕ нужны.
 Для периодической web-проверки:

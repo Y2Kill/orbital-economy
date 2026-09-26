@@ -1,5 +1,5 @@
 {
-  "name": "Orbital Economy v7.7 validation r1",
+  "name": "Orbital Economy v7.7.1 validation r1",
   "mode_variable": "Timed Test Mode",
   "expected_time_step": 0.25,
   "time_step_tolerance": 1e-12,
@@ -35,7 +35,10 @@
     23,
     24,
     25,
-    26
+    26,
+    27,
+    28,
+    29
   ],
   "regression_tolerance": 0,
   "plugins": [
@@ -425,9 +428,11 @@
             "B Transport Capital Goods Consumption",
             "? Refinery Construction Materials Consumption",
             "? Electronics Construction Materials Consumption",
-            "? Power Construction Materials Consumption"
+            "? Power Construction Materials Consumption",
+            "A Transport Construction Materials Consumption",
+            "B Transport Construction Materials Consumption"
           ],
-          "reason": "v7.5/v7.5.1: installed capital expansion is a unit transformation of Capital Goods; regional sectors use one local sink, shared Transport uses two A/B regional sinks whose total identity is checked at runtime. v7.7: colonial sector expansion is additionally backed by a local Construction Materials sink.",
+          "reason": "v7.5/v7.5.1: installed capital expansion is a unit transformation of Capital Goods; regional sectors use one local sink, shared Transport uses two A/B regional sinks whose total identity is checked at runtime. v7.7: colonial sector expansion is additionally backed by a local Construction Materials sink. v7.7.1: shared Transport expansion is additionally backed by construction materials from both A and B inventories (two legs).",
           "requires_pair": true
         },
         {
@@ -558,7 +563,9 @@
           "source": "Transport Capacity Expansion",
           "sinks": [
             "A Transport Capital Goods Consumption",
-            "B Transport Capital Goods Consumption"
+            "B Transport Capital Goods Consumption",
+            "A Transport Construction Materials Consumption",
+            "B Transport Construction Materials Consumption"
           ],
           "identity": "Transport capital goods pair identity"
         },
@@ -987,6 +994,42 @@
           "op": "<=",
           "value": 40,
           "tolerance": 1e-9
+        },
+        {
+          "type": "metric",
+          "name": "Mode 0: A Transport construction materials consumption is zero (switch off)",
+          "column": "A Transport Construction Materials Consumption",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 0: B Transport construction materials consumption is zero (switch off)",
+          "column": "B Transport Construction Materials Consumption",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 0: Transport construction materials fulfillment is 1 (switch off)",
+          "column": "Transport Construction Materials Fulfillment",
+          "metric": "min",
+          "op": ">=",
+          "value": 1,
+          "tolerance": 1e-12
+        },
+        {
+          "type": "metric",
+          "name": "Mode 0: Transport construction materials demand is zero (switch off)",
+          "column": "Transport Construction Materials Demand",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
         }
       ]
     },
@@ -1383,6 +1426,42 @@
           "op": "<=",
           "value": 40,
           "tolerance": 1e-9
+        },
+        {
+          "type": "metric",
+          "name": "Mode 1: A Transport construction materials consumption is zero (switch off)",
+          "column": "A Transport Construction Materials Consumption",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 1: B Transport construction materials consumption is zero (switch off)",
+          "column": "B Transport Construction Materials Consumption",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 1: Transport construction materials fulfillment is 1 (switch off)",
+          "column": "Transport Construction Materials Fulfillment",
+          "metric": "min",
+          "op": ">=",
+          "value": 1,
+          "tolerance": 1e-12
+        },
+        {
+          "type": "metric",
+          "name": "Mode 1: Transport construction materials demand is zero (switch off)",
+          "column": "Transport Construction Materials Demand",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
         }
       ]
     },
@@ -1779,6 +1858,42 @@
           "op": "<=",
           "value": 40,
           "tolerance": 1e-9
+        },
+        {
+          "type": "metric",
+          "name": "Mode 2: A Transport construction materials consumption is zero (switch off)",
+          "column": "A Transport Construction Materials Consumption",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 2: B Transport construction materials consumption is zero (switch off)",
+          "column": "B Transport Construction Materials Consumption",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 2: Transport construction materials fulfillment is 1 (switch off)",
+          "column": "Transport Construction Materials Fulfillment",
+          "metric": "min",
+          "op": ">=",
+          "value": 1,
+          "tolerance": 1e-12
+        },
+        {
+          "type": "metric",
+          "name": "Mode 2: Transport construction materials demand is zero (switch off)",
+          "column": "Transport Construction Materials Demand",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
         }
       ]
     },
@@ -2175,6 +2290,42 @@
           "op": "<=",
           "value": 40,
           "tolerance": 1e-9
+        },
+        {
+          "type": "metric",
+          "name": "Mode 3: A Transport construction materials consumption is zero (switch off)",
+          "column": "A Transport Construction Materials Consumption",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 3: B Transport construction materials consumption is zero (switch off)",
+          "column": "B Transport Construction Materials Consumption",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 3: Transport construction materials fulfillment is 1 (switch off)",
+          "column": "Transport Construction Materials Fulfillment",
+          "metric": "min",
+          "op": ">=",
+          "value": 1,
+          "tolerance": 1e-12
+        },
+        {
+          "type": "metric",
+          "name": "Mode 3: Transport construction materials demand is zero (switch off)",
+          "column": "Transport Construction Materials Demand",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
         }
       ]
     },
@@ -2571,6 +2722,42 @@
           "op": "<=",
           "value": 40,
           "tolerance": 1e-9
+        },
+        {
+          "type": "metric",
+          "name": "Mode 4: A Transport construction materials consumption is zero (switch off)",
+          "column": "A Transport Construction Materials Consumption",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 4: B Transport construction materials consumption is zero (switch off)",
+          "column": "B Transport Construction Materials Consumption",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 4: Transport construction materials fulfillment is 1 (switch off)",
+          "column": "Transport Construction Materials Fulfillment",
+          "metric": "min",
+          "op": ">=",
+          "value": 1,
+          "tolerance": 1e-12
+        },
+        {
+          "type": "metric",
+          "name": "Mode 4: Transport construction materials demand is zero (switch off)",
+          "column": "Transport Construction Materials Demand",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
         }
       ]
     },
@@ -2967,6 +3154,42 @@
           "op": "<=",
           "value": 40,
           "tolerance": 1e-9
+        },
+        {
+          "type": "metric",
+          "name": "Mode 5: A Transport construction materials consumption is zero (switch off)",
+          "column": "A Transport Construction Materials Consumption",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 5: B Transport construction materials consumption is zero (switch off)",
+          "column": "B Transport Construction Materials Consumption",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 5: Transport construction materials fulfillment is 1 (switch off)",
+          "column": "Transport Construction Materials Fulfillment",
+          "metric": "min",
+          "op": ">=",
+          "value": 1,
+          "tolerance": 1e-12
+        },
+        {
+          "type": "metric",
+          "name": "Mode 5: Transport construction materials demand is zero (switch off)",
+          "column": "Transport Construction Materials Demand",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
         }
       ]
     },
@@ -3363,6 +3586,42 @@
           "op": "<=",
           "value": 40,
           "tolerance": 1e-9
+        },
+        {
+          "type": "metric",
+          "name": "Mode 6: A Transport construction materials consumption is zero (switch off)",
+          "column": "A Transport Construction Materials Consumption",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 6: B Transport construction materials consumption is zero (switch off)",
+          "column": "B Transport Construction Materials Consumption",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 6: Transport construction materials fulfillment is 1 (switch off)",
+          "column": "Transport Construction Materials Fulfillment",
+          "metric": "min",
+          "op": ">=",
+          "value": 1,
+          "tolerance": 1e-12
+        },
+        {
+          "type": "metric",
+          "name": "Mode 6: Transport construction materials demand is zero (switch off)",
+          "column": "Transport Construction Materials Demand",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
         }
       ]
     },
@@ -3759,6 +4018,42 @@
           "op": "<=",
           "value": 40,
           "tolerance": 1e-9
+        },
+        {
+          "type": "metric",
+          "name": "Mode 7: A Transport construction materials consumption is zero (switch off)",
+          "column": "A Transport Construction Materials Consumption",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 7: B Transport construction materials consumption is zero (switch off)",
+          "column": "B Transport Construction Materials Consumption",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 7: Transport construction materials fulfillment is 1 (switch off)",
+          "column": "Transport Construction Materials Fulfillment",
+          "metric": "min",
+          "op": ">=",
+          "value": 1,
+          "tolerance": 1e-12
+        },
+        {
+          "type": "metric",
+          "name": "Mode 7: Transport construction materials demand is zero (switch off)",
+          "column": "Transport Construction Materials Demand",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
         }
       ]
     },
@@ -4155,6 +4450,42 @@
           "op": "<=",
           "value": 40,
           "tolerance": 1e-9
+        },
+        {
+          "type": "metric",
+          "name": "Mode 8: A Transport construction materials consumption is zero (switch off)",
+          "column": "A Transport Construction Materials Consumption",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 8: B Transport construction materials consumption is zero (switch off)",
+          "column": "B Transport Construction Materials Consumption",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 8: Transport construction materials fulfillment is 1 (switch off)",
+          "column": "Transport Construction Materials Fulfillment",
+          "metric": "min",
+          "op": ">=",
+          "value": 1,
+          "tolerance": 1e-12
+        },
+        {
+          "type": "metric",
+          "name": "Mode 8: Transport construction materials demand is zero (switch off)",
+          "column": "Transport Construction Materials Demand",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
         }
       ]
     },
@@ -4551,6 +4882,42 @@
           "op": "<=",
           "value": 40,
           "tolerance": 1e-9
+        },
+        {
+          "type": "metric",
+          "name": "Mode 9: A Transport construction materials consumption is zero (switch off)",
+          "column": "A Transport Construction Materials Consumption",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 9: B Transport construction materials consumption is zero (switch off)",
+          "column": "B Transport Construction Materials Consumption",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 9: Transport construction materials fulfillment is 1 (switch off)",
+          "column": "Transport Construction Materials Fulfillment",
+          "metric": "min",
+          "op": ">=",
+          "value": 1,
+          "tolerance": 1e-12
+        },
+        {
+          "type": "metric",
+          "name": "Mode 9: Transport construction materials demand is zero (switch off)",
+          "column": "Transport Construction Materials Demand",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
         }
       ]
     },
@@ -4947,6 +5314,42 @@
           "op": "<=",
           "value": 40,
           "tolerance": 1e-9
+        },
+        {
+          "type": "metric",
+          "name": "Mode 10: A Transport construction materials consumption is zero (switch off)",
+          "column": "A Transport Construction Materials Consumption",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 10: B Transport construction materials consumption is zero (switch off)",
+          "column": "B Transport Construction Materials Consumption",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 10: Transport construction materials fulfillment is 1 (switch off)",
+          "column": "Transport Construction Materials Fulfillment",
+          "metric": "min",
+          "op": ">=",
+          "value": 1,
+          "tolerance": 1e-12
+        },
+        {
+          "type": "metric",
+          "name": "Mode 10: Transport construction materials demand is zero (switch off)",
+          "column": "Transport Construction Materials Demand",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
         }
       ]
     },
@@ -5343,6 +5746,42 @@
           "op": "<=",
           "value": 40,
           "tolerance": 1e-9
+        },
+        {
+          "type": "metric",
+          "name": "Mode 11: A Transport construction materials consumption is zero (switch off)",
+          "column": "A Transport Construction Materials Consumption",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 11: B Transport construction materials consumption is zero (switch off)",
+          "column": "B Transport Construction Materials Consumption",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 11: Transport construction materials fulfillment is 1 (switch off)",
+          "column": "Transport Construction Materials Fulfillment",
+          "metric": "min",
+          "op": ">=",
+          "value": 1,
+          "tolerance": 1e-12
+        },
+        {
+          "type": "metric",
+          "name": "Mode 11: Transport construction materials demand is zero (switch off)",
+          "column": "Transport Construction Materials Demand",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
         }
       ]
     },
@@ -5763,6 +6202,42 @@
           "op": "<=",
           "value": 40,
           "tolerance": 1e-9
+        },
+        {
+          "type": "metric",
+          "name": "Mode 12: A Transport construction materials consumption is zero (switch off)",
+          "column": "A Transport Construction Materials Consumption",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 12: B Transport construction materials consumption is zero (switch off)",
+          "column": "B Transport Construction Materials Consumption",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 12: Transport construction materials fulfillment is 1 (switch off)",
+          "column": "Transport Construction Materials Fulfillment",
+          "metric": "min",
+          "op": ">=",
+          "value": 1,
+          "tolerance": 1e-12
+        },
+        {
+          "type": "metric",
+          "name": "Mode 12: Transport construction materials demand is zero (switch off)",
+          "column": "Transport Construction Materials Demand",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
         }
       ]
     },
@@ -6185,6 +6660,42 @@
           "op": "<=",
           "value": 40,
           "tolerance": 1e-9
+        },
+        {
+          "type": "metric",
+          "name": "Mode 13: A Transport construction materials consumption is zero (switch off)",
+          "column": "A Transport Construction Materials Consumption",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 13: B Transport construction materials consumption is zero (switch off)",
+          "column": "B Transport Construction Materials Consumption",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 13: Transport construction materials fulfillment is 1 (switch off)",
+          "column": "Transport Construction Materials Fulfillment",
+          "metric": "min",
+          "op": ">=",
+          "value": 1,
+          "tolerance": 1e-12
+        },
+        {
+          "type": "metric",
+          "name": "Mode 13: Transport construction materials demand is zero (switch off)",
+          "column": "Transport Construction Materials Demand",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
         }
       ]
     },
@@ -6616,6 +7127,42 @@
           "op": "<=",
           "value": 40,
           "tolerance": 1e-9
+        },
+        {
+          "type": "metric",
+          "name": "Mode 14: A Transport construction materials consumption is zero (switch off)",
+          "column": "A Transport Construction Materials Consumption",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 14: B Transport construction materials consumption is zero (switch off)",
+          "column": "B Transport Construction Materials Consumption",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 14: Transport construction materials fulfillment is 1 (switch off)",
+          "column": "Transport Construction Materials Fulfillment",
+          "metric": "min",
+          "op": ">=",
+          "value": 1,
+          "tolerance": 1e-12
+        },
+        {
+          "type": "metric",
+          "name": "Mode 14: Transport construction materials demand is zero (switch off)",
+          "column": "Transport Construction Materials Demand",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
         }
       ]
     },
@@ -7051,6 +7598,42 @@
           "op": "<=",
           "value": 40,
           "tolerance": 1e-9
+        },
+        {
+          "type": "metric",
+          "name": "Mode 15: A Transport construction materials consumption is zero (switch off)",
+          "column": "A Transport Construction Materials Consumption",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 15: B Transport construction materials consumption is zero (switch off)",
+          "column": "B Transport Construction Materials Consumption",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 15: Transport construction materials fulfillment is 1 (switch off)",
+          "column": "Transport Construction Materials Fulfillment",
+          "metric": "min",
+          "op": ">=",
+          "value": 1,
+          "tolerance": 1e-12
+        },
+        {
+          "type": "metric",
+          "name": "Mode 15: Transport construction materials demand is zero (switch off)",
+          "column": "Transport Construction Materials Demand",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
         }
       ]
     },
@@ -7465,6 +8048,42 @@
           "op": "<=",
           "value": 40,
           "tolerance": 1e-9
+        },
+        {
+          "type": "metric",
+          "name": "Mode 16: A Transport construction materials consumption is zero (switch off)",
+          "column": "A Transport Construction Materials Consumption",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 16: B Transport construction materials consumption is zero (switch off)",
+          "column": "B Transport Construction Materials Consumption",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 16: Transport construction materials fulfillment is 1 (switch off)",
+          "column": "Transport Construction Materials Fulfillment",
+          "metric": "min",
+          "op": ">=",
+          "value": 1,
+          "tolerance": 1e-12
+        },
+        {
+          "type": "metric",
+          "name": "Mode 16: Transport construction materials demand is zero (switch off)",
+          "column": "Transport Construction Materials Demand",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
         }
       ]
     },
@@ -7997,6 +8616,42 @@
           "op": "<=",
           "value": 40,
           "tolerance": 1e-9
+        },
+        {
+          "type": "metric",
+          "name": "Mode 17: A Transport construction materials consumption is zero (switch off)",
+          "column": "A Transport Construction Materials Consumption",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 17: B Transport construction materials consumption is zero (switch off)",
+          "column": "B Transport Construction Materials Consumption",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 17: Transport construction materials fulfillment is 1 (switch off)",
+          "column": "Transport Construction Materials Fulfillment",
+          "metric": "min",
+          "op": ">=",
+          "value": 1,
+          "tolerance": 1e-12
+        },
+        {
+          "type": "metric",
+          "name": "Mode 17: Transport construction materials demand is zero (switch off)",
+          "column": "Transport Construction Materials Demand",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
         }
       ],
       "notes": [
@@ -8519,6 +9174,42 @@
           "op": "<=",
           "value": 40,
           "tolerance": 1e-9
+        },
+        {
+          "type": "metric",
+          "name": "Mode 18: A Transport construction materials consumption is zero (switch off)",
+          "column": "A Transport Construction Materials Consumption",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 18: B Transport construction materials consumption is zero (switch off)",
+          "column": "B Transport Construction Materials Consumption",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 18: Transport construction materials fulfillment is 1 (switch off)",
+          "column": "Transport Construction Materials Fulfillment",
+          "metric": "min",
+          "op": ">=",
+          "value": 1,
+          "tolerance": 1e-12
+        },
+        {
+          "type": "metric",
+          "name": "Mode 18: Transport construction materials demand is zero (switch off)",
+          "column": "Transport Construction Materials Demand",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
         }
       ],
       "notes": [
@@ -8992,6 +9683,42 @@
           "op": "<=",
           "value": 40,
           "tolerance": 1e-9
+        },
+        {
+          "type": "metric",
+          "name": "Mode 19: A Transport construction materials consumption is zero (switch off)",
+          "column": "A Transport Construction Materials Consumption",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 19: B Transport construction materials consumption is zero (switch off)",
+          "column": "B Transport Construction Materials Consumption",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 19: Transport construction materials fulfillment is 1 (switch off)",
+          "column": "Transport Construction Materials Fulfillment",
+          "metric": "min",
+          "op": ">=",
+          "value": 1,
+          "tolerance": 1e-12
+        },
+        {
+          "type": "metric",
+          "name": "Mode 19: Transport construction materials demand is zero (switch off)",
+          "column": "Transport Construction Materials Demand",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
         }
       ],
       "notes": [
@@ -9416,6 +10143,42 @@
           "op": "<=",
           "value": 40,
           "tolerance": 1e-9
+        },
+        {
+          "type": "metric",
+          "name": "Mode 20: A Transport construction materials consumption is zero (switch off)",
+          "column": "A Transport Construction Materials Consumption",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 20: B Transport construction materials consumption is zero (switch off)",
+          "column": "B Transport Construction Materials Consumption",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 20: Transport construction materials fulfillment is 1 (switch off)",
+          "column": "Transport Construction Materials Fulfillment",
+          "metric": "min",
+          "op": ">=",
+          "value": 1,
+          "tolerance": 1e-12
+        },
+        {
+          "type": "metric",
+          "name": "Mode 20: Transport construction materials demand is zero (switch off)",
+          "column": "Transport Construction Materials Demand",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
         }
       ],
       "notes": [
@@ -9970,6 +10733,42 @@
           "op": "<=",
           "value": 40,
           "tolerance": 1e-9
+        },
+        {
+          "type": "metric",
+          "name": "Mode 21: A Transport construction materials consumption is zero (switch off)",
+          "column": "A Transport Construction Materials Consumption",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 21: B Transport construction materials consumption is zero (switch off)",
+          "column": "B Transport Construction Materials Consumption",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 21: Transport construction materials fulfillment is 1 (switch off)",
+          "column": "Transport Construction Materials Fulfillment",
+          "metric": "min",
+          "op": ">=",
+          "value": 1,
+          "tolerance": 1e-12
+        },
+        {
+          "type": "metric",
+          "name": "Mode 21: Transport construction materials demand is zero (switch off)",
+          "column": "Transport Construction Materials Demand",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
         }
       ]
     },
@@ -10461,6 +11260,42 @@
           "op": "<=",
           "value": 40,
           "tolerance": 1e-9
+        },
+        {
+          "type": "metric",
+          "name": "Mode 22: A Transport construction materials consumption is zero (switch off)",
+          "column": "A Transport Construction Materials Consumption",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 22: B Transport construction materials consumption is zero (switch off)",
+          "column": "B Transport Construction Materials Consumption",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 22: Transport construction materials fulfillment is 1 (switch off)",
+          "column": "Transport Construction Materials Fulfillment",
+          "metric": "min",
+          "op": ">=",
+          "value": 1,
+          "tolerance": 1e-12
+        },
+        {
+          "type": "metric",
+          "name": "Mode 22: Transport construction materials demand is zero (switch off)",
+          "column": "Transport Construction Materials Demand",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
         }
       ]
     },
@@ -10976,6 +11811,42 @@
           "op": "<=",
           "value": 40,
           "tolerance": 1e-9
+        },
+        {
+          "type": "metric",
+          "name": "Mode 23: A Transport construction materials consumption is zero (switch off)",
+          "column": "A Transport Construction Materials Consumption",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 23: B Transport construction materials consumption is zero (switch off)",
+          "column": "B Transport Construction Materials Consumption",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 23: Transport construction materials fulfillment is 1 (switch off)",
+          "column": "Transport Construction Materials Fulfillment",
+          "metric": "min",
+          "op": ">=",
+          "value": 1,
+          "tolerance": 1e-12
+        },
+        {
+          "type": "metric",
+          "name": "Mode 23: Transport construction materials demand is zero (switch off)",
+          "column": "Transport Construction Materials Demand",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
         }
       ]
     },
@@ -11335,6 +12206,42 @@
           "op": "<=",
           "value": 40,
           "tolerance": 1e-9
+        },
+        {
+          "type": "metric",
+          "name": "Mode 24: A Transport construction materials consumption is zero (switch off)",
+          "column": "A Transport Construction Materials Consumption",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 24: B Transport construction materials consumption is zero (switch off)",
+          "column": "B Transport Construction Materials Consumption",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 24: Transport construction materials fulfillment is 1 (switch off)",
+          "column": "Transport Construction Materials Fulfillment",
+          "metric": "min",
+          "op": ">=",
+          "value": 1,
+          "tolerance": 1e-12
+        },
+        {
+          "type": "metric",
+          "name": "Mode 24: Transport construction materials demand is zero (switch off)",
+          "column": "Transport Construction Materials Demand",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
         }
       ],
       "notes": [
@@ -11615,6 +12522,42 @@
           "op": "<=",
           "value": 40,
           "tolerance": 1e-9
+        },
+        {
+          "type": "metric",
+          "name": "Mode 25: A Transport construction materials consumption is zero (switch off)",
+          "column": "A Transport Construction Materials Consumption",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 25: B Transport construction materials consumption is zero (switch off)",
+          "column": "B Transport Construction Materials Consumption",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 25: Transport construction materials fulfillment is 1 (switch off)",
+          "column": "Transport Construction Materials Fulfillment",
+          "metric": "min",
+          "op": ">=",
+          "value": 1,
+          "tolerance": 1e-12
+        },
+        {
+          "type": "metric",
+          "name": "Mode 25: Transport construction materials demand is zero (switch off)",
+          "column": "Transport Construction Materials Demand",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
         }
       ],
       "notes": [
@@ -11871,6 +12814,42 @@
           "op": "<=",
           "value": 40,
           "tolerance": 1e-9
+        },
+        {
+          "type": "metric",
+          "name": "Mode 26: A Transport construction materials consumption is zero (switch off)",
+          "column": "A Transport Construction Materials Consumption",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 26: B Transport construction materials consumption is zero (switch off)",
+          "column": "B Transport Construction Materials Consumption",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 26: Transport construction materials fulfillment is 1 (switch off)",
+          "column": "Transport Construction Materials Fulfillment",
+          "metric": "min",
+          "op": ">=",
+          "value": 1,
+          "tolerance": 1e-12
+        },
+        {
+          "type": "metric",
+          "name": "Mode 26: Transport construction materials demand is zero (switch off)",
+          "column": "Transport Construction Materials Demand",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
         }
       ],
       "notes": [
@@ -12153,6 +13132,42 @@
               "coef": -0.5
             }
           ]
+        },
+        {
+          "type": "metric",
+          "name": "Mode 27: A Transport construction materials consumption is zero (switch off)",
+          "column": "A Transport Construction Materials Consumption",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 27: B Transport construction materials consumption is zero (switch off)",
+          "column": "B Transport Construction Materials Consumption",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 27: Transport construction materials fulfillment is 1 (switch off)",
+          "column": "Transport Construction Materials Fulfillment",
+          "metric": "min",
+          "op": ">=",
+          "value": 1,
+          "tolerance": 1e-12
+        },
+        {
+          "type": "metric",
+          "name": "Mode 27: Transport construction materials demand is zero (switch off)",
+          "column": "Transport Construction Materials Demand",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
         }
       ],
       "notes": [
@@ -12462,6 +13477,42 @@
               "coef": -0.5
             }
           ]
+        },
+        {
+          "type": "metric",
+          "name": "Mode 28: A Transport construction materials consumption is zero (switch off)",
+          "column": "A Transport Construction Materials Consumption",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 28: B Transport construction materials consumption is zero (switch off)",
+          "column": "B Transport Construction Materials Consumption",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 28: Transport construction materials fulfillment is 1 (switch off)",
+          "column": "Transport Construction Materials Fulfillment",
+          "metric": "min",
+          "op": ">=",
+          "value": 1,
+          "tolerance": 1e-12
+        },
+        {
+          "type": "metric",
+          "name": "Mode 28: Transport construction materials demand is zero (switch off)",
+          "column": "Transport Construction Materials Demand",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
         }
       ],
       "notes": [
@@ -12783,10 +13834,783 @@
               "coef": -0.5
             }
           ]
+        },
+        {
+          "type": "metric",
+          "name": "Mode 29: A Transport construction materials consumption is zero (switch off)",
+          "column": "A Transport Construction Materials Consumption",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 29: B Transport construction materials consumption is zero (switch off)",
+          "column": "B Transport Construction Materials Consumption",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 29: Transport construction materials fulfillment is 1 (switch off)",
+          "column": "Transport Construction Materials Fulfillment",
+          "metric": "min",
+          "op": ">=",
+          "value": 1,
+          "tolerance": 1e-12
+        },
+        {
+          "type": "metric",
+          "name": "Mode 29: Transport construction materials demand is zero (switch off)",
+          "column": "Transport Construction Materials Demand",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
         }
       ],
       "notes": [
         "r1 calibration probes intentionally fail to expose Regolith depletion, fulfillment and recovery before thresholds are chosen."
+      ]
+    },
+    "30": {
+      "name": "v7.7.1 Transport Construction Materials Baseline",
+      "checks": [
+        {
+          "type": "event_exists",
+          "name": "Mode 30: Transport expands in baseline",
+          "event": {
+            "column": "Transport Capacity Expansion",
+            "op": ">",
+            "value": 0,
+            "window": [
+              0,
+              360
+            ]
+          }
+        },
+        {
+          "type": "event_exists",
+          "name": "Mode 30: A Transport construction-materials leg is active",
+          "event": {
+            "column": "A Transport Construction Materials Consumption",
+            "op": ">",
+            "value": 0,
+            "window": [
+              0,
+              360
+            ]
+          }
+        },
+        {
+          "type": "event_exists",
+          "name": "Mode 30: B Transport construction-materials leg is active",
+          "event": {
+            "column": "B Transport Construction Materials Consumption",
+            "op": ">",
+            "value": 0,
+            "window": [
+              0,
+              360
+            ]
+          }
+        },
+        {
+          "type": "metric",
+          "name": "Mode 30: Transport construction-materials fulfillment remains >= 0.98",
+          "column": "Transport Construction Materials Fulfillment",
+          "metric": "min",
+          "window": [
+            0,
+            1080
+          ],
+          "op": ">=",
+          "value": 0.98
+        },
+        {
+          "type": "identity",
+          "name": "Mode 30: Transport construction materials pair identity",
+          "abs_tol": 1e-8,
+          "terms": [
+            {
+              "column": "A Transport Construction Materials Consumption",
+              "coef": 1
+            },
+            {
+              "column": "B Transport Construction Materials Consumption",
+              "coef": 1
+            },
+            {
+              "column": "Transport Capacity Expansion",
+              "coef": -3
+            }
+          ],
+          "note": "Total regional Construction Materials consumption equals Transport expansion × Transport Construction Materials per Capacity."
+        },
+        {
+          "type": "identity",
+          "name": "Mode 30: Transport Capital Goods pair identity",
+          "abs_tol": 1e-8,
+          "terms": [
+            {
+              "column": "A Transport Capital Goods Consumption",
+              "coef": 1
+            },
+            {
+              "column": "B Transport Capital Goods Consumption",
+              "coef": 1
+            },
+            {
+              "column": "Transport Capacity Expansion",
+              "coef": -2.8333333333333335
+            }
+          ],
+          "note": "Total regional Capital Goods consumption equals Transport expansion × Transport Capital Goods per Capacity."
+        },
+        {
+          "type": "metric",
+          "name": "Mode 30: Transport construction-materials source shares sum >= 1",
+          "column": "Transport Construction Materials Source Share Sum",
+          "metric": "min",
+          "window": [
+            0,
+            1080
+          ],
+          "op": ">=",
+          "value": 1,
+          "tolerance": 1e-10
+        },
+        {
+          "type": "metric",
+          "name": "Mode 30: Transport construction-materials source shares sum <= 1",
+          "column": "Transport Construction Materials Source Share Sum",
+          "metric": "max",
+          "window": [
+            0,
+            1080
+          ],
+          "op": "<=",
+          "value": 1,
+          "tolerance": 1e-10
+        },
+        {
+          "type": "identity",
+          "name": "Mode 30: A regolith -> construction materials pair identity",
+          "abs_tol": 1e-8,
+          "terms": [
+            {
+              "column": "A Construction Materials Regolith Consumption",
+              "coef": 1
+            },
+            {
+              "column": "A Construction Materials Production",
+              "coef": -2
+            }
+          ],
+          "note": "Regolith per Construction Materials Unit = 2."
+        },
+        {
+          "type": "identity",
+          "name": "Mode 30: A Refinery construction materials pair identity",
+          "abs_tol": 1e-8,
+          "terms": [
+            {
+              "column": "A Refinery Construction Materials Consumption",
+              "coef": 1
+            },
+            {
+              "column": "A Refinery Expansion",
+              "coef": -20
+            }
+          ],
+          "note": "Coefficient equals -20, matching Construction Materials per Capacity."
+        },
+        {
+          "type": "identity",
+          "name": "Mode 30: A Electronics construction materials pair identity",
+          "abs_tol": 1e-8,
+          "terms": [
+            {
+              "column": "A Electronics Construction Materials Consumption",
+              "coef": 1
+            },
+            {
+              "column": "A Electronics Factory Expansion",
+              "coef": -12
+            }
+          ],
+          "note": "Coefficient equals -12, matching Construction Materials per Capacity."
+        },
+        {
+          "type": "identity",
+          "name": "Mode 30: A Power construction materials pair identity",
+          "abs_tol": 1e-8,
+          "terms": [
+            {
+              "column": "A Power Construction Materials Consumption",
+              "coef": 1
+            },
+            {
+              "column": "A Power Generation Expansion",
+              "coef": -1
+            }
+          ],
+          "note": "Coefficient equals -1, matching Construction Materials per Capacity."
+        },
+        {
+          "type": "identity",
+          "name": "Mode 30: A Refinery capital goods pair identity",
+          "abs_tol": 1e-8,
+          "terms": [
+            {
+              "column": "A Refinery Capital Goods Consumption",
+              "coef": 1
+            },
+            {
+              "column": "A Refinery Expansion",
+              "coef": -17
+            }
+          ]
+        },
+        {
+          "type": "identity",
+          "name": "Mode 30: A Electronics capital goods pair identity",
+          "abs_tol": 1e-8,
+          "terms": [
+            {
+              "column": "A Electronics Capital Goods Consumption",
+              "coef": 1
+            },
+            {
+              "column": "A Electronics Factory Expansion",
+              "coef": -11.5
+            }
+          ]
+        },
+        {
+          "type": "identity",
+          "name": "Mode 30: A Power capital goods pair identity",
+          "abs_tol": 1e-8,
+          "terms": [
+            {
+              "column": "A Power Capital Goods Consumption",
+              "coef": 1
+            },
+            {
+              "column": "A Power Generation Expansion",
+              "coef": -0.5
+            }
+          ]
+        },
+        {
+          "type": "identity",
+          "name": "Mode 30: B regolith -> construction materials pair identity",
+          "abs_tol": 1e-8,
+          "terms": [
+            {
+              "column": "B Construction Materials Regolith Consumption",
+              "coef": 1
+            },
+            {
+              "column": "B Construction Materials Production",
+              "coef": -2
+            }
+          ],
+          "note": "Regolith per Construction Materials Unit = 2."
+        },
+        {
+          "type": "identity",
+          "name": "Mode 30: B Refinery construction materials pair identity",
+          "abs_tol": 1e-8,
+          "terms": [
+            {
+              "column": "B Refinery Construction Materials Consumption",
+              "coef": 1
+            },
+            {
+              "column": "B Refinery Expansion",
+              "coef": -20
+            }
+          ],
+          "note": "Coefficient equals -20, matching Construction Materials per Capacity."
+        },
+        {
+          "type": "identity",
+          "name": "Mode 30: B Electronics construction materials pair identity",
+          "abs_tol": 1e-8,
+          "terms": [
+            {
+              "column": "B Electronics Construction Materials Consumption",
+              "coef": 1
+            },
+            {
+              "column": "B Electronics Factory Expansion",
+              "coef": -12
+            }
+          ],
+          "note": "Coefficient equals -12, matching Construction Materials per Capacity."
+        },
+        {
+          "type": "identity",
+          "name": "Mode 30: B Power construction materials pair identity",
+          "abs_tol": 1e-8,
+          "terms": [
+            {
+              "column": "B Power Construction Materials Consumption",
+              "coef": 1
+            },
+            {
+              "column": "B Power Generation Expansion",
+              "coef": -1
+            }
+          ],
+          "note": "Coefficient equals -1, matching Construction Materials per Capacity."
+        },
+        {
+          "type": "identity",
+          "name": "Mode 30: B Refinery capital goods pair identity",
+          "abs_tol": 1e-8,
+          "terms": [
+            {
+              "column": "B Refinery Capital Goods Consumption",
+              "coef": 1
+            },
+            {
+              "column": "B Refinery Expansion",
+              "coef": -17
+            }
+          ]
+        },
+        {
+          "type": "identity",
+          "name": "Mode 30: B Electronics capital goods pair identity",
+          "abs_tol": 1e-8,
+          "terms": [
+            {
+              "column": "B Electronics Capital Goods Consumption",
+              "coef": 1
+            },
+            {
+              "column": "B Electronics Factory Expansion",
+              "coef": -11.5
+            }
+          ]
+        },
+        {
+          "type": "identity",
+          "name": "Mode 30: B Power capital goods pair identity",
+          "abs_tol": 1e-8,
+          "terms": [
+            {
+              "column": "B Power Capital Goods Consumption",
+              "coef": 1
+            },
+            {
+              "column": "B Power Generation Expansion",
+              "coef": -0.5
+            }
+          ]
+        }
+      ],
+      "notes": [
+        "r2 calibration from first Linux candidate run 36232699114: Transport Construction Materials fulfillment min=0.990737111465802; acceptance floor 0.98 leaves ~0.0107 absolute margin while still requiring high fulfillment."
+      ]
+    },
+    "31": {
+      "name": "v7.7.1 Transport Surge on Construction Materials",
+      "checks": [
+        {
+          "type": "event_exists",
+          "name": "Mode 31: Transport expands during surge",
+          "event": {
+            "column": "Transport Capacity Expansion",
+            "op": ">",
+            "value": 0,
+            "window": [
+              360,
+              720
+            ]
+          }
+        },
+        {
+          "type": "metric",
+          "name": "Mode 31: B construction-materials production exceeds 1.5 during surge",
+          "column": "B Construction Materials Production",
+          "metric": "max",
+          "window": [
+            360,
+            720
+          ],
+          "op": ">",
+          "value": 1.5
+        },
+        {
+          "type": "event_exists",
+          "name": "Mode 31: B extracts regolith during surge",
+          "event": {
+            "column": "B Regolith Extraction",
+            "op": ">",
+            "value": 0,
+            "window": [
+              360,
+              720
+            ]
+          }
+        },
+        {
+          "type": "event_exists",
+          "name": "Mode 31: B builds Power during surge",
+          "event": {
+            "column": "B Power Generation Expansion",
+            "op": ">",
+            "value": 0,
+            "window": [
+              360,
+              720
+            ]
+          }
+        },
+        {
+          "type": "metric",
+          "name": "Mode 31: B construction-materials fulfillment falls below 0.95 during surge",
+          "column": "B Construction Materials Fulfillment",
+          "metric": "min",
+          "window": [
+            360,
+            720
+          ],
+          "op": "<",
+          "value": 0.95
+        },
+        {
+          "type": "event_absent",
+          "name": "Mode 31: B construction-materials production absent before surge",
+          "event": {
+            "column": "B Construction Materials Production",
+            "op": ">",
+            "value": 0,
+            "window": [
+              0,
+              359.75
+            ]
+          }
+        },
+        {
+          "type": "event_order",
+          "name": "Mode 31: surge begins before B construction-materials production",
+          "events": [
+            {
+              "name": "transport surge active",
+              "column": "Test 2 Transport Surge Active",
+              "op": ">",
+              "value": 0,
+              "window": [
+                360,
+                720
+              ]
+            },
+            {
+              "name": "B construction-materials production",
+              "column": "B Construction Materials Production",
+              "op": ">",
+              "value": 0,
+              "window": [
+                360,
+                720
+              ]
+            }
+          ]
+        },
+        {
+          "type": "identity",
+          "name": "Mode 31: Transport construction materials pair identity",
+          "abs_tol": 1e-8,
+          "terms": [
+            {
+              "column": "A Transport Construction Materials Consumption",
+              "coef": 1
+            },
+            {
+              "column": "B Transport Construction Materials Consumption",
+              "coef": 1
+            },
+            {
+              "column": "Transport Capacity Expansion",
+              "coef": -3
+            }
+          ],
+          "note": "Total regional Construction Materials consumption equals Transport expansion × Transport Construction Materials per Capacity."
+        },
+        {
+          "type": "identity",
+          "name": "Mode 31: Transport Capital Goods pair identity",
+          "abs_tol": 1e-8,
+          "terms": [
+            {
+              "column": "A Transport Capital Goods Consumption",
+              "coef": 1
+            },
+            {
+              "column": "B Transport Capital Goods Consumption",
+              "coef": 1
+            },
+            {
+              "column": "Transport Capacity Expansion",
+              "coef": -2.8333333333333335
+            }
+          ],
+          "note": "Total regional Capital Goods consumption equals Transport expansion × Transport Capital Goods per Capacity."
+        },
+        {
+          "type": "metric",
+          "name": "Mode 31: Transport construction-materials source shares sum >= 1",
+          "column": "Transport Construction Materials Source Share Sum",
+          "metric": "min",
+          "window": [
+            0,
+            1080
+          ],
+          "op": ">=",
+          "value": 1,
+          "tolerance": 1e-10
+        },
+        {
+          "type": "metric",
+          "name": "Mode 31: Transport construction-materials source shares sum <= 1",
+          "column": "Transport Construction Materials Source Share Sum",
+          "metric": "max",
+          "window": [
+            0,
+            1080
+          ],
+          "op": "<=",
+          "value": 1,
+          "tolerance": 1e-10
+        },
+        {
+          "type": "identity",
+          "name": "Mode 31: A regolith -> construction materials pair identity",
+          "abs_tol": 1e-8,
+          "terms": [
+            {
+              "column": "A Construction Materials Regolith Consumption",
+              "coef": 1
+            },
+            {
+              "column": "A Construction Materials Production",
+              "coef": -2
+            }
+          ],
+          "note": "Regolith per Construction Materials Unit = 2."
+        },
+        {
+          "type": "identity",
+          "name": "Mode 31: A Refinery construction materials pair identity",
+          "abs_tol": 1e-8,
+          "terms": [
+            {
+              "column": "A Refinery Construction Materials Consumption",
+              "coef": 1
+            },
+            {
+              "column": "A Refinery Expansion",
+              "coef": -20
+            }
+          ],
+          "note": "Coefficient equals -20, matching Construction Materials per Capacity."
+        },
+        {
+          "type": "identity",
+          "name": "Mode 31: A Electronics construction materials pair identity",
+          "abs_tol": 1e-8,
+          "terms": [
+            {
+              "column": "A Electronics Construction Materials Consumption",
+              "coef": 1
+            },
+            {
+              "column": "A Electronics Factory Expansion",
+              "coef": -12
+            }
+          ],
+          "note": "Coefficient equals -12, matching Construction Materials per Capacity."
+        },
+        {
+          "type": "identity",
+          "name": "Mode 31: A Power construction materials pair identity",
+          "abs_tol": 1e-8,
+          "terms": [
+            {
+              "column": "A Power Construction Materials Consumption",
+              "coef": 1
+            },
+            {
+              "column": "A Power Generation Expansion",
+              "coef": -1
+            }
+          ],
+          "note": "Coefficient equals -1, matching Construction Materials per Capacity."
+        },
+        {
+          "type": "identity",
+          "name": "Mode 31: A Refinery capital goods pair identity",
+          "abs_tol": 1e-8,
+          "terms": [
+            {
+              "column": "A Refinery Capital Goods Consumption",
+              "coef": 1
+            },
+            {
+              "column": "A Refinery Expansion",
+              "coef": -17
+            }
+          ]
+        },
+        {
+          "type": "identity",
+          "name": "Mode 31: A Electronics capital goods pair identity",
+          "abs_tol": 1e-8,
+          "terms": [
+            {
+              "column": "A Electronics Capital Goods Consumption",
+              "coef": 1
+            },
+            {
+              "column": "A Electronics Factory Expansion",
+              "coef": -11.5
+            }
+          ]
+        },
+        {
+          "type": "identity",
+          "name": "Mode 31: A Power capital goods pair identity",
+          "abs_tol": 1e-8,
+          "terms": [
+            {
+              "column": "A Power Capital Goods Consumption",
+              "coef": 1
+            },
+            {
+              "column": "A Power Generation Expansion",
+              "coef": -0.5
+            }
+          ]
+        },
+        {
+          "type": "identity",
+          "name": "Mode 31: B regolith -> construction materials pair identity",
+          "abs_tol": 1e-8,
+          "terms": [
+            {
+              "column": "B Construction Materials Regolith Consumption",
+              "coef": 1
+            },
+            {
+              "column": "B Construction Materials Production",
+              "coef": -2
+            }
+          ],
+          "note": "Regolith per Construction Materials Unit = 2."
+        },
+        {
+          "type": "identity",
+          "name": "Mode 31: B Refinery construction materials pair identity",
+          "abs_tol": 1e-8,
+          "terms": [
+            {
+              "column": "B Refinery Construction Materials Consumption",
+              "coef": 1
+            },
+            {
+              "column": "B Refinery Expansion",
+              "coef": -20
+            }
+          ],
+          "note": "Coefficient equals -20, matching Construction Materials per Capacity."
+        },
+        {
+          "type": "identity",
+          "name": "Mode 31: B Electronics construction materials pair identity",
+          "abs_tol": 1e-8,
+          "terms": [
+            {
+              "column": "B Electronics Construction Materials Consumption",
+              "coef": 1
+            },
+            {
+              "column": "B Electronics Factory Expansion",
+              "coef": -12
+            }
+          ],
+          "note": "Coefficient equals -12, matching Construction Materials per Capacity."
+        },
+        {
+          "type": "identity",
+          "name": "Mode 31: B Power construction materials pair identity",
+          "abs_tol": 1e-8,
+          "terms": [
+            {
+              "column": "B Power Construction Materials Consumption",
+              "coef": 1
+            },
+            {
+              "column": "B Power Generation Expansion",
+              "coef": -1
+            }
+          ],
+          "note": "Coefficient equals -1, matching Construction Materials per Capacity."
+        },
+        {
+          "type": "identity",
+          "name": "Mode 31: B Refinery capital goods pair identity",
+          "abs_tol": 1e-8,
+          "terms": [
+            {
+              "column": "B Refinery Capital Goods Consumption",
+              "coef": 1
+            },
+            {
+              "column": "B Refinery Expansion",
+              "coef": -17
+            }
+          ]
+        },
+        {
+          "type": "identity",
+          "name": "Mode 31: B Electronics capital goods pair identity",
+          "abs_tol": 1e-8,
+          "terms": [
+            {
+              "column": "B Electronics Capital Goods Consumption",
+              "coef": 1
+            },
+            {
+              "column": "B Electronics Factory Expansion",
+              "coef": -11.5
+            }
+          ]
+        },
+        {
+          "type": "identity",
+          "name": "Mode 31: B Power capital goods pair identity",
+          "abs_tol": 1e-8,
+          "terms": [
+            {
+              "column": "B Power Capital Goods Consumption",
+              "coef": 1
+            },
+            {
+              "column": "B Power Generation Expansion",
+              "coef": -0.5
+            }
+          ]
+        }
+      ],
+      "notes": [
+        "r2 calibration from first Linux candidate run 36232699114: B Construction Materials Production max=1.85361612493811 -> floor >1.5; B Construction Materials Fulfillment min=0.926415559897726 -> ceiling <0.95 (scarcity >5%)."
       ]
     }
   },
@@ -13205,6 +15029,10 @@
     "v7.7 candidate r1: Modes 0-26 include explicit switch-off checks for Construction Materials/Regolith.",
     "v7.7 candidate r1: Modes 27-29 include exact Regolith->Construction Materials, sector expansion->Construction Materials, and legacy Capital Goods pair identities.",
     "v7.7 candidate r2 calibration from Linux candidate run 36190086944: Mode27 fulfillment min=0.9669176 -> floor 0.94; Mode28 fulfillment/ratio min=0.3604454 -> ceiling 0.50; CG fulfillment min=0.9684302 -> floor 0.95; recovery@900=0.9671779 -> floor 0.94; Mode29 regolith min=0.8716267 -> ceiling 5; CM fulfillment min=0.4751981 -> ceiling 0.60; production-rate max=0.7060652 with capacity exactly 3 -> ceiling 1.0; recovery@900=0.9671409 -> floor 0.94.",
-    "B idle fulfillment observed 0.999999999966667 due floating arithmetic; executable floor is 1-1e-9, matching the test-plan epsilon formulation rather than false exact equality."
+    "B idle fulfillment observed 0.999999999966667 due floating arithmetic; executable floor is 1-1e-9, matching the test-plan epsilon formulation rather than false exact equality.",
+    "v7.7.1 DRAFT: structural declarations only. The executor adds scenario checks for Modes 30-31, the transport construction-materials pair identity (Modes 30-31 only), switch-off checks for Modes 0-29, and the source-share sum check.",
+    "v7.7.1 candidate r1: Modes 0-29 explicitly assert the new Transport Construction Materials mechanism is off.",
+    "v7.7.1 candidate r1: Modes 30-31 check both Transport Construction Materials legs, source-share sum, new and legacy Transport pair identities, and all v7.7 colonial pair identities.",
+    "v7.7.1 candidate r2 calibration from Linux candidate run 36232699114: Mode30 Transport CM fulfillment min=0.990737111465802 -> floor 0.98; Mode31 B CM production max=1.85361612493811 -> floor 1.5; B CM fulfillment min=0.926415559897726 -> ceiling 0.95."
   ]
 }

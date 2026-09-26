@@ -1,15 +1,15 @@
 {
   "status": "ACCEPTED",
-  "model_name": "Orbital Economy v7.7 r1 — Construction Materials",
-  "model_file": "orbital_economy_v7_7_r1_modeljson.json",
-  "model_sha256": "5bbc29b6e18caa64ec22267892b6cd0669649722c8fc029d8dba43a77a34d5a1",
-  "validation_file": "validation-v7.7.json",
-  "validation_sha256": "01d8e87ca4ad216b206164db768a9888fbf5efa58f2775a50eecee02be66133c",
+  "model_name": "Orbital Economy v7.7.1 r1 — Transport on Construction Materials",
+  "model_file": "orbital_economy_v7_7_1_r1_modeljson.json",
+  "model_sha256": "d53d014d727a439694e103aafb49f87d4dbbb362e581414cbf4dc71a19646f93",
+  "validation_file": "validation-v7.7.1.json",
+  "validation_sha256": "23928c3abab5b4609cf963a5646e89fe551cadc046d5b49d3b69adbe6a02b70f",
   "accepted_date": "2026-09-26",
   "engine": "simulation@9.0.0",
   "notes": [
-    "v7.7 adds Construction Materials: regolith is extracted and processed into construction materials; colonial Refinery/Electronics/Power expansion requires both Capital Goods and Construction Materials (Min of the two fulfillments). See docs/tasks/008-construction-materials/.",
-    "Modes 0-26 reproduce v7.6.1 r1 exactly (switch Construction Materials Enabled = 0); Modes 27-29 exercise the new sector.",
+    "v7.7.1: shared Transport expansion also requires construction materials, drawn from A and B inventories (two legs, as capital goods since v7.5.1). See docs/tasks/009-transport-construction-materials/.",
+    "Modes 0-29 reproduce v7.7 r1 exactly (Transport Construction Materials Enabled = 0); Mode 30 baseline, Mode 31 transport surge in which colony B builds and produces construction materials.",
     "Exact numbers are defined on the canonical platform (docs/VERSIONING_AND_AUTHORITY.md section 8); series-digest.windows.json is the golden."
   ]
 }

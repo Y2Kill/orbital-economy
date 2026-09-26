@@ -2,14 +2,14 @@
 
 A deterministic System Dynamics model of a two-region planetary economy, together with the bench that accepts changes to it.
 
-**Accepted baseline:** v7.7 r1 — Construction Materials
-**Model SHA-256:** `5bbc29b6e18caa64ec22267892b6cd0669649722c8fc029d8dba43a77a34d5a1`
+**Accepted baseline:** v7.7.1 r1 — Transport on Construction Materials
+**Model SHA-256:** `d53d014d727a439694e103aafb49f87d4dbbb362e581414cbf4dc71a19646f93`
 **Engine contract:** `simulation@9.0.0` (pinned)
 **Canonical platform:** Windows x64 · Node 24.11.1 — bit-exact numbers are defined here only; Linux differs in the last bits (`docs/VERSIONING_AND_AUTHORITY.md` §8)
-**Scenarios:** Modes 0–29 · 0..1080 days · dt 0.25 · RK1
-**Accepted:** 2026-09-26 — validation 30/30 PASS; Modes 0–26 bit-identical to the previous accepted baseline (v7.6.1 r1) on the canonical platform
+**Scenarios:** Modes 0–31 · 0..1080 days · dt 0.25 · RK1
+**Accepted:** 2026-09-26 — validation 32/32 PASS; Modes 0–29 bit-identical to the previous accepted baseline (v7.7 r1) on the canonical platform
 
-Two regions (A and B) each run ore → metal → electronics, a power sector, and a capital-goods sector that physically backs capacity expansion; they trade over shared transport with endogenous prices. Capital has an explicit lifecycle (installed / active / mothballed / decommissioned), expansion consumes capital goods, since v7.6 generation consumes a physical operating resource, and since v7.7 colonial expansion also needs construction materials processed from extracted regolith.
+Two regions (A and B) each run ore → metal → electronics, a power sector, and a capital-goods sector that physically backs capacity expansion; they trade over shared transport with endogenous prices. Capital has an explicit lifecycle (installed / active / mothballed / decommissioned), expansion consumes capital goods, since v7.6 generation consumes a physical operating resource, and since v7.7 every capacity expansion (colonial, and since v7.7.1 shared transport) also needs construction materials processed from extracted regolith.
 
 ## Repository layout
 
@@ -19,7 +19,7 @@ validation/     executable validation contract (HARD invariants, plugins, per-Mo
 policy/         strict default-deny change policy, bound to the SHA-256 of both files above
 docs/           documentation aligned to the accepted model, generated audit reports, version history
 lab/            Orbital Economy Lab — the bench: run, compare, audit, policy-check, apply patches
-reference/      the previous accepted baseline (v7.6.1 r1), kept for exact regression comparison
+reference/      the previous accepted baseline (v7.7 r1), kept for exact regression comparison
 tools/          repository tooling: integrity manifests (build_sums), task-branch acceptance guard (check_branch)
 BASELINE_MANIFEST.json   what is accepted, with every SHA-256 and every gate result
 SHA256SUMS.txt           integrity of the whole tree (lab/ has its own for the bench)
@@ -38,14 +38,14 @@ RUN_LAB.cmd
 Everything else is one command:
 
 ```bat
-RUN_TESTS.cmd ..\model\orbital_economy_v7_7_r1_modeljson.json ..\validation\validation-v7.7.json all
-COMPARE_MODELS.cmd ..\reference\v7.6.1\model\orbital_economy_v7_6_1_r1_modeljson.json ..\model\orbital_economy_v7_7_r1_modeljson.json ..\validation\validation-v7.7.json 0-26
+RUN_TESTS.cmd ..\model\orbital_economy_v7_7_1_r1_modeljson.json ..\validation\validation-v7.7.1.json all
+COMPARE_MODELS.cmd ..\reference\v7.7\model\orbital_economy_v7_7_r1_modeljson.json ..\model\orbital_economy_v7_7_1_r1_modeljson.json ..\validation\validation-v7.7.1.json 0-29
 LIFECYCLE_CONFORMANCE.cmd   STRUCTURE_AUDIT.cmd   PARAMETER_REGISTRY.cmd
 CHECK_CANDIDATE.cmd         (accepted vs candidate + change policy — the acceptance gate)
 QA_SELF_TEST.cmd  POLICY_SELF_TEST.cmd  CONFORMANCE_SELF_TEST.cmd  STRUCTURE_SELF_TEST.cmd  COMPARE_SELF_TEST.cmd
 ```
 
-On a clean checkout `CHECK_CANDIDATE.cmd` reports `BYTE_IDENTICAL` and `POLICY RESULT: PASS`: the accepted model is its own candidate. The `COMPARE_MODELS` line above reports `changed=0, maxAbs=0` in every Mode 0–26 (66 added series each).
+On a clean checkout `CHECK_CANDIDATE.cmd` reports `BYTE_IDENTICAL` and `POLICY RESULT: PASS`: the accepted model is its own candidate. The `COMPARE_MODELS` line above reports `changed=0, maxAbs=0` in every Mode 0–29 (12 added series each).
 
 
 ## CI
@@ -87,6 +87,7 @@ Rules that do not bend:
 | What went wrong in v7.6 r1 and how it was fixed | `docs/V7_6_R1_TO_R2_FIX_REPORT.md` |
 | Why Mode 25 is a 50 % shock (v7.6.1 calibration) | `docs/V7_6_1_CALIBRATION_REPORT.md` |
 | Construction materials (v7.7): spec, test plan, delivery, acceptance | `docs/tasks/008-construction-materials/` |
+| Transport on construction materials (v7.7.1) | `docs/tasks/009-transport-construction-materials/` |
 | Capital lifecycle contract and role mapping | `docs/CAPITAL_LIFECYCLE_KERNEL_SPEC.md`, `docs/CAPITAL_LIFECYCLE_SECTOR_MAPPING.md` |
 | Structure of the whole economy | `docs/ARCHITECTURE.md` |
 | How we got here, version by version (RU) | `docs/HISTORY_RU.md` |
@@ -99,7 +100,7 @@ Documentation is mixed-language by history: model documentation is English, proc
 
 ## Versioning
 
-One accepted baseline lives in the tree; earlier ones are commits and tags (`v7.6-r2`, `v7.6.1-r1`, `v7.7-r1`), not directories. `reference/` carries only the immediately previous accepted model, because exact regression is measured against it. Model, validation and policy are rewritten together at acceptance, and `BASELINE_MANIFEST.json` plus both `SHA256SUMS.txt` are regenerated in the same commit.
+One accepted baseline lives in the tree; earlier ones are commits and tags (`v7.6-r2`, `v7.6.1-r1`, `v7.7-r1`, `v7.7.1-r1`), not directories. `reference/` carries only the immediately previous accepted model, because exact regression is measured against it. Model, validation and policy are rewritten together at acceptance, and `BASELINE_MANIFEST.json` plus both `SHA256SUMS.txt` are regenerated in the same commit.
 
 The engine is frozen at `simulation@9.0.0`; upgrading it requires a new golden cross-check, not a dependency bump (`lab/ENGINE_PIN.md`).
 

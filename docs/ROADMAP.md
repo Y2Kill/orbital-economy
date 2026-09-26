@@ -1,16 +1,20 @@
 # Roadmap
 
 **Document status:** CURRENT  
-**Base:** Orbital Economy v7.7 r1 — Construction Materials (accepted 2026-09-26)  
+**Base:** Orbital Economy v7.7.1 r1 — Transport on Construction Materials (accepted 2026-09-26)  
 **Rule:** roadmap describes intent; executable accepted code remains authoritative for accepted behavior.
 
-## Current implementation — v7.7 Construction Materials
+## Current implementation — v7.7.1 Transport on Construction Materials
+
+Shared Transport expansion also needs construction materials, drawn from A and B (two legs, as capital goods since v7.5.1). Mode 31 (transport surge) is the first Mode in which colony B produces construction materials. With this, every capacity expansion in the model is backed by both capital goods and construction materials.
+
+## v7.7 Construction Materials
 
 A second raw-material chain: regional regolith extraction → construction materials → colonial Refinery/Electronics/Power expansion, which now needs both capital goods and construction materials (`Min` of the two fulfillments). No energy use, no interregional trade, fixed sector capacities. Modes 27–29; Modes 0–26 exact. First model version delivered by the repository agent through `candidate.yml` (task 008). Next increments on this layer:
 
-- **v7.7.1 — Transport on construction materials**: shared transport expansion drawing on A and B inventories, as v7.5.1 did for capital goods;
+- ~~v7.7.1 — Transport on construction materials~~ — done (task 009);
 - construction materials using energy (the allocator change is the risky part — see the v7.4 lesson);
-- a stimulated Mode with construction materials on, in which colony B builds (as Mode 24 does through the reused transport surge): Modes 27–29 do not stimulate B, so B's construction-materials path has only run at zero. B is not broken — it builds under stimulus in Modes 18–20 and 23–26 and winds down surplus capacity in calm ones.
+- ~~a stimulated Mode in which colony B builds with construction materials on~~ — done: Mode 31 (v7.7.1).
 
 ## Previous layer — v7.6 Energy Kernel v2
 

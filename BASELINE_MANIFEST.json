@@ -1,26 +1,26 @@
 {
   "format": "orbital-economy-baseline-manifest-v2",
-  "baseline": "orbital-economy-baseline-v7.7",
+  "baseline": "orbital-economy-baseline-v7.7.1",
   "built": "2026-09-26",
   "status": "ACCEPTED",
   "model": {
-    "name": "Orbital Economy v7.7 r1 — Construction Materials",
-    "file": "model/orbital_economy_v7_7_r1_modeljson.json",
-    "sha256": "5bbc29b6e18caa64ec22267892b6cd0669649722c8fc029d8dba43a77a34d5a1",
-    "scenarios": "Modes 0-29",
-    "elements": 3142,
+    "name": "Orbital Economy v7.7.1 r1 — Transport on Construction Materials",
+    "file": "model/orbital_economy_v7_7_1_r1_modeljson.json",
+    "sha256": "d53d014d727a439694e103aafb49f87d4dbbb362e581414cbf4dc71a19646f93",
+    "scenarios": "Modes 0-31",
+    "elements": 3187,
     "simulation": "0..1080 day, dt=0.25, RK1",
-    "predecessor_sha256": "16e8ca6c5719e67422e16a6ec1ea2724b6121a062200eaf91e81389a2a180cd1",
+    "predecessor_sha256": "5bbc29b6e18caa64ec22267892b6cd0669649722c8fc029d8dba43a77a34d5a1",
     "history": {
-      "v7.7 candidate r1 (task 008)": {
-        "file": "docs/tasks/008-construction-materials/candidate/model-patch.json",
-        "candidate_sha256": "fe9f0f4a8cd82da0d6bac0598008f91a6605eb1f36ee2626c854d9cd2d9dd201",
-        "result": "accepted in round 1; promoted metadata-clean (name only) as v7.7 r1"
+      "v7.7.1 candidate r1 (task 009)": {
+        "file": "docs/tasks/009-transport-construction-materials/candidate/model-patch.json",
+        "candidate_sha256": "a3c371395bd930a865359da6c8a0a0c8eb6a29736056651492211d4dacc6f60a",
+        "result": "accepted in round 1; promoted metadata-clean (name only)"
       },
-      "v7.6.1 r1": {
-        "file": "reference/v7.6.1/model/orbital_economy_v7_6_1_r1_modeljson.json",
-        "sha256": "16e8ca6c5719e67422e16a6ec1ea2724b6121a062200eaf91e81389a2a180cd1",
-        "result": "accepted 2026-09-25; superseded by v7.7 r1"
+      "v7.7 r1": {
+        "file": "reference/v7.7/model/orbital_economy_v7_7_r1_modeljson.json",
+        "sha256": "5bbc29b6e18caa64ec22267892b6cd0669649722c8fc029d8dba43a77a34d5a1",
+        "result": "accepted 2026-09-26; superseded by v7.7.1 r1"
       }
     }
   },
@@ -35,21 +35,20 @@
     "node": "24.11.1",
     "engine": "simulation 9.0.0 (lab/vendor, enforced by lab/src/engine.js)",
     "golden": "lab/reference/accepted/series-digest.windows.json",
-    "golden_sha256": "6c9e3c23a33a9501ddcb6e43171e74c34abdb6b391fac323f761447f444b0221",
+    "golden_sha256": "504a1f056e1acdd71277ecf64545bce8cdc9ae6fd2666cd1c0b8a4a6dd99d650",
     "verify": "cd lab && node --expose-gc src/cli.js series --modes=all --out=output/series && cd .. && node tools/verify_series.mjs lab/output/series/series-digest.json",
     "reason": "the model's ^ runs as Math.pow; Node's Math.pow rounds differently on Windows and Linux for some arguments (docs/tasks/006-cross-os/ACCEPTANCE_RU.md)"
   },
   "validation": {
-    "file": "validation/validation-v7.7.json",
-    "sha256": "01d8e87ca4ad216b206164db768a9888fbf5efa58f2775a50eecee02be66133c",
-    "result": "Modes 0-29 PASS (30/30, 4719 checks) on the canonical platform, 2026-09-26",
-    "note": "identical to the delivered candidate validation (954b6b4d...) except its name"
+    "file": "validation/validation-v7.7.1.json",
+    "sha256": "23928c3abab5b4609cf963a5646e89fe551cadc046d5b49d3b69adbe6a02b70f",
+    "result": "Modes 0-31 PASS (32/32, 5120 checks) on the canonical platform, 2026-09-26"
   },
   "strict_policy": {
-    "file": "policy/change-policy-v7.7-strict.json",
+    "file": "policy/change-policy-v7.7.1-strict.json",
     "default_action": "deny",
     "rules": 0,
-    "sha256": "fbaa823cc7ea76a6f6480fad5c574db8ab48babd4f9415b49ec44cf936edcfc6"
+    "sha256": "000204195f32f0bd6df63ff0de67ded4ed571146cc0167a59ff6a1985533e6e5"
   },
   "energy_kernel_v2": {
     "switch": "Power Resource Enabled",
@@ -69,8 +68,8 @@
     "kernel_v2_variations": 7
   },
   "structure": {
-    "flows_total": 151,
-    "boundary_flows": 120,
+    "flows_total": 153,
+    "boundary_flows": 122,
     "unclassified": 0,
     "closed_world_violations": 0,
     "transformation_pairs": 15,
@@ -81,44 +80,52 @@
     "result": "PASS (static)"
   },
   "regression": {
-    "base": "Orbital Economy v7.6.1 r1",
-    "base_sha256": "16e8ca6c5719e67422e16a6ec1ea2724b6121a062200eaf91e81389a2a180cd1",
-    "modes": "0-26",
-    "design": "exact algebraic fallback under Construction Materials Enabled = 0",
-    "result": "27 x common=1004, changed=0, added=66, maxAbs=0 on the canonical platform",
-    "change_policy": "docs/tasks/008-construction-materials/candidate/change-policy.json: POLICY PASS, 2016 expected events, unexpected 0",
+    "base": "Orbital Economy v7.7 r1",
+    "base_sha256": "5bbc29b6e18caa64ec22267892b6cd0669649722c8fc029d8dba43a77a34d5a1",
+    "modes": "0-29",
+    "design": "exact algebraic fallback under Transport Construction Materials Enabled = 0",
+    "result": "30 x common=1070, changed=0, added=12, maxAbs=0 on the canonical platform",
+    "change_policy": "docs/tasks/009-transport-construction-materials/candidate/change-policy.json: POLICY PASS, 441 expected events, unexpected 0",
     "previous": {
-      "base": "Orbital Economy v7.6 r2",
-      "base_sha256": "a9573f5afe43d2ae2bf12fdc3066c983c264eba162e1d3fc1d5f11e3872f9e91",
-      "modes": "0-24,26",
-      "design": "only the value of Power Resource Shock Factor changed; the constant acts only in Mode 25",
-      "result": "26 × common=1004, changed=1 (the constant's own series, 0.1 -> 0.5), every other series identical; Mode 25: 639 series changed by design",
-      "change_policy": "docs/model_v7_6_1/change-policy-v7.6.1-mode25-calibration.json (r1.1): POLICY RESULT PASS, 667 expected events, unexpected 0, forbidden 0, required missing 0",
+      "base": "Orbital Economy v7.6.1 r1",
+      "base_sha256": "16e8ca6c5719e67422e16a6ec1ea2724b6121a062200eaf91e81389a2a180cd1",
+      "modes": "0-26",
+      "design": "exact algebraic fallback under Construction Materials Enabled = 0",
+      "result": "27 x common=1004, changed=0, added=66, maxAbs=0 on the canonical platform",
+      "change_policy": "docs/tasks/008-construction-materials/candidate/change-policy.json: POLICY PASS, 2016 expected events, unexpected 0",
       "previous": {
-        "base": "Orbital Economy v7.5.1 r1",
-        "base_sha256": "299216122552a6819e5ef6432f8dc51197cde7c0862de7a43edd8eef359aeeda",
-        "modes": "0-24",
-        "design": "exact algebraic fallback under Power Resource Enabled=0",
-        "result": "25 × common=963, changed=0, added=41, removed=0, maxAbs=0"
+        "base": "Orbital Economy v7.6 r2",
+        "base_sha256": "a9573f5afe43d2ae2bf12fdc3066c983c264eba162e1d3fc1d5f11e3872f9e91",
+        "modes": "0-24,26",
+        "design": "only the value of Power Resource Shock Factor changed; the constant acts only in Mode 25",
+        "result": "26 × common=1004, changed=1 (the constant's own series, 0.1 -> 0.5), every other series identical; Mode 25: 639 series changed by design",
+        "change_policy": "docs/model_v7_6_1/change-policy-v7.6.1-mode25-calibration.json (r1.1): POLICY RESULT PASS, 667 expected events, unexpected 0, forbidden 0, required missing 0",
+        "previous": {
+          "base": "Orbital Economy v7.5.1 r1",
+          "base_sha256": "299216122552a6819e5ef6432f8dc51197cde7c0862de7a43edd8eef359aeeda",
+          "modes": "0-24",
+          "design": "exact algebraic fallback under Power Resource Enabled=0",
+          "result": "25 × common=963, changed=0, added=41, removed=0, maxAbs=0"
+        }
       }
     }
   },
-  "next": "v7.7.1 Transport on construction materials; construction materials using energy; see docs/ROADMAP.md.",
+  "next": "construction materials using energy; further planetary industries (docs/ROADMAP.md).",
   "authority": "Accepted code wins; documentation in docs/ is aligned to this model as of 2026-09-26.",
   "accepted": "2026-09-26",
   "parameters": {
-    "total": 353,
-    "annotated": 187,
+    "total": 355,
+    "annotated": 189,
     "asymmetric_pairs": 45,
     "asymmetric_unannotated": 0
   },
   "repository": {
     "layout": "repo root is the accepted baseline; earlier baselines are commits and tags, not directories",
     "reference": {
-      "baseline": "orbital-economy-baseline-v7.6.1",
-      "path": "reference/v7.6.1",
-      "model_sha256": "16e8ca6c5719e67422e16a6ec1ea2724b6121a062200eaf91e81389a2a180cd1",
-      "purpose": "exact regression base for Modes 0-26"
+      "baseline": "orbital-economy-baseline-v7.7",
+      "path": "reference/v7.7",
+      "model_sha256": "5bbc29b6e18caa64ec22267892b6cd0669649722c8fc029d8dba43a77a34d5a1",
+      "purpose": "exact regression base for Modes 0-29"
     },
     "not_in_git": [
       "lab/node_modules (pinned by lab/package-lock.json, installed with lab/INSTALL.cmd)",
@@ -129,7 +136,8 @@
     "tags": [
       "v7.6-r2",
       "v7.6.1-r1",
-      "v7.7-r1"
+      "v7.7-r1",
+      "v7.7.1-r1"
     ]
   },
   "construction_materials": {
@@ -138,11 +146,14 @@
     "new_modes": [
       27,
       28,
-      29
+      29,
+      30,
+      31
     ],
     "expansion": "X <Sector> Expansion = Desired Expansion x Min(X Capital Goods Fulfillment, X Construction Materials Fulfillment) for Refinery / Electronics / Power in A and B",
-    "not_in_v7_7": "energy use, interregional trade, Transport (v7.7.1), lifecycle of the new sectors",
-    "known_limit": "colony B builds only under stimulus (Modes 18-20, 23-26); none of Modes 27-29 stimulates B, so its construction-materials sector is idle there and that path runs only at zero until a stimulated Mode is added (planned v7.7.1)",
-    "task": "docs/tasks/008-construction-materials/"
+    "not_in_v7_7": "energy use, interregional trade, lifecycle of the new sectors",
+    "known_limit": "colony B builds only under stimulus; Mode 31 (transport surge) is the Mode in which B produces construction materials (Mode 30: B only draws its starting stock)",
+    "task": "docs/tasks/008-construction-materials/, docs/tasks/009-transport-construction-materials/",
+    "transport": "since v7.7.1 shared Transport expansion = Desired x Min(Transport CG Fulfillment, Transport CM Fulfillment), drawing construction materials from A and B by stock shares (switch Transport Construction Materials Enabled)"
   }
 }

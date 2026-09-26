@@ -1,21 +1,21 @@
 # Current State
 
 **Document status:** CURRENT  
-**Describes code:** Orbital Economy v7.7 r1 — Construction Materials  
-**Base:** accepted v7.6.1 r1 (Energy Kernel v2, Mode 25 calibrated)  
-**Model SHA-256:** `5bbc29b6e18caa64ec22267892b6cd0669649722c8fc029d8dba43a77a34d5a1`
+**Describes code:** Orbital Economy v7.7.1 r1 — Transport on Construction Materials  
+**Base:** accepted v7.7 r1 (Construction Materials)  
+**Model SHA-256:** `d53d014d727a439694e103aafb49f87d4dbbb362e581414cbf4dc71a19646f93`
 
 ## 1. Checkpoint
 
 | Property | Value |
 |---|---:|
-| ModelJSON elements | 3142 |
-| VARIABLE | 848 |
+| ModelJSON elements | 3187 |
+| VARIABLE | 858 |
 | STOCK | 71 |
-| FLOW | 151 |
-| LINK | 2072 |
-| Named primitives | 1070 |
-| Scenarios | 30 |
+| FLOW | 153 |
+| LINK | 2105 |
+| Named primitives | 1082 |
+| Scenarios | 32 |
 | Simulation | 0..1080 days |
 | Time step | 0.25 day |
 | Engine | `simulation@9.0.0` |
@@ -43,7 +43,7 @@ Each colony extracts regolith into a regional inventory and processes it into co
 X <Sector> Expansion = X <Sector> Desired Expansion × Min(X Capital Goods Fulfillment, X Construction Materials Fulfillment)
 ```
 
-and consumes construction materials by its own per-capacity norm (Refinery 20, Electronics 12, Power 1 — calibration parameters). Fulfillment and raw-material availability are scale-free (buffers in days of demand). Transport does not use construction materials yet (v7.7.1). Colony B builds only when stimulated: it starts with more Refinery / Electronics / Power capacity than it needs, so in calm scenarios (Modes 17, 21, 27) it winds capacity down, while demand surges and shocks make it expand (Modes 18–20, 23–26 — e.g. Mode 24 through the reused transport surge). None of Modes 27–29 stimulates B, so its construction-materials sector is idle there and B's construction-materials path is exercised only at zero; a stimulated Mode is planned with v7.7.1. Switch `Construction Materials Enabled`: Modes 0–26 = 0 (exact regression), Modes 27–29 = 1. Spec, test plan, delivery and acceptance: `docs/tasks/008-construction-materials/`.
+and consumes construction materials by its own per-capacity norm (Refinery 20, Electronics 12, Power 1 — calibration parameters). Fulfillment and raw-material availability are scale-free (buffers in days of demand). Since v7.7.1 shared Transport expansion draws construction materials from A and B as well (two legs by current stock shares; planning demand split 50/50), with `Min` of its two fulfillments. Colony B builds only when stimulated: it starts with more Refinery / Electronics / Power capacity than it needs, so in calm scenarios (Modes 17, 21, 27) it winds capacity down, while demand surges and shocks make it expand (Modes 18–20, 23–26, 31). Since v7.7.1 shared Transport also draws construction materials from A and B (two legs, as capital goods since v7.5.1), and Mode 31 — the transport surge with everything on — makes B build, extract regolith and produce construction materials. Switches: `Construction Materials Enabled` (Modes 0–26 = 0) and `Transport Construction Materials Enabled` (Modes 0–29 = 0); Modes 30–31 have both on. Spec, test plan, delivery and acceptance: `docs/tasks/008-construction-materials/`.
 
 ## 3. Energy Kernel v2
 
@@ -135,12 +135,20 @@ A processing capacity × 0.1 during the standard window. A construction-material
 
 A regolith extraction × 0.1 during the same window. The regolith stock is drained (≈ 0.9 of an initial 40), processing is raw-material-limited below its unshocked capacity, fulfillment falls to ≈ 0.48; recovery after the window. The 28/29 pair separates processing scarcity from raw-material scarcity, like 26/25 for energy.
 
+### Mode 30 — Transport Construction Materials Baseline
+
+Everything on, no stimulus. Transport draws construction materials from both A and B (source shares sum to 1); its construction-materials fulfillment stays ≈ 0.99. B does not produce construction materials here: its starting stock covers the transport draw (30 → 13 by day 1080).
+
+### Mode 31 — Transport Surge on Construction Materials
+
+The transport-demand surge of Modes 2 and 24 with everything on. B builds (Power, Refinery), extracts regolith up to its capacity and produces construction materials (≈ 1.85 per day at the peak); its construction-materials fulfillment dips to ≈ 0.93 — the first Mode in which B's construction-materials path runs at non-zero values.
+
 ## 6. Static QA
 
-| Metric | v7.7 r1 |
+| Metric | v7.7.1 r1 |
 |---|---:|
-| FLOW | 151 |
-| Boundary flows | 120 |
+| FLOW | 153 |
+| Boundary flows | 122 |
 | Unclassified boundary flows | 0 |
 | Declared transformation pairs | 15 |
 | Unpaired transformation flows | 0 |
@@ -150,7 +158,7 @@ A regolith extraction × 0.1 during the same window. The regolith stock is drain
 | Capital lifecycle instances | 7 |
 | Capital lifecycle non-conforming | **0** |
 
-Executable validation Modes 0–29 (`validation/validation-v7.7.json`) was run on the canonical platform on 2026-09-26: **30/30 PASS**; Modes 0–26 reproduce v7.6.1 r1 exactly (27 × `common=1004, changed=0, maxAbs=0`, 66 added series). v7.6.1 had reproduced v7.6 r2 in Modes 0–24 and 26 apart from the recalibrated constant's own series. v7.6 r2 in its turn reproduced v7.5.1 r1 exactly in Modes 0–24 (25 × `common=963, changed=0, maxAbs=0`, 41 added series). See `ACCEPTANCE_STATUS.md`.
+Executable validation Modes 0–31 (`validation/validation-v7.7.1.json`) was run on the canonical platform on 2026-09-26: **32/32 PASS**; Modes 0–29 reproduce v7.7 r1 exactly (30 × `common=1070, changed=0, maxAbs=0`, 12 added series). v7.7 had reproduced v7.6.1 r1 exactly in Modes 0–26. v7.6.1 had reproduced v7.6 r2 in Modes 0–24 and 26 apart from the recalibrated constant's own series. v7.6 r2 in its turn reproduced v7.5.1 r1 exactly in Modes 0–24 (25 × `common=963, changed=0, maxAbs=0`, 41 added series). See `ACCEPTANCE_STATUS.md`.
 
 ## 7. What v7.6 deliberately does not implement
 

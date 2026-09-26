@@ -1,6 +1,6 @@
 {
   "format": "orbital-economy-parameter-annotations-v1",
-  "model": "Orbital Economy v7.7 r1 — Construction Materials",
+  "model": "Orbital Economy v7.7.1 r1 — Transport on Construction Materials",
   "updated": "2026-09-26",
   "policy": "Каждый внешний параметр, влияющий на структуру поведения (сравнительные преимущества, нормирование, планирование), должен иметь аннотацию: роль, что меняет, доказательство (ссылка на прогон/документ). Несимметричные пары A/B аннотируются в первую очередь. Изменение значения = изменение модели → через change-policy, с обновлением аннотации.",
   "embedded_literals": [
@@ -1732,6 +1732,29 @@
       "applies_to_mirror": true,
       "tags": [
         "construction-materials",
+        "calibration",
+        "intensity"
+      ]
+    },
+    "Transport Construction Materials Enabled": {
+      "role": "v7.7.1 shared-Transport Construction Materials master switch.",
+      "effect": "0 preserves Modes 0-29 exactly; 1 makes shared Transport expansion require both Capital Goods and Construction Materials.",
+      "evidence": "V7_7_1_ARCHITECTURE_SPEC §0–§3.",
+      "since": "v7.7.1 r1",
+      "tags": [
+        "construction-materials",
+        "transport",
+        "switch"
+      ]
+    },
+    "Transport Construction Materials per Capacity": {
+      "role": "[calib] physical-material intensity for shared Transport, skeleton value 3.",
+      "effect": "Scales shared Transport Construction Materials demand and the exact A/B consumption-pair identity.",
+      "evidence": "Owner skeleton feasibility value; chosen near accepted Transport Capital Goods intensity 2.8333333333333335 and checked in candidate runs.",
+      "since": "v7.7.1 r1",
+      "tags": [
+        "construction-materials",
+        "transport",
         "calibration",
         "intensity"
       ]

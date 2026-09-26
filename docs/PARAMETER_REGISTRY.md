@@ -1,16 +1,16 @@
 # Orbital Economy — реестр внешних параметров
 
-- generated: 2026-09-25T22:31:57.963Z
-- model: Orbital Economy v7.7 r1 — Construction Materials — SHA-256 `5bbc29b6e18caa64ec22267892b6cd0669649722c8fc029d8dba43a77a34d5a1`
-- annotations: docs/PARAMETER_ANNOTATIONS.json (SHA-256 `c9591dfaef700d74b9152601e1485d683272a6e412b2e6b17b008f599f8bc85f`)
+- generated: 2026-09-26T10:39:35.367Z
+- model: Orbital Economy v7.7.1 r1 — Transport on Construction Materials — SHA-256 `d53d014d727a439694e103aafb49f87d4dbbb362e581414cbf4dc71a19646f93`
+- annotations: docs/PARAMETER_ANNOTATIONS.json (SHA-256 `df539aaa540c28f562438345bda12bd095ddeb7f7c3879d05599aeed91d6f7f0`)
 
 Всё, что модель не выводит сама: числовые константы, начальные запасы, переключатели, тестовые множители. Инвентарь сгенерирован из ModelJSON; аннотации («роль / что меняет / доказательство») ведутся вручную и версионируются вместе с baseline.
 
 ## Сводка
 
-- внешних величин: **353** (константы 242, начальные запасы 69, переключатели 7, тестовая обвязка 35)
-- по колониям: A 102, B 102, глобальные 149
-- аннотировано: **187 / 353** (53 %)
+- внешних величин: **355** (константы 243, начальные запасы 69, переключатели 8, тестовая обвязка 35)
+- по колониям: A 102, B 102, глобальные 151
+- аннотировано: **189 / 355** (53 %)
 - несимметричных пар A/B: **45**, из них без аннотации: **0**
 
 ## Несимметричные пары A/B — что задаёт различия колоний
@@ -251,6 +251,7 @@
 | Capital Lifecycle Enabled | switch | 1 | Переключатель v7.3 (1 в сыром файле; 0 в Modes 0–11; 1 в 12–20). | При 0 — Electronics/Power используют фиксированные legacy-мощности (v7.2 r4 бит-в-бит); при 1 — полный kernel капитала для Electronics и Power. К Refinery/Transport не применяется и применяться не должен (KERNEL_SPEC §5). | V7_3_R2_VALIDATION_REPORT §2. |
 | Construction Materials Enabled | switch | 1 | v7.7 master switch. | 0 preserves Modes 0-26 exactly; 1 makes colonial expansion require both Capital Goods and Construction Materials. | V7_7_ARCHITECTURE_SPEC §0–§3. |
 | Intermediate Inputs Enabled | switch | 1 | Переключатель v7.4 (1 в сыром файле; 0 в Modes 0–16; 1 в 17–20). | При 0 — точное воспроизведение v7.3 r2 (Feedstock из ∅ по legacy-цене). При 1 — металл как физический вход, Feedstock Extraction = 0, Feedstock Price = Market Price, Desired Smelting Rate += поставки. Только форма IfThenElse(switch, new, old). | CHECK_CANDIDATE r2: Modes 0–16 changed=0, maxAbs=0. |
+| Transport Construction Materials Enabled | switch | 1 | v7.7.1 shared-Transport Construction Materials master switch. | 0 preserves Modes 0-29 exactly; 1 makes shared Transport expansion require both Capital Goods and Construction Materials. | V7_7_1_ARCHITECTURE_SPEC §0–§3. |
 | Priority Stress A Ore Base Cost | test_wiring | 4 | Нейтральная A-сторона override-константа ore base cost для Mode 8. | Равна A Ore Base Cost = 4; позволяет A Effective Ore Base Cost иметь ту же test chain, что B, сохраняя прежний результат. |  |
 | Reverse A Mining Capacity | test_wiring | 70 | Нейтральная A-сторона override-константа mining capacity для Mode 4. | Равна A Mining Capacity = 70; симметризует ветку Reverse Advantage без изменения численного результата A. |  |
 | Reverse A Wage | test_wiring | 100 | Нейтральная A-сторона override-константа Mode 4; зеркало Reverse B Wage. | Равна A Wage = 100, поэтому введение A Effective Wage не меняет A в Mode 4; позволяет сделать cost wiring A/B структурно зеркальным. |  |
@@ -265,6 +266,7 @@
 | v7.7 Regolith Shock Multiplier | test_wiring | 0.1 | [calib] Mode 29 extraction-capacity shock, value 0.1. | Controls severity of temporary A Regolith extraction shock. | Owner skeleton feasibility value; candidate run calibrates behavioural thresholds. |
 | Export Reserve | constant | 100 | Запас металла, ниже которого экспортёр не продаёт (100). | Ограничивает экспорт при низком запасе — в Mode 18 A сокращает экспорт 17 → 5 при запасе 127. | Mode 18 series. |
 | Import Share Sensitivity | constant | 100 | Чувствительность доли импорта к ценовому преимуществу (100). | Скорость, с которой покупатели переключаются на импорт при более дешёвом landed price; вместе с Import Inventory Adjustment Time (20 д) определяет, почему переворот электронной торговли в Mode 17 к дню 1080 ещё не завершён (A→B только 1.25). | Mode 17: Electronics A→B 0 → 0.12 → 1.25. |
+| Transport Construction Materials per Capacity | constant | 3 | [calib] physical-material intensity for shared Transport, skeleton value 3. | Scales shared Transport Construction Materials demand and the exact A/B consumption-pair identity. | Owner skeleton feasibility value; chosen near accepted Transport Capital Goods intensity 2.8333333333333335 and checked in candidate runs. |
 | Transport Construction Time | constant | 120 | Отраслевая policy kernel капитала (120 д). | Не часть kernel-контракта — отраслевая параметризация (KERNEL_SPEC §4.3). Сравнение секторов: CAPITAL_LIFECYCLE_SECTOR_MAPPING, последняя таблица. |  |
 | Transport Installed Throughput Capacity | initial_stock | 20 | Начальная пропускная способность транспорта (20 т/день). | Стартовый общий ресурс перевозок обоих товаров; далее эндогенно через Transport kernel. |  |
 | Travel Time | constant | 10 | Время в пути A↔B (10 дней; глобально). | Задержка физических поставок (Cargo в пути) и фрахтовая часть landed price (Transit Cost 0.2/т·день). Не орбитальная физика — абстракция, одинаково годится для планетарных регионов. |  |
@@ -580,6 +582,7 @@
 | Intermediate Inputs Enabled | switch | global | 1 (сценарии: {"0":0,"1":0,"2":0,"3":0,"4":0,"5":0,"6":0,"7":0,"8":0,"9":0…) |  | Master switch for v7.4 Metal-to-Electronics intermediate-input coupling. Modes 0-16 override to 0; Modes 17+ enable it. | ✓ |
 | Power Resource Enabled | switch | global | 0 (сценарии: {"0":0,"1":0,"2":0,"3":0,"4":0,"5":0,"6":0,"7":0,"8":0,"9":0…) |  | v7.6 master switch. When 0, the accepted v7.5.1 energy path is reproduced; when 1, generation requires a physical operating resource. |  |
 | Transport Capital Goods Enabled | switch | global | 1 (сценарии: {"0":0,"1":0,"2":0,"3":0,"4":0,"5":0,"6":0,"7":0,"8":0,"9":0…) |  | v7.5.1 regression switch: when enabled, Transport Capacity Expansion is physically backed by Capital Goods drawn from A/B regional inventories. |  |
+| Transport Construction Materials Enabled | switch | global | 1 (сценарии: {"0":0,"1":0,"2":0,"3":0,"4":0,"5":0,"6":0,"7":0,"8":0,"9":0…) |  | v7.7.1 master switch: shared Transport expansion physically requires Construction Materials. | ✓ |
 
 ### Test
 
@@ -653,6 +656,7 @@
 | Transport Allocation Bid Floor | constant | global | 0.01 |  | Small positive numerical floor for the allocation score. Requested trade already requires a positive trade advantage, so this floor is primarily for numerical robustness. |  |
 | Transport Capital Cost per Capacity | constant | global | 150 |  | Capital required to add one tonne/day of throughput capacity. |  |
 | Transport Capital Goods per Capacity | constant | global | 2.8333333333333335 |  | Capital Goods required per unit of new Transport installed throughput capacity. Initial calibration preserves the v7.5 Refinery ratio of Capital Goods to financial capital cost: 17/900 × 150. |  |
+| Transport Construction Materials per Capacity | constant | global | 3 |  | [calib] Construction Materials units consumed per unit of shared Transport capacity expansion. | ✓ |
 | Transport Construction Time | constant | global | 120 |  | Physical timescale for closing an installed transport-capacity shortage. | ✓ |
 | Transport Decommissioning Capacity | initial_stock | global | 0 |  | Transport capacity committed to disposal/decommissioning and no longer available on the route. This is an explicit extension point for future reassignment or secondary-market logic. |  |
 | Transport Decommissioning Time | constant | global | 360 |  | Physical time from decommissioning commitment to retired transport capacity. For mobile assets, future versions may instead route much of Surplus into reassignment/resale. |  |
