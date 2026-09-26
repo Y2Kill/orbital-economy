@@ -1,0 +1,67 @@
+{
+  "format": "orbital-economy-parameter-annotations-fragment-v1",
+  "model": "Orbital Economy v7.7.2 Construction Materials Energy candidate r1",
+  "updated": "2026-09-27",
+  "note": "Task 012 fragment. New external constants and calibrated initial signal stocks; reviewer merges accepted entries into the canonical registry.",
+  "parameters": {
+    "Construction Materials Energy Enabled": {
+      "role": "v7.7.2 Construction Materials energy-coupling master switch.",
+      "effect": "0 preserves Modes 0-31 exactly; 1 makes Construction Materials processing request and receive energy through the common colony allocator.",
+      "evidence": "V7_7_2_ARCHITECTURE_SPEC §0–§3.",
+      "since": "v7.7.2 candidate r1",
+      "tags": [
+        "construction-materials",
+        "energy",
+        "switch"
+      ]
+    },
+    "Construction Materials Energy per Unit": {
+      "role": "Physical energy intensity of Construction Materials processing, value 10.",
+      "effect": "Scales Construction Materials requested energy from the pre-energy production rate.",
+      "evidence": "V7_7_2_ARCHITECTURE_SPEC §2; owner-defined skeleton value, compared with Metal=30 and Electronics=12.",
+      "since": "v7.7.2 candidate r1",
+      "tags": [
+        "construction-materials",
+        "energy",
+        "intensity"
+      ]
+    },
+    "Construction Materials Demand Signal Adjustment Time": {
+      "role": "Adjustment time of the smoothed Construction Materials demand signal, value 3.",
+      "effect": "Controls how quickly the allocator-facing production plan follows construction demand while preserving one-step causality.",
+      "evidence": "V7_7_2_ARCHITECTURE_SPEC §1–§2; same idiom as Energy Demand Signal Adjustment Time.",
+      "since": "v7.7.2 candidate r1",
+      "tags": [
+        "construction-materials",
+        "signal",
+        "causality"
+      ]
+    },
+    "A Construction Materials Demand Signal": {
+      "role": "Initial smoothed Construction Materials demand signal for colony A, value 0.14.",
+      "effect": "Sets the startup state of the causal demand signal before endogenous adjustment.",
+      "evidence": "V7_7_2_ARCHITECTURE_SPEC §2; owner skeleton initial value near day-0 demand ≈0.137.",
+      "since": "v7.7.2 candidate r1",
+      "applies_to_mirror": true,
+      "tags": [
+        "construction-materials",
+        "signal",
+        "initial",
+        "calibration"
+      ]
+    },
+    "B Construction Materials Demand Signal": {
+      "role": "Initial smoothed Construction Materials demand signal for colony B, value 0.14.",
+      "effect": "Sets the startup state of the causal demand signal before endogenous adjustment.",
+      "evidence": "V7_7_2_ARCHITECTURE_SPEC §2; owner skeleton initial value near day-0 demand ≈0.137.",
+      "since": "v7.7.2 candidate r1",
+      "applies_to_mirror": true,
+      "tags": [
+        "construction-materials",
+        "signal",
+        "initial",
+        "calibration"
+      ]
+    }
+  }
+}

@@ -1,0 +1,131 @@
+{
+  "format": "orbital-economy-change-policy-v1",
+  "name": "Orbital Economy v7.7.2 Construction Materials Energy - change contract candidate r1",
+  "description": "Owner draft rules retained unchanged. Accepted baseline v7.7.1 r1; Modes 0-31 exact; Modes 32-33 carry the new Construction Materials energy mechanism. validation_sha256 remains intentionally unbound until calibration finalises validation.json.",
+  "accepted_model_sha256": "d53d014d727a439694e103aafb49f87d4dbbb362e581414cbf4dc71a19646f93",
+  "validation_sha256": "<SHA-256 of the delivered validation.json>",
+  "comparison": {
+    "abs_tolerance": 0,
+    "rel_tolerance": null,
+    "rel_floor": 1e-12
+  },
+  "engine": {
+    "package": "simulation",
+    "version": "9.0.0"
+  },
+  "default_action": "deny",
+  "require_full_mode_coverage": true,
+  "rules": [
+    {
+      "id": "regression-guard-modes-0-31",
+      "action": "deny",
+      "event": "series_changed",
+      "modes": "0-31",
+      "name": "*",
+      "note": "Modes 0-31 set Construction Materials Energy Enabled = 0 and must reproduce v7.7.1 r1 exactly (first match wins)."
+    },
+    {
+      "id": "forbid-removals-and-structural-drift",
+      "action": "deny",
+      "event": [
+        "element_removed",
+        "series_removed",
+        "mode_removed",
+        "link_removed",
+        "type_changed",
+        "simulation_changed",
+        "time_axis_changed",
+        "scenario_renamed"
+      ],
+      "name": "*"
+    },
+    {
+      "id": "add-construction-materials-energy",
+      "action": "allow",
+      "event": "element_added",
+      "name": [
+        "Construction Materials Energy *",
+        "Construction Materials Demand Signal Adjustment Time",
+        "? Pre Energy Construction Materials Production Rate",
+        "? Construction Materials Requested Energy",
+        "? Construction Materials Allocated Energy",
+        "? Construction Materials Energy Fulfillment Ratio",
+        "? Construction Materials Demand Signal",
+        "? Construction Materials Demand Signal *"
+      ],
+      "required": true,
+      "note": "switch, energy per unit, demand-signal stock and flows, pre-energy rate, requested/allocated energy, energy fulfillment (V7_7_2_ARCHITECTURE_SPEC §2)"
+    },
+    {
+      "id": "change-definitions-per-spec",
+      "action": "allow",
+      "event": "definition_changed",
+      "name": [
+        "? Construction Materials Production Rate",
+        "? Desired Construction Materials Production",
+        "? Total Requested Energy",
+        "? Energy Supply",
+        "Test 26 Energy Kernel Capacity Shock Active"
+      ],
+      "required": true,
+      "note": "under the switch: production = pre-energy x CM energy fulfillment; plan reads the demand signal; CM request joins Total Requested Energy and CM allocation joins Energy Supply; Test 26 flag + Mode 33 (spec §3)"
+    },
+    {
+      "id": "link-into-changed-definitions",
+      "action": "allow",
+      "event": "link_added",
+      "name": [
+        "* -> ? Construction Materials Production Rate",
+        "* -> ? Desired Construction Materials Production",
+        "* -> ? Total Requested Energy",
+        "* -> ? Energy Supply",
+        "* -> Test 26 Energy Kernel Capacity Shock Active"
+      ]
+    },
+    {
+      "id": "link-into-new-elements",
+      "action": "allow",
+      "event": "link_added",
+      "name": [
+        "* -> Construction Materials Energy *",
+        "* -> Construction Materials Demand Signal Adjustment Time",
+        "* -> ? Pre Energy Construction Materials Production Rate",
+        "* -> ? Construction Materials Requested Energy",
+        "* -> ? Construction Materials Allocated Energy",
+        "* -> ? Construction Materials Energy Fulfillment Ratio",
+        "* -> ? Construction Materials Demand Signal",
+        "* -> ? Construction Materials Demand Signal *"
+      ]
+    },
+    {
+      "id": "add-modes-32-33",
+      "action": "allow",
+      "event": "mode_added",
+      "modes": "32-33",
+      "required": true
+    },
+    {
+      "id": "scenarios-0-31-gain-switch-off",
+      "action": "allow",
+      "event": "scenario_input_changed",
+      "modes": "0-31",
+      "required": true,
+      "note": "only \"Construction Materials Energy Enabled\": 0"
+    },
+    {
+      "id": "new-series-everywhere",
+      "action": "allow",
+      "event": "series_added",
+      "name": [
+        "Construction Materials Energy *",
+        "Construction Materials Demand Signal Adjustment Time",
+        "? Pre Energy Construction Materials Production Rate",
+        "? Construction Materials Requested Energy",
+        "? Construction Materials Allocated Energy",
+        "? Construction Materials Energy Fulfillment Ratio",
+        "? Construction Materials Demand Signal",
+        "? Construction Materials Demand Signal *"
+      ]
+    }
+  ]
+}
