@@ -2,6 +2,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { readJson, sha256File, nowIso, writeJson, ensureDir } from './util.js';
 import { runStructureAudits, printStructureAudits } from './structure_audit.js';
+import { auditAlgebraicLoops } from './loop_audit.js';
 
 function esc(s) { return String(s ?? '').replace(/\|/g, '\\|').replace(/\n/g, ' '); }
 
@@ -118,6 +119,30 @@ export function writeAuditReports(outDir, report) {
     }
   }
   l.push('');
+  l.push('## Algebraic loops (switch-aware, unconditional static audit)');
+  l.push('');
+  const al = report.algebraicLoops;
+  if (!al) l.push('- not available');
+  else {
+    l.push(`- status: **${al.status}**`);
+    l.push(`- switches: ${al.switches.length} — ${al.switches.map(esc).join(', ') || 'none'}`);
+    l.push(`- combinations: ${al.combinations}; with loops: **${al.combinationsWithLoops}**`);
+    l.push(`- Modes with loops: ${al.modesWithLoops.join(', ') || 'none'}`);
+    for (const e of al.errors || []) l.push(`- **FAIL parser** ${esc(e.element)} — ${esc(e.message)}`);
+    if (al.loops?.length) {
+      l.push('');
+      l.push('| SCC size | Combinations | Example enabled switches | Shortest cycle |');
+      l.push('|---:|---:|---|---|');
+      for (const x of al.loops) l.push(`| ${x.size} | ${x.combinations} | ${esc(x.example.join(', ') || 'none')} | ${esc(x.shortestCycle.join(' → '))} |`);
+      l.push('');
+      l.push('<details><summary>Loop component members</summary>');
+      l.push('');
+      for (const [i, x] of al.loops.entries()) l.push(`- #${i + 1} (${x.size}): ${x.members.map(esc).join(', ')}`);
+      l.push('');
+      l.push('</details>');
+    }
+  }
+  l.push('');
   fs.writeFileSync(path.join(outDir, 'structure-audit.md'), l.join('\n'), 'utf8');
 }
 
@@ -143,7 +168,62 @@ export function runAuditCommand({ modelFile, validationFile, outDir }) {
   console.log(`STRUCTURE AUDIT RESULT: ${report.status}`);
   if (report.openBoundaries?.summary) console.log(`Open boundaries: ${report.openBoundaries.summary.openFlows}; unclassified=${report.openBoundaries.summary.unclassified}; closed-world violations=${report.openBoundaries.summary.closedWorldViolations}`);
   if (report.colonySymmetry?.summary) console.log(`Colony symmetry: mismatches=${report.colonySymmetry.summary.mismatches}; parameter differences=${report.colonySymmetry.summary.parameterDifferences}; exceptions=${report.colonySymmetry.summary.exceptions}`);
+  if (report.algebraicLoops) console.log(`Algebraic loops: switches=${report.algebraicLoops.switches.length}; combinations=${report.algebraicLoops.combinations}; with loops=${report.algebraicLoops.combinationsWithLoops}; Modes=${report.algebraicLoops.modesWithLoops.join(',') || 'none'}`);
   console.log(`Report: ${path.join(outDir, 'structure-audit.md')}`);
   console.log('============================================================');
+  return report;
+}
+
+
+function writeLoopReports(outDir, report) {
+  ensureDir(outDir);
+  writeJson(path.join(outDir, 'algebraic-loops.json'), report);
+  const l = [];
+  l.push('# Orbital Economy Lab — algebraic loop audit');
+  l.push('');
+  l.push(`- generated: ${report.generated}`);
+  l.push(`- model: ${esc(report.model.name || report.model.file)}`);
+  l.push(`- model SHA-256: \`${report.model.sha256}\``);
+  l.push(`- status: **${report.status}**`);
+  l.push(`- switches: ${report.switches.length} — ${report.switches.map(esc).join(', ') || 'none'}`);
+  l.push(`- combinations: ${report.combinations}; with loops: **${report.combinationsWithLoops}**`);
+  l.push(`- Modes with loops: ${report.modesWithLoops.join(', ') || 'none'}`);
+  for (const e of report.errors || []) l.push(`- **FAIL parser** ${esc(e.element)} — ${esc(e.message)}`);
+  if (report.loops?.length) {
+    l.push('');
+    l.push('| SCC size | Combinations | Example enabled switches | Shortest cycle |');
+    l.push('|---:|---:|---|---|');
+    for (const x of report.loops) l.push(`| ${x.size} | ${x.combinations} | ${esc(x.example.join(', ') || 'none')} | ${esc(x.shortestCycle.join(' → '))} |`);
+  }
+  l.push('');
+  fs.writeFileSync(path.join(outDir, 'algebraic-loops.md'), l.join('\n'), 'utf8');
+}
+
+export function runLoopsCommand({ modelFile, outDir }) {
+  const raw = readJson(modelFile);
+  const started = process.hrtime.bigint();
+  const result = auditAlgebraicLoops(raw);
+  const runtimeSeconds = Number(process.hrtime.bigint() - started) / 1e9;
+  const report = {
+    generated: nowIso(),
+    model: { file: path.resolve(modelFile), name: raw.name || null, sha256: sha256File(modelFile) },
+    runtimeSeconds,
+    ...result
+  };
+
+  console.log('Orbital Economy Lab - algebraic loop audit (static)');
+  console.log(`Model:       ${raw.name || path.basename(modelFile)}`);
+  console.log(`  SHA-256:   ${report.model.sha256}`);
+  console.log(`Switches:    ${report.switches.length} — ${report.switches.join(', ') || 'none'}`);
+  console.log(`Combinations:${report.combinations}; with loops=${report.combinationsWithLoops}`);
+  console.log(`Modes:       ${report.modesWithLoops.join(',') || 'none'}`);
+  for (const e of report.errors || []) console.log(`  [FAIL] parser ${e.element}: ${e.message}`);
+  for (const x of report.loops || []) {
+    console.log(`  [FAIL] size=${x.size}; combinations=${x.combinations}; example=[${x.example.join(', ')}]`);
+    console.log(`         shortest cycle: ${x.shortestCycle.join(' -> ')}`);
+  }
+  console.log(`Runtime:     ${runtimeSeconds.toFixed(3)} s`);
+  writeLoopReports(outDir, report);
+  console.log(`Report:      ${path.join(outDir, 'algebraic-loops.md')}`);
   return report;
 }

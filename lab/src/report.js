@@ -87,6 +87,20 @@ export function writeReports(outDir, report) {
       }
     }
   }
+  const al = st?.algebraicLoops;
+  if (al) {
+    lines.push('');
+    lines.push('### Algebraic loops');
+    lines.push('');
+    lines.push(`- status: **${al.status}**`);
+    lines.push(`- switches: ${al.switches.length}; combinations: ${al.combinations}; combinations with loops: **${al.combinationsWithLoops}**`);
+    lines.push(`- Modes with loops: ${al.modesWithLoops.join(', ') || 'none'}`);
+    for (const e of al.errors || []) lines.push(`- **FAIL parser** ${esc(e.element)} — ${esc(e.message)}`);
+    for (const x of al.loops || []) {
+      lines.push(`- **FAIL loop** size=${x.size}; combinations=${x.combinations}; example=[${esc(x.example.join(', ') || 'none')}]`);
+      lines.push(`  - shortest cycle: ${esc(x.shortestCycle.join(' → '))}`);
+    }
+  }
   lines.push('');
 
   lines.push('## Web cross-check');

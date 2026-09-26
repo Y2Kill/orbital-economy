@@ -2,12 +2,14 @@
 import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
+import { spawnSync } from 'node:child_process';
 import { auditAlgebraicLoops, algebraicLoopCombinationDetails } from './loop_audit.js';
 import { runStructureAudits } from './structure_audit.js';
 import { compareModels } from './compare_models.js';
 import { loadModelJSON } from './engine.js';
 import { listScenarios, modelJsonForScenario } from './model.js';
 import { ensureDir, writeJson } from './util.js';
+import { runAuditCommand } from './audit_run.js';
 
 let passed = 0;
 let failed = 0;
@@ -221,9 +223,32 @@ try {
       console.log = oldLog;
       console.error = oldErr;
     }
-    return cmp.result === 'NOT_COMPARED' && cmp.scenarios.length === 0
+    if (!(cmp.result === 'NOT_COMPARED' && cmp.scenarios.length === 0
       && cmp.static.candidate.status === 'FAIL'
-      && cmp.static.candidate.structure?.status === 'FAIL';
+      && cmp.static.candidate.structure?.status === 'FAIL')) return false;
+
+    const auditDir = ensureDir(path.join(tmp, 'audit'));
+    let auditReport;
+    console.log = () => {};
+    console.error = () => {};
+    try {
+      auditReport = runAuditCommand({ modelFile: candidateFile, validationFile, outDir: auditDir });
+    } finally {
+      console.log = oldLog;
+      console.error = oldErr;
+    }
+    const md = fs.readFileSync(path.join(auditDir, 'structure-audit.md'), 'utf8');
+    const cycle = auditReport.algebraicLoops?.loops?.[0]?.shortestCycle || [];
+    if (auditReport.status !== 'FAIL' || !cycle.length || !md.includes('## Algebraic loops') || !md.includes(cycle.join(' → '))) return false;
+
+    const loopsDir = path.join(tmp, 'loops-cli');
+    const cli = spawnSync(process.execPath, ['src/cli.js', 'loops', candidateFile, `--out=${loopsDir}`], {
+      cwd: process.cwd(), encoding: 'utf8'
+    });
+    if (cli.status !== 1 || !fs.existsSync(path.join(loopsDir, 'algebraic-loops.json'))) {
+      throw new Error(`loops CLI expected exit 1, got ${cli.status}; stderr=${cli.stderr}`);
+    }
+    return `NOT_COMPARED; shortest cycle: ${cycle.join(' -> ')}; loops CLI exit=1`;
   });
 
   await expect('13 audit JSON is deterministic for the same input', () => {

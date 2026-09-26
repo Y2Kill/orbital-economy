@@ -8,7 +8,7 @@ import { compareModels } from './compare_models.js';
 import { evaluatePolicyFiles } from './policy.js';
 import { runCandidatePolicyCheck } from './policy_run.js';
 import { runConformanceCommand } from './conformance_run.js';
-import { runAuditCommand } from './audit_run.js';
+import { runAuditCommand, runLoopsCommand } from './audit_run.js';
 import { applyPatch } from './patch.js';
 import { runParametersCommand } from './parameters.js';
 import { runSeriesCommand } from './series.js';
@@ -19,7 +19,7 @@ function defaultOutDir() {
 
 function usage() {
   console.log(`
-Orbital Economy Lab v0.9.4
+Orbital Economy Lab v0.9.5
 
 Recommended workspace commands:
   lab [--input=input] [--modes=all] [--out=DIR]
@@ -164,6 +164,12 @@ try {
     const outDir = ensureDir(options.out || path.resolve('output', `conformance-${new Date().toISOString().replace(/[:.]/g, '-')}`));
     const report = runConformanceCommand({ modelFile, validationFile, outDir });
     process.exitCode = report.status === 'PASS' ? 0 : 2;
+  } else if (cmd === 'loops') {
+    if (!positional[1]) throw new Error('Need a path to model.json');
+    const modelFile = positional[1];
+    const outDir = ensureDir(options.out || path.resolve('output', `loops-${new Date().toISOString().replace(/[:.]/g, '-')}`));
+    const report = runLoopsCommand({ modelFile, outDir });
+    process.exitCode = report.status === 'FAIL' ? 1 : 0;
   } else if (cmd === 'audit') {
     let modelFile = positional[1] || null;
     let validationFile = positional[2] || null;
