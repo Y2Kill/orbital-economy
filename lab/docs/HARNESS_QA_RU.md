@@ -1,4 +1,4 @@
-# QA самого Orbital Economy Lab v0.9.5
+# QA самого Orbital Economy Lab v0.9.6
 
 ## 1. Operational QA
 
@@ -124,11 +124,32 @@ LOOP_SELF_TEST.cmd
 
 Linux CI задачи 010: **13 passed, 0 failed**, около 17 s. Каноническая Windows-проверка выполняется владельцем при приёмке.
 
+## 3d. Planet v1 closure QA (v0.9.6)
+
+Запуск:
+
+```text
+PLANET_SELF_TEST.cmd
+```
+
+**16 случаев** на accepted v7.7.1 r1 и мутированных копиях:
+
+- baseline: точное совпадение reference counters — 17 process instances + 2 legacy; P2 7/10/0; P3 4/2/11/0; P4 0/6; P5 4/13; P6 4; reversibility 0;
+- L1–L5: ложные capacity/energy declarations отвергаются; для далёких зависимостей сохраняется shortest path и число hops;
+- completeness: удалённый process виден как undeclared в `report` и становится FAIL в `classify`;
+- `planet_v1` / `planet_strict`: проверяются точные dimensions текущего долга;
+- reversibility constant capacity, deposit closure, state-dependent demand driver и unread labor intensity;
+- lower-case + whitespace в declaration names дают тот же verdict/counters;
+- case 15: `runStructureAudits`, `STATIC_ONLY_PLUGINS` и `audit --planet-closure` интегрированы;
+- case 16: JSON результата детерминирован.
+
+Linux CI задачи 011: **16 passed, 0 failed**; каноническая Windows-проверка выполняется reviewer при приёмке.
+
 ## 4. Fail-fast
 
 Если web-reference batch не проходит preflight, длительные simulation не запускаются.
 
-Если accepted или candidate не проходит static validation в model comparator, numerical comparison не запускается. С v0.5.0 в static validation входит Capital Lifecycle Kernel conformance, с v0.6.0 — structure audits, а с v0.9.5 — безусловный switch-aware algebraic-loop audit. Неконформный, асимметричный или содержащий возможную алгебраическую петлю candidate даёт `NOT_COMPARED` без единой сценарной симуляции.
+Если accepted или candidate не проходит static validation в model comparator, numerical comparison не запускается. С v0.5.0 в static validation входит Capital Lifecycle Kernel conformance, с v0.6.0 — structure audits, с v0.9.5 — безусловный switch-aware algebraic-loop audit, с v0.9.6 — декларативный `planet_closure`. Ложная Planet declaration или нарушение активного enforce-mode блокирует candidate до сценарной simulation.
 
 Policy preflight отдельно проверяет:
 
