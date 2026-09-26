@@ -1,3 +1,5 @@
+import { auditAlgebraicLoops } from './loop_audit.js';
+
 // Static structure audits (pre-simulation), declared as validation plugins:
 //
 //   open_boundaries  — every FLOW whose `from` or `to` is null crosses the model boundary.
@@ -233,10 +235,25 @@ export function runStructureAudits(raw, validation) {
   const cs = plugins.find(p => p?.type === 'colony_symmetry');
   const openBoundaries = ob ? auditOpenBoundaries(raw, ob) : null;
   const colonySymmetry = cs ? auditColonySymmetry(raw, cs) : null;
-  const parts = [openBoundaries, colonySymmetry].filter(Boolean);
-  if (!parts.length) return { status: 'SKIPPED', message: 'validation has no open_boundaries / colony_symmetry plugin', openBoundaries, colonySymmetry };
-  const status = parts.some(p => p.status === 'FAIL') ? 'FAIL' : 'PASS';
-  return { status, openBoundaries, colonySymmetry };
+
+  // Algebraic loops are a model property, not a validation plugin: always run.
+  const algebraicLoops = auditAlgebraicLoops(raw);
+  const configured = [openBoundaries, colonySymmetry].filter(Boolean);
+
+  // Backward compatibility for structure_qa: a validation without the two
+  // legacy structure plugins remains SKIPPED only when the unconditional loop
+  // audit itself passes. A loop or parser failure always makes the gate FAIL.
+  if (!configured.length && algebraicLoops.status !== 'FAIL') {
+    return {
+      status: 'SKIPPED',
+      message: 'validation has no open_boundaries / colony_symmetry plugin; algebraic loop audit PASS',
+      openBoundaries, colonySymmetry, algebraicLoops
+    };
+  }
+
+  const parts = [...configured, algebraicLoops];
+  const status = parts.some(p => p?.status === 'FAIL') ? 'FAIL' : 'PASS';
+  return { status, openBoundaries, colonySymmetry, algebraicLoops };
 }
 
 export function structureAuditErrors(audit) {
@@ -245,6 +262,13 @@ export function structureAuditErrors(audit) {
     if (!part) continue;
     for (const e of part.specErrors || []) out.push(`${part.type} spec: ${e}`);
     for (const c of part.checks || []) if (c.status === 'FAIL') out.push(`${part.type}: ${c.name}: ${c.message}`);
+  }
+  const loops = audit?.algebraicLoops;
+  if (loops?.status === 'FAIL') {
+    for (const e of loops.errors || []) out.push(`algebraic_loops parser: ${e.element}: ${e.message}`);
+    for (const x of loops.loops || []) {
+      out.push(`algebraic_loops: size=${x.size}, combinations=${x.combinations}, cycle=${x.shortestCycle.join(' -> ')}`);
+    }
   }
   return out;
 }
@@ -268,6 +292,14 @@ export function printStructureAudits(audit, log = console.log) {
       log(`    colony symmetry (${cs.tokens.join('↔')}): pairs=${cs.summary.pairsChecked}, links=${cs.summary.linksChecked}, mismatches=${cs.summary.mismatches}, parameter differences=${cs.summary.parameterDifferences}, exceptions=${cs.summary.exceptions}`);
       for (const m of cs.mismatches.slice(0, 20)) log(`        - ${m.kind}: ${m.name}${m.expected ? ` | expected ${m.expected}` : ''}${m.actual ? ` | actual ${m.actual}` : ''}`);
       if (cs.mismatches.length > 20) log(`        … ${cs.mismatches.length - 20} more`);
+    }
+  }
+  const al = audit.algebraicLoops;
+  if (al) {
+    log(`    algebraic loops: switches=${al.switches.length}; combinations=${al.combinations}; with loops=${al.combinationsWithLoops}; Modes=${al.modesWithLoops.join(',') || 'none'}`);
+    for (const e of al.errors || []) log(`        [FAIL] parser ${e.element}: ${e.message}`);
+    for (const x of al.loops || []) {
+      log(`        [FAIL] size=${x.size}; combinations=${x.combinations}; example=[${x.example.join(', ')}]; cycle=${x.shortestCycle.join(' -> ')}`);
     }
   }
 }
