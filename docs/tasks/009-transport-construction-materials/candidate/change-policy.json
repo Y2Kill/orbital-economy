@@ -3,7 +3,7 @@
   "name": "Orbital Economy v7.7.1 Transport on Construction Materials - change contract candidate r1",
   "description": "Owner draft rules retained unchanged. Accepted baseline: v7.7 r1. Modes 0-29 must reproduce it exactly; new behaviour lives in Modes 30-31 behind Transport Construction Materials Enabled. validation_sha256 remains a placeholder until validation is finalized.",
   "accepted_model_sha256": "5bbc29b6e18caa64ec22267892b6cd0669649722c8fc029d8dba43a77a34d5a1",
-  "validation_sha256": "<SHA-256 of the delivered validation.json>",
+  "validation_sha256": "5aba67ef5ef4b60a095ffe2005112de13cf04feafcdce3fa30ce018016116daa",
   "comparison": {
     "abs_tolerance": 0,
     "rel_tolerance": null,
