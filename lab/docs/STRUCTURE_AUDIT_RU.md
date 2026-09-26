@@ -1,6 +1,6 @@
-# Structure audits — границы, A/B-симметрия и алгебраические петли (Lab v0.9.5)
+# Structure audits — границы, A/B-симметрия, алгебраические петли и Planet v1 closure (Lab v0.9.6)
 
-Три статические проверки структуры ModelJSON, выполняемые до симуляции. `open_boundaries` и `colony_symmetry` объявляются как плагины validation JSON. `algebraic_loops` с v0.9.5 выполняется **всегда**, независимо от validation: он анализирует формулы VARIABLE/FLOW и все комбинации бинарных сценарных переключателей.
+Четыре статические проверки структуры ModelJSON, выполняемые до симуляции. `open_boundaries`, `colony_symmetry` и `planet_closure` объявляются как плагины validation JSON. `algebraic_loops` выполняется **всегда**, независимо от validation. `planet_closure` с v0.9.6 связывает физические source-процессы с декларативным контрактом Planet v1 по мощности, энергии, исчерпаемым запасам, труду и внешнему спросу.
 
 ```text
 STRUCTURE_AUDIT.cmd  → output\audit-<timestamp>\structure-audit.md/.json
@@ -188,7 +188,58 @@ LOOP_SELF_TEST.cmd
 - Это аудит алгебраических зависимостей одного шага, не анализ динамической устойчивости и не поиск циклов через STOCK во времени.
 
 ---
-## 4. QA — `STRUCTURE_SELF_TEST.cmd` + `LOOP_SELF_TEST.cmd`
+
+## 4. `planet_closure` — per-process аудит Planet v1
+
+Плагин отвечает на вопрос, **какие физические процессы модели уже имеют явно объявленные ограничения P2–P6**, а какие ещё остаются долгом Planet v1. Он не заменяет `open_boundaries`: список ожидаемых производственных source-FLOW берётся именно из категорий `open_boundaries`, перечисленных в `process_categories`.
+
+### Разрешение имён и доказательства зависимостей
+
+Все имена элементов из декларации разрешаются по ключу `trim().toLowerCase()`; в JSON/Markdown выводятся канонические `element.name` из ModelJSON.
+
+Утверждение «A читает B» считается доказанным только если существует reference path длиной не более `max_hops` (в декларации v7.7.1 — 4). Промежуточными узлами пути могут быть только VARIABLE/FLOW; конечной целью может быть STOCK. Если реальный shortest path существует, но длиннее лимита, FAIL сохраняет полный путь и число hops — это защищает от ложного признания далёкой экономической обратной связи локальным физическим ограничением.
+
+### Роли P2–P6
+
+- **P2 capacity**: `kernel` требует чтение указанного capacity STOCK; `constant` и `unbounded` — явные исключения с обязательным `reason`. Для constant дополнительно проверяется reversibility: параметр не должен использоваться вне dependency closure собственного output.
+- **P3 energy**: `requests` требует energy request, включённый в total request, чтение fulfillment выпуском и общий planned-rate элемент; `producer` допустим для energy service; `none` — исключение с обязательным reason.
+- **P4 deposits**: extraction может ссылаться на реальный deposit STOCK; отсутствие deposit пока считается отдельным долгом.
+- **P5 labor**: `declared` intensity должна существовать и реально читаться формулой; `undeclared` считается отдельным долгом.
+- **P6 demand drivers**: объявленные внешние параметры должны быть без STOCK-зависимости и реально вести к заявленным consumption flows.
+
+Legacy-процессы учитываются отдельно и не входят в 17 активных P2–P6 process instances.
+
+### Режимы enforce
+
+- `report` — фактическая карта состояния; undeclared/исключения являются метриками, структурно ложная декларация всё равно FAIL.
+- `classify` — дополнительно требует полноту process declaration для ожидаемых source outputs.
+- `planet_v1` — требует полноту процессов, P2/P3 roles, deposit closure, labor declaration, demand drivers и нулевые reversibility violations; задокументированные P2/P3 exceptions пока разрешены.
+- `planet_strict` — всё из `planet_v1` плюс **ноль P2/P3 exceptions**.
+
+Accepted v7.7.1 r1 в режиме `report`:
+
+```text
+processes=17; legacy=2; expected source outputs=16
+P2 capacity: kernel=7; exceptions=10; undeclared=0
+P3 energy: requests=4; producer=2; exceptions=11; undeclared=0
+P4 deposits: with=0; without=6
+P5 labor: declared=4; undeclared=13
+P6 demand drivers=4
+reversibility=0
+```
+
+Это **не** означает завершённую Planet v1: текущие явные долги — шесть extraction без deposit STOCK и 13 process instances без labor declaration; strict дополнительно видит 10 capacity и 11 energy exceptions.
+
+### Команда и отчёт
+
+```cmd
+node src\cli.js audit model.json validation.json --planet-closure=planet_closure.json --out=output\audit
+PLANET_SELF_TEST.cmd
+```
+
+`--planet-closure` позволяет проверить декларацию отдельно до её включения в accepted validation: файл заменяет существующий `planet_closure` plugin либо временно добавляется в validation только в памяти. `structure-audit.md/.json` и RUN_LAB report показывают counters, reasons, undeclared, reversibility и dependency paths.
+
+## 5. QA — `STRUCTURE_SELF_TEST.cmd` + `LOOP_SELF_TEST.cmd` + `PLANET_SELF_TEST.cmd`
 
 20 случаев на мутированных копиях реальной модели; ожидаемый итог **21 passed, 0 failed**:
 
@@ -200,12 +251,16 @@ LOOP_SELF_TEST.cmd
 
 `LOOP_SELF_TEST.cmd`: 15 случаев. Accepted v7.7.1 r1 → 7 switches / 128 combinations / 0 loops; v7.6 r1 → 16/32 loop combinations и Modes 25–26; мутация задачи 001 r1 → 64/128 и Modes 17–31; lower-case construction-materials mutation → 64/128 и Modes 27–31; unresolved reference → FAIL; дополнительно engine agreement, STOCK/FLOW/self-loop, parser FAIL, static compare gate и deterministic JSON.
 
+`PLANET_SELF_TEST.cmd`: **16 случаев**. Эталонные P2–P6 counters, L1–L5 false declarations с shortest paths, completeness/enforce modes, reversibility, deposits, demand/labor negatives, case-insensitive names, structure/CLI/static-only integration и deterministic JSON.
+
 ---
 
-## 5. Что делать при FAIL
+## 6. Что делать при FAIL
 
 - **Неклассифицированный граничный поток**: добавить категорию или расширить существующую — с `reason` и честным `closed_world`. Не ставить `closed_world: true` только чтобы метрика не росла.
 - **Асимметрия**: либо это ошибка (исправить модель), либо намеренная тестовая обвязка (добавить исключение с reason), либо новая экономическая асимметрия — тогда её надо описать в спецификации версии, а не в исключениях.
 - Любое изменение validation JSON → новая ревизия change-policy (`validation_sha256`).
 
 - **Алгебраическая петля**: читать `shortestCycle` и разрывать same-step зависимость архитектурно (обычно через state/signal или изменение направления зависимости). Не добавлять allow-list «разрешённых» петель: loop audit — HARD.
+
+- **Planet closure**: не «лечить» FAIL увеличением `max_hops` или формальным reason. Ложную декларацию исправить; реальный Planet v1 debt должен оставаться видимым в соответствующем P2–P6 счётчике.
