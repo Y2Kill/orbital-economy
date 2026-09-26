@@ -1,0 +1,17 @@
+{
+  "task": "012",
+  "title": "v7.7.2 Construction Materials use Energy: third consumer of the colony energy allocator, plan reads a smoothed demand signal",
+  "branch": "task/012-construction-materials-energy",
+  "allow": [],
+  "allow_binary": [],
+  "allow_protected": [
+    "docs/tasks/012-construction-materials-energy/candidate/**"
+  ],
+  "required_changes": [
+    "docs/tasks/012-construction-materials-energy/candidate/model-patch.json",
+    "docs/tasks/012-construction-materials-energy/candidate/validation.json",
+    "docs/tasks/012-construction-materials-energy/candidate/change-policy.json",
+    "docs/tasks/012-construction-materials-energy/candidate/PARAMETER_ANNOTATIONS_fragment.json"
+  ],
+  "sums_by": "reviewer"
+}
