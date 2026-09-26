@@ -21,6 +21,23 @@
 
 Дальше: дождаться полного первого candidate-run и проверить comparator/policy для Modes 0–29 (КТ2), затем использовать intentional calibration probes Modes 30–31 для порогов КТ3.
 
+
+### КТ2 — 2026-09-26 12:42 EEST — Modes 0–29 воспроизводятся точно, неожиданных policy-событий нет
+
+Доказательство — первый полный candidate run: https://github.com/Y2Kill/orbital-economy/actions/runs/36232699114.
+
+- Comparator дал для **каждого** Mode 0–29: `common=1070, changed=0, added=12, removed=0, maxAbs=0`; проверены все 30 Mode без пропусков.
+- `COMPARISON RESULT: OUTPUTS_IDENTICAL_BUT_SCENARIO_CONTRACT_CHANGED` — ожидаемо: legacy outputs идентичны, сценарии получили только явный `Transport Construction Materials Enabled = 0`.
+- Policy наблюдает 441 изменение; `Unexpected=0`, `Forbidden=0`, `Threshold exceed=0`, `Required missing=0`.
+- `Hard blockers=2` относятся только к новым Modes 30 и 31, где intentional `[calib probe]` делает candidate validation FAIL.
+- Дополнительные статические данные того же run: `CONFORMANCE RESULT: PASS`, 7/7 instances с допустимой variation; `STRUCTURE AUDIT RESULT: PASS`, open boundaries 122/153, `unclassified=0`, `closed-world violations=0`, transformation pairs 15, `unpaired=0`, colony symmetry `mismatches=0`.
+
+Не подтвердилось:
+- Не обнаружено ни одного изменения legacy-series, требующего расширения owner policy.
+- Первый общий POLICY FAIL не является policy-дрейфом: все четыре счётчика нарушений нулевые; причина — два hard blocker от ожидаемо падающих новых Mode.
+
+Дальше: заменить три `[calib probe]` содержательными порогами с запасом по измеренным значениям первого run и добиться validation PASS 32/32 (КТ3).
+
 ## Реализация кандидата
 
 Candidate r1 следует исчерпывающей спецификации: shared Transport получает второй физический ресурс — Construction Materials — по дословной схеме принятого Transport Capital Goods: половинное планирование спроса по A/B, фактическое списание пропорционально текущим региональным запасам.
