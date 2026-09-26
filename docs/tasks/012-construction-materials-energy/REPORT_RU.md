@@ -4,6 +4,27 @@
 
 Работа начата с `main@ebee3cf7435887fe6c30f921390561d9e91d7b33`. Ветка `task/012-construction-materials-energy` создана от этой же головы; предыдущего журнала в ветке не было. Контрольные точки пока не закрыты.
 
+### КТ1 — 2026-09-27 01:25 EEST — patch/conformance/audit PASS
+
+Сделано: candidate r1 применился к accepted v7.7.1 r1; conformance и structure audit прошли. Структурный объём совпал с исчерпывающей спецификацией: 17 новых элементов, 9 замен формул, 58 LINK, явный switch-off в Modes 0–31 и два новых Mode 32–33.
+
+Доказательство — первый полный Candidate acceptance: https://github.com/Y2Kill/orbital-economy/actions/runs/36275212947, кандидат-коммит `8c7fb46c8fa2500c9a052a4920baa8b6854dca3f`.
+- `Gate 1 - apply-patch` — PASS.
+- `Gate 2 - conformance` — PASS.
+- `Gate 3 - audit` — PASS.
+- Audit: `open boundaries: 126 of 157`, `unclassified=0`, `closed-world violations=0`, transformation pairs=15, `unpaired=0`.
+- Planet closure: `P3 energy: requests=6; producer=2; exceptions=9; undeclared=0`; итоговая строка `P3=6/2/9/0`.
+- Loop audit: `switches=8; combinations=256; with loops=0; Modes=none`.
+- `STRUCTURE AUDIT RESULT: PASS`.
+
+Не подтвердилось:
+- Не обнаружено структурной петли, которую должна была предотвращать схема с `X Construction Materials Demand Signal`.
+- Не обнаружено незаявленных границ или нарушений closed-world/Planet closure.
+- Общий r1 run ожидаемо не является финальным PASS: три намеренных `[calib probe]` дают validation FAIL, после чего policy имеет два hard blocker от Modes 32–33. Это не относится к КТ1.
+
+Дальше: зафиксировать КТ2 по уже завершившемуся comparator/policy для Modes 0–31, затем заменить `[calib probe]` измеренными порогами с запасом для КТ3.
+
+
 ## Реализация кандидата
 
 Candidate r1 следует исчерпывающей спецификации: переработка реголита в Construction Materials становится третьим потребителем общего энергетического аллокатора колонии, а план, питающий запрос энергии, читает сглаженный сток `X Construction Materials Demand Signal`, а не мгновенный спрос.
