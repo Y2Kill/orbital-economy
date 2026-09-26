@@ -120,6 +120,9 @@ jobs:
       - name: Structure self-test
         working-directory: lab
         run: node --expose-gc src/structure_qa.js
+      - name: Loop self-test
+        working-directory: lab
+        run: node --expose-gc src/loop_qa.js
       - name: Conformance self-test
         working-directory: lab
         run: node --expose-gc src/conformance_qa.js
