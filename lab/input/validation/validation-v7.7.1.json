@@ -1,5 +1,5 @@
 {
-  "name": "Orbital Economy v7.7.1 validation r1",
+  "name": "Orbital Economy v7.7.1 validation r2",
   "mode_variable": "Timed Test Mode",
   "expected_time_step": 0.25,
   "time_step_tolerance": 1e-12,
@@ -594,6 +594,209 @@
       "enforce": true,
       "note": "v7.4.1: test wiring symmetrized via applicability flags; no exceptions remain.",
       "exceptions": []
+    },
+    {
+      "type": "planet_closure",
+      "enforce": "report",
+      "note": "Planet v1 contract (docs/PLANET_V1_CONTRACT_RU.md) declaration for accepted v7.7.1 r1. Counters P2-P6 are measured per declared process. {C} expands to each colony token; a process without {C} is shared.",
+      "colonies": [
+        "A",
+        "B"
+      ],
+      "max_hops": 4,
+      "process_categories": [
+        "primary_extraction",
+        "power_resource_extraction",
+        "regolith_extraction",
+        "unit_transformation",
+        "capital_goods_transformation",
+        "construction_materials_transformation"
+      ],
+      "energy": {
+        "total_request": "{C} Total Requested Energy",
+        "fulfillment": "{C} Energy Fulfillment Ratio"
+      },
+      "processes": [
+        {
+          "id": "mining",
+          "kind": "extraction",
+          "output": "{C} Mining",
+          "capacity": {
+            "kind": "constant",
+            "parameter": "{C} Mining Capacity",
+            "reason": "v7.4 fixed ore mining capacity; no mining capital yet (P2)"
+          },
+          "energy": {
+            "kind": "none",
+            "reason": "ore mining uses no energy yet (P3)"
+          },
+          "deposit": {
+            "kind": "none"
+          },
+          "labor": {
+            "kind": "undeclared"
+          }
+        },
+        {
+          "id": "electronics_feedstock_extraction",
+          "kind": "extraction",
+          "output": "{C} Electronics Feedstock Extraction",
+          "legacy": {
+            "switch": "Intermediate Inputs Enabled",
+            "active_when": 0,
+            "reason": "pre-v7.4 external feedstock path; zero whenever intermediate inputs are on"
+          }
+        },
+        {
+          "id": "smelting",
+          "kind": "transformation",
+          "output": "{C} Metal Production",
+          "capacity": {
+            "kind": "kernel",
+            "stock": "{C} Refinery Active Capacity"
+          },
+          "energy": {
+            "kind": "requests",
+            "request": "{C} Metal Requested Energy"
+          },
+          "labor": {
+            "kind": "declared",
+            "intensity": "{C} Labor per Metal"
+          }
+        },
+        {
+          "id": "electronics",
+          "kind": "transformation",
+          "output": "{C} Electronics Production",
+          "capacity": {
+            "kind": "kernel",
+            "stock": "{C} Electronics Active Factory Capacity"
+          },
+          "energy": {
+            "kind": "requests",
+            "request": "{C} Electronics Requested Energy"
+          },
+          "labor": {
+            "kind": "declared",
+            "intensity": "{C} Electronics Labor per Unit"
+          }
+        },
+        {
+          "id": "capital_goods",
+          "kind": "transformation",
+          "output": "{C} Capital Goods Production",
+          "capacity": {
+            "kind": "constant",
+            "parameter": "{C} Capital Goods Base Production Capacity",
+            "reason": "v7.5 fixed capital-goods capacity; no capital-goods-industry capital yet (P2)"
+          },
+          "energy": {
+            "kind": "none",
+            "reason": "capital-goods assembly uses no energy yet (P3)"
+          },
+          "labor": {
+            "kind": "undeclared"
+          }
+        },
+        {
+          "id": "regolith",
+          "kind": "extraction",
+          "output": "{C} Regolith Extraction",
+          "capacity": {
+            "kind": "constant",
+            "parameter": "{C} Regolith Base Extraction Capacity",
+            "reason": "v7.7 fixed regolith extraction capacity (P2)"
+          },
+          "energy": {
+            "kind": "none",
+            "reason": "v7.7 regolith extraction uses no energy by design (P3)"
+          },
+          "deposit": {
+            "kind": "none"
+          },
+          "labor": {
+            "kind": "undeclared"
+          }
+        },
+        {
+          "id": "construction_materials",
+          "kind": "transformation",
+          "output": "{C} Construction Materials Production",
+          "capacity": {
+            "kind": "constant",
+            "parameter": "{C} Construction Materials Base Production Capacity",
+            "reason": "v7.7 fixed construction-materials capacity (P2)"
+          },
+          "energy": {
+            "kind": "none",
+            "reason": "v7.7 construction-materials processing uses no energy by design; first P3 step on the roadmap"
+          },
+          "labor": {
+            "kind": "undeclared"
+          }
+        },
+        {
+          "id": "power_resource",
+          "kind": "extraction",
+          "output": "{C} Power Resource Extraction",
+          "capacity": {
+            "kind": "unbounded",
+            "reason": "v7.6 extraction follows demand x headroom; only the Mode 25 shock multiplier limits it (P2)"
+          },
+          "energy": {
+            "kind": "none",
+            "reason": "extraction energy is not modelled; treated as part of generation efficiency (P3)"
+          },
+          "deposit": {
+            "kind": "none"
+          },
+          "labor": {
+            "kind": "undeclared"
+          }
+        },
+        {
+          "id": "generation",
+          "kind": "service",
+          "output": "{C} Available Generation",
+          "capacity": {
+            "kind": "kernel",
+            "stock": "{C} Power Active Generation Capital"
+          },
+          "energy": {
+            "kind": "producer"
+          },
+          "labor": {
+            "kind": "undeclared"
+          }
+        },
+        {
+          "id": "transport",
+          "kind": "service",
+          "output": "Capacity Limited Total Transport Load",
+          "capacity": {
+            "kind": "kernel",
+            "stock": "Transport Active Throughput Capacity"
+          },
+          "energy": {
+            "kind": "none",
+            "reason": "shared transport uses no fuel or energy yet (P3)"
+          },
+          "labor": {
+            "kind": "undeclared"
+          }
+        }
+      ],
+      "demand_drivers": {
+        "parameters": [
+          "{C} Local Base Demand",
+          "{C} Electronics Local Base Demand"
+        ],
+        "consumption": [
+          "{C} Local Consumption",
+          "{C} Electronics Local Consumption"
+        ],
+        "reason": "Planet v1 has no population: final demand is an explicit external driver (P6); population and life support are Planet v2"
+      }
     },
     {
       "type": "transport_allocator",

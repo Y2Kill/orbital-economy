@@ -4,7 +4,7 @@
   "model_file": "orbital_economy_v7_7_1_r1_modeljson.json",
   "model_sha256": "d53d014d727a439694e103aafb49f87d4dbbb362e581414cbf4dc71a19646f93",
   "validation_file": "validation-v7.7.1.json",
-  "validation_sha256": "23928c3abab5b4609cf963a5646e89fe551cadc046d5b49d3b69adbe6a02b70f",
+  "validation_sha256": "2b5ef810dc9aaff5beaaa9b25c0410a6e859e6195753f133755136487913c9a6",
   "accepted_date": "2026-09-26",
   "engine": "simulation@9.0.0",
   "notes": [

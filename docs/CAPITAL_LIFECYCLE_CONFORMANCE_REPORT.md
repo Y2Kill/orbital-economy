@@ -1,10 +1,10 @@
 # Orbital Economy Lab — Capital Lifecycle Kernel conformance
 
-- generated: 2026-09-26T10:39:34.803Z
+- generated: 2026-09-26T14:15:38.317Z
 - model: Orbital Economy v7.7.1 r1 — Transport on Construction Materials
 - model SHA-256: `d53d014d727a439694e103aafb49f87d4dbbb362e581414cbf4dc71a19646f93`
-- validation: Orbital Economy v7.7.1 validation r1
-- validation SHA-256: `23928c3abab5b4609cf963a5646e89fe551cadc046d5b49d3b69adbe6a02b70f`
+- validation: Orbital Economy v7.7.1 validation r2
+- validation SHA-256: `2b5ef810dc9aaff5beaaa9b25c0410a6e859e6195753f133755136487913c9a6`
 - kernel format: orbital-economy-capital-lifecycle-kernel-v1
 - status: **PASS**
 

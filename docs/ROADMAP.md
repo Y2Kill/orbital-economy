@@ -95,7 +95,7 @@ Defined 2026-09-26: `docs/PLANET_V1_CONTRACT_RU.md`. The single boundary counter
 | P6 final demand | constants | explicit external driver (population and life support: v2) |
 | P7 reproducibility | closed on the canonical platform | platform independence before going public |
 
-Order: first a bench task — `planet_closure` validation plugin in `report` mode (counters only, model unchanged); then model steps under the counter, starting with construction materials using energy.
+Measured by the `planet_closure` validation plugin (task 011, Lab v0.9.6; validation v7.7.1 r2, `report` mode). Next: model steps under the counter, starting with construction materials using energy (P3 5 → 4 per colony). Open: `labor: declared` is trusted until the P5 model step introduces explicit labor-requirement variables (contract P5).
 
 ## v8 — replicated regions/colonies/planets
 

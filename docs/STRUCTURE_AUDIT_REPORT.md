@@ -1,10 +1,10 @@
 # Orbital Economy Lab — structure audit
 
-- generated: 2026-09-26T12:54:07.246Z
+- generated: 2026-09-26T14:15:38.057Z
 - model: Orbital Economy v7.7.1 r1 — Transport on Construction Materials
 - model SHA-256: `d53d014d727a439694e103aafb49f87d4dbbb362e581414cbf4dc71a19646f93`
-- validation: Orbital Economy v7.7.1 validation r1
-- validation SHA-256: `23928c3abab5b4609cf963a5646e89fe551cadc046d5b49d3b69adbe6a02b70f`
+- validation: Orbital Economy v7.7.1 validation r2
+- validation SHA-256: `2b5ef810dc9aaff5beaaa9b25c0410a6e859e6195753f133755136487913c9a6`
 - status: **PASS**
 
 ## Open boundaries (declared physical-boundary meter)
@@ -276,6 +276,114 @@ Declared unit-transformation pairs (source flow physically backed by sink flows;
 | value | A Test 29 Regolith Shock Applies | 1 | B Test 29 Regolith Shock Applies | 0 |
 | value | A Regolith Base Extraction Capacity | 7 | B Regolith Base Extraction Capacity | 5 |
 | value | A Construction Materials Base Production Capacity | 3 | B Construction Materials Base Production Capacity | 2 |
+
+</details>
+
+## Planet closure (per-process Planet v1 contract)
+
+- status: **PASS**; mode: `report`
+- processes: 17; legacy: 2; expected source outputs: 16; undeclared outputs: 0
+- P2 capacity: kernel **7** / exceptions **10** / undeclared **0**
+- P3 energy: requests **4** / producer **2** / exceptions **11** / undeclared **0**
+- P4 deposits: with **0** / without **6**
+- P5 labor: declared **4** / undeclared **13**
+- P6 demand drivers: **4**
+- reversibility violations: **0**
+
+| Dimension | Process | Kind | Value | Reason |
+|---|---|---|---|---|
+| P2 | mining[A] | constant | A Mining Capacity | v7.4 fixed ore mining capacity; no mining capital yet (P2) |
+| P3 | mining[A] | none | — | ore mining uses no energy yet (P3) |
+| P2 | mining[B] | constant | B Mining Capacity | v7.4 fixed ore mining capacity; no mining capital yet (P2) |
+| P3 | mining[B] | none | — | ore mining uses no energy yet (P3) |
+| P2 | capital_goods[A] | constant | A Capital Goods Base Production Capacity | v7.5 fixed capital-goods capacity; no capital-goods-industry capital yet (P2) |
+| P3 | capital_goods[A] | none | — | capital-goods assembly uses no energy yet (P3) |
+| P2 | capital_goods[B] | constant | B Capital Goods Base Production Capacity | v7.5 fixed capital-goods capacity; no capital-goods-industry capital yet (P2) |
+| P3 | capital_goods[B] | none | — | capital-goods assembly uses no energy yet (P3) |
+| P2 | regolith[A] | constant | A Regolith Base Extraction Capacity | v7.7 fixed regolith extraction capacity (P2) |
+| P3 | regolith[A] | none | — | v7.7 regolith extraction uses no energy by design (P3) |
+| P2 | regolith[B] | constant | B Regolith Base Extraction Capacity | v7.7 fixed regolith extraction capacity (P2) |
+| P3 | regolith[B] | none | — | v7.7 regolith extraction uses no energy by design (P3) |
+| P2 | construction_materials[A] | constant | A Construction Materials Base Production Capacity | v7.7 fixed construction-materials capacity (P2) |
+| P3 | construction_materials[A] | none | — | v7.7 construction-materials processing uses no energy by design; first P3 step on the roadmap |
+| P2 | construction_materials[B] | constant | B Construction Materials Base Production Capacity | v7.7 fixed construction-materials capacity (P2) |
+| P3 | construction_materials[B] | none | — | v7.7 construction-materials processing uses no energy by design; first P3 step on the roadmap |
+| P2 | power_resource[A] | unbounded | — | v7.6 extraction follows demand x headroom; only the Mode 25 shock multiplier limits it (P2) |
+| P3 | power_resource[A] | none | — | extraction energy is not modelled; treated as part of generation efficiency (P3) |
+| P2 | power_resource[B] | unbounded | — | v7.6 extraction follows demand x headroom; only the Mode 25 shock multiplier limits it (P2) |
+| P3 | power_resource[B] | none | — | extraction energy is not modelled; treated as part of generation efficiency (P3) |
+| P3 | transport | none | — | shared transport uses no fuel or energy yet (P3) |
+
+<details><summary>Process paths</summary>
+
+**mining[A]**
+- capacity: A Mining → A Mining Rate → A Effective Mining Capacity → A Mining Capacity
+
+**mining[B]**
+- capacity: B Mining → B Mining Rate → B Effective Mining Capacity → B Mining Capacity
+
+**smelting[A]**
+- capacity: A Metal Production → A Smelting Rate → A Pre Energy Smelting Rate → A Refinery Active Capacity
+- energy_total_to_request: A Total Requested Energy → A Metal Requested Energy
+- energy_output_to_fulfillment: A Metal Production → A Smelting Rate → A Metal Energy Fulfillment Ratio → A Metal Allocated Energy → A Energy Fulfillment Ratio
+- energy_shared_planned: shared A Desired Smelting Rate
+  - request: A Metal Requested Energy → A Pre Energy Smelting Rate → A Positive Desired Smelting Rate → A Desired Smelting Rate
+  - output: A Metal Production → A Smelting Rate → A Pre Energy Smelting Rate → A Positive Desired Smelting Rate → A Desired Smelting Rate
+- labor_readers: A Metal Unit Cost
+
+**smelting[B]**
+- capacity: B Metal Production → B Smelting Rate → B Pre Energy Smelting Rate → B Refinery Active Capacity
+- energy_total_to_request: B Total Requested Energy → B Metal Requested Energy
+- energy_output_to_fulfillment: B Metal Production → B Smelting Rate → B Metal Energy Fulfillment Ratio → B Metal Allocated Energy → B Energy Fulfillment Ratio
+- energy_shared_planned: shared B Desired Smelting Rate
+  - request: B Metal Requested Energy → B Pre Energy Smelting Rate → B Positive Desired Smelting Rate → B Desired Smelting Rate
+  - output: B Metal Production → B Smelting Rate → B Pre Energy Smelting Rate → B Positive Desired Smelting Rate → B Desired Smelting Rate
+- labor_readers: B Metal Unit Cost
+
+**electronics[A]**
+- capacity: A Electronics Production → A Electronics Production Rate → A Pre Energy Electronics Production Rate → A Electronics Factory Capacity → A Electronics Active Factory Capacity
+- energy_total_to_request: A Total Requested Energy → A Electronics Requested Energy
+- energy_output_to_fulfillment: A Electronics Production → A Electronics Production Rate → A Electronics Energy Fulfillment Ratio → A Electronics Allocated Energy → A Energy Fulfillment Ratio
+- energy_shared_planned: shared A Electronics Feedstock Buffer
+  - request: A Electronics Requested Energy → A Pre Energy Electronics Production Rate → A Electronics Feedstock Buffer
+  - output: A Electronics Production → A Electronics Production Rate → A Pre Energy Electronics Production Rate → A Electronics Feedstock Buffer
+- labor_readers: A Electronics Unit Cost → A Electronics Unit Cost
+
+**electronics[B]**
+- capacity: B Electronics Production → B Electronics Production Rate → B Pre Energy Electronics Production Rate → B Electronics Factory Capacity → B Electronics Active Factory Capacity
+- energy_total_to_request: B Total Requested Energy → B Electronics Requested Energy
+- energy_output_to_fulfillment: B Electronics Production → B Electronics Production Rate → B Electronics Energy Fulfillment Ratio → B Electronics Allocated Energy → B Energy Fulfillment Ratio
+- energy_shared_planned: shared B Electronics Feedstock Buffer
+  - request: B Electronics Requested Energy → B Pre Energy Electronics Production Rate → B Electronics Feedstock Buffer
+  - output: B Electronics Production → B Electronics Production Rate → B Pre Energy Electronics Production Rate → B Electronics Feedstock Buffer
+- labor_readers: B Electronics Unit Cost → B Electronics Unit Cost
+
+**capital_goods[A]**
+- capacity: A Capital Goods Production → A Capital Goods Production Rate → A Capital Goods Production Capacity → A Capital Goods Base Production Capacity
+
+**capital_goods[B]**
+- capacity: B Capital Goods Production → B Capital Goods Production Rate → B Capital Goods Production Capacity → B Capital Goods Base Production Capacity
+
+**regolith[A]**
+- capacity: A Regolith Extraction → A Regolith Extraction Rate → A Regolith Extraction Capacity → A Regolith Base Extraction Capacity
+
+**regolith[B]**
+- capacity: B Regolith Extraction → B Regolith Extraction Rate → B Regolith Extraction Capacity → B Regolith Base Extraction Capacity
+
+**construction_materials[A]**
+- capacity: A Construction Materials Production → A Construction Materials Production Rate → A Construction Materials Production Capacity → A Construction Materials Base Production Capacity
+
+**construction_materials[B]**
+- capacity: B Construction Materials Production → B Construction Materials Production Rate → B Construction Materials Production Capacity → B Construction Materials Base Production Capacity
+
+**generation[A]**
+- capacity: A Available Generation → A Power Active Generation Capacity → A Power Active Generation Capital
+
+**generation[B]**
+- capacity: B Available Generation → B Power Active Generation Capacity → B Power Active Generation Capital
+
+**transport**
+- capacity: Capacity Limited Total Transport Load → Transport Active Throughput Capacity
 
 </details>
 

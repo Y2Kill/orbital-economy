@@ -187,7 +187,7 @@ try {
   await expect('runStructureAudits combines both and is SKIPPED without plugins', () => {
     const v = structuredClone(baseValidation);
     const full = runStructureAudits(baseRaw, v);
-    v.plugins = v.plugins.filter(p => p.type !== 'open_boundaries' && p.type !== 'colony_symmetry');
+    v.plugins = v.plugins.filter(p => p.type !== 'open_boundaries' && p.type !== 'colony_symmetry' && p.type !== 'planet_closure');
     const none = runStructureAudits(baseRaw, v);
     return full.status === 'PASS' && full.openBoundaries && full.colonySymmetry && none.status === 'SKIPPED';
   });
