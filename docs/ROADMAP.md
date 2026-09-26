@@ -10,7 +10,7 @@ A second raw-material chain: regional regolith extraction → construction mater
 
 - **v7.7.1 — Transport on construction materials**: shared transport expansion drawing on A and B inventories, as v7.5.1 did for capital goods;
 - construction materials using energy (the allocator change is the risky part — see the v7.4 lesson);
-- a situation where colony B builds: today B never expands, so half of every new sector stays idle.
+- a stimulated Mode with construction materials on, in which colony B builds (as Mode 24 does through the reused transport surge): Modes 27–29 do not stimulate B, so B's construction-materials path has only run at zero. B is not broken — it builds under stimulus in Modes 18–20 and 23–26 and winds down surplus capacity in calm ones.
 
 ## Previous layer — v7.6 Energy Kernel v2
 

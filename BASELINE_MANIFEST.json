@@ -142,7 +142,7 @@
     ],
     "expansion": "X <Sector> Expansion = Desired Expansion x Min(X Capital Goods Fulfillment, X Construction Materials Fulfillment) for Refinery / Electronics / Power in A and B",
     "not_in_v7_7": "energy use, interregional trade, Transport (v7.7.1), lifecycle of the new sectors",
-    "known_limit": "colony B does not expand in the accepted dynamics, so its construction-materials sector is idle",
+    "known_limit": "colony B builds only under stimulus (Modes 18-20, 23-26); none of Modes 27-29 stimulates B, so its construction-materials sector is idle there and that path runs only at zero until a stimulated Mode is added (planned v7.7.1)",
     "task": "docs/tasks/008-construction-materials/"
   }
 }

@@ -95,7 +95,7 @@ Each colony extracts **regolith** (a second, bulk raw resource) into a regional 
 expansion = desired expansion × Min(Capital Goods fulfillment, Construction Materials fulfillment)
 ```
 
-and consumes both, each by its own per-capacity norm. Both fulfillments are scale-free (buffer in days of demand). Shared Transport does not use construction materials yet (planned v7.7.1). In the accepted dynamics colony B does not expand, so its construction-materials sector is idle. Switch: `Construction Materials Enabled` (Modes 0–26 = 0). Details: `docs/tasks/008-construction-materials/V7_7_ARCHITECTURE_SPEC.md`.
+and consumes both, each by its own per-capacity norm. Both fulfillments are scale-free (buffer in days of demand). Shared Transport does not use construction materials yet (planned v7.7.1). Colony B builds only when stimulated: it starts with more Refinery / Electronics / Power capacity than it needs, so in calm scenarios (Modes 17, 21, 27) it winds capacity down, while demand surges and shocks make it expand (Modes 18–20, 23–26 — e.g. Mode 24 through the reused transport surge). None of Modes 27–29 stimulates B, so its construction-materials sector is idle there and B's construction-materials path is exercised only at zero; a stimulated Mode is planned with v7.7.1. Switch: `Construction Materials Enabled` (Modes 0–26 = 0). Details: `docs/tasks/008-construction-materials/V7_7_ARCHITECTURE_SPEC.md`.
 
 ## 5. Capital Lifecycle kernel
 

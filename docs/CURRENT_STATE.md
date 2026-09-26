@@ -43,7 +43,7 @@ Each colony extracts regolith into a regional inventory and processes it into co
 X <Sector> Expansion = X <Sector> Desired Expansion × Min(X Capital Goods Fulfillment, X Construction Materials Fulfillment)
 ```
 
-and consumes construction materials by its own per-capacity norm (Refinery 20, Electronics 12, Power 1 — calibration parameters). Fulfillment and raw-material availability are scale-free (buffers in days of demand). Transport does not use construction materials yet (v7.7.1). Colony B does not expand in the accepted dynamics, so its construction-materials sector is idle in every Mode. Switch `Construction Materials Enabled`: Modes 0–26 = 0 (exact regression), Modes 27–29 = 1. Spec, test plan, delivery and acceptance: `docs/tasks/008-construction-materials/`.
+and consumes construction materials by its own per-capacity norm (Refinery 20, Electronics 12, Power 1 — calibration parameters). Fulfillment and raw-material availability are scale-free (buffers in days of demand). Transport does not use construction materials yet (v7.7.1). Colony B builds only when stimulated: it starts with more Refinery / Electronics / Power capacity than it needs, so in calm scenarios (Modes 17, 21, 27) it winds capacity down, while demand surges and shocks make it expand (Modes 18–20, 23–26 — e.g. Mode 24 through the reused transport surge). None of Modes 27–29 stimulates B, so its construction-materials sector is idle there and B's construction-materials path is exercised only at zero; a stimulated Mode is planned with v7.7.1. Switch `Construction Materials Enabled`: Modes 0–26 = 0 (exact regression), Modes 27–29 = 1. Spec, test plan, delivery and acceptance: `docs/tasks/008-construction-materials/`.
 
 ## 3. Energy Kernel v2
 
