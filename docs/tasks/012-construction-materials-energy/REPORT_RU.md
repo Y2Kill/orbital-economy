@@ -25,6 +25,24 @@
 Дальше: зафиксировать КТ2 по уже завершившемуся comparator/policy для Modes 0–31, затем заменить `[calib probe]` измеренными порогами с запасом для КТ3.
 
 
+
+### КТ2 — 2026-09-27 01:26 EEST — Modes 0–31 воспроизводятся точно, неожиданных policy-событий нет
+
+Доказательство — тот же первый полный Candidate acceptance: https://github.com/Y2Kill/orbital-economy/actions/runs/36275212947.
+
+- Comparator для каждого Mode 0–31: `common=1082, changed=0, added=17, removed=0, maxAbs=0`.
+- Все 32 legacy Mode дают `Output comparison: IDENTICAL`.
+- Итог comparator: `COMPARISON RESULT: OUTPUTS_IDENTICAL_BUT_SCENARIO_CONTRACT_CHANGED` — ожидаемо, потому что в legacy-сценарии добавлен только явный `Construction Materials Energy Enabled = 0`.
+- Policy: `Observed changes=662`, `Unexpected=0`, `Forbidden=0`, `Threshold exceed=0`, `Required missing=0`.
+- Два `Hard blockers` относятся только к ожидаемо падающим калибровочным проверкам новых Modes 32 и 33; сами Modes 0–31 прошли candidate validation PASS.
+- Параллельный CI первого candidate-коммита https://github.com/Y2Kill/orbital-economy/actions/runs/36275212946 — guard, tools-selftest и bench-selftests PASS.
+
+Не подтвердилось:
+- Ни одной legacy-series, требующей расширения owner policy, не найдено.
+- Новый signal-stock не изменяет accepted outputs при switch-off: его наличие добавляет 17 новых series, но общие 1082 series в каждом legacy Mode совпадают точно.
+
+Дальше: калибровать только три заранее объявленных `[calib]` ожидания по первому Linux-run, не меняя модельные константы.
+
 ## Реализация кандидата
 
 Candidate r1 следует исчерпывающей спецификации: переработка реголита в Construction Materials становится третьим потребителем общего энергетического аллокатора колонии, а план, питающий запрос энергии, читает сглаженный сток `X Construction Materials Demand Signal`, а не мгновенный спрос.
