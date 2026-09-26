@@ -1,0 +1,35 @@
+{
+  "task": "010",
+  "title": "Static switch-aware algebraic-loop audit: every switch combination checked before simulation",
+  "branch": "task/010-algebraic-loop-audit",
+  "allow": [
+    "lab/src/loop_audit.js",
+    "lab/src/loop_qa.js",
+    "lab/src/structure_audit.js",
+    "lab/src/audit_run.js",
+    "lab/src/report.js",
+    "lab/src/cli.js",
+    "lab/package.json",
+    "lab/package-lock.json",
+    "lab/LOOP_SELF_TEST.cmd",
+    "lab/docs/STRUCTURE_AUDIT_RU.md",
+    "lab/docs/HARNESS_QA_RU.md",
+    "lab/docs/TEST_STATUS_RU.md",
+    "lab/README_RU.md",
+    "lab/CHANGELOG.md"
+  ],
+  "allow_binary": [],
+  "allow_protected": [
+    ".github/workflows/ci.yml",
+    ".github/workflows/candidate.yml"
+  ],
+  "required_changes": [
+    "lab/src/loop_audit.js",
+    "lab/src/loop_qa.js",
+    "lab/src/structure_audit.js",
+    ".github/workflows/ci.yml",
+    "lab/docs/STRUCTURE_AUDIT_RU.md",
+    "lab/CHANGELOG.md"
+  ],
+  "sums_by": "reviewer"
+}

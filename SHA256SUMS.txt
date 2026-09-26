@@ -18,7 +18,7 @@ c4a65a29701ef910474520c0a43609728ff0d2c047d64c9ba0251558cf8c2ee6  ./docs/CONTRAC
 e981cddf6a64518d00d25e68572878f2241b0e11cf8cfe4488a5abfbff9aa2ad  ./docs/HISTORY_RU.md
 df539aaa540c28f562438345bda12bd095ddeb7f7c3879d05599aeed91d6f7f0  ./docs/PARAMETER_ANNOTATIONS.json
 e8023b8a1fe828cd938964c327839ef4c85983ef871d5ce42db1bef951a9827a  ./docs/PARAMETER_REGISTRY.md
-bdc5ffc7422cad19c0fdbf60d0b7856c616ca9ccdaf23a5a18d4dbc4a82e74a7  ./docs/ROADMAP.md
+f8920ca7e151005a074ce55b1616f8ff4278559a776aa494b476d4eaa30ed61f  ./docs/ROADMAP.md
 4e496b42c8882b178319a1fd7da783e80eb8995096284e906f609d6eb0ec512a  ./docs/STRUCTURE_AUDIT_REPORT.md
 3ae639958b7a331cfddf5d730a720990ff0cfb988046709d75391c34967b6baf  ./docs/V7_5_1_TO_V7_6_CHANGE_REPORT.md
 4cadd7f34b7c345f2bb5a18e46a584179eb5ed6b527e4fb4f623059dc001dd35  ./docs/V7_6_1_CALIBRATION_REPORT.md
@@ -152,6 +152,9 @@ eb6946fc933593660ab431e514d3c135d835deb257169bdd429fd44afaf9ef96  ./docs/tasks/0
 4c317b5c78dfb1bcb768520eb7ae3d812ca1532c453fb2600b5737d36b1a2861  ./docs/tasks/009-transport-construction-materials/draft/change-policy-v7.7.1-draft.json
 ce44095d666a54c9ef848a39d3da1a3b142f4a8f090096460adf0abd9051b2fc  ./docs/tasks/009-transport-construction-materials/draft/validation-v7.7.1-draft.json
 869a5c5946da5a18914477ba068f664fa58200b61fe632e4a6db89933c424911  ./docs/tasks/009-transport-construction-materials/scope.json
+437e436e03d62b098cde881f44497ab85840a55911bcf8a5e27de8517381a432  ./docs/tasks/010-algebraic-loop-audit/TASK_RU.md
+c43e8328cc209448f4eaf0931779ff97657899df64b0113c536a1d3433c27f36  ./docs/tasks/010-algebraic-loop-audit/reference/loops_prototype.mjs
+a4f854395437c5677d8c63bcb2d230e4a0a7142f3ee09aa0a0b00025b35a615c  ./docs/tasks/010-algebraic-loop-audit/scope.json
 943413da79f0e70a5c673d3fd505bde105ad2c74ba2e36c5a5f475aaaf2c709e  ./docs/tasks/README_RU.md
 bbf818e93b88d606b3137b1bb69d60db8c41c9df4089025a921b1ca00f473244  ./lab/APPLY_PATCH.cmd
 8ec18e3efcaefc65c2fdca2d08b43c515028b4997bcdaeecad1fd3951236a5cd  ./lab/CHANGELOG.md

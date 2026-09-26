@@ -59,6 +59,28 @@ The decomposition rule remains: do not split a sector merely for detail. Split i
 
 Any of these changes the model's numbers everywhere (by 1 ULP and whatever the feedback makes of it), so it is a new model version, not a bench fix.
 
+## Bench and process
+
+### In progress — static algebraic-loop audit (task 010)
+
+The engine detects an algebraic loop only at run time and only along the `IfThenElse` branches actually taken, so a loop that exists under some switch value is invisible to every static check. This is how 001 r1 (Modes 17–20) and v7.6 r1 (Modes 25–26) failed. The audit builds the same-step dependency graph (VARIABLE and FLOW; STOCK cuts), prunes `IfThenElse` branches decided by the switches and runs Tarjan on every switch combination (128 for v7.7.1), plus a per-Mode forecast. A prototype reproduces both historical failures exactly and reports zero loops on v7.7.1 (`docs/tasks/010-algebraic-loop-audit/`). Once accepted, it also runs on every skeleton before a model task is issued.
+
+### Deferred, with a trigger — model generator
+
+Idea: stable element IDs, deterministic serialisation, the ModelJSON as a build product; first step, generate colony B from colony A plus a parameter table, accepted when the output is byte-identical (`CHECK_CANDIDATE` → `BYTE_IDENTICAL`).
+
+Why not now (measured on v7.7.1 r1): of 344 A/B pairs, 293 are pure name swaps and the 45 behavioural differences are exactly the 45 annotated asymmetric parameters, so all asymmetry already lives in parameters, and the colony-symmetry audit already guards the rest (0 unannotated). A byte-identical generator would still have to carry element order (A and B interleaved), layout (212 pairs differ in coordinates) and 7 descriptions, so the source would hardly be shorter than the JSON. It would also change the delivery format: the contractor would edit the source instead of patching the model.
+
+**Trigger:** a third settlement (colony C) or the v8 templates, when one description really does produce several copies.
+
+### Deferred, with a trigger — retiring switched-off branches
+
+Idea: run old Modes on a frozen model and bench (tag + pinned engine) and delete dead branches from the main line.
+
+Why not now: it replaces the project's central guarantee (old Modes bit-exact on the main line) with replaying history on an old tag. The number of switches (7 in v7.7.1) is not the cost. The cost is untested switch combinations, and the loop audit above covers them statically.
+
+**Trigger:** the first model change for which an exact algebraic fallback at `switch = 0` is impossible or would distort the design. The next planned increment, construction materials using energy, still has a clean fallback.
+
 ## Planet v1 acceptance concept
 
 Planet v1 needs a multi-part contract rather than a single violation counter:
