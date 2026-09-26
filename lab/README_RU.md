@@ -1,6 +1,6 @@
-# Orbital Economy Lab v0.9.5
+# Orbital Economy Lab v0.9.6
 
-Локальный стенд для запуска, проверки, regression-анализа, policy-gating, Capital Lifecycle Kernel и статических аудитов структуры для ModelJSON Orbital Economy. v0.9.5 добавляет безусловный switch-aware аудит алгебраических петель: он перебирает все бинарные сценарные переключатели и блокирует candidate до simulation, если петля возможна хотя бы в одной комбинации.
+Локальный стенд для запуска, проверки, regression-анализа, policy-gating, Capital Lifecycle Kernel и статических аудитов структуры для ModelJSON Orbital Economy. v0.9.6 добавляет `planet_closure`: декларативную per-process карту критериев Planet v1 P2–P6 с dependency paths, exceptions/debt counters и режимами `report/classify/planet_v1/planet_strict`.
 
 ## Подтверждённая база
 
@@ -25,6 +25,25 @@
 
 ---
 
+
+# 0e. Что изменилось в v0.9.6
+
+Новый static plugin `planet_closure` отвечает на вопрос, насколько текущие физические процессы закрыты по контракту Planet v1:
+
+```cmd
+PLANET_SELF_TEST.cmd
+node src\cli.js audit model.json validation.json --planet-closure=planet_closure.json
+```
+
+На accepted v7.7.1 r1 он фиксирует: 17 активных process instances + 2 legacy; P2 = 7 kernel / 10 exceptions / 0 undeclared; P3 = 4 requests / 2 producers / 11 exceptions / 0 undeclared; P4 = 0/6 deposits; P5 = 4/13 labor; P6 = 4 demand drivers; reversibility = 0.
+
+Ключевое правило: declaration не считается доказательством сама по себе. Для capacity/energy строится реальный reference path по ModelJSON, и он должен укладываться в `max_hops`; ложные L1–L5 декларации self-test отвергает. `planet_v1` и `planet_strict` превращают соответствующие долги в hard static gate.
+
+Плагин встроен в `runStructureAudits`, RUN_LAB/report и comparator static validation, но помечен static-only и не создаёт runtime checks на каждом Mode. Accepted validation в задаче 011 не переписывается; `--planet-closure` позволяет проверить декларацию отдельно до promotion.
+
+Подробно: `docs\STRUCTURE_AUDIT_RU.md`, `docs\VALIDATION_FORMAT_RU.md`.
+
+---
 
 # 0d. Что изменилось в v0.9.5
 
