@@ -1,7 +1,11 @@
 #!/usr/bin/env node
 import fs from 'node:fs';
+import os from 'node:os';
 import path from 'node:path';
+import { spawnSync } from 'node:child_process';
 import { auditPlanetClosure } from './planet_closure.js';
+import { runStructureAudits } from './structure_audit.js';
+import { checkPlugin } from './checks.js';
 
 let passed = 0;
 let failed = 0;
@@ -93,7 +97,7 @@ const openBoundaries = (validation.plugins || []).find(p => p?.type === 'open_bo
 
 console.log('Orbital Economy Lab Planet v1 closure QA');
 console.log('Declaration source: ' + declarationSource);
-console.log('14 static-audit cases through checkpoint KT2.\n');
+console.log('16 static-audit cases through checkpoint KT3.\n');
 
 try {
   await expect('1 accepted v7.7.1 matches Planet v1 reference counters exactly', () => {
@@ -303,6 +307,58 @@ try {
     });
     if (JSON.stringify(project(a)) !== JSON.stringify(project(b))) throw new Error('verdict/counters differ after name normalization');
     return 'same PASS and counters under lower-case + surrounding whitespace';
+  });
+
+
+  await expect('15 plugin integration, static-only runtime handling, and audit CLI override', () => {
+    const v = structuredClone(validation);
+    v.plugins = [...(v.plugins || []).filter(p => p?.type !== 'planet_closure'), structuredClone(declaration)];
+    const st = runStructureAudits(accepted, v);
+    if (!(st.status === 'PASS'
+      && st.planetClosure?.status === 'PASS'
+      && st.planetClosure.counters.processes === 17
+      && st.planetClosure.counters.P2.kernel === 7
+      && st.planetClosure.counters.P3.exceptions === 11)) {
+      throw new Error('runStructureAudits integration mismatch: ' + JSON.stringify(st.planetClosure));
+    }
+    const runtimeChecks = checkPlugin(declaration, null);
+    if (!Array.isArray(runtimeChecks) || runtimeChecks.length !== 0) {
+      throw new Error('planet_closure must be static-only: ' + JSON.stringify(runtimeChecks));
+    }
+
+    const tmp = fs.mkdtempSync(path.join(os.tmpdir(), 'orbital-economy-planet-cli-'));
+    try {
+      const cli = spawnSync(process.execPath, [
+        'src/cli.js', 'audit', acceptedFile, validationFile,
+        `--planet-closure=${fallbackFile}`,
+        `--out=${tmp}`
+      ], { cwd: process.cwd(), encoding: 'utf8' });
+      if (cli.status !== 0) throw new Error(`audit CLI exit=${cli.status}; stderr=${cli.stderr}; stdout=${cli.stdout}`);
+      const mdFile = path.join(tmp, 'structure-audit.md');
+      if (!fs.existsSync(mdFile)) throw new Error('structure-audit.md missing');
+      const md = fs.readFileSync(mdFile, 'utf8');
+      for (const needle of [
+        '## Planet closure',
+        'processes: 17; legacy: 2; expected source outputs: 16',
+        'P2 capacity: kernel **7** / exceptions **10** / undeclared **0**',
+        'P3 energy: requests **4** / producer **2** / exceptions **11** / undeclared **0**',
+        'P4 deposits: with **0** / without **6**',
+        'P5 labor: declared **4** / undeclared **13**',
+        'P6 demand drivers: **4**'
+      ]) {
+        if (!md.includes(needle)) throw new Error(`structure-audit.md missing: ${needle}`);
+      }
+      return 'structure gate PASS; checkPlugin=[]; audit --planet-closure exit=0 and report has P2-P6 counters';
+    } finally {
+      fs.rmSync(tmp, { recursive: true, force: true });
+    }
+  });
+
+  await expect('16 audit JSON is deterministic for the same model and declaration', () => {
+    const a = JSON.stringify(audit(accepted, declaration));
+    const b = JSON.stringify(audit(accepted, declaration));
+    if (a !== b) throw new Error('JSON output differs between identical runs');
+    return 'byte-identical JSON.stringify output';
   });
 } catch (e) {
   console.error('[FAIL] planet QA crashed:', e?.message || e);
