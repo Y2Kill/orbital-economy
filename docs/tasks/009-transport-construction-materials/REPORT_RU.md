@@ -38,6 +38,29 @@
 
 Дальше: заменить три `[calib probe]` содержательными порогами с запасом по измеренным значениям первого run и добиться validation PASS 32/32 (КТ3).
 
+
+### КТ3 — 2026-09-26 13:00 EEST — validation PASS 32/32, B производит стройматериалы в Mode 31
+
+Сделано: три intentional `[calib probe]` первого run заменены округлёнными содержательными порогами с запасом; модельные константы не менялись. Validation r2 проверяет все прежние условия, switch-off 0–29, тождества 30–31 и сценарное поведение.
+
+Доказательство:
+- Candidate acceptance run: https://github.com/Y2Kill/orbital-economy/actions/runs/36233604832.
+- `OVERALL: PASS`; в summary `validation | PASS`; пройдены Modes 0–31, то есть validation **32/32**.
+- Validation SHA-256: `5aba67ef5ef4b60a095ffe2005112de13cf04feafcdce3fa30ce018016116daa`.
+- Mode 31: `B Construction Materials Production > 1.5` — PASS; первый run измерил max `1.85361612493811`.
+- Mode 31: `B Regolith Extraction > 0` — PASS.
+- Mode 31: `B Power Generation Expansion > 0` — PASS; тем самым выполнен test-plan дизъюнкт «B Refinery или B Power строится».
+- Mode 31: `B Construction Materials Fulfillment < 0.95` — PASS; первый run измерил min `0.926415559897726`.
+- Проверка порядка — производство B отсутствует до окна и начинается после старта transport surge — PASS.
+- Mode 30: обе транспортные CM-ноги работают и fulfillment `>=0.98` — PASS; первый run измерил min `0.990737111465802`.
+- Все новые/legacy парные тождества и сумма source shares в Modes 30–31 — PASS.
+
+Не подтвердилось:
+- Оснований менять `Transport Construction Materials per Capacity = 3` нет: первый run практически воспроизвёл skeleton-ориентиры спецификации.
+- Policy этого run ещё FAIL только из-за непривязанного `validation_sha256`: `Unexpected=0`, `Forbidden=0`, `Threshold exceed=0`, `Required missing=0`, `Hard blockers=0`.
+
+Дальше: привязать `change-policy.json.validation_sha256` к SHA validation без изменения rules и добиться 5/5 PASS + зелёного CI (КТ4).
+
 ## Реализация кандидата
 
 Candidate r1 следует исчерпывающей спецификации: shared Transport получает второй физический ресурс — Construction Materials — по дословной схеме принятого Transport Capital Goods: половинное планирование спроса по A/B, фактическое списание пропорционально текущим региональным запасам.
@@ -52,7 +75,15 @@ Candidate r1 следует исчерпывающей спецификации:
 
 ## Калибровка
 
-Ожидается первый полный Linux-run. Константа `Transport Construction Materials per Capacity = 3` оставлена ровно на skeleton-значении владельца; до измерения не корректируется.
+Первый полный Linux-run: https://github.com/Y2Kill/orbital-economy/actions/runs/36232699114. Три r1-проверки были намеренно невозможными `[calib probe]`; r2 использует не значения «впритык», а округлённые смысловые границы:
+
+| Проверка | Наблюдение r1 | Порог r2 | Запас / смысл |
+|---|---:|---:|---|
+| Mode 30 Transport CM fulfillment min | 0.9907371115 | >= 0.98 | ≈0.0107; транспорт остаётся хорошо обеспечен стройматериалами |
+| Mode 31 B CM production max [360,720] | 1.8536161249 | > 1.5 | ≈0.3536; явное ненулевое производство B с существенным запасом |
+| Mode 31 B CM fulfillment min [360,720] | 0.9264155599 | < 0.95 | ≈0.0236; дефицит как минимум 5%, а не численный шум |
+
+`Transport Construction Materials per Capacity = 3` оставлена ровно на skeleton-значении владельца. Измерения практически совпали с skeleton-ориентирами (≈0.991, ≈1.85, ≈0.93), поэтому оснований подгонять константу нет.
 
 ## Известные ограничения
 
