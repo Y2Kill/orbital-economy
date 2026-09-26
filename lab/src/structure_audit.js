@@ -1,4 +1,5 @@
 import { auditAlgebraicLoops } from './loop_audit.js';
+import { auditPlanetClosure } from './planet_closure.js';
 
 // Static structure audits (pre-simulation), declared as validation plugins:
 //
@@ -233,12 +234,14 @@ export function runStructureAudits(raw, validation) {
   const plugins = validation?.plugins || [];
   const ob = plugins.find(p => p?.type === 'open_boundaries');
   const cs = plugins.find(p => p?.type === 'colony_symmetry');
+  const pc = plugins.find(p => p?.type === 'planet_closure');
   const openBoundaries = ob ? auditOpenBoundaries(raw, ob) : null;
   const colonySymmetry = cs ? auditColonySymmetry(raw, cs) : null;
+  const planetClosure = pc ? auditPlanetClosure(raw, pc, ob) : null;
 
   // Algebraic loops are a model property, not a validation plugin: always run.
   const algebraicLoops = auditAlgebraicLoops(raw);
-  const configured = [openBoundaries, colonySymmetry].filter(Boolean);
+  const configured = [openBoundaries, colonySymmetry, planetClosure].filter(Boolean);
 
   // Backward compatibility for structure_qa: a validation without the two
   // legacy structure plugins remains SKIPPED only when the unconditional loop
@@ -247,13 +250,13 @@ export function runStructureAudits(raw, validation) {
     return {
       status: 'SKIPPED',
       message: 'validation has no open_boundaries / colony_symmetry plugin; algebraic loop audit PASS',
-      openBoundaries, colonySymmetry, algebraicLoops
+      openBoundaries, colonySymmetry, planetClosure, algebraicLoops
     };
   }
 
   const parts = [...configured, algebraicLoops];
   const status = parts.some(p => p?.status === 'FAIL') ? 'FAIL' : 'PASS';
-  return { status, openBoundaries, colonySymmetry, algebraicLoops };
+  return { status, openBoundaries, colonySymmetry, planetClosure, algebraicLoops };
 }
 
 export function structureAuditErrors(audit) {
@@ -263,6 +266,16 @@ export function structureAuditErrors(audit) {
     for (const e of part.specErrors || []) out.push(`${part.type} spec: ${e}`);
     for (const c of part.checks || []) if (c.status === 'FAIL') out.push(`${part.type}: ${c.name}: ${c.message}`);
   }
+  const planet = audit?.planetClosure;
+  if (planet?.status === 'FAIL') {
+    for (const e of planet.errors || []) {
+      out.push(`planet_closure: ${e.instance ? e.instance + ': ' : ''}${e.message}`);
+    }
+    for (const e of planet.modeFailures || []) {
+      out.push(`planet_closure mode ${planet.mode}: ${e.dimension}: ${e.message} (${e.count})`);
+    }
+  }
+
   const loops = audit?.algebraicLoops;
   if (loops?.status === 'FAIL') {
     for (const e of loops.errors || []) out.push(`algebraic_loops parser: ${e.element}: ${e.message}`);
@@ -292,6 +305,22 @@ export function printStructureAudits(audit, log = console.log) {
       log(`    colony symmetry (${cs.tokens.join('↔')}): pairs=${cs.summary.pairsChecked}, links=${cs.summary.linksChecked}, mismatches=${cs.summary.mismatches}, parameter differences=${cs.summary.parameterDifferences}, exceptions=${cs.summary.exceptions}`);
       for (const m of cs.mismatches.slice(0, 20)) log(`        - ${m.kind}: ${m.name}${m.expected ? ` | expected ${m.expected}` : ''}${m.actual ? ` | actual ${m.actual}` : ''}`);
       if (cs.mismatches.length > 20) log(`        … ${cs.mismatches.length - 20} more`);
+    }
+  }
+  const pc = audit.planetClosure;
+  if (pc) {
+    const c = pc.counters;
+    log(`    planet closure (${pc.mode}): status=${pc.status}; processes=${c.processes}; legacy=${c.legacy}; expected=${c.expected_process_outputs}`);
+    log(`        P2 capacity: kernel=${c.P2.kernel}; exceptions=${c.P2.exceptions}; undeclared=${c.P2.undeclared}`);
+    log(`        P3 energy: requests=${c.P3.requests}; producer=${c.P3.producer}; exceptions=${c.P3.exceptions}; undeclared=${c.P3.undeclared}`);
+    log(`        P4 deposits: with=${c.P4.with_deposit}; without=${c.P4.without_deposit}; P5 labor: declared=${c.P5.declared}; undeclared=${c.P5.undeclared}; P6 demand=${c.P6.drivers}; reversibility=${pc.reversibility.length}`);
+    for (const e of pc.exceptions || []) log(`        [EXCEPTION] ${e.dimension} ${e.instance}: ${e.kind}${e.value ? ' ' + e.value : ''} — ${e.reason}`);
+    for (const e of pc.errors || []) log(`        [FAIL] ${e.instance || 'declaration'}: ${e.message}`);
+    for (const p of pc.processes || []) {
+      for (const [kind, value] of Object.entries(p.paths || {})) {
+        if (Array.isArray(value)) log(`        [PATH] ${p.instance} ${kind}: ${value.join(' -> ')}`);
+        else if (value?.element) log(`        [PATH] ${p.instance} ${kind}: ${value.element}`);
+      }
     }
   }
   const al = audit.algebraicLoops;
