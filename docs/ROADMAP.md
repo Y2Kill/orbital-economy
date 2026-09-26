@@ -61,9 +61,9 @@ Any of these changes the model's numbers everywhere (by 1 ULP and whatever the f
 
 ## Bench and process
 
-### In progress — static algebraic-loop audit (task 010)
+### Done — static algebraic-loop audit (task 010, Lab v0.9.5)
 
-The engine detects an algebraic loop only at run time and only along the `IfThenElse` branches actually taken, so a loop that exists under some switch value is invisible to every static check. This is how 001 r1 (Modes 17–20) and v7.6 r1 (Modes 25–26) failed. The audit builds the same-step dependency graph (VARIABLE and FLOW; STOCK cuts), prunes `IfThenElse` branches decided by the switches and runs Tarjan on every switch combination (128 for v7.7.1), plus a per-Mode forecast. A prototype reproduces both historical failures exactly and reports zero loops on v7.7.1 (`docs/tasks/010-algebraic-loop-audit/`). Once accepted, it also runs on every skeleton before a model task is issued.
+The engine detects an algebraic loop only at run time and only along the `IfThenElse` branches actually taken, so a loop that exists under some switch value is invisible to every static check. This is how 001 r1 (Modes 17–20) and v7.6 r1 (Modes 25–26) failed. The audit builds the same-step dependency graph (VARIABLE and FLOW; STOCK cuts), prunes `IfThenElse` branches decided by the switches and runs Tarjan on every switch combination (128 for v7.7.1), plus a per-Mode forecast. It reproduces both historical failures exactly and reports zero loops on v7.7.1; it is part of `STRUCTURE_AUDIT` (a loop in any combination is FAIL, `compare` gives `NOT_COMPARED`) and runs on every skeleton before a model task is issued (`node src/cli.js loops`; contract §8 p. 13). Accepted 2026-09-26 (`docs/tasks/010-algebraic-loop-audit/`).
 
 ### Deferred, with a trigger — model generator
 

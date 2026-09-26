@@ -1,6 +1,6 @@
 # Orbital Economy Lab — structure audit
 
-- generated: 2026-09-26T10:39:35.104Z
+- generated: 2026-09-26T12:54:07.246Z
 - model: Orbital Economy v7.7.1 r1 — Transport on Construction Materials
 - model SHA-256: `d53d014d727a439694e103aafb49f87d4dbbb362e581414cbf4dc71a19646f93`
 - validation: Orbital Economy v7.7.1 validation r1
@@ -278,3 +278,10 @@ Declared unit-transformation pairs (source flow physically backed by sink flows;
 | value | A Construction Materials Base Production Capacity | 3 | B Construction Materials Base Production Capacity | 2 |
 
 </details>
+
+## Algebraic loops (switch-aware, unconditional static audit)
+
+- status: **PASS**
+- switches: 7 — Capital Lifecycle Enabled, Intermediate Inputs Enabled, Capital Goods Enabled, Transport Capital Goods Enabled, Power Resource Enabled, Construction Materials Enabled, Transport Construction Materials Enabled
+- combinations: 128; with loops: **0**
+- Modes with loops: none
