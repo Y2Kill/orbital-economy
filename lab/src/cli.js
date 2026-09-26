@@ -19,7 +19,7 @@ function defaultOutDir() {
 
 function usage() {
   console.log(`
-Orbital Economy Lab v0.9.5
+Orbital Economy Lab v0.9.6
 
 Recommended workspace commands:
   lab [--input=input] [--modes=all] [--out=DIR]
@@ -28,7 +28,7 @@ Recommended workspace commands:
   policy [accepted.json] [candidate.json] [validation.json] [policy.json] [--modes=all] [--out=DIR]
   evaluate-policy <model-comparison.json> [policy.json] [--out=DIR]
   conformance [model.json] [validation.json] [--out=DIR]
-  audit [model.json] [validation.json] [--out=DIR]
+  audit [model.json] [validation.json] [--planet-closure=file.json] [--out=DIR]
   apply-patch <patch.json> [base.json] [--out=candidate.json]
   parameters [model.json] [--annotations=file.json] [--out=DIR]
   series [model.json] [--modes=all] [--out=DIR] [--dump=MODE] [--plan=file.json]
@@ -179,7 +179,12 @@ try {
       if (!validationFile) validationFile = ws.validationFile;
     }
     const outDir = ensureDir(options.out || path.resolve('output', `audit-${new Date().toISOString().replace(/[:.]/g, '-')}`));
-    const report = runAuditCommand({ modelFile, validationFile, outDir });
+    const report = runAuditCommand({
+      modelFile,
+      validationFile,
+      outDir,
+      planetClosureFile: options['planet-closure'] || null
+    });
     process.exitCode = report.status === 'PASS' ? 0 : 2;
   } else if (cmd === 'parameters') {
     let modelFile = positional[1] || null;
