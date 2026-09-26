@@ -30,6 +30,39 @@
 
 Дальше: добавить cases 2–14, включая L1–L5, режимы enforce, reversibility, deposits, demand/labor negatives и case-insensitive декларацию; довести их до зелёного CI (КТ2).
 
+
+### КТ2 — 2026-09-26 16:44 EEST — cases 2–14 PASS, ложные декларации диагностируются путями
+
+Сделано:
+- `planet_qa.js` расширен до cases 1–14 без изменения case 1;
+- L1–L5 проверяют заявленные в задании ложные декларации;
+- для ложного утверждения «output читает X» аудит сохраняет полный кратчайший путь, даже если он длиннее `max_hops`, чтобы FAIL объяснял не только отсутствие допустимого пути, но и реальную дистанцию;
+- проверены режимы `report/classify/planet_v1/planet_strict`, reversibility, deposits, demand drivers, labor и разрешение имён `trim().toLowerCase()`.
+
+Доказательство:
+- CI: https://github.com/Y2Kill/orbital-economy/actions/runs/36245973496 — **success**; guard, tools-selftest и весь `bench-selftests` PASS.
+- `PLANET QA RESULT: PASS (14 passed, 0 failed) in 0.253 s`.
+- L1 `mining[A]`: shortest **7 hops**:
+  `A Mining -> A Mining Rate -> A Positive Desired Mining Rate -> A Desired Mining Rate -> A Ore Consumption Rate -> A Smelting Rate -> A Pre Energy Smelting Rate -> A Refinery Active Capacity`.
+- L2 `construction_materials[A]`: выпуск до `A Energy Fulfillment Ratio` имеет shortest **11 hops**, то есть > `max_hops=4`; ложная energy declaration отклонена.
+- L3 `transport`: shortest до `A Power Active Generation Capital` — **13 hops**:
+  `Capacity Limited Total Transport Load -> Total Requested Transport Load -> Requested Electronics Transport Load -> Requested Electronics Load B to A -> Requested Electronics Shipment B to A -> Desired Electronics Shipment B to A -> A Electronics Local Demand -> A Electronics Market Price -> A Electronics Domestic Offer Price -> A Electronics Unit Cost -> A Energy Price -> A Perceived Energy Scarcity Ratio -> A Power Active Generation Capacity -> A Power Active Generation Capital`.
+- L4 `smelting[A]`: `A Electronics Requested Energy` не имеет общего planned-rate элемента с выпуском в пределах 4 ссылок.
+- L5 `electronics[A]`: shortest до `A Refinery Active Capacity` — **8 hops**:
+  `A Electronics Production -> A Electronics Production Rate -> A Electronics Energy Fulfillment Ratio -> A Electronics Allocated Energy -> A Energy Fulfillment Ratio -> A Total Requested Energy -> A Metal Requested Energy -> A Pre Energy Smelting Rate -> A Refinery Active Capacity`.
+- Case 7: отсутствие `regolith` → report PASS с двумя undeclared outputs; classify FAIL.
+- Case 9: `planet_v1` FAIL ровно `P4:6, P5:13`; `planet_strict` дополнительно `P2 exceptions:10, P3 exceptions:11`.
+- Case 10: искусственное чтение чужой constant capacity → reversibility=1 в report и FAIL в `planet_v1`.
+- Case 11: два deposit STOCK закрывают regolith и дают P4 **2/4**; односторонний STOCK даёт FAIL для `regolith[B]`.
+- Cases 12–14: state-dependent demand driver, unused labor intensity и lower-case/trim declaration отрабатывают ожидаемо.
+
+Не подтвердилось:
+- Ни одна из L1–L5 не проходит из-за далёкой dependency chain; ограничение `max_hops=4` отсекает их как задумано.
+- Дополнительных ошибок в исходной декларации v7.7.1 не найдено; правки декларации по-прежнему не нужны.
+
+Дальше: интеграция `planet_closure` в structure gate/report/CLI, `STATIC_ONLY_PLUGINS`, cases 15–16, v0.9.6 и полный зелёный bench-selftests (КТ3).
+
+
 ## Устройство модуля и отличия от прототипа
 
 Будет дополнено после завершения интеграции.
