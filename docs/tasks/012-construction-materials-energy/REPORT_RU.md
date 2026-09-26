@@ -67,12 +67,15 @@ Candidate r1 следует исчерпывающей спецификации:
 
 ## Калибровка
 
-Первая поставка использует намеренно невозможные `[calib probe]` только для трёх чисел, которые test plan предписывает определить по первому `candidate.yml`:
-- минимум A Construction Materials Energy Fulfillment Ratio в Mode 32;
-- терминальная ошибка `|A Construction Materials Demand Signal - A Construction Materials Demand|` в Mode 32;
-- минимум B Construction Materials Energy Fulfillment Ratio в окне Mode 33.
+Первый полный Linux-run: https://github.com/Y2Kill/orbital-economy/actions/runs/36275212947. Три заранее объявленных r1 `[calib probe]` дали измерения, после чего validation r2 использует округлённые смысловые границы с запасом; модельные константы не менялись.
 
-После первого полного прогона probes будут заменены округлёнными содержательными порогами с запасом; модельные константы ради прохождения порогов подгоняться не будут.
+| Проверка | Наблюдение r1 | Порог r2 | Запас / смысл |
+|---|---:|---:|---|
+| Mode 32 A CM energy fulfillment min | 0.9263883515 | < 0.95 | ≈0.0236; фиксирует минимум 5% энергетического дефицита |
+| Mode 32 terminal \|A signal − A demand\| | 0.0008954554 | <= 0.002 | >2× наблюдаемой ошибки; проверяет фактическое слежение, не численный ноль |
+| Mode 33 B CM energy fulfillment min [360,720] | 0.7147017290 | < 0.80 | ≈0.0853; фиксирует минимум 20% дефицита в shock-window |
+
+Наблюдения практически совпадают с owner skeleton (≈0.926 и ≈0.715), поэтому оснований менять `Construction Materials Energy per Unit = 10`, signal adjustment time или начальные signal stocks нет.
 
 ## Известные ограничения
 

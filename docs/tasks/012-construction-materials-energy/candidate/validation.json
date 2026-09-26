@@ -1,5 +1,5 @@
 {
-  "name": "Orbital Economy v7.7.2 Construction Materials Energy candidate validation r1",
+  "name": "Orbital Economy v7.7.2 Construction Materials Energy candidate validation r2",
   "mode_variable": "Timed Test Mode",
   "expected_time_step": 0.25,
   "time_step_tolerance": 1e-12,
@@ -16681,7 +16681,7 @@
         },
         {
           "type": "metric",
-          "name": "Mode 32: [calib probe] A Construction Materials energy fulfillment minimum",
+          "name": "Mode 32: A Construction Materials energy fulfillment falls below 0.95",
           "column": "A Construction Materials Energy Fulfillment Ratio",
           "metric": "min",
           "window": [
@@ -16689,13 +16689,12 @@
             1080
           ],
           "op": "<",
-          "value": 0,
-          "note": "Intentional impossible first-run probe; replace with a padded scarcity threshold from candidate.yml."
+          "value": 0.95
         },
         {
           "type": "identity",
-          "name": "Mode 32: [calib probe] terminal A demand-signal tracking error",
-          "abs_tol": 0,
+          "name": "Mode 32: terminal A demand-signal tracking error <= 0.002",
+          "abs_tol": 0.002,
           "window": [
             1080,
             1080
@@ -16709,12 +16708,11 @@
               "column": "A Construction Materials Demand",
               "coef": -1
             }
-          ],
-          "note": "Intentional zero-tolerance first-run probe; replace with a padded terminal tracking tolerance from candidate.yml."
+          ]
         }
       ],
       "notes": [
-        "r1 carries two intentional [calib probe] checks required by V7_7_2_TEST_PLAN: numerical thresholds are set only after the first candidate.yml run."
+        "r2 calibration from first Linux candidate run 36275212947: A CM energy fulfillment min=0.926388351545351 -> ceiling 0.95; terminal |signal-demand|=0.0008954554231939693 -> tolerance 0.002."
       ]
     },
     "33": {
@@ -16847,7 +16845,7 @@
         },
         {
           "type": "metric",
-          "name": "Mode 33: [calib probe] B Construction Materials energy fulfillment minimum during shock",
+          "name": "Mode 33: B Construction Materials energy fulfillment falls below 0.80 during shock",
           "column": "B Construction Materials Energy Fulfillment Ratio",
           "metric": "min",
           "window": [
@@ -16855,8 +16853,7 @@
             720
           ],
           "op": "<",
-          "value": 0,
-          "note": "Intentional impossible first-run probe; replace with a padded scarcity threshold from candidate.yml."
+          "value": 0.8
         },
         {
           "type": "event_exists",
@@ -16926,7 +16923,7 @@
         }
       ],
       "notes": [
-        "r1 carries one intentional [calib probe] check required by V7_7_2_TEST_PLAN; the final scarcity threshold is set from the first candidate.yml run."
+        "r2 calibration from first Linux candidate run 36275212947: B CM energy fulfillment min=0.714701728962681 -> ceiling 0.80."
       ]
     }
   },
@@ -17369,6 +17366,6 @@
     "v7.7.2 DRAFT: structural declarations only (regression 0-31, energy_balance consumers, planet_closure). The executor adds switch-off checks for Modes 0-31, scenario checks for Modes 32-33 and the per-colony construction-materials energy relations.",
     "v7.7.2 candidate r1: Modes 0-31 explicitly assert the Construction Materials energy mechanism is off (requested=0, allocated=0, fulfillment=1).",
     "v7.7.2 candidate r1: Modes 32-33 check requested-energy and regolith identities, actual<=pre-energy plan, and the linear allocated-energy/actual-production consequence. The current generic validation DSL has no nonlinear row-wise product check; the two required product formulas remain literal model formulas reviewed in model-patch.json and covered structurally by conformance/audit. This limitation is documented in REPORT_RU.md rather than silently weakening the test plan.",
-    "v7.7.2 candidate r1: numerical [calib] expectations are intentional impossible probes; final thresholds are derived from the first candidate.yml run with margin."
+    "v7.7.2 candidate r2 calibration from Linux candidate run 36275212947: Mode32 A CM energy fulfillment min=0.926388351545351 -> <0.95; terminal signal tracking abs error=0.0008954554231939693 -> <=0.002; Mode33 B CM energy fulfillment min=0.714701728962681 -> <0.80. Model constants unchanged."
   ]
 }
