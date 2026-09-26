@@ -87,6 +87,29 @@ export function writeReports(outDir, report) {
       }
     }
   }
+  const pc = st?.planetClosure;
+  if (pc) {
+    const c = pc.counters;
+    lines.push('');
+    lines.push('### Planet closure');
+    lines.push('');
+    lines.push(`- status: **${pc.status}**; mode: \`${pc.mode}\``);
+    lines.push(`- processes: ${c.processes}; legacy: ${c.legacy}; expected source outputs: ${c.expected_process_outputs}; undeclared outputs: ${pc.undeclared.length}`);
+    lines.push(`- P2 capacity: kernel ${c.P2.kernel} / exceptions ${c.P2.exceptions} / undeclared ${c.P2.undeclared}`);
+    lines.push(`- P3 energy: requests ${c.P3.requests} / producer ${c.P3.producer} / exceptions ${c.P3.exceptions} / undeclared ${c.P3.undeclared}`);
+    lines.push(`- P4 deposits: with ${c.P4.with_deposit} / without ${c.P4.without_deposit}; P5 labor: declared ${c.P5.declared} / undeclared ${c.P5.undeclared}; P6 demand: ${c.P6.drivers}`);
+    lines.push(`- reversibility violations: ${pc.reversibility.length}`);
+    for (const e of pc.exceptions || []) lines.push(`- exception ${esc(e.dimension)} ${esc(e.instance)}: ${esc(e.kind)}${e.value ? ' ' + esc(e.value) : ''} — ${esc(e.reason)}`);
+    for (const e of pc.errors || []) lines.push(`- **FAIL** ${esc(e.instance || 'declaration')} — ${esc(e.message)}`);
+    for (const e of pc.modeFailures || []) lines.push(`- **FAIL mode** ${esc(e.dimension)} — ${esc(e.message)} (${e.count})`);
+    for (const p of pc.processes || []) {
+      for (const [kind, value] of Object.entries(p.paths || {})) {
+        if (Array.isArray(value)) lines.push(`- path ${esc(p.instance)} ${esc(kind)}: ${value.map(esc).join(' → ')}`);
+        else if (value?.element) lines.push(`- path ${esc(p.instance)} ${esc(kind)}: shared ${esc(value.element)}`);
+      }
+    }
+  }
+
   const al = st?.algebraicLoops;
   if (al) {
     lines.push('');
