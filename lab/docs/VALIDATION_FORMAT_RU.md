@@ -1,4 +1,4 @@
-# Validation format v0.6.0
+# Validation format — Lab v0.9.6
 
 `validation.json` — изменяемый контракт проверки конкретной версии модели. Ядро runner должно меняться реже, чем этот файл.
 
@@ -69,6 +69,37 @@
 ### `colony_symmetry` (v0.6.0, статический)
 
 Зеркальность элементов с токенами колоний (`tokens: ["A","B"]`): существование, тип, формула по модулю переименования ссылок, endpoints, LINK. Числовые константы могут отличаться. `exceptions[]` — glob + обязательный `reason`. `enforce: false` понижает FAIL до WARN. Подробно: `STRUCTURE_AUDIT_RU.md`.
+
+### `planet_closure` (v0.9.6, статический)
+
+Декларативная карта производственных/service-процессов для критериев Planet v1 P2–P6. Выполняется только статически до simulation; runtime `checkPlugin` его пропускает.
+
+Основные поля:
+
+- `enforce`: `report | classify | planet_v1 | planet_strict`;
+- `colonies`: токены подстановки `{C}`;
+- `max_hops`: максимальная длина reference path для утверждения «output читает constraint»;
+- `process_categories`: категории `open_boundaries`, определяющие ожидаемые source outputs;
+- `processes[]`: `id`, `kind`, `output` и роли `capacity`, `energy`, `deposit`, `labor`;
+- `energy.total_request` / `energy.fulfillment`: общая энергетическая обвязка;
+- `demand_drivers.parameters/consumption/reason`: явные внешние драйверы спроса.
+
+Имена ссылок декларации разрешаются как ModelJSON-ссылки стенда: `trim().toLowerCase()`, отчёты используют канонические имена элементов.
+
+Пример process:
+
+```json
+{
+  "id": "smelting",
+  "kind": "transformation",
+  "output": "{C} Metal Production",
+  "capacity": { "kind": "kernel", "stock": "{C} Refinery Active Capacity" },
+  "energy": { "kind": "requests", "request": "{C} Metal Requested Energy" },
+  "labor": { "kind": "declared", "intensity": "{C} Refinery Labor per Capacity" }
+}
+```
+
+`capacity.kind=constant|unbounded` и `energy.kind=none` требуют `reason`. В `planet_v1` задокументированные P2/P3 exceptions допускаются; `planet_strict` запрещает их. Подробная семантика paths, reversibility, deposits и режимов — `STRUCTURE_AUDIT_RU.md`, раздел `planet_closure`.
 
 ### `capital_lifecycle` (v0.3/v0.4, совместимость)
 
