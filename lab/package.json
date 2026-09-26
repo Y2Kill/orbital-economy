@@ -1,10 +1,10 @@
 {
   "name": "orbital-economy-lab",
-  "version": "0.9.5",
+  "version": "0.9.6",
   "private": true,
   "license": "MIT",
   "type": "module",
-  "description": "Local ModelJSON test runner, validator, web cross-check harness, accepted-vs-candidate comparator, explicit change-policy gate, Capital Lifecycle Kernel conformance checker, and static structure audits (open boundaries, colony symmetry, switch-aware algebraic loops) for Orbital Economy using simulation@9.0.0.",
+  "description": "Local ModelJSON test runner, validator, comparator, policy gate, lifecycle conformance checker, and static structure audits (open boundaries, colony symmetry, algebraic loops, Planet v1 process closure) for Orbital Economy using simulation@9.0.0.",
   "engines": {
     "node": ">=20"
   },
@@ -28,7 +28,8 @@
     "loop-qa": "node --expose-gc src/loop_qa.js",
     "apply-patch": "node src/cli.js apply-patch",
     "parameters": "node src/cli.js parameters",
-    "series": "node --expose-gc src/cli.js series"
+    "series": "node --expose-gc src/cli.js series",
+    "planet-qa": "node --expose-gc src/planet_qa.js"
   },
   "dependencies": {
     "csv-parse": "5.6.0",
