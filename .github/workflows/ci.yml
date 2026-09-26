@@ -123,6 +123,9 @@ jobs:
       - name: Loop self-test
         working-directory: lab
         run: node --expose-gc src/loop_qa.js
+      - name: Planet self-test
+        working-directory: lab
+        run: node --expose-gc src/planet_qa.js
       - name: Conformance self-test
         working-directory: lab
         run: node --expose-gc src/conformance_qa.js
