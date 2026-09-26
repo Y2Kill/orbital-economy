@@ -2,7 +2,7 @@
 
 ## Журнал
 
-Работа начата с `main@ebee3cf7435887fe6c30f921390561d9e91d7b33`. Ветка `task/012-construction-materials-energy` создана от этой же головы; предыдущего журнала в ветке не было. Контрольные точки пока не закрыты.
+Работа начата с `main@ebee3cf7435887fe6c30f921390561d9e91d7b33`. Ветка `task/012-construction-materials-energy` создана от этой же головы; предыдущего журнала в ветке не было. Ниже зафиксированы все четыре закрытые контрольные точки.
 
 ### КТ1 — 2026-09-27 01:25 EEST — patch/conformance/audit PASS
 
@@ -62,6 +62,28 @@
 
 Дальше: привязать owner policy к финальному SHA validation без изменения rules и получить финальный candidate 5/5 PASS + зелёный CI.
 
+### КТ4 — 2026-09-27 02:03 EEST — поставка полная, candidate 5/5 PASS и CI зелёный
+
+Сделано:
+- `change-policy.json.validation_sha256` привязан к финальной validation SHA `0a61e3cffedcb9b2ded506f321526221e52d315dc7afe38dbdf91177883c4f54` коммитом `42c921046371eca01d2375c057a8cb796345e9c0`; owner-rules не менялись.
+- Модель после КТ1 не менялась; validation после КТ3 не менялась.
+
+Доказательство:
+- Финальный Candidate acceptance: https://github.com/Y2Kill/orbital-economy/actions/runs/36277680133 — **success**.
+- Все пять гейтов: `apply-patch PASS`, `conformance PASS`, `audit PASS`, `validation PASS`, `policy PASS`.
+- Итог лога: `All five candidate gates PASS.`
+- Candidate SHA-256: `a993dbb5966eebc36c1a7a4a468c1debf0dcecbaba5012a08b8e246889042795`.
+- Validation SHA-256: `0a61e3cffedcb9b2ded506f321526221e52d315dc7afe38dbdf91177883c4f54`.
+- `POLICY RESULT: PASS`: `Observed=662`, `Expected=662`, `Unexpected=0`, `Forbidden=0`, `Threshold exceed=0`, `Required missing=0`, `Hard blockers=0`.
+- Финальный comparator снова подтверждает для каждого Mode 0–31: `common=1082, changed=0, added=17, removed=0, maxAbs=0`.
+- CI той же candidate-головы: https://github.com/Y2Kill/orbital-economy/actions/runs/36277680158 — **success**.
+
+Не подтвердилось:
+- После привязки validation SHA не появилось новых policy-расхождений.
+- Дополнительная калибровка или изменение модельных констант не потребовались.
+
+Дальше: поставка задачи 012 завершена со стороны исполнителя; канонический Windows-прогон, `SHA256SUMS` и решение о приёмке остаются за reviewer по контракту.
+
 ## Реализация кандидата
 
 Candidate r1 следует исчерпывающей спецификации: переработка реголита в Construction Materials становится третьим потребителем общего энергетического аллокатора колонии, а план, питающий запрос энергии, читает сглаженный сток `X Construction Materials Demand Signal`, а не мгновенный спрос.
@@ -101,6 +123,20 @@ Candidate r1 следует исчерпывающей спецификации:
 - В Mode 33 спецификация ожидает, что стройки A в окне стоят; обязательная демонстрация энергетического ограничения поэтому выполняется на B.
 - Сигнальные stocks/flows живут и в Modes 0–31, но новый energy switch там явно равен 0, поэтому они не должны влиять на legacy outputs.
 - Канонические числовые эталоны снимаются reviewer на Windows; Linux Actions используется для гейтов и калибровочных ориентиров.
+
+## Итог поставки
+
+Финальный candidate-коммит перед отчётным коммитом — `42c921046371eca01d2375c057a8cb796345e9c0`. Поставка содержит четыре обязательных файла в `candidate/`: `model-patch.json`, `validation.json`, `change-policy.json`, `PARAMETER_ANNOTATIONS_fragment.json`.
+
+Принятые GitHub Actions-доказательства:
+- candidate 5/5 PASS: https://github.com/Y2Kill/orbital-economy/actions/runs/36277680133;
+- CI success: https://github.com/Y2Kill/orbital-economy/actions/runs/36277680158;
+- validation 34/34 PASS;
+- Modes 0–31 точны относительно accepted v7.7.1 r1 (`changed=0`, `maxAbs=0`);
+- audit PASS, `open boundaries=126`, `P3=6/2/9/0`, `loops=0/256`;
+- policy PASS, `Observed=Expected=662`, все счётчики нарушений и hard blockers равны нулю.
+
+Отклонений от архитектурной спецификации модели не выявлено. Единственное отмеченное ограничение относится к исполнимости формулировки test plan: общий validation DSL не умеет произвольное построчное произведение двух временных рядов, поэтому это явно документировано выше и покрыто буквальными формулами модели, структурным аудитом и исполнимыми линейными следствиями в пределах разрешённого scope.
 
 ## Что не запускалось локально
 
