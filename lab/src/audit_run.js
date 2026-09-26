@@ -118,6 +118,62 @@ export function writeAuditReports(outDir, report) {
     }
   }
   l.push('');
+  l.push('## Planet closure (per-process Planet v1 contract)');
+  l.push('');
+  const pc = report.planetClosure;
+  if (!pc) l.push('- not configured');
+  else {
+    const c = pc.counters;
+    l.push(`- status: **${pc.status}**; mode: \`${pc.mode}\``);
+    l.push(`- processes: ${c.processes}; legacy: ${c.legacy}; expected source outputs: ${c.expected_process_outputs}; undeclared outputs: ${pc.undeclared.length}`);
+    l.push(`- P2 capacity: kernel **${c.P2.kernel}** / exceptions **${c.P2.exceptions}** / undeclared **${c.P2.undeclared}**`);
+    l.push(`- P3 energy: requests **${c.P3.requests}** / producer **${c.P3.producer}** / exceptions **${c.P3.exceptions}** / undeclared **${c.P3.undeclared}**`);
+    l.push(`- P4 deposits: with **${c.P4.with_deposit}** / without **${c.P4.without_deposit}**`);
+    l.push(`- P5 labor: declared **${c.P5.declared}** / undeclared **${c.P5.undeclared}**`);
+    l.push(`- P6 demand drivers: **${c.P6.drivers}**`);
+    l.push(`- reversibility violations: **${pc.reversibility.length}**`);
+    if (pc.exceptions.length) {
+      l.push('');
+      l.push('| Dimension | Process | Kind | Value | Reason |');
+      l.push('|---|---|---|---|---|');
+      for (const e of pc.exceptions) l.push(`| ${esc(e.dimension)} | ${esc(e.instance)} | ${esc(e.kind)} | ${esc(e.value || '—')} | ${esc(e.reason)} |`);
+    }
+    if (pc.undeclared.length) {
+      l.push('');
+      l.push('Undeclared process outputs:');
+      for (const e of pc.undeclared) l.push(`- ${esc(e.output)}`);
+    }
+    if (pc.reversibility.length) {
+      l.push('');
+      l.push('Reversibility violations:');
+      for (const e of pc.reversibility) l.push(`- ${esc(e.instance)}: constant ${esc(e.parameter)} is also read by ${esc(e.reader)}`);
+    }
+    if (pc.errors.length || pc.modeFailures.length) {
+      l.push('');
+      for (const e of pc.errors) l.push(`- **FAIL** ${esc(e.instance || 'declaration')} — ${esc(e.message)}`);
+      for (const e of pc.modeFailures) l.push(`- **FAIL mode** ${esc(e.dimension)} — ${esc(e.message)} (${e.count})`);
+    }
+    l.push('');
+    l.push('<details><summary>Process paths</summary>');
+    l.push('');
+    for (const p of pc.processes) {
+      const entries = Object.entries(p.paths || {});
+      if (!entries.length) continue;
+      l.push(`**${esc(p.instance)}**`);
+      for (const [kind, value] of entries) {
+        if (Array.isArray(value)) l.push(`- ${esc(kind)}: ${value.map(esc).join(' → ')}`);
+        else if (value?.element) {
+          l.push(`- ${esc(kind)}: shared ${esc(value.element)}`);
+          if (value.request) l.push(`  - request: ${value.request.map(esc).join(' → ')}`);
+          if (value.output) l.push(`  - output: ${value.output.map(esc).join(' → ')}`);
+        }
+      }
+      l.push('');
+    }
+    l.push('</details>');
+  }
+  l.push('');
+
   l.push('## Algebraic loops (switch-aware, unconditional static audit)');
   l.push('');
   const al = report.algebraicLoops;
@@ -145,13 +201,23 @@ export function writeAuditReports(outDir, report) {
   fs.writeFileSync(path.join(outDir, 'structure-audit.md'), l.join('\n'), 'utf8');
 }
 
-export function runAuditCommand({ modelFile, validationFile, outDir }) {
+export function runAuditCommand({ modelFile, validationFile, outDir, planetClosureFile = null }) {
   const raw = readJson(modelFile);
   const validation = readJson(validationFile);
+  let planetClosureOverride = null;
+  if (planetClosureFile) {
+    planetClosureOverride = readJson(planetClosureFile);
+    if (planetClosureOverride?.type !== 'planet_closure') throw new Error('--planet-closure file must contain a planet_closure declaration');
+    validation.plugins = Array.isArray(validation.plugins) ? [...validation.plugins] : [];
+    const at = validation.plugins.findIndex(p => p?.type === 'planet_closure');
+    if (at >= 0) validation.plugins[at] = planetClosureOverride;
+    else validation.plugins.push(planetClosureOverride);
+  }
   console.log('Orbital Economy Lab - structure audit (static)');
   console.log(`Model:      ${raw.name || path.basename(modelFile)}`);
   console.log(`  SHA-256:  ${sha256File(modelFile)}`);
   console.log(`Validation: ${validation.name || path.basename(validationFile)}`);
+  if (planetClosureFile) console.log(`Planet decl: ${path.resolve(planetClosureFile)}`);
   console.log('');
   const result = runStructureAudits(raw, validation);
   printStructureAudits(result);
@@ -159,6 +225,7 @@ export function runAuditCommand({ modelFile, validationFile, outDir }) {
     generated: nowIso(),
     model: { file: path.resolve(modelFile), name: raw.name || null, sha256: sha256File(modelFile) },
     validation: { file: path.resolve(validationFile), name: validation.name || null, sha256: sha256File(validationFile) },
+    planetClosureOverride: planetClosureFile ? { file: path.resolve(planetClosureFile), sha256: sha256File(planetClosureFile) } : null,
     ...result
   };
   writeAuditReports(outDir, report);
@@ -167,6 +234,10 @@ export function runAuditCommand({ modelFile, validationFile, outDir }) {
   console.log(`STRUCTURE AUDIT RESULT: ${report.status}`);
   if (report.openBoundaries?.summary) console.log(`Open boundaries: ${report.openBoundaries.summary.openFlows}; unclassified=${report.openBoundaries.summary.unclassified}; closed-world violations=${report.openBoundaries.summary.closedWorldViolations}`);
   if (report.colonySymmetry?.summary) console.log(`Colony symmetry: mismatches=${report.colonySymmetry.summary.mismatches}; parameter differences=${report.colonySymmetry.summary.parameterDifferences}; exceptions=${report.colonySymmetry.summary.exceptions}`);
+  if (report.planetClosure) {
+    const c = report.planetClosure.counters;
+    console.log(`Planet closure: mode=${report.planetClosure.mode}; processes=${c.processes}; legacy=${c.legacy}; P2=${c.P2.kernel}/${c.P2.exceptions}/${c.P2.undeclared}; P3=${c.P3.requests}/${c.P3.producer}/${c.P3.exceptions}/${c.P3.undeclared}; P4=${c.P4.with_deposit}/${c.P4.without_deposit}; P5=${c.P5.declared}/${c.P5.undeclared}; P6=${c.P6.drivers}; reversibility=${report.planetClosure.reversibility.length}`);
+  }
   if (report.algebraicLoops) console.log(`Algebraic loops: switches=${report.algebraicLoops.switches.length}; combinations=${report.algebraicLoops.combinations}; with loops=${report.algebraicLoops.combinationsWithLoops}; Modes=${report.algebraicLoops.modesWithLoops.join(',') || 'none'}`);
   console.log(`Report: ${path.join(outDir, 'structure-audit.md')}`);
   console.log('============================================================');
