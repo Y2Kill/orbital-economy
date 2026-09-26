@@ -1,9 +1,9 @@
 {
   "format": "orbital-economy-change-policy-v1",
-  "name": "Orbital Economy v7.7.2 Construction Materials Energy - change contract candidate r1",
-  "description": "Owner draft rules retained unchanged. Accepted baseline v7.7.1 r1; Modes 0-31 exact; Modes 32-33 carry the new Construction Materials energy mechanism. validation_sha256 remains intentionally unbound until calibration finalises validation.json.",
+  "name": "Orbital Economy v7.7.2 Construction Materials Energy - change contract final candidate",
+  "description": "Owner draft rules retained unchanged. Accepted baseline v7.7.1 r1; Modes 0-31 exact; Modes 32-33 carry the new Construction Materials energy mechanism. Bound to final candidate validation r2.",
   "accepted_model_sha256": "d53d014d727a439694e103aafb49f87d4dbbb362e581414cbf4dc71a19646f93",
-  "validation_sha256": "<SHA-256 of the delivered validation.json>",
+  "validation_sha256": "0a61e3cffedcb9b2ded506f321526221e52d315dc7afe38dbdf91177883c4f54",
   "comparison": {
     "abs_tolerance": 0,
     "rel_tolerance": null,
