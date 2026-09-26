@@ -129,7 +129,8 @@ pairs=646, links=1252, mismatches=0, parameter differences=42, exceptions=17
 
 - узлы — только `VARIABLE` и `FLOW`;
 - `STOCK` разрывает граф: его текущее значение считается состоянием прошлого шага;
-- ребро `X → Y` создаётся по ссылке `[X]` в формуле `Y`; визуальные `LINK` для этого аудита не являются источником истины;
+- ребро `X → Y` создаётся по ссылке `[X]` в формуле `Y`; имена ссылок и scenario values разрешаются как в стенде/движке по ключу `trim().toLowerCase()`, но в отчёте остаются канонические имена ModelJSON; визуальные `LINK` не являются источником истины;
+- ссылка `[Name]`, которая не разрешается ни в один элемент, даёт **FAIL** с именем элемента и самой ссылкой, а не пропускается;
 - self-reference считается петлёй.
 
 Переключатель распознаётся **по данным**, а не по имени: VARIABLE имеет literal `0` или `1` в модели, задаётся хотя бы одним сценарием, и все сценарные значения этой переменной — только `0/1`. На accepted v7.7.1 r1 это даёт 7 переключателей и 128 комбинаций; `Timed Test Mode` не подходит, потому что принимает 0…31.
@@ -197,7 +198,7 @@ LOOP_SELF_TEST.cmd
 
 Интеграция старых plugin-аудитов: `runStructureAudits` объединяет их; статические плагины не порождают runtime-записей (регресс-тест на «Неизвестный plugin» WARN); `compareModels` с асимметричным candidate → `NOT_COMPARED` без симуляции.
 
-`LOOP_SELF_TEST.cmd`: 13 случаев. Accepted v7.7.1 r1 → 7 switches / 128 combinations / 0 loops; v7.6 r1 → 16/32 loop combinations и Modes 25–26; мутация задачи 001 r1 → 64/128 и Modes 17–31; дополнительно engine agreement, STOCK/FLOW/self-loop, parser FAIL, static compare gate и deterministic JSON.
+`LOOP_SELF_TEST.cmd`: 15 случаев. Accepted v7.7.1 r1 → 7 switches / 128 combinations / 0 loops; v7.6 r1 → 16/32 loop combinations и Modes 25–26; мутация задачи 001 r1 → 64/128 и Modes 17–31; lower-case construction-materials mutation → 64/128 и Modes 27–31; unresolved reference → FAIL; дополнительно engine agreement, STOCK/FLOW/self-loop, parser FAIL, static compare gate и deterministic JSON.
 
 ---
 
