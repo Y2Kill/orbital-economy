@@ -238,7 +238,7 @@ function lifecycleIdentityChecks(ctx, label, r, tol, safe = (_, fn) => fn()) {
 }
 
 // Plugins evaluated only statically (before simulation) by lifecycle_conformance.js / structure_audit.js.
-const STATIC_ONLY_PLUGINS = new Set(['open_boundaries', 'colony_symmetry']);
+const STATIC_ONLY_PLUGINS = new Set(['open_boundaries', 'colony_symmetry', 'planet_closure']);
 
 export function checkPlugin(plugin, ctx) {
   const results = [];
