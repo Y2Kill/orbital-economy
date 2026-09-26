@@ -1,0 +1,109 @@
+{
+  "format": "orbital-economy-change-policy-v1",
+  "name": "Orbital Economy v7.7.1 Transport on Construction Materials - change contract candidate r1",
+  "description": "Owner draft rules retained unchanged. Accepted baseline: v7.7 r1. Modes 0-29 must reproduce it exactly; new behaviour lives in Modes 30-31 behind Transport Construction Materials Enabled. validation_sha256 remains a placeholder until validation is finalized.",
+  "accepted_model_sha256": "5bbc29b6e18caa64ec22267892b6cd0669649722c8fc029d8dba43a77a34d5a1",
+  "validation_sha256": "<SHA-256 of the delivered validation.json>",
+  "comparison": {
+    "abs_tolerance": 0,
+    "rel_tolerance": null,
+    "rel_floor": 1e-12
+  },
+  "engine": {
+    "package": "simulation",
+    "version": "9.0.0"
+  },
+  "default_action": "deny",
+  "require_full_mode_coverage": true,
+  "rules": [
+    {
+      "id": "regression-guard-modes-0-29",
+      "action": "deny",
+      "event": "series_changed",
+      "modes": "0-29",
+      "name": "*",
+      "note": "Modes 0-29 set Transport Construction Materials Enabled = 0 and must reproduce v7.7 r1 exactly (first match wins)."
+    },
+    {
+      "id": "forbid-removals-and-structural-drift",
+      "action": "deny",
+      "event": [
+        "element_removed",
+        "series_removed",
+        "mode_removed",
+        "link_removed",
+        "type_changed",
+        "simulation_changed",
+        "time_axis_changed",
+        "scenario_renamed"
+      ],
+      "name": "*"
+    },
+    {
+      "id": "add-transport-construction-materials",
+      "action": "allow",
+      "event": "element_added",
+      "name": [
+        "Transport Construction Materials *",
+        "? Transport Construction Materials *"
+      ],
+      "required": true,
+      "note": "switch, per-capacity norm, demand, two-leg source/share/allocation/consumption (V7_7_1_ARCHITECTURE_SPEC §2)"
+    },
+    {
+      "id": "change-definitions-per-spec",
+      "action": "allow",
+      "event": "definition_changed",
+      "name": [
+        "Transport Capacity Expansion",
+        "? Construction Materials Demand",
+        "Test 2 Transport Surge Active"
+      ],
+      "required": true,
+      "note": "Transport Capacity Expansion: Min of the two fulfillments under the switch; X Construction Materials Demand: + transport allocation under the switch; Test 2 Transport Surge Active: + Mode 31 (spec §3)"
+    },
+    {
+      "id": "link-into-changed-definitions",
+      "action": "allow",
+      "event": "link_added",
+      "name": [
+        "* -> Transport Capacity Expansion",
+        "* -> ? Construction Materials Demand",
+        "* -> Test 2 Transport Surge Active"
+      ]
+    },
+    {
+      "id": "link-into-new-elements",
+      "action": "allow",
+      "event": "link_added",
+      "name": [
+        "* -> Transport Construction Materials *",
+        "* -> ? Transport Construction Materials *"
+      ]
+    },
+    {
+      "id": "add-modes-30-31",
+      "action": "allow",
+      "event": "mode_added",
+      "modes": "30-31",
+      "required": true
+    },
+    {
+      "id": "scenarios-0-29-gain-switch-off",
+      "action": "allow",
+      "event": "scenario_input_changed",
+      "modes": "0-29",
+      "required": true,
+      "note": "only \"Transport Construction Materials Enabled\": 0"
+    },
+    {
+      "id": "new-series-everywhere",
+      "action": "allow",
+      "event": "series_added",
+      "name": [
+        "Transport Construction Materials *",
+        "? Transport Construction Materials *"
+      ]
+    }
+  ]
+}
