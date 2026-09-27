@@ -112,3 +112,11 @@ Mode 37, окно 360→720:
 Пороговые значения r2 оставлены без изменений: после исправления DSL они имеют достаточный смысловой запас и подтверждены именно на требуемом окне. Модель после КТ1 не менялась.
 
 Policy того же run ожидаемо FAIL только на preflight: `validation_sha256 must be null/omitted or a 64-character SHA-256 hex string` — в candidate policy ещё оставался placeholder. Счётчики содержательных изменений: `Observed=2995`, `Unexpected=0`, `Forbidden=0`, `Threshold exceed=0`, `Required missing=0`, `Hard blockers=0`. Следующий шаг — привязать policy к validation SHA выше и запустить финальный candidate.
+
+### Ожидаемые прогоны после финальной привязки policy
+
+После push финального candidate-коммита `652ac0985f9274aca4b167050571bbd2aabf5cc2` зафиксированы:
+- Candidate acceptance: https://github.com/Y2Kill/orbital-economy/actions/runs/36334915097 — ожидается полный результат 5/5 с policy, привязанной к validation SHA `0eb8ca4b751dfb033e3d4ae78540630c23aadcb5213b7bbcb7ebfdfb2f7ad11e`.
+- CI: https://github.com/Y2Kill/orbital-economy/actions/runs/36334915132 — guard FAIL на этой ветке разрешено игнорировать по прямому указанию владельца: после создания ветки владелец сдвинул `main`, поэтому ветка формально forked от старого `6daeb43`; rebase запрещён владельцем для этого раунда. Для КТ4 проверяются остальные CI jobs.
+
+Результаты проверяются отдельными шагами; один длинный polling/wait не используется.
