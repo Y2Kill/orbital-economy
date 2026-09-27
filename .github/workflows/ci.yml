@@ -135,6 +135,9 @@ jobs:
       - name: Compare self-test
         working-directory: lab
         run: node --expose-gc src/compare_qa.js
+      - name: Node self-test
+        working-directory: lab
+        run: node --expose-gc src/node_qa.js
       - name: Bench self-test (Modes 0,12)
         working-directory: lab
         run: node --expose-gc src/cli.js lab --input=input --modes=0,12
