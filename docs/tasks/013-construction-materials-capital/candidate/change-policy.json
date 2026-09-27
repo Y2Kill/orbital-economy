@@ -1,9 +1,9 @@
 {
   "format": "orbital-economy-change-policy-v1",
-  "name": "Orbital Economy v7.7.3 Construction Materials Capital - change contract candidate r1 (validation SHA pending first candidate run)",
-  "description": "Written before implementation from V7_7_3_ARCHITECTURE_SPEC.md. Accepted baseline: v7.7.2 r1. Modes 0-33 must reproduce it exactly; new behaviour lives in Modes 34-35 behind Construction Materials Capital Enabled. validation_sha256 must be set to the delivered validation. Candidate r1 intentionally leaves validation_sha256 pending the first candidate.yml, per task workflow.",
+  "name": "Orbital Economy v7.7.3 Construction Materials Capital - change contract candidate r2",
+  "description": "Finalized from V7_7_3_ARCHITECTURE_SPEC.md after first candidate calibration. Accepted baseline: v7.7.2 r1. Modes 0-33 must reproduce it exactly; new behaviour lives in Modes 34-35 behind Construction Materials Capital Enabled. validation_sha256 is bound to candidate validation r2 calibrated from run 36313670047.",
   "accepted_model_sha256": "9bd5c956acccefddc3573b18d04e782d3cb329be89c1d297337b0831c04f2b45",
-  "validation_sha256": "<SHA-256 of the delivered validation.json>",
+  "validation_sha256": "3d91e9b0ceeed3e48a189b39fbe13306ee18f88935c49e484cf827c330f84e86",
   "comparison": {
     "abs_tolerance": 0,
     "rel_tolerance": null,

@@ -49,6 +49,20 @@
 
 Следующий технический шаг: прогнать validation r2; после PASS взять её SHA-256 именно из `candidate.yml` и только затем привязать `change-policy.json.validation_sha256`.
 
+### КТ3 — 2026-09-27 — validation r2 PASS 36/36; B строит завод заново в Mode 35
+
+Доказательство — Candidate acceptance r2: https://github.com/Y2Kill/orbital-economy/actions/runs/36316284968, commit `30eb4c880511a2e364e4b24a1480328ff65be7e8`.
+- Gate 4 `validation` — PASS.
+- Validation SHA-256: `3d91e9b0ceeed3e48a189b39fbe13306ee18f88935c49e484cf827c330f84e86`.
+- Все 36 Mode покрыты validation: legacy 0–33 плюс новые 34–35.
+- Mode 34: A installed capacity contracts (`−2.2639623310 < −2.0`), A CM production active (`2.2392768615 > 2.0`), B plant expansion остаётся в material-zero коридоре (`0 <= 1e−6`).
+- Mode 35: B plant expansion `0.00893006891 > 0.007`; B installed capacity change 360→720 `+0.9848665634 > 0.8`; B CM production max `1.0270755249 > 0.9`; B CM fulfillment min `0.1224758265 < 0.20`.
+- Оба физических расхода завода и запрет расширения до surge-window сохранились отдельными обязательными проверками и Gate 4 прошли.
+
+Пороги взяты только из заранее объявленных калибровочных зондов первого run 36313670047 и округлены в сторону смыслового запаса; модельные формулы/константы после КТ1 не менялись. Главный сценарный критерий P2 подтверждён: B во всплеске действительно строит завод заново.
+
+Policy теперь привязывается к этой validation SHA без изменения owner-rules. Следующий push должен дать финальные `validation PASS` и `policy PASS`.
+
 ## Реализация кандидата
 
 Патч следует исчерпывающему списку V7_7_3_ARCHITECTURE_SPEC.md: 69 новых элементов, 7 замен формул, 126 новых LINK, 34 legacy-сценария с `Construction Materials Capital Enabled = 0` и два новых Mode 34–35.
