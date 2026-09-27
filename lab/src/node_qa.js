@@ -5,6 +5,8 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { discoverSingleJson } from './workspace.js';
 import { readJson } from './util.js';
+import { PATCH_FORMAT, applyPatch } from './patch.js';
+import { expandNode } from './nodes/index.js';
 import {
   capitalLifecycleGeneratedNames,
   capitalLifecycleReplacementNames,
@@ -41,6 +43,16 @@ async function expect(name, fn) {
     mark(v !== false, name, typeof v === 'string' ? v : '');
   } catch (e) {
     mark(false, name, e.message || String(e));
+  }
+}
+
+async function expectThrows(name, fn, pattern) {
+  try {
+    await fn();
+    mark(false, name, 'expected an exception');
+  } catch (e) {
+    const message = e?.message || String(e);
+    mark(pattern.test(message), name, message);
   }
 }
 
@@ -171,6 +183,60 @@ await expect('1. strip and regenerate both capital_lifecycle declarations', () =
     details.push(line);
   }
   return `${declarations.length} declarations rebuilt with 0 definition/link/validation differences`;
+});
+
+
+const decl = declarations[0];
+const base = states[0].base;
+
+await expect('2. patch nodes and pre-expanded patch produce the same model definitions', () => {
+  const expanded = expandNode(decl, base);
+  const fromNode = applyPatch(base, { format: PATCH_FORMAT, nodes: [decl] }).model;
+  const fromExpanded = applyPatch(base, { format: PATCH_FORMAT, ...expanded.patch }).model;
+  if (JSON.stringify(fromNode.elements) !== JSON.stringify(fromExpanded.elements)) {
+    throw new Error('models differ after node expansion');
+  }
+  return 'definitions equal';
+});
+
+await expectThrows('3. unknown declaration field is rejected with its path', () => {
+  const bad = structuredClone(decl);
+  bad.backings = [];
+  expandNode(bad, base);
+}, /node\.backings: unknown field/);
+
+await expectThrows('4. unknown node type is rejected', () => {
+  const bad = structuredClone(decl);
+  bad.type = 'not_a_node_type';
+  expandNode(bad, base);
+}, /node\.type: unknown node type/);
+
+await expectThrows('5. missing capacity replacement reference is rejected', () => {
+  const bad = structuredClone(decl);
+  bad.capacity_output.replaces = '{C} Capital Goods Inventory';
+  expandNode(bad, base);
+}, /does not read \[A Capital Goods Inventory\]/);
+
+await expectThrows('6. node and explicit replacement cannot touch the same element', () => {
+  const target = decl.capacity_output.variable.replaceAll('{C}', decl.colonies[0]);
+  applyPatch(base, {
+    format: PATCH_FORMAT,
+    nodes: [decl],
+    replace_formulas: [{ name: target, value: '0' }]
+  });
+}, /nodes: generated element .* is also added or replaced explicitly/);
+
+await expectThrows('7. declaration reference to a missing model element is rejected', () => {
+  const bad = structuredClone(decl);
+  bad.backing[0].fulfillment = '{C} Missing Fulfillment';
+  expandNode(bad, base);
+}, /backing\[0\]\.fulfillment\[A\] references missing base element/);
+
+await expect('8. expansion is byte-deterministic', () => {
+  const a = JSON.stringify(expandNode(decl, base));
+  const b = JSON.stringify(expandNode(decl, base));
+  if (a !== b) throw new Error('two expansions differ byte-for-byte');
+  return `${a.length} JSON bytes stable`;
 });
 
 console.log(`\nNODE SELF-TEST: ${passed} passed, ${failed} failed`);

@@ -1,3 +1,5 @@
+import { expandNodes, validateNodeDeclaration } from './nodes/index.js';
+
 // Declarative model patch: the preferred delivery format for contractors who cannot run the lab.
 // A patch is small, reviewable and applied deterministically to the frozen accepted model by the lab,
 // so the candidate ModelJSON is never hand-edited (no lost elements, no reformatting, no stray edits).
@@ -28,8 +30,11 @@ export function validatePatch(patch) {
   if (patch.format !== PATCH_FORMAT) errors.push(`format must be "${PATCH_FORMAT}"`);
   if (patch.base_sha256 != null && !/^[0-9a-f]{64}$/i.test(patch.base_sha256)) errors.push('base_sha256 must be a 64-hex SHA-256 or omitted');
   if (patch.name != null && typeof patch.name !== 'string') errors.push('name must be a string');
-  for (const key of ['add_elements', 'replace_formulas', 'add_links', 'modify_scenarios', 'add_scenarios']) {
+  for (const key of ['nodes', 'add_elements', 'replace_formulas', 'add_links', 'modify_scenarios', 'add_scenarios']) {
     if (patch[key] != null && !Array.isArray(patch[key])) errors.push(`${key} must be an array`);
+  }
+  if (Array.isArray(patch.nodes)) {
+    for (const [i, node] of patch.nodes.entries()) errors.push(...validateNodeDeclaration(node, `nodes[${i}]`));
   }
   for (const [i, el] of (patch.add_elements || []).entries()) {
     const p = `add_elements[${i}]`;
@@ -67,6 +72,28 @@ export function applyPatch(base, patch, { baseSha256 = null, modeVariable = 'Tim
   if (errors.length) throw new Error(`Invalid patch:\n  - ${errors.join('\n  - ')}`);
   if (patch.base_sha256 && baseSha256 && patch.base_sha256.toLowerCase() !== baseSha256.toLowerCase()) {
     throw new Error(`Patch was written against base ${patch.base_sha256.slice(0, 12)}… but the supplied base is ${baseSha256.slice(0, 12)}…`);
+  }
+  if ((patch.nodes || []).length) {
+    const generated = expandNodes(patch.nodes, base, { path: 'nodes' }).patch;
+    const generatedTouched = new Set([
+      ...generated.add_elements.map(x => String(x.name).toLowerCase()),
+      ...generated.replace_formulas.map(x => String(x.name).toLowerCase())
+    ]);
+    const explicitTouched = new Set([
+      ...(patch.add_elements || []).map(x => String(x.name).toLowerCase()),
+      ...(patch.replace_formulas || []).map(x => String(x.name).toLowerCase())
+    ]);
+    for (const name of explicitTouched) {
+      if (generatedTouched.has(name)) throw new Error(`nodes: generated element "${name}" is also added or replaced explicitly`);
+    }
+    const merged = {
+      ...patch,
+      nodes: undefined,
+      add_elements: [...generated.add_elements, ...(patch.add_elements || [])],
+      replace_formulas: [...generated.replace_formulas, ...(patch.replace_formulas || [])],
+      add_links: [...generated.add_links, ...(patch.add_links || [])]
+    };
+    return applyPatch(base, merged, { baseSha256, modeVariable });
   }
   const model = structuredClone(base);
   const log = [];

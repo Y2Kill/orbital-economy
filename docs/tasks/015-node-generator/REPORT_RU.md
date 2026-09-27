@@ -10,6 +10,12 @@
 Ожидаемый запуск после push КТ1: CI run 36343421041 (голова `c2c2a2930f3475d3f4dc292b666664e308fd710d`); результат будет проверен отдельным шагом.
 Результат КТ1: первый run 36343421041 был отменён journal-push из-за `concurrency.cancel-in-progress`; доказательство — следующий run [36343437733](https://github.com/Y2Kill/orbital-economy/actions/runs/36343437733) на голове `78aede2bc764ff950a2f8ed3df392c33761c58e1`: `bench-selftests` SUCCESS. В логе Node self-test: Construction Materials Plant — 69 элементов / 6 замен / 126 связей / validation=equal; Capital Goods Plant — 76 / 6 / 138 / validation=equal; `NODE SELF-TEST: 1 passed, 0 failed`.
 
+### КТ2 — 2026-09-27 — строгая декларация и секция `nodes` в `APPLY_PATCH`
+Сделано: добавлен реестр `lab/src/nodes/index.js` с проверкой неизвестных/обязательных полей и путями ошибок; `applyPatch` принимает `nodes`, последовательно раскрывает их против рабочей модели от базы патча и запрещает пересечение с явными `add_elements` / `replace_formulas`. В `node_qa.js` добавлены случаи 2–8: эквивалентность nodes/expanded, неизвестное поле, неизвестный тип, отсутствующая подменяемая ссылка, конфликт node/explicit, отсутствующая ссылка декларации, детерминированность.
+Доказательство: код и запись КТ2 отправляются этим push; ожидается отдельный CI run новой головы, после чего будут проверены `Node self-test` и весь `bench-selftests`.
+Не запускалось локально: Node-команды, стенд и самотесты.
+Дальше: после зелёного КТ2 — CLI `expand-nodes`, merge validation и случай 9.
+
 ## Что не запускалось
 
 Локально не запускались `check_branch`, стенд, самотесты и Node-команды. В этой среде работа ведётся только через GitHub API; проверки выполняются GitHub Actions согласно §9.4. `SHA256SUMS.txt` и `lab/SHA256SUMS.txt` не пересобирались (`sums_by: reviewer`).
