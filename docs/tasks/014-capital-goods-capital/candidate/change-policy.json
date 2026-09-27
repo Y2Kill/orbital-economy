@@ -1,9 +1,9 @@
 {
   "format": "orbital-economy-change-policy-v1",
-  "name": "Orbital Economy v7.7.4 Capital Goods Capital - change contract candidate r1",
-  "description": "Task 014 candidate r1. Owner rules preserved; validation_sha256 intentionally remains unbound until the calibrated validation passes and candidate.yml reports its SHA-256.",
+  "name": "Orbital Economy v7.7.4 Capital Goods Capital - change contract final candidate",
+  "description": "Task 014 final candidate. Owner rules preserved; validation_sha256 is bound to the r3 validation that passed all 38 Modes in candidate run 36333421925.",
   "accepted_model_sha256": "a620cc65b93f6faedf2303e16f10dd595a882c319403c0b1bd98b69c1f7ef173",
-  "validation_sha256": "<SHA-256 of the delivered validation.json>",
+  "validation_sha256": "0eb8ca4b751dfb033e3d4ae78540630c23aadcb5213b7bbcb7ebfdfb2f7ad11e",
   "comparison": {
     "abs_tolerance": 0,
     "rel_tolerance": null,
