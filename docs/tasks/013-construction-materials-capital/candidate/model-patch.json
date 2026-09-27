@@ -1,0 +1,1398 @@
+{
+  "format": "orbital-economy-model-patch-v1",
+  "base_sha256": "9bd5c956acccefddc3573b18d04e782d3cb329be89c1d297337b0831c04f2b45",
+  "name": "Orbital Economy v7.7.3 Construction Materials Capital candidate r1",
+  "description": "Task 013: construction-materials processing capacity becomes a kernel-v2 lifecycle-capital sector in each colony. Required capacity follows the smoothed Construction Materials Demand Signal to preserve same-step causality.",
+  "add_elements": [
+    {
+      "type": "VARIABLE",
+      "name": "Construction Materials Capital Enabled",
+      "behavior": {
+        "value": 1
+      },
+      "description": "v7.7.3 switch: enables construction-materials processing capacity as lifecycle capital."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "Construction Materials Plant Operating Reserve Factor",
+      "behavior": {
+        "value": 1.1
+      },
+      "description": "Required active plant capacity multiplier over the smoothed construction-materials demand signal."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "Construction Materials Plant Installed Reserve Factor",
+      "behavior": {
+        "value": 1.15
+      },
+      "description": "Desired installed plant capacity multiplier over required active capacity."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "Construction Materials Plant Activation Time",
+      "behavior": {
+        "value": 20
+      },
+      "description": "Days to reactivate mothballed construction-materials plant capacity."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "Construction Materials Plant Mothball Time",
+      "behavior": {
+        "value": 10
+      },
+      "description": "Days to mothball unneeded active construction-materials plant capacity."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "Construction Materials Plant Surplus Disposal Decision Time",
+      "behavior": {
+        "value": 240
+      },
+      "description": "Decision timescale before true surplus plant capacity enters decommissioning."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "Construction Materials Plant Construction Time",
+      "behavior": {
+        "value": 120
+      },
+      "description": "Physical timescale for closing an installed construction-materials plant capacity shortage."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "Construction Materials Plant Decommissioning Time",
+      "behavior": {
+        "value": 540
+      },
+      "description": "Physical timescale from decommissioning commitment to retirement."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "Construction Materials Plant Depreciation Rate",
+      "behavior": {
+        "value": 0.0001
+      },
+      "description": "Daily physical depreciation rate of construction-materials plant capacity."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "Construction Materials Plant Capital Goods per Capacity",
+      "behavior": {
+        "value": 5
+      },
+      "description": "Capital Goods consumed per unit of new construction-materials plant capacity."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "Construction Materials Plant Construction Materials per Capacity",
+      "behavior": {
+        "value": 5
+      },
+      "description": "Construction Materials consumed per unit of new construction-materials plant capacity."
+    },
+    {
+      "type": "STOCK",
+      "name": "A Construction Materials Plant Installed Capacity",
+      "behavior": {
+        "initial_value": 3,
+        "non_negative": true
+      },
+      "description": "Physical installed construction-materials processing capacity in colony A."
+    },
+    {
+      "type": "STOCK",
+      "name": "A Construction Materials Plant Active Capacity",
+      "behavior": {
+        "initial_value": 3,
+        "non_negative": true
+      },
+      "description": "Operational construction-materials processing capacity in colony A."
+    },
+    {
+      "type": "STOCK",
+      "name": "A Construction Materials Plant Decommissioning Capacity",
+      "behavior": {
+        "initial_value": 0,
+        "non_negative": true
+      },
+      "description": "Construction-materials plant capacity committed to decommissioning in colony A."
+    },
+    {
+      "type": "STOCK",
+      "name": "A Construction Materials Plant Retired Capacity",
+      "behavior": {
+        "initial_value": 0,
+        "non_negative": true
+      },
+      "description": "Cumulative retired construction-materials plant capacity in colony A."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "A Construction Materials Plant Required Active Capacity",
+      "behavior": {
+        "value": "[A Construction Materials Demand Signal] * [Construction Materials Plant Operating Reserve Factor]"
+      },
+      "description": "Required active plant capacity follows the smoothed demand signal, preserving same-step causality."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "A Construction Materials Plant Desired Installed Capacity",
+      "behavior": {
+        "value": "[A Construction Materials Plant Required Active Capacity] * [Construction Materials Plant Installed Reserve Factor]"
+      },
+      "description": "Long-run desired installed construction-materials plant capacity."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "A Construction Materials Plant Inactive Capacity",
+      "behavior": {
+        "value": "(([A Construction Materials Plant Installed Capacity] - [A Construction Materials Plant Active Capacity]) + ((([A Construction Materials Plant Installed Capacity] - [A Construction Materials Plant Active Capacity]) ^ 2) ^ 0.5)) / 2"
+      },
+      "description": "Installed but inactive construction-materials plant capacity."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "A Construction Materials Plant Target Active Capacity",
+      "behavior": {
+        "value": "(([A Construction Materials Plant Required Active Capacity]) + ([A Construction Materials Plant Installed Capacity]) - (((([A Construction Materials Plant Required Active Capacity]) - ([A Construction Materials Plant Installed Capacity])) ^ 2) ^ 0.5)) / 2"
+      },
+      "description": "Active-capacity target bounded by installed capacity."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "A Construction Materials Plant Activation Gap",
+      "behavior": {
+        "value": "(([A Construction Materials Plant Target Active Capacity] - [A Construction Materials Plant Active Capacity]) + ((([A Construction Materials Plant Target Active Capacity] - [A Construction Materials Plant Active Capacity]) ^ 2) ^ 0.5)) / 2"
+      },
+      "description": "Positive activation gap."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "A Construction Materials Plant Mothball Gap",
+      "behavior": {
+        "value": "(([A Construction Materials Plant Active Capacity] - [A Construction Materials Plant Target Active Capacity]) + ((([A Construction Materials Plant Active Capacity] - [A Construction Materials Plant Target Active Capacity]) ^ 2) ^ 0.5)) / 2"
+      },
+      "description": "Positive mothballing gap."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "A Construction Materials Plant Installed Capacity Shortage",
+      "behavior": {
+        "value": "(([A Construction Materials Plant Desired Installed Capacity] - [A Construction Materials Plant Installed Capacity]) + ((([A Construction Materials Plant Desired Installed Capacity] - [A Construction Materials Plant Installed Capacity]) ^ 2) ^ 0.5)) / 2"
+      },
+      "description": "Positive installed-capacity shortage."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "A Construction Materials Plant Installed Capacity Excess",
+      "behavior": {
+        "value": "(([A Construction Materials Plant Installed Capacity] - [A Construction Materials Plant Desired Installed Capacity]) + ((([A Construction Materials Plant Installed Capacity] - [A Construction Materials Plant Desired Installed Capacity]) ^ 2) ^ 0.5)) / 2"
+      },
+      "description": "Positive installed-capacity excess."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "A Construction Materials Plant Gap Limited Construction",
+      "behavior": {
+        "value": "[A Construction Materials Plant Installed Capacity Shortage] / [Construction Materials Plant Construction Time]"
+      },
+      "description": "Maximum construction rate justified by the installed-capacity shortage."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "A Construction Materials Plant Activation Queue Capacity",
+      "behavior": {
+        "value": "(([A Construction Materials Plant Inactive Capacity]) + ([A Construction Materials Plant Activation Gap]) - (((([A Construction Materials Plant Inactive Capacity]) - ([A Construction Materials Plant Activation Gap])) ^ 2) ^ 0.5)) / 2"
+      },
+      "description": "Inactive capacity already needed to close the activation gap."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "A Construction Materials Plant Inactive After Activation Queue",
+      "behavior": {
+        "value": "(([A Construction Materials Plant Inactive Capacity] - [A Construction Materials Plant Activation Queue Capacity]) + ((([A Construction Materials Plant Inactive Capacity] - [A Construction Materials Plant Activation Queue Capacity]) ^ 2) ^ 0.5)) / 2"
+      },
+      "description": "Inactive capacity remaining after activation needs are reserved."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "A Construction Materials Plant Strategic Reserve Target",
+      "behavior": {
+        "value": "(([A Construction Materials Plant Desired Installed Capacity] - [A Construction Materials Plant Required Active Capacity]) + ((([A Construction Materials Plant Desired Installed Capacity] - [A Construction Materials Plant Required Active Capacity]) ^ 2) ^ 0.5)) / 2"
+      },
+      "description": "Desired inactive strategic reserve implied by installed reserve."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "A Construction Materials Plant Strategic Reserve Capacity",
+      "behavior": {
+        "value": "(([A Construction Materials Plant Inactive After Activation Queue]) + ([A Construction Materials Plant Strategic Reserve Target]) - (((([A Construction Materials Plant Inactive After Activation Queue]) - ([A Construction Materials Plant Strategic Reserve Target])) ^ 2) ^ 0.5)) / 2"
+      },
+      "description": "Inactive construction-materials plant capacity intentionally retained as strategic reserve."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "A Construction Materials Plant Surplus Capacity",
+      "behavior": {
+        "value": "(([A Construction Materials Plant Inactive After Activation Queue] - [A Construction Materials Plant Strategic Reserve Capacity]) + ((([A Construction Materials Plant Inactive After Activation Queue] - [A Construction Materials Plant Strategic Reserve Capacity]) ^ 2) ^ 0.5)) / 2"
+      },
+      "description": "True surplus plant capacity eligible for decommissioning."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "A Construction Materials Plant Lifetime Capacity Account",
+      "behavior": {
+        "value": "[A Construction Materials Plant Installed Capacity] + [A Construction Materials Plant Decommissioning Capacity] + [A Construction Materials Plant Retired Capacity]"
+      },
+      "description": "Lifetime accounting identity for constructed plant capacity."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "A Construction Materials Plant Desired Expansion",
+      "behavior": {
+        "value": "IfThenElse([Construction Materials Capital Enabled] = 1, [A Construction Materials Plant Gap Limited Construction], 0)"
+      },
+      "description": "Desired construction-materials plant expansion; no finance limit, gated only by the v7.7.3 switch."
+    },
+    {
+      "type": "FLOW",
+      "name": "A Construction Materials Plant Expansion",
+      "from": null,
+      "to": "A Construction Materials Plant Installed Capacity",
+      "behavior": {
+        "value": "IfThenElse([Construction Materials Capital Enabled] = 1, [A Construction Materials Plant Gap Limited Construction] * Min([A Capital Goods Fulfillment], [A Construction Materials Fulfillment]), 0)",
+        "non_negative": true
+      },
+      "description": "Actual plant expansion after physical Capital Goods and Construction Materials fulfillment."
+    },
+    {
+      "type": "FLOW",
+      "name": "A Construction Materials Plant Decommissioning Initiation",
+      "from": "A Construction Materials Plant Installed Capacity",
+      "to": "A Construction Materials Plant Decommissioning Capacity",
+      "behavior": {
+        "value": "[A Construction Materials Plant Surplus Capacity] / [Construction Materials Plant Surplus Disposal Decision Time]",
+        "non_negative": true
+      },
+      "description": "Commitment of true surplus plant capacity to decommissioning."
+    },
+    {
+      "type": "FLOW",
+      "name": "A Construction Materials Plant Depreciation",
+      "from": "A Construction Materials Plant Installed Capacity",
+      "to": "A Construction Materials Plant Retired Capacity",
+      "behavior": {
+        "value": "[A Construction Materials Plant Installed Capacity] * [Construction Materials Plant Depreciation Rate]",
+        "non_negative": true
+      },
+      "description": "Installed plant capacity lost to physical depreciation."
+    },
+    {
+      "type": "FLOW",
+      "name": "A Construction Materials Plant Dismantling Completion",
+      "from": "A Construction Materials Plant Decommissioning Capacity",
+      "to": "A Construction Materials Plant Retired Capacity",
+      "behavior": {
+        "value": "[A Construction Materials Plant Decommissioning Capacity] / [Construction Materials Plant Decommissioning Time]",
+        "non_negative": true
+      },
+      "description": "Completion of physical decommissioning."
+    },
+    {
+      "type": "FLOW",
+      "name": "A Construction Materials Plant Activation",
+      "from": null,
+      "to": "A Construction Materials Plant Active Capacity",
+      "behavior": {
+        "value": "[A Construction Materials Plant Activation Gap] / [Construction Materials Plant Activation Time]",
+        "non_negative": true
+      },
+      "description": "Reactivation of mothballed plant capacity."
+    },
+    {
+      "type": "FLOW",
+      "name": "A Construction Materials Plant Mothballing",
+      "from": "A Construction Materials Plant Active Capacity",
+      "to": null,
+      "behavior": {
+        "value": "[A Construction Materials Plant Mothball Gap] / [Construction Materials Plant Mothball Time]",
+        "non_negative": true
+      },
+      "description": "Temporary removal of unneeded active plant capacity."
+    },
+    {
+      "type": "FLOW",
+      "name": "A Construction Materials Plant Active Depreciation",
+      "from": "A Construction Materials Plant Active Capacity",
+      "to": null,
+      "behavior": {
+        "value": "[A Construction Materials Plant Active Capacity] * [Construction Materials Plant Depreciation Rate]",
+        "non_negative": true
+      },
+      "description": "Active capacity lost as installed plant physically depreciates."
+    },
+    {
+      "type": "FLOW",
+      "name": "A Construction Materials Plant Capital Goods Consumption",
+      "from": "A Capital Goods Inventory",
+      "to": null,
+      "behavior": {
+        "value": "IfThenElse([Construction Materials Capital Enabled] = 1, [A Construction Materials Plant Expansion] * [Construction Materials Plant Capital Goods per Capacity], 0)",
+        "non_negative": true
+      },
+      "description": "Capital Goods physically consumed by construction-materials plant expansion."
+    },
+    {
+      "type": "FLOW",
+      "name": "A Construction Materials Plant Construction Materials Consumption",
+      "from": "A Construction Materials Inventory",
+      "to": null,
+      "behavior": {
+        "value": "IfThenElse([Construction Materials Capital Enabled] = 1, [A Construction Materials Plant Expansion] * [Construction Materials Plant Construction Materials per Capacity], 0)",
+        "non_negative": true
+      },
+      "description": "Construction Materials physically consumed by construction-materials plant expansion."
+    },
+    {
+      "type": "STOCK",
+      "name": "B Construction Materials Plant Installed Capacity",
+      "behavior": {
+        "initial_value": 2,
+        "non_negative": true
+      },
+      "description": "Physical installed construction-materials processing capacity in colony B."
+    },
+    {
+      "type": "STOCK",
+      "name": "B Construction Materials Plant Active Capacity",
+      "behavior": {
+        "initial_value": 2,
+        "non_negative": true
+      },
+      "description": "Operational construction-materials processing capacity in colony B."
+    },
+    {
+      "type": "STOCK",
+      "name": "B Construction Materials Plant Decommissioning Capacity",
+      "behavior": {
+        "initial_value": 0,
+        "non_negative": true
+      },
+      "description": "Construction-materials plant capacity committed to decommissioning in colony B."
+    },
+    {
+      "type": "STOCK",
+      "name": "B Construction Materials Plant Retired Capacity",
+      "behavior": {
+        "initial_value": 0,
+        "non_negative": true
+      },
+      "description": "Cumulative retired construction-materials plant capacity in colony B."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "B Construction Materials Plant Required Active Capacity",
+      "behavior": {
+        "value": "[B Construction Materials Demand Signal] * [Construction Materials Plant Operating Reserve Factor]"
+      },
+      "description": "Required active plant capacity follows the smoothed demand signal, preserving same-step causality."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "B Construction Materials Plant Desired Installed Capacity",
+      "behavior": {
+        "value": "[B Construction Materials Plant Required Active Capacity] * [Construction Materials Plant Installed Reserve Factor]"
+      },
+      "description": "Long-run desired installed construction-materials plant capacity."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "B Construction Materials Plant Inactive Capacity",
+      "behavior": {
+        "value": "(([B Construction Materials Plant Installed Capacity] - [B Construction Materials Plant Active Capacity]) + ((([B Construction Materials Plant Installed Capacity] - [B Construction Materials Plant Active Capacity]) ^ 2) ^ 0.5)) / 2"
+      },
+      "description": "Installed but inactive construction-materials plant capacity."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "B Construction Materials Plant Target Active Capacity",
+      "behavior": {
+        "value": "(([B Construction Materials Plant Required Active Capacity]) + ([B Construction Materials Plant Installed Capacity]) - (((([B Construction Materials Plant Required Active Capacity]) - ([B Construction Materials Plant Installed Capacity])) ^ 2) ^ 0.5)) / 2"
+      },
+      "description": "Active-capacity target bounded by installed capacity."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "B Construction Materials Plant Activation Gap",
+      "behavior": {
+        "value": "(([B Construction Materials Plant Target Active Capacity] - [B Construction Materials Plant Active Capacity]) + ((([B Construction Materials Plant Target Active Capacity] - [B Construction Materials Plant Active Capacity]) ^ 2) ^ 0.5)) / 2"
+      },
+      "description": "Positive activation gap."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "B Construction Materials Plant Mothball Gap",
+      "behavior": {
+        "value": "(([B Construction Materials Plant Active Capacity] - [B Construction Materials Plant Target Active Capacity]) + ((([B Construction Materials Plant Active Capacity] - [B Construction Materials Plant Target Active Capacity]) ^ 2) ^ 0.5)) / 2"
+      },
+      "description": "Positive mothballing gap."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "B Construction Materials Plant Installed Capacity Shortage",
+      "behavior": {
+        "value": "(([B Construction Materials Plant Desired Installed Capacity] - [B Construction Materials Plant Installed Capacity]) + ((([B Construction Materials Plant Desired Installed Capacity] - [B Construction Materials Plant Installed Capacity]) ^ 2) ^ 0.5)) / 2"
+      },
+      "description": "Positive installed-capacity shortage."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "B Construction Materials Plant Installed Capacity Excess",
+      "behavior": {
+        "value": "(([B Construction Materials Plant Installed Capacity] - [B Construction Materials Plant Desired Installed Capacity]) + ((([B Construction Materials Plant Installed Capacity] - [B Construction Materials Plant Desired Installed Capacity]) ^ 2) ^ 0.5)) / 2"
+      },
+      "description": "Positive installed-capacity excess."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "B Construction Materials Plant Gap Limited Construction",
+      "behavior": {
+        "value": "[B Construction Materials Plant Installed Capacity Shortage] / [Construction Materials Plant Construction Time]"
+      },
+      "description": "Maximum construction rate justified by the installed-capacity shortage."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "B Construction Materials Plant Activation Queue Capacity",
+      "behavior": {
+        "value": "(([B Construction Materials Plant Inactive Capacity]) + ([B Construction Materials Plant Activation Gap]) - (((([B Construction Materials Plant Inactive Capacity]) - ([B Construction Materials Plant Activation Gap])) ^ 2) ^ 0.5)) / 2"
+      },
+      "description": "Inactive capacity already needed to close the activation gap."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "B Construction Materials Plant Inactive After Activation Queue",
+      "behavior": {
+        "value": "(([B Construction Materials Plant Inactive Capacity] - [B Construction Materials Plant Activation Queue Capacity]) + ((([B Construction Materials Plant Inactive Capacity] - [B Construction Materials Plant Activation Queue Capacity]) ^ 2) ^ 0.5)) / 2"
+      },
+      "description": "Inactive capacity remaining after activation needs are reserved."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "B Construction Materials Plant Strategic Reserve Target",
+      "behavior": {
+        "value": "(([B Construction Materials Plant Desired Installed Capacity] - [B Construction Materials Plant Required Active Capacity]) + ((([B Construction Materials Plant Desired Installed Capacity] - [B Construction Materials Plant Required Active Capacity]) ^ 2) ^ 0.5)) / 2"
+      },
+      "description": "Desired inactive strategic reserve implied by installed reserve."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "B Construction Materials Plant Strategic Reserve Capacity",
+      "behavior": {
+        "value": "(([B Construction Materials Plant Inactive After Activation Queue]) + ([B Construction Materials Plant Strategic Reserve Target]) - (((([B Construction Materials Plant Inactive After Activation Queue]) - ([B Construction Materials Plant Strategic Reserve Target])) ^ 2) ^ 0.5)) / 2"
+      },
+      "description": "Inactive construction-materials plant capacity intentionally retained as strategic reserve."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "B Construction Materials Plant Surplus Capacity",
+      "behavior": {
+        "value": "(([B Construction Materials Plant Inactive After Activation Queue] - [B Construction Materials Plant Strategic Reserve Capacity]) + ((([B Construction Materials Plant Inactive After Activation Queue] - [B Construction Materials Plant Strategic Reserve Capacity]) ^ 2) ^ 0.5)) / 2"
+      },
+      "description": "True surplus plant capacity eligible for decommissioning."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "B Construction Materials Plant Lifetime Capacity Account",
+      "behavior": {
+        "value": "[B Construction Materials Plant Installed Capacity] + [B Construction Materials Plant Decommissioning Capacity] + [B Construction Materials Plant Retired Capacity]"
+      },
+      "description": "Lifetime accounting identity for constructed plant capacity."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "B Construction Materials Plant Desired Expansion",
+      "behavior": {
+        "value": "IfThenElse([Construction Materials Capital Enabled] = 1, [B Construction Materials Plant Gap Limited Construction], 0)"
+      },
+      "description": "Desired construction-materials plant expansion; no finance limit, gated only by the v7.7.3 switch."
+    },
+    {
+      "type": "FLOW",
+      "name": "B Construction Materials Plant Expansion",
+      "from": null,
+      "to": "B Construction Materials Plant Installed Capacity",
+      "behavior": {
+        "value": "IfThenElse([Construction Materials Capital Enabled] = 1, [B Construction Materials Plant Gap Limited Construction] * Min([B Capital Goods Fulfillment], [B Construction Materials Fulfillment]), 0)",
+        "non_negative": true
+      },
+      "description": "Actual plant expansion after physical Capital Goods and Construction Materials fulfillment."
+    },
+    {
+      "type": "FLOW",
+      "name": "B Construction Materials Plant Decommissioning Initiation",
+      "from": "B Construction Materials Plant Installed Capacity",
+      "to": "B Construction Materials Plant Decommissioning Capacity",
+      "behavior": {
+        "value": "[B Construction Materials Plant Surplus Capacity] / [Construction Materials Plant Surplus Disposal Decision Time]",
+        "non_negative": true
+      },
+      "description": "Commitment of true surplus plant capacity to decommissioning."
+    },
+    {
+      "type": "FLOW",
+      "name": "B Construction Materials Plant Depreciation",
+      "from": "B Construction Materials Plant Installed Capacity",
+      "to": "B Construction Materials Plant Retired Capacity",
+      "behavior": {
+        "value": "[B Construction Materials Plant Installed Capacity] * [Construction Materials Plant Depreciation Rate]",
+        "non_negative": true
+      },
+      "description": "Installed plant capacity lost to physical depreciation."
+    },
+    {
+      "type": "FLOW",
+      "name": "B Construction Materials Plant Dismantling Completion",
+      "from": "B Construction Materials Plant Decommissioning Capacity",
+      "to": "B Construction Materials Plant Retired Capacity",
+      "behavior": {
+        "value": "[B Construction Materials Plant Decommissioning Capacity] / [Construction Materials Plant Decommissioning Time]",
+        "non_negative": true
+      },
+      "description": "Completion of physical decommissioning."
+    },
+    {
+      "type": "FLOW",
+      "name": "B Construction Materials Plant Activation",
+      "from": null,
+      "to": "B Construction Materials Plant Active Capacity",
+      "behavior": {
+        "value": "[B Construction Materials Plant Activation Gap] / [Construction Materials Plant Activation Time]",
+        "non_negative": true
+      },
+      "description": "Reactivation of mothballed plant capacity."
+    },
+    {
+      "type": "FLOW",
+      "name": "B Construction Materials Plant Mothballing",
+      "from": "B Construction Materials Plant Active Capacity",
+      "to": null,
+      "behavior": {
+        "value": "[B Construction Materials Plant Mothball Gap] / [Construction Materials Plant Mothball Time]",
+        "non_negative": true
+      },
+      "description": "Temporary removal of unneeded active plant capacity."
+    },
+    {
+      "type": "FLOW",
+      "name": "B Construction Materials Plant Active Depreciation",
+      "from": "B Construction Materials Plant Active Capacity",
+      "to": null,
+      "behavior": {
+        "value": "[B Construction Materials Plant Active Capacity] * [Construction Materials Plant Depreciation Rate]",
+        "non_negative": true
+      },
+      "description": "Active capacity lost as installed plant physically depreciates."
+    },
+    {
+      "type": "FLOW",
+      "name": "B Construction Materials Plant Capital Goods Consumption",
+      "from": "B Capital Goods Inventory",
+      "to": null,
+      "behavior": {
+        "value": "IfThenElse([Construction Materials Capital Enabled] = 1, [B Construction Materials Plant Expansion] * [Construction Materials Plant Capital Goods per Capacity], 0)",
+        "non_negative": true
+      },
+      "description": "Capital Goods physically consumed by construction-materials plant expansion."
+    },
+    {
+      "type": "FLOW",
+      "name": "B Construction Materials Plant Construction Materials Consumption",
+      "from": "B Construction Materials Inventory",
+      "to": null,
+      "behavior": {
+        "value": "IfThenElse([Construction Materials Capital Enabled] = 1, [B Construction Materials Plant Expansion] * [Construction Materials Plant Construction Materials per Capacity], 0)",
+        "non_negative": true
+      },
+      "description": "Construction Materials physically consumed by construction-materials plant expansion."
+    }
+  ],
+  "replace_formulas": [
+    {
+      "name": "A Construction Materials Production Capacity",
+      "value": "IfThenElse([Construction Materials Capital Enabled] = 1, IfThenElse([Test 28 Construction Materials Shock Active] = 1, [A Construction Materials Plant Active Capacity] * IfThenElse([A Test 28 Construction Materials Shock Applies] = 1, [v7.7 Construction Materials Shock Multiplier], 1), [A Construction Materials Plant Active Capacity]), IfThenElse([Test 28 Construction Materials Shock Active] = 1, [A Construction Materials Base Production Capacity] * IfThenElse([A Test 28 Construction Materials Shock Applies] = 1, [v7.7 Construction Materials Shock Multiplier], 1), [A Construction Materials Base Production Capacity]))"
+    },
+    {
+      "name": "A Capital Goods Demand",
+      "value": "IfThenElse([Construction Materials Capital Enabled] = 1, [A Refinery Desired Expansion] * [A Refinery Capital Goods per Capacity] + [A Electronics Desired Expansion] * [A Electronics Capital Goods per Capacity] + [A Power Desired Expansion] * [A Power Capital Goods per Capacity] + [A Transport Capital Goods Demand Allocation] + [A Construction Materials Plant Desired Expansion] * [Construction Materials Plant Capital Goods per Capacity], [A Refinery Desired Expansion] * [A Refinery Capital Goods per Capacity] + [A Electronics Desired Expansion] * [A Electronics Capital Goods per Capacity] + [A Power Desired Expansion] * [A Power Capital Goods per Capacity] + [A Transport Capital Goods Demand Allocation])"
+    },
+    {
+      "name": "A Construction Materials Demand",
+      "value": "IfThenElse([Construction Materials Capital Enabled] = 1, IfThenElse([Transport Construction Materials Enabled] = 1, [A Refinery Desired Expansion] * [A Refinery Construction Materials per Capacity] + [A Electronics Desired Expansion] * [A Electronics Construction Materials per Capacity] + [A Power Desired Expansion] * [A Power Construction Materials per Capacity] + [A Transport Construction Materials Demand Allocation], [A Refinery Desired Expansion] * [A Refinery Construction Materials per Capacity] + [A Electronics Desired Expansion] * [A Electronics Construction Materials per Capacity] + [A Power Desired Expansion] * [A Power Construction Materials per Capacity]) + [A Construction Materials Plant Desired Expansion] * [Construction Materials Plant Construction Materials per Capacity], IfThenElse([Transport Construction Materials Enabled] = 1, [A Refinery Desired Expansion] * [A Refinery Construction Materials per Capacity] + [A Electronics Desired Expansion] * [A Electronics Construction Materials per Capacity] + [A Power Desired Expansion] * [A Power Construction Materials per Capacity] + [A Transport Construction Materials Demand Allocation], [A Refinery Desired Expansion] * [A Refinery Construction Materials per Capacity] + [A Electronics Desired Expansion] * [A Electronics Construction Materials per Capacity] + [A Power Desired Expansion] * [A Power Construction Materials per Capacity]))"
+    },
+    {
+      "name": "B Construction Materials Production Capacity",
+      "value": "IfThenElse([Construction Materials Capital Enabled] = 1, IfThenElse([Test 28 Construction Materials Shock Active] = 1, [B Construction Materials Plant Active Capacity] * IfThenElse([B Test 28 Construction Materials Shock Applies] = 1, [v7.7 Construction Materials Shock Multiplier], 1), [B Construction Materials Plant Active Capacity]), IfThenElse([Test 28 Construction Materials Shock Active] = 1, [B Construction Materials Base Production Capacity] * IfThenElse([B Test 28 Construction Materials Shock Applies] = 1, [v7.7 Construction Materials Shock Multiplier], 1), [B Construction Materials Base Production Capacity]))"
+    },
+    {
+      "name": "B Capital Goods Demand",
+      "value": "IfThenElse([Construction Materials Capital Enabled] = 1, [B Refinery Desired Expansion] * [B Refinery Capital Goods per Capacity] + [B Electronics Desired Expansion] * [B Electronics Capital Goods per Capacity] + [B Power Desired Expansion] * [B Power Capital Goods per Capacity] + [B Transport Capital Goods Demand Allocation] + [B Construction Materials Plant Desired Expansion] * [Construction Materials Plant Capital Goods per Capacity], [B Refinery Desired Expansion] * [B Refinery Capital Goods per Capacity] + [B Electronics Desired Expansion] * [B Electronics Capital Goods per Capacity] + [B Power Desired Expansion] * [B Power Capital Goods per Capacity] + [B Transport Capital Goods Demand Allocation])"
+    },
+    {
+      "name": "B Construction Materials Demand",
+      "value": "IfThenElse([Construction Materials Capital Enabled] = 1, IfThenElse([Transport Construction Materials Enabled] = 1, [B Refinery Desired Expansion] * [B Refinery Construction Materials per Capacity] + [B Electronics Desired Expansion] * [B Electronics Construction Materials per Capacity] + [B Power Desired Expansion] * [B Power Construction Materials per Capacity] + [B Transport Construction Materials Demand Allocation], [B Refinery Desired Expansion] * [B Refinery Construction Materials per Capacity] + [B Electronics Desired Expansion] * [B Electronics Construction Materials per Capacity] + [B Power Desired Expansion] * [B Power Construction Materials per Capacity]) + [B Construction Materials Plant Desired Expansion] * [Construction Materials Plant Construction Materials per Capacity], IfThenElse([Transport Construction Materials Enabled] = 1, [B Refinery Desired Expansion] * [B Refinery Construction Materials per Capacity] + [B Electronics Desired Expansion] * [B Electronics Construction Materials per Capacity] + [B Power Desired Expansion] * [B Power Construction Materials per Capacity] + [B Transport Construction Materials Demand Allocation], [B Refinery Desired Expansion] * [B Refinery Construction Materials per Capacity] + [B Electronics Desired Expansion] * [B Electronics Construction Materials per Capacity] + [B Power Desired Expansion] * [B Power Construction Materials per Capacity]))"
+    },
+    {
+      "name": "Test 2 Transport Surge Active",
+      "value": "IfThenElse([Timed Test Mode] = 2, [Temporary Test Window], IfThenElse([Timed Test Mode] = 24, [Temporary Test Window], IfThenElse([Timed Test Mode] = 31, [Temporary Test Window], IfThenElse([Timed Test Mode] = 35, [Temporary Test Window], 0))))"
+    }
+  ],
+  "add_links": [
+    {
+      "from": "A Construction Materials Demand Signal",
+      "to": "A Construction Materials Plant Required Active Capacity"
+    },
+    {
+      "from": "Construction Materials Plant Operating Reserve Factor",
+      "to": "A Construction Materials Plant Required Active Capacity"
+    },
+    {
+      "from": "A Construction Materials Plant Required Active Capacity",
+      "to": "A Construction Materials Plant Desired Installed Capacity"
+    },
+    {
+      "from": "Construction Materials Plant Installed Reserve Factor",
+      "to": "A Construction Materials Plant Desired Installed Capacity"
+    },
+    {
+      "from": "A Construction Materials Plant Installed Capacity",
+      "to": "A Construction Materials Plant Inactive Capacity"
+    },
+    {
+      "from": "A Construction Materials Plant Active Capacity",
+      "to": "A Construction Materials Plant Inactive Capacity"
+    },
+    {
+      "from": "A Construction Materials Plant Required Active Capacity",
+      "to": "A Construction Materials Plant Target Active Capacity"
+    },
+    {
+      "from": "A Construction Materials Plant Installed Capacity",
+      "to": "A Construction Materials Plant Target Active Capacity"
+    },
+    {
+      "from": "A Construction Materials Plant Target Active Capacity",
+      "to": "A Construction Materials Plant Activation Gap"
+    },
+    {
+      "from": "A Construction Materials Plant Active Capacity",
+      "to": "A Construction Materials Plant Activation Gap"
+    },
+    {
+      "from": "A Construction Materials Plant Active Capacity",
+      "to": "A Construction Materials Plant Mothball Gap"
+    },
+    {
+      "from": "A Construction Materials Plant Target Active Capacity",
+      "to": "A Construction Materials Plant Mothball Gap"
+    },
+    {
+      "from": "A Construction Materials Plant Desired Installed Capacity",
+      "to": "A Construction Materials Plant Installed Capacity Shortage"
+    },
+    {
+      "from": "A Construction Materials Plant Installed Capacity",
+      "to": "A Construction Materials Plant Installed Capacity Shortage"
+    },
+    {
+      "from": "A Construction Materials Plant Installed Capacity",
+      "to": "A Construction Materials Plant Installed Capacity Excess"
+    },
+    {
+      "from": "A Construction Materials Plant Desired Installed Capacity",
+      "to": "A Construction Materials Plant Installed Capacity Excess"
+    },
+    {
+      "from": "A Construction Materials Plant Installed Capacity Shortage",
+      "to": "A Construction Materials Plant Gap Limited Construction"
+    },
+    {
+      "from": "Construction Materials Plant Construction Time",
+      "to": "A Construction Materials Plant Gap Limited Construction"
+    },
+    {
+      "from": "A Construction Materials Plant Inactive Capacity",
+      "to": "A Construction Materials Plant Activation Queue Capacity"
+    },
+    {
+      "from": "A Construction Materials Plant Activation Gap",
+      "to": "A Construction Materials Plant Activation Queue Capacity"
+    },
+    {
+      "from": "A Construction Materials Plant Inactive Capacity",
+      "to": "A Construction Materials Plant Inactive After Activation Queue"
+    },
+    {
+      "from": "A Construction Materials Plant Activation Queue Capacity",
+      "to": "A Construction Materials Plant Inactive After Activation Queue"
+    },
+    {
+      "from": "A Construction Materials Plant Desired Installed Capacity",
+      "to": "A Construction Materials Plant Strategic Reserve Target"
+    },
+    {
+      "from": "A Construction Materials Plant Required Active Capacity",
+      "to": "A Construction Materials Plant Strategic Reserve Target"
+    },
+    {
+      "from": "A Construction Materials Plant Inactive After Activation Queue",
+      "to": "A Construction Materials Plant Strategic Reserve Capacity"
+    },
+    {
+      "from": "A Construction Materials Plant Strategic Reserve Target",
+      "to": "A Construction Materials Plant Strategic Reserve Capacity"
+    },
+    {
+      "from": "A Construction Materials Plant Inactive After Activation Queue",
+      "to": "A Construction Materials Plant Surplus Capacity"
+    },
+    {
+      "from": "A Construction Materials Plant Strategic Reserve Capacity",
+      "to": "A Construction Materials Plant Surplus Capacity"
+    },
+    {
+      "from": "A Construction Materials Plant Installed Capacity",
+      "to": "A Construction Materials Plant Lifetime Capacity Account"
+    },
+    {
+      "from": "A Construction Materials Plant Decommissioning Capacity",
+      "to": "A Construction Materials Plant Lifetime Capacity Account"
+    },
+    {
+      "from": "A Construction Materials Plant Retired Capacity",
+      "to": "A Construction Materials Plant Lifetime Capacity Account"
+    },
+    {
+      "from": "Construction Materials Capital Enabled",
+      "to": "A Construction Materials Plant Desired Expansion"
+    },
+    {
+      "from": "A Construction Materials Plant Gap Limited Construction",
+      "to": "A Construction Materials Plant Desired Expansion"
+    },
+    {
+      "from": "Construction Materials Capital Enabled",
+      "to": "A Construction Materials Plant Expansion"
+    },
+    {
+      "from": "A Construction Materials Plant Gap Limited Construction",
+      "to": "A Construction Materials Plant Expansion"
+    },
+    {
+      "from": "A Capital Goods Fulfillment",
+      "to": "A Construction Materials Plant Expansion"
+    },
+    {
+      "from": "A Construction Materials Fulfillment",
+      "to": "A Construction Materials Plant Expansion"
+    },
+    {
+      "from": "A Construction Materials Plant Surplus Capacity",
+      "to": "A Construction Materials Plant Decommissioning Initiation"
+    },
+    {
+      "from": "Construction Materials Plant Surplus Disposal Decision Time",
+      "to": "A Construction Materials Plant Decommissioning Initiation"
+    },
+    {
+      "from": "A Construction Materials Plant Installed Capacity",
+      "to": "A Construction Materials Plant Depreciation"
+    },
+    {
+      "from": "Construction Materials Plant Depreciation Rate",
+      "to": "A Construction Materials Plant Depreciation"
+    },
+    {
+      "from": "A Construction Materials Plant Decommissioning Capacity",
+      "to": "A Construction Materials Plant Dismantling Completion"
+    },
+    {
+      "from": "Construction Materials Plant Decommissioning Time",
+      "to": "A Construction Materials Plant Dismantling Completion"
+    },
+    {
+      "from": "A Construction Materials Plant Activation Gap",
+      "to": "A Construction Materials Plant Activation"
+    },
+    {
+      "from": "Construction Materials Plant Activation Time",
+      "to": "A Construction Materials Plant Activation"
+    },
+    {
+      "from": "A Construction Materials Plant Mothball Gap",
+      "to": "A Construction Materials Plant Mothballing"
+    },
+    {
+      "from": "Construction Materials Plant Mothball Time",
+      "to": "A Construction Materials Plant Mothballing"
+    },
+    {
+      "from": "A Construction Materials Plant Active Capacity",
+      "to": "A Construction Materials Plant Active Depreciation"
+    },
+    {
+      "from": "Construction Materials Plant Depreciation Rate",
+      "to": "A Construction Materials Plant Active Depreciation"
+    },
+    {
+      "from": "Construction Materials Capital Enabled",
+      "to": "A Construction Materials Plant Capital Goods Consumption"
+    },
+    {
+      "from": "A Construction Materials Plant Expansion",
+      "to": "A Construction Materials Plant Capital Goods Consumption"
+    },
+    {
+      "from": "Construction Materials Plant Capital Goods per Capacity",
+      "to": "A Construction Materials Plant Capital Goods Consumption"
+    },
+    {
+      "from": "Construction Materials Capital Enabled",
+      "to": "A Construction Materials Plant Construction Materials Consumption"
+    },
+    {
+      "from": "A Construction Materials Plant Expansion",
+      "to": "A Construction Materials Plant Construction Materials Consumption"
+    },
+    {
+      "from": "Construction Materials Plant Construction Materials per Capacity",
+      "to": "A Construction Materials Plant Construction Materials Consumption"
+    },
+    {
+      "from": "B Construction Materials Demand Signal",
+      "to": "B Construction Materials Plant Required Active Capacity"
+    },
+    {
+      "from": "Construction Materials Plant Operating Reserve Factor",
+      "to": "B Construction Materials Plant Required Active Capacity"
+    },
+    {
+      "from": "B Construction Materials Plant Required Active Capacity",
+      "to": "B Construction Materials Plant Desired Installed Capacity"
+    },
+    {
+      "from": "Construction Materials Plant Installed Reserve Factor",
+      "to": "B Construction Materials Plant Desired Installed Capacity"
+    },
+    {
+      "from": "B Construction Materials Plant Installed Capacity",
+      "to": "B Construction Materials Plant Inactive Capacity"
+    },
+    {
+      "from": "B Construction Materials Plant Active Capacity",
+      "to": "B Construction Materials Plant Inactive Capacity"
+    },
+    {
+      "from": "B Construction Materials Plant Required Active Capacity",
+      "to": "B Construction Materials Plant Target Active Capacity"
+    },
+    {
+      "from": "B Construction Materials Plant Installed Capacity",
+      "to": "B Construction Materials Plant Target Active Capacity"
+    },
+    {
+      "from": "B Construction Materials Plant Target Active Capacity",
+      "to": "B Construction Materials Plant Activation Gap"
+    },
+    {
+      "from": "B Construction Materials Plant Active Capacity",
+      "to": "B Construction Materials Plant Activation Gap"
+    },
+    {
+      "from": "B Construction Materials Plant Active Capacity",
+      "to": "B Construction Materials Plant Mothball Gap"
+    },
+    {
+      "from": "B Construction Materials Plant Target Active Capacity",
+      "to": "B Construction Materials Plant Mothball Gap"
+    },
+    {
+      "from": "B Construction Materials Plant Desired Installed Capacity",
+      "to": "B Construction Materials Plant Installed Capacity Shortage"
+    },
+    {
+      "from": "B Construction Materials Plant Installed Capacity",
+      "to": "B Construction Materials Plant Installed Capacity Shortage"
+    },
+    {
+      "from": "B Construction Materials Plant Installed Capacity",
+      "to": "B Construction Materials Plant Installed Capacity Excess"
+    },
+    {
+      "from": "B Construction Materials Plant Desired Installed Capacity",
+      "to": "B Construction Materials Plant Installed Capacity Excess"
+    },
+    {
+      "from": "B Construction Materials Plant Installed Capacity Shortage",
+      "to": "B Construction Materials Plant Gap Limited Construction"
+    },
+    {
+      "from": "Construction Materials Plant Construction Time",
+      "to": "B Construction Materials Plant Gap Limited Construction"
+    },
+    {
+      "from": "B Construction Materials Plant Inactive Capacity",
+      "to": "B Construction Materials Plant Activation Queue Capacity"
+    },
+    {
+      "from": "B Construction Materials Plant Activation Gap",
+      "to": "B Construction Materials Plant Activation Queue Capacity"
+    },
+    {
+      "from": "B Construction Materials Plant Inactive Capacity",
+      "to": "B Construction Materials Plant Inactive After Activation Queue"
+    },
+    {
+      "from": "B Construction Materials Plant Activation Queue Capacity",
+      "to": "B Construction Materials Plant Inactive After Activation Queue"
+    },
+    {
+      "from": "B Construction Materials Plant Desired Installed Capacity",
+      "to": "B Construction Materials Plant Strategic Reserve Target"
+    },
+    {
+      "from": "B Construction Materials Plant Required Active Capacity",
+      "to": "B Construction Materials Plant Strategic Reserve Target"
+    },
+    {
+      "from": "B Construction Materials Plant Inactive After Activation Queue",
+      "to": "B Construction Materials Plant Strategic Reserve Capacity"
+    },
+    {
+      "from": "B Construction Materials Plant Strategic Reserve Target",
+      "to": "B Construction Materials Plant Strategic Reserve Capacity"
+    },
+    {
+      "from": "B Construction Materials Plant Inactive After Activation Queue",
+      "to": "B Construction Materials Plant Surplus Capacity"
+    },
+    {
+      "from": "B Construction Materials Plant Strategic Reserve Capacity",
+      "to": "B Construction Materials Plant Surplus Capacity"
+    },
+    {
+      "from": "B Construction Materials Plant Installed Capacity",
+      "to": "B Construction Materials Plant Lifetime Capacity Account"
+    },
+    {
+      "from": "B Construction Materials Plant Decommissioning Capacity",
+      "to": "B Construction Materials Plant Lifetime Capacity Account"
+    },
+    {
+      "from": "B Construction Materials Plant Retired Capacity",
+      "to": "B Construction Materials Plant Lifetime Capacity Account"
+    },
+    {
+      "from": "Construction Materials Capital Enabled",
+      "to": "B Construction Materials Plant Desired Expansion"
+    },
+    {
+      "from": "B Construction Materials Plant Gap Limited Construction",
+      "to": "B Construction Materials Plant Desired Expansion"
+    },
+    {
+      "from": "Construction Materials Capital Enabled",
+      "to": "B Construction Materials Plant Expansion"
+    },
+    {
+      "from": "B Construction Materials Plant Gap Limited Construction",
+      "to": "B Construction Materials Plant Expansion"
+    },
+    {
+      "from": "B Capital Goods Fulfillment",
+      "to": "B Construction Materials Plant Expansion"
+    },
+    {
+      "from": "B Construction Materials Fulfillment",
+      "to": "B Construction Materials Plant Expansion"
+    },
+    {
+      "from": "B Construction Materials Plant Surplus Capacity",
+      "to": "B Construction Materials Plant Decommissioning Initiation"
+    },
+    {
+      "from": "Construction Materials Plant Surplus Disposal Decision Time",
+      "to": "B Construction Materials Plant Decommissioning Initiation"
+    },
+    {
+      "from": "B Construction Materials Plant Installed Capacity",
+      "to": "B Construction Materials Plant Depreciation"
+    },
+    {
+      "from": "Construction Materials Plant Depreciation Rate",
+      "to": "B Construction Materials Plant Depreciation"
+    },
+    {
+      "from": "B Construction Materials Plant Decommissioning Capacity",
+      "to": "B Construction Materials Plant Dismantling Completion"
+    },
+    {
+      "from": "Construction Materials Plant Decommissioning Time",
+      "to": "B Construction Materials Plant Dismantling Completion"
+    },
+    {
+      "from": "B Construction Materials Plant Activation Gap",
+      "to": "B Construction Materials Plant Activation"
+    },
+    {
+      "from": "Construction Materials Plant Activation Time",
+      "to": "B Construction Materials Plant Activation"
+    },
+    {
+      "from": "B Construction Materials Plant Mothball Gap",
+      "to": "B Construction Materials Plant Mothballing"
+    },
+    {
+      "from": "Construction Materials Plant Mothball Time",
+      "to": "B Construction Materials Plant Mothballing"
+    },
+    {
+      "from": "B Construction Materials Plant Active Capacity",
+      "to": "B Construction Materials Plant Active Depreciation"
+    },
+    {
+      "from": "Construction Materials Plant Depreciation Rate",
+      "to": "B Construction Materials Plant Active Depreciation"
+    },
+    {
+      "from": "Construction Materials Capital Enabled",
+      "to": "B Construction Materials Plant Capital Goods Consumption"
+    },
+    {
+      "from": "B Construction Materials Plant Expansion",
+      "to": "B Construction Materials Plant Capital Goods Consumption"
+    },
+    {
+      "from": "Construction Materials Plant Capital Goods per Capacity",
+      "to": "B Construction Materials Plant Capital Goods Consumption"
+    },
+    {
+      "from": "Construction Materials Capital Enabled",
+      "to": "B Construction Materials Plant Construction Materials Consumption"
+    },
+    {
+      "from": "B Construction Materials Plant Expansion",
+      "to": "B Construction Materials Plant Construction Materials Consumption"
+    },
+    {
+      "from": "Construction Materials Plant Construction Materials per Capacity",
+      "to": "B Construction Materials Plant Construction Materials Consumption"
+    },
+    {
+      "from": "Construction Materials Capital Enabled",
+      "to": "A Construction Materials Production Capacity"
+    },
+    {
+      "from": "A Construction Materials Plant Active Capacity",
+      "to": "A Construction Materials Production Capacity"
+    },
+    {
+      "from": "Construction Materials Capital Enabled",
+      "to": "A Capital Goods Demand"
+    },
+    {
+      "from": "A Construction Materials Plant Desired Expansion",
+      "to": "A Capital Goods Demand"
+    },
+    {
+      "from": "Construction Materials Plant Capital Goods per Capacity",
+      "to": "A Capital Goods Demand"
+    },
+    {
+      "from": "Construction Materials Capital Enabled",
+      "to": "A Construction Materials Demand"
+    },
+    {
+      "from": "A Construction Materials Plant Desired Expansion",
+      "to": "A Construction Materials Demand"
+    },
+    {
+      "from": "Construction Materials Plant Construction Materials per Capacity",
+      "to": "A Construction Materials Demand"
+    },
+    {
+      "from": "Construction Materials Capital Enabled",
+      "to": "B Construction Materials Production Capacity"
+    },
+    {
+      "from": "B Construction Materials Plant Active Capacity",
+      "to": "B Construction Materials Production Capacity"
+    },
+    {
+      "from": "Construction Materials Capital Enabled",
+      "to": "B Capital Goods Demand"
+    },
+    {
+      "from": "B Construction Materials Plant Desired Expansion",
+      "to": "B Capital Goods Demand"
+    },
+    {
+      "from": "Construction Materials Plant Capital Goods per Capacity",
+      "to": "B Capital Goods Demand"
+    },
+    {
+      "from": "Construction Materials Capital Enabled",
+      "to": "B Construction Materials Demand"
+    },
+    {
+      "from": "B Construction Materials Plant Desired Expansion",
+      "to": "B Construction Materials Demand"
+    },
+    {
+      "from": "Construction Materials Plant Construction Materials per Capacity",
+      "to": "B Construction Materials Demand"
+    }
+  ],
+  "modify_scenarios": [
+    {
+      "mode": 0,
+      "set": {
+        "Construction Materials Capital Enabled": 0
+      }
+    },
+    {
+      "mode": 1,
+      "set": {
+        "Construction Materials Capital Enabled": 0
+      }
+    },
+    {
+      "mode": 2,
+      "set": {
+        "Construction Materials Capital Enabled": 0
+      }
+    },
+    {
+      "mode": 3,
+      "set": {
+        "Construction Materials Capital Enabled": 0
+      }
+    },
+    {
+      "mode": 4,
+      "set": {
+        "Construction Materials Capital Enabled": 0
+      }
+    },
+    {
+      "mode": 5,
+      "set": {
+        "Construction Materials Capital Enabled": 0
+      }
+    },
+    {
+      "mode": 6,
+      "set": {
+        "Construction Materials Capital Enabled": 0
+      }
+    },
+    {
+      "mode": 7,
+      "set": {
+        "Construction Materials Capital Enabled": 0
+      }
+    },
+    {
+      "mode": 8,
+      "set": {
+        "Construction Materials Capital Enabled": 0
+      }
+    },
+    {
+      "mode": 9,
+      "set": {
+        "Construction Materials Capital Enabled": 0
+      }
+    },
+    {
+      "mode": 10,
+      "set": {
+        "Construction Materials Capital Enabled": 0
+      }
+    },
+    {
+      "mode": 11,
+      "set": {
+        "Construction Materials Capital Enabled": 0
+      }
+    },
+    {
+      "mode": 12,
+      "set": {
+        "Construction Materials Capital Enabled": 0
+      }
+    },
+    {
+      "mode": 13,
+      "set": {
+        "Construction Materials Capital Enabled": 0
+      }
+    },
+    {
+      "mode": 14,
+      "set": {
+        "Construction Materials Capital Enabled": 0
+      }
+    },
+    {
+      "mode": 15,
+      "set": {
+        "Construction Materials Capital Enabled": 0
+      }
+    },
+    {
+      "mode": 16,
+      "set": {
+        "Construction Materials Capital Enabled": 0
+      }
+    },
+    {
+      "mode": 17,
+      "set": {
+        "Construction Materials Capital Enabled": 0
+      }
+    },
+    {
+      "mode": 18,
+      "set": {
+        "Construction Materials Capital Enabled": 0
+      }
+    },
+    {
+      "mode": 19,
+      "set": {
+        "Construction Materials Capital Enabled": 0
+      }
+    },
+    {
+      "mode": 20,
+      "set": {
+        "Construction Materials Capital Enabled": 0
+      }
+    },
+    {
+      "mode": 21,
+      "set": {
+        "Construction Materials Capital Enabled": 0
+      }
+    },
+    {
+      "mode": 22,
+      "set": {
+        "Construction Materials Capital Enabled": 0
+      }
+    },
+    {
+      "mode": 23,
+      "set": {
+        "Construction Materials Capital Enabled": 0
+      }
+    },
+    {
+      "mode": 24,
+      "set": {
+        "Construction Materials Capital Enabled": 0
+      }
+    },
+    {
+      "mode": 25,
+      "set": {
+        "Construction Materials Capital Enabled": 0
+      }
+    },
+    {
+      "mode": 26,
+      "set": {
+        "Construction Materials Capital Enabled": 0
+      }
+    },
+    {
+      "mode": 27,
+      "set": {
+        "Construction Materials Capital Enabled": 0
+      }
+    },
+    {
+      "mode": 28,
+      "set": {
+        "Construction Materials Capital Enabled": 0
+      }
+    },
+    {
+      "mode": 29,
+      "set": {
+        "Construction Materials Capital Enabled": 0
+      }
+    },
+    {
+      "mode": 30,
+      "set": {
+        "Construction Materials Capital Enabled": 0
+      }
+    },
+    {
+      "mode": 31,
+      "set": {
+        "Construction Materials Capital Enabled": 0
+      }
+    },
+    {
+      "mode": 32,
+      "set": {
+        "Construction Materials Capital Enabled": 0
+      }
+    },
+    {
+      "mode": 33,
+      "set": {
+        "Construction Materials Capital Enabled": 0
+      }
+    }
+  ],
+  "add_scenarios": [
+    {
+      "name": "v7.7.3 Construction Materials Capital Baseline",
+      "description": "All accepted mechanics plus construction-materials processing capacity on the capital lifecycle kernel; no new test stimulus.",
+      "values": {
+        "Timed Test Mode": 34,
+        "Capital Lifecycle Enabled": 1,
+        "Intermediate Inputs Enabled": 1,
+        "Capital Goods Enabled": 1,
+        "Transport Capital Goods Enabled": 1,
+        "Power Resource Enabled": 1,
+        "Construction Materials Enabled": 1,
+        "Transport Construction Materials Enabled": 1,
+        "Construction Materials Energy Enabled": 1,
+        "Construction Materials Capital Enabled": 1
+      }
+    },
+    {
+      "name": "v7.7.3 Transport Surge on Construction Materials Capital",
+      "description": "All accepted mechanics plus construction-materials plant capital under the standard transport-demand surge window.",
+      "values": {
+        "Timed Test Mode": 35,
+        "Capital Lifecycle Enabled": 1,
+        "Intermediate Inputs Enabled": 1,
+        "Capital Goods Enabled": 1,
+        "Transport Capital Goods Enabled": 1,
+        "Power Resource Enabled": 1,
+        "Construction Materials Enabled": 1,
+        "Transport Construction Materials Enabled": 1,
+        "Construction Materials Energy Enabled": 1,
+        "Construction Materials Capital Enabled": 1
+      }
+    }
+  ]
+}

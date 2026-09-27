@@ -1,0 +1,181 @@
+{
+  "format": "orbital-economy-parameter-annotations-fragment-v1",
+  "model": "Orbital Economy v7.7.3 Construction Materials Capital candidate r1",
+  "updated": "2026-09-27",
+  "note": "Task 013 fragment. All new numeric constants plus the intentionally asymmetric A/B initial plant capacities are annotated; reviewer merges accepted entries into the canonical registry.",
+  "parameters": {
+    "Construction Materials Capital Enabled": {
+      "role": "v7.7.3 Construction Materials plant-capital master switch (value 1).",
+      "effect": "0 preserves Modes 0-33 exactly; 1 makes production capacity read lifecycle plant active capacity and enables plant expansion demand/sinks.",
+      "evidence": "V7_7_3_ARCHITECTURE_SPEC §0–§3.",
+      "since": "v7.7.3 candidate r1",
+      "tags": [
+        "construction-materials",
+        "capital",
+        "switch"
+      ]
+    },
+    "Construction Materials Plant Operating Reserve Factor": {
+      "role": "Construction Materials plant lifecycle parameter, value 1.1.",
+      "effect": "Scales smoothed demand signal into required active plant capacity.",
+      "evidence": "V7_7_3_ARCHITECTURE_SPEC §2; owner-defined value verified on the pre-issue skeleton.",
+      "since": "v7.7.3 candidate r1",
+      "tags": [
+        "construction-materials",
+        "capital",
+        "lifecycle"
+      ]
+    },
+    "Construction Materials Plant Installed Reserve Factor": {
+      "role": "Construction Materials plant lifecycle parameter, value 1.15.",
+      "effect": "Scales required active capacity into desired installed plant capacity.",
+      "evidence": "V7_7_3_ARCHITECTURE_SPEC §2; owner-defined value verified on the pre-issue skeleton.",
+      "since": "v7.7.3 candidate r1",
+      "tags": [
+        "construction-materials",
+        "capital",
+        "lifecycle"
+      ]
+    },
+    "Construction Materials Plant Activation Time": {
+      "role": "Construction Materials plant lifecycle parameter, value 20.",
+      "effect": "Controls reactivation speed of mothballed plant capacity.",
+      "evidence": "V7_7_3_ARCHITECTURE_SPEC §2; owner-defined value verified on the pre-issue skeleton.",
+      "since": "v7.7.3 candidate r1",
+      "tags": [
+        "construction-materials",
+        "capital",
+        "lifecycle"
+      ]
+    },
+    "Construction Materials Plant Mothball Time": {
+      "role": "Construction Materials plant lifecycle parameter, value 10.",
+      "effect": "Controls deactivation speed of unneeded active plant capacity.",
+      "evidence": "V7_7_3_ARCHITECTURE_SPEC §2; owner-defined value verified on the pre-issue skeleton.",
+      "since": "v7.7.3 candidate r1",
+      "tags": [
+        "construction-materials",
+        "capital",
+        "lifecycle"
+      ]
+    },
+    "Construction Materials Plant Surplus Disposal Decision Time": {
+      "role": "Construction Materials plant lifecycle parameter, value 240.",
+      "effect": "Controls delay before true surplus is committed to decommissioning.",
+      "evidence": "V7_7_3_ARCHITECTURE_SPEC §2; owner-defined value verified on the pre-issue skeleton.",
+      "since": "v7.7.3 candidate r1",
+      "tags": [
+        "construction-materials",
+        "capital",
+        "lifecycle"
+      ]
+    },
+    "Construction Materials Plant Construction Time": {
+      "role": "Construction Materials plant lifecycle parameter, value 120.",
+      "effect": "Controls gap-limited construction rate.",
+      "evidence": "V7_7_3_ARCHITECTURE_SPEC §2; owner-defined value verified on the pre-issue skeleton.",
+      "since": "v7.7.3 candidate r1",
+      "tags": [
+        "construction-materials",
+        "capital",
+        "lifecycle"
+      ]
+    },
+    "Construction Materials Plant Decommissioning Time": {
+      "role": "Construction Materials plant lifecycle parameter, value 540.",
+      "effect": "Controls dismantling completion rate.",
+      "evidence": "V7_7_3_ARCHITECTURE_SPEC §2; owner-defined value verified on the pre-issue skeleton.",
+      "since": "v7.7.3 candidate r1",
+      "tags": [
+        "construction-materials",
+        "capital",
+        "lifecycle"
+      ]
+    },
+    "Construction Materials Plant Depreciation Rate": {
+      "role": "Construction Materials plant lifecycle parameter, value 0.0001.",
+      "effect": "Controls physical attrition of installed and active plant capacity.",
+      "evidence": "V7_7_3_ARCHITECTURE_SPEC §2; owner-defined value verified on the pre-issue skeleton.",
+      "since": "v7.7.3 candidate r1",
+      "tags": [
+        "construction-materials",
+        "capital",
+        "lifecycle"
+      ]
+    },
+    "Construction Materials Plant Capital Goods per Capacity": {
+      "role": "Construction Materials plant lifecycle parameter, value 5.",
+      "effect": "Scales plant expansion into Capital Goods demand and physical consumption.",
+      "evidence": "V7_7_3_ARCHITECTURE_SPEC §2; owner-defined value verified on the pre-issue skeleton.",
+      "since": "v7.7.3 candidate r1",
+      "tags": [
+        "construction-materials",
+        "capital",
+        "lifecycle"
+      ]
+    },
+    "Construction Materials Plant Construction Materials per Capacity": {
+      "role": "Construction Materials plant lifecycle parameter, value 5.",
+      "effect": "Scales plant expansion into Construction Materials demand and physical consumption.",
+      "evidence": "V7_7_3_ARCHITECTURE_SPEC §2; owner-defined value verified on the pre-issue skeleton.",
+      "since": "v7.7.3 candidate r1",
+      "tags": [
+        "construction-materials",
+        "capital",
+        "lifecycle"
+      ]
+    },
+    "A Construction Materials Plant Installed Capacity": {
+      "role": "Initial installed construction-materials plant capacity for colony A, value 3.",
+      "effect": "Seeds lifecycle capital at the previously accepted base production capacity; A/B are intentionally asymmetric (3 vs 2).",
+      "evidence": "V7_7_3_ARCHITECTURE_SPEC §2 explicitly requires A=3, B=2 and mandatory annotation of the asymmetric pair.",
+      "since": "v7.7.3 candidate r1",
+      "tags": [
+        "construction-materials",
+        "capital",
+        "initial",
+        "asymmetry"
+      ],
+      "applies_to_mirror": true
+    },
+    "A Construction Materials Plant Active Capacity": {
+      "role": "Initial active construction-materials plant capacity for colony A, value 3.",
+      "effect": "Starts active equal to installed capacity, preserving the prior base-capacity level before lifecycle adjustment; A/B are intentionally asymmetric (3 vs 2).",
+      "evidence": "V7_7_3_ARCHITECTURE_SPEC §2; same specified initial A/B capacities as Installed.",
+      "since": "v7.7.3 candidate r1",
+      "tags": [
+        "construction-materials",
+        "capital",
+        "initial",
+        "asymmetry"
+      ],
+      "applies_to_mirror": true
+    },
+    "B Construction Materials Plant Installed Capacity": {
+      "role": "Initial installed construction-materials plant capacity for colony B, value 2.",
+      "effect": "Seeds lifecycle capital at the previously accepted base production capacity; A/B are intentionally asymmetric (3 vs 2).",
+      "evidence": "V7_7_3_ARCHITECTURE_SPEC §2 explicitly requires A=3, B=2 and mandatory annotation of the asymmetric pair.",
+      "since": "v7.7.3 candidate r1",
+      "tags": [
+        "construction-materials",
+        "capital",
+        "initial",
+        "asymmetry"
+      ],
+      "applies_to_mirror": true
+    },
+    "B Construction Materials Plant Active Capacity": {
+      "role": "Initial active construction-materials plant capacity for colony B, value 2.",
+      "effect": "Starts active equal to installed capacity, preserving the prior base-capacity level before lifecycle adjustment; A/B are intentionally asymmetric (3 vs 2).",
+      "evidence": "V7_7_3_ARCHITECTURE_SPEC §2; same specified initial A/B capacities as Installed.",
+      "since": "v7.7.3 candidate r1",
+      "tags": [
+        "construction-materials",
+        "capital",
+        "initial",
+        "asymmetry"
+      ],
+      "applies_to_mirror": true
+    }
+  }
+}
