@@ -1,0 +1,35 @@
+{
+  "type": "capital_lifecycle",
+  "version": 1,
+  "sector": "Capital Goods Plant",
+  "colonies": ["A", "B"],
+  "switch": "Capital Goods Capital Enabled",
+  "initial_capacity": { "A": 2, "B": 1 },
+  "parameters": {
+    "Operating Reserve Factor": 1.1,
+    "Installed Reserve Factor": 1.15,
+    "Activation Time": 20,
+    "Mothball Time": 10,
+    "Surplus Disposal Decision Time": 240,
+    "Construction Time": 120,
+    "Decommissioning Time": 540,
+    "Depreciation Rate": 0.0001,
+    "Capital Goods per Capacity": 5,
+    "Construction Materials per Capacity": 5
+  },
+  "sizing": {
+    "signal": {
+      "name": "{C} Capital Goods Demand Signal",
+      "create": true,
+      "demand": "{C} Capital Goods Demand",
+      "initial": 0.13,
+      "adjustment_time": { "name": "Capital Goods Demand Signal Adjustment Time", "value": 3 }
+    }
+  },
+  "capacity_output": { "variable": "{C} Capital Goods Production Capacity", "replaces": "{C} Capital Goods Base Production Capacity" },
+  "backing": [
+    { "good": "Capital Goods", "fulfillment": "{C} Capital Goods Fulfillment", "inventory": "{C} Capital Goods Inventory", "demand": "{C} Capital Goods Demand" },
+    { "good": "Construction Materials", "fulfillment": "{C} Construction Materials Fulfillment", "inventory": "{C} Construction Materials Inventory", "demand": "{C} Construction Materials Demand" }
+  ],
+  "planet_process": "capital_goods"
+}

@@ -1,0 +1,34 @@
+{
+  "task": "015",
+  "title": "Node generator: capital_lifecycle node declarations expand into model-patch and validation fragments",
+  "branch": "task/015-node-generator",
+  "allow": [
+    "lab/src/nodes/**",
+    "lab/src/node_qa.js",
+    "lab/src/patch.js",
+    "lab/src/cli.js",
+    "lab/package.json",
+    "lab/package-lock.json",
+    "lab/NODE_SELF_TEST.cmd",
+    "lab/docs/NODES_RU.md",
+    "lab/docs/MODEL_PATCH_RU.md",
+    "lab/docs/HARNESS_QA_RU.md",
+    "lab/docs/TEST_STATUS_RU.md",
+    "lab/README_RU.md",
+    "lab/CHANGELOG.md"
+  ],
+  "allow_binary": [],
+  "allow_protected": [
+    ".github/workflows/ci.yml"
+  ],
+  "required_changes": [
+    "lab/src/nodes/capital_lifecycle.js",
+    "lab/src/nodes/index.js",
+    "lab/src/node_qa.js",
+    "lab/src/patch.js",
+    ".github/workflows/ci.yml",
+    "lab/docs/NODES_RU.md",
+    "lab/CHANGELOG.md"
+  ],
+  "sums_by": "reviewer"
+}

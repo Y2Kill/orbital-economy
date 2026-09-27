@@ -19,7 +19,7 @@ c32371bce337fc169565567e4e8328ce712fdbcd333af859dafe8a2467a2d528  ./docs/HISTORY
 f00035a61da71b0dbc8be355c77677bffc1120e0d4ad9bec494a035c79ae04e4  ./docs/PARAMETER_ANNOTATIONS.json
 3e59f1609f98ecf7c7231038a2159458710a07b6414a00913ede065d13d3df2e  ./docs/PARAMETER_REGISTRY.md
 d6a5bf4662922756f5a65261e5900f3033191786bbdf261644f70501ce935041  ./docs/PLANET_V1_CONTRACT_RU.md
-c2a115f8a5a0163c9fc5bf9ba5f7ecbd836b29dcc5d56de718f0791611687234  ./docs/ROADMAP.md
+0c4b9876ead6d47249da57884523429f8eaea98438bb3589955191cd1ff00673  ./docs/ROADMAP.md
 159acd7ba3680a28bd8149dfeb3e1aacdb9f788c28eb71e77bfd4bb71682c9b0  ./docs/STRUCTURE_AUDIT_REPORT.md
 3ae639958b7a331cfddf5d730a720990ff0cfb988046709d75391c34967b6baf  ./docs/V7_5_1_TO_V7_6_CHANGE_REPORT.md
 4cadd7f34b7c345f2bb5a18e46a584179eb5ed6b527e4fb4f623059dc001dd35  ./docs/V7_6_1_CALIBRATION_REPORT.md
@@ -200,6 +200,9 @@ c8a005ac8876a1ebb2c69d0ab63c4cb04be100400966943cb6758dbbbf6ddce5  ./docs/tasks/0
 285929893ce41987148694998901a346ae2d6d24ea958efa43a0d8788828ab79  ./docs/tasks/014-capital-goods-capital/draft/change-policy-v7.7.4-draft.json
 bfcb955f18dba1edef21d3627327396383e8ee723e91d7863ab4b7c1df40108f  ./docs/tasks/014-capital-goods-capital/draft/validation-v7.7.4-draft.json
 3f170bfe19d23144eb71d7518bc35ee9b458713566624dc14c16550de8533e19  ./docs/tasks/014-capital-goods-capital/scope.json
+60774fc0eee0443571c8bb9bc5b0b3972090b91ec6192ff4223f047dae2498b2  ./docs/tasks/015-node-generator/TASK_RU.md
+b36862e2f7d496475af67439f7c9e82e341470d896cb7241bbb6462a146c50d4  ./docs/tasks/015-node-generator/reference/expand_prototype.mjs
+b8bc7680457e04af7beb2261b2869e76294e56c692f96421cea463aa60ac39c5  ./docs/tasks/015-node-generator/scope.json
 33928a0530eb2a406c7ae381407c111887c7bbcf62708806353596df635343e1  ./docs/tasks/README_RU.md
 bbf818e93b88d606b3137b1bb69d60db8c41c9df4089025a921b1ca00f473244  ./lab/APPLY_PATCH.cmd
 d90eb418676366e16143d65f35af9a9b65f20675805a1c7777f79c16d9731df4  ./lab/CHANGELOG.md
@@ -282,6 +285,9 @@ bfcb5e7bb2a29d98040ede7b45d3242ca55828478636262c9545763234ac2a5e  ./lab/src/repo
 dde50493cfcce4c72fba4f1b1ca418b44de04c16efe02ce185b368a927e8467c  ./lab/vendor/README.md
 2c11496fd2d83a23f0274bf6b9a27096d937a6ba958ca1ec92052268e889c071  ./lab/vendor/csv-parse-5.6.0.tgz
 82b4d2528851baa9b7281aa0364b56a2114c02e2e5be6331adf0ae43a03dac12  ./lab/vendor/simulation-9.0.0.tgz
+311b4f32e0de1db77f18f78f97075bd872d099601c3b258393a63553cd410e12  ./model/nodes/README.md
+f51cdd104a334e68ea1f25d0b40d41e80a339e2bf7c9c787d207c59e1c3cc946  ./model/nodes/capital-goods-plant.json
+ba2ccc52248e8e21a9debaa5fcdbcfa66502bf69e69e6a6708b88411267a8291  ./model/nodes/construction-materials-plant.json
 8a71fe6678c4fc6c532bb8e35b6006280ddb9639a69aed045a6ca25f516f1991  ./model/orbital_economy_v7_7_4_r1_modeljson.json
 292481c670f9562171f79266421e86ab073f45694724d01bf391d21f8756cf5c  ./policy/change-policy-v7.7.4-strict.json
 406cfa85df3fc2a7ce11e72db7f9952173c1420f53a9e1e366375c26cee8dc2e  ./reference/v7.7.3/BASELINE_MANIFEST.json
