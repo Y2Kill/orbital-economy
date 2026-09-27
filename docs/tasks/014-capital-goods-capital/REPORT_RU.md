@@ -27,3 +27,45 @@
 - CI: https://github.com/Y2Kill/orbital-economy/actions/runs/36329067243 — ожидается общий guard/selftest Linux для этой головы.
 
 Результаты этих запусков будут прочитаны отдельным шагом; длительное ожидание одним вызовом не используется.
+
+
+## Журнал — продолжение
+
+### КТ1 — закрыта по candidate r1
+
+Проверен завершённый Candidate acceptance run 36329067162 для `e33ff96ebf22998641c28ffc30653d7d9ddd31ab`.
+
+- apply-patch: PASS.
+- conformance: PASS; `Instances: 11; conforming=0; with-variation=11; non-conforming=0`.
+- `A Capital Goods Plant CONFORMING_WITH_VARIATION (69/69 checks)`.
+- `B Capital Goods Plant CONFORMING_WITH_VARIATION (69/69 checks)`.
+- structure audit: PASS.
+- open boundaries: `154`; unclassified=0; closed-world violations=0.
+- P2 capacity: `kernel=11; exceptions=6; undeclared=0`.
+- algebraic loops: `switches=10; combinations=1024; with loops=0; Modes=none`.
+- candidate SHA-256: `b5c12954861c651d254feeb4b6d8011c9de7b272f4cd21c708cffb0940dcef1d`.
+- r1 validation SHA-256: `daa07690459cf51590d7ebd37f0c5884947e50d319cef184654ee8c759633ce1`.
+
+Таким образом требования КТ1 из TASK_RU.md выполнены.
+
+### КТ2 — закрыта по candidate r1
+
+В policy-сравнении Modes 0–35 дали `Output comparison: IDENTICAL` (включая Modes 34–35); для каждого legacy Mode добавленные 76 series не меняют общие accepted series: `changed=0`, `maxAbs=0`. Итог policy r1: `Unexpected=0`, `Forbidden=0`, `Threshold exceed=0`, `Required missing=0`; два hard blocker ожидаемы на этой стадии — validation с калибровочными зондами ещё FAIL и validation hash ещё не привязан. Это не маскирует регрессию: неожиданных изменений нет.
+
+CI run 36329094918 для текущей на тот момент головы `1b1e381779a67411caf1b3296c9f6762a3249446` завершён `success`; guard, tools-selftest и bench-selftests PASS, integrity корректно skipped при `sums_by: reviewer`. Старый CI 36329067243 был отменён concurrency после report-only push и не используется как результат.
+
+### Калибровочные значения первого полного прогона
+
+Mode 36:
+- A CG Plant Installed Capacity max = `2.08805191453971`;
+- A CG Plant Installed Capacity change 0→1080 = `-1.491001998582788`;
+- A Capital Goods Production Rate max = `1.74059930593874`;
+- B CG Plant Expansion max = `0`.
+
+Mode 37, окно 360→720:
+- B CG Plant Expansion max = `0.00885222467202124`;
+- B CG Plant Installed Capacity change 360→720 = `0.8803454850179351`;
+- B Capital Goods Production Rate max = `1.0179022127517`;
+- B Capital Goods Fulfillment min = `0.193467789511843`.
+
+Следующий шаг: заменить только диагностические невозможные пороги округлёнными семантическими порогами с запасом; owner-rules не ослаблять. После нового candidate push отдельно зафиксировать и проверить его run.
