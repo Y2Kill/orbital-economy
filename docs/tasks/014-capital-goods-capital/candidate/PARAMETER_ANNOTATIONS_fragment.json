@@ -1,0 +1,214 @@
+{
+  "format": "orbital-economy-parameter-annotations-fragment-v1",
+  "model": "Orbital Economy v7.7.4 Capital Goods Capital candidate r1",
+  "updated": "2026-09-27",
+  "note": "Task 014 fragment. All new numeric constants, demand-signal initial values, and the intentionally asymmetric A/B initial plant capacities are annotated; reviewer merges accepted entries into the canonical registry.",
+  "parameters": {
+    "Capital Goods Capital Enabled": {
+      "role": "v7.7.4 Construction Materials plant-capital master switch (value 1).",
+      "effect": "0 preserves Modes 0-33 exactly; 1 makes production capacity read lifecycle plant active capacity and enables plant expansion demand/sinks.",
+      "evidence": "V7_7_4_ARCHITECTURE_SPEC §0–§3.",
+      "since": "v7.7.4 candidate r1",
+      "tags": [
+        "construction-materials",
+        "capital",
+        "switch"
+      ]
+    },
+    "Capital Goods Plant Operating Reserve Factor": {
+      "role": "Construction Materials plant lifecycle parameter, value 1.1.",
+      "effect": "Scales smoothed demand signal into required active plant capacity.",
+      "evidence": "V7_7_4_ARCHITECTURE_SPEC §2; owner-defined value verified on the pre-issue skeleton.",
+      "since": "v7.7.4 candidate r1",
+      "tags": [
+        "construction-materials",
+        "capital",
+        "lifecycle"
+      ]
+    },
+    "Capital Goods Plant Installed Reserve Factor": {
+      "role": "Construction Materials plant lifecycle parameter, value 1.15.",
+      "effect": "Scales required active capacity into desired installed plant capacity.",
+      "evidence": "V7_7_4_ARCHITECTURE_SPEC §2; owner-defined value verified on the pre-issue skeleton.",
+      "since": "v7.7.4 candidate r1",
+      "tags": [
+        "construction-materials",
+        "capital",
+        "lifecycle"
+      ]
+    },
+    "Capital Goods Plant Activation Time": {
+      "role": "Construction Materials plant lifecycle parameter, value 20.",
+      "effect": "Controls reactivation speed of mothballed plant capacity.",
+      "evidence": "V7_7_4_ARCHITECTURE_SPEC §2; owner-defined value verified on the pre-issue skeleton.",
+      "since": "v7.7.4 candidate r1",
+      "tags": [
+        "construction-materials",
+        "capital",
+        "lifecycle"
+      ]
+    },
+    "Capital Goods Plant Mothball Time": {
+      "role": "Construction Materials plant lifecycle parameter, value 10.",
+      "effect": "Controls deactivation speed of unneeded active plant capacity.",
+      "evidence": "V7_7_4_ARCHITECTURE_SPEC §2; owner-defined value verified on the pre-issue skeleton.",
+      "since": "v7.7.4 candidate r1",
+      "tags": [
+        "construction-materials",
+        "capital",
+        "lifecycle"
+      ]
+    },
+    "Capital Goods Plant Surplus Disposal Decision Time": {
+      "role": "Construction Materials plant lifecycle parameter, value 240.",
+      "effect": "Controls delay before true surplus is committed to decommissioning.",
+      "evidence": "V7_7_4_ARCHITECTURE_SPEC §2; owner-defined value verified on the pre-issue skeleton.",
+      "since": "v7.7.4 candidate r1",
+      "tags": [
+        "construction-materials",
+        "capital",
+        "lifecycle"
+      ]
+    },
+    "Capital Goods Plant Construction Time": {
+      "role": "Construction Materials plant lifecycle parameter, value 120.",
+      "effect": "Controls gap-limited construction rate.",
+      "evidence": "V7_7_4_ARCHITECTURE_SPEC §2; owner-defined value verified on the pre-issue skeleton.",
+      "since": "v7.7.4 candidate r1",
+      "tags": [
+        "construction-materials",
+        "capital",
+        "lifecycle"
+      ]
+    },
+    "Capital Goods Plant Decommissioning Time": {
+      "role": "Construction Materials plant lifecycle parameter, value 540.",
+      "effect": "Controls dismantling completion rate.",
+      "evidence": "V7_7_4_ARCHITECTURE_SPEC §2; owner-defined value verified on the pre-issue skeleton.",
+      "since": "v7.7.4 candidate r1",
+      "tags": [
+        "construction-materials",
+        "capital",
+        "lifecycle"
+      ]
+    },
+    "Capital Goods Plant Depreciation Rate": {
+      "role": "Construction Materials plant lifecycle parameter, value 0.0001.",
+      "effect": "Controls physical attrition of installed and active plant capacity.",
+      "evidence": "V7_7_4_ARCHITECTURE_SPEC §2; owner-defined value verified on the pre-issue skeleton.",
+      "since": "v7.7.4 candidate r1",
+      "tags": [
+        "construction-materials",
+        "capital",
+        "lifecycle"
+      ]
+    },
+    "Capital Goods Plant Capital Goods per Capacity": {
+      "role": "Construction Materials plant lifecycle parameter, value 5.",
+      "effect": "Scales plant expansion into Capital Goods demand and physical consumption.",
+      "evidence": "V7_7_4_ARCHITECTURE_SPEC §2; owner-defined value verified on the pre-issue skeleton.",
+      "since": "v7.7.4 candidate r1",
+      "tags": [
+        "construction-materials",
+        "capital",
+        "lifecycle"
+      ]
+    },
+    "Capital Goods Plant Construction Materials per Capacity": {
+      "role": "Construction Materials plant lifecycle parameter, value 5.",
+      "effect": "Scales plant expansion into Construction Materials demand and physical consumption.",
+      "evidence": "V7_7_4_ARCHITECTURE_SPEC §2; owner-defined value verified on the pre-issue skeleton.",
+      "since": "v7.7.4 candidate r1",
+      "tags": [
+        "construction-materials",
+        "capital",
+        "lifecycle"
+      ]
+    },
+    "A Capital Goods Plant Installed Capacity": {
+      "role": "Initial installed capital-goods plant capacity for colony A, value 2.",
+      "effect": "Seeds lifecycle capital at the previously accepted base production capacity; A/B are intentionally asymmetric (2 vs 1).",
+      "evidence": "V7_7_4_ARCHITECTURE_SPEC §2 explicitly requires A=2, B=1 and mandatory annotation of the asymmetric pair.",
+      "since": "v7.7.4 candidate r1",
+      "tags": [
+        "capital-goods",
+        "capital",
+        "initial",
+        "asymmetry"
+      ],
+      "applies_to_mirror": true
+    },
+    "A Capital Goods Plant Active Capacity": {
+      "role": "Initial active capital-goods plant capacity for colony A, value 2.",
+      "effect": "Starts active equal to installed capacity, preserving the prior base-capacity level before lifecycle adjustment; A/B are intentionally asymmetric (2 vs 1).",
+      "evidence": "V7_7_4_ARCHITECTURE_SPEC §2; same specified initial A/B capacities as Installed.",
+      "since": "v7.7.4 candidate r1",
+      "tags": [
+        "capital-goods",
+        "capital",
+        "initial",
+        "asymmetry"
+      ],
+      "applies_to_mirror": true
+    },
+    "B Capital Goods Plant Installed Capacity": {
+      "role": "Initial installed capital-goods plant capacity for colony B, value 1.",
+      "effect": "Seeds lifecycle capital at the previously accepted base production capacity; A/B are intentionally asymmetric (2 vs 1).",
+      "evidence": "V7_7_4_ARCHITECTURE_SPEC §2 explicitly requires A=2, B=1 and mandatory annotation of the asymmetric pair.",
+      "since": "v7.7.4 candidate r1",
+      "tags": [
+        "capital-goods",
+        "capital",
+        "initial",
+        "asymmetry"
+      ],
+      "applies_to_mirror": true
+    },
+    "B Capital Goods Plant Active Capacity": {
+      "role": "Initial active capital-goods plant capacity for colony B, value 1.",
+      "effect": "Starts active equal to installed capacity, preserving the prior base-capacity level before lifecycle adjustment; A/B are intentionally asymmetric (2 vs 1).",
+      "evidence": "V7_7_4_ARCHITECTURE_SPEC §2; same specified initial A/B capacities as Installed.",
+      "since": "v7.7.4 candidate r1",
+      "tags": [
+        "capital-goods",
+        "capital",
+        "initial",
+        "asymmetry"
+      ],
+      "applies_to_mirror": true
+    },
+    "Capital Goods Demand Signal Adjustment Time": {
+      "role": "Capital Goods demand-signal adjustment time, value 3 days.",
+      "effect": "Controls lag between instantaneous Capital Goods demand and the plant sizing signal; this lag breaks the same-step demand -> required capacity -> desired expansion -> demand loop.",
+      "evidence": "V7_7_4_ARCHITECTURE_SPEC §1–§2; owner skeleton uses the established demand-signal idiom.",
+      "since": "v7.7.4 candidate r1",
+      "tags": [
+        "capital-goods",
+        "signal",
+        "causality"
+      ]
+    },
+    "A Capital Goods Demand Signal": {
+      "role": "Initial smoothed Capital Goods demand signal for colony A, value 0.13.",
+      "effect": "Seeds the lagged plant-sizing signal at day-0 demand instead of feeding instantaneous demand into Required Active Capacity.",
+      "evidence": "V7_7_4_ARCHITECTURE_SPEC §1–§2.",
+      "since": "v7.7.4 candidate r1",
+      "tags": [
+        "capital-goods",
+        "signal",
+        "initial"
+      ]
+    },
+    "B Capital Goods Demand Signal": {
+      "role": "Initial smoothed Capital Goods demand signal for colony B, value 0.13.",
+      "effect": "Seeds the lagged plant-sizing signal at day-0 demand instead of feeding instantaneous demand into Required Active Capacity.",
+      "evidence": "V7_7_4_ARCHITECTURE_SPEC §1–§2.",
+      "since": "v7.7.4 candidate r1",
+      "tags": [
+        "capital-goods",
+        "signal",
+        "initial"
+      ]
+    }
+  }
+}
