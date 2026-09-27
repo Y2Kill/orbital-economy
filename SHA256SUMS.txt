@@ -19,7 +19,7 @@ f331750009218f53c65d39f53dc54f554ca6d91c46698713cc5dc6a1364a53c7  ./docs/HISTORY
 d7d0fe073ace927de77424a01a9d9022dd6ab52c7f8e2fee2cb122a616d240d7  ./docs/PARAMETER_ANNOTATIONS.json
 f29fa435af5a03ca6fe1ad37f9ec13d7a1a19346205b830ec5f81d3ae0f7926d  ./docs/PARAMETER_REGISTRY.md
 fed76ea887b91fa73caf92dbdc941c9d82ec62e90665e95094e18e4a41a40180  ./docs/PLANET_V1_CONTRACT_RU.md
-7e1374774df93b0751677627a6651a84988909b981914e4465b5f1b607630e1c  ./docs/ROADMAP.md
+edb8d35eb528763392135ff11c9f1328de47563eda7a26535dfdf956465d307a  ./docs/ROADMAP.md
 24ef6087ef7d8e2dc9defdc1dcf6a8f3df16ffe314cc24158cb3d3531d06c212  ./docs/STRUCTURE_AUDIT_REPORT.md
 3ae639958b7a331cfddf5d730a720990ff0cfb988046709d75391c34967b6baf  ./docs/V7_5_1_TO_V7_6_CHANGE_REPORT.md
 4cadd7f34b7c345f2bb5a18e46a584179eb5ed6b527e4fb4f623059dc001dd35  ./docs/V7_6_1_CALIBRATION_REPORT.md
@@ -176,6 +176,12 @@ c631ac9c1c5fb477d50ab23e032312ee35daaf1c681c6bc36642deb623045aad  ./docs/tasks/0
 badaedf761edd089b1128ff797d7a817afa38c26b964f83f4fbf519e873b4a09  ./docs/tasks/012-construction-materials-energy/draft/change-policy-v7.7.2-draft.json
 61c2d2e6c2b2a85ae35d5abd4cd1e514385e2ab12403b15ee07b20bd9625ba9a  ./docs/tasks/012-construction-materials-energy/draft/validation-v7.7.2-draft.json
 035066e09ce57dabf2d54f29e6568a636b1d16c9653df8b3210ce788ed6cad15  ./docs/tasks/012-construction-materials-energy/scope.json
+01025a528b9a5a438c43ba86a03e48fbbd1f61ca8d1552ae1dc8305a436775fe  ./docs/tasks/013-construction-materials-capital/TASK_RU.md
+16b07bd2c5dbf658706b745550185be1b009c0e996efbcb714a348d1b6a021a1  ./docs/tasks/013-construction-materials-capital/V7_7_3_ARCHITECTURE_SPEC.md
+70ad7a59caa43403d32f12de1ed88ccfa6af6efb1eb29689c5659f6926223d1d  ./docs/tasks/013-construction-materials-capital/V7_7_3_TEST_PLAN.md
+b8a7dca10b217a15e01045db7232264c69dd33cb5b8b90894068785cfc65a0c3  ./docs/tasks/013-construction-materials-capital/draft/change-policy-v7.7.3-draft.json
+007dacd67e8af333a22eac1dcf4aa341ce8c04a700614fe8289e3f724fcad0bc  ./docs/tasks/013-construction-materials-capital/draft/validation-v7.7.3-draft.json
+f46ac1b383d2868e61108fb077337b557423ed289c3ae0efdcaa683edb84e122  ./docs/tasks/013-construction-materials-capital/scope.json
 a42535af038db26d7a48c06426e9030153a8563ddff5a78cfa11f0f18b0912a7  ./docs/tasks/README_RU.md
 bbf818e93b88d606b3137b1bb69d60db8c41c9df4089025a921b1ca00f473244  ./lab/APPLY_PATCH.cmd
 d90eb418676366e16143d65f35af9a9b65f20675805a1c7777f79c16d9731df4  ./lab/CHANGELOG.md

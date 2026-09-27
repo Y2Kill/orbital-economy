@@ -1,0 +1,17 @@
+{
+  "task": "013",
+  "title": "v7.7.3 Construction Materials Capital: processing capacity on the capital lifecycle kernel (Planet v1 P2)",
+  "branch": "task/013-construction-materials-capital",
+  "allow": [],
+  "allow_binary": [],
+  "allow_protected": [
+    "docs/tasks/013-construction-materials-capital/candidate/**"
+  ],
+  "required_changes": [
+    "docs/tasks/013-construction-materials-capital/candidate/model-patch.json",
+    "docs/tasks/013-construction-materials-capital/candidate/validation.json",
+    "docs/tasks/013-construction-materials-capital/candidate/change-policy.json",
+    "docs/tasks/013-construction-materials-capital/candidate/PARAMETER_ANNOTATIONS_fragment.json"
+  ],
+  "sums_by": "reviewer"
+}

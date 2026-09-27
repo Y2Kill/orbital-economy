@@ -1,0 +1,114 @@
+{
+  "format": "orbital-economy-change-policy-v1",
+  "name": "Orbital Economy v7.7.3 Construction Materials Capital - change contract DRAFT (owner); executor finalises and justifies every change",
+  "description": "Written before implementation from V7_7_3_ARCHITECTURE_SPEC.md. Accepted baseline: v7.7.2 r1. Modes 0-33 must reproduce it exactly; new behaviour lives in Modes 34-35 behind Construction Materials Capital Enabled. validation_sha256 must be set to the delivered validation.",
+  "accepted_model_sha256": "9bd5c956acccefddc3573b18d04e782d3cb329be89c1d297337b0831c04f2b45",
+  "validation_sha256": "<SHA-256 of the delivered validation.json>",
+  "comparison": {
+    "abs_tolerance": 0,
+    "rel_tolerance": null,
+    "rel_floor": 1e-12
+  },
+  "engine": {
+    "package": "simulation",
+    "version": "9.0.0"
+  },
+  "default_action": "deny",
+  "require_full_mode_coverage": true,
+  "rules": [
+    {
+      "id": "regression-guard-modes-0-33",
+      "action": "deny",
+      "event": "series_changed",
+      "modes": "0-33",
+      "name": "*",
+      "note": "Modes 0-33 set Construction Materials Capital Enabled = 0 and must reproduce v7.7.2 r1 exactly (first match wins)."
+    },
+    {
+      "id": "forbid-removals-and-structural-drift",
+      "action": "deny",
+      "event": [
+        "element_removed",
+        "series_removed",
+        "mode_removed",
+        "link_removed",
+        "type_changed",
+        "simulation_changed",
+        "time_axis_changed",
+        "scenario_renamed"
+      ],
+      "name": "*"
+    },
+    {
+      "id": "add-construction-materials-plant",
+      "action": "allow",
+      "event": "element_added",
+      "name": [
+        "Construction Materials Capital Enabled",
+        "Construction Materials Plant *",
+        "? Construction Materials Plant *"
+      ],
+      "required": true,
+      "note": "switch, plant parameters, two kernel-v2 plant instances: stocks, flows, derived roles, CG and CM consumption (V7_7_3_ARCHITECTURE_SPEC §2)"
+    },
+    {
+      "id": "change-definitions-per-spec",
+      "action": "allow",
+      "event": "definition_changed",
+      "name": [
+        "? Construction Materials Production Capacity",
+        "? Capital Goods Demand",
+        "? Construction Materials Demand",
+        "Test 2 Transport Surge Active"
+      ],
+      "required": true,
+      "note": "under the switch: production capacity = plant active capacity; plant desired expansion joins CG and CM demand; Test 2 flag + Mode 35 (spec §3)"
+    },
+    {
+      "id": "link-into-changed-definitions",
+      "action": "allow",
+      "event": "link_added",
+      "name": [
+        "* -> ? Construction Materials Production Capacity",
+        "* -> ? Capital Goods Demand",
+        "* -> ? Construction Materials Demand",
+        "* -> Test 2 Transport Surge Active"
+      ]
+    },
+    {
+      "id": "link-into-new-elements",
+      "action": "allow",
+      "event": "link_added",
+      "name": [
+        "* -> Construction Materials Capital Enabled",
+        "* -> Construction Materials Plant *",
+        "* -> ? Construction Materials Plant *"
+      ]
+    },
+    {
+      "id": "add-modes-34-35",
+      "action": "allow",
+      "event": "mode_added",
+      "modes": "34-35",
+      "required": true
+    },
+    {
+      "id": "scenarios-0-33-gain-switch-off",
+      "action": "allow",
+      "event": "scenario_input_changed",
+      "modes": "0-33",
+      "required": true,
+      "note": "only \"Construction Materials Capital Enabled\": 0"
+    },
+    {
+      "id": "new-series-everywhere",
+      "action": "allow",
+      "event": "series_added",
+      "name": [
+        "Construction Materials Capital Enabled",
+        "Construction Materials Plant *",
+        "? Construction Materials Plant *"
+      ]
+    }
+  ]
+}
