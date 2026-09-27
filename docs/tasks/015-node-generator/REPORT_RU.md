@@ -1,4 +1,4 @@
-# Отчст по заданию 015 — генератор узлов
+# Отчёт по заданию 015 — генератор узлов
 
 ## Журнал
 
@@ -26,6 +26,12 @@
 Результат КТ3: run 36344522722 был отменён journal-push по concurrency; доказательство — [CI run 36344547409](https://github.com/Y2Kill/orbital-economy/actions/runs/36344547409) на голове `d0a7e136e0010f62d474b767a55ec6b4edd40147`: `guard`, `tools-selftest`, `bench-selftests` — SUCCESS; `integrity` ожидаемо SKIPPED. Case 9: `expand-nodes --validation preserves accepted validation byte-for-byte — 871633 bytes identical`; итог `NODE SELF-TEST: 9 passed, 0 failed`. Case 1 сохранил 69/6/126 и 76/6/138.
 Не запускалось локально: CLI, Node-команды, стенд и self-tests.
 Дальше: после зелёного КТ3 — документация/финальный аудит и КТ4.
+
+### КТ4 — 2026-09-27 — документация и финальный аудит
+Сделано: добавлен `lab/docs/NODES_RU.md`; обновлены `MODEL_PATCH_RU.md`, `HARNESS_QA_RU.md`, `TEST_STATUS_RU.md`, `lab/README_RU.md`, `lab/CHANGELOG.md` для Lab v0.9.8. Документация явно фиксирует строгую схему, patch `nodes`, CLI/validation merge, 9 QA-случаев и границу задачи: accepted model/validation/policy и семь прежних рукописных kernel-экземпляров не меняются. Случайная executable-бит правка `cli.js` / `node_qa.js` нормализуется к `100644`.
+Доказательство перед push: КТ1–КТ3 уже подтверждены CI, включая 9/9 и byte-identical validation; после этого push ожидается финальный `ci.yml` текущей головы и отдельная проверка diff против исходного main `e8164e8e68b452119b9cfeb3826f305e87d5e943`.
+Не запускалось локально: `check_branch`, Node/npm, Windows wrappers, стенд и self-tests. `SHA256SUMS.txt` и `lab/SHA256SUMS.txt` не пересобирались (`sums_by: reviewer`).
+Дальше: записать run финальной головы, дождаться зелёного CI отдельной проверкой, проверить список изменённых файлов и закрыть КТ4.
 
 ## Что не запускалось
 

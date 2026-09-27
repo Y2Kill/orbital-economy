@@ -1,4 +1,4 @@
-# QA самого Orbital Economy Lab v0.9.7
+# QA самого Orbital Economy Lab v0.9.8
 
 ## 1. Operational QA
 
@@ -31,7 +31,7 @@ QA создаёт одноразовые временные рабочие ка�
 
 - parameter registry (v0.8.0): инвентарь = все числовые константы + начальные запасы, переключатели распознаны, аннотации сливаются (в т.ч. на зеркало), неизвестные имена — предупреждение, malformed-файл отклоняется.
 
-Ожидаемый итог: **30 passed, 0 failed**.
+Ожидаемый итог: **32 passed, 0 failed**.
 
 ## 2. Integration QA factual comparator
 
@@ -144,6 +144,29 @@ PLANET_SELF_TEST.cmd
 - case 16: JSON результата детерминирован.
 
 Linux CI задачи 011: **16 passed, 0 failed**; каноническая Windows-проверка выполняется reviewer при приёмке.
+
+## 3e. Node generator QA (v0.9.8)
+
+Запуск:
+
+```text
+NODE_SELF_TEST.cmd
+npm run node-qa
+```
+
+Девять случаев работают от **текущей** accepted-модели и двух деклараций `model/nodes/`, без привязки к историческому имени ModelJSON:
+
+1. обе декларации вырезаются из accepted в обратном порядке и собираются заново; определения (кроме `description`), замены, новые LINK и generated validation совпадают; на baseline v7.7.4 r1 диагностика: Construction Materials Plant = 69/6/126, Capital Goods Plant = 76/6/138;
+2. patch с `nodes` и предварительно раскрытый patch дают одинаковые определения модели;
+3. неизвестное поле декларации отвергается с путём;
+4. неизвестный тип узла отвергается;
+5. отсутствующая ссылка, которую должна заменить capacity-formula, отвергается;
+6. пересечение generated и explicit add/replace отвергается;
+7. ссылка декларации на отсутствующий элемент base отвергается;
+8. повторное раскрытие даёт byte-identical JSON;
+9. CLI `expand-nodes --validation` на уже принятой validation возвращает `validation.merged.json`, побайтно равный входному файлу.
+
+Linux CI задачи 015: **9 passed, 0 failed**; case 9 — 871633 bytes identical. Это проверка разработки, а не каноническая Windows-приёмка.
 
 ## 4. Fail-fast
 

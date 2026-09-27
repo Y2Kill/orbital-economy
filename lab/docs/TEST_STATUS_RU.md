@@ -1,4 +1,4 @@
-# Статус проверок Orbital Economy Lab v0.9.7 — baseline v7.7.4 r1
+# Статус проверок Orbital Economy Lab v0.9.8 — baseline v7.7.4 r1
 
 ## Принятая основа
 
@@ -39,7 +39,22 @@
 | `STRUCTURE_SELF_TEST.cmd` | **PASS** 21/21 |
 | `LOOP_SELF_TEST.cmd` | **PASS** 15/15 (Windows, promotion v7.7.2); accepted 10 switches / 1024; v7.6 r1 = 16/32; ожидания для accepted выводятся из модели (с v7.7.2) |
 | `PLANET_SELF_TEST.cmd` | **PASS** 16/16 (Windows, promotion v7.7.2); accepted P2=11/6/0, P3=6/2/9/0, P4=0/6, P5=4/13, P6=4; ожидаемые счётчики выводятся из декларации (с v7.7.2) |
+| `NODE_SELF_TEST.cmd` | **PASS** 9/9 (Linux CI задачи 015); case 1 = 69/6/126 и 76/6/138, case 9 = 871633 bytes identical |
 | `COMPARE_SELF_TEST.cmd` | **PASS** |
+
+## Lab v0.9.8 — декларативный генератор узлов (задача 015)
+
+Ветка задачи 015 добавляет harness-only слой: строгие декларации `capital_lifecycle` v1 раскрываются в обычный model patch и generated validation fragment. Accepted ModelJSON, accepted validation, policy, две декларации и существующие семь рукописных kernel-экземпляров не менялись.
+
+GitHub Actions подтвердил:
+- Construction Materials Plant: 69 элементов / 6 замен / 126 LINK, validation equal;
+- Capital Goods Plant: 76 / 6 / 138, validation equal;
+- schema/reference/conflict/determinism cases 2–8 — PASS;
+- `expand-nodes --validation` на accepted validation — 871633 bytes identical;
+- `NODE SELF-TEST: 9 passed, 0 failed`;
+- `guard`, `tools-selftest`, `bench-selftests` — SUCCESS в CI run 36344547409.
+
+Это Linux CI разработки. Канонический Windows-прогон и пересборка SHA256SUMS остаются за reviewer.
 
 ## Рабочая область
 

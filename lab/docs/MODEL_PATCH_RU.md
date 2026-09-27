@@ -1,4 +1,4 @@
-# Model patch — формат поставки изменений модели (Lab v0.7.0)
+# Model patch — формат поставки изменений модели (Lab v0.9.8)
 
 ## Зачем
 
@@ -22,6 +22,10 @@ APPLY_PATCH.cmd "delivery\model-patch.json" "input\model\candidate.json"
   "base_sha256": "57a2a102f2b632c69c37cc00c4cd11182ca2601d2af9395560228b5fdde0f44d",
   "name": "Orbital Economy <next-version> candidate r1",
   "description": "optional",
+
+  "nodes": [
+    { "type": "capital_lifecycle", "version": 1, "sector": "…", "...": "см. NODES_RU.md" }
+  ],
 
   "add_elements": [
     { "type": "VARIABLE", "name": "Intermediate Inputs Enabled", "behavior": { "value": 1 }, "description": "…" },
@@ -48,6 +52,7 @@ APPLY_PATCH.cmd "delivery\model-patch.json" "input\model\candidate.json"
 
 | Секция | Правила |
 |---|---|
+| `nodes` | необязательный массив строгих деклараций узлов. Перед обычными секциями они детерминированно раскрываются относительно той же base-модели; каждый следующий узел видит результат предыдущего. Неизвестный тип/поле, отсутствующее обязательное поле или ссылка на отсутствующий элемент — отказ с путём поля. Если узел и явная секция одновременно добавляют/заменяют один элемент — отказ. Подробно: `NODES_RU.md`. |
 | `add_elements` | имя не должно существовать; `VARIABLE`/`FLOW` требуют `behavior.value`, `STOCK` — `behavior.initial_value`; у `FLOW` поля `from`/`to` обязательны явно (`null` = граница модели) и должны указывать на существующие **STOCK**; `display` не передавать; `FLOW` получает `non_negative: true`, если не указано иное |
 | `replace_formulas` | цель должна существовать; для не-STOCK — `value`, для STOCK — `initial_value`; **вся** новая формула целиком (не диф) |
 | `add_links` | оба конца существуют (в том числе только что добавленные); дубликаты — отказ. Ссылка `[X]` в формуле без LINK `X → элемент` — это ошибка модели, которую поймает `LIFECYCLE_CONFORMANCE` / `STRUCTURE_AUDIT` (model-wide references) |
@@ -56,7 +61,20 @@ APPLY_PATCH.cmd "delivery\model-patch.json" "input\model\candidate.json"
 
 Не поддерживается намеренно: удаление, переименование, изменение типа, изменение `from`/`to` существующего FLOW, изменение `simulation`. Всё это — структурные регрессии, которые policy отклонит; если такое действительно нужно, это предмет отдельного решения, а не патча.
 
-Порядок применения: `add_elements` → `replace_formulas` → `add_links` → `modify_scenarios` → `add_scenarios`. Поэтому формулы в `add_elements` могут ссылаться на элементы, добавленные в том же патче, а `add_links` могут связывать новые элементы.
+Порядок применения: раскрытие `nodes` → объединение с явными `add_elements` / `replace_formulas` / `add_links` → `add_elements` → `replace_formulas` → `add_links` → `modify_scenarios` → `add_scenarios`. Старые патчи без `nodes` проходят прежним путём без изменения семантики. Поэтому формулы в `add_elements` могут ссылаться на элементы, добавленные в том же патче, а `add_links` могут связывать новые элементы.
+
+## Декларативные узлы (Lab v0.9.8)
+
+`APPLY_PATCH` принимает `nodes` напрямую; ручного предварительного раскрытия не требуется. Для ревью или генерации обычного v1 patch используется:
+
+```cmd
+node src\cli.js expand-nodes <node-or-patch.json> <base-model.json> --out=output\expanded
+node src\cli.js expand-nodes <node-or-patch.json> <base-model.json> --out=output\expanded --validation=input\validation\validation-v7.7.4.json
+```
+
+Команда пишет `patch.expanded.json` и `validation.fragments.json`; с `--validation` также `validation.merged.json`. Уже присутствующий generated validation-фрагмент не дублируется: он обязан совпасть (для kernel instance допускается только дополнительный `policy_notes` у принятой записи). Если merge ничего не меняет, validation копируется побайтно.
+
+Сейчас поддерживается `capital_lifecycle` v1. Две декларации лежат в `../model/nodes/`; семь более ранних kernel-экземпляров остаются рукописными и этой задачей не переписываются. Схема, границы ответственности и QA: `NODES_RU.md`.
 
 ## Синтаксис формул (то, что нужно знать автору патча)
 

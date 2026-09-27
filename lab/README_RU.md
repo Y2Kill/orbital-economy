@@ -1,4 +1,4 @@
-# Orbital Economy Lab v0.9.7
+# Orbital Economy Lab v0.9.8
 
 Локальный стенд для запуска, проверки, regression-анализа, policy-gating, Capital Lifecycle Kernel и статических аудитов структуры для ModelJSON Orbital Economy. v0.9.6 добавляет `planet_closure`: декларативную per-process карту критериев Planet v1 P2–P6 с dependency paths, exceptions/debt counters и режимами `report/classify/planet_v1/planet_strict`.
 
@@ -28,6 +28,26 @@
 
 ---
 
+
+# 0f. Что изменилось в v0.9.8
+
+Добавлен декларативный генератор повторяемых model-node конструкций без изменения accepted-модели:
+
+```cmd
+NODE_SELF_TEST.cmd
+node src\cli.js expand-nodes ..\model\nodes\construction-materials-plant.json <base-model.json> --out=output\expanded
+```
+
+- `model/nodes/*.json` — короткие строгие декларации; неизвестные поля/типы и отсутствующие ссылки отклоняются с путём;
+- `capital_lifecycle` v1 воспроизводит две уже принятые отрасли: Construction Materials Plant и Capital Goods Plant;
+- model patch v1 получил необязательную секцию `nodes`; generated и явные add/replace не могут трогать один элемент;
+- `expand-nodes` пишет обычный раскрытый patch + validation fragments; `--validation` делает идемпотентный merge;
+- `NODE_SELF_TEST.cmd` содержит 9 случаев, включая byte-determinism и побайтовое равенство merged accepted validation;
+- существующие семь kernel-экземпляров остаются рукописными.
+
+Подробно: `docs\NODES_RU.md` и `docs\MODEL_PATCH_RU.md`.
+
+---
 
 # 0e. Что изменилось в v0.9.6
 
@@ -203,6 +223,7 @@ POLICY_SELF_TEST.cmd
 CONFORMANCE_SELF_TEST.cmd
 STRUCTURE_SELF_TEST.cmd
 LOOP_SELF_TEST.cmd
+NODE_SELF_TEST.cmd
 ```
 
 COMPARE / POLICY / CONFORMANCE реально запускают simulation, поэтому занимают некоторое время.

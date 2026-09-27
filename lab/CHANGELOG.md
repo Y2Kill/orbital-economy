@@ -1,5 +1,14 @@
 # Changelog
 
+## v0.9.8 — declarative model node generator
+
+- новый `src/nodes/`: строгий registry/schema и генератор `capital_lifecycle` v1; формулы совпадают с прототипом задачи 015, а ссылки, replacement target и конфликты имён проверяются до применения;
+- model patch v1 получил необязательный `nodes`; узлы раскрываются последовательно относительно base, а пересечение generated и explicit add/replace — ошибка; патчи без `nodes` сохраняют прежнюю семантику;
+- новый CLI `expand-nodes` пишет `patch.expanded.json`, `validation.fragments.json` и при `--validation` — идемпотентный `validation.merged.json`;
+- generated validation включает kernel-v2 instances, open-boundary transformation names/pairs и planet capacity; повторно существующие записи обязаны совпадать (у kernel instance дополнительный `policy_notes` не считается различием);
+- `NODE_SELF_TEST.cmd` / `node-qa`: 9 version-independent случаев; на accepted v7.7.4 r1 две декларации дают 69/6/126 и 76/6/138, merged validation — 871633 bytes identical;
+- Lab/package version → v0.9.8; accepted model/validation/policy и существующие семь рукописных kernel-экземпляров не изменены.
+
 ## v0.9.7 — energy_balance: список потребителей энергии
 
 - плагин validation `energy_balance` принимает `consumers` — потребителей общего аллокатора колонии (`X K Requested Energy` / `X K Allocated Energy`); по умолчанию `["Metal", "Electronics"]`, при котором проверки, их имена и порядок прежние;
