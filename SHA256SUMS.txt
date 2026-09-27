@@ -19,7 +19,7 @@ fc3133ca2dbf4c21d86a96b3c3af8873d9e2c20d4d803b6b77656dec918d2180  ./docs/HISTORY
 d3a81678a22f0a7082890b4bbc61d96828e3491d34b2923c613ccf044811ee1a  ./docs/PARAMETER_ANNOTATIONS.json
 257ddb2de8a1722c16b2926285d3df4a5c6f443b062bc028eb5abe15712c9357  ./docs/PARAMETER_REGISTRY.md
 97d6c0184b0f74b2fa8b8a7f5740d963eae62e7768a83450ddd5bcdb87adb125  ./docs/PLANET_V1_CONTRACT_RU.md
-e131805b9880b7d5d84bc2d30d1650154ac5fb3d868915f844bfec118260c153  ./docs/ROADMAP.md
+ded256c3e99a6615ac6bc2fb1403e0396ee87d8b4df462d715973177ec117f5d  ./docs/ROADMAP.md
 d3369c9e85fba4cfac0d878cc483326b6750da5a8fb4dc45fb4f26f507f498da  ./docs/STRUCTURE_AUDIT_REPORT.md
 3ae639958b7a331cfddf5d730a720990ff0cfb988046709d75391c34967b6baf  ./docs/V7_5_1_TO_V7_6_CHANGE_REPORT.md
 4cadd7f34b7c345f2bb5a18e46a584179eb5ed6b527e4fb4f623059dc001dd35  ./docs/V7_6_1_CALIBRATION_REPORT.md
@@ -188,6 +188,12 @@ f742660448ab79372e325e7ac89481c3264a8815125d70fe80fbeb3c493ed92d  ./docs/tasks/0
 b8a7dca10b217a15e01045db7232264c69dd33cb5b8b90894068785cfc65a0c3  ./docs/tasks/013-construction-materials-capital/draft/change-policy-v7.7.3-draft.json
 007dacd67e8af333a22eac1dcf4aa341ce8c04a700614fe8289e3f724fcad0bc  ./docs/tasks/013-construction-materials-capital/draft/validation-v7.7.3-draft.json
 f46ac1b383d2868e61108fb077337b557423ed289c3ae0efdcaa683edb84e122  ./docs/tasks/013-construction-materials-capital/scope.json
+f2694ccfe5ba94d2a5f8c7131edc21fed5c8719fcbf99e5ce2e48eadec6fd283  ./docs/tasks/014-capital-goods-capital/TASK_RU.md
+493dc8748a7d56e162f9963633122b09b7bd6df460d8320646f2ee88f69ae044  ./docs/tasks/014-capital-goods-capital/V7_7_4_ARCHITECTURE_SPEC.md
+260f7638f6ebcb90efab21a92ee5d8fe139a66919bd47dd3503e63a18fcb9a91  ./docs/tasks/014-capital-goods-capital/V7_7_4_TEST_PLAN.md
+285929893ce41987148694998901a346ae2d6d24ea958efa43a0d8788828ab79  ./docs/tasks/014-capital-goods-capital/draft/change-policy-v7.7.4-draft.json
+bfcb955f18dba1edef21d3627327396383e8ee723e91d7863ab4b7c1df40108f  ./docs/tasks/014-capital-goods-capital/draft/validation-v7.7.4-draft.json
+3f170bfe19d23144eb71d7518bc35ee9b458713566624dc14c16550de8533e19  ./docs/tasks/014-capital-goods-capital/scope.json
 33928a0530eb2a406c7ae381407c111887c7bbcf62708806353596df635343e1  ./docs/tasks/README_RU.md
 bbf818e93b88d606b3137b1bb69d60db8c41c9df4089025a921b1ca00f473244  ./lab/APPLY_PATCH.cmd
 d90eb418676366e16143d65f35af9a9b65f20675805a1c7777f79c16d9731df4  ./lab/CHANGELOG.md
