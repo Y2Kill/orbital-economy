@@ -1,8 +1,8 @@
 CURRENT ACCEPTED BASELINE
 
-Orbital Economy v7.7.1 r1 — Transport on Construction Materials
-Model SHA-256: d53d014d727a439694e103aafb49f87d4dbbb362e581414cbf4dc71a19646f93
-Validation SHA-256: 2b5ef810dc9aaff5beaaa9b25c0410a6e859e6195753f133755136487913c9a6
+Orbital Economy v7.7.2 r1 — Construction Materials use Energy
+Model SHA-256: 9bd5c956acccefddc3573b18d04e782d3cb329be89c1d297337b0831c04f2b45
+Validation SHA-256: c3e5a54cf23baf5e2b8b91c9106b47454bc83a1c7e54edfd4cef95fdc7fb83eb
 
 This directory is the accepted reference used by comparison/policy tools.
 

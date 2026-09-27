@@ -95,40 +95,51 @@ const declaration = embedded || readJson(fallbackFile);
 const declarationSource = embedded ? `accepted validation: ${validationFile}` : `task declaration: ${fallbackFile}`;
 const openBoundaries = (validation.plugins || []).find(p => p?.type === 'open_boundaries');
 
+// Expected counters are computed from the declaration's own kinds (an oracle independent of the model checks):
+// when every declaration is verified (0 errors), the audit's counters must equal these. The accepted declaration
+// moves with each Planet v1 step, so the self-test follows it instead of pinning one model version.
+function declaredCounters(d) {
+  const cols = (d.colonies || []).length;
+  const n = s => (String(s).includes('{C}') ? cols : 1);
+  const c = { processes: 0, legacy: 0, P2: { kernel: 0, exceptions: 0, undeclared: 0 }, P3: { requests: 0, producer: 0, exceptions: 0, undeclared: 0 },
+    P4: { with_deposit: 0, without_deposit: 0 }, P5: { declared: 0, undeclared: 0 }, P6: { drivers: 0 } };
+  for (const p of d.processes || []) {
+    const k = n(p.output);
+    if (p.legacy) { c.legacy += k; continue; }
+    c.processes += k;
+    const cap = p.capacity?.kind; if (cap === 'kernel') c.P2.kernel += k; else if (cap === 'constant' || cap === 'unbounded') c.P2.exceptions += k; else c.P2.undeclared += k;
+    const en = p.energy?.kind; if (en === 'requests') c.P3.requests += k; else if (en === 'producer') c.P3.producer += k; else if (en === 'none') c.P3.exceptions += k; else c.P3.undeclared += k;
+    if (p.kind === 'extraction') { if (p.deposit?.kind === 'stock') c.P4.with_deposit += k; else c.P4.without_deposit += k; }
+    if (p.labor?.kind === 'declared') c.P5.declared += k; else c.P5.undeclared += k;
+  }
+  for (const s of d.demand_drivers?.parameters || []) c.P6.drivers += n(s);
+  return c;
+}
+const EXP = declaredCounters(declaration);
+const sig = c => `P2=${c.P2.kernel}/${c.P2.exceptions}/${c.P2.undeclared}; P3=${c.P3.requests}/${c.P3.producer}/${c.P3.exceptions}/${c.P3.undeclared}; P4=${c.P4.with_deposit}/${c.P4.without_deposit}; P5=${c.P5.declared}/${c.P5.undeclared}; P6=${c.P6.drivers}`;
+
 console.log('Orbital Economy Lab Planet v1 closure QA');
 console.log('Declaration source: ' + declarationSource);
 console.log('16 static-audit cases through checkpoint KT3.\n');
 
 try {
-  await expect('1 accepted v7.7.1 matches Planet v1 reference counters exactly', () => {
+  await expect('1 accepted model matches the counters of its own declaration exactly', () => {
     const r = auditPlanetClosure(accepted, declaration, openBoundaries);
+    const got = { processes: r.counters.processes, legacy: r.counters.legacy, P2: r.counters.P2, P3: r.counters.P3, P4: r.counters.P4, P5: r.counters.P5, P6: r.counters.P6 };
     const ok = r.status === 'PASS'
       && r.mode === 'report'
       && r.errors.length === 0
-      && r.counters.processes === 17
-      && r.counters.legacy === 2
+      && JSON.stringify(got) === JSON.stringify(EXP)
+      && EXP.processes === 17 && EXP.legacy === 2
       && r.counters.expected_process_outputs === 16
-      && r.counters.P2.kernel === 7
-      && r.counters.P2.exceptions === 10
-      && r.counters.P2.undeclared === 0
-      && r.counters.P3.requests === 4
-      && r.counters.P3.producer === 2
-      && r.counters.P3.exceptions === 11
-      && r.counters.P3.undeclared === 0
-      && r.counters.P4.with_deposit === 0
-      && r.counters.P4.without_deposit === 6
-      && r.counters.P5.declared === 4
-      && r.counters.P5.undeclared === 13
-      && r.counters.P6.drivers === 4
       && r.reversibility.length === 0
       && r.undeclared.length === 0
       && r.processes.length === 19
-      && r.exceptions.filter(x => x.dimension === 'P2').length === 10
-      && r.exceptions.filter(x => x.dimension === 'P3').length === 11;
-    if (!ok) throw new Error(JSON.stringify(r));
-    return 'PASS; processes=17 legacy=2 expected=16; P2=7/10/0; P3=4/2/11/0; P4=0/6; P5=4/13; P6=4; reversibility=0';
+      && r.exceptions.filter(x => x.dimension === 'P2').length === EXP.P2.exceptions
+      && r.exceptions.filter(x => x.dimension === 'P3').length === EXP.P3.exceptions;
+    if (!ok) throw new Error(JSON.stringify({ expected: EXP, audit: r }));
+    return `PASS; processes=17 legacy=2 expected=16; ${sig(EXP)}; reversibility=0`;
   });
-
 
   await expect('2 L1 mining cannot claim Refinery kernel capacity within max_hops', () => {
     const d = structuredClone(declaration);
@@ -212,13 +223,13 @@ try {
     v1d.enforce = 'planet_v1';
     const v1 = audit(accepted, v1d);
     const v1sig = v1.modeFailures.map(x => `${x.dimension}:${x.count}`).join(',');
-    if (!(v1.status === 'FAIL' && v1sig === 'P4:6,P5:13')) throw new Error('planet_v1: ' + v1sig);
+    if (!(v1.status === 'FAIL' && v1sig === `P4:${EXP.P4.without_deposit},P5:${EXP.P5.undeclared}`)) throw new Error('planet_v1: ' + v1sig);
 
     const sd = structuredClone(declaration);
     sd.enforce = 'planet_strict';
     const strict = audit(accepted, sd);
     const ssig = strict.modeFailures.map(x => `${x.dimension}:${x.count}`).join(',');
-    if (!(strict.status === 'FAIL' && ssig === 'P4:6,P5:13,P2 exceptions:10,P3 exceptions:11')) {
+    if (!(strict.status === 'FAIL' && ssig === `P4:${EXP.P4.without_deposit},P5:${EXP.P5.undeclared},P2 exceptions:${EXP.P2.exceptions},P3 exceptions:${EXP.P3.exceptions}`)) {
       throw new Error('planet_strict: ' + ssig);
     }
     return `planet_v1=${v1sig}; planet_strict=${ssig}`;
@@ -317,8 +328,8 @@ try {
     if (!(st.status === 'PASS'
       && st.planetClosure?.status === 'PASS'
       && st.planetClosure.counters.processes === 17
-      && st.planetClosure.counters.P2.kernel === 7
-      && st.planetClosure.counters.P3.exceptions === 11)) {
+      && st.planetClosure.counters.P2.kernel === EXP.P2.kernel
+      && st.planetClosure.counters.P3.exceptions === EXP.P3.exceptions)) {
       throw new Error('runStructureAudits integration mismatch: ' + JSON.stringify(st.planetClosure));
     }
     const runtimeChecks = checkPlugin(declaration, null);

@@ -77,6 +77,15 @@ const accepted = readJson(acceptedFile);
 const validation = readJson(validationFile);
 const v76r1 = readJson(v76r1File);
 const mut001 = mutation001(accepted);
+// Expectations that depend on the accepted model are derived from it, so the self-test survives promotions:
+// N = accepted switch count (at least the 7 of v7.7.1); a switch-gated loop must appear in exactly half of the
+// 2^N combinations and in exactly the Modes whose scenario turns that switch on (read from scenario values,
+// not from the audit under test).
+const ACC_SWITCHES = auditAlgebraicLoops(accepted).switches;
+const N = ACC_SWITCHES.length;
+const COMBOS = 2 ** N;
+const modesWith = (raw, sw) => raw.scenarios.map((s, i) => [Number(s.values?.['Timed Test Mode'] ?? i), Number(s.values?.[sw] ?? 0)])
+  .filter(([, v]) => v === 1).map(([m]) => m).sort((a, b) => a - b).join(',');
 const tmp = fs.mkdtempSync(path.join(os.tmpdir(), 'orbital-economy-loop-qa-'));
 
 console.log('Orbital Economy Lab algebraic-loop QA');
@@ -85,10 +94,10 @@ console.log('15 switch-aware static-audit cases.\n');
 try {
   await expect('1 accepted model has no algebraic loops', () => {
     const r = auditAlgebraicLoops(accepted);
-    const ok = r.status === 'PASS' && r.switches.length === 7 && r.combinations === 128
+    const ok = r.status === 'PASS' && N >= 7 && r.combinations === COMBOS
       && r.combinationsWithLoops === 0 && r.loops.length === 0 && r.modesWithLoops.length === 0;
     if (!ok) throw new Error(JSON.stringify(r));
-    return 'switches=7, combinations=128, with loops=0, Modes=none';
+    return `switches=${N}, combinations=${COMBOS}, with loops=0, Modes=none`;
   });
 
   await expect('2 v7.6 r1 reproduces the hidden Power Resource loop', () => {
@@ -104,12 +113,12 @@ try {
   await expect('3 task-001 r1 mutation reproduces the Intermediate Inputs loop', () => {
     const r = auditAlgebraicLoops(mut001);
     const details = algebraicLoopCombinationDetails(mut001);
-    const expectedModes = Array.from({ length: 15 }, (_x, i) => i + 17).join(',');
-    const everyIntermediateOn = details.bad.length === 64 && details.bad.every(x => x.enabled.includes('Intermediate Inputs Enabled'));
-    const ok = r.status === 'FAIL' && r.switches.length === 7 && r.combinations === 128
-      && r.combinationsWithLoops === 64 && r.modesWithLoops.join(',') === expectedModes && everyIntermediateOn;
-    if (!ok) throw new Error(JSON.stringify({ audit: r, everyIntermediateOn, bad: details.bad.length }));
-    return 'switches=7, combinations=128, with loops=64, all Intermediate Inputs Enabled=1, Modes=17-31';
+    const expectedModes = modesWith(mut001, 'Intermediate Inputs Enabled');
+    const everyIntermediateOn = details.bad.length === COMBOS / 2 && details.bad.every(x => x.enabled.includes('Intermediate Inputs Enabled'));
+    const ok = r.status === 'FAIL' && r.switches.length === N && r.combinations === COMBOS
+      && r.combinationsWithLoops === COMBOS / 2 && r.modesWithLoops.join(',') === expectedModes && expectedModes.startsWith('17,') && everyIntermediateOn;
+    if (!ok) throw new Error(JSON.stringify({ audit: r, everyIntermediateOn, bad: details.bad.length, expectedModes }));
+    return `switches=${N}, combinations=${COMBOS}, with loops=${COMBOS / 2}, all Intermediate Inputs Enabled=1, Modes=${expectedModes}`;
   });
 
   await expect('4 audit prediction agrees with simulation engine on mutation 001', () => {
@@ -186,7 +195,7 @@ try {
     addVariable(raw, 'QA Unused Binary Variable', 1);
     for (let i = 0; i < raw.scenarios.length; i++) raw.scenarios[i].values['QA Not Binary Scenario Switch'] = i === 0 ? 2 : 0;
     const r = auditAlgebraicLoops(raw);
-    return r.switches.length === 7
+    return r.switches.length === N
       && !r.switches.includes('QA Not Binary Scenario Switch')
       && !r.switches.includes('QA Unused Binary Variable');
   });
@@ -268,7 +277,7 @@ try {
     if (noPluginsReport.status !== 'SKIPPED'
       || noPluginsReport.algebraicLoops?.status !== 'PASS'
       || !noPluginsMd.includes('## Algebraic loops')
-      || !noPluginsMd.includes('combinations: 128; with loops: **0**')) {
+      || !noPluginsMd.includes(`combinations: ${COMBOS}; with loops: **0**`)) {
       throw new Error('validation-independent loop report is missing/incomplete');
     }
 
@@ -300,13 +309,14 @@ try {
 
     const r = auditAlgebraicLoops(raw);
     const details = algebraicLoopCombinationDetails(raw);
-    const everyCmOn = details.bad.length === 64
+    const everyCmOn = details.bad.length === COMBOS / 2
       && details.bad.every(x => x.enabled.includes('Construction Materials Enabled'));
-    const expectedModes = '27,28,29,30,31';
+    const expectedModes = modesWith(raw, 'Construction Materials Enabled');
     if (!(r.status === 'FAIL'
-      && r.switches.length === 7
-      && r.combinations === 128
-      && r.combinationsWithLoops === 64
+      && expectedModes.startsWith('27,')
+      && r.switches.length === N
+      && r.combinations === COMBOS
+      && r.combinationsWithLoops === COMBOS / 2
       && r.modesWithLoops.join(',') === expectedModes
       && everyCmOn
       && r.loops.some(x => x.members.includes('B Construction Materials Fulfillment')
@@ -331,7 +341,7 @@ try {
       if (!mode27Loop) throw e;
     }
     if (!mode27Loop) return false;
-    return '64/128, all Construction Materials Enabled=1, Modes=27-31; Mode 26 simulates, Mode 27 throws Circular equation loop';
+    return `${COMBOS / 2}/${COMBOS}, all Construction Materials Enabled=1, Modes=${expectedModes}; Mode 26 simulates, Mode 27 throws Circular equation loop`;
   });
 
   await expect('15 unresolved formula reference is FAIL with element and reference, no outward exception', () => {

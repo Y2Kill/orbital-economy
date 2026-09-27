@@ -1,7 +1,7 @@
 {
   "engine": "SIMULATION_PACKAGE",
-  "name": "Orbital Economy v7.7 r1 — Construction Materials",
-  "description": "Regolith -> Construction Materials -> colonial Refinery/Electronics/Power expansion; Transport and energy use are intentionally unchanged.",
+  "name": "Orbital Economy v7.7.2 r1 — Construction Materials use Energy",
+  "description": "Task 012: Construction Materials processing becomes the third colony energy consumer; production planning uses a smoothed demand-signal stock to avoid the same-step allocator loop.",
   "simulation": {
     "algorithm": "RK1",
     "time_start": 0,
@@ -6422,7 +6422,7 @@
       "from": null,
       "to": "Transport Installed Throughput Capacity",
       "behavior": {
-        "value": "IfThenElse([Transport Capital Goods Enabled] = 1, [Transport Desired Expansion] * [Transport Capital Goods Fulfillment], (([Transport Gap Limited Construction]) + ([Transport Finance Limited Construction]) - (((([Transport Gap Limited Construction]) - ([Transport Finance Limited Construction])) ^ 2) ^ 0.5)) / 2)",
+        "value": "IfThenElse([Transport Construction Materials Enabled] = 1, [Transport Desired Expansion] * Min([Transport Capital Goods Fulfillment], [Transport Construction Materials Fulfillment]), IfThenElse([Transport Capital Goods Enabled] = 1, [Transport Desired Expansion] * [Transport Capital Goods Fulfillment], (([Transport Gap Limited Construction]) + ([Transport Finance Limited Construction]) - (((([Transport Gap Limited Construction]) - ([Transport Finance Limited Construction])) ^ 2) ^ 0.5)) / 2))",
         "non_negative": true
       },
       "description": "New installed transport capacity. v7.5.1: when Transport Capital Goods Enabled, actual expansion equals Desired Expansion × Capital Goods Fulfillment; otherwise the accepted v7.5 expression is preserved verbatim."
@@ -9731,7 +9731,7 @@
       "type": "VARIABLE",
       "name": "Test 2 Transport Surge Active",
       "behavior": {
-        "value": "IfThenElse([Timed Test Mode] = 2, [Temporary Test Window], IfThenElse([Timed Test Mode] = 24, [Temporary Test Window], 0))"
+        "value": "IfThenElse([Timed Test Mode] = 2, [Temporary Test Window], IfThenElse([Timed Test Mode] = 24, [Temporary Test Window], IfThenElse([Timed Test Mode] = 31, [Temporary Test Window], 0)))"
       },
       "display": {
         "coordinates": [
@@ -18945,7 +18945,7 @@
       "type": "VARIABLE",
       "name": "A Total Requested Energy",
       "behavior": {
-        "value": "[A Metal Requested Energy] + [A Electronics Requested Energy]"
+        "value": "IfThenElse([Construction Materials Energy Enabled] = 1, [A Metal Requested Energy] + [A Electronics Requested Energy] + [A Construction Materials Requested Energy], [A Metal Requested Energy] + [A Electronics Requested Energy])"
       },
       "display": {
         "coordinates": [
@@ -19049,7 +19049,7 @@
       "type": "VARIABLE",
       "name": "A Energy Supply",
       "behavior": {
-        "value": "[A Metal Allocated Energy] + [A Electronics Allocated Energy]"
+        "value": "IfThenElse([Construction Materials Energy Enabled] = 1, [A Metal Allocated Energy] + [A Electronics Allocated Energy] + [A Construction Materials Allocated Energy], [A Metal Allocated Energy] + [A Electronics Allocated Energy])"
       },
       "display": {
         "coordinates": [
@@ -19323,7 +19323,7 @@
       "type": "VARIABLE",
       "name": "B Total Requested Energy",
       "behavior": {
-        "value": "[B Metal Requested Energy] + [B Electronics Requested Energy]"
+        "value": "IfThenElse([Construction Materials Energy Enabled] = 1, [B Metal Requested Energy] + [B Electronics Requested Energy] + [B Construction Materials Requested Energy], [B Metal Requested Energy] + [B Electronics Requested Energy])"
       },
       "display": {
         "coordinates": [
@@ -19427,7 +19427,7 @@
       "type": "VARIABLE",
       "name": "B Energy Supply",
       "behavior": {
-        "value": "[B Metal Allocated Energy] + [B Electronics Allocated Energy]"
+        "value": "IfThenElse([Construction Materials Energy Enabled] = 1, [B Metal Allocated Energy] + [B Electronics Allocated Energy] + [B Construction Materials Allocated Energy], [B Metal Allocated Energy] + [B Electronics Allocated Energy])"
       },
       "display": {
         "coordinates": [
@@ -24631,7 +24631,7 @@
       "type": "VARIABLE",
       "name": "Test 26 Energy Kernel Capacity Shock Active",
       "behavior": {
-        "value": "IfThenElse([Timed Test Mode] = 26, [Temporary Test Window], 0)"
+        "value": "IfThenElse([Timed Test Mode] = 26, [Temporary Test Window], IfThenElse([Timed Test Mode] = 33, [Temporary Test Window], 0))"
       },
       "description": "1 during the Mode-26 temporary A generation-capacity shock."
     },
@@ -25622,7 +25622,7 @@
       "type": "VARIABLE",
       "name": "A Construction Materials Demand",
       "behavior": {
-        "value": "[A Refinery Desired Expansion] * [A Refinery Construction Materials per Capacity] + [A Electronics Desired Expansion] * [A Electronics Construction Materials per Capacity] + [A Power Desired Expansion] * [A Power Construction Materials per Capacity]"
+        "value": "IfThenElse([Transport Construction Materials Enabled] = 1, [A Refinery Desired Expansion] * [A Refinery Construction Materials per Capacity] + [A Electronics Desired Expansion] * [A Electronics Construction Materials per Capacity] + [A Power Desired Expansion] * [A Power Construction Materials per Capacity] + [A Transport Construction Materials Demand Allocation], [A Refinery Desired Expansion] * [A Refinery Construction Materials per Capacity] + [A Electronics Desired Expansion] * [A Electronics Construction Materials per Capacity] + [A Power Desired Expansion] * [A Power Construction Materials per Capacity])"
       },
       "description": "Total desired local Construction Materials demand generated by colonial capacity expansion in colony A."
     },
@@ -25638,7 +25638,7 @@
       "type": "VARIABLE",
       "name": "A Desired Construction Materials Production",
       "behavior": {
-        "value": "Max(0, [A Construction Materials Demand] + ([A Construction Materials Target Inventory] - [A Construction Materials Inventory]) / [Construction Materials Adjustment Time])"
+        "value": "IfThenElse([Construction Materials Energy Enabled] = 1, Max(0, [A Construction Materials Demand Signal] + ([A Construction Materials Demand Signal] * [Construction Materials Target Days] - [A Construction Materials Inventory]) / [Construction Materials Adjustment Time]), Max(0, [A Construction Materials Demand] + ([A Construction Materials Target Inventory] - [A Construction Materials Inventory]) / [Construction Materials Adjustment Time]))"
       },
       "description": "Desired Construction Materials production including inventory correction in colony A."
     },
@@ -25646,7 +25646,7 @@
       "type": "VARIABLE",
       "name": "A Construction Materials Production Rate",
       "behavior": {
-        "value": "IfThenElse([Construction Materials Enabled] = 1, [A Desired Construction Materials Production] / (1 + ([A Desired Construction Materials Production] / ([A Construction Materials Production Capacity] + 0.001)) ^ 8) ^ 0.125 * [A Regolith Inventory] / ([A Regolith Inventory] + [Regolith Buffer Days] * Max([A Regolith Requirement], 0.000000001)), 0)"
+        "value": "IfThenElse([Construction Materials Energy Enabled] = 1, [A Pre Energy Construction Materials Production Rate] * [A Construction Materials Energy Fulfillment Ratio], IfThenElse([Construction Materials Enabled] = 1, [A Desired Construction Materials Production] / (1 + ([A Desired Construction Materials Production] / ([A Construction Materials Production Capacity] + 0.001)) ^ 8) ^ 0.125 * [A Regolith Inventory] / ([A Regolith Inventory] + [Regolith Buffer Days] * Max([A Regolith Requirement], 0.000000001)), 0))"
       },
       "description": "Actual Construction Materials production rate after capacity and scale-free Regolith availability constraints in colony A."
     },
@@ -25858,7 +25858,7 @@
       "type": "VARIABLE",
       "name": "B Construction Materials Demand",
       "behavior": {
-        "value": "[B Refinery Desired Expansion] * [B Refinery Construction Materials per Capacity] + [B Electronics Desired Expansion] * [B Electronics Construction Materials per Capacity] + [B Power Desired Expansion] * [B Power Construction Materials per Capacity]"
+        "value": "IfThenElse([Transport Construction Materials Enabled] = 1, [B Refinery Desired Expansion] * [B Refinery Construction Materials per Capacity] + [B Electronics Desired Expansion] * [B Electronics Construction Materials per Capacity] + [B Power Desired Expansion] * [B Power Construction Materials per Capacity] + [B Transport Construction Materials Demand Allocation], [B Refinery Desired Expansion] * [B Refinery Construction Materials per Capacity] + [B Electronics Desired Expansion] * [B Electronics Construction Materials per Capacity] + [B Power Desired Expansion] * [B Power Construction Materials per Capacity])"
       },
       "description": "Total desired local Construction Materials demand generated by colonial capacity expansion in colony B."
     },
@@ -25874,7 +25874,7 @@
       "type": "VARIABLE",
       "name": "B Desired Construction Materials Production",
       "behavior": {
-        "value": "Max(0, [B Construction Materials Demand] + ([B Construction Materials Target Inventory] - [B Construction Materials Inventory]) / [Construction Materials Adjustment Time])"
+        "value": "IfThenElse([Construction Materials Energy Enabled] = 1, Max(0, [B Construction Materials Demand Signal] + ([B Construction Materials Demand Signal] * [Construction Materials Target Days] - [B Construction Materials Inventory]) / [Construction Materials Adjustment Time]), Max(0, [B Construction Materials Demand] + ([B Construction Materials Target Inventory] - [B Construction Materials Inventory]) / [Construction Materials Adjustment Time]))"
       },
       "description": "Desired Construction Materials production including inventory correction in colony B."
     },
@@ -25882,7 +25882,7 @@
       "type": "VARIABLE",
       "name": "B Construction Materials Production Rate",
       "behavior": {
-        "value": "IfThenElse([Construction Materials Enabled] = 1, [B Desired Construction Materials Production] / (1 + ([B Desired Construction Materials Production] / ([B Construction Materials Production Capacity] + 0.001)) ^ 8) ^ 0.125 * [B Regolith Inventory] / ([B Regolith Inventory] + [Regolith Buffer Days] * Max([B Regolith Requirement], 0.000000001)), 0)"
+        "value": "IfThenElse([Construction Materials Energy Enabled] = 1, [B Pre Energy Construction Materials Production Rate] * [B Construction Materials Energy Fulfillment Ratio], IfThenElse([Construction Materials Enabled] = 1, [B Desired Construction Materials Production] / (1 + ([B Desired Construction Materials Production] / ([B Construction Materials Production Capacity] + 0.001)) ^ 8) ^ 0.125 * [B Regolith Inventory] / ([B Regolith Inventory] + [Regolith Buffer Days] * Max([B Regolith Requirement], 0.000000001)), 0))"
       },
       "description": "Actual Construction Materials production rate after capacity and scale-free Regolith availability constraints in colony B."
     },
@@ -26616,6 +26616,713 @@
       "type": "LINK",
       "from": "B Construction Materials Fulfillment",
       "to": "B Power Generation Expansion"
+    },
+    {
+      "type": "VARIABLE",
+      "name": "Transport Construction Materials Enabled",
+      "behavior": {
+        "value": 1
+      },
+      "description": "v7.7.1 master switch: shared Transport expansion physically requires Construction Materials."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "Transport Construction Materials per Capacity",
+      "behavior": {
+        "value": 3
+      },
+      "description": "[calib] Construction Materials units consumed per unit of shared Transport capacity expansion."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "Transport Construction Materials Demand",
+      "behavior": {
+        "value": "IfThenElse([Transport Construction Materials Enabled] = 1, [Transport Desired Expansion] * [Transport Construction Materials per Capacity], 0)"
+      },
+      "description": "Physical Construction Materials demand generated by desired shared Transport expansion."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "Transport Construction Materials Source Inventory",
+      "behavior": {
+        "value": "[A Construction Materials Inventory] + [B Construction Materials Inventory]"
+      },
+      "description": "Combined A/B Construction Materials inventory available to shared Transport investment."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "Transport Construction Materials Fulfillment",
+      "behavior": {
+        "value": "IfThenElse([Transport Construction Materials Enabled] = 1, [Transport Construction Materials Source Inventory] / ([Transport Construction Materials Source Inventory] + [Construction Materials Buffer Days] * Max([Transport Construction Materials Demand], 0.000000001)), 1)"
+      },
+      "description": "Scale-free fulfillment factor for shared Transport Construction Materials demand, using the combined A/B source inventory."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "A Transport Construction Materials Source Share",
+      "behavior": {
+        "value": "IfThenElse([Transport Construction Materials Source Inventory] > 0.000000001, [A Construction Materials Inventory] / [Transport Construction Materials Source Inventory], 0.5)"
+      },
+      "description": "A share of actual Transport Construction Materials consumption, proportional to current regional inventory."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "B Transport Construction Materials Source Share",
+      "behavior": {
+        "value": "IfThenElse([Transport Construction Materials Source Inventory] > 0.000000001, [B Construction Materials Inventory] / [Transport Construction Materials Source Inventory], 0.5)"
+      },
+      "description": "B share of actual Transport Construction Materials consumption, proportional to current regional inventory."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "A Transport Construction Materials Demand Allocation",
+      "behavior": {
+        "value": "IfThenElse([Transport Construction Materials Enabled] = 1, [Transport Construction Materials Demand] * 0.5, 0)"
+      },
+      "description": "A production-planning half of shared Transport Construction Materials demand; actual consumption follows inventory shares."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "B Transport Construction Materials Demand Allocation",
+      "behavior": {
+        "value": "IfThenElse([Transport Construction Materials Enabled] = 1, [Transport Construction Materials Demand] * 0.5, 0)"
+      },
+      "description": "B production-planning half of shared Transport Construction Materials demand; actual consumption follows inventory shares."
+    },
+    {
+      "type": "FLOW",
+      "name": "A Transport Construction Materials Consumption",
+      "from": "A Construction Materials Inventory",
+      "to": null,
+      "behavior": {
+        "value": "IfThenElse([Transport Construction Materials Enabled] = 1, [Transport Capacity Expansion] * [Transport Construction Materials per Capacity] * [A Transport Construction Materials Source Share], 0)",
+        "non_negative": true
+      },
+      "description": "A regional contribution of Construction Materials physically consumed by shared Transport expansion."
+    },
+    {
+      "type": "FLOW",
+      "name": "B Transport Construction Materials Consumption",
+      "from": "B Construction Materials Inventory",
+      "to": null,
+      "behavior": {
+        "value": "IfThenElse([Transport Construction Materials Enabled] = 1, [Transport Capacity Expansion] * [Transport Construction Materials per Capacity] * [B Transport Construction Materials Source Share], 0)",
+        "non_negative": true
+      },
+      "description": "B regional contribution of Construction Materials physically consumed by shared Transport expansion."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "Transport Construction Materials Source Share Sum",
+      "behavior": {
+        "value": "[A Transport Construction Materials Source Share] + [B Transport Construction Materials Source Share]"
+      },
+      "description": "Diagnostic sum of A/B Transport Construction Materials source shares; equals 1 while source inventory is positive."
+    },
+    {
+      "type": "LINK",
+      "from": "Transport Construction Materials Enabled",
+      "to": "Transport Construction Materials Demand"
+    },
+    {
+      "type": "LINK",
+      "from": "Transport Desired Expansion",
+      "to": "Transport Construction Materials Demand"
+    },
+    {
+      "type": "LINK",
+      "from": "Transport Construction Materials per Capacity",
+      "to": "Transport Construction Materials Demand"
+    },
+    {
+      "type": "LINK",
+      "from": "A Construction Materials Inventory",
+      "to": "Transport Construction Materials Source Inventory"
+    },
+    {
+      "type": "LINK",
+      "from": "B Construction Materials Inventory",
+      "to": "Transport Construction Materials Source Inventory"
+    },
+    {
+      "type": "LINK",
+      "from": "Transport Construction Materials Enabled",
+      "to": "Transport Construction Materials Fulfillment"
+    },
+    {
+      "type": "LINK",
+      "from": "Transport Construction Materials Source Inventory",
+      "to": "Transport Construction Materials Fulfillment"
+    },
+    {
+      "type": "LINK",
+      "from": "Construction Materials Buffer Days",
+      "to": "Transport Construction Materials Fulfillment"
+    },
+    {
+      "type": "LINK",
+      "from": "Transport Construction Materials Demand",
+      "to": "Transport Construction Materials Fulfillment"
+    },
+    {
+      "type": "LINK",
+      "from": "Transport Construction Materials Source Inventory",
+      "to": "A Transport Construction Materials Source Share"
+    },
+    {
+      "type": "LINK",
+      "from": "A Construction Materials Inventory",
+      "to": "A Transport Construction Materials Source Share"
+    },
+    {
+      "type": "LINK",
+      "from": "Transport Construction Materials Source Inventory",
+      "to": "B Transport Construction Materials Source Share"
+    },
+    {
+      "type": "LINK",
+      "from": "B Construction Materials Inventory",
+      "to": "B Transport Construction Materials Source Share"
+    },
+    {
+      "type": "LINK",
+      "from": "Transport Construction Materials Enabled",
+      "to": "A Transport Construction Materials Demand Allocation"
+    },
+    {
+      "type": "LINK",
+      "from": "Transport Construction Materials Demand",
+      "to": "A Transport Construction Materials Demand Allocation"
+    },
+    {
+      "type": "LINK",
+      "from": "Transport Construction Materials Enabled",
+      "to": "B Transport Construction Materials Demand Allocation"
+    },
+    {
+      "type": "LINK",
+      "from": "Transport Construction Materials Demand",
+      "to": "B Transport Construction Materials Demand Allocation"
+    },
+    {
+      "type": "LINK",
+      "from": "Transport Construction Materials Enabled",
+      "to": "A Transport Construction Materials Consumption"
+    },
+    {
+      "type": "LINK",
+      "from": "Transport Capacity Expansion",
+      "to": "A Transport Construction Materials Consumption"
+    },
+    {
+      "type": "LINK",
+      "from": "Transport Construction Materials per Capacity",
+      "to": "A Transport Construction Materials Consumption"
+    },
+    {
+      "type": "LINK",
+      "from": "A Transport Construction Materials Source Share",
+      "to": "A Transport Construction Materials Consumption"
+    },
+    {
+      "type": "LINK",
+      "from": "Transport Construction Materials Enabled",
+      "to": "B Transport Construction Materials Consumption"
+    },
+    {
+      "type": "LINK",
+      "from": "Transport Capacity Expansion",
+      "to": "B Transport Construction Materials Consumption"
+    },
+    {
+      "type": "LINK",
+      "from": "Transport Construction Materials per Capacity",
+      "to": "B Transport Construction Materials Consumption"
+    },
+    {
+      "type": "LINK",
+      "from": "B Transport Construction Materials Source Share",
+      "to": "B Transport Construction Materials Consumption"
+    },
+    {
+      "type": "LINK",
+      "from": "A Transport Construction Materials Source Share",
+      "to": "Transport Construction Materials Source Share Sum"
+    },
+    {
+      "type": "LINK",
+      "from": "B Transport Construction Materials Source Share",
+      "to": "Transport Construction Materials Source Share Sum"
+    },
+    {
+      "type": "LINK",
+      "from": "Transport Construction Materials Enabled",
+      "to": "Transport Capacity Expansion"
+    },
+    {
+      "type": "LINK",
+      "from": "Transport Construction Materials Fulfillment",
+      "to": "Transport Capacity Expansion"
+    },
+    {
+      "type": "LINK",
+      "from": "Transport Construction Materials Enabled",
+      "to": "A Construction Materials Demand"
+    },
+    {
+      "type": "LINK",
+      "from": "A Transport Construction Materials Demand Allocation",
+      "to": "A Construction Materials Demand"
+    },
+    {
+      "type": "LINK",
+      "from": "Transport Construction Materials Enabled",
+      "to": "B Construction Materials Demand"
+    },
+    {
+      "type": "LINK",
+      "from": "B Transport Construction Materials Demand Allocation",
+      "to": "B Construction Materials Demand"
+    },
+    {
+      "type": "VARIABLE",
+      "name": "Construction Materials Energy Enabled",
+      "behavior": {
+        "value": 1
+      },
+      "description": "v7.7.2 switch: makes Construction Materials processing participate in the colony energy allocator."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "Construction Materials Energy per Unit",
+      "behavior": {
+        "value": 10
+      },
+      "description": "Energy required per unit of Construction Materials processing."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "Construction Materials Demand Signal Adjustment Time",
+      "behavior": {
+        "value": 3
+      },
+      "description": "Adjustment time for the smoothed Construction Materials demand signal."
+    },
+    {
+      "type": "STOCK",
+      "name": "A Construction Materials Demand Signal",
+      "behavior": {
+        "initial_value": 0.14,
+        "non_negative": true
+      },
+      "description": "Smoothed Construction Materials demand signal for colony A; breaks same-step allocator causality."
+    },
+    {
+      "type": "FLOW",
+      "name": "A Construction Materials Demand Signal Increase",
+      "from": null,
+      "to": "A Construction Materials Demand Signal",
+      "behavior": {
+        "value": "IfThenElse([A Construction Materials Demand] > [A Construction Materials Demand Signal], ([A Construction Materials Demand] - [A Construction Materials Demand Signal]) / [Construction Materials Demand Signal Adjustment Time], 0)",
+        "non_negative": true
+      },
+      "description": "Upward adjustment of colony A Construction Materials demand signal."
+    },
+    {
+      "type": "FLOW",
+      "name": "A Construction Materials Demand Signal Decrease",
+      "from": "A Construction Materials Demand Signal",
+      "to": null,
+      "behavior": {
+        "value": "IfThenElse([A Construction Materials Demand Signal] > [A Construction Materials Demand], ([A Construction Materials Demand Signal] - [A Construction Materials Demand]) / [Construction Materials Demand Signal Adjustment Time], 0)",
+        "non_negative": true
+      },
+      "description": "Downward adjustment of colony A Construction Materials demand signal."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "A Pre Energy Construction Materials Production Rate",
+      "behavior": {
+        "value": "IfThenElse([Construction Materials Enabled] = 1, [A Desired Construction Materials Production] / (1 + ([A Desired Construction Materials Production] / ([A Construction Materials Production Capacity] + 0.001)) ^ 8) ^ 0.125 * [A Regolith Inventory] / ([A Regolith Inventory] + [Regolith Buffer Days] * Max([A Regolith Requirement], 0.000000001)), 0)"
+      },
+      "description": "Colony A Construction Materials production plan before energy rationing; verbatim v7.7.1 production-rate formula."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "A Construction Materials Requested Energy",
+      "behavior": {
+        "value": "IfThenElse([Construction Materials Energy Enabled] = 1, [A Pre Energy Construction Materials Production Rate] * [Construction Materials Energy per Unit], 0)"
+      },
+      "description": "Energy requested by colony A Construction Materials processing."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "A Construction Materials Allocated Energy",
+      "behavior": {
+        "value": "[A Construction Materials Requested Energy] * [A Energy Fulfillment Ratio]"
+      },
+      "description": "Energy allocated to colony A Construction Materials processing by the common proportional allocator."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "A Construction Materials Energy Fulfillment Ratio",
+      "behavior": {
+        "value": "IfThenElse([A Construction Materials Requested Energy] > 0.001, [A Construction Materials Allocated Energy] / [A Construction Materials Requested Energy], 1)"
+      },
+      "description": "Energy fulfillment ratio of colony A Construction Materials processing."
+    },
+    {
+      "type": "STOCK",
+      "name": "B Construction Materials Demand Signal",
+      "behavior": {
+        "initial_value": 0.14,
+        "non_negative": true
+      },
+      "description": "Smoothed Construction Materials demand signal for colony B; breaks same-step allocator causality."
+    },
+    {
+      "type": "FLOW",
+      "name": "B Construction Materials Demand Signal Increase",
+      "from": null,
+      "to": "B Construction Materials Demand Signal",
+      "behavior": {
+        "value": "IfThenElse([B Construction Materials Demand] > [B Construction Materials Demand Signal], ([B Construction Materials Demand] - [B Construction Materials Demand Signal]) / [Construction Materials Demand Signal Adjustment Time], 0)",
+        "non_negative": true
+      },
+      "description": "Upward adjustment of colony B Construction Materials demand signal."
+    },
+    {
+      "type": "FLOW",
+      "name": "B Construction Materials Demand Signal Decrease",
+      "from": "B Construction Materials Demand Signal",
+      "to": null,
+      "behavior": {
+        "value": "IfThenElse([B Construction Materials Demand Signal] > [B Construction Materials Demand], ([B Construction Materials Demand Signal] - [B Construction Materials Demand]) / [Construction Materials Demand Signal Adjustment Time], 0)",
+        "non_negative": true
+      },
+      "description": "Downward adjustment of colony B Construction Materials demand signal."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "B Pre Energy Construction Materials Production Rate",
+      "behavior": {
+        "value": "IfThenElse([Construction Materials Enabled] = 1, [B Desired Construction Materials Production] / (1 + ([B Desired Construction Materials Production] / ([B Construction Materials Production Capacity] + 0.001)) ^ 8) ^ 0.125 * [B Regolith Inventory] / ([B Regolith Inventory] + [Regolith Buffer Days] * Max([B Regolith Requirement], 0.000000001)), 0)"
+      },
+      "description": "Colony B Construction Materials production plan before energy rationing; verbatim v7.7.1 production-rate formula."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "B Construction Materials Requested Energy",
+      "behavior": {
+        "value": "IfThenElse([Construction Materials Energy Enabled] = 1, [B Pre Energy Construction Materials Production Rate] * [Construction Materials Energy per Unit], 0)"
+      },
+      "description": "Energy requested by colony B Construction Materials processing."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "B Construction Materials Allocated Energy",
+      "behavior": {
+        "value": "[B Construction Materials Requested Energy] * [B Energy Fulfillment Ratio]"
+      },
+      "description": "Energy allocated to colony B Construction Materials processing by the common proportional allocator."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "B Construction Materials Energy Fulfillment Ratio",
+      "behavior": {
+        "value": "IfThenElse([B Construction Materials Requested Energy] > 0.001, [B Construction Materials Allocated Energy] / [B Construction Materials Requested Energy], 1)"
+      },
+      "description": "Energy fulfillment ratio of colony B Construction Materials processing."
+    },
+    {
+      "type": "LINK",
+      "from": "A Construction Materials Demand",
+      "to": "A Construction Materials Demand Signal Increase"
+    },
+    {
+      "type": "LINK",
+      "from": "A Construction Materials Demand Signal",
+      "to": "A Construction Materials Demand Signal Increase"
+    },
+    {
+      "type": "LINK",
+      "from": "Construction Materials Demand Signal Adjustment Time",
+      "to": "A Construction Materials Demand Signal Increase"
+    },
+    {
+      "type": "LINK",
+      "from": "A Construction Materials Demand Signal",
+      "to": "A Construction Materials Demand Signal Decrease"
+    },
+    {
+      "type": "LINK",
+      "from": "A Construction Materials Demand",
+      "to": "A Construction Materials Demand Signal Decrease"
+    },
+    {
+      "type": "LINK",
+      "from": "Construction Materials Demand Signal Adjustment Time",
+      "to": "A Construction Materials Demand Signal Decrease"
+    },
+    {
+      "type": "LINK",
+      "from": "Construction Materials Enabled",
+      "to": "A Pre Energy Construction Materials Production Rate"
+    },
+    {
+      "type": "LINK",
+      "from": "A Desired Construction Materials Production",
+      "to": "A Pre Energy Construction Materials Production Rate"
+    },
+    {
+      "type": "LINK",
+      "from": "A Construction Materials Production Capacity",
+      "to": "A Pre Energy Construction Materials Production Rate"
+    },
+    {
+      "type": "LINK",
+      "from": "A Regolith Inventory",
+      "to": "A Pre Energy Construction Materials Production Rate"
+    },
+    {
+      "type": "LINK",
+      "from": "Regolith Buffer Days",
+      "to": "A Pre Energy Construction Materials Production Rate"
+    },
+    {
+      "type": "LINK",
+      "from": "A Regolith Requirement",
+      "to": "A Pre Energy Construction Materials Production Rate"
+    },
+    {
+      "type": "LINK",
+      "from": "Construction Materials Energy Enabled",
+      "to": "A Construction Materials Requested Energy"
+    },
+    {
+      "type": "LINK",
+      "from": "A Pre Energy Construction Materials Production Rate",
+      "to": "A Construction Materials Requested Energy"
+    },
+    {
+      "type": "LINK",
+      "from": "Construction Materials Energy per Unit",
+      "to": "A Construction Materials Requested Energy"
+    },
+    {
+      "type": "LINK",
+      "from": "A Construction Materials Requested Energy",
+      "to": "A Construction Materials Allocated Energy"
+    },
+    {
+      "type": "LINK",
+      "from": "A Energy Fulfillment Ratio",
+      "to": "A Construction Materials Allocated Energy"
+    },
+    {
+      "type": "LINK",
+      "from": "A Construction Materials Requested Energy",
+      "to": "A Construction Materials Energy Fulfillment Ratio"
+    },
+    {
+      "type": "LINK",
+      "from": "A Construction Materials Allocated Energy",
+      "to": "A Construction Materials Energy Fulfillment Ratio"
+    },
+    {
+      "type": "LINK",
+      "from": "Construction Materials Energy Enabled",
+      "to": "A Construction Materials Production Rate"
+    },
+    {
+      "type": "LINK",
+      "from": "A Pre Energy Construction Materials Production Rate",
+      "to": "A Construction Materials Production Rate"
+    },
+    {
+      "type": "LINK",
+      "from": "A Construction Materials Energy Fulfillment Ratio",
+      "to": "A Construction Materials Production Rate"
+    },
+    {
+      "type": "LINK",
+      "from": "Construction Materials Energy Enabled",
+      "to": "A Desired Construction Materials Production"
+    },
+    {
+      "type": "LINK",
+      "from": "A Construction Materials Demand Signal",
+      "to": "A Desired Construction Materials Production"
+    },
+    {
+      "type": "LINK",
+      "from": "Construction Materials Target Days",
+      "to": "A Desired Construction Materials Production"
+    },
+    {
+      "type": "LINK",
+      "from": "Construction Materials Energy Enabled",
+      "to": "A Total Requested Energy"
+    },
+    {
+      "type": "LINK",
+      "from": "A Construction Materials Requested Energy",
+      "to": "A Total Requested Energy"
+    },
+    {
+      "type": "LINK",
+      "from": "Construction Materials Energy Enabled",
+      "to": "A Energy Supply"
+    },
+    {
+      "type": "LINK",
+      "from": "A Construction Materials Allocated Energy",
+      "to": "A Energy Supply"
+    },
+    {
+      "type": "LINK",
+      "from": "B Construction Materials Demand",
+      "to": "B Construction Materials Demand Signal Increase"
+    },
+    {
+      "type": "LINK",
+      "from": "B Construction Materials Demand Signal",
+      "to": "B Construction Materials Demand Signal Increase"
+    },
+    {
+      "type": "LINK",
+      "from": "Construction Materials Demand Signal Adjustment Time",
+      "to": "B Construction Materials Demand Signal Increase"
+    },
+    {
+      "type": "LINK",
+      "from": "B Construction Materials Demand Signal",
+      "to": "B Construction Materials Demand Signal Decrease"
+    },
+    {
+      "type": "LINK",
+      "from": "B Construction Materials Demand",
+      "to": "B Construction Materials Demand Signal Decrease"
+    },
+    {
+      "type": "LINK",
+      "from": "Construction Materials Demand Signal Adjustment Time",
+      "to": "B Construction Materials Demand Signal Decrease"
+    },
+    {
+      "type": "LINK",
+      "from": "Construction Materials Enabled",
+      "to": "B Pre Energy Construction Materials Production Rate"
+    },
+    {
+      "type": "LINK",
+      "from": "B Desired Construction Materials Production",
+      "to": "B Pre Energy Construction Materials Production Rate"
+    },
+    {
+      "type": "LINK",
+      "from": "B Construction Materials Production Capacity",
+      "to": "B Pre Energy Construction Materials Production Rate"
+    },
+    {
+      "type": "LINK",
+      "from": "B Regolith Inventory",
+      "to": "B Pre Energy Construction Materials Production Rate"
+    },
+    {
+      "type": "LINK",
+      "from": "Regolith Buffer Days",
+      "to": "B Pre Energy Construction Materials Production Rate"
+    },
+    {
+      "type": "LINK",
+      "from": "B Regolith Requirement",
+      "to": "B Pre Energy Construction Materials Production Rate"
+    },
+    {
+      "type": "LINK",
+      "from": "Construction Materials Energy Enabled",
+      "to": "B Construction Materials Requested Energy"
+    },
+    {
+      "type": "LINK",
+      "from": "B Pre Energy Construction Materials Production Rate",
+      "to": "B Construction Materials Requested Energy"
+    },
+    {
+      "type": "LINK",
+      "from": "Construction Materials Energy per Unit",
+      "to": "B Construction Materials Requested Energy"
+    },
+    {
+      "type": "LINK",
+      "from": "B Construction Materials Requested Energy",
+      "to": "B Construction Materials Allocated Energy"
+    },
+    {
+      "type": "LINK",
+      "from": "B Energy Fulfillment Ratio",
+      "to": "B Construction Materials Allocated Energy"
+    },
+    {
+      "type": "LINK",
+      "from": "B Construction Materials Requested Energy",
+      "to": "B Construction Materials Energy Fulfillment Ratio"
+    },
+    {
+      "type": "LINK",
+      "from": "B Construction Materials Allocated Energy",
+      "to": "B Construction Materials Energy Fulfillment Ratio"
+    },
+    {
+      "type": "LINK",
+      "from": "Construction Materials Energy Enabled",
+      "to": "B Construction Materials Production Rate"
+    },
+    {
+      "type": "LINK",
+      "from": "B Pre Energy Construction Materials Production Rate",
+      "to": "B Construction Materials Production Rate"
+    },
+    {
+      "type": "LINK",
+      "from": "B Construction Materials Energy Fulfillment Ratio",
+      "to": "B Construction Materials Production Rate"
+    },
+    {
+      "type": "LINK",
+      "from": "Construction Materials Energy Enabled",
+      "to": "B Desired Construction Materials Production"
+    },
+    {
+      "type": "LINK",
+      "from": "B Construction Materials Demand Signal",
+      "to": "B Desired Construction Materials Production"
+    },
+    {
+      "type": "LINK",
+      "from": "Construction Materials Target Days",
+      "to": "B Desired Construction Materials Production"
+    },
+    {
+      "type": "LINK",
+      "from": "Construction Materials Energy Enabled",
+      "to": "B Total Requested Energy"
+    },
+    {
+      "type": "LINK",
+      "from": "B Construction Materials Requested Energy",
+      "to": "B Total Requested Energy"
+    },
+    {
+      "type": "LINK",
+      "from": "Construction Materials Energy Enabled",
+      "to": "B Energy Supply"
+    },
+    {
+      "type": "LINK",
+      "from": "B Construction Materials Allocated Energy",
+      "to": "B Energy Supply"
     }
   ],
   "visualizations": [
@@ -27289,7 +27996,9 @@
         "Capital Goods Enabled": 0,
         "Transport Capital Goods Enabled": 0,
         "Power Resource Enabled": 0,
-        "Construction Materials Enabled": 0
+        "Construction Materials Enabled": 0,
+        "Transport Construction Materials Enabled": 0,
+        "Construction Materials Energy Enabled": 0
       }
     },
     {
@@ -27302,7 +28011,9 @@
         "Capital Goods Enabled": 0,
         "Transport Capital Goods Enabled": 0,
         "Power Resource Enabled": 0,
-        "Construction Materials Enabled": 0
+        "Construction Materials Enabled": 0,
+        "Transport Construction Materials Enabled": 0,
+        "Construction Materials Energy Enabled": 0
       }
     },
     {
@@ -27315,7 +28026,9 @@
         "Capital Goods Enabled": 0,
         "Transport Capital Goods Enabled": 0,
         "Power Resource Enabled": 0,
-        "Construction Materials Enabled": 0
+        "Construction Materials Enabled": 0,
+        "Transport Construction Materials Enabled": 0,
+        "Construction Materials Energy Enabled": 0
       }
     },
     {
@@ -27328,7 +28041,9 @@
         "Capital Goods Enabled": 0,
         "Transport Capital Goods Enabled": 0,
         "Power Resource Enabled": 0,
-        "Construction Materials Enabled": 0
+        "Construction Materials Enabled": 0,
+        "Transport Construction Materials Enabled": 0,
+        "Construction Materials Energy Enabled": 0
       }
     },
     {
@@ -27341,7 +28056,9 @@
         "Capital Goods Enabled": 0,
         "Transport Capital Goods Enabled": 0,
         "Power Resource Enabled": 0,
-        "Construction Materials Enabled": 0
+        "Construction Materials Enabled": 0,
+        "Transport Construction Materials Enabled": 0,
+        "Construction Materials Energy Enabled": 0
       }
     },
     {
@@ -27354,7 +28071,9 @@
         "Capital Goods Enabled": 0,
         "Transport Capital Goods Enabled": 0,
         "Power Resource Enabled": 0,
-        "Construction Materials Enabled": 0
+        "Construction Materials Enabled": 0,
+        "Transport Construction Materials Enabled": 0,
+        "Construction Materials Energy Enabled": 0
       }
     },
     {
@@ -27367,7 +28086,9 @@
         "Capital Goods Enabled": 0,
         "Transport Capital Goods Enabled": 0,
         "Power Resource Enabled": 0,
-        "Construction Materials Enabled": 0
+        "Construction Materials Enabled": 0,
+        "Transport Construction Materials Enabled": 0,
+        "Construction Materials Energy Enabled": 0
       }
     },
     {
@@ -27380,7 +28101,9 @@
         "Capital Goods Enabled": 0,
         "Transport Capital Goods Enabled": 0,
         "Power Resource Enabled": 0,
-        "Construction Materials Enabled": 0
+        "Construction Materials Enabled": 0,
+        "Transport Construction Materials Enabled": 0,
+        "Construction Materials Energy Enabled": 0
       }
     },
     {
@@ -27393,7 +28116,9 @@
         "Capital Goods Enabled": 0,
         "Transport Capital Goods Enabled": 0,
         "Power Resource Enabled": 0,
-        "Construction Materials Enabled": 0
+        "Construction Materials Enabled": 0,
+        "Transport Construction Materials Enabled": 0,
+        "Construction Materials Energy Enabled": 0
       }
     },
     {
@@ -27406,7 +28131,9 @@
         "Capital Goods Enabled": 0,
         "Transport Capital Goods Enabled": 0,
         "Power Resource Enabled": 0,
-        "Construction Materials Enabled": 0
+        "Construction Materials Enabled": 0,
+        "Transport Construction Materials Enabled": 0,
+        "Construction Materials Energy Enabled": 0
       }
     },
     {
@@ -27419,7 +28146,9 @@
         "Capital Goods Enabled": 0,
         "Transport Capital Goods Enabled": 0,
         "Power Resource Enabled": 0,
-        "Construction Materials Enabled": 0
+        "Construction Materials Enabled": 0,
+        "Transport Construction Materials Enabled": 0,
+        "Construction Materials Energy Enabled": 0
       }
     },
     {
@@ -27432,7 +28161,9 @@
         "Capital Goods Enabled": 0,
         "Transport Capital Goods Enabled": 0,
         "Power Resource Enabled": 0,
-        "Construction Materials Enabled": 0
+        "Construction Materials Enabled": 0,
+        "Transport Construction Materials Enabled": 0,
+        "Construction Materials Energy Enabled": 0
       }
     },
     {
@@ -27445,7 +28176,9 @@
         "Capital Goods Enabled": 0,
         "Transport Capital Goods Enabled": 0,
         "Power Resource Enabled": 0,
-        "Construction Materials Enabled": 0
+        "Construction Materials Enabled": 0,
+        "Transport Construction Materials Enabled": 0,
+        "Construction Materials Energy Enabled": 0
       }
     },
     {
@@ -27458,7 +28191,9 @@
         "Capital Goods Enabled": 0,
         "Transport Capital Goods Enabled": 0,
         "Power Resource Enabled": 0,
-        "Construction Materials Enabled": 0
+        "Construction Materials Enabled": 0,
+        "Transport Construction Materials Enabled": 0,
+        "Construction Materials Energy Enabled": 0
       }
     },
     {
@@ -27471,7 +28206,9 @@
         "Capital Goods Enabled": 0,
         "Transport Capital Goods Enabled": 0,
         "Power Resource Enabled": 0,
-        "Construction Materials Enabled": 0
+        "Construction Materials Enabled": 0,
+        "Transport Construction Materials Enabled": 0,
+        "Construction Materials Energy Enabled": 0
       }
     },
     {
@@ -27484,7 +28221,9 @@
         "Capital Goods Enabled": 0,
         "Transport Capital Goods Enabled": 0,
         "Power Resource Enabled": 0,
-        "Construction Materials Enabled": 0
+        "Construction Materials Enabled": 0,
+        "Transport Construction Materials Enabled": 0,
+        "Construction Materials Energy Enabled": 0
       }
     },
     {
@@ -27497,7 +28236,9 @@
         "Capital Goods Enabled": 0,
         "Transport Capital Goods Enabled": 0,
         "Power Resource Enabled": 0,
-        "Construction Materials Enabled": 0
+        "Construction Materials Enabled": 0,
+        "Transport Construction Materials Enabled": 0,
+        "Construction Materials Energy Enabled": 0
       }
     },
     {
@@ -27510,7 +28251,9 @@
         "Capital Goods Enabled": 0,
         "Transport Capital Goods Enabled": 0,
         "Power Resource Enabled": 0,
-        "Construction Materials Enabled": 0
+        "Construction Materials Enabled": 0,
+        "Transport Construction Materials Enabled": 0,
+        "Construction Materials Energy Enabled": 0
       }
     },
     {
@@ -27523,7 +28266,9 @@
         "Capital Goods Enabled": 0,
         "Transport Capital Goods Enabled": 0,
         "Power Resource Enabled": 0,
-        "Construction Materials Enabled": 0
+        "Construction Materials Enabled": 0,
+        "Transport Construction Materials Enabled": 0,
+        "Construction Materials Energy Enabled": 0
       }
     },
     {
@@ -27536,7 +28281,9 @@
         "Capital Goods Enabled": 0,
         "Transport Capital Goods Enabled": 0,
         "Power Resource Enabled": 0,
-        "Construction Materials Enabled": 0
+        "Construction Materials Enabled": 0,
+        "Transport Construction Materials Enabled": 0,
+        "Construction Materials Energy Enabled": 0
       }
     },
     {
@@ -27549,7 +28296,9 @@
         "Capital Goods Enabled": 0,
         "Transport Capital Goods Enabled": 0,
         "Power Resource Enabled": 0,
-        "Construction Materials Enabled": 0
+        "Construction Materials Enabled": 0,
+        "Transport Construction Materials Enabled": 0,
+        "Construction Materials Energy Enabled": 0
       }
     },
     {
@@ -27562,7 +28311,9 @@
         "Capital Goods Enabled": 1,
         "Transport Capital Goods Enabled": 0,
         "Power Resource Enabled": 0,
-        "Construction Materials Enabled": 0
+        "Construction Materials Enabled": 0,
+        "Transport Construction Materials Enabled": 0,
+        "Construction Materials Energy Enabled": 0
       }
     },
     {
@@ -27575,7 +28326,9 @@
         "Capital Goods Enabled": 1,
         "Transport Capital Goods Enabled": 0,
         "Power Resource Enabled": 0,
-        "Construction Materials Enabled": 0
+        "Construction Materials Enabled": 0,
+        "Transport Construction Materials Enabled": 0,
+        "Construction Materials Energy Enabled": 0
       }
     },
     {
@@ -27588,7 +28341,9 @@
         "Capital Goods Enabled": 1,
         "Transport Capital Goods Enabled": 0,
         "Power Resource Enabled": 0,
-        "Construction Materials Enabled": 0
+        "Construction Materials Enabled": 0,
+        "Transport Construction Materials Enabled": 0,
+        "Construction Materials Energy Enabled": 0
       }
     },
     {
@@ -27601,7 +28356,9 @@
         "Capital Goods Enabled": 1,
         "Transport Capital Goods Enabled": 1,
         "Power Resource Enabled": 0,
-        "Construction Materials Enabled": 0
+        "Construction Materials Enabled": 0,
+        "Transport Construction Materials Enabled": 0,
+        "Construction Materials Energy Enabled": 0
       }
     },
     {
@@ -27614,7 +28371,9 @@
         "Capital Goods Enabled": 1,
         "Transport Capital Goods Enabled": 1,
         "Power Resource Enabled": 1,
-        "Construction Materials Enabled": 0
+        "Construction Materials Enabled": 0,
+        "Transport Construction Materials Enabled": 0,
+        "Construction Materials Energy Enabled": 0
       }
     },
     {
@@ -27627,7 +28386,9 @@
         "Capital Goods Enabled": 1,
         "Transport Capital Goods Enabled": 1,
         "Power Resource Enabled": 1,
-        "Construction Materials Enabled": 0
+        "Construction Materials Enabled": 0,
+        "Transport Construction Materials Enabled": 0,
+        "Construction Materials Energy Enabled": 0
       }
     },
     {
@@ -27640,7 +28401,9 @@
         "Capital Goods Enabled": 1,
         "Transport Capital Goods Enabled": 1,
         "Power Resource Enabled": 1,
-        "Construction Materials Enabled": 1
+        "Construction Materials Enabled": 1,
+        "Transport Construction Materials Enabled": 0,
+        "Construction Materials Energy Enabled": 0
       }
     },
     {
@@ -27653,7 +28416,9 @@
         "Capital Goods Enabled": 1,
         "Transport Capital Goods Enabled": 1,
         "Power Resource Enabled": 1,
-        "Construction Materials Enabled": 1
+        "Construction Materials Enabled": 1,
+        "Transport Construction Materials Enabled": 0,
+        "Construction Materials Energy Enabled": 0
       }
     },
     {
@@ -27666,7 +28431,69 @@
         "Capital Goods Enabled": 1,
         "Transport Capital Goods Enabled": 1,
         "Power Resource Enabled": 1,
-        "Construction Materials Enabled": 1
+        "Construction Materials Enabled": 1,
+        "Transport Construction Materials Enabled": 0,
+        "Construction Materials Energy Enabled": 0
+      }
+    },
+    {
+      "name": "v7.7.1 Transport Construction Materials Baseline",
+      "description": "Full coupled v7.7 economy with shared Transport Construction Materials enabled and no additional stimulus.",
+      "values": {
+        "Timed Test Mode": 30,
+        "Capital Lifecycle Enabled": 1,
+        "Intermediate Inputs Enabled": 1,
+        "Capital Goods Enabled": 1,
+        "Transport Capital Goods Enabled": 1,
+        "Power Resource Enabled": 1,
+        "Construction Materials Enabled": 1,
+        "Transport Construction Materials Enabled": 1,
+        "Construction Materials Energy Enabled": 0
+      }
+    },
+    {
+      "name": "v7.7.1 Transport Surge on Construction Materials",
+      "description": "Full coupled v7.7 economy with shared Transport Construction Materials enabled; reuses the standard temporary Transport-demand surge to stimulate colony B.",
+      "values": {
+        "Timed Test Mode": 31,
+        "Capital Lifecycle Enabled": 1,
+        "Intermediate Inputs Enabled": 1,
+        "Capital Goods Enabled": 1,
+        "Transport Capital Goods Enabled": 1,
+        "Power Resource Enabled": 1,
+        "Construction Materials Enabled": 1,
+        "Transport Construction Materials Enabled": 1,
+        "Construction Materials Energy Enabled": 0
+      }
+    },
+    {
+      "name": "v7.7.2 Construction Materials Energy Baseline",
+      "description": "All existing mechanics plus Construction Materials energy coupling enabled; no new test stimulus.",
+      "values": {
+        "Timed Test Mode": 32,
+        "Capital Lifecycle Enabled": 1,
+        "Intermediate Inputs Enabled": 1,
+        "Capital Goods Enabled": 1,
+        "Transport Capital Goods Enabled": 1,
+        "Power Resource Enabled": 1,
+        "Construction Materials Enabled": 1,
+        "Transport Construction Materials Enabled": 1,
+        "Construction Materials Energy Enabled": 1
+      }
+    },
+    {
+      "name": "v7.7.2 Generation Capacity Shock with Construction Materials Energy",
+      "description": "All existing mechanics plus Construction Materials energy coupling enabled under the standard generation-capacity shock window.",
+      "values": {
+        "Timed Test Mode": 33,
+        "Capital Lifecycle Enabled": 1,
+        "Intermediate Inputs Enabled": 1,
+        "Capital Goods Enabled": 1,
+        "Transport Capital Goods Enabled": 1,
+        "Power Resource Enabled": 1,
+        "Construction Materials Enabled": 1,
+        "Transport Construction Materials Enabled": 1,
+        "Construction Materials Energy Enabled": 1
       }
     }
   ]

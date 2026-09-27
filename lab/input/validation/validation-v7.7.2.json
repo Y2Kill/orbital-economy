@@ -1,5 +1,5 @@
 {
-  "name": "Orbital Economy v7.7.1 validation r2",
+  "name": "Orbital Economy v7.7.2 validation r1",
   "mode_variable": "Timed Test Mode",
   "expected_time_step": 0.25,
   "time_step_tolerance": 1e-12,
@@ -38,7 +38,9 @@
     26,
     27,
     28,
-    29
+    29,
+    30,
+    31
   ],
   "regression_tolerance": 0,
   "plugins": [
@@ -48,7 +50,12 @@
         "A",
         "B"
       ],
-      "abs_tol": 1e-8
+      "abs_tol": 1e-8,
+      "consumers": [
+        "Metal",
+        "Electronics",
+        "Construction Materials"
+      ]
     },
     {
       "type": "capital_lifecycle_kernel",
@@ -598,7 +605,7 @@
     {
       "type": "planet_closure",
       "enforce": "report",
-      "note": "Planet v1 contract (docs/PLANET_V1_CONTRACT_RU.md) declaration for accepted v7.7.1 r1. Counters P2-P6 are measured per declared process. {C} expands to each colony token; a process without {C} is shared.",
+      "note": "Planet v1 contract (docs/PLANET_V1_CONTRACT_RU.md) declaration for accepted v7.7.1 r1. Counters P2-P6 are measured per declared process. {C} expands to each colony token; a process without {C} is shared. v7.7.2: construction-materials processing requests energy (P3 exceptions 11 -> 9).",
       "colonies": [
         "A",
         "B"
@@ -728,8 +735,8 @@
             "reason": "v7.7 fixed construction-materials capacity (P2)"
           },
           "energy": {
-            "kind": "none",
-            "reason": "v7.7 construction-materials processing uses no energy by design; first P3 step on the roadmap"
+            "kind": "requests",
+            "request": "{C} Construction Materials Requested Energy"
           },
           "labor": {
             "kind": "undeclared"
@@ -1233,6 +1240,60 @@
           "op": "<=",
           "value": 0,
           "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 0: A Construction Materials requested energy is zero (energy switch off)",
+          "column": "A Construction Materials Requested Energy",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 0: A Construction Materials allocated energy is zero (energy switch off)",
+          "column": "A Construction Materials Allocated Energy",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 0: A Construction Materials energy fulfillment is 1 (energy switch off)",
+          "column": "A Construction Materials Energy Fulfillment Ratio",
+          "metric": "min",
+          "op": ">=",
+          "value": 1,
+          "tolerance": 1e-12
+        },
+        {
+          "type": "metric",
+          "name": "Mode 0: B Construction Materials requested energy is zero (energy switch off)",
+          "column": "B Construction Materials Requested Energy",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 0: B Construction Materials allocated energy is zero (energy switch off)",
+          "column": "B Construction Materials Allocated Energy",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 0: B Construction Materials energy fulfillment is 1 (energy switch off)",
+          "column": "B Construction Materials Energy Fulfillment Ratio",
+          "metric": "min",
+          "op": ">=",
+          "value": 1,
+          "tolerance": 1e-12
         }
       ]
     },
@@ -1665,6 +1726,60 @@
           "op": "<=",
           "value": 0,
           "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 1: A Construction Materials requested energy is zero (energy switch off)",
+          "column": "A Construction Materials Requested Energy",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 1: A Construction Materials allocated energy is zero (energy switch off)",
+          "column": "A Construction Materials Allocated Energy",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 1: A Construction Materials energy fulfillment is 1 (energy switch off)",
+          "column": "A Construction Materials Energy Fulfillment Ratio",
+          "metric": "min",
+          "op": ">=",
+          "value": 1,
+          "tolerance": 1e-12
+        },
+        {
+          "type": "metric",
+          "name": "Mode 1: B Construction Materials requested energy is zero (energy switch off)",
+          "column": "B Construction Materials Requested Energy",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 1: B Construction Materials allocated energy is zero (energy switch off)",
+          "column": "B Construction Materials Allocated Energy",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 1: B Construction Materials energy fulfillment is 1 (energy switch off)",
+          "column": "B Construction Materials Energy Fulfillment Ratio",
+          "metric": "min",
+          "op": ">=",
+          "value": 1,
+          "tolerance": 1e-12
         }
       ]
     },
@@ -2097,6 +2212,60 @@
           "op": "<=",
           "value": 0,
           "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 2: A Construction Materials requested energy is zero (energy switch off)",
+          "column": "A Construction Materials Requested Energy",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 2: A Construction Materials allocated energy is zero (energy switch off)",
+          "column": "A Construction Materials Allocated Energy",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 2: A Construction Materials energy fulfillment is 1 (energy switch off)",
+          "column": "A Construction Materials Energy Fulfillment Ratio",
+          "metric": "min",
+          "op": ">=",
+          "value": 1,
+          "tolerance": 1e-12
+        },
+        {
+          "type": "metric",
+          "name": "Mode 2: B Construction Materials requested energy is zero (energy switch off)",
+          "column": "B Construction Materials Requested Energy",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 2: B Construction Materials allocated energy is zero (energy switch off)",
+          "column": "B Construction Materials Allocated Energy",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 2: B Construction Materials energy fulfillment is 1 (energy switch off)",
+          "column": "B Construction Materials Energy Fulfillment Ratio",
+          "metric": "min",
+          "op": ">=",
+          "value": 1,
+          "tolerance": 1e-12
         }
       ]
     },
@@ -2529,6 +2698,60 @@
           "op": "<=",
           "value": 0,
           "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 3: A Construction Materials requested energy is zero (energy switch off)",
+          "column": "A Construction Materials Requested Energy",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 3: A Construction Materials allocated energy is zero (energy switch off)",
+          "column": "A Construction Materials Allocated Energy",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 3: A Construction Materials energy fulfillment is 1 (energy switch off)",
+          "column": "A Construction Materials Energy Fulfillment Ratio",
+          "metric": "min",
+          "op": ">=",
+          "value": 1,
+          "tolerance": 1e-12
+        },
+        {
+          "type": "metric",
+          "name": "Mode 3: B Construction Materials requested energy is zero (energy switch off)",
+          "column": "B Construction Materials Requested Energy",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 3: B Construction Materials allocated energy is zero (energy switch off)",
+          "column": "B Construction Materials Allocated Energy",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 3: B Construction Materials energy fulfillment is 1 (energy switch off)",
+          "column": "B Construction Materials Energy Fulfillment Ratio",
+          "metric": "min",
+          "op": ">=",
+          "value": 1,
+          "tolerance": 1e-12
         }
       ]
     },
@@ -2961,6 +3184,60 @@
           "op": "<=",
           "value": 0,
           "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 4: A Construction Materials requested energy is zero (energy switch off)",
+          "column": "A Construction Materials Requested Energy",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 4: A Construction Materials allocated energy is zero (energy switch off)",
+          "column": "A Construction Materials Allocated Energy",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 4: A Construction Materials energy fulfillment is 1 (energy switch off)",
+          "column": "A Construction Materials Energy Fulfillment Ratio",
+          "metric": "min",
+          "op": ">=",
+          "value": 1,
+          "tolerance": 1e-12
+        },
+        {
+          "type": "metric",
+          "name": "Mode 4: B Construction Materials requested energy is zero (energy switch off)",
+          "column": "B Construction Materials Requested Energy",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 4: B Construction Materials allocated energy is zero (energy switch off)",
+          "column": "B Construction Materials Allocated Energy",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 4: B Construction Materials energy fulfillment is 1 (energy switch off)",
+          "column": "B Construction Materials Energy Fulfillment Ratio",
+          "metric": "min",
+          "op": ">=",
+          "value": 1,
+          "tolerance": 1e-12
         }
       ]
     },
@@ -3393,6 +3670,60 @@
           "op": "<=",
           "value": 0,
           "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 5: A Construction Materials requested energy is zero (energy switch off)",
+          "column": "A Construction Materials Requested Energy",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 5: A Construction Materials allocated energy is zero (energy switch off)",
+          "column": "A Construction Materials Allocated Energy",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 5: A Construction Materials energy fulfillment is 1 (energy switch off)",
+          "column": "A Construction Materials Energy Fulfillment Ratio",
+          "metric": "min",
+          "op": ">=",
+          "value": 1,
+          "tolerance": 1e-12
+        },
+        {
+          "type": "metric",
+          "name": "Mode 5: B Construction Materials requested energy is zero (energy switch off)",
+          "column": "B Construction Materials Requested Energy",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 5: B Construction Materials allocated energy is zero (energy switch off)",
+          "column": "B Construction Materials Allocated Energy",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 5: B Construction Materials energy fulfillment is 1 (energy switch off)",
+          "column": "B Construction Materials Energy Fulfillment Ratio",
+          "metric": "min",
+          "op": ">=",
+          "value": 1,
+          "tolerance": 1e-12
         }
       ]
     },
@@ -3825,6 +4156,60 @@
           "op": "<=",
           "value": 0,
           "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 6: A Construction Materials requested energy is zero (energy switch off)",
+          "column": "A Construction Materials Requested Energy",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 6: A Construction Materials allocated energy is zero (energy switch off)",
+          "column": "A Construction Materials Allocated Energy",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 6: A Construction Materials energy fulfillment is 1 (energy switch off)",
+          "column": "A Construction Materials Energy Fulfillment Ratio",
+          "metric": "min",
+          "op": ">=",
+          "value": 1,
+          "tolerance": 1e-12
+        },
+        {
+          "type": "metric",
+          "name": "Mode 6: B Construction Materials requested energy is zero (energy switch off)",
+          "column": "B Construction Materials Requested Energy",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 6: B Construction Materials allocated energy is zero (energy switch off)",
+          "column": "B Construction Materials Allocated Energy",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 6: B Construction Materials energy fulfillment is 1 (energy switch off)",
+          "column": "B Construction Materials Energy Fulfillment Ratio",
+          "metric": "min",
+          "op": ">=",
+          "value": 1,
+          "tolerance": 1e-12
         }
       ]
     },
@@ -4257,6 +4642,60 @@
           "op": "<=",
           "value": 0,
           "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 7: A Construction Materials requested energy is zero (energy switch off)",
+          "column": "A Construction Materials Requested Energy",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 7: A Construction Materials allocated energy is zero (energy switch off)",
+          "column": "A Construction Materials Allocated Energy",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 7: A Construction Materials energy fulfillment is 1 (energy switch off)",
+          "column": "A Construction Materials Energy Fulfillment Ratio",
+          "metric": "min",
+          "op": ">=",
+          "value": 1,
+          "tolerance": 1e-12
+        },
+        {
+          "type": "metric",
+          "name": "Mode 7: B Construction Materials requested energy is zero (energy switch off)",
+          "column": "B Construction Materials Requested Energy",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 7: B Construction Materials allocated energy is zero (energy switch off)",
+          "column": "B Construction Materials Allocated Energy",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 7: B Construction Materials energy fulfillment is 1 (energy switch off)",
+          "column": "B Construction Materials Energy Fulfillment Ratio",
+          "metric": "min",
+          "op": ">=",
+          "value": 1,
+          "tolerance": 1e-12
         }
       ]
     },
@@ -4689,6 +5128,60 @@
           "op": "<=",
           "value": 0,
           "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 8: A Construction Materials requested energy is zero (energy switch off)",
+          "column": "A Construction Materials Requested Energy",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 8: A Construction Materials allocated energy is zero (energy switch off)",
+          "column": "A Construction Materials Allocated Energy",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 8: A Construction Materials energy fulfillment is 1 (energy switch off)",
+          "column": "A Construction Materials Energy Fulfillment Ratio",
+          "metric": "min",
+          "op": ">=",
+          "value": 1,
+          "tolerance": 1e-12
+        },
+        {
+          "type": "metric",
+          "name": "Mode 8: B Construction Materials requested energy is zero (energy switch off)",
+          "column": "B Construction Materials Requested Energy",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 8: B Construction Materials allocated energy is zero (energy switch off)",
+          "column": "B Construction Materials Allocated Energy",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 8: B Construction Materials energy fulfillment is 1 (energy switch off)",
+          "column": "B Construction Materials Energy Fulfillment Ratio",
+          "metric": "min",
+          "op": ">=",
+          "value": 1,
+          "tolerance": 1e-12
         }
       ]
     },
@@ -5121,6 +5614,60 @@
           "op": "<=",
           "value": 0,
           "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 9: A Construction Materials requested energy is zero (energy switch off)",
+          "column": "A Construction Materials Requested Energy",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 9: A Construction Materials allocated energy is zero (energy switch off)",
+          "column": "A Construction Materials Allocated Energy",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 9: A Construction Materials energy fulfillment is 1 (energy switch off)",
+          "column": "A Construction Materials Energy Fulfillment Ratio",
+          "metric": "min",
+          "op": ">=",
+          "value": 1,
+          "tolerance": 1e-12
+        },
+        {
+          "type": "metric",
+          "name": "Mode 9: B Construction Materials requested energy is zero (energy switch off)",
+          "column": "B Construction Materials Requested Energy",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 9: B Construction Materials allocated energy is zero (energy switch off)",
+          "column": "B Construction Materials Allocated Energy",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 9: B Construction Materials energy fulfillment is 1 (energy switch off)",
+          "column": "B Construction Materials Energy Fulfillment Ratio",
+          "metric": "min",
+          "op": ">=",
+          "value": 1,
+          "tolerance": 1e-12
         }
       ]
     },
@@ -5553,6 +6100,60 @@
           "op": "<=",
           "value": 0,
           "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 10: A Construction Materials requested energy is zero (energy switch off)",
+          "column": "A Construction Materials Requested Energy",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 10: A Construction Materials allocated energy is zero (energy switch off)",
+          "column": "A Construction Materials Allocated Energy",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 10: A Construction Materials energy fulfillment is 1 (energy switch off)",
+          "column": "A Construction Materials Energy Fulfillment Ratio",
+          "metric": "min",
+          "op": ">=",
+          "value": 1,
+          "tolerance": 1e-12
+        },
+        {
+          "type": "metric",
+          "name": "Mode 10: B Construction Materials requested energy is zero (energy switch off)",
+          "column": "B Construction Materials Requested Energy",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 10: B Construction Materials allocated energy is zero (energy switch off)",
+          "column": "B Construction Materials Allocated Energy",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 10: B Construction Materials energy fulfillment is 1 (energy switch off)",
+          "column": "B Construction Materials Energy Fulfillment Ratio",
+          "metric": "min",
+          "op": ">=",
+          "value": 1,
+          "tolerance": 1e-12
         }
       ]
     },
@@ -5985,6 +6586,60 @@
           "op": "<=",
           "value": 0,
           "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 11: A Construction Materials requested energy is zero (energy switch off)",
+          "column": "A Construction Materials Requested Energy",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 11: A Construction Materials allocated energy is zero (energy switch off)",
+          "column": "A Construction Materials Allocated Energy",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 11: A Construction Materials energy fulfillment is 1 (energy switch off)",
+          "column": "A Construction Materials Energy Fulfillment Ratio",
+          "metric": "min",
+          "op": ">=",
+          "value": 1,
+          "tolerance": 1e-12
+        },
+        {
+          "type": "metric",
+          "name": "Mode 11: B Construction Materials requested energy is zero (energy switch off)",
+          "column": "B Construction Materials Requested Energy",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 11: B Construction Materials allocated energy is zero (energy switch off)",
+          "column": "B Construction Materials Allocated Energy",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 11: B Construction Materials energy fulfillment is 1 (energy switch off)",
+          "column": "B Construction Materials Energy Fulfillment Ratio",
+          "metric": "min",
+          "op": ">=",
+          "value": 1,
+          "tolerance": 1e-12
         }
       ]
     },
@@ -6441,6 +7096,60 @@
           "op": "<=",
           "value": 0,
           "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 12: A Construction Materials requested energy is zero (energy switch off)",
+          "column": "A Construction Materials Requested Energy",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 12: A Construction Materials allocated energy is zero (energy switch off)",
+          "column": "A Construction Materials Allocated Energy",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 12: A Construction Materials energy fulfillment is 1 (energy switch off)",
+          "column": "A Construction Materials Energy Fulfillment Ratio",
+          "metric": "min",
+          "op": ">=",
+          "value": 1,
+          "tolerance": 1e-12
+        },
+        {
+          "type": "metric",
+          "name": "Mode 12: B Construction Materials requested energy is zero (energy switch off)",
+          "column": "B Construction Materials Requested Energy",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 12: B Construction Materials allocated energy is zero (energy switch off)",
+          "column": "B Construction Materials Allocated Energy",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 12: B Construction Materials energy fulfillment is 1 (energy switch off)",
+          "column": "B Construction Materials Energy Fulfillment Ratio",
+          "metric": "min",
+          "op": ">=",
+          "value": 1,
+          "tolerance": 1e-12
         }
       ]
     },
@@ -6899,6 +7608,60 @@
           "op": "<=",
           "value": 0,
           "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 13: A Construction Materials requested energy is zero (energy switch off)",
+          "column": "A Construction Materials Requested Energy",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 13: A Construction Materials allocated energy is zero (energy switch off)",
+          "column": "A Construction Materials Allocated Energy",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 13: A Construction Materials energy fulfillment is 1 (energy switch off)",
+          "column": "A Construction Materials Energy Fulfillment Ratio",
+          "metric": "min",
+          "op": ">=",
+          "value": 1,
+          "tolerance": 1e-12
+        },
+        {
+          "type": "metric",
+          "name": "Mode 13: B Construction Materials requested energy is zero (energy switch off)",
+          "column": "B Construction Materials Requested Energy",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 13: B Construction Materials allocated energy is zero (energy switch off)",
+          "column": "B Construction Materials Allocated Energy",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 13: B Construction Materials energy fulfillment is 1 (energy switch off)",
+          "column": "B Construction Materials Energy Fulfillment Ratio",
+          "metric": "min",
+          "op": ">=",
+          "value": 1,
+          "tolerance": 1e-12
         }
       ]
     },
@@ -7366,6 +8129,60 @@
           "op": "<=",
           "value": 0,
           "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 14: A Construction Materials requested energy is zero (energy switch off)",
+          "column": "A Construction Materials Requested Energy",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 14: A Construction Materials allocated energy is zero (energy switch off)",
+          "column": "A Construction Materials Allocated Energy",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 14: A Construction Materials energy fulfillment is 1 (energy switch off)",
+          "column": "A Construction Materials Energy Fulfillment Ratio",
+          "metric": "min",
+          "op": ">=",
+          "value": 1,
+          "tolerance": 1e-12
+        },
+        {
+          "type": "metric",
+          "name": "Mode 14: B Construction Materials requested energy is zero (energy switch off)",
+          "column": "B Construction Materials Requested Energy",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 14: B Construction Materials allocated energy is zero (energy switch off)",
+          "column": "B Construction Materials Allocated Energy",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 14: B Construction Materials energy fulfillment is 1 (energy switch off)",
+          "column": "B Construction Materials Energy Fulfillment Ratio",
+          "metric": "min",
+          "op": ">=",
+          "value": 1,
+          "tolerance": 1e-12
         }
       ]
     },
@@ -7837,6 +8654,60 @@
           "op": "<=",
           "value": 0,
           "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 15: A Construction Materials requested energy is zero (energy switch off)",
+          "column": "A Construction Materials Requested Energy",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 15: A Construction Materials allocated energy is zero (energy switch off)",
+          "column": "A Construction Materials Allocated Energy",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 15: A Construction Materials energy fulfillment is 1 (energy switch off)",
+          "column": "A Construction Materials Energy Fulfillment Ratio",
+          "metric": "min",
+          "op": ">=",
+          "value": 1,
+          "tolerance": 1e-12
+        },
+        {
+          "type": "metric",
+          "name": "Mode 15: B Construction Materials requested energy is zero (energy switch off)",
+          "column": "B Construction Materials Requested Energy",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 15: B Construction Materials allocated energy is zero (energy switch off)",
+          "column": "B Construction Materials Allocated Energy",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 15: B Construction Materials energy fulfillment is 1 (energy switch off)",
+          "column": "B Construction Materials Energy Fulfillment Ratio",
+          "metric": "min",
+          "op": ">=",
+          "value": 1,
+          "tolerance": 1e-12
         }
       ]
     },
@@ -8287,6 +9158,60 @@
           "op": "<=",
           "value": 0,
           "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 16: A Construction Materials requested energy is zero (energy switch off)",
+          "column": "A Construction Materials Requested Energy",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 16: A Construction Materials allocated energy is zero (energy switch off)",
+          "column": "A Construction Materials Allocated Energy",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 16: A Construction Materials energy fulfillment is 1 (energy switch off)",
+          "column": "A Construction Materials Energy Fulfillment Ratio",
+          "metric": "min",
+          "op": ">=",
+          "value": 1,
+          "tolerance": 1e-12
+        },
+        {
+          "type": "metric",
+          "name": "Mode 16: B Construction Materials requested energy is zero (energy switch off)",
+          "column": "B Construction Materials Requested Energy",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 16: B Construction Materials allocated energy is zero (energy switch off)",
+          "column": "B Construction Materials Allocated Energy",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 16: B Construction Materials energy fulfillment is 1 (energy switch off)",
+          "column": "B Construction Materials Energy Fulfillment Ratio",
+          "metric": "min",
+          "op": ">=",
+          "value": 1,
+          "tolerance": 1e-12
         }
       ]
     },
@@ -8855,6 +9780,60 @@
           "op": "<=",
           "value": 0,
           "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 17: A Construction Materials requested energy is zero (energy switch off)",
+          "column": "A Construction Materials Requested Energy",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 17: A Construction Materials allocated energy is zero (energy switch off)",
+          "column": "A Construction Materials Allocated Energy",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 17: A Construction Materials energy fulfillment is 1 (energy switch off)",
+          "column": "A Construction Materials Energy Fulfillment Ratio",
+          "metric": "min",
+          "op": ">=",
+          "value": 1,
+          "tolerance": 1e-12
+        },
+        {
+          "type": "metric",
+          "name": "Mode 17: B Construction Materials requested energy is zero (energy switch off)",
+          "column": "B Construction Materials Requested Energy",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 17: B Construction Materials allocated energy is zero (energy switch off)",
+          "column": "B Construction Materials Allocated Energy",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 17: B Construction Materials energy fulfillment is 1 (energy switch off)",
+          "column": "B Construction Materials Energy Fulfillment Ratio",
+          "metric": "min",
+          "op": ">=",
+          "value": 1,
+          "tolerance": 1e-12
         }
       ],
       "notes": [
@@ -9413,6 +10392,60 @@
           "op": "<=",
           "value": 0,
           "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 18: A Construction Materials requested energy is zero (energy switch off)",
+          "column": "A Construction Materials Requested Energy",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 18: A Construction Materials allocated energy is zero (energy switch off)",
+          "column": "A Construction Materials Allocated Energy",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 18: A Construction Materials energy fulfillment is 1 (energy switch off)",
+          "column": "A Construction Materials Energy Fulfillment Ratio",
+          "metric": "min",
+          "op": ">=",
+          "value": 1,
+          "tolerance": 1e-12
+        },
+        {
+          "type": "metric",
+          "name": "Mode 18: B Construction Materials requested energy is zero (energy switch off)",
+          "column": "B Construction Materials Requested Energy",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 18: B Construction Materials allocated energy is zero (energy switch off)",
+          "column": "B Construction Materials Allocated Energy",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 18: B Construction Materials energy fulfillment is 1 (energy switch off)",
+          "column": "B Construction Materials Energy Fulfillment Ratio",
+          "metric": "min",
+          "op": ">=",
+          "value": 1,
+          "tolerance": 1e-12
         }
       ],
       "notes": [
@@ -9922,6 +10955,60 @@
           "op": "<=",
           "value": 0,
           "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 19: A Construction Materials requested energy is zero (energy switch off)",
+          "column": "A Construction Materials Requested Energy",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 19: A Construction Materials allocated energy is zero (energy switch off)",
+          "column": "A Construction Materials Allocated Energy",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 19: A Construction Materials energy fulfillment is 1 (energy switch off)",
+          "column": "A Construction Materials Energy Fulfillment Ratio",
+          "metric": "min",
+          "op": ">=",
+          "value": 1,
+          "tolerance": 1e-12
+        },
+        {
+          "type": "metric",
+          "name": "Mode 19: B Construction Materials requested energy is zero (energy switch off)",
+          "column": "B Construction Materials Requested Energy",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 19: B Construction Materials allocated energy is zero (energy switch off)",
+          "column": "B Construction Materials Allocated Energy",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 19: B Construction Materials energy fulfillment is 1 (energy switch off)",
+          "column": "B Construction Materials Energy Fulfillment Ratio",
+          "metric": "min",
+          "op": ">=",
+          "value": 1,
+          "tolerance": 1e-12
         }
       ],
       "notes": [
@@ -10382,6 +11469,60 @@
           "op": "<=",
           "value": 0,
           "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 20: A Construction Materials requested energy is zero (energy switch off)",
+          "column": "A Construction Materials Requested Energy",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 20: A Construction Materials allocated energy is zero (energy switch off)",
+          "column": "A Construction Materials Allocated Energy",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 20: A Construction Materials energy fulfillment is 1 (energy switch off)",
+          "column": "A Construction Materials Energy Fulfillment Ratio",
+          "metric": "min",
+          "op": ">=",
+          "value": 1,
+          "tolerance": 1e-12
+        },
+        {
+          "type": "metric",
+          "name": "Mode 20: B Construction Materials requested energy is zero (energy switch off)",
+          "column": "B Construction Materials Requested Energy",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 20: B Construction Materials allocated energy is zero (energy switch off)",
+          "column": "B Construction Materials Allocated Energy",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 20: B Construction Materials energy fulfillment is 1 (energy switch off)",
+          "column": "B Construction Materials Energy Fulfillment Ratio",
+          "metric": "min",
+          "op": ">=",
+          "value": 1,
+          "tolerance": 1e-12
         }
       ],
       "notes": [
@@ -10972,6 +12113,60 @@
           "op": "<=",
           "value": 0,
           "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 21: A Construction Materials requested energy is zero (energy switch off)",
+          "column": "A Construction Materials Requested Energy",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 21: A Construction Materials allocated energy is zero (energy switch off)",
+          "column": "A Construction Materials Allocated Energy",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 21: A Construction Materials energy fulfillment is 1 (energy switch off)",
+          "column": "A Construction Materials Energy Fulfillment Ratio",
+          "metric": "min",
+          "op": ">=",
+          "value": 1,
+          "tolerance": 1e-12
+        },
+        {
+          "type": "metric",
+          "name": "Mode 21: B Construction Materials requested energy is zero (energy switch off)",
+          "column": "B Construction Materials Requested Energy",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 21: B Construction Materials allocated energy is zero (energy switch off)",
+          "column": "B Construction Materials Allocated Energy",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 21: B Construction Materials energy fulfillment is 1 (energy switch off)",
+          "column": "B Construction Materials Energy Fulfillment Ratio",
+          "metric": "min",
+          "op": ">=",
+          "value": 1,
+          "tolerance": 1e-12
         }
       ]
     },
@@ -11499,6 +12694,60 @@
           "op": "<=",
           "value": 0,
           "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 22: A Construction Materials requested energy is zero (energy switch off)",
+          "column": "A Construction Materials Requested Energy",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 22: A Construction Materials allocated energy is zero (energy switch off)",
+          "column": "A Construction Materials Allocated Energy",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 22: A Construction Materials energy fulfillment is 1 (energy switch off)",
+          "column": "A Construction Materials Energy Fulfillment Ratio",
+          "metric": "min",
+          "op": ">=",
+          "value": 1,
+          "tolerance": 1e-12
+        },
+        {
+          "type": "metric",
+          "name": "Mode 22: B Construction Materials requested energy is zero (energy switch off)",
+          "column": "B Construction Materials Requested Energy",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 22: B Construction Materials allocated energy is zero (energy switch off)",
+          "column": "B Construction Materials Allocated Energy",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 22: B Construction Materials energy fulfillment is 1 (energy switch off)",
+          "column": "B Construction Materials Energy Fulfillment Ratio",
+          "metric": "min",
+          "op": ">=",
+          "value": 1,
+          "tolerance": 1e-12
         }
       ]
     },
@@ -12050,6 +13299,60 @@
           "op": "<=",
           "value": 0,
           "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 23: A Construction Materials requested energy is zero (energy switch off)",
+          "column": "A Construction Materials Requested Energy",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 23: A Construction Materials allocated energy is zero (energy switch off)",
+          "column": "A Construction Materials Allocated Energy",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 23: A Construction Materials energy fulfillment is 1 (energy switch off)",
+          "column": "A Construction Materials Energy Fulfillment Ratio",
+          "metric": "min",
+          "op": ">=",
+          "value": 1,
+          "tolerance": 1e-12
+        },
+        {
+          "type": "metric",
+          "name": "Mode 23: B Construction Materials requested energy is zero (energy switch off)",
+          "column": "B Construction Materials Requested Energy",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 23: B Construction Materials allocated energy is zero (energy switch off)",
+          "column": "B Construction Materials Allocated Energy",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 23: B Construction Materials energy fulfillment is 1 (energy switch off)",
+          "column": "B Construction Materials Energy Fulfillment Ratio",
+          "metric": "min",
+          "op": ">=",
+          "value": 1,
+          "tolerance": 1e-12
         }
       ]
     },
@@ -12445,6 +13748,60 @@
           "op": "<=",
           "value": 0,
           "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 24: A Construction Materials requested energy is zero (energy switch off)",
+          "column": "A Construction Materials Requested Energy",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 24: A Construction Materials allocated energy is zero (energy switch off)",
+          "column": "A Construction Materials Allocated Energy",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 24: A Construction Materials energy fulfillment is 1 (energy switch off)",
+          "column": "A Construction Materials Energy Fulfillment Ratio",
+          "metric": "min",
+          "op": ">=",
+          "value": 1,
+          "tolerance": 1e-12
+        },
+        {
+          "type": "metric",
+          "name": "Mode 24: B Construction Materials requested energy is zero (energy switch off)",
+          "column": "B Construction Materials Requested Energy",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 24: B Construction Materials allocated energy is zero (energy switch off)",
+          "column": "B Construction Materials Allocated Energy",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 24: B Construction Materials energy fulfillment is 1 (energy switch off)",
+          "column": "B Construction Materials Energy Fulfillment Ratio",
+          "metric": "min",
+          "op": ">=",
+          "value": 1,
+          "tolerance": 1e-12
         }
       ],
       "notes": [
@@ -12761,6 +14118,60 @@
           "op": "<=",
           "value": 0,
           "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 25: A Construction Materials requested energy is zero (energy switch off)",
+          "column": "A Construction Materials Requested Energy",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 25: A Construction Materials allocated energy is zero (energy switch off)",
+          "column": "A Construction Materials Allocated Energy",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 25: A Construction Materials energy fulfillment is 1 (energy switch off)",
+          "column": "A Construction Materials Energy Fulfillment Ratio",
+          "metric": "min",
+          "op": ">=",
+          "value": 1,
+          "tolerance": 1e-12
+        },
+        {
+          "type": "metric",
+          "name": "Mode 25: B Construction Materials requested energy is zero (energy switch off)",
+          "column": "B Construction Materials Requested Energy",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 25: B Construction Materials allocated energy is zero (energy switch off)",
+          "column": "B Construction Materials Allocated Energy",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 25: B Construction Materials energy fulfillment is 1 (energy switch off)",
+          "column": "B Construction Materials Energy Fulfillment Ratio",
+          "metric": "min",
+          "op": ">=",
+          "value": 1,
+          "tolerance": 1e-12
         }
       ],
       "notes": [
@@ -13053,6 +14464,60 @@
           "op": "<=",
           "value": 0,
           "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 26: A Construction Materials requested energy is zero (energy switch off)",
+          "column": "A Construction Materials Requested Energy",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 26: A Construction Materials allocated energy is zero (energy switch off)",
+          "column": "A Construction Materials Allocated Energy",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 26: A Construction Materials energy fulfillment is 1 (energy switch off)",
+          "column": "A Construction Materials Energy Fulfillment Ratio",
+          "metric": "min",
+          "op": ">=",
+          "value": 1,
+          "tolerance": 1e-12
+        },
+        {
+          "type": "metric",
+          "name": "Mode 26: B Construction Materials requested energy is zero (energy switch off)",
+          "column": "B Construction Materials Requested Energy",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 26: B Construction Materials allocated energy is zero (energy switch off)",
+          "column": "B Construction Materials Allocated Energy",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 26: B Construction Materials energy fulfillment is 1 (energy switch off)",
+          "column": "B Construction Materials Energy Fulfillment Ratio",
+          "metric": "min",
+          "op": ">=",
+          "value": 1,
+          "tolerance": 1e-12
         }
       ],
       "notes": [
@@ -13371,6 +14836,60 @@
           "op": "<=",
           "value": 0,
           "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 27: A Construction Materials requested energy is zero (energy switch off)",
+          "column": "A Construction Materials Requested Energy",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 27: A Construction Materials allocated energy is zero (energy switch off)",
+          "column": "A Construction Materials Allocated Energy",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 27: A Construction Materials energy fulfillment is 1 (energy switch off)",
+          "column": "A Construction Materials Energy Fulfillment Ratio",
+          "metric": "min",
+          "op": ">=",
+          "value": 1,
+          "tolerance": 1e-12
+        },
+        {
+          "type": "metric",
+          "name": "Mode 27: B Construction Materials requested energy is zero (energy switch off)",
+          "column": "B Construction Materials Requested Energy",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 27: B Construction Materials allocated energy is zero (energy switch off)",
+          "column": "B Construction Materials Allocated Energy",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 27: B Construction Materials energy fulfillment is 1 (energy switch off)",
+          "column": "B Construction Materials Energy Fulfillment Ratio",
+          "metric": "min",
+          "op": ">=",
+          "value": 1,
+          "tolerance": 1e-12
         }
       ],
       "notes": [
@@ -13716,6 +15235,60 @@
           "op": "<=",
           "value": 0,
           "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 28: A Construction Materials requested energy is zero (energy switch off)",
+          "column": "A Construction Materials Requested Energy",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 28: A Construction Materials allocated energy is zero (energy switch off)",
+          "column": "A Construction Materials Allocated Energy",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 28: A Construction Materials energy fulfillment is 1 (energy switch off)",
+          "column": "A Construction Materials Energy Fulfillment Ratio",
+          "metric": "min",
+          "op": ">=",
+          "value": 1,
+          "tolerance": 1e-12
+        },
+        {
+          "type": "metric",
+          "name": "Mode 28: B Construction Materials requested energy is zero (energy switch off)",
+          "column": "B Construction Materials Requested Energy",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 28: B Construction Materials allocated energy is zero (energy switch off)",
+          "column": "B Construction Materials Allocated Energy",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 28: B Construction Materials energy fulfillment is 1 (energy switch off)",
+          "column": "B Construction Materials Energy Fulfillment Ratio",
+          "metric": "min",
+          "op": ">=",
+          "value": 1,
+          "tolerance": 1e-12
         }
       ],
       "notes": [
@@ -14073,6 +15646,60 @@
           "op": "<=",
           "value": 0,
           "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 29: A Construction Materials requested energy is zero (energy switch off)",
+          "column": "A Construction Materials Requested Energy",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 29: A Construction Materials allocated energy is zero (energy switch off)",
+          "column": "A Construction Materials Allocated Energy",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 29: A Construction Materials energy fulfillment is 1 (energy switch off)",
+          "column": "A Construction Materials Energy Fulfillment Ratio",
+          "metric": "min",
+          "op": ">=",
+          "value": 1,
+          "tolerance": 1e-12
+        },
+        {
+          "type": "metric",
+          "name": "Mode 29: B Construction Materials requested energy is zero (energy switch off)",
+          "column": "B Construction Materials Requested Energy",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 29: B Construction Materials allocated energy is zero (energy switch off)",
+          "column": "B Construction Materials Allocated Energy",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 29: B Construction Materials energy fulfillment is 1 (energy switch off)",
+          "column": "B Construction Materials Energy Fulfillment Ratio",
+          "metric": "min",
+          "op": ">=",
+          "value": 1,
+          "tolerance": 1e-12
         }
       ],
       "notes": [
@@ -14416,6 +16043,60 @@
               "coef": -0.5
             }
           ]
+        },
+        {
+          "type": "metric",
+          "name": "Mode 30: A Construction Materials requested energy is zero (energy switch off)",
+          "column": "A Construction Materials Requested Energy",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 30: A Construction Materials allocated energy is zero (energy switch off)",
+          "column": "A Construction Materials Allocated Energy",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 30: A Construction Materials energy fulfillment is 1 (energy switch off)",
+          "column": "A Construction Materials Energy Fulfillment Ratio",
+          "metric": "min",
+          "op": ">=",
+          "value": 1,
+          "tolerance": 1e-12
+        },
+        {
+          "type": "metric",
+          "name": "Mode 30: B Construction Materials requested energy is zero (energy switch off)",
+          "column": "B Construction Materials Requested Energy",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 30: B Construction Materials allocated energy is zero (energy switch off)",
+          "column": "B Construction Materials Allocated Energy",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 30: B Construction Materials energy fulfillment is 1 (energy switch off)",
+          "column": "B Construction Materials Energy Fulfillment Ratio",
+          "metric": "min",
+          "op": ">=",
+          "value": 1,
+          "tolerance": 1e-12
         }
       ],
       "notes": [
@@ -14810,10 +16491,439 @@
               "coef": -0.5
             }
           ]
+        },
+        {
+          "type": "metric",
+          "name": "Mode 31: A Construction Materials requested energy is zero (energy switch off)",
+          "column": "A Construction Materials Requested Energy",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 31: A Construction Materials allocated energy is zero (energy switch off)",
+          "column": "A Construction Materials Allocated Energy",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 31: A Construction Materials energy fulfillment is 1 (energy switch off)",
+          "column": "A Construction Materials Energy Fulfillment Ratio",
+          "metric": "min",
+          "op": ">=",
+          "value": 1,
+          "tolerance": 1e-12
+        },
+        {
+          "type": "metric",
+          "name": "Mode 31: B Construction Materials requested energy is zero (energy switch off)",
+          "column": "B Construction Materials Requested Energy",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 31: B Construction Materials allocated energy is zero (energy switch off)",
+          "column": "B Construction Materials Allocated Energy",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 31: B Construction Materials energy fulfillment is 1 (energy switch off)",
+          "column": "B Construction Materials Energy Fulfillment Ratio",
+          "metric": "min",
+          "op": ">=",
+          "value": 1,
+          "tolerance": 1e-12
         }
       ],
       "notes": [
         "r2 calibration from first Linux candidate run 36232699114: B Construction Materials Production max=1.85361612493811 -> floor >1.5; B Construction Materials Fulfillment min=0.926415559897726 -> ceiling <0.95 (scarcity >5%)."
+      ]
+    },
+    "32": {
+      "name": "v7.7.2 Construction Materials Energy Baseline",
+      "checks": [
+        {
+          "type": "identity",
+          "name": "Mode 32: A Construction Materials requested-energy identity",
+          "abs_tol": 1e-8,
+          "terms": [
+            {
+              "column": "A Construction Materials Requested Energy",
+              "coef": 1
+            },
+            {
+              "column": "A Pre Energy Construction Materials Production Rate",
+              "coef": -10
+            }
+          ],
+          "note": "Construction Materials Energy per Unit = 10."
+        },
+        {
+          "type": "identity",
+          "name": "Mode 32: A Construction Materials allocated-energy / actual-production consequence",
+          "abs_tol": 1e-8,
+          "terms": [
+            {
+              "column": "A Construction Materials Allocated Energy",
+              "coef": 1
+            },
+            {
+              "column": "A Construction Materials Production Rate",
+              "coef": -10
+            }
+          ],
+          "note": "Executable consequence of Requested=Pre×10, Allocated=Requested×common energy fulfillment, CM fulfillment=Allocated/Requested, and Actual=Pre×CM fulfillment; valid also at zero request."
+        },
+        {
+          "type": "relation",
+          "name": "Mode 32: A Construction Materials actual production <= pre-energy plan",
+          "left": "A Construction Materials Production Rate",
+          "op": "<=",
+          "right": "A Pre Energy Construction Materials Production Rate",
+          "abs_tol": 1e-8
+        },
+        {
+          "type": "identity",
+          "name": "Mode 32: A regolith -> Construction Materials pair identity",
+          "abs_tol": 1e-8,
+          "terms": [
+            {
+              "column": "A Construction Materials Regolith Consumption",
+              "coef": 1
+            },
+            {
+              "column": "A Construction Materials Production Rate",
+              "coef": -2
+            }
+          ],
+          "note": "Regolith per Construction Materials Unit = 2."
+        },
+        {
+          "type": "identity",
+          "name": "Mode 32: B Construction Materials requested-energy identity",
+          "abs_tol": 1e-8,
+          "terms": [
+            {
+              "column": "B Construction Materials Requested Energy",
+              "coef": 1
+            },
+            {
+              "column": "B Pre Energy Construction Materials Production Rate",
+              "coef": -10
+            }
+          ],
+          "note": "Construction Materials Energy per Unit = 10."
+        },
+        {
+          "type": "identity",
+          "name": "Mode 32: B Construction Materials allocated-energy / actual-production consequence",
+          "abs_tol": 1e-8,
+          "terms": [
+            {
+              "column": "B Construction Materials Allocated Energy",
+              "coef": 1
+            },
+            {
+              "column": "B Construction Materials Production Rate",
+              "coef": -10
+            }
+          ],
+          "note": "Executable consequence of Requested=Pre×10, Allocated=Requested×common energy fulfillment, CM fulfillment=Allocated/Requested, and Actual=Pre×CM fulfillment; valid also at zero request."
+        },
+        {
+          "type": "relation",
+          "name": "Mode 32: B Construction Materials actual production <= pre-energy plan",
+          "left": "B Construction Materials Production Rate",
+          "op": "<=",
+          "right": "B Pre Energy Construction Materials Production Rate",
+          "abs_tol": 1e-8
+        },
+        {
+          "type": "identity",
+          "name": "Mode 32: B regolith -> Construction Materials pair identity",
+          "abs_tol": 1e-8,
+          "terms": [
+            {
+              "column": "B Construction Materials Regolith Consumption",
+              "coef": 1
+            },
+            {
+              "column": "B Construction Materials Production Rate",
+              "coef": -2
+            }
+          ],
+          "note": "Regolith per Construction Materials Unit = 2."
+        },
+        {
+          "type": "event_exists",
+          "name": "Mode 32: A Construction Materials requests energy in baseline",
+          "event": {
+            "column": "A Construction Materials Requested Energy",
+            "op": ">",
+            "value": 0,
+            "window": [
+              0,
+              360
+            ]
+          }
+        },
+        {
+          "type": "metric",
+          "name": "Mode 32: A Construction Materials energy fulfillment falls below 0.95",
+          "column": "A Construction Materials Energy Fulfillment Ratio",
+          "metric": "min",
+          "window": [
+            0,
+            1080
+          ],
+          "op": "<",
+          "value": 0.95
+        },
+        {
+          "type": "identity",
+          "name": "Mode 32: terminal A demand-signal tracking error <= 0.002",
+          "abs_tol": 0.002,
+          "window": [
+            1080,
+            1080
+          ],
+          "terms": [
+            {
+              "column": "A Construction Materials Demand Signal",
+              "coef": 1
+            },
+            {
+              "column": "A Construction Materials Demand",
+              "coef": -1
+            }
+          ]
+        }
+      ],
+      "notes": [
+        "r2 calibration from first Linux candidate run 36275212947: A CM energy fulfillment min=0.926388351545351 -> ceiling 0.95; terminal |signal-demand|=0.0008954554231939693 -> tolerance 0.002."
+      ]
+    },
+    "33": {
+      "name": "v7.7.2 Generation Capacity Shock with Construction Materials Energy",
+      "checks": [
+        {
+          "type": "identity",
+          "name": "Mode 33: A Construction Materials requested-energy identity",
+          "abs_tol": 1e-8,
+          "terms": [
+            {
+              "column": "A Construction Materials Requested Energy",
+              "coef": 1
+            },
+            {
+              "column": "A Pre Energy Construction Materials Production Rate",
+              "coef": -10
+            }
+          ],
+          "note": "Construction Materials Energy per Unit = 10."
+        },
+        {
+          "type": "identity",
+          "name": "Mode 33: A Construction Materials allocated-energy / actual-production consequence",
+          "abs_tol": 1e-8,
+          "terms": [
+            {
+              "column": "A Construction Materials Allocated Energy",
+              "coef": 1
+            },
+            {
+              "column": "A Construction Materials Production Rate",
+              "coef": -10
+            }
+          ],
+          "note": "Executable consequence of Requested=Pre×10, Allocated=Requested×common energy fulfillment, CM fulfillment=Allocated/Requested, and Actual=Pre×CM fulfillment; valid also at zero request."
+        },
+        {
+          "type": "relation",
+          "name": "Mode 33: A Construction Materials actual production <= pre-energy plan",
+          "left": "A Construction Materials Production Rate",
+          "op": "<=",
+          "right": "A Pre Energy Construction Materials Production Rate",
+          "abs_tol": 1e-8
+        },
+        {
+          "type": "identity",
+          "name": "Mode 33: A regolith -> Construction Materials pair identity",
+          "abs_tol": 1e-8,
+          "terms": [
+            {
+              "column": "A Construction Materials Regolith Consumption",
+              "coef": 1
+            },
+            {
+              "column": "A Construction Materials Production Rate",
+              "coef": -2
+            }
+          ],
+          "note": "Regolith per Construction Materials Unit = 2."
+        },
+        {
+          "type": "identity",
+          "name": "Mode 33: B Construction Materials requested-energy identity",
+          "abs_tol": 1e-8,
+          "terms": [
+            {
+              "column": "B Construction Materials Requested Energy",
+              "coef": 1
+            },
+            {
+              "column": "B Pre Energy Construction Materials Production Rate",
+              "coef": -10
+            }
+          ],
+          "note": "Construction Materials Energy per Unit = 10."
+        },
+        {
+          "type": "identity",
+          "name": "Mode 33: B Construction Materials allocated-energy / actual-production consequence",
+          "abs_tol": 1e-8,
+          "terms": [
+            {
+              "column": "B Construction Materials Allocated Energy",
+              "coef": 1
+            },
+            {
+              "column": "B Construction Materials Production Rate",
+              "coef": -10
+            }
+          ],
+          "note": "Executable consequence of Requested=Pre×10, Allocated=Requested×common energy fulfillment, CM fulfillment=Allocated/Requested, and Actual=Pre×CM fulfillment; valid also at zero request."
+        },
+        {
+          "type": "relation",
+          "name": "Mode 33: B Construction Materials actual production <= pre-energy plan",
+          "left": "B Construction Materials Production Rate",
+          "op": "<=",
+          "right": "B Pre Energy Construction Materials Production Rate",
+          "abs_tol": 1e-8
+        },
+        {
+          "type": "identity",
+          "name": "Mode 33: B regolith -> Construction Materials pair identity",
+          "abs_tol": 1e-8,
+          "terms": [
+            {
+              "column": "B Construction Materials Regolith Consumption",
+              "coef": 1
+            },
+            {
+              "column": "B Construction Materials Production Rate",
+              "coef": -2
+            }
+          ],
+          "note": "Regolith per Construction Materials Unit = 2."
+        },
+        {
+          "type": "event_exists",
+          "name": "Mode 33: B Construction Materials requests energy during capacity shock",
+          "event": {
+            "column": "B Construction Materials Requested Energy",
+            "op": ">",
+            "value": 0,
+            "window": [
+              360,
+              720
+            ]
+          }
+        },
+        {
+          "type": "metric",
+          "name": "Mode 33: B Construction Materials energy fulfillment falls below 0.80 during shock",
+          "column": "B Construction Materials Energy Fulfillment Ratio",
+          "metric": "min",
+          "window": [
+            360,
+            720
+          ],
+          "op": "<",
+          "value": 0.8
+        },
+        {
+          "type": "event_exists",
+          "name": "Mode 33: B Construction Materials production is active during energy scarcity window",
+          "event": {
+            "column": "B Construction Materials Production Rate",
+            "op": ">",
+            "value": 0,
+            "window": [
+              360,
+              720
+            ]
+          }
+        },
+        {
+          "type": "event_exists",
+          "name": "Mode 33: B builds Power during capacity shock",
+          "event": {
+            "column": "B Power Generation Expansion",
+            "op": ">",
+            "value": 0,
+            "window": [
+              360,
+              720
+            ]
+          },
+          "note": "Concrete executable branch of the test-plan disjunction 'B Refinery Expansion or B Power Generation Expansion > 0'; skeleton shows Power expansion is active."
+        },
+        {
+          "type": "event_absent",
+          "name": "Mode 33: B Construction Materials energy scarcity is absent before shock",
+          "event": {
+            "column": "B Construction Materials Energy Fulfillment Ratio",
+            "op": "<",
+            "value": 0.999999,
+            "window": [
+              0,
+              359.75
+            ]
+          }
+        },
+        {
+          "type": "event_order",
+          "name": "Mode 33: generation-capacity shock starts before B Construction Materials energy scarcity",
+          "events": [
+            {
+              "name": "capacity shock active",
+              "column": "Test 26 Energy Kernel Capacity Shock Active",
+              "op": ">",
+              "value": 0,
+              "window": [
+                360,
+                720
+              ]
+            },
+            {
+              "name": "B Construction Materials energy scarcity",
+              "column": "B Construction Materials Energy Fulfillment Ratio",
+              "op": "<",
+              "value": 0.999999,
+              "window": [
+                360,
+                720
+              ]
+            }
+          ]
+        }
+      ],
+      "notes": [
+        "r2 calibration from first Linux candidate run 36275212947: B CM energy fulfillment min=0.714701728962681 -> ceiling 0.80."
       ]
     }
   },
@@ -15216,6 +17326,22 @@
       "min": 0,
       "max": 1,
       "tolerance": 1e-9
+    },
+    {
+      "type": "bounded",
+      "name": "A Construction Materials energy fulfillment ratio in [0,1]",
+      "column": "A Construction Materials Energy Fulfillment Ratio",
+      "min": 0,
+      "max": 1,
+      "tolerance": 1e-9
+    },
+    {
+      "type": "bounded",
+      "name": "B Construction Materials energy fulfillment ratio in [0,1]",
+      "column": "B Construction Materials Energy Fulfillment Ratio",
+      "min": 0,
+      "max": 1,
+      "tolerance": 1e-9
     }
   ],
   "notes": [
@@ -15236,6 +17362,10 @@
     "v7.7.1 DRAFT: structural declarations only. The executor adds scenario checks for Modes 30-31, the transport construction-materials pair identity (Modes 30-31 only), switch-off checks for Modes 0-29, and the source-share sum check.",
     "v7.7.1 candidate r1: Modes 0-29 explicitly assert the new Transport Construction Materials mechanism is off.",
     "v7.7.1 candidate r1: Modes 30-31 check both Transport Construction Materials legs, source-share sum, new and legacy Transport pair identities, and all v7.7 colonial pair identities.",
-    "v7.7.1 candidate r2 calibration from Linux candidate run 36232699114: Mode30 Transport CM fulfillment min=0.990737111465802 -> floor 0.98; Mode31 B CM production max=1.85361612493811 -> floor 1.5; B CM fulfillment min=0.926415559897726 -> ceiling 0.95."
+    "v7.7.1 candidate r2 calibration from Linux candidate run 36232699114: Mode30 Transport CM fulfillment min=0.990737111465802 -> floor 0.98; Mode31 B CM production max=1.85361612493811 -> floor 1.5; B CM fulfillment min=0.926415559897726 -> ceiling 0.95.",
+    "v7.7.2 DRAFT: structural declarations only (regression 0-31, energy_balance consumers, planet_closure). The executor adds switch-off checks for Modes 0-31, scenario checks for Modes 32-33 and the per-colony construction-materials energy relations.",
+    "v7.7.2 candidate r1: Modes 0-31 explicitly assert the Construction Materials energy mechanism is off (requested=0, allocated=0, fulfillment=1).",
+    "v7.7.2 candidate r1: Modes 32-33 check requested-energy and regolith identities, actual<=pre-energy plan, and the linear allocated-energy/actual-production consequence. The current generic validation DSL has no nonlinear row-wise product check; the two required product formulas remain literal model formulas reviewed in model-patch.json and covered structurally by conformance/audit. This limitation is documented in REPORT_RU.md rather than silently weakening the test plan.",
+    "v7.7.2 candidate r2 calibration from Linux candidate run 36275212947: Mode32 A CM energy fulfillment min=0.926388351545351 -> <0.95; terminal signal tracking abs error=0.0008954554231939693 -> <=0.002; Mode33 B CM energy fulfillment min=0.714701728962681 -> <0.80. Model constants unchanged."
   ]
 }

@@ -113,9 +113,9 @@ LOOP_SELF_TEST.cmd
 
 13 случаев на accepted и мутированных копиях:
 
-- accepted v7.7.1 r1: 7 переключателей, 128 комбинаций, 0 петель;
+- accepted (v7.7.2 r1): 8 переключателей, 256 комбинаций, 0 петель; с v7.7.2 ожидания для accepted выводятся из самой модели (2^N комбинаций; петля мутации — ровно в половине и ровно в Modes, где сценарий включает её переключатель), поэтому самотест не переписывается при каждом продвижении;
 - исторический v7.6 r1: 16/32 комбинаций, только при `Power Resource Enabled=1`, Modes 25–26;
-- мутация задачи 001 r1: 64/128, только при `Intermediate Inputs Enabled=1`, Modes 17–31;
+- мутация задачи 001 r1: половина комбинаций (128/256 на v7.7.2), только при `Intermediate Inputs Enabled=1`, Modes 17–33;
 - runtime agreement: Mode 16 считается, Mode 17 падает у `simulation@9.0.0` с `Circular equation loop`;
 - безусловная/условная петля, STOCK как разрыв, FLOW как same-step узел, self-reference;
 - строгий parser failure с именем элемента;
@@ -132,9 +132,9 @@ Linux CI задачи 010: **13 passed, 0 failed**, около 17 s. Канон�
 PLANET_SELF_TEST.cmd
 ```
 
-**16 случаев** на accepted v7.7.1 r1 и мутированных копиях:
+**16 случаев** на accepted модели и мутированных копиях:
 
-- baseline: точное совпадение reference counters — 17 process instances + 2 legacy; P2 7/10/0; P3 4/2/11/0; P4 0/6; P5 4/13; P6 4; reversibility 0;
+- baseline: счётчики аудита точно равны счётчикам, посчитанным по видам объявлений самой декларации (с v7.7.2; оракул не зависит от проверок модели), при 0 ошибок; на v7.7.2 r1 — 17 process instances + 2 legacy; P2 7/10/0; P3 6/2/9/0; P4 0/6; P5 4/13; P6 4; reversibility 0;
 - L1–L5: ложные capacity/energy declarations отвергаются; для далёких зависимостей сохраняется shortest path и число hops;
 - completeness: удалённый process виден как undeclared в `report` и становится FAIL в `classify`;
 - `planet_v1` / `planet_strict`: проверяются точные dimensions текущего долга;

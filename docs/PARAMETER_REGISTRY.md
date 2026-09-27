@@ -1,16 +1,16 @@
 # Orbital Economy — реестр внешних параметров
 
-- generated: 2026-09-26T10:39:35.367Z
-- model: Orbital Economy v7.7.1 r1 — Transport on Construction Materials — SHA-256 `d53d014d727a439694e103aafb49f87d4dbbb362e581414cbf4dc71a19646f93`
-- annotations: docs/PARAMETER_ANNOTATIONS.json (SHA-256 `df539aaa540c28f562438345bda12bd095ddeb7f7c3879d05599aeed91d6f7f0`)
+- generated: 2026-09-27T08:29:07.309Z
+- model: Orbital Economy v7.7.2 r1 — Construction Materials use Energy — SHA-256 `9bd5c956acccefddc3573b18d04e782d3cb329be89c1d297337b0831c04f2b45`
+- annotations: docs/PARAMETER_ANNOTATIONS.json (SHA-256 `d7d0fe073ace927de77424a01a9d9022dd6ab52c7f8e2fee2cb122a616d240d7`)
 
 Всё, что модель не выводит сама: числовые константы, начальные запасы, переключатели, тестовые множители. Инвентарь сгенерирован из ModelJSON; аннотации («роль / что меняет / доказательство») ведутся вручную и версионируются вместе с baseline.
 
 ## Сводка
 
-- внешних величин: **355** (константы 243, начальные запасы 69, переключатели 8, тестовая обвязка 35)
-- по колониям: A 102, B 102, глобальные 151
-- аннотировано: **189 / 355** (53 %)
+- внешних величин: **360** (константы 245, начальные запасы 71, переключатели 9, тестовая обвязка 35)
+- по колониям: A 103, B 103, глобальные 154
+- аннотировано: **194 / 360** (54 %)
 - несимметричных пар A/B: **45**, из них без аннотации: **0**
 
 ## Несимметричные пары A/B — что задаёт различия колоний
@@ -177,6 +177,7 @@
 | A Capital Goods Base Production Capacity | constant | 2 / 1 | Baseline maximum production scale of the A capital-goods sector. | Enters the soft production-capacity cap and is the quantity reduced by Mode 22 test wiring. | Start value 2 from V7_5_ARCHITECTURE_SPEC §2; calibration parameter without physical justification at this stage. |
 | A Capital Goods Inventory | initial_stock | 30 | Initial local stock of abstract capital goods in colony A. | Provides initial working inventory before endogenous production and construction consumption settle. | Initial value 30 from the verified skeleton; calibration initial condition without physical justification at this stage. |
 | A Construction Materials Base Production Capacity | constant | 3 / 2 | [calib] fixed Construction Materials production capacity (3). | Caps local processing through the standard soft-cap function. | Owner skeleton feasibility value; candidate run to confirm baseline and Mode 28 shock. |
+| A Construction Materials Demand Signal | initial_stock | 0.14 | Initial smoothed Construction Materials demand signal for colony A, value 0.14. | Sets the startup state of the causal demand signal before endogenous adjustment. | V7_7_2_ARCHITECTURE_SPEC §2; owner skeleton initial value near day-0 demand ≈0.137. |
 | A Construction Materials Inventory | initial_stock | 30 | [calib] initial Construction Materials stock, value 30. | Sets initial construction buffer before local production settles. | Owner skeleton feasibility value; candidate run to confirm baseline fulfillment. |
 | A Domestic Supply Signal | initial_stock | 16 / 22 | Начальный сигнал локального предложения металла (16 / 22). | То же для металла. |  |
 | A Local Base Demand | constant | 16 / 22 | Базовый конечный спрос на металл (A 16 / B 22 /день). | Масштаб конечного рынка металла; B — больший потребитель при меньшей добыче → структурный импорт металла B из A (~21–23/день). | Shipment Rate A→B: 23.1 (Mode 12), 20.8 (Mode 17). |
@@ -190,6 +191,7 @@
 | B Capital Goods Base Production Capacity | constant | 1 / 2 | Baseline maximum production scale of the B capital-goods sector. | Enters the soft production-capacity cap and is the quantity reduced by Mode 22 test wiring. | Start value 1 from V7_5_ARCHITECTURE_SPEC §2; calibration parameter without physical justification at this stage. |
 | B Capital Goods Inventory | initial_stock | 30 | Initial local stock of abstract capital goods in colony B. | Provides initial working inventory before endogenous production and construction consumption settle. | Initial value 30 from the verified skeleton; calibration initial condition without physical justification at this stage. |
 | B Construction Materials Base Production Capacity | constant | 2 / 3 | [calib] fixed Construction Materials production capacity (2). | Caps local processing through the standard soft-cap function. | Owner skeleton feasibility value; candidate run to confirm baseline and Mode 28 shock. |
+| B Construction Materials Demand Signal | initial_stock | 0.14 | Initial smoothed Construction Materials demand signal for colony B, value 0.14. | Sets the startup state of the causal demand signal before endogenous adjustment. | V7_7_2_ARCHITECTURE_SPEC §2; owner skeleton initial value near day-0 demand ≈0.137. |
 | B Construction Materials Inventory | initial_stock | 30 | [calib] initial Construction Materials stock, value 30. | Sets initial construction buffer before local production settles. | Owner skeleton feasibility value; candidate run to confirm baseline fulfillment. |
 | B Domestic Supply Signal | initial_stock | 22 / 16 | Начальный сигнал локального предложения металла (16 / 22). | То же для металла. |  |
 | B Local Base Demand | constant | 22 / 16 | Базовый конечный спрос на металл (A 16 / B 22 /день). | Масштаб конечного рынка металла; B — больший потребитель при меньшей добыче → структурный импорт металла B из A (~21–23/день). | Shipment Rate A→B: 23.1 (Mode 12), 20.8 (Mode 17). |
@@ -205,6 +207,7 @@
 | Capital Goods Target Days | constant | 30 | Target inventory coverage for the capital-goods sector. | Raises or lowers desired equipment inventory relative to current desired construction demand. | Start value 30 days from V7_5_ARCHITECTURE_SPEC §2; calibration parameter, no physical justification at this stage. |
 | Construction Materials Adjustment Time | constant | 20 | Construction Materials inventory correction time. | Higher value slows production response to inventory gaps. | V7_7_ARCHITECTURE_SPEC §2; owner-defined non-[calib] value. |
 | Construction Materials Buffer Days | constant | 1 | Scale-free fulfillment buffer, days of demand. | Higher value lowers fulfillment for the same inventory coverage. | V7_7_ARCHITECTURE_SPEC §2; owner-defined non-[calib] value. |
+| Construction Materials Demand Signal Adjustment Time | constant | 3 | Adjustment time of the smoothed Construction Materials demand signal, value 3. | Controls how quickly the allocator-facing production plan follows construction demand while preserving one-step causality. | V7_7_2_ARCHITECTURE_SPEC §1–§2; same idiom as Energy Demand Signal Adjustment Time. |
 | Construction Materials Target Days | constant | 30 | Construction Materials inventory target, days of desired demand. | Higher value raises desired stock coverage. | V7_7_ARCHITECTURE_SPEC §2; owner-defined non-[calib] value. |
 | Regolith Adjustment Time | constant | 10 | Regolith inventory correction time. | Higher value slows extraction response. | V7_7_ARCHITECTURE_SPEC §2; owner-defined non-[calib] value. |
 | Regolith Buffer Days | constant | 1 | Scale-free Regolith availability buffer, days of requirement. | Higher value makes raw-resource limitation bind sooner. | V7_7_ARCHITECTURE_SPEC §2; owner-defined non-[calib] value. |
@@ -235,6 +238,7 @@
 | B Test 25 Power Resource Shock Applies | constant | 0 / 1 | Applicability flag for the Mode 25 power-resource supply shock in colony B. | 1 applies the shared Power Resource Shock Factor (0.1) to B extraction inside the standard shock window; 0 substitutes the exact neutral multiplier 1. A=1, B=0 keeps the experiment one-sided while both formulas stay mirrored. | Mode 25 run (r2 acceptance, 2026-09-25): A fulfillment 1.00 -> 0.107 inside [360,720], B stays at 1.00 throughout. |
 | B Test 26 Energy Kernel Capacity Shock Applies | constant | 0 / 1 | Applicability flag for the Mode 26 capacity-only control shock in colony B. | 1 applies the shared Energy Kernel Capacity Shock Factor to B active generation capacity; 0 substitutes the exact neutral multiplier 1. A=1, B=0. | Mode 26 run (r2 acceptance, 2026-09-25): A capacity 1359 -> 660 inside the window with resource fulfillment held at 1.00; B unaffected. |
 | Base Power Resource Price | constant | 0.04 | Base physical operating-resource price. | Adds an explicit resource-cost component to generation when Energy Kernel v2 is enabled. | v7.6 Energy Kernel v2 specification and Modes 25/26 validation contract. |
+| Construction Materials Energy per Unit | constant | 10 | Physical energy intensity of Construction Materials processing, value 10. | Scales Construction Materials requested energy from the pre-energy production rate. | V7_7_2_ARCHITECTURE_SPEC §2; owner-defined skeleton value, compared with Metal=30 and Electronics=12. |
 | Energy Kernel Capacity Shock Factor | constant | 0.6 | Mode-26 capacity test multiplier. | Creates a temporary A-only active-generation-capacity shock; test wiring only. | v7.6 Energy Kernel v2 specification and Modes 25/26 validation contract. |
 | Energy Scarcity Price Strength | constant | 4 | Сила дефицитной надбавки к цене энергии (4). | Energy Price = Generation Cost × (1 + 4 × perceived scarcity). |  |
 | Power Capacity Planning Adjustment Time | constant | 60 | Память планирования генерации (60 д). | Причина транзитных энергодефицитов (v7.3 ограничение №2): при быстром росте нагрузки мощность отстаёт. В связанном baseline A это даёт остаточные 72/день @1080 (снижаются). | Mode 12: дефицит A 126–375 д; Mode 17: 142 → 72. |
@@ -250,6 +254,7 @@
 | Capital Goods Enabled | switch | 1 | Master switch for v7.5 physical backing of Refinery / Electronics / Power expansion. | 0 preserves accepted v7.4.1 behavior exactly; 1 enables local capital-goods production, inventory fulfillment and physical consumption. | Architecture control parameter from V7_5_ARCHITECTURE_SPEC §0/§2; Modes 0–20 explicitly set 0, Modes 21–23 set 1. |
 | Capital Lifecycle Enabled | switch | 1 | Переключатель v7.3 (1 в сыром файле; 0 в Modes 0–11; 1 в 12–20). | При 0 — Electronics/Power используют фиксированные legacy-мощности (v7.2 r4 бит-в-бит); при 1 — полный kernel капитала для Electronics и Power. К Refinery/Transport не применяется и применяться не должен (KERNEL_SPEC §5). | V7_3_R2_VALIDATION_REPORT §2. |
 | Construction Materials Enabled | switch | 1 | v7.7 master switch. | 0 preserves Modes 0-26 exactly; 1 makes colonial expansion require both Capital Goods and Construction Materials. | V7_7_ARCHITECTURE_SPEC §0–§3. |
+| Construction Materials Energy Enabled | switch | 1 | v7.7.2 Construction Materials energy-coupling master switch. | 0 preserves Modes 0-31 exactly; 1 makes Construction Materials processing request and receive energy through the common colony allocator. | V7_7_2_ARCHITECTURE_SPEC §0–§3. |
 | Intermediate Inputs Enabled | switch | 1 | Переключатель v7.4 (1 в сыром файле; 0 в Modes 0–16; 1 в 17–20). | При 0 — точное воспроизведение v7.3 r2 (Feedstock из ∅ по legacy-цене). При 1 — металл как физический вход, Feedstock Extraction = 0, Feedstock Price = Market Price, Desired Smelting Rate += поставки. Только форма IfThenElse(switch, new, old). | CHECK_CANDIDATE r2: Modes 0–16 changed=0, maxAbs=0. |
 | Transport Construction Materials Enabled | switch | 1 | v7.7.1 shared-Transport Construction Materials master switch. | 0 preserves Modes 0-29 exactly; 1 makes shared Transport expansion require both Capital Goods and Construction Materials. | V7_7_1_ARCHITECTURE_SPEC §0–§3. |
 | Priority Stress A Ore Base Cost | test_wiring | 4 | Нейтральная A-сторона override-константа ore base cost для Mode 8. | Равна A Ore Base Cost = 4; позволяет A Effective Ore Base Cost иметь ту же test chain, что B, сохраняя прежний результат. |  |
@@ -475,6 +480,7 @@
 | A Capital Goods Base Production Capacity | constant | A | 2 | **1** | Baseline production capacity of the A capital-goods sector. | ✓ |
 | A Capital Goods Inventory | initial_stock | A | 30 | = | Local inventory of abstract capital goods in colony A; initial calibration value. | ✓ |
 | A Construction Materials Base Production Capacity | constant | A | 3 | **2** | [calib] Baseline Construction Materials production capacity in colony A. | ✓ |
+| A Construction Materials Demand Signal | initial_stock | A | 0.14 | = | Smoothed Construction Materials demand signal for colony A; breaks same-step allocator causality. | ✓ |
 | A Construction Materials Inventory | initial_stock | A | 30 | = | [calib] Local Construction Materials inventory in colony A. | ✓ |
 | A Demand Elasticity | constant | A | 0.6 | = |  |  |
 | A Domestic Supply Signal | initial_stock | A | 16 | **22** | Smoothed recent domestic metal production available to A's buyers. | ✓ |
@@ -490,6 +496,7 @@
 | B Capital Goods Base Production Capacity | constant | B | 1 | **2** | Baseline production capacity of the B capital-goods sector. | ✓ |
 | B Capital Goods Inventory | initial_stock | B | 30 | = | Local inventory of abstract capital goods in colony B; initial calibration value. | ✓ |
 | B Construction Materials Base Production Capacity | constant | B | 2 | **3** | [calib] Baseline Construction Materials production capacity in colony B. | ✓ |
+| B Construction Materials Demand Signal | initial_stock | B | 0.14 | = | Smoothed Construction Materials demand signal for colony B; breaks same-step allocator causality. | ✓ |
 | B Construction Materials Inventory | initial_stock | B | 30 | = | [calib] Local Construction Materials inventory in colony B. | ✓ |
 | B Demand Elasticity | constant | B | 0.6 | = |  |  |
 | B Domestic Supply Signal | initial_stock | B | 22 | **16** | Smoothed recent domestic metal production available to B's buyers. | ✓ |
@@ -507,6 +514,7 @@
 | Capital Goods Target Days | constant | global | 30 |  | Target inventory coverage for the capital-goods sector, in days of desired demand. | ✓ |
 | Construction Materials Adjustment Time | constant | global | 20 |  | First-order inventory correction time for desired Construction Materials production. | ✓ |
 | Construction Materials Buffer Days | constant | global | 1 |  | Scale-free Construction Materials fulfillment half-saturation buffer in days of current demand. | ✓ |
+| Construction Materials Demand Signal Adjustment Time | constant | global | 3 |  | Adjustment time for the smoothed Construction Materials demand signal. | ✓ |
 | Construction Materials Target Days | constant | global | 30 |  | Target Construction Materials inventory coverage in days of desired construction demand. | ✓ |
 | Regolith Adjustment Time | constant | global | 10 |  | First-order inventory correction time for desired Regolith extraction. | ✓ |
 | Regolith Buffer Days | constant | global | 1 |  | Scale-free Regolith availability half-saturation buffer in days of current Regolith requirement. | ✓ |
@@ -552,6 +560,7 @@
 | B Test 25 Power Resource Shock Applies | constant | B | 0 | **1** | Applicability flag for symmetric Energy Kernel v2 resource-shock wiring. | ✓ |
 | B Test 26 Energy Kernel Capacity Shock Applies | constant | B | 0 | **1** | Applicability flag for symmetric Energy Kernel v2 capacity-shock wiring. | ✓ |
 | Base Power Resource Price | constant | global | 0.04 |  | Base price per physical power-resource unit before scarcity premium. | ✓ |
+| Construction Materials Energy per Unit | constant | global | 10 |  | Energy required per unit of Construction Materials processing. | ✓ |
 | Energy Demand Signal Adjustment Time | constant | global | 3 |  | Time constant for the perceived/contracting energy-load signal used by endogenous price formation. |  |
 | Energy Kernel Capacity Shock Factor | constant | global | 0.6 |  | Mode 26 temporary multiplier on A active generation capacity. | ✓ |
 | Energy Scarcity Price Strength | constant | global | 4 |  | Linear scarcity premium strength. Price remains equal to generation cost while perceived demand is at or below active capacity. | ✓ |
@@ -579,6 +588,7 @@
 | Capital Goods Enabled | switch | global | 1 (сценарии: {"0":0,"1":0,"2":0,"3":0,"4":0,"5":0,"6":0,"7":0,"8":0,"9":0…) |  | v7.5 master switch: capital expansion is fulfilled from locally produced capital goods. | ✓ |
 | Capital Lifecycle Enabled | switch | global | 1 (сценарии: {"0":0,"1":0,"2":0,"3":0,"4":0,"5":0,"6":0,"7":0,"8":0,"9":0…) |  | Master switch for the v7.3 Electronics and Energy capital lifecycle. Normal/raw model default is enabled. Accepted v7.2 regression scenarios 0-11 explicitly override it to 0; v7.3 scenarios 12+ set it to 1. | ✓ |
 | Construction Materials Enabled | switch | global | 1 (сценарии: {"0":0,"1":0,"2":0,"3":0,"4":0,"5":0,"6":0,"7":0,"8":0,"9":0…) |  | v7.7 master switch: construction materials physically constrain colonial capacity expansion. | ✓ |
+| Construction Materials Energy Enabled | switch | global | 1 (сценарии: {"0":0,"1":0,"2":0,"3":0,"4":0,"5":0,"6":0,"7":0,"8":0,"9":0…) |  | v7.7.2 switch: makes Construction Materials processing participate in the colony energy allocator. | ✓ |
 | Intermediate Inputs Enabled | switch | global | 1 (сценарии: {"0":0,"1":0,"2":0,"3":0,"4":0,"5":0,"6":0,"7":0,"8":0,"9":0…) |  | Master switch for v7.4 Metal-to-Electronics intermediate-input coupling. Modes 0-16 override to 0; Modes 17+ enable it. | ✓ |
 | Power Resource Enabled | switch | global | 0 (сценарии: {"0":0,"1":0,"2":0,"3":0,"4":0,"5":0,"6":0,"7":0,"8":0,"9":0…) |  | v7.6 master switch. When 0, the accepted v7.5.1 energy path is reproduced; when 1, generation requires a physical operating resource. |  |
 | Transport Capital Goods Enabled | switch | global | 1 (сценарии: {"0":0,"1":0,"2":0,"3":0,"4":0,"5":0,"6":0,"7":0,"8":0,"9":0…) |  | v7.5.1 regression switch: when enabled, Transport Capacity Expansion is physically backed by Capital Goods drawn from A/B regional inventories. |  |

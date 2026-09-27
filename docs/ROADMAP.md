@@ -1,10 +1,14 @@
 # Roadmap
 
 **Document status:** CURRENT  
-**Base:** Orbital Economy v7.7.1 r1 — Transport on Construction Materials (accepted 2026-09-26)  
+**Base:** Orbital Economy v7.7.2 r1 — Construction Materials use Energy (accepted 2026-09-27)  
 **Rule:** roadmap describes intent; executable accepted code remains authoritative for accepted behavior.
 
-## Current implementation — v7.7.1 Transport on Construction Materials
+## Current implementation — v7.7.2 Construction Materials use Energy
+
+Regolith processing is the third consumer of each colony's energy allocator (after smelting and electronics); the plan that feeds the allocator reads a smoothed demand-signal stock (same-step demand closed an algebraic loop through refinery profit — found by the loop audit on the first skeleton). Mode 33 (generation capacity shock) shows colony B producing construction materials under an energy shortfall. First model step under the Planet v1 counter: P3 4 → 6 processes requesting energy.
+
+## v7.7.1 Transport on Construction Materials
 
 Shared Transport expansion also needs construction materials, drawn from A and B (two legs, as capital goods since v7.5.1). Mode 31 (transport surge) is the first Mode in which colony B produces construction materials. With this, every capacity expansion in the model is backed by both capital goods and construction materials.
 
@@ -13,7 +17,7 @@ Shared Transport expansion also needs construction materials, drawn from A and B
 A second raw-material chain: regional regolith extraction → construction materials → colonial Refinery/Electronics/Power expansion, which now needs both capital goods and construction materials (`Min` of the two fulfillments). No energy use, no interregional trade, fixed sector capacities. Modes 27–29; Modes 0–26 exact. First model version delivered by the repository agent through `candidate.yml` (task 008). Next increments on this layer:
 
 - ~~v7.7.1 — Transport on construction materials~~ — done (task 009);
-- construction materials using energy (the allocator change is the risky part — see the v7.4 lesson);
+- ~~construction materials using energy~~ — done: v7.7.2 (task 012); the allocator risk materialised as an algebraic loop and was caught by the loop audit on the skeleton;
 - ~~a stimulated Mode in which colony B builds with construction materials on~~ — done: Mode 31 (v7.7.1).
 
 ## Previous layer — v7.6 Energy Kernel v2
@@ -79,7 +83,7 @@ Idea: run old Modes on a frozen model and bench (tag + pinned engine) and delete
 
 Why not now: it replaces the project's central guarantee (old Modes bit-exact on the main line) with replaying history on an old tag. The number of switches (7 in v7.7.1) is not the cost. The cost is untested switch combinations, and the loop audit above covers them statically.
 
-**Trigger:** the first model change for which an exact algebraic fallback at `switch = 0` is impossible or would distort the design. The next planned increment, construction materials using energy, still has a clean fallback.
+**Trigger:** the first model change for which an exact algebraic fallback at `switch = 0` is impossible or would distort the design. The v7.7.2 increment (construction materials using energy) still had a clean fallback: Modes 0–31 bit-exact.
 
 ## Planet v1 acceptance contract
 
@@ -89,13 +93,13 @@ Defined 2026-09-26: `docs/PLANET_V1_CONTRACT_RU.md`. The single boundary counter
 |---|---|---|
 | P1 capital-backed expansion | 0 external | 0 (closed) |
 | P2 capacity from capital, not a constant | 5 constant/unbounded | 0 undeclared; exceptions with reason, counted separately |
-| P3 declared energy use | 5 of 7 processes + transport without energy | 0 undeclared; exceptions with reason |
+| P3 declared energy use | 4 of 7 processes + transport without energy (v7.7.1: 5 of 7) | 0 undeclared; exceptions with reason |
 | P4 finite deposits | 3 extractions from nothing | deposit stock from a named parameter (v8: derived from planet formation) |
 | P5 declared labor | 2 of 9 | all declared; no labor pool (v2) |
 | P6 final demand | constants | explicit external driver (population and life support: v2) |
 | P7 reproducibility | closed on the canonical platform | platform independence before going public |
 
-Measured by the `planet_closure` validation plugin (task 011, Lab v0.9.6; validation v7.7.1 r2, `report` mode). Next: model steps under the counter. In progress: task 012, v7.7.2 construction materials using energy (P3 5 → 4 per colony; bench v0.9.7 `energy_balance` consumers list). Open: `labor: declared` is trusted until the P5 model step introduces explicit labor-requirement variables (contract P5).
+Measured by the `planet_closure` validation plugin (task 011, Lab v0.9.6; in the accepted validation since v7.7.1 r2, `report` mode). Next: model steps under the counter. Done: task 012, v7.7.2 construction materials using energy (P3 5 → 4 per colony; bench v0.9.7 `energy_balance` consumers list). Open: `labor: declared` is trusted until the P5 model step introduces explicit labor-requirement variables (contract P5).
 
 ## v8 — replicated regions/colonies/planets
 
