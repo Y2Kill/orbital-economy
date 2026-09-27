@@ -239,14 +239,19 @@ try {
     const raw = structuredClone(accepted);
     const miningRate = raw.elements.find(e => e?.name === 'A Mining Rate' && e.type === 'VARIABLE');
     if (!miningRate) throw new Error('A Mining Rate fixture missing');
-    miningRate.behavior.value += ' + 0 * [A Capital Goods Base Production Capacity]';
-    raw.elements.push({ type: 'LINK', from: 'A Capital Goods Base Production Capacity', to: 'A Mining Rate' });
+    // The constant is taken from the declaration (first constant-capacity process other than mining), so the case
+    // follows Planet v1 steps: capital goods was the fixture until it moved to capital in v7.7.4.
+    const constProc = (declaration.processes || []).find(p => p.capacity?.kind === 'constant' && p.id !== 'mining');
+    if (!constProc) throw new Error('no constant-capacity process besides mining is left in the declaration — rewrite this fixture');
+    const param = String(constProc.capacity.parameter).replaceAll('{C}', 'A');
+    miningRate.behavior.value += ` + 0 * [${param}]`;
+    raw.elements.push({ type: 'LINK', from: param, to: 'A Mining Rate' });
 
     const rd = structuredClone(declaration);
     rd.enforce = 'report';
     const report = audit(raw, rd);
     if (!(report.status === 'PASS' && report.reversibility.length === 1
-      && report.reversibility[0].parameter === 'A Capital Goods Base Production Capacity'
+      && report.reversibility[0].parameter === param
       && report.reversibility[0].reader === 'A Mining Rate')) {
       throw new Error(JSON.stringify(report.reversibility));
     }

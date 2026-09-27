@@ -1,26 +1,26 @@
 {
   "format": "orbital-economy-baseline-manifest-v2",
-  "baseline": "orbital-economy-baseline-v7.7.3",
+  "baseline": "orbital-economy-baseline-v7.7.4",
   "built": "2026-09-27",
   "status": "ACCEPTED",
   "model": {
-    "name": "Orbital Economy v7.7.3 r1 — Construction Materials Capital",
-    "file": "model/orbital_economy_v7_7_3_r1_modeljson.json",
-    "sha256": "a620cc65b93f6faedf2303e16f10dd595a882c319403c0b1bd98b69c1f7ef173",
-    "scenarios": "Modes 0-35",
-    "elements": 3457,
+    "name": "Orbital Economy v7.7.4 r1 — Capital Goods Capital",
+    "file": "model/orbital_economy_v7_7_4_r1_modeljson.json",
+    "sha256": "8a71fe6678c4fc6c532bb8e35b6006280ddb9639a69aed045a6ca25f516f1991",
+    "scenarios": "Modes 0-37",
+    "elements": 3671,
     "simulation": "0..1080 day, dt=0.25, RK1",
-    "predecessor_sha256": "9bd5c956acccefddc3573b18d04e782d3cb329be89c1d297337b0831c04f2b45",
+    "predecessor_sha256": "a620cc65b93f6faedf2303e16f10dd595a882c319403c0b1bd98b69c1f7ef173",
     "history": {
-      "v7.7.3 candidate r1 (task 013)": {
-        "file": "docs/tasks/013-construction-materials-capital/candidate/model-patch.json",
-        "candidate_sha256": "766b87a6078caef83b987ec2d87ae31dbf25d3b6d48054a98e21a6631a2c1764",
+      "v7.7.4 candidate r1 (task 014)": {
+        "file": "docs/tasks/014-capital-goods-capital/candidate/model-patch.json",
+        "candidate_sha256": "b5c12954861c651d254feeb4b6d8011c9de7b272f4cd21c708cffb0940dcef1d",
         "result": "accepted in round 1; identical to the owner skeleton; promoted metadata-clean (name only)"
       },
-      "v7.7.2 r1": {
-        "file": "reference/v7.7.2/model/orbital_economy_v7_7_2_r1_modeljson.json",
-        "sha256": "9bd5c956acccefddc3573b18d04e782d3cb329be89c1d297337b0831c04f2b45",
-        "result": "accepted 2026-09-27; superseded by v7.7.3 r1"
+      "v7.7.3 r1": {
+        "file": "reference/v7.7.3/model/orbital_economy_v7_7_3_r1_modeljson.json",
+        "sha256": "a620cc65b93f6faedf2303e16f10dd595a882c319403c0b1bd98b69c1f7ef173",
+        "result": "accepted 2026-09-27; superseded by v7.7.4 r1"
       }
     }
   },
@@ -35,20 +35,20 @@
     "node": "24.11.1",
     "engine": "simulation 9.0.0 (lab/vendor, enforced by lab/src/engine.js)",
     "golden": "lab/reference/accepted/series-digest.windows.json",
-    "golden_sha256": "9ac98f2e37007fd3e14043d4632130dc36531bba9545612982aa7790a7d227b7",
+    "golden_sha256": "60436744c5b3597a6db5ca23aa7176182b1d87bf3dbc6e586a964ae4dc5815b4",
     "verify": "cd lab && node --expose-gc src/cli.js series --modes=all --out=output/series && cd .. && node tools/verify_series.mjs lab/output/series/series-digest.json",
     "reason": "the model's ^ runs as Math.pow; Node's Math.pow rounds differently on Windows and Linux for some arguments (docs/tasks/006-cross-os/ACCEPTANCE_RU.md)"
   },
   "validation": {
-    "file": "validation/validation-v7.7.3.json",
-    "sha256": "a7bd29ba5cf3b77fd94af23a44e86011cd6d595d6c7ac8760e9a25707f2f3e3b",
-    "result": "Modes 0-35 PASS (36/36, 6912 checks) on the canonical platform, 2026-09-27"
+    "file": "validation/validation-v7.7.4.json",
+    "sha256": "f75eb9fa4cb93442726a4c01396f98259cdee3f591ff552cb1a18b08bf933ab0",
+    "result": "Modes 0-37 PASS (38/38, 8219 checks) on the canonical platform, 2026-09-27"
   },
   "strict_policy": {
-    "file": "policy/change-policy-v7.7.3-strict.json",
+    "file": "policy/change-policy-v7.7.4-strict.json",
     "default_action": "deny",
     "rules": 0,
-    "sha256": "b757a80f90f9dca56a7fe431599bad8c10c3e8b4c512368b5ffcda6b3cdd2995"
+    "sha256": "292481c670f9562171f79266421e86ab073f45694724d01bf391d21f8756cf5c"
   },
   "energy_kernel_v2": {
     "switch": "Power Resource Enabled",
@@ -62,18 +62,18 @@
     "mode25_calibration": "Power Resource Shock Factor = 0.5 since v7.6.1 (0.1 before): impact-matched to the Mode 26 capacity control; see docs/V7_6_1_CALIBRATION_REPORT.md"
   },
   "capital_lifecycle": {
-    "instances": 9,
+    "instances": 11,
     "non_conforming": 0,
     "result": "PASS (static)",
-    "kernel_v2_variations": 9,
-    "note": "v7.7.3: + A/B Construction Materials Plant (kernel-v2, no finance limit, as Power)"
+    "kernel_v2_variations": 11,
+    "note": "v7.7.3: + A/B Construction Materials Plant; v7.7.4: + A/B Capital Goods Plant (kernel-v2, no finance limit, as Power)"
   },
   "structure": {
-    "flows_total": 175,
-    "boundary_flows": 138,
+    "flows_total": 197,
+    "boundary_flows": 154,
     "unclassified": 0,
     "closed_world_violations": 0,
-    "transformation_pairs": 17,
+    "transformation_pairs": 19,
     "unpaired": 0,
     "symmetry_mismatches": 0,
     "symmetry_exceptions": 0,
@@ -81,46 +81,54 @@
     "result": "PASS (static)"
   },
   "regression": {
-    "base": "Orbital Economy v7.7.2 r1",
-    "base_sha256": "9bd5c956acccefddc3573b18d04e782d3cb329be89c1d297337b0831c04f2b45",
-    "modes": "0-33",
-    "design": "exact algebraic fallback under Construction Materials Capital Enabled = 0",
-    "result": "34 x common=1099, changed=0, added=69, maxAbs=0 on the canonical platform",
-    "change_policy": "docs/tasks/013-construction-materials-capital/candidate/change-policy.json: POLICY PASS, 2584 expected events, unexpected 0",
+    "base": "Orbital Economy v7.7.3 r1",
+    "base_sha256": "a620cc65b93f6faedf2303e16f10dd595a882c319403c0b1bd98b69c1f7ef173",
+    "modes": "0-35",
+    "design": "exact algebraic fallback under Capital Goods Capital Enabled = 0",
+    "result": "36 x common=1168, changed=0, added=76, maxAbs=0 on the canonical platform",
+    "change_policy": "docs/tasks/014-capital-goods-capital/candidate/change-policy.json: POLICY PASS, 2995 expected events, unexpected 0",
     "previous": {
-      "base": "Orbital Economy v7.7.1 r1",
-      "base_sha256": "d53d014d727a439694e103aafb49f87d4dbbb362e581414cbf4dc71a19646f93",
-      "modes": "0-31",
-      "design": "exact algebraic fallback under Construction Materials Energy Enabled = 0",
-      "result": "32 x common=1082, changed=0, added=17, maxAbs=0 on the canonical platform",
-      "change_policy": "docs/tasks/012-construction-materials-energy/candidate/change-policy.json: POLICY PASS, 662 expected events, unexpected 0",
+      "base": "Orbital Economy v7.7.2 r1",
+      "base_sha256": "9bd5c956acccefddc3573b18d04e782d3cb329be89c1d297337b0831c04f2b45",
+      "modes": "0-33",
+      "design": "exact algebraic fallback under Construction Materials Capital Enabled = 0",
+      "result": "34 x common=1099, changed=0, added=69, maxAbs=0 on the canonical platform",
+      "change_policy": "docs/tasks/013-construction-materials-capital/candidate/change-policy.json: POLICY PASS, 2584 expected events, unexpected 0",
       "previous": {
-        "base": "Orbital Economy v7.7 r1",
-        "base_sha256": "5bbc29b6e18caa64ec22267892b6cd0669649722c8fc029d8dba43a77a34d5a1",
-        "modes": "0-29",
-        "design": "exact algebraic fallback under Transport Construction Materials Enabled = 0",
-        "result": "30 x common=1070, changed=0, added=12, maxAbs=0 on the canonical platform",
-        "change_policy": "docs/tasks/009-transport-construction-materials/candidate/change-policy.json: POLICY PASS, 441 expected events, unexpected 0",
+        "base": "Orbital Economy v7.7.1 r1",
+        "base_sha256": "d53d014d727a439694e103aafb49f87d4dbbb362e581414cbf4dc71a19646f93",
+        "modes": "0-31",
+        "design": "exact algebraic fallback under Construction Materials Energy Enabled = 0",
+        "result": "32 x common=1082, changed=0, added=17, maxAbs=0 on the canonical platform",
+        "change_policy": "docs/tasks/012-construction-materials-energy/candidate/change-policy.json: POLICY PASS, 662 expected events, unexpected 0",
         "previous": {
-          "base": "Orbital Economy v7.6.1 r1",
-          "base_sha256": "16e8ca6c5719e67422e16a6ec1ea2724b6121a062200eaf91e81389a2a180cd1",
-          "modes": "0-26",
-          "design": "exact algebraic fallback under Construction Materials Enabled = 0",
-          "result": "27 x common=1004, changed=0, added=66, maxAbs=0 on the canonical platform",
-          "change_policy": "docs/tasks/008-construction-materials/candidate/change-policy.json: POLICY PASS, 2016 expected events, unexpected 0",
+          "base": "Orbital Economy v7.7 r1",
+          "base_sha256": "5bbc29b6e18caa64ec22267892b6cd0669649722c8fc029d8dba43a77a34d5a1",
+          "modes": "0-29",
+          "design": "exact algebraic fallback under Transport Construction Materials Enabled = 0",
+          "result": "30 x common=1070, changed=0, added=12, maxAbs=0 on the canonical platform",
+          "change_policy": "docs/tasks/009-transport-construction-materials/candidate/change-policy.json: POLICY PASS, 441 expected events, unexpected 0",
           "previous": {
-            "base": "Orbital Economy v7.6 r2",
-            "base_sha256": "a9573f5afe43d2ae2bf12fdc3066c983c264eba162e1d3fc1d5f11e3872f9e91",
-            "modes": "0-24,26",
-            "design": "only the value of Power Resource Shock Factor changed; the constant acts only in Mode 25",
-            "result": "26 × common=1004, changed=1 (the constant's own series, 0.1 -> 0.5), every other series identical; Mode 25: 639 series changed by design",
-            "change_policy": "docs/model_v7_6_1/change-policy-v7.6.1-mode25-calibration.json (r1.1): POLICY RESULT PASS, 667 expected events, unexpected 0, forbidden 0, required missing 0",
+            "base": "Orbital Economy v7.6.1 r1",
+            "base_sha256": "16e8ca6c5719e67422e16a6ec1ea2724b6121a062200eaf91e81389a2a180cd1",
+            "modes": "0-26",
+            "design": "exact algebraic fallback under Construction Materials Enabled = 0",
+            "result": "27 x common=1004, changed=0, added=66, maxAbs=0 on the canonical platform",
+            "change_policy": "docs/tasks/008-construction-materials/candidate/change-policy.json: POLICY PASS, 2016 expected events, unexpected 0",
             "previous": {
-              "base": "Orbital Economy v7.5.1 r1",
-              "base_sha256": "299216122552a6819e5ef6432f8dc51197cde7c0862de7a43edd8eef359aeeda",
-              "modes": "0-24",
-              "design": "exact algebraic fallback under Power Resource Enabled=0",
-              "result": "25 × common=963, changed=0, added=41, removed=0, maxAbs=0"
+              "base": "Orbital Economy v7.6 r2",
+              "base_sha256": "a9573f5afe43d2ae2bf12fdc3066c983c264eba162e1d3fc1d5f11e3872f9e91",
+              "modes": "0-24,26",
+              "design": "only the value of Power Resource Shock Factor changed; the constant acts only in Mode 25",
+              "result": "26 × common=1004, changed=1 (the constant's own series, 0.1 -> 0.5), every other series identical; Mode 25: 639 series changed by design",
+              "change_policy": "docs/model_v7_6_1/change-policy-v7.6.1-mode25-calibration.json (r1.1): POLICY RESULT PASS, 667 expected events, unexpected 0, forbidden 0, required missing 0",
+              "previous": {
+                "base": "Orbital Economy v7.5.1 r1",
+                "base_sha256": "299216122552a6819e5ef6432f8dc51197cde7c0862de7a43edd8eef359aeeda",
+                "modes": "0-24",
+                "design": "exact algebraic fallback under Power Resource Enabled=0",
+                "result": "25 × common=963, changed=0, added=41, removed=0, maxAbs=0"
+              }
             }
           }
         }
@@ -131,18 +139,18 @@
   "authority": "Accepted code wins; documentation in docs/ is aligned to this model as of 2026-09-26.",
   "accepted": "2026-09-27",
   "parameters": {
-    "total": 379,
-    "annotated": 209,
-    "asymmetric_pairs": 47,
+    "total": 401,
+    "annotated": 227,
+    "asymmetric_pairs": 49,
     "asymmetric_unannotated": 0
   },
   "repository": {
     "layout": "repo root is the accepted baseline; earlier baselines are commits and tags, not directories",
     "reference": {
-      "baseline": "orbital-economy-baseline-v7.7.2",
-      "path": "reference/v7.7.2",
-      "model_sha256": "9bd5c956acccefddc3573b18d04e782d3cb329be89c1d297337b0831c04f2b45",
-      "purpose": "exact regression base for Modes 0-33"
+      "baseline": "orbital-economy-baseline-v7.7.3",
+      "path": "reference/v7.7.3",
+      "model_sha256": "a620cc65b93f6faedf2303e16f10dd595a882c319403c0b1bd98b69c1f7ef173",
+      "purpose": "exact regression base for Modes 0-35"
     },
     "not_in_git": [
       "lab/node_modules (pinned by lab/package-lock.json, installed with lab/INSTALL.cmd)",
@@ -156,7 +164,8 @@
       "v7.7-r1",
       "v7.7.1-r1",
       "v7.7.2-r1",
-      "v7.7.3-r1"
+      "v7.7.3-r1",
+      "v7.7.4-r1"
     ]
   },
   "construction_materials": {
@@ -184,6 +193,16 @@
   "planet_v1": {
     "contract": "docs/PLANET_V1_CONTRACT_RU.md",
     "plugin": "planet_closure (report)",
-    "counters": "processes 17 + legacy 2; P2 9/8/0; P3 6/2/9/0; P4 0/6; P5 4/13; P6 4; reversibility 0"
+    "counters": "processes 17 + legacy 2; P2 11/6/0; P3 6/2/9/0; P4 0/6; P5 4/13; P6 4; reversibility 0"
+  },
+  "capital_goods_capital": {
+    "since": "v7.7.4",
+    "switch": "Capital Goods Capital Enabled",
+    "plant": "kernel-v2 capital-goods plant per colony, no finance limit, sized to the smoothed X Capital Goods Demand Signal stock; expansion from capital goods and construction materials",
+    "modes": [
+      36,
+      37
+    ],
+    "task": "docs/tasks/014-capital-goods-capital/"
   }
 }

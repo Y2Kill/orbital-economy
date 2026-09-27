@@ -1,8 +1,8 @@
 # Capital Lifecycle Kernel — формальная спецификация
 
-Статус: **CURRENT / current lifecycle contract carried into v7.7.3 r1** (обновлено 2026-09-25). Kernel-v1 remains the common lifecycle foundation; all seven accepted instances now use kernel-v2 physical Capital Goods backing.
-Модель: `Orbital Economy v7.7.3 r1 — Construction Materials Capital`, SHA-256 `a620cc65b93f6faedf2303e16f10dd595a882c319403c0b1bd98b69c1f7ef173`. Capital Lifecycle structure is inherited from accepted v7.5.1.
-Машинная форма контракта: plugin `capital_lifecycle_kernel` в `validation/validation-v7.7.3.json`; проверяющий код `lab/src/lifecycle_conformance.js` (static) и `lab/src/checks.js` (runtime). При расхождении машинная форма и accepted code имеют приоритет.
+Статус: **CURRENT / current lifecycle contract carried into v7.7.4 r1** (обновлено 2026-09-25). Kernel-v1 remains the common lifecycle foundation; all seven accepted instances now use kernel-v2 physical Capital Goods backing.
+Модель: `Orbital Economy v7.7.4 r1 — Capital Goods Capital`, SHA-256 `8a71fe6678c4fc6c532bb8e35b6006280ddb9639a69aed045a6ca25f516f1991`. Capital Lifecycle structure is inherited from accepted v7.5.1.
+Машинная форма контракта: plugin `capital_lifecycle_kernel` в `validation/validation-v7.7.4.json`; проверяющий код `lab/src/lifecycle_conformance.js` (static) и `lab/src/checks.js` (runtime). При расхождении машинная форма и accepted code имеют приоритет.
 
 ## 1. Зачем
 
@@ -123,7 +123,7 @@
 6. все 4 стока ≥ 0
 7. все 7 потоков ≥ 0
 
-Семь проверок × число экземпляров: 49 runtime-проверок на Mode при 7 экземплярах (v7.5.1–v7.7.2), 63 — при 9 (с v7.7.3).
+Семь проверок × число экземпляров: 49 runtime-проверок на Mode при 7 экземплярах (v7.5.1–v7.7.2), 63 — при 9 (v7.7.3), 77 — при 11 (с v7.7.4).
 
 ### 4.3 Что НЕ проверяется — намеренно
 
@@ -166,6 +166,8 @@
 | Transport | CONFORMING_WITH_VARIATION | kernel-v2 shared infrastructure; две physical consumption leg |
 | A Construction Materials Plant | CONFORMING_WITH_VARIATION | kernel-v2 (v7.7.3); нет `finance_limited_construction`; расширение читает `gap_limited_construction` напрямую |
 | B Construction Materials Plant | CONFORMING_WITH_VARIATION | то же |
+| A Capital Goods Plant | CONFORMING_WITH_VARIATION | kernel-v2 (v7.7.4); как завод стройматериалов; размер — по сигналу спроса на оборудование |
+| B Capital Goods Plant | CONFORMING_WITH_VARIATION | то же |
 
 Подробности: `docs/CAPITAL_LIFECYCLE_CONFORMANCE_REPORT.md`, mapping: `docs/CAPITAL_LIFECYCLE_SECTOR_MAPPING.md`.
 

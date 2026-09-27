@@ -1,17 +1,17 @@
 # Orbital Economy — реестр внешних параметров
 
-- generated: 2026-09-27T12:56:13.542Z
-- model: Orbital Economy v7.7.3 r1 — Construction Materials Capital — SHA-256 `a620cc65b93f6faedf2303e16f10dd595a882c319403c0b1bd98b69c1f7ef173`
-- annotations: docs/PARAMETER_ANNOTATIONS.json (SHA-256 `d3a81678a22f0a7082890b4bbc61d96828e3491d34b2923c613ccf044811ee1a`)
+- generated: 2026-09-27T17:48:27.025Z
+- model: Orbital Economy v7.7.4 r1 — Capital Goods Capital — SHA-256 `8a71fe6678c4fc6c532bb8e35b6006280ddb9639a69aed045a6ca25f516f1991`
+- annotations: docs/PARAMETER_ANNOTATIONS.json (SHA-256 `f00035a61da71b0dbc8be355c77677bffc1120e0d4ad9bec494a035c79ae04e4`)
 
 Всё, что модель не выводит сама: числовые константы, начальные запасы, переключатели, тестовые множители. Инвентарь сгенерирован из ModelJSON; аннотации («роль / что меняет / доказательство») ведутся вручную и версионируются вместе с baseline.
 
 ## Сводка
 
-- внешних величин: **379** (константы 255, начальные запасы 79, переключатели 10, тестовая обвязка 35)
-- по колониям: A 107, B 107, глобальные 165
-- аннотировано: **209 / 379** (55 %)
-- несимметричных пар A/B: **47**, из них без аннотации: **0**
+- внешних величин: **401** (константы 266, начальные запасы 89, переключатели 11, тестовая обвязка 35)
+- по колониям: A 112, B 112, глобальные 177
+- аннотировано: **227 / 401** (57 %)
+- несимметричных пар A/B: **49**, из них без аннотации: **0**
 
 ## Несимметричные пары A/B — что задаёт различия колоний
 
@@ -46,6 +46,8 @@
 | Test 8 Metal Demand Applies | Metal | 0 | 1 | При 1 разрешает существующий множитель Priority Stress Demand Multiplier; при 0 заменяет его точным нейтральным ×1. Сохраняет прежнюю одностороннюю семантику при зеркальной формуле A/B. |
 | Test 9 Metal Demand Applies | Metal | 0 | 1 | При 1 разрешает существующий множитель Two Industry Energy Stress Demand Multiplier; при 0 заменяет его точным нейтральным ×1. Сохраняет прежнюю одностороннюю семантику при зеркальной формуле A/B. |
 | Capital Goods Base Production Capacity | Other | 2 | 1 | Enters the soft production-capacity cap and is the quantity reduced by Mode 22 test wiring. |
+| Capital Goods Plant Active Capacity | Other | 2 | 1 | Starts active equal to installed capacity, preserving the prior base-capacity level before lifecycle adjustment; A/B are intentionally asymmetric (2 vs 1). |
+| Capital Goods Plant Installed Capacity | Other | 2 | 1 | Seeds lifecycle capital at the previously accepted base production capacity; A/B are intentionally asymmetric (2 vs 1). |
 | Construction Materials Base Production Capacity | Other | 3 | 2 | Caps local processing through the standard soft-cap function. |
 | Construction Materials Plant Active Capacity | Other | 3 | 2 | Starts active equal to installed capacity, preserving the prior base-capacity level before lifecycle adjustment; A/B are intentionally asymmetric (3 vs 2). |
 | Construction Materials Plant Installed Capacity | Other | 3 | 2 | Seeds lifecycle capital at the previously accepted base production capacity; A/B are intentionally asymmetric (3 vs 2). |
@@ -177,7 +179,10 @@
 | Refinery Installed Reserve Factor | constant | 1.15 | Отраслевая policy kernel капитала (1.15). | Не часть kernel-контракта — отраслевая параметризация (KERNEL_SPEC §4.3). Сравнение секторов: CAPITAL_LIFECYCLE_SECTOR_MAPPING, последняя таблица. |  |
 | Refinery Operating Reserve Factor | constant | 1.1 | Отраслевая policy kernel капитала (1.10). | Не часть kernel-контракта — отраслевая параметризация (KERNEL_SPEC §4.3). Сравнение секторов: CAPITAL_LIFECYCLE_SECTOR_MAPPING, последняя таблица. |  |
 | A Capital Goods Base Production Capacity | constant | 2 / 1 | Baseline maximum production scale of the A capital-goods sector. | Enters the soft production-capacity cap and is the quantity reduced by Mode 22 test wiring. | Start value 2 from V7_5_ARCHITECTURE_SPEC §2; calibration parameter without physical justification at this stage. |
+| A Capital Goods Demand Signal | initial_stock | 0.13 | Initial smoothed Capital Goods demand signal for colony A, value 0.13. | Seeds the lagged plant-sizing signal at day-0 demand instead of feeding instantaneous demand into Required Active Capacity. | V7_7_4_ARCHITECTURE_SPEC §1–§2. |
 | A Capital Goods Inventory | initial_stock | 30 | Initial local stock of abstract capital goods in colony A. | Provides initial working inventory before endogenous production and construction consumption settle. | Initial value 30 from the verified skeleton; calibration initial condition without physical justification at this stage. |
+| A Capital Goods Plant Active Capacity | initial_stock | 2 / 1 | Initial active capital-goods plant capacity for colony A, value 2. | Starts active equal to installed capacity, preserving the prior base-capacity level before lifecycle adjustment; A/B are intentionally asymmetric (2 vs 1). | V7_7_4_ARCHITECTURE_SPEC §2; same specified initial A/B capacities as Installed. |
+| A Capital Goods Plant Installed Capacity | initial_stock | 2 / 1 | Initial installed capital-goods plant capacity for colony A, value 2. | Seeds lifecycle capital at the previously accepted base production capacity; A/B are intentionally asymmetric (2 vs 1). | V7_7_4_ARCHITECTURE_SPEC §2 explicitly requires A=2, B=1 and mandatory annotation of the asymmetric pair. |
 | A Construction Materials Base Production Capacity | constant | 3 / 2 | [calib] fixed Construction Materials production capacity (3). | Caps local processing through the standard soft-cap function. | Owner skeleton feasibility value; candidate run to confirm baseline and Mode 28 shock. |
 | A Construction Materials Demand Signal | initial_stock | 0.14 | Initial smoothed Construction Materials demand signal for colony A, value 0.14. | Sets the startup state of the causal demand signal before endogenous adjustment. | V7_7_2_ARCHITECTURE_SPEC §2; owner skeleton initial value near day-0 demand ≈0.137. |
 | A Construction Materials Inventory | initial_stock | 30 | [calib] initial Construction Materials stock, value 30. | Sets initial construction buffer before local production settles. | Owner skeleton feasibility value; candidate run to confirm baseline fulfillment. |
@@ -193,7 +198,10 @@
 | A Test 4 Headroom Applies | constant | 0 / 1 | Флаг применимости legacy power headroom Mode 4 к колонии A; значение 0. | Оборачивает существующий общий power multiplier через IfThenElse(flag=1, multiplier, 1), сохраняя старую одностороннюю тестовую обвязку при зеркальной формуле. |  |
 | A Test 6 Headroom Applies | constant | 1 / 0 | Флаг применимости legacy power headroom Mode 6 к колонии A; значение 1. | Оборачивает существующий общий power multiplier через IfThenElse(flag=1, multiplier, 1), сохраняя старую одностороннюю тестовую обвязку при зеркальной формуле. |  |
 | B Capital Goods Base Production Capacity | constant | 1 / 2 | Baseline maximum production scale of the B capital-goods sector. | Enters the soft production-capacity cap and is the quantity reduced by Mode 22 test wiring. | Start value 1 from V7_5_ARCHITECTURE_SPEC §2; calibration parameter without physical justification at this stage. |
+| B Capital Goods Demand Signal | initial_stock | 0.13 | Initial smoothed Capital Goods demand signal for colony B, value 0.13. | Seeds the lagged plant-sizing signal at day-0 demand instead of feeding instantaneous demand into Required Active Capacity. | V7_7_4_ARCHITECTURE_SPEC §1–§2. |
 | B Capital Goods Inventory | initial_stock | 30 | Initial local stock of abstract capital goods in colony B. | Provides initial working inventory before endogenous production and construction consumption settle. | Initial value 30 from the verified skeleton; calibration initial condition without physical justification at this stage. |
+| B Capital Goods Plant Active Capacity | initial_stock | 1 / 2 | Initial active capital-goods plant capacity for colony B, value 1. | Starts active equal to installed capacity, preserving the prior base-capacity level before lifecycle adjustment; A/B are intentionally asymmetric (2 vs 1). | V7_7_4_ARCHITECTURE_SPEC §2; same specified initial A/B capacities as Installed. |
+| B Capital Goods Plant Installed Capacity | initial_stock | 1 / 2 | Initial installed capital-goods plant capacity for colony B, value 1. | Seeds lifecycle capital at the previously accepted base production capacity; A/B are intentionally asymmetric (2 vs 1). | V7_7_4_ARCHITECTURE_SPEC §2 explicitly requires A=2, B=1 and mandatory annotation of the asymmetric pair. |
 | B Construction Materials Base Production Capacity | constant | 2 / 3 | [calib] fixed Construction Materials production capacity (2). | Caps local processing through the standard soft-cap function. | Owner skeleton feasibility value; candidate run to confirm baseline and Mode 28 shock. |
 | B Construction Materials Demand Signal | initial_stock | 0.14 | Initial smoothed Construction Materials demand signal for colony B, value 0.14. | Sets the startup state of the causal demand signal before endogenous adjustment. | V7_7_2_ARCHITECTURE_SPEC §2; owner skeleton initial value near day-0 demand ≈0.137. |
 | B Construction Materials Inventory | initial_stock | 30 | [calib] initial Construction Materials stock, value 30. | Sets initial construction buffer before local production settles. | Owner skeleton feasibility value; candidate run to confirm baseline fulfillment. |
@@ -210,6 +218,17 @@
 | B Test 6 Headroom Applies | constant | 0 / 1 | Флаг применимости legacy power headroom Mode 6 к колонии B; значение 0. | Оборачивает существующий общий power multiplier через IfThenElse(flag=1, multiplier, 1), сохраняя старую одностороннюю тестовую обвязку при зеркальной формуле. |  |
 | Capital Goods Adjustment Time | constant | 20 | First-order inventory correction time for desired capital-goods production. | Controls how quickly production responds to the gap between target and actual capital-goods inventory. | Start value 20 days from V7_5_ARCHITECTURE_SPEC §2; calibration parameter. |
 | Capital Goods Buffer Days | constant | 1 | Soft-normalization buffer in Capital Goods Fulfillment = Inventory/(Inventory+Buffer). | Larger values reduce fulfillment for a given inventory and therefore slow all three local construction sectors proportionally. | Value 0.5 is explicitly fixed by V7_5_ARCHITECTURE_SPEC §2 after the skeleton showed Buffer=2 capped normal fulfillment near 0.86. |
+| Capital Goods Demand Signal Adjustment Time | constant | 3 | Capital Goods demand-signal adjustment time, value 3 days. | Controls lag between instantaneous Capital Goods demand and the plant sizing signal; this lag breaks the same-step demand -> required capacity -> desired expansion -> demand loop. | V7_7_4_ARCHITECTURE_SPEC §1–§2; owner skeleton uses the established demand-signal idiom. |
+| Capital Goods Plant Activation Time | constant | 20 | Construction Materials plant lifecycle parameter, value 20. | Controls reactivation speed of mothballed plant capacity. | V7_7_4_ARCHITECTURE_SPEC §2; owner-defined value verified on the pre-issue skeleton. |
+| Capital Goods Plant Capital Goods per Capacity | constant | 5 | Construction Materials plant lifecycle parameter, value 5. | Scales plant expansion into Capital Goods demand and physical consumption. | V7_7_4_ARCHITECTURE_SPEC §2; owner-defined value verified on the pre-issue skeleton. |
+| Capital Goods Plant Construction Materials per Capacity | constant | 5 | Construction Materials plant lifecycle parameter, value 5. | Scales plant expansion into Construction Materials demand and physical consumption. | V7_7_4_ARCHITECTURE_SPEC §2; owner-defined value verified on the pre-issue skeleton. |
+| Capital Goods Plant Construction Time | constant | 120 | Construction Materials plant lifecycle parameter, value 120. | Controls gap-limited construction rate. | V7_7_4_ARCHITECTURE_SPEC §2; owner-defined value verified on the pre-issue skeleton. |
+| Capital Goods Plant Decommissioning Time | constant | 540 | Construction Materials plant lifecycle parameter, value 540. | Controls dismantling completion rate. | V7_7_4_ARCHITECTURE_SPEC §2; owner-defined value verified on the pre-issue skeleton. |
+| Capital Goods Plant Depreciation Rate | constant | 0.0001 | Construction Materials plant lifecycle parameter, value 0.0001. | Controls physical attrition of installed and active plant capacity. | V7_7_4_ARCHITECTURE_SPEC §2; owner-defined value verified on the pre-issue skeleton. |
+| Capital Goods Plant Installed Reserve Factor | constant | 1.15 | Construction Materials plant lifecycle parameter, value 1.15. | Scales required active capacity into desired installed plant capacity. | V7_7_4_ARCHITECTURE_SPEC §2; owner-defined value verified on the pre-issue skeleton. |
+| Capital Goods Plant Mothball Time | constant | 10 | Construction Materials plant lifecycle parameter, value 10. | Controls deactivation speed of unneeded active plant capacity. | V7_7_4_ARCHITECTURE_SPEC §2; owner-defined value verified on the pre-issue skeleton. |
+| Capital Goods Plant Operating Reserve Factor | constant | 1.1 | Construction Materials plant lifecycle parameter, value 1.1. | Scales smoothed demand signal into required active plant capacity. | V7_7_4_ARCHITECTURE_SPEC §2; owner-defined value verified on the pre-issue skeleton. |
+| Capital Goods Plant Surplus Disposal Decision Time | constant | 240 | Construction Materials plant lifecycle parameter, value 240. | Controls delay before true surplus is committed to decommissioning. | V7_7_4_ARCHITECTURE_SPEC §2; owner-defined value verified on the pre-issue skeleton. |
 | Capital Goods Target Days | constant | 30 | Target inventory coverage for the capital-goods sector. | Raises or lowers desired equipment inventory relative to current desired construction demand. | Start value 30 days from V7_5_ARCHITECTURE_SPEC §2; calibration parameter, no physical justification at this stage. |
 | Construction Materials Adjustment Time | constant | 20 | Construction Materials inventory correction time. | Higher value slows production response to inventory gaps. | V7_7_ARCHITECTURE_SPEC §2; owner-defined non-[calib] value. |
 | Construction Materials Buffer Days | constant | 1 | Scale-free fulfillment buffer, days of demand. | Higher value lowers fulfillment for the same inventory coverage. | V7_7_ARCHITECTURE_SPEC §2; owner-defined non-[calib] value. |
@@ -267,6 +286,7 @@
 | Power Resource Scarcity Price Strength | constant | 4 | Resource scarcity price sensitivity. | Raises physical resource price as fulfillment falls. | v7.6 Energy Kernel v2 specification and Modes 25/26 validation contract. |
 | Power Resource Shock Factor | constant | 0.5 | Mode-25 test multiplier. | Creates a temporary A-only resource-supply shock; test wiring only. 0.5 (since v7.6.1; 0.1 before) keeps A energy at ~45 % of the no-shock control over the window and leaves the same capital scar as the Mode 26 capacity control; 0.1 was a cut-off (~7 %). | v7.6 Energy Kernel v2 specification and Modes 25/26 validation contract; calibration sweep in docs/V7_6_1_CALIBRATION_REPORT.md; Mode 25 check "A energy is rationed, not cut off". |
 | Power Strategic Reserve Fraction | constant | 0.05 | Отраслевая policy kernel капитала (0.05). | Не часть kernel-контракта — отраслевая параметризация (KERNEL_SPEC §4.3). Сравнение секторов: CAPITAL_LIFECYCLE_SECTOR_MAPPING, последняя таблица. |  |
+| Capital Goods Capital Enabled | switch | 1 | v7.7.4 Construction Materials plant-capital master switch (value 1). | 0 preserves Modes 0-33 exactly; 1 makes production capacity read lifecycle plant active capacity and enables plant expansion demand/sinks. | V7_7_4_ARCHITECTURE_SPEC §0–§3. |
 | Capital Goods Enabled | switch | 1 | Master switch for v7.5 physical backing of Refinery / Electronics / Power expansion. | 0 preserves accepted v7.4.1 behavior exactly; 1 enables local capital-goods production, inventory fulfillment and physical consumption. | Architecture control parameter from V7_5_ARCHITECTURE_SPEC §0/§2; Modes 0–20 explicitly set 0, Modes 21–23 set 1. |
 | Capital Lifecycle Enabled | switch | 1 | Переключатель v7.3 (1 в сыром файле; 0 в Modes 0–11; 1 в 12–20). | При 0 — Electronics/Power используют фиксированные legacy-мощности (v7.2 r4 бит-в-бит); при 1 — полный kernel капитала для Electronics и Power. К Refinery/Transport не применяется и применяться не должен (KERNEL_SPEC §5). | V7_3_R2_VALIDATION_REPORT §2. |
 | Construction Materials Capital Enabled | switch | 1 | v7.7.3 Construction Materials plant-capital master switch (value 1). | 0 preserves Modes 0-33 exactly; 1 makes production capacity read lifecycle plant active capacity and enables plant expansion demand/sinks. | V7_7_3_ARCHITECTURE_SPEC §0–§3. |
@@ -495,7 +515,12 @@
 |---|---|---|---:|---:|---|:---:|
 | A Base Markup | constant | A | 0.15 | = |  |  |
 | A Capital Goods Base Production Capacity | constant | A | 2 | **1** | Baseline production capacity of the A capital-goods sector. | ✓ |
+| A Capital Goods Demand Signal | initial_stock | A | 0.13 | = | Smoothed Capital Goods demand signal for colony A; breaks same-step plant-demand causality. | ✓ |
 | A Capital Goods Inventory | initial_stock | A | 30 | = | Local inventory of abstract capital goods in colony A; initial calibration value. | ✓ |
+| A Capital Goods Plant Active Capacity | initial_stock | A | 2 | **1** | Operational capital-goods production capacity in colony A. | ✓ |
+| A Capital Goods Plant Decommissioning Capacity | initial_stock | A | 0 | = | Construction-materials plant capacity committed to decommissioning in colony A. |  |
+| A Capital Goods Plant Installed Capacity | initial_stock | A | 2 | **1** | Physical installed capital-goods production capacity in colony A. | ✓ |
+| A Capital Goods Plant Retired Capacity | initial_stock | A | 0 | = | Cumulative retired capital-goods plant capacity in colony A. |  |
 | A Construction Materials Base Production Capacity | constant | A | 3 | **2** | [calib] Baseline Construction Materials production capacity in colony A. | ✓ |
 | A Construction Materials Demand Signal | initial_stock | A | 0.14 | = | Smoothed Construction Materials demand signal for colony A; breaks same-step allocator causality. | ✓ |
 | A Construction Materials Inventory | initial_stock | A | 30 | = | [calib] Local Construction Materials inventory in colony A. | ✓ |
@@ -515,7 +540,12 @@
 | A Test 6 Headroom Applies | constant | A | 1 | **0** | Applicability flag for symmetric power test wiring. | ✓ |
 | B Base Markup | constant | B | 0.15 | = |  |  |
 | B Capital Goods Base Production Capacity | constant | B | 1 | **2** | Baseline production capacity of the B capital-goods sector. | ✓ |
+| B Capital Goods Demand Signal | initial_stock | B | 0.13 | = | Smoothed Capital Goods demand signal for colony B; breaks same-step plant-demand causality. | ✓ |
 | B Capital Goods Inventory | initial_stock | B | 30 | = | Local inventory of abstract capital goods in colony B; initial calibration value. | ✓ |
+| B Capital Goods Plant Active Capacity | initial_stock | B | 1 | **2** | Operational capital-goods production capacity in colony B. | ✓ |
+| B Capital Goods Plant Decommissioning Capacity | initial_stock | B | 0 | = | Construction-materials plant capacity committed to decommissioning in colony B. |  |
+| B Capital Goods Plant Installed Capacity | initial_stock | B | 1 | **2** | Physical installed capital-goods production capacity in colony B. | ✓ |
+| B Capital Goods Plant Retired Capacity | initial_stock | B | 0 | = | Cumulative retired capital-goods plant capacity in colony B. |  |
 | B Construction Materials Base Production Capacity | constant | B | 2 | **3** | [calib] Baseline Construction Materials production capacity in colony B. | ✓ |
 | B Construction Materials Demand Signal | initial_stock | B | 0.14 | = | Smoothed Construction Materials demand signal for colony B; breaks same-step allocator causality. | ✓ |
 | B Construction Materials Inventory | initial_stock | B | 30 | = | [calib] Local Construction Materials inventory in colony B. | ✓ |
@@ -536,6 +566,17 @@
 | Base Handling Cost | constant | global | 1 |  | Loading/unloading and other per-tonne cost independent of travel duration. |  |
 | Capital Goods Adjustment Time | constant | global | 20 |  | First-order inventory correction time for desired capital-goods production. | ✓ |
 | Capital Goods Buffer Days | constant | global | 1 |  | v7.5 scale-free fulfillment half-saturation buffer, expressed in days of current capital-goods demand. | ✓ |
+| Capital Goods Demand Signal Adjustment Time | constant | global | 3 |  | Adjustment time for the smoothed Capital Goods demand signal. | ✓ |
+| Capital Goods Plant Activation Time | constant | global | 20 |  | Days to reactivate mothballed capital-goods plant capacity. | ✓ |
+| Capital Goods Plant Capital Goods per Capacity | constant | global | 5 |  | Capital Goods consumed per unit of new capital-goods plant capacity. | ✓ |
+| Capital Goods Plant Construction Materials per Capacity | constant | global | 5 |  | Construction Materials consumed per unit of new capital-goods plant capacity. | ✓ |
+| Capital Goods Plant Construction Time | constant | global | 120 |  | Physical timescale for closing an installed capital-goods plant capacity shortage. | ✓ |
+| Capital Goods Plant Decommissioning Time | constant | global | 540 |  | Physical timescale from decommissioning commitment to retirement. | ✓ |
+| Capital Goods Plant Depreciation Rate | constant | global | 0.0001 |  | Daily physical depreciation rate of capital-goods plant capacity. | ✓ |
+| Capital Goods Plant Installed Reserve Factor | constant | global | 1.15 |  | Desired installed plant capacity multiplier over required active capacity. | ✓ |
+| Capital Goods Plant Mothball Time | constant | global | 10 |  | Days to mothball unneeded active capital-goods plant capacity. | ✓ |
+| Capital Goods Plant Operating Reserve Factor | constant | global | 1.1 |  | Required active plant capacity multiplier over the smoothed construction-materials demand signal. | ✓ |
+| Capital Goods Plant Surplus Disposal Decision Time | constant | global | 240 |  | Decision timescale before true surplus plant capacity enters decommissioning. | ✓ |
 | Capital Goods Target Days | constant | global | 30 |  | Target inventory coverage for the capital-goods sector, in days of desired demand. | ✓ |
 | Construction Materials Adjustment Time | constant | global | 20 |  | First-order inventory correction time for desired Construction Materials production. | ✓ |
 | Construction Materials Buffer Days | constant | global | 1 |  | Scale-free Construction Materials fulfillment half-saturation buffer in days of current demand. | ✓ |
@@ -620,6 +661,7 @@
 
 | Параметр | Вид | Колония | Значение | Зеркало | Описание в модели | Аннотация |
 |---|---|---|---:|---:|---|:---:|
+| Capital Goods Capital Enabled | switch | global | 1 (сценарии: {"0":0,"1":0,"2":0,"3":0,"4":0,"5":0,"6":0,"7":0,"8":0,"9":0…) |  | v7.7.4 switch: enables capital-goods production capacity as lifecycle capital. | ✓ |
 | Capital Goods Enabled | switch | global | 1 (сценарии: {"0":0,"1":0,"2":0,"3":0,"4":0,"5":0,"6":0,"7":0,"8":0,"9":0…) |  | v7.5 master switch: capital expansion is fulfilled from locally produced capital goods. | ✓ |
 | Capital Lifecycle Enabled | switch | global | 1 (сценарии: {"0":0,"1":0,"2":0,"3":0,"4":0,"5":0,"6":0,"7":0,"8":0,"9":0…) |  | Master switch for the v7.3 Electronics and Energy capital lifecycle. Normal/raw model default is enabled. Accepted v7.2 regression scenarios 0-11 explicitly override it to 0; v7.3 scenarios 12+ set it to 1. | ✓ |
 | Construction Materials Capital Enabled | switch | global | 1 (сценарии: {"0":0,"1":0,"2":0,"3":0,"4":0,"5":0,"6":0,"7":0,"8":0,"9":0…) |  | v7.7.3 switch: enables construction-materials processing capacity as lifecycle capital. | ✓ |

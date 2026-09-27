@@ -1,5 +1,5 @@
 {
-  "name": "Orbital Economy v7.7.3 validation r1",
+  "name": "Orbital Economy v7.7.4 validation r1",
   "mode_variable": "Timed Test Mode",
   "expected_time_step": 0.25,
   "time_step_tolerance": 1e-12,
@@ -42,7 +42,9 @@
     30,
     31,
     32,
-    33
+    33,
+    34,
+    35
   ],
   "regression_tolerance": 0,
   "plugins": [
@@ -399,6 +401,80 @@
           },
           "kernel_version": 2,
           "policy_notes": "v7.7.3: no finance_limited_construction (construction materials have no market price, as Power); sized to the smoothed construction-materials demand signal; expansion gated by Construction Materials Capital Enabled (not the legacy switch)."
+        },
+        {
+          "name": "A Capital Goods Plant",
+          "sector": "Capital Goods Plant",
+          "switch_gated": false,
+          "roles": {
+            "installed": "A Capital Goods Plant Installed Capacity",
+            "active": "A Capital Goods Plant Active Capacity",
+            "inactive": "A Capital Goods Plant Inactive Capacity",
+            "decommissioning": "A Capital Goods Plant Decommissioning Capacity",
+            "retired": "A Capital Goods Plant Retired Capacity",
+            "lifetime": "A Capital Goods Plant Lifetime Capacity Account",
+            "required_active": "A Capital Goods Plant Required Active Capacity",
+            "target_active": "A Capital Goods Plant Target Active Capacity",
+            "desired_installed": "A Capital Goods Plant Desired Installed Capacity",
+            "activation_gap": "A Capital Goods Plant Activation Gap",
+            "mothball_gap": "A Capital Goods Plant Mothball Gap",
+            "installed_shortage": "A Capital Goods Plant Installed Capacity Shortage",
+            "installed_excess": "A Capital Goods Plant Installed Capacity Excess",
+            "gap_limited_construction": "A Capital Goods Plant Gap Limited Construction",
+            "activation_queue": "A Capital Goods Plant Activation Queue Capacity",
+            "inactive_after_activation_queue": "A Capital Goods Plant Inactive After Activation Queue",
+            "strategic_reserve_target": "A Capital Goods Plant Strategic Reserve Target",
+            "strategic_reserve": "A Capital Goods Plant Strategic Reserve Capacity",
+            "surplus": "A Capital Goods Plant Surplus Capacity",
+            "activation": "A Capital Goods Plant Activation",
+            "mothballing": "A Capital Goods Plant Mothballing",
+            "active_depreciation": "A Capital Goods Plant Active Depreciation",
+            "expansion": "A Capital Goods Plant Expansion",
+            "decommissioning_initiation": "A Capital Goods Plant Decommissioning Initiation",
+            "installed_depreciation": "A Capital Goods Plant Depreciation",
+            "dismantling_completion": "A Capital Goods Plant Dismantling Completion",
+            "desired_expansion": "A Capital Goods Plant Desired Expansion",
+            "capital_goods_consumption": "A Capital Goods Plant Capital Goods Consumption"
+          },
+          "kernel_version": 2,
+          "policy_notes": "v7.7.4: no finance_limited_construction (as Power and the construction-materials plant); sized to the smoothed capital-goods demand signal; expansion gated by Capital Goods Capital Enabled (not the legacy switch)."
+        },
+        {
+          "name": "B Capital Goods Plant",
+          "sector": "Capital Goods Plant",
+          "switch_gated": false,
+          "roles": {
+            "installed": "B Capital Goods Plant Installed Capacity",
+            "active": "B Capital Goods Plant Active Capacity",
+            "inactive": "B Capital Goods Plant Inactive Capacity",
+            "decommissioning": "B Capital Goods Plant Decommissioning Capacity",
+            "retired": "B Capital Goods Plant Retired Capacity",
+            "lifetime": "B Capital Goods Plant Lifetime Capacity Account",
+            "required_active": "B Capital Goods Plant Required Active Capacity",
+            "target_active": "B Capital Goods Plant Target Active Capacity",
+            "desired_installed": "B Capital Goods Plant Desired Installed Capacity",
+            "activation_gap": "B Capital Goods Plant Activation Gap",
+            "mothball_gap": "B Capital Goods Plant Mothball Gap",
+            "installed_shortage": "B Capital Goods Plant Installed Capacity Shortage",
+            "installed_excess": "B Capital Goods Plant Installed Capacity Excess",
+            "gap_limited_construction": "B Capital Goods Plant Gap Limited Construction",
+            "activation_queue": "B Capital Goods Plant Activation Queue Capacity",
+            "inactive_after_activation_queue": "B Capital Goods Plant Inactive After Activation Queue",
+            "strategic_reserve_target": "B Capital Goods Plant Strategic Reserve Target",
+            "strategic_reserve": "B Capital Goods Plant Strategic Reserve Capacity",
+            "surplus": "B Capital Goods Plant Surplus Capacity",
+            "activation": "B Capital Goods Plant Activation",
+            "mothballing": "B Capital Goods Plant Mothballing",
+            "active_depreciation": "B Capital Goods Plant Active Depreciation",
+            "expansion": "B Capital Goods Plant Expansion",
+            "decommissioning_initiation": "B Capital Goods Plant Decommissioning Initiation",
+            "installed_depreciation": "B Capital Goods Plant Depreciation",
+            "dismantling_completion": "B Capital Goods Plant Dismantling Completion",
+            "desired_expansion": "B Capital Goods Plant Desired Expansion",
+            "capital_goods_consumption": "B Capital Goods Plant Capital Goods Consumption"
+          },
+          "kernel_version": 2,
+          "policy_notes": "v7.7.4: no finance_limited_construction (as Power and the construction-materials plant); sized to the smoothed capital-goods demand signal; expansion gated by Capital Goods Capital Enabled (not the legacy switch)."
         }
       ]
     },
@@ -516,9 +592,12 @@
             "B Transport Construction Materials Consumption",
             "? Construction Materials Plant Expansion",
             "? Construction Materials Plant Capital Goods Consumption",
-            "? Construction Materials Plant Construction Materials Consumption"
+            "? Construction Materials Plant Construction Materials Consumption",
+            "? Capital Goods Plant Expansion",
+            "? Capital Goods Plant Capital Goods Consumption",
+            "? Capital Goods Plant Construction Materials Consumption"
           ],
-          "reason": "v7.5/v7.5.1: installed capital expansion is a unit transformation of Capital Goods; regional sectors use one local sink, shared Transport uses two A/B regional sinks whose total identity is checked at runtime. v7.7: colonial sector expansion is additionally backed by a local Construction Materials sink. v7.7.1: shared Transport expansion is additionally backed by construction materials from both A and B inventories (two legs). v7.7.3: construction-materials plant expansion is backed by local capital goods and construction materials.",
+          "reason": "v7.5/v7.5.1: installed capital expansion is a unit transformation of Capital Goods; regional sectors use one local sink, shared Transport uses two A/B regional sinks whose total identity is checked at runtime. v7.7: colonial sector expansion is additionally backed by a local Construction Materials sink. v7.7.1: shared Transport expansion is additionally backed by construction materials from both A and B inventories (two legs). v7.7.3: construction-materials plant expansion is backed by local capital goods and construction materials. v7.7.4: capital-goods plant expansion is backed by local capital goods and construction materials.",
           "requires_pair": true
         },
         {
@@ -684,6 +763,22 @@
             "B Construction Materials Plant Construction Materials Consumption"
           ],
           "identity": "B Construction Materials Plant capital goods pair identity"
+        },
+        {
+          "source": "A Capital Goods Plant Expansion",
+          "sinks": [
+            "A Capital Goods Plant Capital Goods Consumption",
+            "A Capital Goods Plant Construction Materials Consumption"
+          ],
+          "identity": "A Capital Goods Plant capital goods pair identity"
+        },
+        {
+          "source": "B Capital Goods Plant Expansion",
+          "sinks": [
+            "B Capital Goods Plant Capital Goods Consumption",
+            "B Capital Goods Plant Construction Materials Consumption"
+          ],
+          "identity": "B Capital Goods Plant capital goods pair identity"
         }
       ]
     },
@@ -700,7 +795,7 @@
     {
       "type": "planet_closure",
       "enforce": "report",
-      "note": "Planet v1 contract (docs/PLANET_V1_CONTRACT_RU.md) declaration for accepted v7.7.1 r1. Counters P2-P6 are measured per declared process. {C} expands to each colony token; a process without {C} is shared. v7.7.2: construction-materials processing requests energy (P3 exceptions 11 -> 9). v7.7.3: construction-materials capacity is capital on the lifecycle kernel (P2 exceptions 10 -> 8).",
+      "note": "Planet v1 contract (docs/PLANET_V1_CONTRACT_RU.md) declaration for accepted v7.7.1 r1. Counters P2-P6 are measured per declared process. {C} expands to each colony token; a process without {C} is shared. v7.7.2: construction-materials processing requests energy (P3 exceptions 11 -> 9). v7.7.3: construction-materials capacity is capital on the lifecycle kernel (P2 exceptions 10 -> 8). v7.7.4: capital-goods capacity is capital on the lifecycle kernel (P2 exceptions 8 -> 6).",
       "colonies": [
         "A",
         "B"
@@ -788,9 +883,8 @@
           "kind": "transformation",
           "output": "{C} Capital Goods Production",
           "capacity": {
-            "kind": "constant",
-            "parameter": "{C} Capital Goods Base Production Capacity",
-            "reason": "v7.5 fixed capital-goods capacity; no capital-goods-industry capital yet (P2)"
+            "kind": "kernel",
+            "stock": "{C} Capital Goods Plant Active Capacity"
           },
           "energy": {
             "kind": "none",
@@ -1492,6 +1586,110 @@
             }
           ],
           "note": "v7.7.3 switch is explicitly off in Modes 0-33; Mode 28 is excluded because its accepted shock multiplier changes effective capacity."
+        },
+        {
+          "type": "metric",
+          "name": "Mode 0: A CG plant expansion off",
+          "column": "A Capital Goods Plant Expansion",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 0: A CG plant desired expansion off",
+          "column": "A Capital Goods Plant Desired Expansion",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 0: A CG plant Capital Goods consumption off",
+          "column": "A Capital Goods Plant Capital Goods Consumption",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 0: A CG plant Construction Materials consumption off",
+          "column": "A Capital Goods Plant Construction Materials Consumption",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "identity",
+          "name": "Mode 0: A CG production capacity equals legacy base capacity",
+          "abs_tol": 1e-8,
+          "terms": [
+            {
+              "column": "A Capital Goods Production Capacity",
+              "coef": 1
+            },
+            {
+              "column": "A Capital Goods Base Production Capacity",
+              "coef": -1
+            }
+          ],
+          "note": "v7.7.4 switch is explicitly off in Modes 0-35; Mode 22 is excluded because its accepted shock multiplier changes effective capacity."
+        },
+        {
+          "type": "metric",
+          "name": "Mode 0: B CG plant expansion off",
+          "column": "B Capital Goods Plant Expansion",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 0: B CG plant desired expansion off",
+          "column": "B Capital Goods Plant Desired Expansion",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 0: B CG plant Capital Goods consumption off",
+          "column": "B Capital Goods Plant Capital Goods Consumption",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 0: B CG plant Construction Materials consumption off",
+          "column": "B Capital Goods Plant Construction Materials Consumption",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "identity",
+          "name": "Mode 0: B CG production capacity equals legacy base capacity",
+          "abs_tol": 1e-8,
+          "terms": [
+            {
+              "column": "B Capital Goods Production Capacity",
+              "coef": 1
+            },
+            {
+              "column": "B Capital Goods Base Production Capacity",
+              "coef": -1
+            }
+          ],
+          "note": "v7.7.4 switch is explicitly off in Modes 0-35; Mode 22 is excluded because its accepted shock multiplier changes effective capacity."
         }
       ]
     },
@@ -2082,6 +2280,110 @@
             }
           ],
           "note": "v7.7.3 switch is explicitly off in Modes 0-33; Mode 28 is excluded because its accepted shock multiplier changes effective capacity."
+        },
+        {
+          "type": "metric",
+          "name": "Mode 1: A CG plant expansion off",
+          "column": "A Capital Goods Plant Expansion",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 1: A CG plant desired expansion off",
+          "column": "A Capital Goods Plant Desired Expansion",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 1: A CG plant Capital Goods consumption off",
+          "column": "A Capital Goods Plant Capital Goods Consumption",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 1: A CG plant Construction Materials consumption off",
+          "column": "A Capital Goods Plant Construction Materials Consumption",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "identity",
+          "name": "Mode 1: A CG production capacity equals legacy base capacity",
+          "abs_tol": 1e-8,
+          "terms": [
+            {
+              "column": "A Capital Goods Production Capacity",
+              "coef": 1
+            },
+            {
+              "column": "A Capital Goods Base Production Capacity",
+              "coef": -1
+            }
+          ],
+          "note": "v7.7.4 switch is explicitly off in Modes 0-35; Mode 22 is excluded because its accepted shock multiplier changes effective capacity."
+        },
+        {
+          "type": "metric",
+          "name": "Mode 1: B CG plant expansion off",
+          "column": "B Capital Goods Plant Expansion",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 1: B CG plant desired expansion off",
+          "column": "B Capital Goods Plant Desired Expansion",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 1: B CG plant Capital Goods consumption off",
+          "column": "B Capital Goods Plant Capital Goods Consumption",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 1: B CG plant Construction Materials consumption off",
+          "column": "B Capital Goods Plant Construction Materials Consumption",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "identity",
+          "name": "Mode 1: B CG production capacity equals legacy base capacity",
+          "abs_tol": 1e-8,
+          "terms": [
+            {
+              "column": "B Capital Goods Production Capacity",
+              "coef": 1
+            },
+            {
+              "column": "B Capital Goods Base Production Capacity",
+              "coef": -1
+            }
+          ],
+          "note": "v7.7.4 switch is explicitly off in Modes 0-35; Mode 22 is excluded because its accepted shock multiplier changes effective capacity."
         }
       ]
     },
@@ -2672,6 +2974,110 @@
             }
           ],
           "note": "v7.7.3 switch is explicitly off in Modes 0-33; Mode 28 is excluded because its accepted shock multiplier changes effective capacity."
+        },
+        {
+          "type": "metric",
+          "name": "Mode 2: A CG plant expansion off",
+          "column": "A Capital Goods Plant Expansion",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 2: A CG plant desired expansion off",
+          "column": "A Capital Goods Plant Desired Expansion",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 2: A CG plant Capital Goods consumption off",
+          "column": "A Capital Goods Plant Capital Goods Consumption",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 2: A CG plant Construction Materials consumption off",
+          "column": "A Capital Goods Plant Construction Materials Consumption",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "identity",
+          "name": "Mode 2: A CG production capacity equals legacy base capacity",
+          "abs_tol": 1e-8,
+          "terms": [
+            {
+              "column": "A Capital Goods Production Capacity",
+              "coef": 1
+            },
+            {
+              "column": "A Capital Goods Base Production Capacity",
+              "coef": -1
+            }
+          ],
+          "note": "v7.7.4 switch is explicitly off in Modes 0-35; Mode 22 is excluded because its accepted shock multiplier changes effective capacity."
+        },
+        {
+          "type": "metric",
+          "name": "Mode 2: B CG plant expansion off",
+          "column": "B Capital Goods Plant Expansion",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 2: B CG plant desired expansion off",
+          "column": "B Capital Goods Plant Desired Expansion",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 2: B CG plant Capital Goods consumption off",
+          "column": "B Capital Goods Plant Capital Goods Consumption",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 2: B CG plant Construction Materials consumption off",
+          "column": "B Capital Goods Plant Construction Materials Consumption",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "identity",
+          "name": "Mode 2: B CG production capacity equals legacy base capacity",
+          "abs_tol": 1e-8,
+          "terms": [
+            {
+              "column": "B Capital Goods Production Capacity",
+              "coef": 1
+            },
+            {
+              "column": "B Capital Goods Base Production Capacity",
+              "coef": -1
+            }
+          ],
+          "note": "v7.7.4 switch is explicitly off in Modes 0-35; Mode 22 is excluded because its accepted shock multiplier changes effective capacity."
         }
       ]
     },
@@ -3262,6 +3668,110 @@
             }
           ],
           "note": "v7.7.3 switch is explicitly off in Modes 0-33; Mode 28 is excluded because its accepted shock multiplier changes effective capacity."
+        },
+        {
+          "type": "metric",
+          "name": "Mode 3: A CG plant expansion off",
+          "column": "A Capital Goods Plant Expansion",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 3: A CG plant desired expansion off",
+          "column": "A Capital Goods Plant Desired Expansion",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 3: A CG plant Capital Goods consumption off",
+          "column": "A Capital Goods Plant Capital Goods Consumption",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 3: A CG plant Construction Materials consumption off",
+          "column": "A Capital Goods Plant Construction Materials Consumption",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "identity",
+          "name": "Mode 3: A CG production capacity equals legacy base capacity",
+          "abs_tol": 1e-8,
+          "terms": [
+            {
+              "column": "A Capital Goods Production Capacity",
+              "coef": 1
+            },
+            {
+              "column": "A Capital Goods Base Production Capacity",
+              "coef": -1
+            }
+          ],
+          "note": "v7.7.4 switch is explicitly off in Modes 0-35; Mode 22 is excluded because its accepted shock multiplier changes effective capacity."
+        },
+        {
+          "type": "metric",
+          "name": "Mode 3: B CG plant expansion off",
+          "column": "B Capital Goods Plant Expansion",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 3: B CG plant desired expansion off",
+          "column": "B Capital Goods Plant Desired Expansion",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 3: B CG plant Capital Goods consumption off",
+          "column": "B Capital Goods Plant Capital Goods Consumption",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 3: B CG plant Construction Materials consumption off",
+          "column": "B Capital Goods Plant Construction Materials Consumption",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "identity",
+          "name": "Mode 3: B CG production capacity equals legacy base capacity",
+          "abs_tol": 1e-8,
+          "terms": [
+            {
+              "column": "B Capital Goods Production Capacity",
+              "coef": 1
+            },
+            {
+              "column": "B Capital Goods Base Production Capacity",
+              "coef": -1
+            }
+          ],
+          "note": "v7.7.4 switch is explicitly off in Modes 0-35; Mode 22 is excluded because its accepted shock multiplier changes effective capacity."
         }
       ]
     },
@@ -3852,6 +4362,110 @@
             }
           ],
           "note": "v7.7.3 switch is explicitly off in Modes 0-33; Mode 28 is excluded because its accepted shock multiplier changes effective capacity."
+        },
+        {
+          "type": "metric",
+          "name": "Mode 4: A CG plant expansion off",
+          "column": "A Capital Goods Plant Expansion",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 4: A CG plant desired expansion off",
+          "column": "A Capital Goods Plant Desired Expansion",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 4: A CG plant Capital Goods consumption off",
+          "column": "A Capital Goods Plant Capital Goods Consumption",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 4: A CG plant Construction Materials consumption off",
+          "column": "A Capital Goods Plant Construction Materials Consumption",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "identity",
+          "name": "Mode 4: A CG production capacity equals legacy base capacity",
+          "abs_tol": 1e-8,
+          "terms": [
+            {
+              "column": "A Capital Goods Production Capacity",
+              "coef": 1
+            },
+            {
+              "column": "A Capital Goods Base Production Capacity",
+              "coef": -1
+            }
+          ],
+          "note": "v7.7.4 switch is explicitly off in Modes 0-35; Mode 22 is excluded because its accepted shock multiplier changes effective capacity."
+        },
+        {
+          "type": "metric",
+          "name": "Mode 4: B CG plant expansion off",
+          "column": "B Capital Goods Plant Expansion",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 4: B CG plant desired expansion off",
+          "column": "B Capital Goods Plant Desired Expansion",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 4: B CG plant Capital Goods consumption off",
+          "column": "B Capital Goods Plant Capital Goods Consumption",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 4: B CG plant Construction Materials consumption off",
+          "column": "B Capital Goods Plant Construction Materials Consumption",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "identity",
+          "name": "Mode 4: B CG production capacity equals legacy base capacity",
+          "abs_tol": 1e-8,
+          "terms": [
+            {
+              "column": "B Capital Goods Production Capacity",
+              "coef": 1
+            },
+            {
+              "column": "B Capital Goods Base Production Capacity",
+              "coef": -1
+            }
+          ],
+          "note": "v7.7.4 switch is explicitly off in Modes 0-35; Mode 22 is excluded because its accepted shock multiplier changes effective capacity."
         }
       ]
     },
@@ -4442,6 +5056,110 @@
             }
           ],
           "note": "v7.7.3 switch is explicitly off in Modes 0-33; Mode 28 is excluded because its accepted shock multiplier changes effective capacity."
+        },
+        {
+          "type": "metric",
+          "name": "Mode 5: A CG plant expansion off",
+          "column": "A Capital Goods Plant Expansion",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 5: A CG plant desired expansion off",
+          "column": "A Capital Goods Plant Desired Expansion",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 5: A CG plant Capital Goods consumption off",
+          "column": "A Capital Goods Plant Capital Goods Consumption",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 5: A CG plant Construction Materials consumption off",
+          "column": "A Capital Goods Plant Construction Materials Consumption",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "identity",
+          "name": "Mode 5: A CG production capacity equals legacy base capacity",
+          "abs_tol": 1e-8,
+          "terms": [
+            {
+              "column": "A Capital Goods Production Capacity",
+              "coef": 1
+            },
+            {
+              "column": "A Capital Goods Base Production Capacity",
+              "coef": -1
+            }
+          ],
+          "note": "v7.7.4 switch is explicitly off in Modes 0-35; Mode 22 is excluded because its accepted shock multiplier changes effective capacity."
+        },
+        {
+          "type": "metric",
+          "name": "Mode 5: B CG plant expansion off",
+          "column": "B Capital Goods Plant Expansion",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 5: B CG plant desired expansion off",
+          "column": "B Capital Goods Plant Desired Expansion",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 5: B CG plant Capital Goods consumption off",
+          "column": "B Capital Goods Plant Capital Goods Consumption",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 5: B CG plant Construction Materials consumption off",
+          "column": "B Capital Goods Plant Construction Materials Consumption",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "identity",
+          "name": "Mode 5: B CG production capacity equals legacy base capacity",
+          "abs_tol": 1e-8,
+          "terms": [
+            {
+              "column": "B Capital Goods Production Capacity",
+              "coef": 1
+            },
+            {
+              "column": "B Capital Goods Base Production Capacity",
+              "coef": -1
+            }
+          ],
+          "note": "v7.7.4 switch is explicitly off in Modes 0-35; Mode 22 is excluded because its accepted shock multiplier changes effective capacity."
         }
       ]
     },
@@ -5032,6 +5750,110 @@
             }
           ],
           "note": "v7.7.3 switch is explicitly off in Modes 0-33; Mode 28 is excluded because its accepted shock multiplier changes effective capacity."
+        },
+        {
+          "type": "metric",
+          "name": "Mode 6: A CG plant expansion off",
+          "column": "A Capital Goods Plant Expansion",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 6: A CG plant desired expansion off",
+          "column": "A Capital Goods Plant Desired Expansion",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 6: A CG plant Capital Goods consumption off",
+          "column": "A Capital Goods Plant Capital Goods Consumption",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 6: A CG plant Construction Materials consumption off",
+          "column": "A Capital Goods Plant Construction Materials Consumption",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "identity",
+          "name": "Mode 6: A CG production capacity equals legacy base capacity",
+          "abs_tol": 1e-8,
+          "terms": [
+            {
+              "column": "A Capital Goods Production Capacity",
+              "coef": 1
+            },
+            {
+              "column": "A Capital Goods Base Production Capacity",
+              "coef": -1
+            }
+          ],
+          "note": "v7.7.4 switch is explicitly off in Modes 0-35; Mode 22 is excluded because its accepted shock multiplier changes effective capacity."
+        },
+        {
+          "type": "metric",
+          "name": "Mode 6: B CG plant expansion off",
+          "column": "B Capital Goods Plant Expansion",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 6: B CG plant desired expansion off",
+          "column": "B Capital Goods Plant Desired Expansion",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 6: B CG plant Capital Goods consumption off",
+          "column": "B Capital Goods Plant Capital Goods Consumption",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 6: B CG plant Construction Materials consumption off",
+          "column": "B Capital Goods Plant Construction Materials Consumption",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "identity",
+          "name": "Mode 6: B CG production capacity equals legacy base capacity",
+          "abs_tol": 1e-8,
+          "terms": [
+            {
+              "column": "B Capital Goods Production Capacity",
+              "coef": 1
+            },
+            {
+              "column": "B Capital Goods Base Production Capacity",
+              "coef": -1
+            }
+          ],
+          "note": "v7.7.4 switch is explicitly off in Modes 0-35; Mode 22 is excluded because its accepted shock multiplier changes effective capacity."
         }
       ]
     },
@@ -5622,6 +6444,110 @@
             }
           ],
           "note": "v7.7.3 switch is explicitly off in Modes 0-33; Mode 28 is excluded because its accepted shock multiplier changes effective capacity."
+        },
+        {
+          "type": "metric",
+          "name": "Mode 7: A CG plant expansion off",
+          "column": "A Capital Goods Plant Expansion",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 7: A CG plant desired expansion off",
+          "column": "A Capital Goods Plant Desired Expansion",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 7: A CG plant Capital Goods consumption off",
+          "column": "A Capital Goods Plant Capital Goods Consumption",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 7: A CG plant Construction Materials consumption off",
+          "column": "A Capital Goods Plant Construction Materials Consumption",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "identity",
+          "name": "Mode 7: A CG production capacity equals legacy base capacity",
+          "abs_tol": 1e-8,
+          "terms": [
+            {
+              "column": "A Capital Goods Production Capacity",
+              "coef": 1
+            },
+            {
+              "column": "A Capital Goods Base Production Capacity",
+              "coef": -1
+            }
+          ],
+          "note": "v7.7.4 switch is explicitly off in Modes 0-35; Mode 22 is excluded because its accepted shock multiplier changes effective capacity."
+        },
+        {
+          "type": "metric",
+          "name": "Mode 7: B CG plant expansion off",
+          "column": "B Capital Goods Plant Expansion",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 7: B CG plant desired expansion off",
+          "column": "B Capital Goods Plant Desired Expansion",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 7: B CG plant Capital Goods consumption off",
+          "column": "B Capital Goods Plant Capital Goods Consumption",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 7: B CG plant Construction Materials consumption off",
+          "column": "B Capital Goods Plant Construction Materials Consumption",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "identity",
+          "name": "Mode 7: B CG production capacity equals legacy base capacity",
+          "abs_tol": 1e-8,
+          "terms": [
+            {
+              "column": "B Capital Goods Production Capacity",
+              "coef": 1
+            },
+            {
+              "column": "B Capital Goods Base Production Capacity",
+              "coef": -1
+            }
+          ],
+          "note": "v7.7.4 switch is explicitly off in Modes 0-35; Mode 22 is excluded because its accepted shock multiplier changes effective capacity."
         }
       ]
     },
@@ -6212,6 +7138,110 @@
             }
           ],
           "note": "v7.7.3 switch is explicitly off in Modes 0-33; Mode 28 is excluded because its accepted shock multiplier changes effective capacity."
+        },
+        {
+          "type": "metric",
+          "name": "Mode 8: A CG plant expansion off",
+          "column": "A Capital Goods Plant Expansion",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 8: A CG plant desired expansion off",
+          "column": "A Capital Goods Plant Desired Expansion",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 8: A CG plant Capital Goods consumption off",
+          "column": "A Capital Goods Plant Capital Goods Consumption",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 8: A CG plant Construction Materials consumption off",
+          "column": "A Capital Goods Plant Construction Materials Consumption",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "identity",
+          "name": "Mode 8: A CG production capacity equals legacy base capacity",
+          "abs_tol": 1e-8,
+          "terms": [
+            {
+              "column": "A Capital Goods Production Capacity",
+              "coef": 1
+            },
+            {
+              "column": "A Capital Goods Base Production Capacity",
+              "coef": -1
+            }
+          ],
+          "note": "v7.7.4 switch is explicitly off in Modes 0-35; Mode 22 is excluded because its accepted shock multiplier changes effective capacity."
+        },
+        {
+          "type": "metric",
+          "name": "Mode 8: B CG plant expansion off",
+          "column": "B Capital Goods Plant Expansion",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 8: B CG plant desired expansion off",
+          "column": "B Capital Goods Plant Desired Expansion",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 8: B CG plant Capital Goods consumption off",
+          "column": "B Capital Goods Plant Capital Goods Consumption",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 8: B CG plant Construction Materials consumption off",
+          "column": "B Capital Goods Plant Construction Materials Consumption",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "identity",
+          "name": "Mode 8: B CG production capacity equals legacy base capacity",
+          "abs_tol": 1e-8,
+          "terms": [
+            {
+              "column": "B Capital Goods Production Capacity",
+              "coef": 1
+            },
+            {
+              "column": "B Capital Goods Base Production Capacity",
+              "coef": -1
+            }
+          ],
+          "note": "v7.7.4 switch is explicitly off in Modes 0-35; Mode 22 is excluded because its accepted shock multiplier changes effective capacity."
         }
       ]
     },
@@ -6802,6 +7832,110 @@
             }
           ],
           "note": "v7.7.3 switch is explicitly off in Modes 0-33; Mode 28 is excluded because its accepted shock multiplier changes effective capacity."
+        },
+        {
+          "type": "metric",
+          "name": "Mode 9: A CG plant expansion off",
+          "column": "A Capital Goods Plant Expansion",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 9: A CG plant desired expansion off",
+          "column": "A Capital Goods Plant Desired Expansion",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 9: A CG plant Capital Goods consumption off",
+          "column": "A Capital Goods Plant Capital Goods Consumption",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 9: A CG plant Construction Materials consumption off",
+          "column": "A Capital Goods Plant Construction Materials Consumption",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "identity",
+          "name": "Mode 9: A CG production capacity equals legacy base capacity",
+          "abs_tol": 1e-8,
+          "terms": [
+            {
+              "column": "A Capital Goods Production Capacity",
+              "coef": 1
+            },
+            {
+              "column": "A Capital Goods Base Production Capacity",
+              "coef": -1
+            }
+          ],
+          "note": "v7.7.4 switch is explicitly off in Modes 0-35; Mode 22 is excluded because its accepted shock multiplier changes effective capacity."
+        },
+        {
+          "type": "metric",
+          "name": "Mode 9: B CG plant expansion off",
+          "column": "B Capital Goods Plant Expansion",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 9: B CG plant desired expansion off",
+          "column": "B Capital Goods Plant Desired Expansion",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 9: B CG plant Capital Goods consumption off",
+          "column": "B Capital Goods Plant Capital Goods Consumption",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 9: B CG plant Construction Materials consumption off",
+          "column": "B Capital Goods Plant Construction Materials Consumption",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "identity",
+          "name": "Mode 9: B CG production capacity equals legacy base capacity",
+          "abs_tol": 1e-8,
+          "terms": [
+            {
+              "column": "B Capital Goods Production Capacity",
+              "coef": 1
+            },
+            {
+              "column": "B Capital Goods Base Production Capacity",
+              "coef": -1
+            }
+          ],
+          "note": "v7.7.4 switch is explicitly off in Modes 0-35; Mode 22 is excluded because its accepted shock multiplier changes effective capacity."
         }
       ]
     },
@@ -7392,6 +8526,110 @@
             }
           ],
           "note": "v7.7.3 switch is explicitly off in Modes 0-33; Mode 28 is excluded because its accepted shock multiplier changes effective capacity."
+        },
+        {
+          "type": "metric",
+          "name": "Mode 10: A CG plant expansion off",
+          "column": "A Capital Goods Plant Expansion",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 10: A CG plant desired expansion off",
+          "column": "A Capital Goods Plant Desired Expansion",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 10: A CG plant Capital Goods consumption off",
+          "column": "A Capital Goods Plant Capital Goods Consumption",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 10: A CG plant Construction Materials consumption off",
+          "column": "A Capital Goods Plant Construction Materials Consumption",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "identity",
+          "name": "Mode 10: A CG production capacity equals legacy base capacity",
+          "abs_tol": 1e-8,
+          "terms": [
+            {
+              "column": "A Capital Goods Production Capacity",
+              "coef": 1
+            },
+            {
+              "column": "A Capital Goods Base Production Capacity",
+              "coef": -1
+            }
+          ],
+          "note": "v7.7.4 switch is explicitly off in Modes 0-35; Mode 22 is excluded because its accepted shock multiplier changes effective capacity."
+        },
+        {
+          "type": "metric",
+          "name": "Mode 10: B CG plant expansion off",
+          "column": "B Capital Goods Plant Expansion",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 10: B CG plant desired expansion off",
+          "column": "B Capital Goods Plant Desired Expansion",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 10: B CG plant Capital Goods consumption off",
+          "column": "B Capital Goods Plant Capital Goods Consumption",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 10: B CG plant Construction Materials consumption off",
+          "column": "B Capital Goods Plant Construction Materials Consumption",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "identity",
+          "name": "Mode 10: B CG production capacity equals legacy base capacity",
+          "abs_tol": 1e-8,
+          "terms": [
+            {
+              "column": "B Capital Goods Production Capacity",
+              "coef": 1
+            },
+            {
+              "column": "B Capital Goods Base Production Capacity",
+              "coef": -1
+            }
+          ],
+          "note": "v7.7.4 switch is explicitly off in Modes 0-35; Mode 22 is excluded because its accepted shock multiplier changes effective capacity."
         }
       ]
     },
@@ -7982,6 +9220,110 @@
             }
           ],
           "note": "v7.7.3 switch is explicitly off in Modes 0-33; Mode 28 is excluded because its accepted shock multiplier changes effective capacity."
+        },
+        {
+          "type": "metric",
+          "name": "Mode 11: A CG plant expansion off",
+          "column": "A Capital Goods Plant Expansion",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 11: A CG plant desired expansion off",
+          "column": "A Capital Goods Plant Desired Expansion",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 11: A CG plant Capital Goods consumption off",
+          "column": "A Capital Goods Plant Capital Goods Consumption",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 11: A CG plant Construction Materials consumption off",
+          "column": "A Capital Goods Plant Construction Materials Consumption",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "identity",
+          "name": "Mode 11: A CG production capacity equals legacy base capacity",
+          "abs_tol": 1e-8,
+          "terms": [
+            {
+              "column": "A Capital Goods Production Capacity",
+              "coef": 1
+            },
+            {
+              "column": "A Capital Goods Base Production Capacity",
+              "coef": -1
+            }
+          ],
+          "note": "v7.7.4 switch is explicitly off in Modes 0-35; Mode 22 is excluded because its accepted shock multiplier changes effective capacity."
+        },
+        {
+          "type": "metric",
+          "name": "Mode 11: B CG plant expansion off",
+          "column": "B Capital Goods Plant Expansion",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 11: B CG plant desired expansion off",
+          "column": "B Capital Goods Plant Desired Expansion",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 11: B CG plant Capital Goods consumption off",
+          "column": "B Capital Goods Plant Capital Goods Consumption",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 11: B CG plant Construction Materials consumption off",
+          "column": "B Capital Goods Plant Construction Materials Consumption",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "identity",
+          "name": "Mode 11: B CG production capacity equals legacy base capacity",
+          "abs_tol": 1e-8,
+          "terms": [
+            {
+              "column": "B Capital Goods Production Capacity",
+              "coef": 1
+            },
+            {
+              "column": "B Capital Goods Base Production Capacity",
+              "coef": -1
+            }
+          ],
+          "note": "v7.7.4 switch is explicitly off in Modes 0-35; Mode 22 is excluded because its accepted shock multiplier changes effective capacity."
         }
       ]
     },
@@ -8596,6 +9938,110 @@
             }
           ],
           "note": "v7.7.3 switch is explicitly off in Modes 0-33; Mode 28 is excluded because its accepted shock multiplier changes effective capacity."
+        },
+        {
+          "type": "metric",
+          "name": "Mode 12: A CG plant expansion off",
+          "column": "A Capital Goods Plant Expansion",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 12: A CG plant desired expansion off",
+          "column": "A Capital Goods Plant Desired Expansion",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 12: A CG plant Capital Goods consumption off",
+          "column": "A Capital Goods Plant Capital Goods Consumption",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 12: A CG plant Construction Materials consumption off",
+          "column": "A Capital Goods Plant Construction Materials Consumption",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "identity",
+          "name": "Mode 12: A CG production capacity equals legacy base capacity",
+          "abs_tol": 1e-8,
+          "terms": [
+            {
+              "column": "A Capital Goods Production Capacity",
+              "coef": 1
+            },
+            {
+              "column": "A Capital Goods Base Production Capacity",
+              "coef": -1
+            }
+          ],
+          "note": "v7.7.4 switch is explicitly off in Modes 0-35; Mode 22 is excluded because its accepted shock multiplier changes effective capacity."
+        },
+        {
+          "type": "metric",
+          "name": "Mode 12: B CG plant expansion off",
+          "column": "B Capital Goods Plant Expansion",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 12: B CG plant desired expansion off",
+          "column": "B Capital Goods Plant Desired Expansion",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 12: B CG plant Capital Goods consumption off",
+          "column": "B Capital Goods Plant Capital Goods Consumption",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 12: B CG plant Construction Materials consumption off",
+          "column": "B Capital Goods Plant Construction Materials Consumption",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "identity",
+          "name": "Mode 12: B CG production capacity equals legacy base capacity",
+          "abs_tol": 1e-8,
+          "terms": [
+            {
+              "column": "B Capital Goods Production Capacity",
+              "coef": 1
+            },
+            {
+              "column": "B Capital Goods Base Production Capacity",
+              "coef": -1
+            }
+          ],
+          "note": "v7.7.4 switch is explicitly off in Modes 0-35; Mode 22 is excluded because its accepted shock multiplier changes effective capacity."
         }
       ]
     },
@@ -9212,6 +10658,110 @@
             }
           ],
           "note": "v7.7.3 switch is explicitly off in Modes 0-33; Mode 28 is excluded because its accepted shock multiplier changes effective capacity."
+        },
+        {
+          "type": "metric",
+          "name": "Mode 13: A CG plant expansion off",
+          "column": "A Capital Goods Plant Expansion",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 13: A CG plant desired expansion off",
+          "column": "A Capital Goods Plant Desired Expansion",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 13: A CG plant Capital Goods consumption off",
+          "column": "A Capital Goods Plant Capital Goods Consumption",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 13: A CG plant Construction Materials consumption off",
+          "column": "A Capital Goods Plant Construction Materials Consumption",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "identity",
+          "name": "Mode 13: A CG production capacity equals legacy base capacity",
+          "abs_tol": 1e-8,
+          "terms": [
+            {
+              "column": "A Capital Goods Production Capacity",
+              "coef": 1
+            },
+            {
+              "column": "A Capital Goods Base Production Capacity",
+              "coef": -1
+            }
+          ],
+          "note": "v7.7.4 switch is explicitly off in Modes 0-35; Mode 22 is excluded because its accepted shock multiplier changes effective capacity."
+        },
+        {
+          "type": "metric",
+          "name": "Mode 13: B CG plant expansion off",
+          "column": "B Capital Goods Plant Expansion",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 13: B CG plant desired expansion off",
+          "column": "B Capital Goods Plant Desired Expansion",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 13: B CG plant Capital Goods consumption off",
+          "column": "B Capital Goods Plant Capital Goods Consumption",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 13: B CG plant Construction Materials consumption off",
+          "column": "B Capital Goods Plant Construction Materials Consumption",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "identity",
+          "name": "Mode 13: B CG production capacity equals legacy base capacity",
+          "abs_tol": 1e-8,
+          "terms": [
+            {
+              "column": "B Capital Goods Production Capacity",
+              "coef": 1
+            },
+            {
+              "column": "B Capital Goods Base Production Capacity",
+              "coef": -1
+            }
+          ],
+          "note": "v7.7.4 switch is explicitly off in Modes 0-35; Mode 22 is excluded because its accepted shock multiplier changes effective capacity."
         }
       ]
     },
@@ -9837,6 +11387,110 @@
             }
           ],
           "note": "v7.7.3 switch is explicitly off in Modes 0-33; Mode 28 is excluded because its accepted shock multiplier changes effective capacity."
+        },
+        {
+          "type": "metric",
+          "name": "Mode 14: A CG plant expansion off",
+          "column": "A Capital Goods Plant Expansion",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 14: A CG plant desired expansion off",
+          "column": "A Capital Goods Plant Desired Expansion",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 14: A CG plant Capital Goods consumption off",
+          "column": "A Capital Goods Plant Capital Goods Consumption",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 14: A CG plant Construction Materials consumption off",
+          "column": "A Capital Goods Plant Construction Materials Consumption",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "identity",
+          "name": "Mode 14: A CG production capacity equals legacy base capacity",
+          "abs_tol": 1e-8,
+          "terms": [
+            {
+              "column": "A Capital Goods Production Capacity",
+              "coef": 1
+            },
+            {
+              "column": "A Capital Goods Base Production Capacity",
+              "coef": -1
+            }
+          ],
+          "note": "v7.7.4 switch is explicitly off in Modes 0-35; Mode 22 is excluded because its accepted shock multiplier changes effective capacity."
+        },
+        {
+          "type": "metric",
+          "name": "Mode 14: B CG plant expansion off",
+          "column": "B Capital Goods Plant Expansion",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 14: B CG plant desired expansion off",
+          "column": "B Capital Goods Plant Desired Expansion",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 14: B CG plant Capital Goods consumption off",
+          "column": "B Capital Goods Plant Capital Goods Consumption",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 14: B CG plant Construction Materials consumption off",
+          "column": "B Capital Goods Plant Construction Materials Consumption",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "identity",
+          "name": "Mode 14: B CG production capacity equals legacy base capacity",
+          "abs_tol": 1e-8,
+          "terms": [
+            {
+              "column": "B Capital Goods Production Capacity",
+              "coef": 1
+            },
+            {
+              "column": "B Capital Goods Base Production Capacity",
+              "coef": -1
+            }
+          ],
+          "note": "v7.7.4 switch is explicitly off in Modes 0-35; Mode 22 is excluded because its accepted shock multiplier changes effective capacity."
         }
       ]
     },
@@ -10466,6 +12120,110 @@
             }
           ],
           "note": "v7.7.3 switch is explicitly off in Modes 0-33; Mode 28 is excluded because its accepted shock multiplier changes effective capacity."
+        },
+        {
+          "type": "metric",
+          "name": "Mode 15: A CG plant expansion off",
+          "column": "A Capital Goods Plant Expansion",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 15: A CG plant desired expansion off",
+          "column": "A Capital Goods Plant Desired Expansion",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 15: A CG plant Capital Goods consumption off",
+          "column": "A Capital Goods Plant Capital Goods Consumption",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 15: A CG plant Construction Materials consumption off",
+          "column": "A Capital Goods Plant Construction Materials Consumption",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "identity",
+          "name": "Mode 15: A CG production capacity equals legacy base capacity",
+          "abs_tol": 1e-8,
+          "terms": [
+            {
+              "column": "A Capital Goods Production Capacity",
+              "coef": 1
+            },
+            {
+              "column": "A Capital Goods Base Production Capacity",
+              "coef": -1
+            }
+          ],
+          "note": "v7.7.4 switch is explicitly off in Modes 0-35; Mode 22 is excluded because its accepted shock multiplier changes effective capacity."
+        },
+        {
+          "type": "metric",
+          "name": "Mode 15: B CG plant expansion off",
+          "column": "B Capital Goods Plant Expansion",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 15: B CG plant desired expansion off",
+          "column": "B Capital Goods Plant Desired Expansion",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 15: B CG plant Capital Goods consumption off",
+          "column": "B Capital Goods Plant Capital Goods Consumption",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 15: B CG plant Construction Materials consumption off",
+          "column": "B Capital Goods Plant Construction Materials Consumption",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "identity",
+          "name": "Mode 15: B CG production capacity equals legacy base capacity",
+          "abs_tol": 1e-8,
+          "terms": [
+            {
+              "column": "B Capital Goods Production Capacity",
+              "coef": 1
+            },
+            {
+              "column": "B Capital Goods Base Production Capacity",
+              "coef": -1
+            }
+          ],
+          "note": "v7.7.4 switch is explicitly off in Modes 0-35; Mode 22 is excluded because its accepted shock multiplier changes effective capacity."
         }
       ]
     },
@@ -11074,6 +12832,110 @@
             }
           ],
           "note": "v7.7.3 switch is explicitly off in Modes 0-33; Mode 28 is excluded because its accepted shock multiplier changes effective capacity."
+        },
+        {
+          "type": "metric",
+          "name": "Mode 16: A CG plant expansion off",
+          "column": "A Capital Goods Plant Expansion",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 16: A CG plant desired expansion off",
+          "column": "A Capital Goods Plant Desired Expansion",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 16: A CG plant Capital Goods consumption off",
+          "column": "A Capital Goods Plant Capital Goods Consumption",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 16: A CG plant Construction Materials consumption off",
+          "column": "A Capital Goods Plant Construction Materials Consumption",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "identity",
+          "name": "Mode 16: A CG production capacity equals legacy base capacity",
+          "abs_tol": 1e-8,
+          "terms": [
+            {
+              "column": "A Capital Goods Production Capacity",
+              "coef": 1
+            },
+            {
+              "column": "A Capital Goods Base Production Capacity",
+              "coef": -1
+            }
+          ],
+          "note": "v7.7.4 switch is explicitly off in Modes 0-35; Mode 22 is excluded because its accepted shock multiplier changes effective capacity."
+        },
+        {
+          "type": "metric",
+          "name": "Mode 16: B CG plant expansion off",
+          "column": "B Capital Goods Plant Expansion",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 16: B CG plant desired expansion off",
+          "column": "B Capital Goods Plant Desired Expansion",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 16: B CG plant Capital Goods consumption off",
+          "column": "B Capital Goods Plant Capital Goods Consumption",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 16: B CG plant Construction Materials consumption off",
+          "column": "B Capital Goods Plant Construction Materials Consumption",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "identity",
+          "name": "Mode 16: B CG production capacity equals legacy base capacity",
+          "abs_tol": 1e-8,
+          "terms": [
+            {
+              "column": "B Capital Goods Production Capacity",
+              "coef": 1
+            },
+            {
+              "column": "B Capital Goods Base Production Capacity",
+              "coef": -1
+            }
+          ],
+          "note": "v7.7.4 switch is explicitly off in Modes 0-35; Mode 22 is excluded because its accepted shock multiplier changes effective capacity."
         }
       ]
     },
@@ -11800,6 +13662,110 @@
             }
           ],
           "note": "v7.7.3 switch is explicitly off in Modes 0-33; Mode 28 is excluded because its accepted shock multiplier changes effective capacity."
+        },
+        {
+          "type": "metric",
+          "name": "Mode 17: A CG plant expansion off",
+          "column": "A Capital Goods Plant Expansion",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 17: A CG plant desired expansion off",
+          "column": "A Capital Goods Plant Desired Expansion",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 17: A CG plant Capital Goods consumption off",
+          "column": "A Capital Goods Plant Capital Goods Consumption",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 17: A CG plant Construction Materials consumption off",
+          "column": "A Capital Goods Plant Construction Materials Consumption",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "identity",
+          "name": "Mode 17: A CG production capacity equals legacy base capacity",
+          "abs_tol": 1e-8,
+          "terms": [
+            {
+              "column": "A Capital Goods Production Capacity",
+              "coef": 1
+            },
+            {
+              "column": "A Capital Goods Base Production Capacity",
+              "coef": -1
+            }
+          ],
+          "note": "v7.7.4 switch is explicitly off in Modes 0-35; Mode 22 is excluded because its accepted shock multiplier changes effective capacity."
+        },
+        {
+          "type": "metric",
+          "name": "Mode 17: B CG plant expansion off",
+          "column": "B Capital Goods Plant Expansion",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 17: B CG plant desired expansion off",
+          "column": "B Capital Goods Plant Desired Expansion",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 17: B CG plant Capital Goods consumption off",
+          "column": "B Capital Goods Plant Capital Goods Consumption",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 17: B CG plant Construction Materials consumption off",
+          "column": "B Capital Goods Plant Construction Materials Consumption",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "identity",
+          "name": "Mode 17: B CG production capacity equals legacy base capacity",
+          "abs_tol": 1e-8,
+          "terms": [
+            {
+              "column": "B Capital Goods Production Capacity",
+              "coef": 1
+            },
+            {
+              "column": "B Capital Goods Base Production Capacity",
+              "coef": -1
+            }
+          ],
+          "note": "v7.7.4 switch is explicitly off in Modes 0-35; Mode 22 is excluded because its accepted shock multiplier changes effective capacity."
         }
       ],
       "notes": [
@@ -12516,6 +14482,110 @@
             }
           ],
           "note": "v7.7.3 switch is explicitly off in Modes 0-33; Mode 28 is excluded because its accepted shock multiplier changes effective capacity."
+        },
+        {
+          "type": "metric",
+          "name": "Mode 18: A CG plant expansion off",
+          "column": "A Capital Goods Plant Expansion",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 18: A CG plant desired expansion off",
+          "column": "A Capital Goods Plant Desired Expansion",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 18: A CG plant Capital Goods consumption off",
+          "column": "A Capital Goods Plant Capital Goods Consumption",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 18: A CG plant Construction Materials consumption off",
+          "column": "A Capital Goods Plant Construction Materials Consumption",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "identity",
+          "name": "Mode 18: A CG production capacity equals legacy base capacity",
+          "abs_tol": 1e-8,
+          "terms": [
+            {
+              "column": "A Capital Goods Production Capacity",
+              "coef": 1
+            },
+            {
+              "column": "A Capital Goods Base Production Capacity",
+              "coef": -1
+            }
+          ],
+          "note": "v7.7.4 switch is explicitly off in Modes 0-35; Mode 22 is excluded because its accepted shock multiplier changes effective capacity."
+        },
+        {
+          "type": "metric",
+          "name": "Mode 18: B CG plant expansion off",
+          "column": "B Capital Goods Plant Expansion",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 18: B CG plant desired expansion off",
+          "column": "B Capital Goods Plant Desired Expansion",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 18: B CG plant Capital Goods consumption off",
+          "column": "B Capital Goods Plant Capital Goods Consumption",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 18: B CG plant Construction Materials consumption off",
+          "column": "B Capital Goods Plant Construction Materials Consumption",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "identity",
+          "name": "Mode 18: B CG production capacity equals legacy base capacity",
+          "abs_tol": 1e-8,
+          "terms": [
+            {
+              "column": "B Capital Goods Production Capacity",
+              "coef": 1
+            },
+            {
+              "column": "B Capital Goods Base Production Capacity",
+              "coef": -1
+            }
+          ],
+          "note": "v7.7.4 switch is explicitly off in Modes 0-35; Mode 22 is excluded because its accepted shock multiplier changes effective capacity."
         }
       ],
       "notes": [
@@ -13183,6 +15253,110 @@
             }
           ],
           "note": "v7.7.3 switch is explicitly off in Modes 0-33; Mode 28 is excluded because its accepted shock multiplier changes effective capacity."
+        },
+        {
+          "type": "metric",
+          "name": "Mode 19: A CG plant expansion off",
+          "column": "A Capital Goods Plant Expansion",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 19: A CG plant desired expansion off",
+          "column": "A Capital Goods Plant Desired Expansion",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 19: A CG plant Capital Goods consumption off",
+          "column": "A Capital Goods Plant Capital Goods Consumption",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 19: A CG plant Construction Materials consumption off",
+          "column": "A Capital Goods Plant Construction Materials Consumption",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "identity",
+          "name": "Mode 19: A CG production capacity equals legacy base capacity",
+          "abs_tol": 1e-8,
+          "terms": [
+            {
+              "column": "A Capital Goods Production Capacity",
+              "coef": 1
+            },
+            {
+              "column": "A Capital Goods Base Production Capacity",
+              "coef": -1
+            }
+          ],
+          "note": "v7.7.4 switch is explicitly off in Modes 0-35; Mode 22 is excluded because its accepted shock multiplier changes effective capacity."
+        },
+        {
+          "type": "metric",
+          "name": "Mode 19: B CG plant expansion off",
+          "column": "B Capital Goods Plant Expansion",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 19: B CG plant desired expansion off",
+          "column": "B Capital Goods Plant Desired Expansion",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 19: B CG plant Capital Goods consumption off",
+          "column": "B Capital Goods Plant Capital Goods Consumption",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 19: B CG plant Construction Materials consumption off",
+          "column": "B Capital Goods Plant Construction Materials Consumption",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "identity",
+          "name": "Mode 19: B CG production capacity equals legacy base capacity",
+          "abs_tol": 1e-8,
+          "terms": [
+            {
+              "column": "B Capital Goods Production Capacity",
+              "coef": 1
+            },
+            {
+              "column": "B Capital Goods Base Production Capacity",
+              "coef": -1
+            }
+          ],
+          "note": "v7.7.4 switch is explicitly off in Modes 0-35; Mode 22 is excluded because its accepted shock multiplier changes effective capacity."
         }
       ],
       "notes": [
@@ -13801,6 +15975,110 @@
             }
           ],
           "note": "v7.7.3 switch is explicitly off in Modes 0-33; Mode 28 is excluded because its accepted shock multiplier changes effective capacity."
+        },
+        {
+          "type": "metric",
+          "name": "Mode 20: A CG plant expansion off",
+          "column": "A Capital Goods Plant Expansion",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 20: A CG plant desired expansion off",
+          "column": "A Capital Goods Plant Desired Expansion",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 20: A CG plant Capital Goods consumption off",
+          "column": "A Capital Goods Plant Capital Goods Consumption",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 20: A CG plant Construction Materials consumption off",
+          "column": "A Capital Goods Plant Construction Materials Consumption",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "identity",
+          "name": "Mode 20: A CG production capacity equals legacy base capacity",
+          "abs_tol": 1e-8,
+          "terms": [
+            {
+              "column": "A Capital Goods Production Capacity",
+              "coef": 1
+            },
+            {
+              "column": "A Capital Goods Base Production Capacity",
+              "coef": -1
+            }
+          ],
+          "note": "v7.7.4 switch is explicitly off in Modes 0-35; Mode 22 is excluded because its accepted shock multiplier changes effective capacity."
+        },
+        {
+          "type": "metric",
+          "name": "Mode 20: B CG plant expansion off",
+          "column": "B Capital Goods Plant Expansion",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 20: B CG plant desired expansion off",
+          "column": "B Capital Goods Plant Desired Expansion",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 20: B CG plant Capital Goods consumption off",
+          "column": "B Capital Goods Plant Capital Goods Consumption",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 20: B CG plant Construction Materials consumption off",
+          "column": "B Capital Goods Plant Construction Materials Consumption",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "identity",
+          "name": "Mode 20: B CG production capacity equals legacy base capacity",
+          "abs_tol": 1e-8,
+          "terms": [
+            {
+              "column": "B Capital Goods Production Capacity",
+              "coef": 1
+            },
+            {
+              "column": "B Capital Goods Base Production Capacity",
+              "coef": -1
+            }
+          ],
+          "note": "v7.7.4 switch is explicitly off in Modes 0-35; Mode 22 is excluded because its accepted shock multiplier changes effective capacity."
         }
       ],
       "notes": [
@@ -14549,6 +16827,110 @@
             }
           ],
           "note": "v7.7.3 switch is explicitly off in Modes 0-33; Mode 28 is excluded because its accepted shock multiplier changes effective capacity."
+        },
+        {
+          "type": "metric",
+          "name": "Mode 21: A CG plant expansion off",
+          "column": "A Capital Goods Plant Expansion",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 21: A CG plant desired expansion off",
+          "column": "A Capital Goods Plant Desired Expansion",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 21: A CG plant Capital Goods consumption off",
+          "column": "A Capital Goods Plant Capital Goods Consumption",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 21: A CG plant Construction Materials consumption off",
+          "column": "A Capital Goods Plant Construction Materials Consumption",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "identity",
+          "name": "Mode 21: A CG production capacity equals legacy base capacity",
+          "abs_tol": 1e-8,
+          "terms": [
+            {
+              "column": "A Capital Goods Production Capacity",
+              "coef": 1
+            },
+            {
+              "column": "A Capital Goods Base Production Capacity",
+              "coef": -1
+            }
+          ],
+          "note": "v7.7.4 switch is explicitly off in Modes 0-35; Mode 22 is excluded because its accepted shock multiplier changes effective capacity."
+        },
+        {
+          "type": "metric",
+          "name": "Mode 21: B CG plant expansion off",
+          "column": "B Capital Goods Plant Expansion",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 21: B CG plant desired expansion off",
+          "column": "B Capital Goods Plant Desired Expansion",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 21: B CG plant Capital Goods consumption off",
+          "column": "B Capital Goods Plant Capital Goods Consumption",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 21: B CG plant Construction Materials consumption off",
+          "column": "B Capital Goods Plant Construction Materials Consumption",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "identity",
+          "name": "Mode 21: B CG production capacity equals legacy base capacity",
+          "abs_tol": 1e-8,
+          "terms": [
+            {
+              "column": "B Capital Goods Production Capacity",
+              "coef": 1
+            },
+            {
+              "column": "B Capital Goods Base Production Capacity",
+              "coef": -1
+            }
+          ],
+          "note": "v7.7.4 switch is explicitly off in Modes 0-35; Mode 22 is excluded because its accepted shock multiplier changes effective capacity."
         }
       ]
     },
@@ -15234,6 +17616,78 @@
             }
           ],
           "note": "v7.7.3 switch is explicitly off in Modes 0-33; Mode 28 is excluded because its accepted shock multiplier changes effective capacity."
+        },
+        {
+          "type": "metric",
+          "name": "Mode 22: A CG plant expansion off",
+          "column": "A Capital Goods Plant Expansion",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 22: A CG plant desired expansion off",
+          "column": "A Capital Goods Plant Desired Expansion",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 22: A CG plant Capital Goods consumption off",
+          "column": "A Capital Goods Plant Capital Goods Consumption",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 22: A CG plant Construction Materials consumption off",
+          "column": "A Capital Goods Plant Construction Materials Consumption",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 22: B CG plant expansion off",
+          "column": "B Capital Goods Plant Expansion",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 22: B CG plant desired expansion off",
+          "column": "B Capital Goods Plant Desired Expansion",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 22: B CG plant Capital Goods consumption off",
+          "column": "B Capital Goods Plant Capital Goods Consumption",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 22: B CG plant Construction Materials consumption off",
+          "column": "B Capital Goods Plant Construction Materials Consumption",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
         }
       ]
     },
@@ -15943,6 +18397,110 @@
             }
           ],
           "note": "v7.7.3 switch is explicitly off in Modes 0-33; Mode 28 is excluded because its accepted shock multiplier changes effective capacity."
+        },
+        {
+          "type": "metric",
+          "name": "Mode 23: A CG plant expansion off",
+          "column": "A Capital Goods Plant Expansion",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 23: A CG plant desired expansion off",
+          "column": "A Capital Goods Plant Desired Expansion",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 23: A CG plant Capital Goods consumption off",
+          "column": "A Capital Goods Plant Capital Goods Consumption",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 23: A CG plant Construction Materials consumption off",
+          "column": "A Capital Goods Plant Construction Materials Consumption",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "identity",
+          "name": "Mode 23: A CG production capacity equals legacy base capacity",
+          "abs_tol": 1e-8,
+          "terms": [
+            {
+              "column": "A Capital Goods Production Capacity",
+              "coef": 1
+            },
+            {
+              "column": "A Capital Goods Base Production Capacity",
+              "coef": -1
+            }
+          ],
+          "note": "v7.7.4 switch is explicitly off in Modes 0-35; Mode 22 is excluded because its accepted shock multiplier changes effective capacity."
+        },
+        {
+          "type": "metric",
+          "name": "Mode 23: B CG plant expansion off",
+          "column": "B Capital Goods Plant Expansion",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 23: B CG plant desired expansion off",
+          "column": "B Capital Goods Plant Desired Expansion",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 23: B CG plant Capital Goods consumption off",
+          "column": "B Capital Goods Plant Capital Goods Consumption",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 23: B CG plant Construction Materials consumption off",
+          "column": "B Capital Goods Plant Construction Materials Consumption",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "identity",
+          "name": "Mode 23: B CG production capacity equals legacy base capacity",
+          "abs_tol": 1e-8,
+          "terms": [
+            {
+              "column": "B Capital Goods Production Capacity",
+              "coef": 1
+            },
+            {
+              "column": "B Capital Goods Base Production Capacity",
+              "coef": -1
+            }
+          ],
+          "note": "v7.7.4 switch is explicitly off in Modes 0-35; Mode 22 is excluded because its accepted shock multiplier changes effective capacity."
         }
       ]
     },
@@ -16496,6 +19054,110 @@
             }
           ],
           "note": "v7.7.3 switch is explicitly off in Modes 0-33; Mode 28 is excluded because its accepted shock multiplier changes effective capacity."
+        },
+        {
+          "type": "metric",
+          "name": "Mode 24: A CG plant expansion off",
+          "column": "A Capital Goods Plant Expansion",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 24: A CG plant desired expansion off",
+          "column": "A Capital Goods Plant Desired Expansion",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 24: A CG plant Capital Goods consumption off",
+          "column": "A Capital Goods Plant Capital Goods Consumption",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 24: A CG plant Construction Materials consumption off",
+          "column": "A Capital Goods Plant Construction Materials Consumption",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "identity",
+          "name": "Mode 24: A CG production capacity equals legacy base capacity",
+          "abs_tol": 1e-8,
+          "terms": [
+            {
+              "column": "A Capital Goods Production Capacity",
+              "coef": 1
+            },
+            {
+              "column": "A Capital Goods Base Production Capacity",
+              "coef": -1
+            }
+          ],
+          "note": "v7.7.4 switch is explicitly off in Modes 0-35; Mode 22 is excluded because its accepted shock multiplier changes effective capacity."
+        },
+        {
+          "type": "metric",
+          "name": "Mode 24: B CG plant expansion off",
+          "column": "B Capital Goods Plant Expansion",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 24: B CG plant desired expansion off",
+          "column": "B Capital Goods Plant Desired Expansion",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 24: B CG plant Capital Goods consumption off",
+          "column": "B Capital Goods Plant Capital Goods Consumption",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 24: B CG plant Construction Materials consumption off",
+          "column": "B Capital Goods Plant Construction Materials Consumption",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "identity",
+          "name": "Mode 24: B CG production capacity equals legacy base capacity",
+          "abs_tol": 1e-8,
+          "terms": [
+            {
+              "column": "B Capital Goods Production Capacity",
+              "coef": 1
+            },
+            {
+              "column": "B Capital Goods Base Production Capacity",
+              "coef": -1
+            }
+          ],
+          "note": "v7.7.4 switch is explicitly off in Modes 0-35; Mode 22 is excluded because its accepted shock multiplier changes effective capacity."
         }
       ],
       "notes": [
@@ -16970,6 +19632,110 @@
             }
           ],
           "note": "v7.7.3 switch is explicitly off in Modes 0-33; Mode 28 is excluded because its accepted shock multiplier changes effective capacity."
+        },
+        {
+          "type": "metric",
+          "name": "Mode 25: A CG plant expansion off",
+          "column": "A Capital Goods Plant Expansion",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 25: A CG plant desired expansion off",
+          "column": "A Capital Goods Plant Desired Expansion",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 25: A CG plant Capital Goods consumption off",
+          "column": "A Capital Goods Plant Capital Goods Consumption",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 25: A CG plant Construction Materials consumption off",
+          "column": "A Capital Goods Plant Construction Materials Consumption",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "identity",
+          "name": "Mode 25: A CG production capacity equals legacy base capacity",
+          "abs_tol": 1e-8,
+          "terms": [
+            {
+              "column": "A Capital Goods Production Capacity",
+              "coef": 1
+            },
+            {
+              "column": "A Capital Goods Base Production Capacity",
+              "coef": -1
+            }
+          ],
+          "note": "v7.7.4 switch is explicitly off in Modes 0-35; Mode 22 is excluded because its accepted shock multiplier changes effective capacity."
+        },
+        {
+          "type": "metric",
+          "name": "Mode 25: B CG plant expansion off",
+          "column": "B Capital Goods Plant Expansion",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 25: B CG plant desired expansion off",
+          "column": "B Capital Goods Plant Desired Expansion",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 25: B CG plant Capital Goods consumption off",
+          "column": "B Capital Goods Plant Capital Goods Consumption",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 25: B CG plant Construction Materials consumption off",
+          "column": "B Capital Goods Plant Construction Materials Consumption",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "identity",
+          "name": "Mode 25: B CG production capacity equals legacy base capacity",
+          "abs_tol": 1e-8,
+          "terms": [
+            {
+              "column": "B Capital Goods Production Capacity",
+              "coef": 1
+            },
+            {
+              "column": "B Capital Goods Base Production Capacity",
+              "coef": -1
+            }
+          ],
+          "note": "v7.7.4 switch is explicitly off in Modes 0-35; Mode 22 is excluded because its accepted shock multiplier changes effective capacity."
         }
       ],
       "notes": [
@@ -17420,6 +20186,110 @@
             }
           ],
           "note": "v7.7.3 switch is explicitly off in Modes 0-33; Mode 28 is excluded because its accepted shock multiplier changes effective capacity."
+        },
+        {
+          "type": "metric",
+          "name": "Mode 26: A CG plant expansion off",
+          "column": "A Capital Goods Plant Expansion",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 26: A CG plant desired expansion off",
+          "column": "A Capital Goods Plant Desired Expansion",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 26: A CG plant Capital Goods consumption off",
+          "column": "A Capital Goods Plant Capital Goods Consumption",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 26: A CG plant Construction Materials consumption off",
+          "column": "A Capital Goods Plant Construction Materials Consumption",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "identity",
+          "name": "Mode 26: A CG production capacity equals legacy base capacity",
+          "abs_tol": 1e-8,
+          "terms": [
+            {
+              "column": "A Capital Goods Production Capacity",
+              "coef": 1
+            },
+            {
+              "column": "A Capital Goods Base Production Capacity",
+              "coef": -1
+            }
+          ],
+          "note": "v7.7.4 switch is explicitly off in Modes 0-35; Mode 22 is excluded because its accepted shock multiplier changes effective capacity."
+        },
+        {
+          "type": "metric",
+          "name": "Mode 26: B CG plant expansion off",
+          "column": "B Capital Goods Plant Expansion",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 26: B CG plant desired expansion off",
+          "column": "B Capital Goods Plant Desired Expansion",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 26: B CG plant Capital Goods consumption off",
+          "column": "B Capital Goods Plant Capital Goods Consumption",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 26: B CG plant Construction Materials consumption off",
+          "column": "B Capital Goods Plant Construction Materials Consumption",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "identity",
+          "name": "Mode 26: B CG production capacity equals legacy base capacity",
+          "abs_tol": 1e-8,
+          "terms": [
+            {
+              "column": "B Capital Goods Production Capacity",
+              "coef": 1
+            },
+            {
+              "column": "B Capital Goods Base Production Capacity",
+              "coef": -1
+            }
+          ],
+          "note": "v7.7.4 switch is explicitly off in Modes 0-35; Mode 22 is excluded because its accepted shock multiplier changes effective capacity."
         }
       ],
       "notes": [
@@ -17896,6 +20766,110 @@
             }
           ],
           "note": "v7.7.3 switch is explicitly off in Modes 0-33; Mode 28 is excluded because its accepted shock multiplier changes effective capacity."
+        },
+        {
+          "type": "metric",
+          "name": "Mode 27: A CG plant expansion off",
+          "column": "A Capital Goods Plant Expansion",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 27: A CG plant desired expansion off",
+          "column": "A Capital Goods Plant Desired Expansion",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 27: A CG plant Capital Goods consumption off",
+          "column": "A Capital Goods Plant Capital Goods Consumption",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 27: A CG plant Construction Materials consumption off",
+          "column": "A Capital Goods Plant Construction Materials Consumption",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "identity",
+          "name": "Mode 27: A CG production capacity equals legacy base capacity",
+          "abs_tol": 1e-8,
+          "terms": [
+            {
+              "column": "A Capital Goods Production Capacity",
+              "coef": 1
+            },
+            {
+              "column": "A Capital Goods Base Production Capacity",
+              "coef": -1
+            }
+          ],
+          "note": "v7.7.4 switch is explicitly off in Modes 0-35; Mode 22 is excluded because its accepted shock multiplier changes effective capacity."
+        },
+        {
+          "type": "metric",
+          "name": "Mode 27: B CG plant expansion off",
+          "column": "B Capital Goods Plant Expansion",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 27: B CG plant desired expansion off",
+          "column": "B Capital Goods Plant Desired Expansion",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 27: B CG plant Capital Goods consumption off",
+          "column": "B Capital Goods Plant Capital Goods Consumption",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 27: B CG plant Construction Materials consumption off",
+          "column": "B Capital Goods Plant Construction Materials Consumption",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "identity",
+          "name": "Mode 27: B CG production capacity equals legacy base capacity",
+          "abs_tol": 1e-8,
+          "terms": [
+            {
+              "column": "B Capital Goods Production Capacity",
+              "coef": 1
+            },
+            {
+              "column": "B Capital Goods Base Production Capacity",
+              "coef": -1
+            }
+          ],
+          "note": "v7.7.4 switch is explicitly off in Modes 0-35; Mode 22 is excluded because its accepted shock multiplier changes effective capacity."
         }
       ],
       "notes": [
@@ -18367,6 +21341,110 @@
           "op": "<=",
           "value": 0,
           "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 28: A CG plant expansion off",
+          "column": "A Capital Goods Plant Expansion",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 28: A CG plant desired expansion off",
+          "column": "A Capital Goods Plant Desired Expansion",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 28: A CG plant Capital Goods consumption off",
+          "column": "A Capital Goods Plant Capital Goods Consumption",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 28: A CG plant Construction Materials consumption off",
+          "column": "A Capital Goods Plant Construction Materials Consumption",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "identity",
+          "name": "Mode 28: A CG production capacity equals legacy base capacity",
+          "abs_tol": 1e-8,
+          "terms": [
+            {
+              "column": "A Capital Goods Production Capacity",
+              "coef": 1
+            },
+            {
+              "column": "A Capital Goods Base Production Capacity",
+              "coef": -1
+            }
+          ],
+          "note": "v7.7.4 switch is explicitly off in Modes 0-35; Mode 22 is excluded because its accepted shock multiplier changes effective capacity."
+        },
+        {
+          "type": "metric",
+          "name": "Mode 28: B CG plant expansion off",
+          "column": "B Capital Goods Plant Expansion",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 28: B CG plant desired expansion off",
+          "column": "B Capital Goods Plant Desired Expansion",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 28: B CG plant Capital Goods consumption off",
+          "column": "B Capital Goods Plant Capital Goods Consumption",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 28: B CG plant Construction Materials consumption off",
+          "column": "B Capital Goods Plant Construction Materials Consumption",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "identity",
+          "name": "Mode 28: B CG production capacity equals legacy base capacity",
+          "abs_tol": 1e-8,
+          "terms": [
+            {
+              "column": "B Capital Goods Production Capacity",
+              "coef": 1
+            },
+            {
+              "column": "B Capital Goods Base Production Capacity",
+              "coef": -1
+            }
+          ],
+          "note": "v7.7.4 switch is explicitly off in Modes 0-35; Mode 22 is excluded because its accepted shock multiplier changes effective capacity."
         }
       ],
       "notes": [
@@ -18882,6 +21960,110 @@
             }
           ],
           "note": "v7.7.3 switch is explicitly off in Modes 0-33; Mode 28 is excluded because its accepted shock multiplier changes effective capacity."
+        },
+        {
+          "type": "metric",
+          "name": "Mode 29: A CG plant expansion off",
+          "column": "A Capital Goods Plant Expansion",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 29: A CG plant desired expansion off",
+          "column": "A Capital Goods Plant Desired Expansion",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 29: A CG plant Capital Goods consumption off",
+          "column": "A Capital Goods Plant Capital Goods Consumption",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 29: A CG plant Construction Materials consumption off",
+          "column": "A Capital Goods Plant Construction Materials Consumption",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "identity",
+          "name": "Mode 29: A CG production capacity equals legacy base capacity",
+          "abs_tol": 1e-8,
+          "terms": [
+            {
+              "column": "A Capital Goods Production Capacity",
+              "coef": 1
+            },
+            {
+              "column": "A Capital Goods Base Production Capacity",
+              "coef": -1
+            }
+          ],
+          "note": "v7.7.4 switch is explicitly off in Modes 0-35; Mode 22 is excluded because its accepted shock multiplier changes effective capacity."
+        },
+        {
+          "type": "metric",
+          "name": "Mode 29: B CG plant expansion off",
+          "column": "B Capital Goods Plant Expansion",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 29: B CG plant desired expansion off",
+          "column": "B Capital Goods Plant Desired Expansion",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 29: B CG plant Capital Goods consumption off",
+          "column": "B Capital Goods Plant Capital Goods Consumption",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 29: B CG plant Construction Materials consumption off",
+          "column": "B Capital Goods Plant Construction Materials Consumption",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "identity",
+          "name": "Mode 29: B CG production capacity equals legacy base capacity",
+          "abs_tol": 1e-8,
+          "terms": [
+            {
+              "column": "B Capital Goods Production Capacity",
+              "coef": 1
+            },
+            {
+              "column": "B Capital Goods Base Production Capacity",
+              "coef": -1
+            }
+          ],
+          "note": "v7.7.4 switch is explicitly off in Modes 0-35; Mode 22 is excluded because its accepted shock multiplier changes effective capacity."
         }
       ],
       "notes": [
@@ -19383,6 +22565,110 @@
             }
           ],
           "note": "v7.7.3 switch is explicitly off in Modes 0-33; Mode 28 is excluded because its accepted shock multiplier changes effective capacity."
+        },
+        {
+          "type": "metric",
+          "name": "Mode 30: A CG plant expansion off",
+          "column": "A Capital Goods Plant Expansion",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 30: A CG plant desired expansion off",
+          "column": "A Capital Goods Plant Desired Expansion",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 30: A CG plant Capital Goods consumption off",
+          "column": "A Capital Goods Plant Capital Goods Consumption",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 30: A CG plant Construction Materials consumption off",
+          "column": "A Capital Goods Plant Construction Materials Consumption",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "identity",
+          "name": "Mode 30: A CG production capacity equals legacy base capacity",
+          "abs_tol": 1e-8,
+          "terms": [
+            {
+              "column": "A Capital Goods Production Capacity",
+              "coef": 1
+            },
+            {
+              "column": "A Capital Goods Base Production Capacity",
+              "coef": -1
+            }
+          ],
+          "note": "v7.7.4 switch is explicitly off in Modes 0-35; Mode 22 is excluded because its accepted shock multiplier changes effective capacity."
+        },
+        {
+          "type": "metric",
+          "name": "Mode 30: B CG plant expansion off",
+          "column": "B Capital Goods Plant Expansion",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 30: B CG plant desired expansion off",
+          "column": "B Capital Goods Plant Desired Expansion",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 30: B CG plant Capital Goods consumption off",
+          "column": "B Capital Goods Plant Capital Goods Consumption",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 30: B CG plant Construction Materials consumption off",
+          "column": "B Capital Goods Plant Construction Materials Consumption",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "identity",
+          "name": "Mode 30: B CG production capacity equals legacy base capacity",
+          "abs_tol": 1e-8,
+          "terms": [
+            {
+              "column": "B Capital Goods Production Capacity",
+              "coef": 1
+            },
+            {
+              "column": "B Capital Goods Base Production Capacity",
+              "coef": -1
+            }
+          ],
+          "note": "v7.7.4 switch is explicitly off in Modes 0-35; Mode 22 is excluded because its accepted shock multiplier changes effective capacity."
         }
       ],
       "notes": [
@@ -19935,6 +23221,110 @@
             }
           ],
           "note": "v7.7.3 switch is explicitly off in Modes 0-33; Mode 28 is excluded because its accepted shock multiplier changes effective capacity."
+        },
+        {
+          "type": "metric",
+          "name": "Mode 31: A CG plant expansion off",
+          "column": "A Capital Goods Plant Expansion",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 31: A CG plant desired expansion off",
+          "column": "A Capital Goods Plant Desired Expansion",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 31: A CG plant Capital Goods consumption off",
+          "column": "A Capital Goods Plant Capital Goods Consumption",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 31: A CG plant Construction Materials consumption off",
+          "column": "A Capital Goods Plant Construction Materials Consumption",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "identity",
+          "name": "Mode 31: A CG production capacity equals legacy base capacity",
+          "abs_tol": 1e-8,
+          "terms": [
+            {
+              "column": "A Capital Goods Production Capacity",
+              "coef": 1
+            },
+            {
+              "column": "A Capital Goods Base Production Capacity",
+              "coef": -1
+            }
+          ],
+          "note": "v7.7.4 switch is explicitly off in Modes 0-35; Mode 22 is excluded because its accepted shock multiplier changes effective capacity."
+        },
+        {
+          "type": "metric",
+          "name": "Mode 31: B CG plant expansion off",
+          "column": "B Capital Goods Plant Expansion",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 31: B CG plant desired expansion off",
+          "column": "B Capital Goods Plant Desired Expansion",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 31: B CG plant Capital Goods consumption off",
+          "column": "B Capital Goods Plant Capital Goods Consumption",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 31: B CG plant Construction Materials consumption off",
+          "column": "B Capital Goods Plant Construction Materials Consumption",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "identity",
+          "name": "Mode 31: B CG production capacity equals legacy base capacity",
+          "abs_tol": 1e-8,
+          "terms": [
+            {
+              "column": "B Capital Goods Production Capacity",
+              "coef": 1
+            },
+            {
+              "column": "B Capital Goods Base Production Capacity",
+              "coef": -1
+            }
+          ],
+          "note": "v7.7.4 switch is explicitly off in Modes 0-35; Mode 22 is excluded because its accepted shock multiplier changes effective capacity."
         }
       ],
       "notes": [
@@ -20203,6 +23593,110 @@
             }
           ],
           "note": "v7.7.3 switch is explicitly off in Modes 0-33; Mode 28 is excluded because its accepted shock multiplier changes effective capacity."
+        },
+        {
+          "type": "metric",
+          "name": "Mode 32: A CG plant expansion off",
+          "column": "A Capital Goods Plant Expansion",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 32: A CG plant desired expansion off",
+          "column": "A Capital Goods Plant Desired Expansion",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 32: A CG plant Capital Goods consumption off",
+          "column": "A Capital Goods Plant Capital Goods Consumption",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 32: A CG plant Construction Materials consumption off",
+          "column": "A Capital Goods Plant Construction Materials Consumption",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "identity",
+          "name": "Mode 32: A CG production capacity equals legacy base capacity",
+          "abs_tol": 1e-8,
+          "terms": [
+            {
+              "column": "A Capital Goods Production Capacity",
+              "coef": 1
+            },
+            {
+              "column": "A Capital Goods Base Production Capacity",
+              "coef": -1
+            }
+          ],
+          "note": "v7.7.4 switch is explicitly off in Modes 0-35; Mode 22 is excluded because its accepted shock multiplier changes effective capacity."
+        },
+        {
+          "type": "metric",
+          "name": "Mode 32: B CG plant expansion off",
+          "column": "B Capital Goods Plant Expansion",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 32: B CG plant desired expansion off",
+          "column": "B Capital Goods Plant Desired Expansion",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 32: B CG plant Capital Goods consumption off",
+          "column": "B Capital Goods Plant Capital Goods Consumption",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 32: B CG plant Construction Materials consumption off",
+          "column": "B Capital Goods Plant Construction Materials Consumption",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "identity",
+          "name": "Mode 32: B CG production capacity equals legacy base capacity",
+          "abs_tol": 1e-8,
+          "terms": [
+            {
+              "column": "B Capital Goods Production Capacity",
+              "coef": 1
+            },
+            {
+              "column": "B Capital Goods Base Production Capacity",
+              "coef": -1
+            }
+          ],
+          "note": "v7.7.4 switch is explicitly off in Modes 0-35; Mode 22 is excluded because its accepted shock multiplier changes effective capacity."
         }
       ],
       "notes": [
@@ -20518,6 +24012,110 @@
             }
           ],
           "note": "v7.7.3 switch is explicitly off in Modes 0-33; Mode 28 is excluded because its accepted shock multiplier changes effective capacity."
+        },
+        {
+          "type": "metric",
+          "name": "Mode 33: A CG plant expansion off",
+          "column": "A Capital Goods Plant Expansion",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 33: A CG plant desired expansion off",
+          "column": "A Capital Goods Plant Desired Expansion",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 33: A CG plant Capital Goods consumption off",
+          "column": "A Capital Goods Plant Capital Goods Consumption",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 33: A CG plant Construction Materials consumption off",
+          "column": "A Capital Goods Plant Construction Materials Consumption",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "identity",
+          "name": "Mode 33: A CG production capacity equals legacy base capacity",
+          "abs_tol": 1e-8,
+          "terms": [
+            {
+              "column": "A Capital Goods Production Capacity",
+              "coef": 1
+            },
+            {
+              "column": "A Capital Goods Base Production Capacity",
+              "coef": -1
+            }
+          ],
+          "note": "v7.7.4 switch is explicitly off in Modes 0-35; Mode 22 is excluded because its accepted shock multiplier changes effective capacity."
+        },
+        {
+          "type": "metric",
+          "name": "Mode 33: B CG plant expansion off",
+          "column": "B Capital Goods Plant Expansion",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 33: B CG plant desired expansion off",
+          "column": "B Capital Goods Plant Desired Expansion",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 33: B CG plant Capital Goods consumption off",
+          "column": "B Capital Goods Plant Capital Goods Consumption",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 33: B CG plant Construction Materials consumption off",
+          "column": "B Capital Goods Plant Construction Materials Consumption",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "identity",
+          "name": "Mode 33: B CG production capacity equals legacy base capacity",
+          "abs_tol": 1e-8,
+          "terms": [
+            {
+              "column": "B Capital Goods Production Capacity",
+              "coef": 1
+            },
+            {
+              "column": "B Capital Goods Base Production Capacity",
+              "coef": -1
+            }
+          ],
+          "note": "v7.7.4 switch is explicitly off in Modes 0-35; Mode 22 is excluded because its accepted shock multiplier changes effective capacity."
         }
       ],
       "notes": [
@@ -20897,6 +24495,110 @@
           "metric": "max",
           "op": "<=",
           "value": 0.000001
+        },
+        {
+          "type": "metric",
+          "name": "Mode 34: A CG plant expansion off",
+          "column": "A Capital Goods Plant Expansion",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 34: A CG plant desired expansion off",
+          "column": "A Capital Goods Plant Desired Expansion",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 34: A CG plant Capital Goods consumption off",
+          "column": "A Capital Goods Plant Capital Goods Consumption",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 34: A CG plant Construction Materials consumption off",
+          "column": "A Capital Goods Plant Construction Materials Consumption",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "identity",
+          "name": "Mode 34: A CG production capacity equals legacy base capacity",
+          "abs_tol": 1e-8,
+          "terms": [
+            {
+              "column": "A Capital Goods Production Capacity",
+              "coef": 1
+            },
+            {
+              "column": "A Capital Goods Base Production Capacity",
+              "coef": -1
+            }
+          ],
+          "note": "v7.7.4 switch is explicitly off in Modes 0-35; Mode 22 is excluded because its accepted shock multiplier changes effective capacity."
+        },
+        {
+          "type": "metric",
+          "name": "Mode 34: B CG plant expansion off",
+          "column": "B Capital Goods Plant Expansion",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 34: B CG plant desired expansion off",
+          "column": "B Capital Goods Plant Desired Expansion",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 34: B CG plant Capital Goods consumption off",
+          "column": "B Capital Goods Plant Capital Goods Consumption",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 34: B CG plant Construction Materials consumption off",
+          "column": "B Capital Goods Plant Construction Materials Consumption",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "identity",
+          "name": "Mode 34: B CG production capacity equals legacy base capacity",
+          "abs_tol": 1e-8,
+          "terms": [
+            {
+              "column": "B Capital Goods Production Capacity",
+              "coef": 1
+            },
+            {
+              "column": "B Capital Goods Base Production Capacity",
+              "coef": -1
+            }
+          ],
+          "note": "v7.7.4 switch is explicitly off in Modes 0-35; Mode 22 is excluded because its accepted shock multiplier changes effective capacity."
         }
       ],
       "notes": [
@@ -21333,10 +25035,1129 @@
               359.75
             ]
           }
+        },
+        {
+          "type": "metric",
+          "name": "Mode 35: A CG plant expansion off",
+          "column": "A Capital Goods Plant Expansion",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 35: A CG plant desired expansion off",
+          "column": "A Capital Goods Plant Desired Expansion",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 35: A CG plant Capital Goods consumption off",
+          "column": "A Capital Goods Plant Capital Goods Consumption",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 35: A CG plant Construction Materials consumption off",
+          "column": "A Capital Goods Plant Construction Materials Consumption",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "identity",
+          "name": "Mode 35: A CG production capacity equals legacy base capacity",
+          "abs_tol": 1e-8,
+          "terms": [
+            {
+              "column": "A Capital Goods Production Capacity",
+              "coef": 1
+            },
+            {
+              "column": "A Capital Goods Base Production Capacity",
+              "coef": -1
+            }
+          ],
+          "note": "v7.7.4 switch is explicitly off in Modes 0-35; Mode 22 is excluded because its accepted shock multiplier changes effective capacity."
+        },
+        {
+          "type": "metric",
+          "name": "Mode 35: B CG plant expansion off",
+          "column": "B Capital Goods Plant Expansion",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 35: B CG plant desired expansion off",
+          "column": "B Capital Goods Plant Desired Expansion",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 35: B CG plant Capital Goods consumption off",
+          "column": "B Capital Goods Plant Capital Goods Consumption",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 35: B CG plant Construction Materials consumption off",
+          "column": "B Capital Goods Plant Construction Materials Consumption",
+          "metric": "max",
+          "op": "<=",
+          "value": 0,
+          "tolerance": 0
+        },
+        {
+          "type": "identity",
+          "name": "Mode 35: B CG production capacity equals legacy base capacity",
+          "abs_tol": 1e-8,
+          "terms": [
+            {
+              "column": "B Capital Goods Production Capacity",
+              "coef": 1
+            },
+            {
+              "column": "B Capital Goods Base Production Capacity",
+              "coef": -1
+            }
+          ],
+          "note": "v7.7.4 switch is explicitly off in Modes 0-35; Mode 22 is excluded because its accepted shock multiplier changes effective capacity."
         }
       ],
       "notes": [
         "r2 calibration from Linux candidate run 36313670047: B plant expansion max=0.0089300689086293 -> require >0.007; installed-capacity change 360->720=0.98486656336586 -> require >0.8; B CM production max=1.02707552489587 -> require >0.9; B CM fulfillment min=0.122475826515893 -> require <0.20."
+      ]
+    },
+    "36": {
+      "name": "v7.7.4 Capital Goods Capital Baseline",
+      "checks": [
+        {
+          "type": "identity",
+          "name": "Mode 36: A CM plant Capital Goods pair identity",
+          "abs_tol": 1e-8,
+          "terms": [
+            {
+              "column": "A Construction Materials Plant Capital Goods Consumption",
+              "coef": 1
+            },
+            {
+              "column": "A Construction Materials Plant Expansion",
+              "coef": -5
+            }
+          ],
+          "note": "Construction Materials Plant Capital Goods per Capacity = 5."
+        },
+        {
+          "type": "identity",
+          "name": "Mode 36: A CM plant Construction Materials pair identity",
+          "abs_tol": 1e-8,
+          "terms": [
+            {
+              "column": "A Construction Materials Plant Construction Materials Consumption",
+              "coef": 1
+            },
+            {
+              "column": "A Construction Materials Plant Expansion",
+              "coef": -5
+            }
+          ],
+          "note": "Construction Materials Plant Construction Materials per Capacity = 5."
+        },
+        {
+          "type": "identity",
+          "name": "Mode 36: A CM production capacity equals plant active capacity",
+          "abs_tol": 1e-8,
+          "terms": [
+            {
+              "column": "A Construction Materials Production Capacity",
+              "coef": 1
+            },
+            {
+              "column": "A Construction Materials Plant Active Capacity",
+              "coef": -1
+            }
+          ],
+          "note": "No Mode-28 shock is active in Modes 34-35."
+        },
+        {
+          "type": "identity",
+          "name": "Mode 36: A regolith -> Construction Materials pair identity",
+          "abs_tol": 1e-8,
+          "terms": [
+            {
+              "column": "A Construction Materials Regolith Consumption",
+              "coef": 1
+            },
+            {
+              "column": "A Construction Materials Production Rate",
+              "coef": -2
+            }
+          ],
+          "note": "Regolith per Construction Materials Unit = 2."
+        },
+        {
+          "type": "identity",
+          "name": "Mode 36: A Refinery Construction Materials pair identity",
+          "abs_tol": 1e-8,
+          "terms": [
+            {
+              "column": "A Refinery Construction Materials Consumption",
+              "coef": 1
+            },
+            {
+              "column": "A Refinery Expansion",
+              "coef": -20
+            }
+          ]
+        },
+        {
+          "type": "identity",
+          "name": "Mode 36: A Electronics Construction Materials pair identity",
+          "abs_tol": 1e-8,
+          "terms": [
+            {
+              "column": "A Electronics Construction Materials Consumption",
+              "coef": 1
+            },
+            {
+              "column": "A Electronics Factory Expansion",
+              "coef": -12
+            }
+          ]
+        },
+        {
+          "type": "identity",
+          "name": "Mode 36: A Power Construction Materials pair identity",
+          "abs_tol": 1e-8,
+          "terms": [
+            {
+              "column": "A Power Construction Materials Consumption",
+              "coef": 1
+            },
+            {
+              "column": "A Power Generation Expansion",
+              "coef": -1
+            }
+          ]
+        },
+        {
+          "type": "identity",
+          "name": "Mode 36: A Refinery Capital Goods pair identity",
+          "abs_tol": 1e-8,
+          "terms": [
+            {
+              "column": "A Refinery Capital Goods Consumption",
+              "coef": 1
+            },
+            {
+              "column": "A Refinery Expansion",
+              "coef": -17
+            }
+          ]
+        },
+        {
+          "type": "identity",
+          "name": "Mode 36: A Electronics Capital Goods pair identity",
+          "abs_tol": 1e-8,
+          "terms": [
+            {
+              "column": "A Electronics Capital Goods Consumption",
+              "coef": 1
+            },
+            {
+              "column": "A Electronics Factory Expansion",
+              "coef": -11.5
+            }
+          ]
+        },
+        {
+          "type": "identity",
+          "name": "Mode 36: A Power Capital Goods pair identity",
+          "abs_tol": 1e-8,
+          "terms": [
+            {
+              "column": "A Power Capital Goods Consumption",
+              "coef": 1
+            },
+            {
+              "column": "A Power Generation Expansion",
+              "coef": -0.5
+            }
+          ]
+        },
+        {
+          "type": "identity",
+          "name": "Mode 36: B CM plant Capital Goods pair identity",
+          "abs_tol": 1e-8,
+          "terms": [
+            {
+              "column": "B Construction Materials Plant Capital Goods Consumption",
+              "coef": 1
+            },
+            {
+              "column": "B Construction Materials Plant Expansion",
+              "coef": -5
+            }
+          ],
+          "note": "Construction Materials Plant Capital Goods per Capacity = 5."
+        },
+        {
+          "type": "identity",
+          "name": "Mode 36: B CM plant Construction Materials pair identity",
+          "abs_tol": 1e-8,
+          "terms": [
+            {
+              "column": "B Construction Materials Plant Construction Materials Consumption",
+              "coef": 1
+            },
+            {
+              "column": "B Construction Materials Plant Expansion",
+              "coef": -5
+            }
+          ],
+          "note": "Construction Materials Plant Construction Materials per Capacity = 5."
+        },
+        {
+          "type": "identity",
+          "name": "Mode 36: B CM production capacity equals plant active capacity",
+          "abs_tol": 1e-8,
+          "terms": [
+            {
+              "column": "B Construction Materials Production Capacity",
+              "coef": 1
+            },
+            {
+              "column": "B Construction Materials Plant Active Capacity",
+              "coef": -1
+            }
+          ],
+          "note": "No Mode-28 shock is active in Modes 34-35."
+        },
+        {
+          "type": "identity",
+          "name": "Mode 36: B regolith -> Construction Materials pair identity",
+          "abs_tol": 1e-8,
+          "terms": [
+            {
+              "column": "B Construction Materials Regolith Consumption",
+              "coef": 1
+            },
+            {
+              "column": "B Construction Materials Production Rate",
+              "coef": -2
+            }
+          ],
+          "note": "Regolith per Construction Materials Unit = 2."
+        },
+        {
+          "type": "identity",
+          "name": "Mode 36: B Refinery Construction Materials pair identity",
+          "abs_tol": 1e-8,
+          "terms": [
+            {
+              "column": "B Refinery Construction Materials Consumption",
+              "coef": 1
+            },
+            {
+              "column": "B Refinery Expansion",
+              "coef": -20
+            }
+          ]
+        },
+        {
+          "type": "identity",
+          "name": "Mode 36: B Electronics Construction Materials pair identity",
+          "abs_tol": 1e-8,
+          "terms": [
+            {
+              "column": "B Electronics Construction Materials Consumption",
+              "coef": 1
+            },
+            {
+              "column": "B Electronics Factory Expansion",
+              "coef": -12
+            }
+          ]
+        },
+        {
+          "type": "identity",
+          "name": "Mode 36: B Power Construction Materials pair identity",
+          "abs_tol": 1e-8,
+          "terms": [
+            {
+              "column": "B Power Construction Materials Consumption",
+              "coef": 1
+            },
+            {
+              "column": "B Power Generation Expansion",
+              "coef": -1
+            }
+          ]
+        },
+        {
+          "type": "identity",
+          "name": "Mode 36: B Refinery Capital Goods pair identity",
+          "abs_tol": 1e-8,
+          "terms": [
+            {
+              "column": "B Refinery Capital Goods Consumption",
+              "coef": 1
+            },
+            {
+              "column": "B Refinery Expansion",
+              "coef": -17
+            }
+          ]
+        },
+        {
+          "type": "identity",
+          "name": "Mode 36: B Electronics Capital Goods pair identity",
+          "abs_tol": 1e-8,
+          "terms": [
+            {
+              "column": "B Electronics Capital Goods Consumption",
+              "coef": 1
+            },
+            {
+              "column": "B Electronics Factory Expansion",
+              "coef": -11.5
+            }
+          ]
+        },
+        {
+          "type": "identity",
+          "name": "Mode 36: B Power Capital Goods pair identity",
+          "abs_tol": 1e-8,
+          "terms": [
+            {
+              "column": "B Power Capital Goods Consumption",
+              "coef": 1
+            },
+            {
+              "column": "B Power Generation Expansion",
+              "coef": -0.5
+            }
+          ]
+        },
+        {
+          "type": "identity",
+          "name": "Mode 36: Transport Construction Materials pair identity",
+          "abs_tol": 1e-8,
+          "terms": [
+            {
+              "column": "A Transport Construction Materials Consumption",
+              "coef": 1
+            },
+            {
+              "column": "B Transport Construction Materials Consumption",
+              "coef": 1
+            },
+            {
+              "column": "Transport Capacity Expansion",
+              "coef": -3
+            }
+          ]
+        },
+        {
+          "type": "identity",
+          "name": "Mode 36: Transport Capital Goods pair identity",
+          "abs_tol": 1e-8,
+          "terms": [
+            {
+              "column": "A Transport Capital Goods Consumption",
+              "coef": 1
+            },
+            {
+              "column": "B Transport Capital Goods Consumption",
+              "coef": 1
+            },
+            {
+              "column": "Transport Capacity Expansion",
+              "coef": -2.8333333333333335
+            }
+          ]
+        },
+        {
+          "type": "identity",
+          "name": "Mode 36: A CG plant Capital Goods pair identity",
+          "abs_tol": 1e-8,
+          "terms": [
+            {
+              "column": "A Capital Goods Plant Capital Goods Consumption",
+              "coef": 1
+            },
+            {
+              "column": "A Capital Goods Plant Expansion",
+              "coef": -5
+            }
+          ],
+          "note": "Capital Goods Plant Capital Goods per Capacity = 5."
+        },
+        {
+          "type": "identity",
+          "name": "Mode 36: A CG plant Construction Materials pair identity",
+          "abs_tol": 1e-8,
+          "terms": [
+            {
+              "column": "A Capital Goods Plant Construction Materials Consumption",
+              "coef": 1
+            },
+            {
+              "column": "A Capital Goods Plant Expansion",
+              "coef": -5
+            }
+          ],
+          "note": "Capital Goods Plant Construction Materials per Capacity = 5."
+        },
+        {
+          "type": "identity",
+          "name": "Mode 36: A Capital Goods production capacity equals plant active capacity",
+          "abs_tol": 1e-8,
+          "terms": [
+            {
+              "column": "A Capital Goods Production Capacity",
+              "coef": 1
+            },
+            {
+              "column": "A Capital Goods Plant Active Capacity",
+              "coef": -1
+            }
+          ],
+          "note": "No Mode-22 shock is active in Modes 36-37."
+        },
+        {
+          "type": "identity",
+          "name": "Mode 36: B CG plant Capital Goods pair identity",
+          "abs_tol": 1e-8,
+          "terms": [
+            {
+              "column": "B Capital Goods Plant Capital Goods Consumption",
+              "coef": 1
+            },
+            {
+              "column": "B Capital Goods Plant Expansion",
+              "coef": -5
+            }
+          ],
+          "note": "Capital Goods Plant Capital Goods per Capacity = 5."
+        },
+        {
+          "type": "identity",
+          "name": "Mode 36: B CG plant Construction Materials pair identity",
+          "abs_tol": 1e-8,
+          "terms": [
+            {
+              "column": "B Capital Goods Plant Construction Materials Consumption",
+              "coef": 1
+            },
+            {
+              "column": "B Capital Goods Plant Expansion",
+              "coef": -5
+            }
+          ],
+          "note": "Capital Goods Plant Construction Materials per Capacity = 5."
+        },
+        {
+          "type": "identity",
+          "name": "Mode 36: B Capital Goods production capacity equals plant active capacity",
+          "abs_tol": 1e-8,
+          "terms": [
+            {
+              "column": "B Capital Goods Production Capacity",
+              "coef": 1
+            },
+            {
+              "column": "B Capital Goods Plant Active Capacity",
+              "coef": -1
+            }
+          ],
+          "note": "No Mode-22 shock is active in Modes 36-37."
+        },
+        {
+          "type": "metric",
+          "name": "Mode 36: A CG plant installed capacity grows above initial 2",
+          "column": "A Capital Goods Plant Installed Capacity",
+          "metric": "max",
+          "op": ">",
+          "value": 2
+        },
+        {
+          "type": "change",
+          "name": "Mode 36: A CG plant installed capacity declines materially by day 1080",
+          "column": "A Capital Goods Plant Installed Capacity",
+          "from_day": 0,
+          "to_day": 1080,
+          "op": "<",
+          "value": -1
+        },
+        {
+          "type": "metric",
+          "name": "Mode 36: A Capital Goods production rate remains substantial",
+          "column": "A Capital Goods Production Rate",
+          "metric": "max",
+          "op": ">",
+          "value": 1.5
+        },
+        {
+          "type": "metric",
+          "name": "Mode 36: B CG plant expansion remains effectively zero",
+          "column": "B Capital Goods Plant Expansion",
+          "metric": "max",
+          "op": "<=",
+          "value": 0.000001
+        }
+      ],
+      "notes": [
+        "Thresholds calibrated once from candidate r1 run 36329067162 using rounded semantic margins: observed installed max 2.08805, installed change -1.49100, production max 1.74060, B expansion 0."
+      ]
+    },
+    "37": {
+      "name": "v7.7.4 Transport Surge on Capital Goods Capital",
+      "checks": [
+        {
+          "type": "identity",
+          "name": "Mode 37: A CM plant Capital Goods pair identity",
+          "abs_tol": 1e-8,
+          "terms": [
+            {
+              "column": "A Construction Materials Plant Capital Goods Consumption",
+              "coef": 1
+            },
+            {
+              "column": "A Construction Materials Plant Expansion",
+              "coef": -5
+            }
+          ],
+          "note": "Construction Materials Plant Capital Goods per Capacity = 5."
+        },
+        {
+          "type": "identity",
+          "name": "Mode 37: A CM plant Construction Materials pair identity",
+          "abs_tol": 1e-8,
+          "terms": [
+            {
+              "column": "A Construction Materials Plant Construction Materials Consumption",
+              "coef": 1
+            },
+            {
+              "column": "A Construction Materials Plant Expansion",
+              "coef": -5
+            }
+          ],
+          "note": "Construction Materials Plant Construction Materials per Capacity = 5."
+        },
+        {
+          "type": "identity",
+          "name": "Mode 37: A CM production capacity equals plant active capacity",
+          "abs_tol": 1e-8,
+          "terms": [
+            {
+              "column": "A Construction Materials Production Capacity",
+              "coef": 1
+            },
+            {
+              "column": "A Construction Materials Plant Active Capacity",
+              "coef": -1
+            }
+          ],
+          "note": "No Mode-28 shock is active in Modes 34-35."
+        },
+        {
+          "type": "identity",
+          "name": "Mode 37: A regolith -> Construction Materials pair identity",
+          "abs_tol": 1e-8,
+          "terms": [
+            {
+              "column": "A Construction Materials Regolith Consumption",
+              "coef": 1
+            },
+            {
+              "column": "A Construction Materials Production Rate",
+              "coef": -2
+            }
+          ],
+          "note": "Regolith per Construction Materials Unit = 2."
+        },
+        {
+          "type": "identity",
+          "name": "Mode 37: A Refinery Construction Materials pair identity",
+          "abs_tol": 1e-8,
+          "terms": [
+            {
+              "column": "A Refinery Construction Materials Consumption",
+              "coef": 1
+            },
+            {
+              "column": "A Refinery Expansion",
+              "coef": -20
+            }
+          ]
+        },
+        {
+          "type": "identity",
+          "name": "Mode 37: A Electronics Construction Materials pair identity",
+          "abs_tol": 1e-8,
+          "terms": [
+            {
+              "column": "A Electronics Construction Materials Consumption",
+              "coef": 1
+            },
+            {
+              "column": "A Electronics Factory Expansion",
+              "coef": -12
+            }
+          ]
+        },
+        {
+          "type": "identity",
+          "name": "Mode 37: A Power Construction Materials pair identity",
+          "abs_tol": 1e-8,
+          "terms": [
+            {
+              "column": "A Power Construction Materials Consumption",
+              "coef": 1
+            },
+            {
+              "column": "A Power Generation Expansion",
+              "coef": -1
+            }
+          ]
+        },
+        {
+          "type": "identity",
+          "name": "Mode 37: A Refinery Capital Goods pair identity",
+          "abs_tol": 1e-8,
+          "terms": [
+            {
+              "column": "A Refinery Capital Goods Consumption",
+              "coef": 1
+            },
+            {
+              "column": "A Refinery Expansion",
+              "coef": -17
+            }
+          ]
+        },
+        {
+          "type": "identity",
+          "name": "Mode 37: A Electronics Capital Goods pair identity",
+          "abs_tol": 1e-8,
+          "terms": [
+            {
+              "column": "A Electronics Capital Goods Consumption",
+              "coef": 1
+            },
+            {
+              "column": "A Electronics Factory Expansion",
+              "coef": -11.5
+            }
+          ]
+        },
+        {
+          "type": "identity",
+          "name": "Mode 37: A Power Capital Goods pair identity",
+          "abs_tol": 1e-8,
+          "terms": [
+            {
+              "column": "A Power Capital Goods Consumption",
+              "coef": 1
+            },
+            {
+              "column": "A Power Generation Expansion",
+              "coef": -0.5
+            }
+          ]
+        },
+        {
+          "type": "identity",
+          "name": "Mode 37: B CM plant Capital Goods pair identity",
+          "abs_tol": 1e-8,
+          "terms": [
+            {
+              "column": "B Construction Materials Plant Capital Goods Consumption",
+              "coef": 1
+            },
+            {
+              "column": "B Construction Materials Plant Expansion",
+              "coef": -5
+            }
+          ],
+          "note": "Construction Materials Plant Capital Goods per Capacity = 5."
+        },
+        {
+          "type": "identity",
+          "name": "Mode 37: B CM plant Construction Materials pair identity",
+          "abs_tol": 1e-8,
+          "terms": [
+            {
+              "column": "B Construction Materials Plant Construction Materials Consumption",
+              "coef": 1
+            },
+            {
+              "column": "B Construction Materials Plant Expansion",
+              "coef": -5
+            }
+          ],
+          "note": "Construction Materials Plant Construction Materials per Capacity = 5."
+        },
+        {
+          "type": "identity",
+          "name": "Mode 37: B CM production capacity equals plant active capacity",
+          "abs_tol": 1e-8,
+          "terms": [
+            {
+              "column": "B Construction Materials Production Capacity",
+              "coef": 1
+            },
+            {
+              "column": "B Construction Materials Plant Active Capacity",
+              "coef": -1
+            }
+          ],
+          "note": "No Mode-28 shock is active in Modes 34-35."
+        },
+        {
+          "type": "identity",
+          "name": "Mode 37: B regolith -> Construction Materials pair identity",
+          "abs_tol": 1e-8,
+          "terms": [
+            {
+              "column": "B Construction Materials Regolith Consumption",
+              "coef": 1
+            },
+            {
+              "column": "B Construction Materials Production Rate",
+              "coef": -2
+            }
+          ],
+          "note": "Regolith per Construction Materials Unit = 2."
+        },
+        {
+          "type": "identity",
+          "name": "Mode 37: B Refinery Construction Materials pair identity",
+          "abs_tol": 1e-8,
+          "terms": [
+            {
+              "column": "B Refinery Construction Materials Consumption",
+              "coef": 1
+            },
+            {
+              "column": "B Refinery Expansion",
+              "coef": -20
+            }
+          ]
+        },
+        {
+          "type": "identity",
+          "name": "Mode 37: B Electronics Construction Materials pair identity",
+          "abs_tol": 1e-8,
+          "terms": [
+            {
+              "column": "B Electronics Construction Materials Consumption",
+              "coef": 1
+            },
+            {
+              "column": "B Electronics Factory Expansion",
+              "coef": -12
+            }
+          ]
+        },
+        {
+          "type": "identity",
+          "name": "Mode 37: B Power Construction Materials pair identity",
+          "abs_tol": 1e-8,
+          "terms": [
+            {
+              "column": "B Power Construction Materials Consumption",
+              "coef": 1
+            },
+            {
+              "column": "B Power Generation Expansion",
+              "coef": -1
+            }
+          ]
+        },
+        {
+          "type": "identity",
+          "name": "Mode 37: B Refinery Capital Goods pair identity",
+          "abs_tol": 1e-8,
+          "terms": [
+            {
+              "column": "B Refinery Capital Goods Consumption",
+              "coef": 1
+            },
+            {
+              "column": "B Refinery Expansion",
+              "coef": -17
+            }
+          ]
+        },
+        {
+          "type": "identity",
+          "name": "Mode 37: B Electronics Capital Goods pair identity",
+          "abs_tol": 1e-8,
+          "terms": [
+            {
+              "column": "B Electronics Capital Goods Consumption",
+              "coef": 1
+            },
+            {
+              "column": "B Electronics Factory Expansion",
+              "coef": -11.5
+            }
+          ]
+        },
+        {
+          "type": "identity",
+          "name": "Mode 37: B Power Capital Goods pair identity",
+          "abs_tol": 1e-8,
+          "terms": [
+            {
+              "column": "B Power Capital Goods Consumption",
+              "coef": 1
+            },
+            {
+              "column": "B Power Generation Expansion",
+              "coef": -0.5
+            }
+          ]
+        },
+        {
+          "type": "identity",
+          "name": "Mode 37: Transport Construction Materials pair identity",
+          "abs_tol": 1e-8,
+          "terms": [
+            {
+              "column": "A Transport Construction Materials Consumption",
+              "coef": 1
+            },
+            {
+              "column": "B Transport Construction Materials Consumption",
+              "coef": 1
+            },
+            {
+              "column": "Transport Capacity Expansion",
+              "coef": -3
+            }
+          ]
+        },
+        {
+          "type": "identity",
+          "name": "Mode 37: Transport Capital Goods pair identity",
+          "abs_tol": 1e-8,
+          "terms": [
+            {
+              "column": "A Transport Capital Goods Consumption",
+              "coef": 1
+            },
+            {
+              "column": "B Transport Capital Goods Consumption",
+              "coef": 1
+            },
+            {
+              "column": "Transport Capacity Expansion",
+              "coef": -2.8333333333333335
+            }
+          ]
+        },
+        {
+          "type": "identity",
+          "name": "Mode 37: A CG plant Capital Goods pair identity",
+          "abs_tol": 1e-8,
+          "terms": [
+            {
+              "column": "A Capital Goods Plant Capital Goods Consumption",
+              "coef": 1
+            },
+            {
+              "column": "A Capital Goods Plant Expansion",
+              "coef": -5
+            }
+          ],
+          "note": "Capital Goods Plant Capital Goods per Capacity = 5."
+        },
+        {
+          "type": "identity",
+          "name": "Mode 37: A CG plant Construction Materials pair identity",
+          "abs_tol": 1e-8,
+          "terms": [
+            {
+              "column": "A Capital Goods Plant Construction Materials Consumption",
+              "coef": 1
+            },
+            {
+              "column": "A Capital Goods Plant Expansion",
+              "coef": -5
+            }
+          ],
+          "note": "Capital Goods Plant Construction Materials per Capacity = 5."
+        },
+        {
+          "type": "identity",
+          "name": "Mode 37: A Capital Goods production capacity equals plant active capacity",
+          "abs_tol": 1e-8,
+          "terms": [
+            {
+              "column": "A Capital Goods Production Capacity",
+              "coef": 1
+            },
+            {
+              "column": "A Capital Goods Plant Active Capacity",
+              "coef": -1
+            }
+          ],
+          "note": "No Mode-22 shock is active in Modes 36-37."
+        },
+        {
+          "type": "identity",
+          "name": "Mode 37: B CG plant Capital Goods pair identity",
+          "abs_tol": 1e-8,
+          "terms": [
+            {
+              "column": "B Capital Goods Plant Capital Goods Consumption",
+              "coef": 1
+            },
+            {
+              "column": "B Capital Goods Plant Expansion",
+              "coef": -5
+            }
+          ],
+          "note": "Capital Goods Plant Capital Goods per Capacity = 5."
+        },
+        {
+          "type": "identity",
+          "name": "Mode 37: B CG plant Construction Materials pair identity",
+          "abs_tol": 1e-8,
+          "terms": [
+            {
+              "column": "B Capital Goods Plant Construction Materials Consumption",
+              "coef": 1
+            },
+            {
+              "column": "B Capital Goods Plant Expansion",
+              "coef": -5
+            }
+          ],
+          "note": "Capital Goods Plant Construction Materials per Capacity = 5."
+        },
+        {
+          "type": "identity",
+          "name": "Mode 37: B Capital Goods production capacity equals plant active capacity",
+          "abs_tol": 1e-8,
+          "terms": [
+            {
+              "column": "B Capital Goods Production Capacity",
+              "coef": 1
+            },
+            {
+              "column": "B Capital Goods Plant Active Capacity",
+              "coef": -1
+            }
+          ],
+          "note": "No Mode-22 shock is active in Modes 36-37."
+        },
+        {
+          "type": "metric",
+          "name": "Mode 37: B CG plant expansion responds during surge",
+          "column": "B Capital Goods Plant Expansion",
+          "metric": "max",
+          "op": ">",
+          "value": 0.005,
+          "window": [
+            360,
+            720
+          ]
+        },
+        {
+          "type": "change",
+          "name": "Mode 37: B CG plant installed capacity rebuilds during surge",
+          "column": "B Capital Goods Plant Installed Capacity",
+          "from_day": 360,
+          "to_day": 720,
+          "op": ">",
+          "value": 0.5
+        },
+        {
+          "type": "metric",
+          "name": "Mode 37: B CG plant Construction Materials consumption is real",
+          "column": "B Capital Goods Plant Construction Materials Consumption",
+          "metric": "max",
+          "op": ">",
+          "value": 0,
+          "window": [
+            360,
+            720
+          ]
+        },
+        {
+          "type": "metric",
+          "name": "Mode 37: B CG plant Capital Goods consumption is real",
+          "column": "B Capital Goods Plant Capital Goods Consumption",
+          "metric": "max",
+          "op": ">",
+          "value": 0,
+          "window": [
+            360,
+            720
+          ]
+        },
+        {
+          "type": "metric",
+          "name": "Mode 37: B Capital Goods production rate recovers",
+          "column": "B Capital Goods Production Rate",
+          "metric": "max",
+          "op": ">",
+          "value": 0.9,
+          "window": [
+            360,
+            720
+          ]
+        },
+        {
+          "type": "metric",
+          "name": "Mode 37: B Capital Goods fulfillment shows surge pressure",
+          "column": "B Capital Goods Fulfillment",
+          "metric": "min",
+          "op": "<",
+          "value": 0.3,
+          "window": [
+            360,
+            720
+          ]
+        },
+        {
+          "type": "event_absent",
+          "name": "Mode 37: B CG plant does not expand before surge window",
+          "event": {
+            "column": "B Capital Goods Plant Expansion",
+            "op": ">",
+            "value": 0.000001,
+            "window": [
+              0,
+              359.75
+            ]
+          }
+        }
+      ],
+      "notes": [
+        "r3 fixes validation DSL only: metric surge checks use window [360,720]; event_absent uses nested event with window [0,359.75]. Thresholds remain the rounded r2 semantic margins until this run reports the true windowed values."
       ]
     }
   },
@@ -21768,20 +26589,16 @@
     "r2 (2026-09-25): the power-resource operating identity (Consumption = Energy Supply x Power Resource per Energy) is scoped to Modes 25-26. The consumption flow is gated by [Power Resource Enabled], so in Modes 0-24 it is 0 while Energy Supply is not; as a global check it failed every legacy mode. Modes 0-24 instead assert the switch-off state: consumption 0, extraction 0, fulfillment 1, inventory a dead stock at 5000, price at base.",
     "r2: the price channel reads [X Perceived Power Resource Fulfillment] (inventory coverage of the smoothed demand signal), not the physical rationing ratio, which closed an algebraic loop price -> demand -> rationing -> price in Modes 25-26.",
     "v7.7 DRAFT: structural declarations only. The executor adds: scenario checks for Modes 27-29, the regolith->construction materials and expansion->construction materials pair identities (only in Modes where the flows are enabled), switch-off checks for Modes 0-26, and kernel/colony declarations if the audit asks for them.",
-    "v7.7 candidate r1: Modes 0-26 include explicit switch-off checks for Construction Materials/Regolith.",
-    "v7.7 candidate r1: Modes 27-29 include exact Regolith->Construction Materials, sector expansion->Construction Materials, and legacy Capital Goods pair identities.",
     "v7.7 candidate r2 calibration from Linux candidate run 36190086944: Mode27 fulfillment min=0.9669176 -> floor 0.94; Mode28 fulfillment/ratio min=0.3604454 -> ceiling 0.50; CG fulfillment min=0.9684302 -> floor 0.95; recovery@900=0.9671779 -> floor 0.94; Mode29 regolith min=0.8716267 -> ceiling 5; CM fulfillment min=0.4751981 -> ceiling 0.60; production-rate max=0.7060652 with capacity exactly 3 -> ceiling 1.0; recovery@900=0.9671409 -> floor 0.94.",
     "B idle fulfillment observed 0.999999999966667 due floating arithmetic; executable floor is 1-1e-9, matching the test-plan epsilon formulation rather than false exact equality.",
     "v7.7.1 DRAFT: structural declarations only. The executor adds scenario checks for Modes 30-31, the transport construction-materials pair identity (Modes 30-31 only), switch-off checks for Modes 0-29, and the source-share sum check.",
-    "v7.7.1 candidate r1: Modes 0-29 explicitly assert the new Transport Construction Materials mechanism is off.",
-    "v7.7.1 candidate r1: Modes 30-31 check both Transport Construction Materials legs, source-share sum, new and legacy Transport pair identities, and all v7.7 colonial pair identities.",
     "v7.7.1 candidate r2 calibration from Linux candidate run 36232699114: Mode30 Transport CM fulfillment min=0.990737111465802 -> floor 0.98; Mode31 B CM production max=1.85361612493811 -> floor 1.5; B CM fulfillment min=0.926415559897726 -> ceiling 0.95.",
     "v7.7.2 DRAFT: structural declarations only (regression 0-31, energy_balance consumers, planet_closure). The executor adds switch-off checks for Modes 0-31, scenario checks for Modes 32-33 and the per-colony construction-materials energy relations.",
-    "v7.7.2 candidate r1: Modes 0-31 explicitly assert the Construction Materials energy mechanism is off (requested=0, allocated=0, fulfillment=1).",
-    "v7.7.2 candidate r1: Modes 32-33 check requested-energy and regolith identities, actual<=pre-energy plan, and the linear allocated-energy/actual-production consequence. The current generic validation DSL has no nonlinear row-wise product check; the two required product formulas remain literal model formulas reviewed in model-patch.json and covered structurally by conformance/audit. This limitation is documented in REPORT_RU.md rather than silently weakening the test plan.",
     "v7.7.2 candidate r2 calibration from Linux candidate run 36275212947: Mode32 A CM energy fulfillment min=0.926388351545351 -> <0.95; terminal signal tracking abs error=0.0008954554231939693 -> <=0.002; Mode33 B CM energy fulfillment min=0.714701728962681 -> <0.80. Model constants unchanged.",
     "v7.7.3 DRAFT: structural declarations only (regression 0-33, kernel instances, boundary classification and pairs, planet_closure). The executor adds switch-off checks for Modes 0-33, pair identities for the two plant expansions (Modes 34-35), and scenario checks for Modes 34-35.",
-    "v7.7.3 candidate r1: Modes 0-33 explicitly assert the new plant expansion/demand sinks are off; Modes 34-35 add plant physical-pair identities, inherited v7.7.2 physical pair identities, capacity=active identity, and calibration probes from V7_7_3_TEST_PLAN.md.",
-    "v7.7.3 candidate r2 calibration from Linux candidate run 36313670047: Mode34 A plant installed change=-2.263962331007464 -> < -2.0; A CM production max=2.23927686146337 -> >2.0; B plant expansion max=0 -> <=1e-6. Mode35 B plant expansion max=0.0089300689086293 -> >0.007; B plant installed change 360->720=0.98486656336586 -> >0.8; B CM production max=1.02707552489587 -> >0.9; B CM fulfillment min=0.122475826515893 -> <0.20. Thresholds are rounded semantic margins, not point fits."
+    "v7.7.3 candidate r2 calibration from Linux candidate run 36313670047: Mode34 A plant installed change=-2.263962331007464 -> < -2.0; A CM production max=2.23927686146337 -> >2.0; B plant expansion max=0 -> <=1e-6. Mode35 B plant expansion max=0.0089300689086293 -> >0.007; B plant installed change 360->720=0.98486656336586 -> >0.8; B CM production max=1.02707552489587 -> >0.9; B CM fulfillment min=0.122475826515893 -> <0.20. Thresholds are rounded semantic margins, not point fits.",
+    "v7.7.4 DRAFT: structural declarations only (regression 0-35, kernel instances, boundary classification and pairs, planet_closure). The executor adds switch-off checks for Modes 0-35, pair identities for the two plant expansions (Modes 36-37), and scenario checks for Modes 36-37.",
+    "v7.7.4 candidate r2: calibration probes replaced after first full run 36329067162 with rounded semantic thresholds; no owner rules or structural checks were weakened.",
+    "v7.7.4 candidate r3: corrected Mode 37 DSL format after r2 exposed that metric from_day/to_day are ignored and event_absent requires nested event. No model or threshold change in this revision; true windowed values are taken from the r3 CI report."
   ]
 }
