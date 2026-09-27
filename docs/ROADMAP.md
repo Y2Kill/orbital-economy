@@ -93,7 +93,7 @@ Why not now: it replaces the project's central guarantee (old Modes bit-exact on
 
 **Trigger:** the first model change for which an exact algebraic fallback at `switch = 0` is impossible or would distort the design. The v7.7.2 increment (construction materials using energy) still had a clean fallback: Modes 0–31 bit-exact.
 
-## External review observations (2026-09-27) — decided: node generator first (task 015, `capital_lifecycle`), then `simple_capital` (task 016)
+## External review observations (2026-09-27) — decided: node generator first (task 015 — done, Lab v0.9.8), then `simple_capital` (task 016)
 
 An outside review of v7.7.3 (not a request for changes). No plan is changed by this section; it records what to decide once task 014 is accepted.
 
