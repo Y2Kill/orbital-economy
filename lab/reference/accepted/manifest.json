@@ -1,15 +1,15 @@
 {
   "status": "ACCEPTED",
-  "model_name": "Orbital Economy v7.7.2 r1 — Construction Materials use Energy",
-  "model_file": "orbital_economy_v7_7_2_r1_modeljson.json",
-  "model_sha256": "9bd5c956acccefddc3573b18d04e782d3cb329be89c1d297337b0831c04f2b45",
-  "validation_file": "validation-v7.7.2.json",
-  "validation_sha256": "c3e5a54cf23baf5e2b8b91c9106b47454bc83a1c7e54edfd4cef95fdc7fb83eb",
+  "model_name": "Orbital Economy v7.7.3 r1 — Construction Materials Capital",
+  "model_file": "orbital_economy_v7_7_3_r1_modeljson.json",
+  "model_sha256": "a620cc65b93f6faedf2303e16f10dd595a882c319403c0b1bd98b69c1f7ef173",
+  "validation_file": "validation-v7.7.3.json",
+  "validation_sha256": "a7bd29ba5cf3b77fd94af23a44e86011cd6d595d6c7ac8760e9a25707f2f3e3b",
   "accepted_date": "2026-09-27",
   "engine": "simulation@9.0.0",
   "notes": [
-    "v7.7.2: construction-materials processing is the third consumer of the colony energy allocator; the plan feeding the allocator reads a smoothed demand-signal stock. See docs/tasks/012-construction-materials-energy/.",
-    "Modes 0-31 reproduce v7.7.1 r1 exactly (Construction Materials Energy Enabled = 0); Mode 32 baseline, Mode 33 generation capacity shock in which colony B produces construction materials under an energy shortfall.",
+    "v7.7.3: construction-materials processing capacity is capital on the lifecycle kernel (a kernel-v2 plant per colony, no finance limit, as Power); the plant is sized to the smoothed demand-signal stock. See docs/tasks/013-construction-materials-capital/.",
+    "Modes 0-33 reproduce v7.7.2 r1 exactly (Construction Materials Capital Enabled = 0); Mode 34 baseline, Mode 35 transport surge in which colony B rebuilds its construction-materials plant.",
     "Exact numbers are defined on the canonical platform (docs/VERSIONING_AND_AUTHORITY.md section 8); series-digest.windows.json is the golden."
   ]
 }

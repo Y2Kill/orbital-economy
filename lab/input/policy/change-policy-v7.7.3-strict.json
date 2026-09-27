@@ -1,0 +1,19 @@
+{
+  "format": "orbital-economy-change-policy-v1",
+  "name": "Orbital Economy v7.7.3 r1 strict accepted-baseline policy",
+  "description": "Default-deny change contract bound to accepted v7.7.3 r1 (Construction Materials Capital). Any candidate must be compared against this model with this validation file.",
+  "accepted_model_sha256": "a620cc65b93f6faedf2303e16f10dd595a882c319403c0b1bd98b69c1f7ef173",
+  "validation_sha256": "a7bd29ba5cf3b77fd94af23a44e86011cd6d595d6c7ac8760e9a25707f2f3e3b",
+  "comparison": {
+    "abs_tolerance": 0,
+    "rel_tolerance": null,
+    "rel_floor": 1e-12
+  },
+  "default_action": "deny",
+  "rules": [],
+  "require_full_mode_coverage": true,
+  "engine": {
+    "package": "simulation",
+    "version": "9.0.0"
+  }
+}

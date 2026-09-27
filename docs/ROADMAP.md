@@ -1,10 +1,14 @@
 # Roadmap
 
 **Document status:** CURRENT  
-**Base:** Orbital Economy v7.7.2 r1 — Construction Materials use Energy (accepted 2026-09-27)  
+**Base:** Orbital Economy v7.7.3 r1 — Construction Materials Capital (accepted 2026-09-27)  
 **Rule:** roadmap describes intent; executable accepted code remains authoritative for accepted behavior.
 
-## Current implementation — v7.7.2 Construction Materials use Energy
+## Current implementation — v7.7.3 Construction Materials Capital
+
+Construction-materials processing capacity is capital: each colony has a plant on the capital lifecycle kernel (kernel-v2, no finance limit, as Power), sized to the smoothed demand signal and expanded from capital goods and construction materials. The plant winds down its oversized starting capacity in calm Modes; in Mode 35 (transport surge) colony B rebuilds it, and until it is rebuilt B's construction materials are short (fulfillment ≈ 0.12) — construction-materials output now has inertia. Planet v1 counter P2: 7 → 9 processes on capital.
+
+## v7.7.2 Construction Materials use Energy
 
 Regolith processing is the third consumer of each colony's energy allocator (after smelting and electronics); the plan that feeds the allocator reads a smoothed demand-signal stock (same-step demand closed an algebraic loop through refinery profit — found by the loop audit on the first skeleton). Mode 33 (generation capacity shock) shows colony B producing construction materials under an energy shortfall. First model step under the Planet v1 counter: P3 4 → 6 processes requesting energy.
 
@@ -92,14 +96,14 @@ Defined 2026-09-26: `docs/PLANET_V1_CONTRACT_RU.md`. The single boundary counter
 | Part | Now (v7.7.1, per colony) | v1 target |
 |---|---|---|
 | P1 capital-backed expansion | 0 external | 0 (closed) |
-| P2 capacity from capital, not a constant | 5 constant/unbounded | 0 undeclared; exceptions with reason, counted separately |
+| P2 capacity from capital, not a constant | 4 constant/unbounded (v7.7.2: 5) | 0 undeclared; exceptions with reason, counted separately |
 | P3 declared energy use | 4 of 7 processes + transport without energy (v7.7.1: 5 of 7) | 0 undeclared; exceptions with reason |
 | P4 finite deposits | 3 extractions from nothing | deposit stock from a named parameter (v8: derived from planet formation) |
 | P5 declared labor | 2 of 9 | all declared; no labor pool (v2) |
 | P6 final demand | constants | explicit external driver (population and life support: v2) |
 | P7 reproducibility | closed on the canonical platform | platform independence before going public |
 
-Measured by the `planet_closure` validation plugin (task 011, Lab v0.9.6; in the accepted validation since v7.7.1 r2, `report` mode). Next: model steps under the counter. Done: task 012, v7.7.2 construction materials using energy (P3 5 → 4 per colony; bench v0.9.7 `energy_balance` consumers list). In progress: task 013, v7.7.3 construction-materials capacity on the capital lifecycle kernel (P2 5 → 4 per colony). Open: `labor: declared` is trusted until the P5 model step introduces explicit labor-requirement variables (contract P5).
+Measured by the `planet_closure` validation plugin (task 011, Lab v0.9.6; in the accepted validation since v7.7.1 r2, `report` mode). Next: model steps under the counter. Done: task 012, v7.7.2 construction materials using energy (P3 5 → 4 per colony; bench v0.9.7 `energy_balance` consumers list). Done: task 013, v7.7.3 construction-materials capacity on the capital lifecycle kernel (P2 5 → 4 per colony). Open: `labor: declared` is trusted until the P5 model step introduces explicit labor-requirement variables (contract P5).
 
 ## v8 — replicated regions/colonies/planets
 

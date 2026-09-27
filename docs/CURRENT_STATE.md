@@ -1,21 +1,21 @@
 # Current State
 
 **Document status:** CURRENT  
-**Describes code:** Orbital Economy v7.7.2 r1 — Construction Materials use Energy  
-**Base:** accepted v7.7.1 r1 (Transport on Construction Materials)  
-**Model SHA-256:** `9bd5c956acccefddc3573b18d04e782d3cb329be89c1d297337b0831c04f2b45`
+**Describes code:** Orbital Economy v7.7.3 r1 — Construction Materials Capital  
+**Base:** accepted v7.7.2 r1 (Construction Materials use Energy)  
+**Model SHA-256:** `a620cc65b93f6faedf2303e16f10dd595a882c319403c0b1bd98b69c1f7ef173`
 
 ## 1. Checkpoint
 
 | Property | Value |
 |---|---:|
-| ModelJSON elements | 3262 |
-| VARIABLE | 869 |
-| STOCK | 73 |
-| FLOW | 157 |
-| LINK | 2163 |
-| Named primitives | 1099 |
-| Scenarios | 34 |
+| ModelJSON elements | 3457 |
+| VARIABLE | 912 |
+| STOCK | 81 |
+| FLOW | 175 |
+| LINK | 2289 |
+| Named primitives | 1168 |
+| Scenarios | 36 |
 | Simulation | 0..1080 days |
 | Time step | 0.25 day |
 | Engine | `simulation@9.0.0` |
@@ -55,6 +55,16 @@ X Construction Materials Production Rate  = X Pre Energy CM Production Rate × X
 ```
 
 The request joins `X Total Requested Energy`, the allocation joins `X Energy Supply`. The plan that feeds the allocator reads the smoothed stock `X Construction Materials Demand Signal` (adjustment 3 days), not same-step demand: same-step demand closes an algebraic loop through refinery profit (actual smelting → profit → desired expansion → construction-materials demand → energy request → allocator → smelting), found by the loop audit on the first skeleton. This is the v7.6 rule: whatever feeds an allocator or a price reads smoothed state. Colony A's energy is not fully covered even without construction materials (fulfillment ≈ 0.90–0.96 in the coupled Modes), so A's construction materials are energy-limited by ~5–7 % already in the baseline. Planet v1 counter P3: processes requesting energy 4 → 6.
+
+### 2c. Construction materials on capital (v7.7.3)
+
+Processing capacity is capital. Each colony has a **construction-materials plant** — a kernel-v2 instance of the capital lifecycle (installed / active / decommissioning / retired, activation, mothballing, depreciation, surplus disposal), cloned from Refinery without the finance limit (construction materials have no price; the same documented variation as Power). With the switch on, `X Construction Materials Production Capacity` is the plant's active capacity, and the plant expands from local capital goods and construction materials:
+
+```text
+X Construction Materials Plant Expansion = Gap Limited Construction × Min(X Capital Goods Fulfillment, X Construction Materials Fulfillment)
+```
+
+The plant is sized to the smoothed demand signal of 2b (`Required Active = Demand Signal × 1.1`, `Desired Installed = × 1.15`): sizing it from the production plan closes an algebraic loop (construction materials are needed to build the plant itself), found by the loop audit on the first skeleton. Starting capacity (A 3, B 2) exceeds calm demand, so the plant winds its surplus down like any oversized kernel sector. Planet v1 counter P2: processes on capital 7 → 9.
 
 ## 3. Energy Kernel v2
 
@@ -120,7 +130,7 @@ Extraction adjusts toward current resource demand plus a target-inventory correc
 - `0`: all new resource flows are inert; `Available Generation` falls back to the accepted active-capacity path; generation cost falls back to the accepted v7.5.1 expression.
 - `1`: Energy Kernel v2 operates.
 
-In v7.6, Modes **0–24** were the exact-regression scope against v7.5.1 and Modes **25–26** were new. In v7.6.1, Modes **0–24** and **26** reproduced v7.6 r2 exactly (every series except the recalibrated constant's own series). In v7.7, Modes **0–26** set `Construction Materials Enabled = 0` and reproduce v7.6.1 r1 bit for bit on the canonical platform; Modes **27–29** are new. In v7.7.1, Modes **0–29** reproduce v7.7 r1 (switch `Transport Construction Materials Enabled`); in v7.7.2, Modes **0–31** set `Construction Materials Energy Enabled = 0` and reproduce v7.7.1 r1 bit for bit; Modes **32–33** are new.
+In v7.6, Modes **0–24** were the exact-regression scope against v7.5.1 and Modes **25–26** were new. In v7.6.1, Modes **0–24** and **26** reproduced v7.6 r2 exactly (every series except the recalibrated constant's own series). In v7.7, Modes **0–26** set `Construction Materials Enabled = 0` and reproduce v7.6.1 r1 bit for bit on the canonical platform; Modes **27–29** are new. In v7.7.1, Modes **0–29** reproduce v7.7 r1 (switch `Transport Construction Materials Enabled`); in v7.7.2, Modes **0–31** set `Construction Materials Energy Enabled = 0` and reproduce v7.7.1 r1 bit for bit; Modes **32–33** are new. In v7.7.3, Modes **0–33** set `Construction Materials Capital Enabled = 0` and reproduce v7.7.2 r1 bit for bit; Modes **34–35** are new.
 
 ## 5. New scenarios
 
@@ -162,22 +172,30 @@ Everything on, no stimulus. A's construction materials request energy (≈ 0.5 %
 
 The capacity-only shock of Mode 26 (A generation × 0.6 in the standard window) with everything on. A's construction stops in the window, so A's construction-materials demand drops to zero; production shifts to B, which builds Power and Refinery, extracts regolith and produces construction materials — under an energy shortfall: B's construction-materials energy fulfillment falls to ≈ 0.715, output ≈ 1.05 per day against a pre-energy plan of ≈ 1.38.
 
+### Mode 34 — Construction Materials Capital Baseline
+
+Everything on, no stimulus. The plants follow the smoothed demand and dispose of surplus: A's installed capacity falls from 3 to ≈ 0.74 by day 1080, B's from 2 to near zero; A briefly mothballs under the small day-0 signal and reactivates for the early demand peak (production peak ≈ 2.24 against ≈ 2.73 in v7.7.2 — a start-up transient).
+
+### Mode 35 — Transport Surge on Construction Materials Capital
+
+The transport-demand surge of Modes 2, 24 and 31 with everything on. By day 360 B's plant is mothballed down to ≈ 0.47; in the surge B **rebuilds it** to ≈ 1.45 from capital goods and construction materials. Until it is rebuilt, B's construction materials are short: fulfillment falls to ≈ 0.12 (≈ 0.93 in v7.7.1 Mode 31 with a constant capacity). Construction-materials output now has inertia.
+
 ## 6. Static QA
 
-| Metric | v7.7.2 r1 |
+| Metric | v7.7.3 r1 |
 |---|---:|
-| FLOW | 157 |
-| Boundary flows | 126 |
+| FLOW | 175 |
+| Boundary flows | 138 |
 | Unclassified boundary flows | 0 |
 | Declared transformation pairs | 15 |
 | Unpaired transformation flows | 0 |
 | Declared external-capital violations | **0** |
 | A/B symmetry mismatches | **0** |
 | A/B parameter differences | 102 |
-| Capital lifecycle instances | 7 |
+| Capital lifecycle instances | 9 |
 | Capital lifecycle non-conforming | **0** |
 
-Executable validation Modes 0–33 (`validation/validation-v7.7.2.json`) was run on the canonical platform on 2026-09-27: **34/34 PASS** (5702 checks); Modes 0–31 reproduce v7.7.1 r1 exactly (32 × `common=1082, changed=0, maxAbs=0`, 17 added series). v7.7.1 had reproduced v7.7 r1 exactly in Modes 0–29. Static: algebraic loops 0 of 256 switch combinations; Planet v1 closure P2 7/10/0, P3 6/2/9/0, P4 0/6, P5 4/13, P6 4. v7.7 had reproduced v7.6.1 r1 exactly in Modes 0–26. v7.6.1 had reproduced v7.6 r2 in Modes 0–24 and 26 apart from the recalibrated constant's own series. v7.6 r2 in its turn reproduced v7.5.1 r1 exactly in Modes 0–24 (25 × `common=963, changed=0, maxAbs=0`, 41 added series). See `ACCEPTANCE_STATUS.md`.
+Executable validation Modes 0–35 (`validation/validation-v7.7.3.json`) was run on the canonical platform on 2026-09-27: **36/36 PASS** (6912 checks); Modes 0–33 reproduce v7.7.2 r1 exactly (34 × `common=1099, changed=0, maxAbs=0`, 69 added series). v7.7.2 had reproduced v7.7.1 r1 exactly in Modes 0–31. v7.7.1 had reproduced v7.7 r1 exactly in Modes 0–29. Static: algebraic loops 0 of 512 switch combinations; Planet v1 closure P2 9/8/0, P3 6/2/9/0, P4 0/6, P5 4/13, P6 4. v7.7 had reproduced v7.6.1 r1 exactly in Modes 0–26. v7.6.1 had reproduced v7.6 r2 in Modes 0–24 and 26 apart from the recalibrated constant's own series. v7.6 r2 in its turn reproduced v7.5.1 r1 exactly in Modes 0–24 (25 × `common=963, changed=0, maxAbs=0`, 41 added series). See `ACCEPTANCE_STATUS.md`.
 
 ## 7. What v7.6 deliberately does not implement
 

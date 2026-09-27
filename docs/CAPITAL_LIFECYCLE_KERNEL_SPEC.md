@@ -1,8 +1,8 @@
 # Capital Lifecycle Kernel — формальная спецификация
 
-Статус: **CURRENT / current lifecycle contract carried into v7.7.2 r1** (обновлено 2026-09-25). Kernel-v1 remains the common lifecycle foundation; all seven accepted instances now use kernel-v2 physical Capital Goods backing.
-Модель: `Orbital Economy v7.7.2 r1 — Construction Materials use Energy`, SHA-256 `9bd5c956acccefddc3573b18d04e782d3cb329be89c1d297337b0831c04f2b45`. Capital Lifecycle structure is inherited from accepted v7.5.1.
-Машинная форма контракта: plugin `capital_lifecycle_kernel` в `validation/validation-v7.7.2.json`; проверяющий код `lab/src/lifecycle_conformance.js` (static) и `lab/src/checks.js` (runtime). При расхождении машинная форма и accepted code имеют приоритет.
+Статус: **CURRENT / current lifecycle contract carried into v7.7.3 r1** (обновлено 2026-09-25). Kernel-v1 remains the common lifecycle foundation; all seven accepted instances now use kernel-v2 physical Capital Goods backing.
+Модель: `Orbital Economy v7.7.3 r1 — Construction Materials Capital`, SHA-256 `a620cc65b93f6faedf2303e16f10dd595a882c319403c0b1bd98b69c1f7ef173`. Capital Lifecycle structure is inherited from accepted v7.5.1.
+Машинная форма контракта: plugin `capital_lifecycle_kernel` в `validation/validation-v7.7.3.json`; проверяющий код `lab/src/lifecycle_conformance.js` (static) и `lab/src/checks.js` (runtime). При расхождении машинная форма и accepted code имеют приоритет.
 
 ## 1. Зачем
 
@@ -123,7 +123,7 @@
 6. все 4 стока ≥ 0
 7. все 7 потоков ≥ 0
 
-Семь проверок × семь экземпляров = 49 runtime-проверок на Mode.
+Семь проверок × число экземпляров: 49 runtime-проверок на Mode при 7 экземплярах (v7.5.1–v7.7.2), 63 — при 9 (с v7.7.3).
 
 ### 4.3 Что НЕ проверяется — намеренно
 
@@ -164,6 +164,8 @@
 | A Refinery | CONFORMING_WITH_VARIATION | kernel-v2, одна physical consumption leg |
 | B Refinery | CONFORMING_WITH_VARIATION | kernel-v2, одна physical consumption leg |
 | Transport | CONFORMING_WITH_VARIATION | kernel-v2 shared infrastructure; две physical consumption leg |
+| A Construction Materials Plant | CONFORMING_WITH_VARIATION | kernel-v2 (v7.7.3); нет `finance_limited_construction`; расширение читает `gap_limited_construction` напрямую |
+| B Construction Materials Plant | CONFORMING_WITH_VARIATION | то же |
 
 Подробности: `docs/CAPITAL_LIFECYCLE_CONFORMANCE_REPORT.md`, mapping: `docs/CAPITAL_LIFECYCLE_SECTOR_MAPPING.md`.
 

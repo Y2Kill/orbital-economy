@@ -1,17 +1,17 @@
 # Orbital Economy — реестр внешних параметров
 
-- generated: 2026-09-27T08:29:07.309Z
-- model: Orbital Economy v7.7.2 r1 — Construction Materials use Energy — SHA-256 `9bd5c956acccefddc3573b18d04e782d3cb329be89c1d297337b0831c04f2b45`
-- annotations: docs/PARAMETER_ANNOTATIONS.json (SHA-256 `d7d0fe073ace927de77424a01a9d9022dd6ab52c7f8e2fee2cb122a616d240d7`)
+- generated: 2026-09-27T12:56:13.542Z
+- model: Orbital Economy v7.7.3 r1 — Construction Materials Capital — SHA-256 `a620cc65b93f6faedf2303e16f10dd595a882c319403c0b1bd98b69c1f7ef173`
+- annotations: docs/PARAMETER_ANNOTATIONS.json (SHA-256 `d3a81678a22f0a7082890b4bbc61d96828e3491d34b2923c613ccf044811ee1a`)
 
 Всё, что модель не выводит сама: числовые константы, начальные запасы, переключатели, тестовые множители. Инвентарь сгенерирован из ModelJSON; аннотации («роль / что меняет / доказательство») ведутся вручную и версионируются вместе с baseline.
 
 ## Сводка
 
-- внешних величин: **360** (константы 245, начальные запасы 71, переключатели 9, тестовая обвязка 35)
-- по колониям: A 103, B 103, глобальные 154
-- аннотировано: **194 / 360** (54 %)
-- несимметричных пар A/B: **45**, из них без аннотации: **0**
+- внешних величин: **379** (константы 255, начальные запасы 79, переключатели 10, тестовая обвязка 35)
+- по колониям: A 107, B 107, глобальные 165
+- аннотировано: **209 / 379** (55 %)
+- несимметричных пар A/B: **47**, из них без аннотации: **0**
 
 ## Несимметричные пары A/B — что задаёт различия колоний
 
@@ -47,6 +47,8 @@
 | Test 9 Metal Demand Applies | Metal | 0 | 1 | При 1 разрешает существующий множитель Two Industry Energy Stress Demand Multiplier; при 0 заменяет его точным нейтральным ×1. Сохраняет прежнюю одностороннюю семантику при зеркальной формуле A/B. |
 | Capital Goods Base Production Capacity | Other | 2 | 1 | Enters the soft production-capacity cap and is the quantity reduced by Mode 22 test wiring. |
 | Construction Materials Base Production Capacity | Other | 3 | 2 | Caps local processing through the standard soft-cap function. |
+| Construction Materials Plant Active Capacity | Other | 3 | 2 | Starts active equal to installed capacity, preserving the prior base-capacity level before lifecycle adjustment; A/B are intentionally asymmetric (3 vs 2). |
+| Construction Materials Plant Installed Capacity | Other | 3 | 2 | Seeds lifecycle capital at the previously accepted base production capacity; A/B are intentionally asymmetric (3 vs 2). |
 | Domestic Supply Signal | Other | 16 | 22 | То же для металла. |
 | Local Base Demand | Other | 16 | 22 | Масштаб конечного рынка металла; B — больший потребитель при меньшей добыче → структурный импорт металла B из A (~21–23/день). |
 | Regolith Base Extraction Capacity | Other | 7 | 5 | Caps Regolith extraction through the standard soft-cap function. |
@@ -179,6 +181,8 @@
 | A Construction Materials Base Production Capacity | constant | 3 / 2 | [calib] fixed Construction Materials production capacity (3). | Caps local processing through the standard soft-cap function. | Owner skeleton feasibility value; candidate run to confirm baseline and Mode 28 shock. |
 | A Construction Materials Demand Signal | initial_stock | 0.14 | Initial smoothed Construction Materials demand signal for colony A, value 0.14. | Sets the startup state of the causal demand signal before endogenous adjustment. | V7_7_2_ARCHITECTURE_SPEC §2; owner skeleton initial value near day-0 demand ≈0.137. |
 | A Construction Materials Inventory | initial_stock | 30 | [calib] initial Construction Materials stock, value 30. | Sets initial construction buffer before local production settles. | Owner skeleton feasibility value; candidate run to confirm baseline fulfillment. |
+| A Construction Materials Plant Active Capacity | initial_stock | 3 / 2 | Initial active construction-materials plant capacity for colony A, value 3. | Starts active equal to installed capacity, preserving the prior base-capacity level before lifecycle adjustment; A/B are intentionally asymmetric (3 vs 2). | V7_7_3_ARCHITECTURE_SPEC §2; same specified initial A/B capacities as Installed. |
+| A Construction Materials Plant Installed Capacity | initial_stock | 3 / 2 | Initial installed construction-materials plant capacity for colony A, value 3. | Seeds lifecycle capital at the previously accepted base production capacity; A/B are intentionally asymmetric (3 vs 2). | V7_7_3_ARCHITECTURE_SPEC §2 explicitly requires A=3, B=2 and mandatory annotation of the asymmetric pair. |
 | A Domestic Supply Signal | initial_stock | 16 / 22 | Начальный сигнал локального предложения металла (16 / 22). | То же для металла. |  |
 | A Local Base Demand | constant | 16 / 22 | Базовый конечный спрос на металл (A 16 / B 22 /день). | Масштаб конечного рынка металла; B — больший потребитель при меньшей добыче → структурный импорт металла B из A (~21–23/день). | Shipment Rate A→B: 23.1 (Mode 12), 20.8 (Mode 17). |
 | A Regolith Base Extraction Capacity | constant | 7 / 5 | [calib] fixed extraction capacity (7). | Caps Regolith extraction through the standard soft-cap function. | Owner skeleton feasibility value; candidate run to confirm baseline and shock behaviour. |
@@ -193,6 +197,8 @@
 | B Construction Materials Base Production Capacity | constant | 2 / 3 | [calib] fixed Construction Materials production capacity (2). | Caps local processing through the standard soft-cap function. | Owner skeleton feasibility value; candidate run to confirm baseline and Mode 28 shock. |
 | B Construction Materials Demand Signal | initial_stock | 0.14 | Initial smoothed Construction Materials demand signal for colony B, value 0.14. | Sets the startup state of the causal demand signal before endogenous adjustment. | V7_7_2_ARCHITECTURE_SPEC §2; owner skeleton initial value near day-0 demand ≈0.137. |
 | B Construction Materials Inventory | initial_stock | 30 | [calib] initial Construction Materials stock, value 30. | Sets initial construction buffer before local production settles. | Owner skeleton feasibility value; candidate run to confirm baseline fulfillment. |
+| B Construction Materials Plant Active Capacity | initial_stock | 2 / 3 | Initial active construction-materials plant capacity for colony B, value 2. | Starts active equal to installed capacity, preserving the prior base-capacity level before lifecycle adjustment; A/B are intentionally asymmetric (3 vs 2). | V7_7_3_ARCHITECTURE_SPEC §2; same specified initial A/B capacities as Installed. |
+| B Construction Materials Plant Installed Capacity | initial_stock | 2 / 3 | Initial installed construction-materials plant capacity for colony B, value 2. | Seeds lifecycle capital at the previously accepted base production capacity; A/B are intentionally asymmetric (3 vs 2). | V7_7_3_ARCHITECTURE_SPEC §2 explicitly requires A=3, B=2 and mandatory annotation of the asymmetric pair. |
 | B Domestic Supply Signal | initial_stock | 22 / 16 | Начальный сигнал локального предложения металла (16 / 22). | То же для металла. |  |
 | B Local Base Demand | constant | 22 / 16 | Базовый конечный спрос на металл (A 16 / B 22 /день). | Масштаб конечного рынка металла; B — больший потребитель при меньшей добыче → структурный импорт металла B из A (~21–23/день). | Shipment Rate A→B: 23.1 (Mode 12), 20.8 (Mode 17). |
 | B Regolith Base Extraction Capacity | constant | 5 / 7 | [calib] fixed extraction capacity (5). | Caps Regolith extraction through the standard soft-cap function. | Owner skeleton feasibility value; candidate run to confirm baseline and shock behaviour. |
@@ -208,6 +214,16 @@
 | Construction Materials Adjustment Time | constant | 20 | Construction Materials inventory correction time. | Higher value slows production response to inventory gaps. | V7_7_ARCHITECTURE_SPEC §2; owner-defined non-[calib] value. |
 | Construction Materials Buffer Days | constant | 1 | Scale-free fulfillment buffer, days of demand. | Higher value lowers fulfillment for the same inventory coverage. | V7_7_ARCHITECTURE_SPEC §2; owner-defined non-[calib] value. |
 | Construction Materials Demand Signal Adjustment Time | constant | 3 | Adjustment time of the smoothed Construction Materials demand signal, value 3. | Controls how quickly the allocator-facing production plan follows construction demand while preserving one-step causality. | V7_7_2_ARCHITECTURE_SPEC §1–§2; same idiom as Energy Demand Signal Adjustment Time. |
+| Construction Materials Plant Activation Time | constant | 20 | Construction Materials plant lifecycle parameter, value 20. | Controls reactivation speed of mothballed plant capacity. | V7_7_3_ARCHITECTURE_SPEC §2; owner-defined value verified on the pre-issue skeleton. |
+| Construction Materials Plant Capital Goods per Capacity | constant | 5 | Construction Materials plant lifecycle parameter, value 5. | Scales plant expansion into Capital Goods demand and physical consumption. | V7_7_3_ARCHITECTURE_SPEC §2; owner-defined value verified on the pre-issue skeleton. |
+| Construction Materials Plant Construction Materials per Capacity | constant | 5 | Construction Materials plant lifecycle parameter, value 5. | Scales plant expansion into Construction Materials demand and physical consumption. | V7_7_3_ARCHITECTURE_SPEC §2; owner-defined value verified on the pre-issue skeleton. |
+| Construction Materials Plant Construction Time | constant | 120 | Construction Materials plant lifecycle parameter, value 120. | Controls gap-limited construction rate. | V7_7_3_ARCHITECTURE_SPEC §2; owner-defined value verified on the pre-issue skeleton. |
+| Construction Materials Plant Decommissioning Time | constant | 540 | Construction Materials plant lifecycle parameter, value 540. | Controls dismantling completion rate. | V7_7_3_ARCHITECTURE_SPEC §2; owner-defined value verified on the pre-issue skeleton. |
+| Construction Materials Plant Depreciation Rate | constant | 0.0001 | Construction Materials plant lifecycle parameter, value 0.0001. | Controls physical attrition of installed and active plant capacity. | V7_7_3_ARCHITECTURE_SPEC §2; owner-defined value verified on the pre-issue skeleton. |
+| Construction Materials Plant Installed Reserve Factor | constant | 1.15 | Construction Materials plant lifecycle parameter, value 1.15. | Scales required active capacity into desired installed plant capacity. | V7_7_3_ARCHITECTURE_SPEC §2; owner-defined value verified on the pre-issue skeleton. |
+| Construction Materials Plant Mothball Time | constant | 10 | Construction Materials plant lifecycle parameter, value 10. | Controls deactivation speed of unneeded active plant capacity. | V7_7_3_ARCHITECTURE_SPEC §2; owner-defined value verified on the pre-issue skeleton. |
+| Construction Materials Plant Operating Reserve Factor | constant | 1.1 | Construction Materials plant lifecycle parameter, value 1.1. | Scales smoothed demand signal into required active plant capacity. | V7_7_3_ARCHITECTURE_SPEC §2; owner-defined value verified on the pre-issue skeleton. |
+| Construction Materials Plant Surplus Disposal Decision Time | constant | 240 | Construction Materials plant lifecycle parameter, value 240. | Controls delay before true surplus is committed to decommissioning. | V7_7_3_ARCHITECTURE_SPEC §2; owner-defined value verified on the pre-issue skeleton. |
 | Construction Materials Target Days | constant | 30 | Construction Materials inventory target, days of desired demand. | Higher value raises desired stock coverage. | V7_7_ARCHITECTURE_SPEC §2; owner-defined non-[calib] value. |
 | Regolith Adjustment Time | constant | 10 | Regolith inventory correction time. | Higher value slows extraction response. | V7_7_ARCHITECTURE_SPEC §2; owner-defined non-[calib] value. |
 | Regolith Buffer Days | constant | 1 | Scale-free Regolith availability buffer, days of requirement. | Higher value makes raw-resource limitation bind sooner. | V7_7_ARCHITECTURE_SPEC §2; owner-defined non-[calib] value. |
@@ -253,6 +269,7 @@
 | Power Strategic Reserve Fraction | constant | 0.05 | Отраслевая policy kernel капитала (0.05). | Не часть kernel-контракта — отраслевая параметризация (KERNEL_SPEC §4.3). Сравнение секторов: CAPITAL_LIFECYCLE_SECTOR_MAPPING, последняя таблица. |  |
 | Capital Goods Enabled | switch | 1 | Master switch for v7.5 physical backing of Refinery / Electronics / Power expansion. | 0 preserves accepted v7.4.1 behavior exactly; 1 enables local capital-goods production, inventory fulfillment and physical consumption. | Architecture control parameter from V7_5_ARCHITECTURE_SPEC §0/§2; Modes 0–20 explicitly set 0, Modes 21–23 set 1. |
 | Capital Lifecycle Enabled | switch | 1 | Переключатель v7.3 (1 в сыром файле; 0 в Modes 0–11; 1 в 12–20). | При 0 — Electronics/Power используют фиксированные legacy-мощности (v7.2 r4 бит-в-бит); при 1 — полный kernel капитала для Electronics и Power. К Refinery/Transport не применяется и применяться не должен (KERNEL_SPEC §5). | V7_3_R2_VALIDATION_REPORT §2. |
+| Construction Materials Capital Enabled | switch | 1 | v7.7.3 Construction Materials plant-capital master switch (value 1). | 0 preserves Modes 0-33 exactly; 1 makes production capacity read lifecycle plant active capacity and enables plant expansion demand/sinks. | V7_7_3_ARCHITECTURE_SPEC §0–§3. |
 | Construction Materials Enabled | switch | 1 | v7.7 master switch. | 0 preserves Modes 0-26 exactly; 1 makes colonial expansion require both Capital Goods and Construction Materials. | V7_7_ARCHITECTURE_SPEC §0–§3. |
 | Construction Materials Energy Enabled | switch | 1 | v7.7.2 Construction Materials energy-coupling master switch. | 0 preserves Modes 0-31 exactly; 1 makes Construction Materials processing request and receive energy through the common colony allocator. | V7_7_2_ARCHITECTURE_SPEC §0–§3. |
 | Intermediate Inputs Enabled | switch | 1 | Переключатель v7.4 (1 в сыром файле; 0 в Modes 0–16; 1 в 17–20). | При 0 — точное воспроизведение v7.3 r2 (Feedstock из ∅ по legacy-цене). При 1 — металл как физический вход, Feedstock Extraction = 0, Feedstock Price = Market Price, Desired Smelting Rate += поставки. Только форма IfThenElse(switch, new, old). | CHECK_CANDIDATE r2: Modes 0–16 changed=0, maxAbs=0. |
@@ -482,6 +499,10 @@
 | A Construction Materials Base Production Capacity | constant | A | 3 | **2** | [calib] Baseline Construction Materials production capacity in colony A. | ✓ |
 | A Construction Materials Demand Signal | initial_stock | A | 0.14 | = | Smoothed Construction Materials demand signal for colony A; breaks same-step allocator causality. | ✓ |
 | A Construction Materials Inventory | initial_stock | A | 30 | = | [calib] Local Construction Materials inventory in colony A. | ✓ |
+| A Construction Materials Plant Active Capacity | initial_stock | A | 3 | **2** | Operational construction-materials processing capacity in colony A. | ✓ |
+| A Construction Materials Plant Decommissioning Capacity | initial_stock | A | 0 | = | Construction-materials plant capacity committed to decommissioning in colony A. |  |
+| A Construction Materials Plant Installed Capacity | initial_stock | A | 3 | **2** | Physical installed construction-materials processing capacity in colony A. | ✓ |
+| A Construction Materials Plant Retired Capacity | initial_stock | A | 0 | = | Cumulative retired construction-materials plant capacity in colony A. |  |
 | A Demand Elasticity | constant | A | 0.6 | = |  |  |
 | A Domestic Supply Signal | initial_stock | A | 16 | **22** | Smoothed recent domestic metal production available to A's buyers. | ✓ |
 | A Local Base Demand | constant | A | 16 | **22** | Local industrial metal demand at the reference price. | ✓ |
@@ -498,6 +519,10 @@
 | B Construction Materials Base Production Capacity | constant | B | 2 | **3** | [calib] Baseline Construction Materials production capacity in colony B. | ✓ |
 | B Construction Materials Demand Signal | initial_stock | B | 0.14 | = | Smoothed Construction Materials demand signal for colony B; breaks same-step allocator causality. | ✓ |
 | B Construction Materials Inventory | initial_stock | B | 30 | = | [calib] Local Construction Materials inventory in colony B. | ✓ |
+| B Construction Materials Plant Active Capacity | initial_stock | B | 2 | **3** | Operational construction-materials processing capacity in colony B. | ✓ |
+| B Construction Materials Plant Decommissioning Capacity | initial_stock | B | 0 | = | Construction-materials plant capacity committed to decommissioning in colony B. |  |
+| B Construction Materials Plant Installed Capacity | initial_stock | B | 2 | **3** | Physical installed construction-materials processing capacity in colony B. | ✓ |
+| B Construction Materials Plant Retired Capacity | initial_stock | B | 0 | = | Cumulative retired construction-materials plant capacity in colony B. |  |
 | B Demand Elasticity | constant | B | 0.6 | = |  |  |
 | B Domestic Supply Signal | initial_stock | B | 22 | **16** | Smoothed recent domestic metal production available to B's buyers. | ✓ |
 | B Local Base Demand | constant | B | 22 | **16** | Local industrial metal demand at the reference price. | ✓ |
@@ -515,6 +540,16 @@
 | Construction Materials Adjustment Time | constant | global | 20 |  | First-order inventory correction time for desired Construction Materials production. | ✓ |
 | Construction Materials Buffer Days | constant | global | 1 |  | Scale-free Construction Materials fulfillment half-saturation buffer in days of current demand. | ✓ |
 | Construction Materials Demand Signal Adjustment Time | constant | global | 3 |  | Adjustment time for the smoothed Construction Materials demand signal. | ✓ |
+| Construction Materials Plant Activation Time | constant | global | 20 |  | Days to reactivate mothballed construction-materials plant capacity. | ✓ |
+| Construction Materials Plant Capital Goods per Capacity | constant | global | 5 |  | Capital Goods consumed per unit of new construction-materials plant capacity. | ✓ |
+| Construction Materials Plant Construction Materials per Capacity | constant | global | 5 |  | Construction Materials consumed per unit of new construction-materials plant capacity. | ✓ |
+| Construction Materials Plant Construction Time | constant | global | 120 |  | Physical timescale for closing an installed construction-materials plant capacity shortage. | ✓ |
+| Construction Materials Plant Decommissioning Time | constant | global | 540 |  | Physical timescale from decommissioning commitment to retirement. | ✓ |
+| Construction Materials Plant Depreciation Rate | constant | global | 0.0001 |  | Daily physical depreciation rate of construction-materials plant capacity. | ✓ |
+| Construction Materials Plant Installed Reserve Factor | constant | global | 1.15 |  | Desired installed plant capacity multiplier over required active capacity. | ✓ |
+| Construction Materials Plant Mothball Time | constant | global | 10 |  | Days to mothball unneeded active construction-materials plant capacity. | ✓ |
+| Construction Materials Plant Operating Reserve Factor | constant | global | 1.1 |  | Required active plant capacity multiplier over the smoothed construction-materials demand signal. | ✓ |
+| Construction Materials Plant Surplus Disposal Decision Time | constant | global | 240 |  | Decision timescale before true surplus plant capacity enters decommissioning. | ✓ |
 | Construction Materials Target Days | constant | global | 30 |  | Target Construction Materials inventory coverage in days of desired construction demand. | ✓ |
 | Regolith Adjustment Time | constant | global | 10 |  | First-order inventory correction time for desired Regolith extraction. | ✓ |
 | Regolith Buffer Days | constant | global | 1 |  | Scale-free Regolith availability half-saturation buffer in days of current Regolith requirement. | ✓ |
@@ -587,6 +622,7 @@
 |---|---|---|---:|---:|---|:---:|
 | Capital Goods Enabled | switch | global | 1 (сценарии: {"0":0,"1":0,"2":0,"3":0,"4":0,"5":0,"6":0,"7":0,"8":0,"9":0…) |  | v7.5 master switch: capital expansion is fulfilled from locally produced capital goods. | ✓ |
 | Capital Lifecycle Enabled | switch | global | 1 (сценарии: {"0":0,"1":0,"2":0,"3":0,"4":0,"5":0,"6":0,"7":0,"8":0,"9":0…) |  | Master switch for the v7.3 Electronics and Energy capital lifecycle. Normal/raw model default is enabled. Accepted v7.2 regression scenarios 0-11 explicitly override it to 0; v7.3 scenarios 12+ set it to 1. | ✓ |
+| Construction Materials Capital Enabled | switch | global | 1 (сценарии: {"0":0,"1":0,"2":0,"3":0,"4":0,"5":0,"6":0,"7":0,"8":0,"9":0…) |  | v7.7.3 switch: enables construction-materials processing capacity as lifecycle capital. | ✓ |
 | Construction Materials Enabled | switch | global | 1 (сценарии: {"0":0,"1":0,"2":0,"3":0,"4":0,"5":0,"6":0,"7":0,"8":0,"9":0…) |  | v7.7 master switch: construction materials physically constrain colonial capacity expansion. | ✓ |
 | Construction Materials Energy Enabled | switch | global | 1 (сценарии: {"0":0,"1":0,"2":0,"3":0,"4":0,"5":0,"6":0,"7":0,"8":0,"9":0…) |  | v7.7.2 switch: makes Construction Materials processing participate in the colony energy allocator. | ✓ |
 | Intermediate Inputs Enabled | switch | global | 1 (сценарии: {"0":0,"1":0,"2":0,"3":0,"4":0,"5":0,"6":0,"7":0,"8":0,"9":0…) |  | Master switch for v7.4 Metal-to-Electronics intermediate-input coupling. Modes 0-16 override to 0; Modes 17+ enable it. | ✓ |

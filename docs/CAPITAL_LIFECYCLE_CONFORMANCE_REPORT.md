@@ -1,18 +1,18 @@
 # Orbital Economy Lab — Capital Lifecycle Kernel conformance
 
-- generated: 2026-09-26T14:15:38.317Z
-- model: Orbital Economy v7.7.1 r1 — Transport on Construction Materials
-- model SHA-256: `d53d014d727a439694e103aafb49f87d4dbbb362e581414cbf4dc71a19646f93`
-- validation: Orbital Economy v7.7.1 validation r2
-- validation SHA-256: `2b5ef810dc9aaff5beaaa9b25c0410a6e859e6195753f133755136487913c9a6`
+- generated: 2026-09-27T12:57:32.630Z
+- model: Orbital Economy v7.7.3 r1 — Construction Materials Capital
+- model SHA-256: `a620cc65b93f6faedf2303e16f10dd595a882c319403c0b1bd98b69c1f7ef173`
+- validation: Orbital Economy v7.7.3 validation r1
+- validation SHA-256: `a7bd29ba5cf3b77fd94af23a44e86011cd6d595d6c7ac8760e9a25707f2f3e3b`
 - kernel format: orbital-economy-capital-lifecycle-kernel-v1
 - status: **PASS**
 
 ## Summary
 
-- instances: 7
+- instances: 9
 - CONFORMING: 0
-- CONFORMING_WITH_VARIATION: 7
+- CONFORMING_WITH_VARIATION: 9
 - NON_CONFORMING: 0
 - kernel roles per instance: 26 required + 4 optional; flows: 9; stocks: 4
 - legacy lifecycle switch: `Capital Lifecycle Enabled`
@@ -34,6 +34,8 @@
 | A Refinery | Refinery | **CONFORMING_WITH_VARIATION** | 70/70 | 0 |
 | B Refinery | Refinery | **CONFORMING_WITH_VARIATION** | 70/70 | 0 |
 | Transport | Transport | **CONFORMING_WITH_VARIATION** | 73/73 | 0 |
+| A Construction Materials Plant | Construction Materials Plant | **CONFORMING_WITH_VARIATION** | 69/69 | 0 |
+| B Construction Materials Plant | Construction Materials Plant | **CONFORMING_WITH_VARIATION** | 69/69 | 0 |
 
 ### A Electronics — CONFORMING_WITH_VARIATION
 
@@ -305,6 +307,84 @@ Sector-specific variation (informative, not a failure):
 | desired_expansion | VARIABLE | Transport Desired Expansion |
 | capital_goods_consumption | FLOW | A Transport Capital Goods Consumption |
 | capital_goods_consumption_secondary | FLOW | B Transport Capital Goods Consumption |
+
+### A Construction Materials Plant — CONFORMING_WITH_VARIATION
+
+Sector-specific variation (informative, not a failure):
+- optional role "finance_limited_construction" not present
+- optional role "capital_goods_consumption_secondary" not present
+- v7.7.3: no finance_limited_construction (construction materials have no market price, as Power); sized to the smoothed construction-materials demand signal; expansion gated by Construction Materials Capital Enabled (not the legacy switch).
+- kernel-v2: expansion physically backed by capital goods
+
+| Kernel role | Kind | Primitive |
+|---|---|---|
+| installed | STOCK | A Construction Materials Plant Installed Capacity |
+| active | STOCK | A Construction Materials Plant Active Capacity |
+| decommissioning | STOCK | A Construction Materials Plant Decommissioning Capacity |
+| retired | STOCK | A Construction Materials Plant Retired Capacity |
+| required_active | VARIABLE | A Construction Materials Plant Required Active Capacity |
+| desired_installed | VARIABLE | A Construction Materials Plant Desired Installed Capacity |
+| strategic_reserve_target | VARIABLE | A Construction Materials Plant Strategic Reserve Target |
+| inactive | VARIABLE | A Construction Materials Plant Inactive Capacity |
+| target_active | VARIABLE | A Construction Materials Plant Target Active Capacity |
+| activation_gap | VARIABLE | A Construction Materials Plant Activation Gap |
+| mothball_gap | VARIABLE | A Construction Materials Plant Mothball Gap |
+| installed_shortage | VARIABLE | A Construction Materials Plant Installed Capacity Shortage |
+| installed_excess | VARIABLE | A Construction Materials Plant Installed Capacity Excess |
+| gap_limited_construction | VARIABLE | A Construction Materials Plant Gap Limited Construction |
+| activation_queue | VARIABLE | A Construction Materials Plant Activation Queue Capacity |
+| inactive_after_activation_queue | VARIABLE | A Construction Materials Plant Inactive After Activation Queue |
+| strategic_reserve | VARIABLE | A Construction Materials Plant Strategic Reserve Capacity |
+| surplus | VARIABLE | A Construction Materials Plant Surplus Capacity |
+| lifetime | VARIABLE | A Construction Materials Plant Lifetime Capacity Account |
+| activation | FLOW | A Construction Materials Plant Activation |
+| mothballing | FLOW | A Construction Materials Plant Mothballing |
+| active_depreciation | FLOW | A Construction Materials Plant Active Depreciation |
+| expansion | FLOW | A Construction Materials Plant Expansion |
+| decommissioning_initiation | FLOW | A Construction Materials Plant Decommissioning Initiation |
+| installed_depreciation | FLOW | A Construction Materials Plant Depreciation |
+| dismantling_completion | FLOW | A Construction Materials Plant Dismantling Completion |
+| desired_expansion | VARIABLE | A Construction Materials Plant Desired Expansion |
+| capital_goods_consumption | FLOW | A Construction Materials Plant Capital Goods Consumption |
+
+### B Construction Materials Plant — CONFORMING_WITH_VARIATION
+
+Sector-specific variation (informative, not a failure):
+- optional role "finance_limited_construction" not present
+- optional role "capital_goods_consumption_secondary" not present
+- v7.7.3: no finance_limited_construction (construction materials have no market price, as Power); sized to the smoothed construction-materials demand signal; expansion gated by Construction Materials Capital Enabled (not the legacy switch).
+- kernel-v2: expansion physically backed by capital goods
+
+| Kernel role | Kind | Primitive |
+|---|---|---|
+| installed | STOCK | B Construction Materials Plant Installed Capacity |
+| active | STOCK | B Construction Materials Plant Active Capacity |
+| decommissioning | STOCK | B Construction Materials Plant Decommissioning Capacity |
+| retired | STOCK | B Construction Materials Plant Retired Capacity |
+| required_active | VARIABLE | B Construction Materials Plant Required Active Capacity |
+| desired_installed | VARIABLE | B Construction Materials Plant Desired Installed Capacity |
+| strategic_reserve_target | VARIABLE | B Construction Materials Plant Strategic Reserve Target |
+| inactive | VARIABLE | B Construction Materials Plant Inactive Capacity |
+| target_active | VARIABLE | B Construction Materials Plant Target Active Capacity |
+| activation_gap | VARIABLE | B Construction Materials Plant Activation Gap |
+| mothball_gap | VARIABLE | B Construction Materials Plant Mothball Gap |
+| installed_shortage | VARIABLE | B Construction Materials Plant Installed Capacity Shortage |
+| installed_excess | VARIABLE | B Construction Materials Plant Installed Capacity Excess |
+| gap_limited_construction | VARIABLE | B Construction Materials Plant Gap Limited Construction |
+| activation_queue | VARIABLE | B Construction Materials Plant Activation Queue Capacity |
+| inactive_after_activation_queue | VARIABLE | B Construction Materials Plant Inactive After Activation Queue |
+| strategic_reserve | VARIABLE | B Construction Materials Plant Strategic Reserve Capacity |
+| surplus | VARIABLE | B Construction Materials Plant Surplus Capacity |
+| lifetime | VARIABLE | B Construction Materials Plant Lifetime Capacity Account |
+| activation | FLOW | B Construction Materials Plant Activation |
+| mothballing | FLOW | B Construction Materials Plant Mothballing |
+| active_depreciation | FLOW | B Construction Materials Plant Active Depreciation |
+| expansion | FLOW | B Construction Materials Plant Expansion |
+| decommissioning_initiation | FLOW | B Construction Materials Plant Decommissioning Initiation |
+| installed_depreciation | FLOW | B Construction Materials Plant Depreciation |
+| dismantling_completion | FLOW | B Construction Materials Plant Dismantling Completion |
+| desired_expansion | VARIABLE | B Construction Materials Plant Desired Expansion |
+| capital_goods_consumption | FLOW | B Construction Materials Plant Capital Goods Consumption |
 
 ## Kernel contract (reference)
 

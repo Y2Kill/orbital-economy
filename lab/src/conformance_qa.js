@@ -23,6 +23,8 @@ if (!fs.existsSync(modelFile) || !fs.existsSync(validationFile)) {
 
 const baseRaw = readJson(modelFile);
 const baseValidation = readJson(validationFile);
+// Instance count comes from the accepted validation (it grows as sectors join the kernel: 7 in v7.5.1-v7.7.2, 9 since v7.7.3).
+const N_INSTANCES = (baseValidation.plugins.find(p => p.type === 'capital_lifecycle_kernel')?.instances || []).length;
 
 let passed = 0, failed = 0;
 function mark(ok, name, detail = '') {
@@ -45,12 +47,12 @@ console.log('Production input/output is not modified.\n');
 
 const tmp = fs.mkdtempSync(path.join(os.tmpdir(), 'orbital-economy-conformance-qa-'));
 try {
-  await expect('accepted baseline: all seven instances conform', () => {
+  await expect('accepted baseline: every declared kernel instance conforms', () => {
     const r = run(baseRaw);
-    const ok = r.status === 'PASS' && r.summary.instances === 7 && r.summary.nonConforming === 0
+    const ok = r.status === 'PASS' && N_INSTANCES >= 7 && r.summary.instances === N_INSTANCES && r.summary.nonConforming === 0
       && cls(r, 'A Refinery') === 'CONFORMING_WITH_VARIATION' && cls(r, 'B Refinery') === 'CONFORMING_WITH_VARIATION' && cls(r, 'Transport') === 'CONFORMING_WITH_VARIATION'
       && cls(r, 'A Electronics') === 'CONFORMING_WITH_VARIATION' && cls(r, 'B Power') === 'CONFORMING_WITH_VARIATION';
-    return ok ? `conforming=${r.summary.conforming}, with-variation=${r.summary.conformingWithVariation}` : false;
+    return ok ? `instances=${N_INSTANCES}, conforming=${r.summary.conforming}, with-variation=${r.summary.conformingWithVariation}` : false;
   });
 
   await expect('missing required flow is NON_CONFORMING (B Refinery Dismantling Completion removed)', () => {
@@ -211,10 +213,10 @@ try {
     return checkPlugin(plugin, ctx);
   }
 
-  await expect('runtime kernel identities pass on accepted Mode 0 for all seven instances', () => {
+  await expect('runtime kernel identities pass on accepted Mode 0 for every declared instance', () => {
     const checks = runtimeChecks(baseRaw);
     const fails = checks.filter(c => c.status === 'FAIL');
-    if (fails.length || checks.length < 7 * 7) throw new Error(`${checks.length} checks; failures: ${fails.map(f => `${f.name}: ${f.message}`).join('; ')}`);
+    if (fails.length || checks.length < N_INSTANCES * 7) throw new Error(`${checks.length} checks; failures: ${fails.map(f => `${f.name}: ${f.message}`).join('; ')}`);
     return `${checks.length} checks`;
   });
 

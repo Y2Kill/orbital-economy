@@ -1,17 +1,17 @@
 # Orbital Economy Lab — structure audit
 
-- generated: 2026-09-26T14:15:38.057Z
-- model: Orbital Economy v7.7.1 r1 — Transport on Construction Materials
-- model SHA-256: `d53d014d727a439694e103aafb49f87d4dbbb362e581414cbf4dc71a19646f93`
-- validation: Orbital Economy v7.7.1 validation r2
-- validation SHA-256: `2b5ef810dc9aaff5beaaa9b25c0410a6e859e6195753f133755136487913c9a6`
+- generated: 2026-09-27T12:57:32.360Z
+- model: Orbital Economy v7.7.3 r1 — Construction Materials Capital
+- model SHA-256: `a620cc65b93f6faedf2303e16f10dd595a882c319403c0b1bd98b69c1f7ef173`
+- validation: Orbital Economy v7.7.3 validation r1
+- validation SHA-256: `a7bd29ba5cf3b77fd94af23a44e86011cd6d595d6c7ac8760e9a25707f2f3e3b`
 - status: **PASS**
 
 ## Open boundaries (declared physical-boundary meter)
 
-- flows total: 153; crossing the model boundary: 122; classified: 122; unclassified: 0
+- flows total: 175; crossing the model boundary: 138; classified: 138; unclassified: 0
 - closed-world violations: **0** (mode: `classify`) — zero means the currently declared closed-world boundary contract is satisfied; it is not a Planet v1 completeness claim
-- declared transformation pairs: 15; transformation flows without a pair: 0
+- declared transformation pairs: 17; transformation flows without a pair: 0
 
 | Category | closed-world | Flows | Reason |
 |---|:---:|---:|---|
@@ -21,10 +21,10 @@
 | final_consumption | yes | 4 | final goods leave the economy as consumption |
 | power_resource_consumption | yes | 2 | v7.6 physical operating resource is consumed in exact proportion to actual delivered generation. |
 | unit_transformation | yes | 8 | input stock -> output stock conversion modelled as a sink/source pair (different units); every flow here must belong to a declared transformation pair whose numeric identity is checked at runtime |
-| information_signal | yes | 30 | smoothing / information stocks, not matter |
+| information_signal | yes | 34 | smoothing / information stocks, not matter |
 | financial_accounting | yes | 16 | money bookkeeping, not matter |
-| capital_state_accounting | yes | 21 | Active is an operational-state sub-account of Installed; these flows change state, not physical capital |
-| capital_transformation | yes | 23 | v7.5/v7.5.1: installed capital expansion is a unit transformation of Capital Goods; regional sectors use one local sink, shared Transport uses two A/B regional sinks whose total identity is checked at runtime. v7.7: colonial sector expansion is additionally backed by a local Construction Materials sink. v7.7.1: shared Transport expansion is additionally backed by construction materials from both A and B inventories (two legs). |
+| capital_state_accounting | yes | 27 | Active is an operational-state sub-account of Installed; these flows change state, not physical capital |
+| capital_transformation | yes | 29 | v7.5/v7.5.1: installed capital expansion is a unit transformation of Capital Goods; regional sectors use one local sink, shared Transport uses two A/B regional sinks whose total identity is checked at runtime. v7.7: colonial sector expansion is additionally backed by a local Construction Materials sink. v7.7.1: shared Transport expansion is additionally backed by construction materials from both A and B inventories (two legs). v7.7.3: construction-materials plant expansion is backed by local capital goods and construction materials. |
 | capital_goods_transformation | yes | 6 | metal + electronics -> capital goods (declared pair; identity checked at runtime) |
 | construction_materials_transformation | yes | 4 | v7.7: regolith -> construction materials (declared pair; identity checked at runtime) |
 | external_capital | **no** | 0 | capital created without physical goods; expected count is zero from v7.5.1 onward for the currently declared expansion-boundary audit |
@@ -49,6 +49,8 @@ Declared unit-transformation pairs (source flow physically backed by sink flows;
 | Transport Capacity Expansion | A Transport Capital Goods Consumption, B Transport Capital Goods Consumption, A Transport Construction Materials Consumption, B Transport Construction Materials Consumption | Transport capital goods pair identity | ok |
 | A Construction Materials Production | A Construction Materials Regolith Consumption | A construction materials production pair identity | ok |
 | B Construction Materials Production | B Construction Materials Regolith Consumption | B construction materials production pair identity | ok |
+| A Construction Materials Plant Expansion | A Construction Materials Plant Capital Goods Consumption, A Construction Materials Plant Construction Materials Consumption | A Construction Materials Plant capital goods pair identity | ok |
+| B Construction Materials Plant Expansion | B Construction Materials Plant Capital Goods Consumption, B Construction Materials Plant Construction Materials Consumption | B Construction Materials Plant capital goods pair identity | ok |
 
 <details><summary>All boundary flows by category</summary>
 
@@ -92,7 +94,7 @@ Declared unit-transformation pairs (source flow physically backed by sink flows;
 - B Electronics Feedstock Consumption
 - B Electronics Production
 
-**information_signal** (30)
+**information_signal** (34)
 
 - A Electronics Capacity Planning Signal Increase
 - A Electronics Capacity Planning Signal Decrease
@@ -124,6 +126,10 @@ Declared unit-transformation pairs (source flow physically backed by sink flows;
 - A Energy Demand Signal Decrease
 - B Energy Demand Signal Increase
 - B Energy Demand Signal Decrease
+- A Construction Materials Demand Signal Increase
+- A Construction Materials Demand Signal Decrease
+- B Construction Materials Demand Signal Increase
+- B Construction Materials Demand Signal Decrease
 
 **financial_accounting** (16)
 
@@ -144,7 +150,7 @@ Declared unit-transformation pairs (source flow physically backed by sink flows;
 - Book Electronics Freight Contract Value B to A
 - Recognize Delivered Electronics Freight Value B to A
 
-**capital_state_accounting** (21)
+**capital_state_accounting** (27)
 
 - A Electronics Factory Activation
 - A Electronics Factory Mothballing
@@ -167,8 +173,14 @@ Declared unit-transformation pairs (source flow physically backed by sink flows;
 - Transport Capacity Activation
 - Transport Capacity Mothballing
 - Transport Active Capacity Depreciation
+- A Construction Materials Plant Activation
+- A Construction Materials Plant Mothballing
+- A Construction Materials Plant Active Depreciation
+- B Construction Materials Plant Activation
+- B Construction Materials Plant Mothballing
+- B Construction Materials Plant Active Depreciation
 
-**capital_transformation** (23)
+**capital_transformation** (29)
 
 - A Refinery Expansion
 - A Electronics Factory Expansion
@@ -193,6 +205,12 @@ Declared unit-transformation pairs (source flow physically backed by sink flows;
 - B Power Construction Materials Consumption
 - A Transport Construction Materials Consumption
 - B Transport Construction Materials Consumption
+- A Construction Materials Plant Expansion
+- A Construction Materials Plant Capital Goods Consumption
+- A Construction Materials Plant Construction Materials Consumption
+- B Construction Materials Plant Expansion
+- B Construction Materials Plant Capital Goods Consumption
+- B Construction Materials Plant Construction Materials Consumption
 
 **capital_goods_transformation** (6)
 
@@ -218,8 +236,8 @@ Declared unit-transformation pairs (source flow physically backed by sink flows;
 ## Colony symmetry
 
 - tokens: A ↔ B
-- mirrored pairs checked: 860; mirrored links checked: 1914
-- structural mismatches: **0**; numeric parameter differences (allowed): 102; elements under exceptions: 0
+- mirrored pairs checked: 932; mirrored links checked: 2098
+- structural mismatches: **0**; numeric parameter differences (allowed): 106; elements under exceptions: 0
 
 <details><summary>Numeric parameter differences between colonies (allowed)</summary>
 
@@ -276,6 +294,8 @@ Declared unit-transformation pairs (source flow physically backed by sink flows;
 | value | A Test 29 Regolith Shock Applies | 1 | B Test 29 Regolith Shock Applies | 0 |
 | value | A Regolith Base Extraction Capacity | 7 | B Regolith Base Extraction Capacity | 5 |
 | value | A Construction Materials Base Production Capacity | 3 | B Construction Materials Base Production Capacity | 2 |
+| initial_value | A Construction Materials Plant Installed Capacity | 3 | B Construction Materials Plant Installed Capacity | 2 |
+| initial_value | A Construction Materials Plant Active Capacity | 3 | B Construction Materials Plant Active Capacity | 2 |
 
 </details>
 
@@ -283,8 +303,8 @@ Declared unit-transformation pairs (source flow physically backed by sink flows;
 
 - status: **PASS**; mode: `report`
 - processes: 17; legacy: 2; expected source outputs: 16; undeclared outputs: 0
-- P2 capacity: kernel **7** / exceptions **10** / undeclared **0**
-- P3 energy: requests **4** / producer **2** / exceptions **11** / undeclared **0**
+- P2 capacity: kernel **9** / exceptions **8** / undeclared **0**
+- P3 energy: requests **6** / producer **2** / exceptions **9** / undeclared **0**
 - P4 deposits: with **0** / without **6**
 - P5 labor: declared **4** / undeclared **13**
 - P6 demand drivers: **4**
@@ -304,10 +324,6 @@ Declared unit-transformation pairs (source flow physically backed by sink flows;
 | P3 | regolith[A] | none | — | v7.7 regolith extraction uses no energy by design (P3) |
 | P2 | regolith[B] | constant | B Regolith Base Extraction Capacity | v7.7 fixed regolith extraction capacity (P2) |
 | P3 | regolith[B] | none | — | v7.7 regolith extraction uses no energy by design (P3) |
-| P2 | construction_materials[A] | constant | A Construction Materials Base Production Capacity | v7.7 fixed construction-materials capacity (P2) |
-| P3 | construction_materials[A] | none | — | v7.7 construction-materials processing uses no energy by design; first P3 step on the roadmap |
-| P2 | construction_materials[B] | constant | B Construction Materials Base Production Capacity | v7.7 fixed construction-materials capacity (P2) |
-| P3 | construction_materials[B] | none | — | v7.7 construction-materials processing uses no energy by design; first P3 step on the roadmap |
 | P2 | power_resource[A] | unbounded | — | v7.6 extraction follows demand x headroom; only the Mode 25 shock multiplier limits it (P2) |
 | P3 | power_resource[A] | none | — | extraction energy is not modelled; treated as part of generation efficiency (P3) |
 | P2 | power_resource[B] | unbounded | — | v7.6 extraction follows demand x headroom; only the Mode 25 shock multiplier limits it (P2) |
@@ -371,10 +387,20 @@ Declared unit-transformation pairs (source flow physically backed by sink flows;
 - capacity: B Regolith Extraction → B Regolith Extraction Rate → B Regolith Extraction Capacity → B Regolith Base Extraction Capacity
 
 **construction_materials[A]**
-- capacity: A Construction Materials Production → A Construction Materials Production Rate → A Construction Materials Production Capacity → A Construction Materials Base Production Capacity
+- capacity: A Construction Materials Production → A Construction Materials Production Rate → A Construction Materials Production Capacity → A Construction Materials Plant Active Capacity
+- energy_total_to_request: A Total Requested Energy → A Construction Materials Requested Energy
+- energy_output_to_fulfillment: A Construction Materials Production → A Construction Materials Production Rate → A Construction Materials Energy Fulfillment Ratio → A Construction Materials Allocated Energy → A Energy Fulfillment Ratio
+- energy_shared_planned: shared Temporary Test Window
+  - request: A Construction Materials Requested Energy → A Pre Energy Construction Materials Production Rate → A Construction Materials Production Capacity → Test 28 Construction Materials Shock Active → Temporary Test Window
+  - output: A Construction Materials Production → A Construction Materials Production Rate → A Construction Materials Production Capacity → Test 28 Construction Materials Shock Active → Temporary Test Window
 
 **construction_materials[B]**
-- capacity: B Construction Materials Production → B Construction Materials Production Rate → B Construction Materials Production Capacity → B Construction Materials Base Production Capacity
+- capacity: B Construction Materials Production → B Construction Materials Production Rate → B Construction Materials Production Capacity → B Construction Materials Plant Active Capacity
+- energy_total_to_request: B Total Requested Energy → B Construction Materials Requested Energy
+- energy_output_to_fulfillment: B Construction Materials Production → B Construction Materials Production Rate → B Construction Materials Energy Fulfillment Ratio → B Construction Materials Allocated Energy → B Energy Fulfillment Ratio
+- energy_shared_planned: shared Temporary Test Window
+  - request: B Construction Materials Requested Energy → B Pre Energy Construction Materials Production Rate → B Construction Materials Production Capacity → Test 28 Construction Materials Shock Active → Temporary Test Window
+  - output: B Construction Materials Production → B Construction Materials Production Rate → B Construction Materials Production Capacity → Test 28 Construction Materials Shock Active → Temporary Test Window
 
 **generation[A]**
 - capacity: A Available Generation → A Power Active Generation Capacity → A Power Active Generation Capital
@@ -390,6 +416,6 @@ Declared unit-transformation pairs (source flow physically backed by sink flows;
 ## Algebraic loops (switch-aware, unconditional static audit)
 
 - status: **PASS**
-- switches: 7 — Capital Lifecycle Enabled, Intermediate Inputs Enabled, Capital Goods Enabled, Transport Capital Goods Enabled, Power Resource Enabled, Construction Materials Enabled, Transport Construction Materials Enabled
-- combinations: 128; with loops: **0**
+- switches: 9 — Capital Lifecycle Enabled, Intermediate Inputs Enabled, Capital Goods Enabled, Transport Capital Goods Enabled, Power Resource Enabled, Construction Materials Enabled, Transport Construction Materials Enabled, Construction Materials Energy Enabled, Construction Materials Capital Enabled
+- combinations: 512; with loops: **0**
 - Modes with loops: none
