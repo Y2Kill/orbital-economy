@@ -1,5 +1,5 @@
 {
-  "name": "Orbital Economy v7.7.4 Capital Goods Capital candidate r1 validation (calibration probes)",
+  "name": "Orbital Economy v7.7.4 Capital Goods Capital candidate r2 validation",
   "mode_variable": "Timed Test Mode",
   "expected_time_step": 0.25,
   "time_step_tolerance": 1e-12,
@@ -25592,40 +25592,40 @@
         },
         {
           "type": "metric",
-          "name": "Mode 36 probe: A CG plant installed capacity max",
+          "name": "Mode 36: A CG plant installed capacity grows above initial 2",
           "column": "A Capital Goods Plant Installed Capacity",
           "metric": "max",
           "op": ">",
-          "value": 999
+          "value": 2
         },
         {
           "type": "change",
-          "name": "Mode 36 probe: A CG plant installed capacity change 0->1080",
+          "name": "Mode 36: A CG plant installed capacity declines materially by day 1080",
           "column": "A Capital Goods Plant Installed Capacity",
           "from_day": 0,
           "to_day": 1080,
           "op": "<",
-          "value": -999
+          "value": -1
         },
         {
           "type": "metric",
-          "name": "Mode 36 probe: A Capital Goods production rate max",
+          "name": "Mode 36: A Capital Goods production rate remains substantial",
           "column": "A Capital Goods Production Rate",
           "metric": "max",
           "op": ">",
-          "value": 999
+          "value": 1.5
         },
         {
           "type": "metric",
-          "name": "Mode 36 probe: B CG plant expansion max",
+          "name": "Mode 36: B CG plant expansion remains effectively zero",
           "column": "B Capital Goods Plant Expansion",
           "metric": "max",
           "op": "<=",
-          "value": -1
+          "value": 0.000001
         }
       ],
       "notes": [
-        "r1 calibration probes intentionally use impossible thresholds. Their only purpose is to obtain first-run values before setting rounded semantic margins per V7_7_4_TEST_PLAN.md §4."
+        "Thresholds calibrated once from candidate r1 run 36329067162 using rounded semantic margins: observed installed max 2.08805, installed change -1.49100, production max 1.74060, B expansion 0."
       ]
     },
     "37": {
@@ -26075,22 +26075,22 @@
         },
         {
           "type": "metric",
-          "name": "Mode 37 probe: B CG plant expansion max [360,720]",
+          "name": "Mode 37: B CG plant expansion responds during surge",
           "column": "B Capital Goods Plant Expansion",
           "metric": "max",
           "from_day": 360,
           "to_day": 720,
           "op": ">",
-          "value": 999
+          "value": 0.005
         },
         {
           "type": "change",
-          "name": "Mode 37 probe: B CG plant installed capacity change 360->720",
+          "name": "Mode 37: B CG plant installed capacity rebuilds during surge",
           "column": "B Capital Goods Plant Installed Capacity",
           "from_day": 360,
           "to_day": 720,
           "op": ">",
-          "value": 999
+          "value": 0.5
         },
         {
           "type": "metric",
@@ -26114,23 +26114,23 @@
         },
         {
           "type": "metric",
-          "name": "Mode 37 probe: B Capital Goods production rate max [360,720]",
+          "name": "Mode 37: B Capital Goods production rate recovers",
           "column": "B Capital Goods Production Rate",
           "metric": "max",
           "from_day": 360,
           "to_day": 720,
           "op": ">",
-          "value": 999
+          "value": 0.9
         },
         {
           "type": "metric",
-          "name": "Mode 37 probe: B Capital Goods fulfillment min [360,720]",
+          "name": "Mode 37: B Capital Goods fulfillment shows surge pressure",
           "column": "B Capital Goods Fulfillment",
           "metric": "min",
           "from_day": 360,
           "to_day": 720,
           "op": "<",
-          "value": -1
+          "value": 0.3
         },
         {
           "type": "event_absent",
@@ -26142,7 +26142,7 @@
         }
       ],
       "notes": [
-        "r1 calibration probes intentionally use impossible thresholds. Positive physical-consumption checks and pre-window event_absent are real acceptance checks, not probes."
+        "Thresholds calibrated once from candidate r1 run 36329067162 using rounded semantic margins: observed expansion max 0.008852, installed change +0.88035, production max 1.01790, fulfillment min 0.19347. Physical-consumption and pre-window event_absent checks remain unchanged."
       ]
     }
   },
@@ -26574,22 +26574,15 @@
     "r2 (2026-09-25): the power-resource operating identity (Consumption = Energy Supply x Power Resource per Energy) is scoped to Modes 25-26. The consumption flow is gated by [Power Resource Enabled], so in Modes 0-24 it is 0 while Energy Supply is not; as a global check it failed every legacy mode. Modes 0-24 instead assert the switch-off state: consumption 0, extraction 0, fulfillment 1, inventory a dead stock at 5000, price at base.",
     "r2: the price channel reads [X Perceived Power Resource Fulfillment] (inventory coverage of the smoothed demand signal), not the physical rationing ratio, which closed an algebraic loop price -> demand -> rationing -> price in Modes 25-26.",
     "v7.7 DRAFT: structural declarations only. The executor adds: scenario checks for Modes 27-29, the regolith->construction materials and expansion->construction materials pair identities (only in Modes where the flows are enabled), switch-off checks for Modes 0-26, and kernel/colony declarations if the audit asks for them.",
-    "v7.7 candidate r1: Modes 0-26 include explicit switch-off checks for Construction Materials/Regolith.",
-    "v7.7 candidate r1: Modes 27-29 include exact Regolith->Construction Materials, sector expansion->Construction Materials, and legacy Capital Goods pair identities.",
     "v7.7 candidate r2 calibration from Linux candidate run 36190086944: Mode27 fulfillment min=0.9669176 -> floor 0.94; Mode28 fulfillment/ratio min=0.3604454 -> ceiling 0.50; CG fulfillment min=0.9684302 -> floor 0.95; recovery@900=0.9671779 -> floor 0.94; Mode29 regolith min=0.8716267 -> ceiling 5; CM fulfillment min=0.4751981 -> ceiling 0.60; production-rate max=0.7060652 with capacity exactly 3 -> ceiling 1.0; recovery@900=0.9671409 -> floor 0.94.",
     "B idle fulfillment observed 0.999999999966667 due floating arithmetic; executable floor is 1-1e-9, matching the test-plan epsilon formulation rather than false exact equality.",
     "v7.7.1 DRAFT: structural declarations only. The executor adds scenario checks for Modes 30-31, the transport construction-materials pair identity (Modes 30-31 only), switch-off checks for Modes 0-29, and the source-share sum check.",
-    "v7.7.1 candidate r1: Modes 0-29 explicitly assert the new Transport Construction Materials mechanism is off.",
-    "v7.7.1 candidate r1: Modes 30-31 check both Transport Construction Materials legs, source-share sum, new and legacy Transport pair identities, and all v7.7 colonial pair identities.",
     "v7.7.1 candidate r2 calibration from Linux candidate run 36232699114: Mode30 Transport CM fulfillment min=0.990737111465802 -> floor 0.98; Mode31 B CM production max=1.85361612493811 -> floor 1.5; B CM fulfillment min=0.926415559897726 -> ceiling 0.95.",
     "v7.7.2 DRAFT: structural declarations only (regression 0-31, energy_balance consumers, planet_closure). The executor adds switch-off checks for Modes 0-31, scenario checks for Modes 32-33 and the per-colony construction-materials energy relations.",
-    "v7.7.2 candidate r1: Modes 0-31 explicitly assert the Construction Materials energy mechanism is off (requested=0, allocated=0, fulfillment=1).",
-    "v7.7.2 candidate r1: Modes 32-33 check requested-energy and regolith identities, actual<=pre-energy plan, and the linear allocated-energy/actual-production consequence. The current generic validation DSL has no nonlinear row-wise product check; the two required product formulas remain literal model formulas reviewed in model-patch.json and covered structurally by conformance/audit. This limitation is documented in REPORT_RU.md rather than silently weakening the test plan.",
     "v7.7.2 candidate r2 calibration from Linux candidate run 36275212947: Mode32 A CM energy fulfillment min=0.926388351545351 -> <0.95; terminal signal tracking abs error=0.0008954554231939693 -> <=0.002; Mode33 B CM energy fulfillment min=0.714701728962681 -> <0.80. Model constants unchanged.",
     "v7.7.3 DRAFT: structural declarations only (regression 0-33, kernel instances, boundary classification and pairs, planet_closure). The executor adds switch-off checks for Modes 0-33, pair identities for the two plant expansions (Modes 34-35), and scenario checks for Modes 34-35.",
-    "v7.7.3 candidate r1: Modes 0-33 explicitly assert the new plant expansion/demand sinks are off; Modes 34-35 add plant physical-pair identities, inherited v7.7.2 physical pair identities, capacity=active identity, and calibration probes from V7_7_3_TEST_PLAN.md.",
     "v7.7.3 candidate r2 calibration from Linux candidate run 36313670047: Mode34 A plant installed change=-2.263962331007464 -> < -2.0; A CM production max=2.23927686146337 -> >2.0; B plant expansion max=0 -> <=1e-6. Mode35 B plant expansion max=0.0089300689086293 -> >0.007; B plant installed change 360->720=0.98486656336586 -> >0.8; B CM production max=1.02707552489587 -> >0.9; B CM fulfillment min=0.122475826515893 -> <0.20. Thresholds are rounded semantic margins, not point fits.",
     "v7.7.4 DRAFT: structural declarations only (regression 0-35, kernel instances, boundary classification and pairs, planet_closure). The executor adds switch-off checks for Modes 0-35, pair identities for the two plant expansions (Modes 36-37), and scenario checks for Modes 36-37.",
-    "v7.7.4 candidate r1: Modes 0-35 explicitly assert the new CG plant expansion/demand sinks are off and legacy production capacity is retained (except accepted Mode 22 shock). Modes 36-37 contain inherited v7.7.3 pair identities, new CG plant pair/capacity identities, and first-run calibration probes."
+    "v7.7.4 candidate r2: calibration probes replaced after first full run 36329067162 with rounded semantic thresholds; no owner rules or structural checks were weakened."
   ]
 }
