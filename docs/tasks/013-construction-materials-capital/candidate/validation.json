@@ -1,5 +1,5 @@
 {
-  "name": "Orbital Economy v7.7.3 Construction Materials Capital validation candidate r1 (calibration probes)",
+  "name": "Orbital Economy v7.7.3 Construction Materials Capital validation candidate r2 (calibration probes)",
   "mode_variable": "Timed Test Mode",
   "expected_time_step": 0.25,
   "time_step_tolerance": 1e-12,
@@ -20875,32 +20875,32 @@
         },
         {
           "type": "change",
-          "name": "Mode 34 [calib probe]: A CM plant installed capacity contracts over run",
+          "name": "Mode 34: A CM plant installed capacity contracts over run",
           "column": "A Construction Materials Plant Installed Capacity",
           "from_day": 0,
           "to_day": 1080,
           "op": "<",
-          "value": -999
+          "value": -2
         },
         {
           "type": "metric",
-          "name": "Mode 34 [calib probe]: A Construction Materials production rate is active",
+          "name": "Mode 34: A Construction Materials production rate is active",
           "column": "A Construction Materials Production Rate",
           "metric": "max",
           "op": ">",
-          "value": 999
+          "value": 2
         },
         {
           "type": "metric",
-          "name": "Mode 34 [calib probe]: B CM plant does not expand",
+          "name": "Mode 34: B CM plant does not expand materially",
           "column": "B Construction Materials Plant Expansion",
           "metric": "max",
           "op": "<=",
-          "value": -1
+          "value": 0.000001
         }
       ],
       "notes": [
-        "r1 uses intentionally impossible [calib probe] thresholds so the first candidate.yml reports actual Linux values; thresholds are replaced with rounded semantic margins in r2."
+        "r2 calibration from Linux candidate run 36313670047: A installed-capacity change=-2.263962331007464 -> require < -2.0; A CM production max=2.23927686146337 -> require > 2.0; B plant expansion max=0 -> allow only <=1e-6 numerical/material-zero band."
       ]
     },
     "35": {
@@ -21254,11 +21254,11 @@
         },
         {
           "type": "metric",
-          "name": "Mode 35 [calib probe]: B CM plant expansion during surge",
+          "name": "Mode 35: B CM plant expansion during surge",
           "column": "B Construction Materials Plant Expansion",
           "metric": "max",
           "op": ">",
-          "value": 999,
+          "value": 0.007,
           "window": [
             360,
             720
@@ -21266,12 +21266,12 @@
         },
         {
           "type": "change",
-          "name": "Mode 35 [calib probe]: B CM plant installed capacity grows during surge",
+          "name": "Mode 35: B CM plant installed capacity grows during surge",
           "column": "B Construction Materials Plant Installed Capacity",
           "from_day": 360,
           "to_day": 720,
           "op": ">",
-          "value": 999
+          "value": 0.8
         },
         {
           "type": "metric",
@@ -21299,11 +21299,11 @@
         },
         {
           "type": "metric",
-          "name": "Mode 35 [calib probe]: B Construction Materials production rate is active",
+          "name": "Mode 35: B Construction Materials production rate is active",
           "column": "B Construction Materials Production Rate",
           "metric": "max",
           "op": ">",
-          "value": 999,
+          "value": 0.9,
           "window": [
             360,
             720
@@ -21311,11 +21311,11 @@
         },
         {
           "type": "metric",
-          "name": "Mode 35 [calib probe]: B Construction Materials fulfillment shows inertia",
+          "name": "Mode 35: B Construction Materials fulfillment shows inertia",
           "column": "B Construction Materials Fulfillment",
           "metric": "min",
           "op": "<",
-          "value": 0,
+          "value": 0.2,
           "window": [
             360,
             720
@@ -21336,7 +21336,7 @@
         }
       ],
       "notes": [
-        "r1 uses intentionally impossible [calib probe] thresholds for the four quantitative expectations; physical-consumption and pre-window absence checks are already executable."
+        "r2 calibration from Linux candidate run 36313670047: B plant expansion max=0.0089300689086293 -> require >0.007; installed-capacity change 360->720=0.98486656336586 -> require >0.8; B CM production max=1.02707552489587 -> require >0.9; B CM fulfillment min=0.122475826515893 -> require <0.20."
       ]
     }
   },
@@ -21781,6 +21781,7 @@
     "v7.7.2 candidate r1: Modes 32-33 check requested-energy and regolith identities, actual<=pre-energy plan, and the linear allocated-energy/actual-production consequence. The current generic validation DSL has no nonlinear row-wise product check; the two required product formulas remain literal model formulas reviewed in model-patch.json and covered structurally by conformance/audit. This limitation is documented in REPORT_RU.md rather than silently weakening the test plan.",
     "v7.7.2 candidate r2 calibration from Linux candidate run 36275212947: Mode32 A CM energy fulfillment min=0.926388351545351 -> <0.95; terminal signal tracking abs error=0.0008954554231939693 -> <=0.002; Mode33 B CM energy fulfillment min=0.714701728962681 -> <0.80. Model constants unchanged.",
     "v7.7.3 DRAFT: structural declarations only (regression 0-33, kernel instances, boundary classification and pairs, planet_closure). The executor adds switch-off checks for Modes 0-33, pair identities for the two plant expansions (Modes 34-35), and scenario checks for Modes 34-35.",
-    "v7.7.3 candidate r1: Modes 0-33 explicitly assert the new plant expansion/demand sinks are off; Modes 34-35 add plant physical-pair identities, inherited v7.7.2 physical pair identities, capacity=active identity, and calibration probes from V7_7_3_TEST_PLAN.md."
+    "v7.7.3 candidate r1: Modes 0-33 explicitly assert the new plant expansion/demand sinks are off; Modes 34-35 add plant physical-pair identities, inherited v7.7.2 physical pair identities, capacity=active identity, and calibration probes from V7_7_3_TEST_PLAN.md.",
+    "v7.7.3 candidate r2 calibration from Linux candidate run 36313670047: Mode34 A plant installed change=-2.263962331007464 -> < -2.0; A CM production max=2.23927686146337 -> >2.0; B plant expansion max=0 -> <=1e-6. Mode35 B plant expansion max=0.0089300689086293 -> >0.007; B plant installed change 360->720=0.98486656336586 -> >0.8; B CM production max=1.02707552489587 -> >0.9; B CM fulfillment min=0.122475826515893 -> <0.20. Thresholds are rounded semantic margins, not point fits."
   ]
 }
