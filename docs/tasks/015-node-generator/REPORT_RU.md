@@ -23,6 +23,7 @@
 Байтовые ограничения: `lab/package.json` сохранён CRLF без завершающего перевода строки; новые файлы — LF. `SHA256SUMS` не трогались.
 Доказательство: реализация и запись КТ3 отправляются этим push; ожидается отдельный CI run текущей головы с `NODE SELF-TEST: 9 passed, 0 failed` и зелёным `bench-selftests`.
 Ожидаемый запуск после push КТ3: CI run 36344522722 (голова `2f2b5a7158e1626ac40fb0279b78389f042bd283`); результат проверяется отдельным шагом.
+Результат КТ3: run 36344522722 был отменён journal-push по concurrency; доказательство — [CI run 36344547409](https://github.com/Y2Kill/orbital-economy/actions/runs/36344547409) на голове `d0a7e136e0010f62d474b767a55ec6b4edd40147`: `guard`, `tools-selftest`, `bench-selftests` — SUCCESS; `integrity` ожидаемо SKIPPED. Case 9: `expand-nodes --validation preserves accepted validation byte-for-byte — 871633 bytes identical`; итог `NODE SELF-TEST: 9 passed, 0 failed`. Case 1 сохранил 69/6/126 и 76/6/138.
 Не запускалось локально: CLI, Node-команды, стенд и self-tests.
 Дальше: после зелёного КТ3 — документация/финальный аудит и КТ4.
 
