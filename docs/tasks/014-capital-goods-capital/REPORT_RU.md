@@ -78,3 +78,11 @@ Mode 37, окно 360→720:
 - CI run 36330596867 — общий CI для candidate r2.
 
 Пороговые правила owner-policy не менялись; изменение этой итерации ограничено `candidate/validation.json`.
+
+### Ожидаемые прогоны после candidate r3
+
+После push исправленного validation DSL в `3fb7b7bb6eb815c8d5169a8b191de3797ae74314` зафиксированы:
+- Candidate acceptance: https://github.com/Y2Kill/orbital-economy/actions/runs/36333421925 — проверяет реальные metric-окна `[360,720]` и корректный nested `event_absent`; до его завершения пороги r2 не считаются подтверждёнными.
+- CI: https://github.com/Y2Kill/orbital-economy/actions/runs/36333421907 — guard FAIL на этой ветке ожидаем и игнорируется по прямому указанию владельца, потому что `main` был сдвинут владельцем после создания ветки; остальные CI jobs должны быть зелёными.
+
+Ветка намеренно не перебазируется. Результаты обоих запусков проверяются отдельным шагом.
