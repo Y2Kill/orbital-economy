@@ -33,7 +33,8 @@
 Не запускалось локально: `check_branch`, Node/npm, Windows wrappers, стенд и self-tests. `SHA256SUMS.txt` и `lab/SHA256SUMS.txt` не пересобирались (`sums_by: reviewer`).
 Дальше: записать run финальной головы, дождаться зелёного CI отдельной проверкой, проверить список изменённых файлов и закрыть КТ4.
 Ожидаемый запуск после push КТ4: CI run 36345048005 (голова `d5c5d0d6a561dc728a43a875e0d992e6e519596c`); результат будет проверен отдельным шагом.
+Результат КТ4: run 36345048005 был отменён journal-push по concurrency; доказательство — [CI run 36345062938](https://github.com/Y2Kill/orbital-economy/actions/runs/36345062938) на голове `f38171f8cd91184a60a33353d25e46f266565a62`: `guard`, `tools-selftest`, `bench-selftests` — SUCCESS; `Node self-test` — SUCCESS; `integrity` ожидаемо SKIPPED. Diff от исходного main `e8164e8e68b452119b9cfeb3826f305e87d5e943`: только workflow, отчёт задачи, Lab code/package/docs и новый node self-test; `model/`, accepted validation/policy, declarations, sums, vendor и engine не изменены. Ветка ahead 11 / behind 0. Все 11 коммитов содержат `Agent: GPT-5.6 Sol`; `[skip ci]` не использовался. `lab/package.json`: v0.9.8, CRLF сохранён, завершающего LF нет. КТ1–КТ4 закрыты.
 
 ## Что не запускалось
 
-Локально не запускались `check_branch`, стенд, самотесты и Node-команды. В этой среде работа ведётся только через GitHub API; проверки выполняются GitHub Actions согласно §9.4. `SHA256SUMS.txt` и `lab/SHA256SUMS.txt` не пересобирались (`sums_by: reviewer`).
+Локально не запускались `check_branch`, стенд, самотесты, Node/npm-команды и Windows `.cmd` wrappers. В этой среде работа ведётся только через GitHub API; проверки выполняются GitHub Actions согласно §9.4. `SHA256SUMS.txt` и `lab/SHA256SUMS.txt` не пересобирались (`sums_by: reviewer`).
