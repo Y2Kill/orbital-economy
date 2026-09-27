@@ -89,6 +89,17 @@ Why not now: it replaces the project's central guarantee (old Modes bit-exact on
 
 **Trigger:** the first model change for which an exact algebraic fallback at `switch = 0` is impossible or would distort the design. The v7.7.2 increment (construction materials using energy) still had a clean fallback: Modes 0–31 bit-exact.
 
+## External review observations (2026-09-27) — to be decided after task 014
+
+An outside review of v7.7.3 (not a request for changes). No plan is changed by this section; it records what to decide once task 014 is accepted.
+
+1. **Kernel instances as a node type.** The review argues the capital lifecycle should become a reusable node rather than be hand-replicated per sector. Our own evidence agrees: task 014 was assembled from task 013 by string replacement; kernel instances go 7 → 9 (v7.7.3) → 11 (v7.7.4), about 40 elements each per colony. The generator trigger above was written for the A/B-symmetry argument (colony C / v8); per-sector replication is a separate and stronger reason, and it has arguably fired. If done: a pure refactor accepted by `BYTE_IDENTICAL` against the current model (the criterion recorded in "Deferred — model generator"), no numbers change.
+2. **Levels of sector detail.** The review proposes three tiers — simple (capacity → production → inventory), industrial (+ inputs, energy, delayed construction, capital goods), strategic (the full lifecycle: mothballing, strategic reserve, decommissioning). Our Planet v1 P2 target reads "capacity through the lifecycle kernel" for every process; for the remaining P2 exceptions (ore, regolith, power resource) the full kernel may be more than needed. Option to weigh: a "simple capital" declaration kind in `planet_closure` (capacity stock, expansion from capital goods and construction materials, depreciation) alongside `kernel`.
+3. **Behavioural criterion for each step.** The review's rule: new detail is justified only if it changes observable market behaviour. Tasks 012–014 already met it (energy-limited construction materials; construction-materials and capital-goods inertia in Modes 35 and 37: fulfillment 0.93 → 0.12 and 0.92 → 0.19). Option: make it an explicit requirement of every Planet v1 step — the step must show its effect in its own Mode.
+4. **Commodity interface outward (v8 sketch).** Per commodity and economy: spot price, available now, sell capacity, buy demand, production and consumption rates, expected supply, import/export capacity, lead time, trend/scarcity. Everything else stays internal to the economy's model. The current model already has the transport prototype (cargo stocks, lag, freight in the import price, contract values fixed at shipment).
+
+**Open question for the owner — order.** Our decision of 2026-09-21 is "breadth to a self-contained planet (Planet v1) first, then the network (v8)". The review suggests trying A ↔ transport ↔ B ↔ C at the current level earlier and adding mechanisms only where the network shows implausible behaviour. Both positions are coherent; to be discussed after task 014.
+
 ## Planet v1 acceptance contract
 
 Defined 2026-09-26: `docs/PLANET_V1_CONTRACT_RU.md`. The single boundary counter reached zero (all 122 boundary flows classified, `external_capital` = 0), so Planet v1 is now a set of parts, each with its own counter measured per **process** rather than per boundary flow:
