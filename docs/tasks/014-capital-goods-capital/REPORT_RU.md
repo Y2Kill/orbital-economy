@@ -19,3 +19,11 @@
 ## Что не запускалось локально
 
 У агента нет локального checkout/Node-стенда. Локально не запускались `check_branch`, bench/selftests, `APPLY_PATCH`, `LIFECYCLE_CONFORMANCE`, `STRUCTURE_AUDIT`, `RUN_LAB`, `CHECK_CANDIDATE`, `candidate.yml` и канонический Windows-прогон. Это заменяется чтением accepted-модели и контрактов, статической сборкой/проверкой патча и GitHub Actions по §9.4. `SHA256SUMS` не пересобираются, поскольку `sums_by: reviewer`.
+
+### Ожидаемые прогоны после candidate r1
+
+После push кандидата `e33ff96ebf22998641c28ffc30653d7d9ddd31ab` зафиксированы отдельные запуски:
+- Candidate acceptance: https://github.com/Y2Kill/orbital-economy/actions/runs/36329067162 — ожидается результат первого полного candidate.yml; по плану validation/policy могут быть красными только из-за калибровочных зондов и непривязанного validation_sha256.
+- CI: https://github.com/Y2Kill/orbital-economy/actions/runs/36329067243 — ожидается общий guard/selftest Linux для этой головы.
+
+Результаты этих запусков будут прочитаны отдельным шагом; длительное ожидание одним вызовом не используется.
