@@ -86,3 +86,29 @@ Mode 37, окно 360→720:
 - CI: https://github.com/Y2Kill/orbital-economy/actions/runs/36333421907 — guard FAIL на этой ветке ожидаем и игнорируется по прямому указанию владельца, потому что `main` был сдвинут владельцем после создания ветки; остальные CI jobs должны быть зелёными.
 
 Ветка намеренно не перебазируется. Результаты обоих запусков проверяются отдельным шагом.
+
+### КТ3 — 2026-09-27 — validation r3 PASS 38/38; A растёт в Mode 36, B перестраивает завод в Mode 37
+
+Доказательство — Candidate acceptance run https://github.com/Y2Kill/orbital-economy/actions/runs/36333421925 для candidate-коммита `3fb7b7bb6eb815c8d5169a8b191de3797ae74314`.
+
+- Gate 4 validation: `OVERALL: PASS`; покрыты все 38 Modes.
+- Validation SHA-256: `0eb8ca4b751dfb033e3d4ae78540630c23aadcb5213b7bbcb7ebfdfb2f7ad11e`.
+- Исправленный `event_absent` в Mode 37 PASS; до дня 360 расширения B выше `1e-6` нет.
+- Пять metric-проверок Mode 37 действительно вычислены на `window: [360,720]`; значения из r3 artifact:
+
+| Проверка | Значение r3 | Порог | Запас / смысл |
+|---|---:|---:|---|
+| Mode 36 A Installed Capacity max | 2.0880519145 | > 2.05 | +0.0381; фиксирует рост сверх стартовых 2 |
+| Mode 36 A Installed change 0→1080 | -1.4910019986 | < -1.2 | 0.291; существенное сворачивание после пика |
+| Mode 36 A CG Production Rate max | 1.7405993059 | > 1.5 | +0.241; выпуск остаётся существенным |
+| Mode 36 B Plant Expansion max | 0 | ≤ 1e-6 | material-zero коридор |
+| Mode 37 B Plant Expansion max [360,720] | 0.00885222467 | > 0.005 | +0.00385 (~43% наблюдения) |
+| Mode 37 B Installed change 360→720 | +0.8803454850 | > 0.5 | +0.380; материальная перестройка завода |
+| Mode 37 B Plant CM Consumption max [360,720] | 0.04426112336 | > 0 | реальный физический расход |
+| Mode 37 B Plant CG Consumption max [360,720] | 0.04426112336 | > 0 | реальный физический расход |
+| Mode 37 B CG Production Rate max [360,720] | 1.0179022128 | > 0.9 | +0.118; выпуск восстанавливается |
+| Mode 37 B CG Fulfillment min [360,720] | 0.1934677895 | < 0.3 | 0.1065 до потолка; фиксирует инерционный дефицит |
+
+Пороговые значения r2 оставлены без изменений: после исправления DSL они имеют достаточный смысловой запас и подтверждены именно на требуемом окне. Модель после КТ1 не менялась.
+
+Policy того же run ожидаемо FAIL только на preflight: `validation_sha256 must be null/omitted or a 64-character SHA-256 hex string` — в candidate policy ещё оставался placeholder. Счётчики содержательных изменений: `Observed=2995`, `Unexpected=0`, `Forbidden=0`, `Threshold exceed=0`, `Required missing=0`, `Hard blockers=0`. Следующий шаг — привязать policy к validation SHA выше и запустить финальный candidate.
