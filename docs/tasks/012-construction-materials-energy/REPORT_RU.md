@@ -99,7 +99,7 @@ Candidate r1 следует исчерпывающей спецификации:
 В candidate r1:
 - обе требуемые нелинейные зависимости записаны **буквально** в формулах `model-patch.json`; их ссылки проверяются conformance/audit;
 - исполнимо проверяется точное `Requested Energy = 10 × Pre Energy Production Rate`;
-- исполнимо проверяется точное линейное следствие `Allocated Energy = 10 × Actual Production Rate`, которое следует из обеих продуктовых формул при `Construction Materials Energy per Unit = 10` и остаётся истинным при нулевом запросе;
+- исполнимо проверяется линейное следствие `Allocated Energy = 10 × Actual Production Rate`: оно строго следует из обеих продуктовых формул при `Construction Materials Energy per Unit = 10` для `Requested Energy = 0` и `Requested Energy > 0.001`; субпороговая ветка `0 < Requested Energy <= 0.001` отдельно оговорена в «Известных ограничениях»;
 - отдельно проверяется `Actual Production Rate <= Pre Energy Production Rate`;
 - `energy_balance` проверяет третьего потребителя, `allocated <= requested`, сумму allocations и энергетический баланс;
 - пара Regolith → Construction Materials остаётся точным тождеством.
@@ -122,6 +122,8 @@ Candidate r1 следует исчерпывающей спецификации:
 
 - В Mode 33 спецификация ожидает, что стройки A в окне стоят; обязательная демонстрация энергетического ограничения поэтому выполняется на B.
 - Сигнальные stocks/flows живут и в Modes 0–31, но новый energy switch там явно равен 0, поэтому они не должны влиять на legacy outputs.
+- Линейное следствие `Allocated Energy = 10 × Actual Production Rate` строго эквивалентно продуктовым формулам только при `Requested Energy = 0` или `Requested Energy > 0.001`. В ветке `0 < Requested Energy <= 0.001` формула `Construction Materials Energy Fulfillment Ratio` принудительно возвращает 1, поэтому `10 × Actual = Requested`, тогда как `Allocated = Requested × common Energy Fulfillment Ratio`; возможное расхождение — порядка до `1e-4` при таком малом запросе.
+- В выполненных Linux-прогонах измеримого проявления этого граничного случая не было: для указанного линейного следствия maxAbsError в Modes 32–33 для A/B не превышал `1.0126e-13`. Сохранённый отчёт также показывает первый положительный A-request в Mode 32 `0.168406293974676` и первый положительный B-request в shock-window Mode 33 `0.106403945538063`, то есть оба значительно выше `0.001`. Однако артефакт `candidate.yml` не сохраняет полный сырой ряд `Requested Energy`, поэтому по одному report нельзя строго исключить отдельную точку `0 < request <= 0.001` вне явно зафиксированных событий, если в ней общий energy fulfillment был ровно 1; можно утверждать только, что такой случай не дал наблюдаемого нарушения линейной проверки.
 - Канонические числовые эталоны снимаются reviewer на Windows; Linux Actions используется для гейтов и калибровочных ориентиров.
 
 ## Итог поставки
