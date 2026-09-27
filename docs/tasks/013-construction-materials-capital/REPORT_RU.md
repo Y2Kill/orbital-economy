@@ -63,6 +63,25 @@
 
 Policy теперь привязывается к этой validation SHA без изменения owner-rules. Следующий push должен дать финальные `validation PASS` и `policy PASS`.
 
+### КТ4 — 2026-09-27 — поставка полная, candidate 5/5 PASS и CI зелёный
+
+Финальная candidate-голова перед отчётным коммитом: `6f21d905e59bae934fcade67e94e7a4872116b91`.
+
+Доказательство:
+- Candidate acceptance: https://github.com/Y2Kill/orbital-economy/actions/runs/36316619503 — **success**.
+- Все пять гейтов: `apply-patch PASS`, `conformance PASS`, `audit PASS`, `validation PASS`, `policy PASS`.
+- Итоговая строка лога: `All five candidate gates PASS.`
+- Validation: `OVERALL: PASS`; Modes 34–35 проходят все сценарные и парные проверки, включая перестройку завода B в Mode 35.
+- Candidate SHA-256: `766b87a6078caef83b987ec2d87ae31dbf25d3b6d48054a98e21a6631a2c1764`.
+- Validation SHA-256: `3d91e9b0ceeed3e48a189b39fbe13306ee18f88935c49e484cf827c330f84e86`; policy привязана к нему.
+- Comparator Modes 0–33: для каждого `common=1099, changed=0, added=69, removed=0, maxAbs=0`; итог `OUTPUTS_IDENTICAL_BUT_SCENARIO_CONTRACT_CHANGED` только из-за явного нового switch-off в legacy scenarios.
+- Policy: `Observed changes=2584`, `Expected/allowed=2584`, `Unexpected=0`, `Forbidden=0`, `Threshold exceed=0`, `Required missing=0`, `Hard blockers=0`.
+- CI той же candidate-головы: https://github.com/Y2Kill/orbital-economy/actions/runs/36316619535 — **success**.
+
+Модель после КТ1 не менялась; после КТ3 validation не менялась. Финальная правка ниже — только запись КТ4 в `REPORT_RU.md`; `candidate.yml` имеет path-filter на `docs/tasks/*/candidate/**`, поэтому отчётный коммит его не перезапускает. CI на task-ветках запускается на любой push и проверяется отдельно.
+
+Итого КТ1–КТ4 закрыты со стороны исполнителя. `SHA256SUMS` не изменялись (`sums_by: reviewer`), `[skip ci]` не использовался.
+
 ## Реализация кандидата
 
 Патч следует исчерпывающему списку V7_7_3_ARCHITECTURE_SPEC.md: 69 новых элементов, 7 замен формул, 126 новых LINK, 34 legacy-сценария с `Construction Materials Capital Enabled = 0` и два новых Mode 34–35.
