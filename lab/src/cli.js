@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+import fs from 'node:fs';
 import path from 'node:path';
 import { readJson, parseArgs, parseModeList, ensureDir, writeJson, sha256File } from './util.js';
 import { listScenarios } from './model.js';
@@ -9,7 +10,8 @@ import { evaluatePolicyFiles } from './policy.js';
 import { runCandidatePolicyCheck } from './policy_run.js';
 import { runConformanceCommand } from './conformance_run.js';
 import { runAuditCommand, runLoopsCommand } from './audit_run.js';
-import { applyPatch } from './patch.js';
+import { applyPatch, expandPatchNodes, PATCH_FORMAT } from './patch.js';
+import { expandNodes, mergeNodeValidation } from './nodes/index.js';
 import { runParametersCommand } from './parameters.js';
 import { runSeriesCommand } from './series.js';
 
@@ -19,7 +21,7 @@ function defaultOutDir() {
 
 function usage() {
   console.log(`
-Orbital Economy Lab v0.9.7
+Orbital Economy Lab v0.9.8
 
 Recommended workspace commands:
   lab [--input=input] [--modes=all] [--out=DIR]
@@ -30,6 +32,7 @@ Recommended workspace commands:
   conformance [model.json] [validation.json] [--out=DIR]
   audit [model.json] [validation.json] [--planet-closure=file.json] [--out=DIR]
   apply-patch <patch.json> [base.json] [--out=candidate.json]
+  expand-nodes <node-or-patch.json> <base-model.json> [--out=DIR] [--validation=file.json]
   parameters [model.json] [--annotations=file.json] [--out=DIR]
   series [model.json] [--modes=all] [--out=DIR] [--dump=MODE] [--plan=file.json]
 
@@ -48,6 +51,7 @@ Examples:
   node src/cli.js conformance
   node src/cli.js audit
   node src/cli.js apply-patch delivery/model-patch.json --out=input/model/candidate.json
+  node src/cli.js expand-nodes ../model/nodes/construction-materials-plant.json base.json --validation=input/validation/validation.json
   node src/cli.js parameters --annotations=../docs/PARAMETER_ANNOTATIONS.json
   node src/cli.js series --modes=all --out=output/series
   node src/cli.js inspect input/model/orbital_economy_v7_3_modeljson.json
@@ -203,6 +207,44 @@ try {
       if (parsed) for (const x of parsed) dumpModes.add(x);
     }
     await runSeriesCommand({ modelFile, modes, outDir, dumpModes, dumpPlanFile: options.plan || null });
+  } else if (cmd === 'expand-nodes') {
+    if (!positional[1]) throw new Error('Need a path to node-or-patch.json');
+    if (!positional[2]) throw new Error('Need a path to base-model.json');
+    const inputFile = positional[1];
+    const baseFile = positional[2];
+    const input = readJson(inputFile);
+    const base = readJson(baseFile);
+    const isPatch = input?.format === PATCH_FORMAT;
+    if (isPatch && !Array.isArray(input.nodes)) throw new Error('Patch input must contain a nodes array');
+
+    const declarations = isPatch ? input.nodes : [input];
+    const expanded = expandNodes(declarations, base, { path: isPatch ? 'nodes' : 'node' });
+    const expandedPatch = isPatch
+      ? expandPatchNodes(base, input)
+      : { format: PATCH_FORMAT, ...expanded.patch };
+    const outDir = ensureDir(options.out || path.resolve('output', `expand-nodes-${new Date().toISOString().replace(/[:.]/g, '-')}`));
+    const patchOut = path.join(outDir, 'patch.expanded.json');
+    const fragmentsOut = path.join(outDir, 'validation.fragments.json');
+    writeJson(patchOut, expandedPatch);
+    writeJson(fragmentsOut, expanded.validation);
+
+    console.log(`Expanded ${declarations.length} node declaration(s).`);
+    console.log(`Patch:      ${patchOut}`);
+    console.log(`Validation: ${fragmentsOut}`);
+
+    if (options.validation) {
+      const validationFile = path.resolve(options.validation);
+      const originalText = fs.readFileSync(validationFile, 'utf8');
+      const original = JSON.parse(originalText);
+      const merged = mergeNodeValidation(original, expanded.validation);
+      const mergedOut = path.join(outDir, 'validation.merged.json');
+      if (JSON.stringify(original) === JSON.stringify(merged)) {
+        fs.copyFileSync(validationFile, mergedOut);
+      } else {
+        writeJson(mergedOut, merged);
+      }
+      console.log(`Merged validation: ${mergedOut}`);
+    }
   } else if (cmd === 'apply-patch') {
     if (!positional[1]) throw new Error('Need a path to patch.json');
     const patchFile = positional[1];

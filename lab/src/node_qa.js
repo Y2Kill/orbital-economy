@@ -3,6 +3,8 @@
 // accepted model instead of pinning a historical model version or hard-coded element counts.
 import fs from 'node:fs';
 import path from 'node:path';
+import os from 'node:os';
+import { spawnSync } from 'node:child_process';
 import { discoverSingleJson } from './workspace.js';
 import { readJson } from './util.js';
 import { PATCH_FORMAT, applyPatch } from './patch.js';
@@ -237,6 +239,35 @@ await expect('8. expansion is byte-deterministic', () => {
   const b = JSON.stringify(expandNode(decl, base));
   if (a !== b) throw new Error('two expansions differ byte-for-byte');
   return `${a.length} JSON bytes stable`;
+});
+
+
+await expect('9. expand-nodes --validation preserves accepted validation byte-for-byte', () => {
+  const tmp = fs.mkdtempSync(path.join(os.tmpdir(), 'orbital-economy-node-qa-'));
+  try {
+    const nodeFile = path.join(tmp, 'node.json');
+    const baseFile = path.join(tmp, 'base.json');
+    const outDir = path.join(tmp, 'out');
+    fs.writeFileSync(nodeFile, JSON.stringify(decl, null, 2), 'utf8');
+    fs.writeFileSync(baseFile, JSON.stringify(base, null, 2), 'utf8');
+    const run = spawnSync(process.execPath, [
+      path.join(root, 'src', 'cli.js'),
+      'expand-nodes',
+      nodeFile,
+      baseFile,
+      `--out=${outDir}`,
+      `--validation=${validationFile}`
+    ], { cwd: root, encoding: 'utf8' });
+    if (run.status !== 0) {
+      throw new Error(`CLI exited ${run.status}: ${run.stderr || run.stdout}`);
+    }
+    const expected = fs.readFileSync(validationFile);
+    const actual = fs.readFileSync(path.join(outDir, 'validation.merged.json'));
+    if (!expected.equals(actual)) throw new Error(`merged validation differs byte-for-byte (${expected.length} vs ${actual.length})`);
+    return `${actual.length} bytes identical`;
+  } finally {
+    fs.rmSync(tmp, { recursive: true, force: true });
+  }
 });
 
 console.log(`\nNODE SELF-TEST: ${passed} passed, ${failed} failed`);

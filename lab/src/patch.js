@@ -66,6 +66,32 @@ export function validatePatch(patch) {
   return errors;
 }
 
+export function expandPatchNodes(base, patch) {
+  const errors = validatePatch(patch);
+  if (errors.length) throw new Error(`Invalid patch:\n  - ${errors.join('\n  - ')}`);
+  if (!(patch.nodes || []).length) return structuredClone(patch);
+
+  const generated = expandNodes(patch.nodes, base, { path: 'nodes' }).patch;
+  const generatedTouched = new Set([
+    ...generated.add_elements.map(x => String(x.name).toLowerCase()),
+    ...generated.replace_formulas.map(x => String(x.name).toLowerCase())
+  ]);
+  const explicitTouched = new Set([
+    ...(patch.add_elements || []).map(x => String(x.name).toLowerCase()),
+    ...(patch.replace_formulas || []).map(x => String(x.name).toLowerCase())
+  ]);
+  for (const name of explicitTouched) {
+    if (generatedTouched.has(name)) throw new Error(`nodes: generated element "${name}" is also added or replaced explicitly`);
+  }
+
+  const merged = structuredClone(patch);
+  delete merged.nodes;
+  merged.add_elements = [...generated.add_elements, ...(patch.add_elements || [])];
+  merged.replace_formulas = [...generated.replace_formulas, ...(patch.replace_formulas || [])];
+  merged.add_links = [...generated.add_links, ...(patch.add_links || [])];
+  return merged;
+}
+
 // Returns { model, log } or throws with a precise message. `base` is not mutated.
 export function applyPatch(base, patch, { baseSha256 = null, modeVariable = 'Timed Test Mode' } = {}) {
   const errors = validatePatch(patch);
@@ -74,26 +100,7 @@ export function applyPatch(base, patch, { baseSha256 = null, modeVariable = 'Tim
     throw new Error(`Patch was written against base ${patch.base_sha256.slice(0, 12)}… but the supplied base is ${baseSha256.slice(0, 12)}…`);
   }
   if ((patch.nodes || []).length) {
-    const generated = expandNodes(patch.nodes, base, { path: 'nodes' }).patch;
-    const generatedTouched = new Set([
-      ...generated.add_elements.map(x => String(x.name).toLowerCase()),
-      ...generated.replace_formulas.map(x => String(x.name).toLowerCase())
-    ]);
-    const explicitTouched = new Set([
-      ...(patch.add_elements || []).map(x => String(x.name).toLowerCase()),
-      ...(patch.replace_formulas || []).map(x => String(x.name).toLowerCase())
-    ]);
-    for (const name of explicitTouched) {
-      if (generatedTouched.has(name)) throw new Error(`nodes: generated element "${name}" is also added or replaced explicitly`);
-    }
-    const merged = {
-      ...patch,
-      nodes: undefined,
-      add_elements: [...generated.add_elements, ...(patch.add_elements || [])],
-      replace_formulas: [...generated.replace_formulas, ...(patch.replace_formulas || [])],
-      add_links: [...generated.add_links, ...(patch.add_links || [])]
-    };
-    return applyPatch(base, merged, { baseSha256, modeVariable });
+    return applyPatch(base, expandPatchNodes(base, patch), { baseSha256, modeVariable });
   }
   const model = structuredClone(base);
   const log = [];

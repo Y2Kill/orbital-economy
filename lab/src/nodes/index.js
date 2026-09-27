@@ -152,3 +152,60 @@ export function expandNodes(declarations, base, { path = 'nodes' } = {}) {
   }
   return { patch, validation };
 }
+
+
+function jsonEqual(a, b) {
+  return JSON.stringify(a) === JSON.stringify(b);
+}
+
+export function mergeNodeValidation(validation, fragments) {
+  const out = structuredClone(validation);
+  const kernel = out.plugins?.find(p => p.type === 'capital_lifecycle_kernel');
+  const boundaries = out.plugins?.find(p => p.type === 'open_boundaries');
+  const planet = out.plugins?.find(p => p.type === 'planet_closure');
+  if (!kernel || !Array.isArray(kernel.instances)) throw new Error('validation: capital_lifecycle_kernel.instances is required');
+  if (!boundaries || !Array.isArray(boundaries.categories) || !Array.isArray(boundaries.transformation_pairs)) {
+    throw new Error('validation: open_boundaries categories and transformation_pairs are required');
+  }
+  if (!planet || !Array.isArray(planet.processes)) throw new Error('validation: planet_closure.processes is required');
+  const category = boundaries.categories.find(x => x.id === 'capital_transformation');
+  if (!category || !Array.isArray(category.name)) throw new Error('validation: open_boundaries capital_transformation category is required');
+
+  for (const [fi, fragment] of fragments.entries()) {
+    for (const generated of fragment.kernel_instances || []) {
+      const existing = kernel.instances.find(x => x.name === generated.name);
+      if (!existing) {
+        kernel.instances.push(structuredClone(generated));
+      } else {
+        const comparable = structuredClone(existing);
+        delete comparable.policy_notes;
+        if (!jsonEqual(comparable, generated)) {
+          throw new Error(`validation fragment[${fi}]: kernel instance "${generated.name}" already exists with a different definition`);
+        }
+      }
+    }
+
+    for (const name of fragment.capital_transformation_names || []) {
+      if (!category.name.includes(name)) category.name.push(name);
+    }
+
+    for (const generated of fragment.transformation_pairs || []) {
+      const existing = boundaries.transformation_pairs.find(x => x.source === generated.source);
+      if (!existing) boundaries.transformation_pairs.push(structuredClone(generated));
+      else if (!jsonEqual(existing, generated)) {
+        throw new Error(`validation fragment[${fi}]: transformation pair "${generated.source}" already exists with a different definition`);
+      }
+    }
+
+    if (fragment.planet_closure) {
+      const generated = fragment.planet_closure;
+      const process = planet.processes.find(x => x.id === generated.process);
+      if (!process) throw new Error(`validation fragment[${fi}]: planet process "${generated.process}" does not exist`);
+      if (process.capacity == null) process.capacity = structuredClone(generated.capacity);
+      else if (!jsonEqual(process.capacity, generated.capacity)) {
+        throw new Error(`validation fragment[${fi}]: planet process "${generated.process}" capacity differs`);
+      }
+    }
+  }
+  return out;
+}

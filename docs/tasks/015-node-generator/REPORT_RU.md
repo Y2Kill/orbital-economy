@@ -18,6 +18,13 @@
 Не запускалось локально: Node-команды, стенд и самотесты.
 Дальше: после зелёного КТ2 — CLI `expand-nodes`, merge validation и случай 9.
 
+### КТ3 — 2026-09-27 — CLI `expand-nodes`, merge validation и полный node self-test
+Сделано: добавлен `expand-nodes <node-or-patch.json> <base-model.json> [--out=DIR] [--validation=file]`; он пишет `patch.expanded.json`, `validation.fragments.json`, а с `--validation` — `validation.merged.json`. Повторно присутствующие kernel instances сравниваются без `policy_notes`; пары и capacity процесса обязаны совпадать. Если merge не меняет validation семантически, исходный файл копируется побайтно. Добавлен случай 9, который запускает CLI в CI и сравнивает Buffer принятой и merged validation. Lab поднят до 0.9.8; добавлены npm script `node-qa` и `NODE_SELF_TEST.cmd`.
+Байтовые ограничения: `lab/package.json` сохранён CRLF без завершающего перевода строки; новые файлы — LF. `SHA256SUMS` не трогались.
+Доказательство: реализация и запись КТ3 отправляются этим push; ожидается отдельный CI run текущей головы с `NODE SELF-TEST: 9 passed, 0 failed` и зелёным `bench-selftests`.
+Не запускалось локально: CLI, Node-команды, стенд и self-tests.
+Дальше: после зелёного КТ3 — документация/финальный аудит и КТ4.
+
 ## Что не запускалось
 
 Локально не запускались `check_branch`, стенд, самотесты и Node-команды. В этой среде работа ведётся только через GitHub API; проверки выполняются GitHub Actions согласно §9.4. `SHA256SUMS.txt` и `lab/SHA256SUMS.txt` не пересобирались (`sums_by: reviewer`).
