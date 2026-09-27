@@ -1,5 +1,5 @@
 {
-  "name": "Orbital Economy v7.7.4 Capital Goods Capital candidate r2 validation",
+  "name": "Orbital Economy v7.7.4 Capital Goods Capital candidate r3 validation",
   "mode_variable": "Timed Test Mode",
   "expected_time_step": 0.25,
   "time_step_tolerance": 1e-12,
@@ -26078,10 +26078,12 @@
           "name": "Mode 37: B CG plant expansion responds during surge",
           "column": "B Capital Goods Plant Expansion",
           "metric": "max",
-          "from_day": 360,
-          "to_day": 720,
           "op": ">",
-          "value": 0.005
+          "value": 0.005,
+          "window": [
+            360,
+            720
+          ]
         },
         {
           "type": "change",
@@ -26097,52 +26099,65 @@
           "name": "Mode 37: B CG plant Construction Materials consumption is real",
           "column": "B Capital Goods Plant Construction Materials Consumption",
           "metric": "max",
-          "from_day": 360,
-          "to_day": 720,
           "op": ">",
-          "value": 0
+          "value": 0,
+          "window": [
+            360,
+            720
+          ]
         },
         {
           "type": "metric",
           "name": "Mode 37: B CG plant Capital Goods consumption is real",
           "column": "B Capital Goods Plant Capital Goods Consumption",
           "metric": "max",
-          "from_day": 360,
-          "to_day": 720,
           "op": ">",
-          "value": 0
+          "value": 0,
+          "window": [
+            360,
+            720
+          ]
         },
         {
           "type": "metric",
           "name": "Mode 37: B Capital Goods production rate recovers",
           "column": "B Capital Goods Production Rate",
           "metric": "max",
-          "from_day": 360,
-          "to_day": 720,
           "op": ">",
-          "value": 0.9
+          "value": 0.9,
+          "window": [
+            360,
+            720
+          ]
         },
         {
           "type": "metric",
           "name": "Mode 37: B Capital Goods fulfillment shows surge pressure",
           "column": "B Capital Goods Fulfillment",
           "metric": "min",
-          "from_day": 360,
-          "to_day": 720,
           "op": "<",
-          "value": 0.3
+          "value": 0.3,
+          "window": [
+            360,
+            720
+          ]
         },
         {
           "type": "event_absent",
           "name": "Mode 37: B CG plant does not expand before surge window",
-          "column": "B Capital Goods Plant Expansion",
-          "threshold": 0.000001,
-          "start_day": 0,
-          "end_day": 360
+          "event": {
+            "column": "B Capital Goods Plant Expansion",
+            "op": ">",
+            "value": 0.000001,
+            "window": [
+              0,
+              359.75
+            ]
+          }
         }
       ],
       "notes": [
-        "Thresholds calibrated once from candidate r1 run 36329067162 using rounded semantic margins: observed expansion max 0.008852, installed change +0.88035, production max 1.01790, fulfillment min 0.19347. Physical-consumption and pre-window event_absent checks remain unchanged."
+        "r3 fixes validation DSL only: metric surge checks use window [360,720]; event_absent uses nested event with window [0,359.75]. Thresholds remain the rounded r2 semantic margins until this run reports the true windowed values."
       ]
     }
   },
@@ -26583,6 +26598,7 @@
     "v7.7.3 DRAFT: structural declarations only (regression 0-33, kernel instances, boundary classification and pairs, planet_closure). The executor adds switch-off checks for Modes 0-33, pair identities for the two plant expansions (Modes 34-35), and scenario checks for Modes 34-35.",
     "v7.7.3 candidate r2 calibration from Linux candidate run 36313670047: Mode34 A plant installed change=-2.263962331007464 -> < -2.0; A CM production max=2.23927686146337 -> >2.0; B plant expansion max=0 -> <=1e-6. Mode35 B plant expansion max=0.0089300689086293 -> >0.007; B plant installed change 360->720=0.98486656336586 -> >0.8; B CM production max=1.02707552489587 -> >0.9; B CM fulfillment min=0.122475826515893 -> <0.20. Thresholds are rounded semantic margins, not point fits.",
     "v7.7.4 DRAFT: structural declarations only (regression 0-35, kernel instances, boundary classification and pairs, planet_closure). The executor adds switch-off checks for Modes 0-35, pair identities for the two plant expansions (Modes 36-37), and scenario checks for Modes 36-37.",
-    "v7.7.4 candidate r2: calibration probes replaced after first full run 36329067162 with rounded semantic thresholds; no owner rules or structural checks were weakened."
+    "v7.7.4 candidate r2: calibration probes replaced after first full run 36329067162 with rounded semantic thresholds; no owner rules or structural checks were weakened.",
+    "v7.7.4 candidate r3: corrected Mode 37 DSL format after r2 exposed that metric from_day/to_day are ignored and event_absent requires nested event. No model or threshold change in this revision; true windowed values are taken from the r3 CI report."
   ]
 }
