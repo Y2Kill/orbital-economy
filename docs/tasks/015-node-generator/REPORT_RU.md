@@ -8,6 +8,7 @@
 Не подтвердилось: пока ничего; локально стенд и самотесты не запускались по условиям задания.
 Дальше: отдельным шагом проверить CI этой головы; после зелёного КТ1 перейти к строгой схеме декларации и секции `nodes` в `APPLY_PATCH`.
 Ожидаемый запуск после push КТ1: CI run 36343421041 (голова `c2c2a2930f3475d3f4dc292b666664e308fd710d`); результат будет проверен отдельным шагом.
+Результат КТ1: первый run 36343421041 был отменён journal-push из-за `concurrency.cancel-in-progress`; доказательство — следующий run [36343437733](https://github.com/Y2Kill/orbital-economy/actions/runs/36343437733) на голове `78aede2bc764ff950a2f8ed3df392c33761c58e1`: `bench-selftests` SUCCESS. В логе Node self-test: Construction Materials Plant — 69 элементов / 6 замен / 126 связей / validation=equal; Capital Goods Plant — 76 / 6 / 138 / validation=equal; `NODE SELF-TEST: 1 passed, 0 failed`.
 
 ## Что не запускалось
 
