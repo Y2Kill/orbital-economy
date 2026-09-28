@@ -147,6 +147,7 @@ export function checkValidationSchema(validation, { modes } = {}) {
       add(`${path}.${key}`, `unknown field for ${check.type}${hint}`);
     }
 
+    if (!Object.hasOwn(check, 'name')) add(`${path}.name`, `required for ${check.type}`);
     for (const key of spec.required) {
       if (!Object.hasOwn(check, key)) add(`${path}.${key}`, `required for ${check.type}`);
     }
