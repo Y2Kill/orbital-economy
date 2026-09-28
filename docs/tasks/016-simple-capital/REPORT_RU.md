@@ -14,6 +14,12 @@
 Не подтвердилось: локальный запуск cases 10/12 и runtime симуляции не выполнялся по §9.4; результаты считаются подтверждёнными только после Actions. Предыдущие КТ1 runs были отменены concurrency последующими обязательными journal/KT2 push; код КТ1 входит без изменений в текущую голову и будет покрыт текущим `bench-selftests`.
 Дальше: проверить Actions отдельно; КТ3 — закончить `capital_retirement`/вид `simple`, case 11 и добиться зелёного полного `bench-selftests`.
 
+### КТ3 — 2026-09-28 — boundary / Planet v1 / rebuild / полный self-test
+Сделано: generated fragment создаёт и идемпотентно наполняет `capital_retirement` (`sink`, `closed_world: true`), `planet_closure.capacity.kind = "simple"` поддерживается как STOCK-capacity с тем же `max_hops` правилом, P2 счётчик имеет форму `kernel / simple / exceptions / undeclared`; case 11 динамически вырезает/собирает все будущие `simple_capital` declarations из `model/nodes/` и модель case 10. Исправлен вывод P2 в structure report. Дополнительно закрыт HARD-путь comparator: failures `simple_capital` теперь формируют static hard errors, а не теряются за общим status.
+Доказательство: CI run 36397985918 — https://github.com/Y2Kill/orbital-economy/actions/runs/36397985918, head `94a395531d1300dd6d685cb5d8ca21aee8f68b89`, workflow **success**. `bench-selftests`: QA 32/32 PASS; Structure 21/21 PASS; Loop 15/15 PASS; Planet 16/16 PASS; Conformance 18/18 PASS; Policy 10/10 PASS; Compare PASS; **NODE SELF-TEST 15/15 PASS**; финальный `OVERALL: PASS`.
+Не подтвердилось локально: ничего не запускалось вне CI (§9.4). Первый полный run 36397681856 выявил устаревший Markdown-формат P2 и закономерно упал в Planet case 15; после исправления следующий полный run 36397985918 зелёный.
+Дальше: КТ4 — версия 0.9.9, вся требуемая документация и финальная зелёная голова.
+
 ## 2. Устройство `simple_capital`, validation и `planet_closure`
 
 На КТ1 реализован генератор. Для каждой колонии он создаёт STOCK мощности, сглаженный sizing signal при `create: true`, desired/shortage/excess/desired expansion, физически обеспеченный Expansion, depreciation, retirement и consumption-потоки backing-благ. Подмена output-мощности switch-gated и сохраняет старую ветку дословно; backing demand получает добавку от Desired Expansion.
