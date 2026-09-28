@@ -291,6 +291,23 @@ export function checkPlugin(plugin, ctx) {
     return results;
   }
 
+
+  if (plugin.type === 'simple_capital') {
+    const tol = plugin.abs_tol ?? 1e-8;
+    const safe = (name, fn) => { try { return fn(); } catch (e) { return fail(name, e.message || String(e)); } };
+    for (const inst of plugin.instances || []) {
+      const r = inst.roles || {};
+      results.push(safe(`${inst.name}: simple capacity >= 0`, () => checkNonNegativeColumns(ctx, {
+        name: `${inst.name}: simple capacity >= 0`, abs_tol: tol, columns: [r.capacity].filter(Boolean)
+      })));
+      results.push(safe(`${inst.name}: simple flows >= 0`, () => checkNonNegativeColumns(ctx, {
+        name: `${inst.name}: simple flows >= 0`, abs_tol: tol,
+        columns: [r.expansion, r.depreciation, r.retirement, ...(inst.consumption || [])].filter(Boolean)
+      })));
+    }
+    return results;
+  }
+
   if (plugin.type === 'transport_allocator') {
     const tol = plugin.abs_tol ?? 1e-8;
     const total = plugin.total || 'Priority Allocated Total Load';
