@@ -124,3 +124,29 @@ CI run https://github.com/Y2Kill/orbital-economy/actions/runs/36410037014 выя
 - CI: https://github.com/Y2Kill/orbital-economy/actions/runs/36415909709 — общий guard/selftests для этой головы; report-only push может отменить его по concurrency, в таком случае будет проверен заменивший его CI.
 
 Результаты проверяются отдельным шагом; один длинный polling/wait не используется.
+
+
+### КТ4 — закрыта: поставка полная, candidate 5/5 PASS, CI зелёный
+
+Финальный Candidate acceptance run: https://github.com/Y2Kill/orbital-economy/actions/runs/36415909682 для candidate-коммита `0340c89b6ee399463e944e8c0c92c13320e75cce`.
+
+Все пять гейтов PASS:
+
+| Gate | Результат |
+|---|:---:|
+| apply-patch | PASS |
+| conformance | PASS |
+| audit | PASS |
+| validation | PASS |
+| policy | PASS |
+
+Итоговая сводка candidate:
+- Candidate SHA-256: `2f7c7e4654e972842eaa8f53064997045bbb22a742f4b7097dba24864f7ad2ca`.
+- Validation SHA-256: `17c2a896be77c3a1078d061c97269bc747d15e786b9ba6a5de28ad90feba84b1` — совпадает с привязкой в `change-policy.json`.
+- `OVERALL: PASS` для validation 40/40.
+- `POLICY RESULT: PASS`; `Observed=1451`, `Expected=1451`, `Unexpected=0`, `Forbidden=0`, `Threshold exceed=0`, `Required missing=0`, `Hard blockers=0`.
+- `COMPARISON RESULT: OUTPUTS_IDENTICAL_BUT_SCENARIO_CONTRACT_CHANGED` — ожидаемый результат: общие series legacy Modes не изменены, сценарный контракт расширен Modes 38–39 и новым switch input.
+
+Общий CI для головы с финальной policy и журналом перед КТ4: https://github.com/Y2Kill/orbital-economy/actions/runs/36415949284 — `success`; `guard`, `tools-selftest`, `bench-selftests` PASS, `integrity` штатно skipped при `sums_by: reviewer`.
+
+Таким образом КТ1–КТ4 закрыты. Поставка содержит ровно требуемые артефакты в `candidate/`; узел остаётся декларацией в секции `nodes`, `SHA256SUMS` не пересобирались, локальный стенд и канонический Windows acceptance агентом не запускались.
