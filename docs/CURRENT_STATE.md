@@ -1,21 +1,21 @@
 # Current State
 
 **Document status:** CURRENT  
-**Describes code:** Orbital Economy v7.7.4 r1 — Capital Goods Capital  
-**Base:** accepted v7.7.3 r1 (Construction Materials Capital)  
-**Model SHA-256:** `8a71fe6678c4fc6c532bb8e35b6006280ddb9639a69aed045a6ca25f516f1991`
+**Describes code:** Orbital Economy v7.7.5 r1 — Regolith Capital  
+**Base:** accepted v7.7.4 r1 (Capital Goods Capital)  
+**Model SHA-256:** `b0b60e63f24bb1791a1d06d631a681a8d96fd820bcccdf79932715ac0d0f9c8c`
 
 ## 1. Checkpoint
 
 | Property | Value |
 |---|---:|
-| ModelJSON elements | 3671 |
-| VARIABLE | 956 |
-| STOCK | 91 |
-| FLOW | 197 |
-| LINK | 2427 |
-| Named primitives | 1244 |
-| Scenarios | 38 |
+| ModelJSON elements | 3783 |
+| VARIABLE | 972 |
+| STOCK | 95 |
+| FLOW | 211 |
+| LINK | 2505 |
+| Named primitives | 1278 |
+| Scenarios | 40 |
 | Simulation | 0..1080 days |
 | Time step | 0.25 day |
 | Engine | `simulation@9.0.0` |
@@ -69,6 +69,10 @@ The plant is sized to the smoothed demand signal of 2b (`Required Active = Deman
 ### 2d. Capital goods on capital (v7.7.4)
 
 Capital-goods production capacity is capital as well: each colony has a **capital-goods plant**, a kernel-v2 lifecycle instance built exactly like the construction-materials plant of 2c (no finance limit, own switch `Capital Goods Capital Enabled`). With the switch on, `X Capital Goods Production Capacity` is the plant's active capacity; the plant expands from capital goods and construction materials. It is sized to a new smoothed stock `X Capital Goods Demand Signal` (adjustment 3 days, the same idiom as the energy and construction-materials demand signals): the plant is built from capital goods, so same-step demand would close an algebraic loop. The former hard ceiling on all construction (A 2, B 1 per day) is gone — in Mode 36 A's plant grows past its starting capacity. Planet v1 counter P2: processes on capital 9 → 11.
+
+### 2e. Regolith mine on simple capital (v7.7.5)
+
+Regolith extraction capacity is no longer a constant (A 7, B 5): each colony has a **regolith mine**, the first instance of **simple capital** — one capacity stock `X Regolith Mine Capacity`, no activation or mothballing. With the switch `Regolith Capital Enabled` on, `X Regolith Extraction Capacity` reads the mine's capacity (the Mode 29 shock stays a multiplier). Desired capacity is a new smoothed stock `X Regolith Demand Signal` (following `X Regolith Requirement`) × 1.25; expansion closes the gap over 90 days, limited by capital-goods and construction-materials fulfillment, and consumes 2 units of each per unit of capacity; depreciation 0.0001/day; excess over desired capacity is retired over 360 days. The sector is generated from the node declaration `model/nodes/regolith-mine.json` (34 elements, 6 formula replacements, 78 links). Planet v1 counter P2: kernel 11 / simple 2 / exceptions 4 (was 11 / 0 / 6).
 
 ## 3. Energy Kernel v2
 
@@ -134,7 +138,7 @@ Extraction adjusts toward current resource demand plus a target-inventory correc
 - `0`: all new resource flows are inert; `Available Generation` falls back to the accepted active-capacity path; generation cost falls back to the accepted v7.5.1 expression.
 - `1`: Energy Kernel v2 operates.
 
-In v7.6, Modes **0–24** were the exact-regression scope against v7.5.1 and Modes **25–26** were new. In v7.6.1, Modes **0–24** and **26** reproduced v7.6 r2 exactly (every series except the recalibrated constant's own series). In v7.7, Modes **0–26** set `Construction Materials Enabled = 0` and reproduce v7.6.1 r1 bit for bit on the canonical platform; Modes **27–29** are new. In v7.7.1, Modes **0–29** reproduce v7.7 r1 (switch `Transport Construction Materials Enabled`); in v7.7.2, Modes **0–31** set `Construction Materials Energy Enabled = 0` and reproduce v7.7.1 r1 bit for bit; Modes **32–33** are new. In v7.7.3, Modes **0–33** set `Construction Materials Capital Enabled = 0` and reproduce v7.7.2 r1 bit for bit; Modes **34–35** are new. In v7.7.4, Modes **0–35** set `Capital Goods Capital Enabled = 0` and reproduce v7.7.3 r1 bit for bit; Modes **36–37** are new.
+In v7.6, Modes **0–24** were the exact-regression scope against v7.5.1 and Modes **25–26** were new. In v7.6.1, Modes **0–24** and **26** reproduced v7.6 r2 exactly (every series except the recalibrated constant's own series). In v7.7, Modes **0–26** set `Construction Materials Enabled = 0` and reproduce v7.6.1 r1 bit for bit on the canonical platform; Modes **27–29** are new. In v7.7.1, Modes **0–29** reproduce v7.7 r1 (switch `Transport Construction Materials Enabled`); in v7.7.2, Modes **0–31** set `Construction Materials Energy Enabled = 0` and reproduce v7.7.1 r1 bit for bit; Modes **32–33** are new. In v7.7.3, Modes **0–33** set `Construction Materials Capital Enabled = 0` and reproduce v7.7.2 r1 bit for bit; Modes **34–35** are new. In v7.7.4, Modes **0–35** set `Capital Goods Capital Enabled = 0` and reproduce v7.7.3 r1 bit for bit; Modes **36–37** are new. In v7.7.5, Modes **0–37** set `Regolith Capital Enabled = 0` and reproduce v7.7.4 r1 bit for bit; Modes **38–39** are new.
 
 ## 5. New scenarios
 
@@ -192,22 +196,31 @@ Everything on, no stimulus. At the early demand peak A's capital-goods plant gro
 
 The transport-demand surge with everything on. By day 360 B's capital-goods plant is mothballed down to ≈ 0.24; in the surge B rebuilds it to ≈ 1.15. Until it is rebuilt, B is short of capital goods (fulfillment ≈ 0.19, against ≈ 0.92 in v7.7.3 Mode 35) and of construction materials (≈ 0.13): both plants of B recover from the same inventories.
 
+### Mode 38 — Regolith Capital Baseline
+
+Everything on, no stimulus. At the early demand peak A's regolith mine grows 7 → ≈ 8.83, then retires its excess down to ≈ 2.29; B's mine, without demand, winds down 5 → ≈ 0.22.
+
+### Mode 39 — Transport Surge on Regolith Capital
+
+The transport-demand surge with everything on. By day 360 B's mine is down to ≈ 1.78; in the surge B **rebuilds** it to ≈ 8.19 and B's regolith extraction reaches ≈ 3.54/day. B is short of construction materials meanwhile (fulfillment down to ≈ 0.10): the inertia of the chain now starts at the raw material.
+
 ## 6. Static QA
 
-| Metric | v7.7.4 r1 |
+| Metric | v7.7.5 r1 |
 |---|---:|
-| FLOW | 197 |
-| Boundary flows | 154 |
+| FLOW | 211 |
+| Boundary flows | 168 |
 | Unclassified boundary flows | 0 |
-| Declared transformation pairs | 19 |
+| Declared transformation pairs | 21 |
 | Unpaired transformation flows | 0 |
 | Declared external-capital violations | **0** |
 | A/B symmetry mismatches | **0** |
-| A/B parameter differences | 102 |
+| A/B parameter differences | 112 |
 | Capital lifecycle instances | 11 |
 | Capital lifecycle non-conforming | **0** |
+| Simple capital instances | 2 (non-conforming **0**) |
 
-Executable validation Modes 0–37 (`validation/validation-v7.7.4.json`) was run on the canonical platform on 2026-09-27: **38/38 PASS** (8219 checks); Modes 0–35 reproduce v7.7.3 r1 exactly (36 × `common=1168, changed=0, maxAbs=0`, 76 added series). v7.7.3 had reproduced v7.7.2 r1 exactly in Modes 0–33. v7.7.2 had reproduced v7.7.1 r1 exactly in Modes 0–31. v7.7.1 had reproduced v7.7 r1 exactly in Modes 0–29. Static: algebraic loops 0 of 1024 switch combinations; Planet v1 closure P2 11/6/0, P3 6/2/9/0, P4 0/6, P5 4/13, P6 4. v7.7 had reproduced v7.6.1 r1 exactly in Modes 0–26. v7.6.1 had reproduced v7.6 r2 in Modes 0–24 and 26 apart from the recalibrated constant's own series. v7.6 r2 in its turn reproduced v7.5.1 r1 exactly in Modes 0–24 (25 × `common=963, changed=0, maxAbs=0`, 41 added series). See `ACCEPTANCE_STATUS.md`.
+Executable validation Modes 0–39 (`validation/validation-v7.7.5.json`) was run on the canonical platform on 2026-09-28: **40/40 PASS** (9291 checks); Modes 0–37 reproduce v7.7.4 r1 exactly (38 × `common=1244, changed=0, maxAbs=0`, 34 added series). v7.7.4 had reproduced v7.7.3 r1 exactly in Modes 0–35. v7.7.3 had reproduced v7.7.2 r1 exactly in Modes 0–33. v7.7.2 had reproduced v7.7.1 r1 exactly in Modes 0–31. v7.7.1 had reproduced v7.7 r1 exactly in Modes 0–29. Static: algebraic loops 0 of 2048 switch combinations; Planet v1 closure P2 11/2/4/0 (kernel/simple/exceptions/undeclared), P3 6/2/9/0, P4 0/6, P5 4/13, P6 4. v7.7 had reproduced v7.6.1 r1 exactly in Modes 0–26. v7.6.1 had reproduced v7.6 r2 in Modes 0–24 and 26 apart from the recalibrated constant's own series. v7.6 r2 in its turn reproduced v7.5.1 r1 exactly in Modes 0–24 (25 × `common=963, changed=0, maxAbs=0`, 41 added series). See `ACCEPTANCE_STATUS.md`.
 
 ## 7. What v7.6 deliberately does not implement
 

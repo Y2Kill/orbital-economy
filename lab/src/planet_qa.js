@@ -237,22 +237,22 @@ try {
 
   await expect('10 constant-capacity reversibility violation is reported and gates planet_v1', () => {
     const raw = structuredClone(accepted);
-    const miningRate = raw.elements.find(e => e?.name === 'A Mining Rate' && e.type === 'VARIABLE');
-    if (!miningRate) throw new Error('A Mining Rate fixture missing');
-    // The constant is taken from the declaration (first constant-capacity process other than mining), so the case
-    // follows Planet v1 steps: capital goods was the fixture until it moved to capital in v7.7.4.
-    const constProc = (declaration.processes || []).find(p => p.capacity?.kind === 'constant' && p.id !== 'mining');
-    if (!constProc) throw new Error('no constant-capacity process besides mining is left in the declaration — rewrite this fixture');
+    // The constant is taken from the declaration (first constant-capacity process) and read by a probe variable
+    // outside every process, so the case follows Planet v1 steps: capital goods, then regolith (v7.7.5) were
+    // fixtures read by A Mining Rate until they moved to capital.
+    const constProc = (declaration.processes || []).find(p => p.capacity?.kind === 'constant');
+    if (!constProc) throw new Error('no constant-capacity process is left in the declaration — rewrite this fixture');
     const param = String(constProc.capacity.parameter).replaceAll('{C}', 'A');
-    miningRate.behavior.value += ` + 0 * [${param}]`;
-    raw.elements.push({ type: 'LINK', from: param, to: 'A Mining Rate' });
+    const probe = 'QA Reversibility Probe';
+    raw.elements.push({ type: 'VARIABLE', name: probe, behavior: { value: `0 * [${param}]` } });
+    raw.elements.push({ type: 'LINK', from: param, to: probe });
 
     const rd = structuredClone(declaration);
     rd.enforce = 'report';
     const report = audit(raw, rd);
     if (!(report.status === 'PASS' && report.reversibility.length === 1
       && report.reversibility[0].parameter === param
-      && report.reversibility[0].reader === 'A Mining Rate')) {
+      && report.reversibility[0].reader === probe)) {
       throw new Error(JSON.stringify(report.reversibility));
     }
     const vd = structuredClone(declaration);

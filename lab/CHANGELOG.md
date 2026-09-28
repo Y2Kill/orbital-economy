@@ -8,6 +8,7 @@
 - Planet P2 расширен до kernel/simple/exceptions/undeclared; simple STOCK использует тот же max_hops proof, что kernel; structure reports обновлены;
 - `NODE_SELF_TEST` 15 cases, включая strip/rebuild, strict schema/conflict/determinism и Mode 38 runtime probe;
 - Lab/package version → v0.9.9; accepted model/validation/policy, model/nodes, tools, vendor и engine не изменены.
+- при продвижении v7.7.5 r1 (задача 017, версия стенда та же): `node_qa` снимает принятые `simple_capital` раньше заводов (case 1), а фикстуру раскрывает на модели без неё (cases 12, 13, 15); `planet_qa` case 10 читает константу мощности отдельной переменной-зондом — на константе осталась только руда.
 
 ## v0.9.8 — declarative model node generator
 

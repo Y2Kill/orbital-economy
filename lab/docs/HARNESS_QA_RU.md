@@ -113,7 +113,7 @@ LOOP_SELF_TEST.cmd
 
 13 случаев на accepted и мутированных копиях:
 
-- accepted (v7.7.4 r1): 10 переключателей, 1024 комбинации, 0 петель; с v7.7.2 ожидания для accepted выводятся из самой модели (2^N комбинаций; петля мутации — ровно в половине и ровно в Modes, где сценарий включает её переключатель), поэтому самотест не переписывается при каждом продвижении;
+- accepted (v7.7.5 r1): 11 переключателей, 2048 комбинаций, 0 петель; с v7.7.2 ожидания для accepted выводятся из самой модели (2^N комбинаций; петля мутации — ровно в половине и ровно в Modes, где сценарий включает её переключатель), поэтому самотест не переписывается при каждом продвижении;
 - исторический v7.6 r1: 16/32 комбинаций, только при `Power Resource Enabled=1`, Modes 25–26;
 - мутация задачи 001 r1: половина комбинаций (128/256 на v7.7.2), только при `Intermediate Inputs Enabled=1`, Modes 17–33;
 - runtime agreement: Mode 16 считается, Mode 17 падает у `simulation@9.0.0` с `Circular equation loop`;
@@ -134,11 +134,11 @@ PLANET_SELF_TEST.cmd
 
 **16 случаев** на accepted модели и мутированных копиях:
 
-- baseline: счётчики аудита точно равны счётчикам, посчитанным по видам объявлений самой декларации (с v7.7.2; оракул не зависит от проверок модели), при 0 ошибок; на v7.7.4 r1 — 17 process instances + 2 legacy; P2 11/6/0; P3 6/2/9/0; P4 0/6; P5 4/13; P6 4; reversibility 0;
+- baseline: счётчики аудита точно равны счётчикам, посчитанным по видам объявлений самой декларации (с v7.7.2; оракул не зависит от проверок модели), при 0 ошибок; на v7.7.5 r1 — 17 process instances + 2 legacy; P2 11/2/4/0; P3 6/2/9/0; P4 0/6; P5 4/13; P6 4; reversibility 0;
 - L1–L5: ложные capacity/energy declarations отвергаются; для далёких зависимостей сохраняется shortest path и число hops;
 - completeness: удалённый process виден как undeclared в `report` и становится FAIL в `classify`;
 - `planet_v1` / `planet_strict`: проверяются точные dimensions текущего долга;
-- reversibility constant capacity, deposit closure, state-dependent demand driver и unread labor intensity;
+- reversibility constant capacity (с v7.7.5 параметр читает отдельная переменная-зонд вне процессов: на константе осталась только руда), deposit closure, state-dependent demand driver и unread labor intensity;
 - lower-case + whitespace в declaration names дают тот же verdict/counters;
 - case 15: `runStructureAudits`, `STATIC_ONLY_PLUGINS` и `audit --planet-closure` интегрированы;
 - case 16: JSON результата детерминирован.
@@ -156,7 +156,7 @@ npm run node-qa
 
 Девять случаев работают от **текущей** accepted-модели и двух деклараций `model/nodes/`, без привязки к историческому имени ModelJSON:
 
-1. обе декларации вырезаются из accepted в обратном порядке и собираются заново; определения (кроме `description`), замены, новые LINK и generated validation совпадают; на baseline v7.7.4 r1 диагностика: Construction Materials Plant = 69/6/126, Capital Goods Plant = 76/6/138;
+1. обе декларации вырезаются из accepted в обратном порядке (после принятых `simple_capital`, которые лежат поверх) и собираются заново; определения (кроме `description`), замены, новые LINK и generated validation совпадают; на baseline v7.7.5 r1 диагностика: Construction Materials Plant = 69/6/126, Capital Goods Plant = 76/6/138;
 2. patch с `nodes` и предварительно раскрытый patch дают одинаковые определения модели;
 3. неизвестное поле декларации отвергается с путём;
 4. неизвестный тип узла отвергается;
@@ -185,7 +185,7 @@ Static/HARD/physics failure нельзя превратить в PASS через
 
 ## 3f. Simple-capital node QA (v0.9.9)
 
-Cases 1–9 задачи 015 сохранены. Cases 10–15 добавляют: интеграцию regolith fixture с merged validation (2 CONFORMING, loops=0, P2.simple=2, unclassified=0); strip/rebuild всех `simple_capital` из `model/nodes/` плюс временной модели case 10; запрет VARIABLE sizing signal; generated-name conflict; unknown-field path; byte-determinism 34/6/78.
+Cases 1–9 задачи 015 сохранены. С v7.7.5 шахта фикстуры стоит в принятой модели: case 10 снимает её и собирает заново, cases 12, 13 и 15 раскрывают фикстуру на модели без неё, case 12 перед слиянием убирает из validation принятые A/B Regolith Mine. Cases 10–15 добавляют: интеграцию regolith fixture с merged validation (2 CONFORMING, loops=0, P2.simple=2, unclassified=0); strip/rebuild всех `simple_capital` из `model/nodes/` плюс временной модели case 10; запрет VARIABLE sizing signal; generated-name conflict; unknown-field path; byte-determinism 34/6/78.
 
 Case 10 также клонирует текущий accepted Mode 37 в временный Mode 38, включает `Regolith Mine Capital Enabled`, выполняет real simulation, общие/runtime plugin checks и проверяет широкий численный envelope reference-прототипа.
 

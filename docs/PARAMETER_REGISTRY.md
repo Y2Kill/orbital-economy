@@ -1,17 +1,17 @@
 # Orbital Economy — реестр внешних параметров
 
-- generated: 2026-09-27T17:48:27.025Z
-- model: Orbital Economy v7.7.4 r1 — Capital Goods Capital — SHA-256 `8a71fe6678c4fc6c532bb8e35b6006280ddb9639a69aed045a6ca25f516f1991`
-- annotations: docs/PARAMETER_ANNOTATIONS.json (SHA-256 `f00035a61da71b0dbc8be355c77677bffc1120e0d4ad9bec494a035c79ae04e4`)
+- generated: 2026-09-28T12:55:21.134Z
+- model: Orbital Economy v7.7.5 r1 — Regolith Capital — SHA-256 `b0b60e63f24bb1791a1d06d631a681a8d96fd820bcccdf79932715ac0d0f9c8c`
+- annotations: docs/PARAMETER_ANNOTATIONS.json (SHA-256 `630f5fefed4f3c4652b33d3664472a44c384a2247e599529444aaedc51e4dc35`)
 
 Всё, что модель не выводит сама: числовые константы, начальные запасы, переключатели, тестовые множители. Инвентарь сгенерирован из ModelJSON; аннотации («роль / что меняет / доказательство») ведутся вручную и версионируются вместе с baseline.
 
 ## Сводка
 
-- внешних величин: **401** (константы 266, начальные запасы 89, переключатели 11, тестовая обвязка 35)
-- по колониям: A 112, B 112, глобальные 177
-- аннотировано: **227 / 401** (57 %)
-- несимметричных пар A/B: **49**, из них без аннотации: **0**
+- внешних величин: **413** (константы 273, начальные запасы 93, переключатели 12, тестовая обвязка 35)
+- по колониям: A 114, B 114, глобальные 185
+- аннотировано: **239 / 413** (58 %)
+- несимметричных пар A/B: **50**, из них без аннотации: **0**
 
 ## Несимметричные пары A/B — что задаёт различия колоний
 
@@ -54,6 +54,7 @@
 | Domestic Supply Signal | Other | 16 | 22 | То же для металла. |
 | Local Base Demand | Other | 16 | 22 | Масштаб конечного рынка металла; B — больший потребитель при меньшей добыче → структурный импорт металла B из A (~21–23/день). |
 | Regolith Base Extraction Capacity | Other | 7 | 5 | Caps Regolith extraction through the standard soft-cap function. |
+| Regolith Mine Capacity | Other | 7 | 5 | Seeds mine capacity at the accepted A Regolith Base Extraction Capacity; A/B are intentionally asymmetric (7 vs 5). |
 | Test 22 Capital Goods Shock Applies | Other | 1 | 0 | 1 applies the shared 0.3 production-capacity multiplier; 0 substitutes exact neutral multiplier 1. |
 | Test 28 Construction Materials Shock Applies | Other | 1 | 0 | Keeps Mode 28 shock wiring structurally symmetric while selecting A only. |
 | Test 29 Regolith Shock Applies | Other | 1 | 0 | Keeps Mode 29 shock wiring structurally symmetric while selecting A only. |
@@ -191,7 +192,9 @@
 | A Domestic Supply Signal | initial_stock | 16 / 22 | Начальный сигнал локального предложения металла (16 / 22). | То же для металла. |  |
 | A Local Base Demand | constant | 16 / 22 | Базовый конечный спрос на металл (A 16 / B 22 /день). | Масштаб конечного рынка металла; B — больший потребитель при меньшей добыче → структурный импорт металла B из A (~21–23/день). | Shipment Rate A→B: 23.1 (Mode 12), 20.8 (Mode 17). |
 | A Regolith Base Extraction Capacity | constant | 7 / 5 | [calib] fixed extraction capacity (7). | Caps Regolith extraction through the standard soft-cap function. | Owner skeleton feasibility value; candidate run to confirm baseline and shock behaviour. |
+| A Regolith Demand Signal | initial_stock | 0.35 | Initial smoothed Regolith demand signal for colony A, value 0.35. | Seeds the STOCK sizing signal without reading instantaneous demand directly. | draft/regolith-mine.json; V7_7_5_ARCHITECTURE_SPEC §1. |
 | A Regolith Inventory | initial_stock | 40 | [calib] initial Regolith stock, value 40. | Sets initial raw-resource buffer before endogenous extraction settles. | Owner skeleton feasibility value; candidate run to confirm no artificial startup failure. |
+| A Regolith Mine Capacity | initial_stock | 7 / 5 | Initial simple-capital mine capacity for colony A, value 7. | Seeds mine capacity at the accepted A Regolith Base Extraction Capacity; A/B are intentionally asymmetric (7 vs 5). | TASK_RU §2 and V7_7_5_ARCHITECTURE_SPEC §0–§2 explicitly require A=7, B=5. |
 | A Test 22 Capital Goods Shock Applies | constant | 1 / 0 | Applicability flag for Mode 22 capital-goods supply shock in colony A. | 1 applies the shared 0.3 production-capacity multiplier; 0 substitutes exact neutral multiplier 1. | Scenario wiring from V7_5_ARCHITECTURE_SPEC §4: A=1, B=0; test-only parameter. |
 | A Test 28 Construction Materials Shock Applies | constant | 1 / 0 | Test-only applicability flag (1). | Keeps Mode 28 shock wiring structurally symmetric while selecting A only. | V7_7_ARCHITECTURE_SPEC §4. |
 | A Test 29 Regolith Shock Applies | constant | 1 / 0 | Test-only applicability flag (1). | Keeps Mode 29 shock wiring structurally symmetric while selecting A only. | V7_7_ARCHITECTURE_SPEC §4. |
@@ -210,7 +213,9 @@
 | B Domestic Supply Signal | initial_stock | 22 / 16 | Начальный сигнал локального предложения металла (16 / 22). | То же для металла. |  |
 | B Local Base Demand | constant | 22 / 16 | Базовый конечный спрос на металл (A 16 / B 22 /день). | Масштаб конечного рынка металла; B — больший потребитель при меньшей добыче → структурный импорт металла B из A (~21–23/день). | Shipment Rate A→B: 23.1 (Mode 12), 20.8 (Mode 17). |
 | B Regolith Base Extraction Capacity | constant | 5 / 7 | [calib] fixed extraction capacity (5). | Caps Regolith extraction through the standard soft-cap function. | Owner skeleton feasibility value; candidate run to confirm baseline and shock behaviour. |
+| B Regolith Demand Signal | initial_stock | 0.35 | Initial smoothed Regolith demand signal for colony B, value 0.35. | Seeds the STOCK sizing signal without reading instantaneous demand directly. | draft/regolith-mine.json; V7_7_5_ARCHITECTURE_SPEC §1. |
 | B Regolith Inventory | initial_stock | 40 | [calib] initial Regolith stock, value 40. | Sets initial raw-resource buffer before endogenous extraction settles. | Owner skeleton feasibility value; candidate run to confirm no artificial startup failure. |
+| B Regolith Mine Capacity | initial_stock | 5 / 7 | Initial simple-capital mine capacity for colony B, value 5. | Seeds mine capacity at the accepted B Regolith Base Extraction Capacity; A/B are intentionally asymmetric (7 vs 5). | TASK_RU §2 and V7_7_5_ARCHITECTURE_SPEC §0–§2 explicitly require A=7, B=5. |
 | B Test 22 Capital Goods Shock Applies | constant | 0 / 1 | Applicability flag for Mode 22 capital-goods supply shock in colony B. | 1 applies the shared 0.3 production-capacity multiplier; 0 substitutes exact neutral multiplier 1. | Scenario wiring from V7_5_ARCHITECTURE_SPEC §4: A=1, B=0; test-only parameter. |
 | B Test 28 Construction Materials Shock Applies | constant | 0 / 1 | Test-only applicability flag (0). | Keeps Mode 28 shock wiring structurally symmetric while selecting A only. | V7_7_ARCHITECTURE_SPEC §4. |
 | B Test 29 Regolith Shock Applies | constant | 0 / 1 | Test-only applicability flag (0). | Keeps Mode 29 shock wiring structurally symmetric while selecting A only. | V7_7_ARCHITECTURE_SPEC §4. |
@@ -246,6 +251,13 @@
 | Construction Materials Target Days | constant | 30 | Construction Materials inventory target, days of desired demand. | Higher value raises desired stock coverage. | V7_7_ARCHITECTURE_SPEC §2; owner-defined non-[calib] value. |
 | Regolith Adjustment Time | constant | 10 | Regolith inventory correction time. | Higher value slows extraction response. | V7_7_ARCHITECTURE_SPEC §2; owner-defined non-[calib] value. |
 | Regolith Buffer Days | constant | 1 | Scale-free Regolith availability buffer, days of requirement. | Higher value makes raw-resource limitation bind sooner. | V7_7_ARCHITECTURE_SPEC §2; owner-defined non-[calib] value. |
+| Regolith Demand Signal Adjustment Time | constant | 3 | Regolith demand-signal adjustment time, value 3 days. | Controls lag from instantaneous Regolith Requirement to the STOCK signal used for mine sizing and prevents same-step demand feedback. | V7_7_5_ARCHITECTURE_SPEC §1–§2; simple_capital STOCK sizing rule in lab/docs/NODES_RU.md. |
+| Regolith Mine Capacity Reserve Factor | constant | 1.25 | Simple-capital desired-capacity reserve factor, value 1.25. | Scales the smoothed Regolith Demand Signal into desired mine capacity. | V7_7_5_ARCHITECTURE_SPEC §1 and draft/regolith-mine.json. |
+| Regolith Mine Capital Goods per Capacity | constant | 2 | Capital Goods requirement per unit of new mine capacity, value 2. | Scales Desired Expansion into Capital Goods demand and actual expansion into Capital Goods consumption. | V7_7_5_ARCHITECTURE_SPEC §1 and draft/regolith-mine.json. |
+| Regolith Mine Construction Materials per Capacity | constant | 2 | Construction Materials requirement per unit of new mine capacity, value 2. | Scales Desired Expansion into Construction Materials demand and actual expansion into Construction Materials consumption. | V7_7_5_ARCHITECTURE_SPEC §1 and draft/regolith-mine.json. |
+| Regolith Mine Construction Time | constant | 90 | Mine-capacity construction time, value 90 days. | Divides the positive capacity gap to set desired expansion speed before backing-resource coverage limits it. | V7_7_5_ARCHITECTURE_SPEC §1 and draft/regolith-mine.json. |
+| Regolith Mine Depreciation Rate | constant | 0.0001 | Mine-capacity depreciation rate, value 0.0001 per day. | Applies continuous physical attrition to Regolith Mine Capacity while the mechanic is enabled. | V7_7_5_ARCHITECTURE_SPEC §1 and draft/regolith-mine.json. |
+| Regolith Mine Retirement Time | constant | 360 | Mine-capacity surplus retirement time, value 360 days. | Controls removal rate of capacity above desired capacity. | V7_7_5_ARCHITECTURE_SPEC §1 and draft/regolith-mine.json. |
 | Regolith per Construction Materials Unit | constant | 2 | [calib] material intensity, skeleton value 2. | Scales Regolith requirement and exact production/consumption identity. | Owner skeleton feasibility value; numerical behaviour to be confirmed in candidate runs. |
 | Regolith Target Days | constant | 10 | Regolith target inventory, days of requirement. | Higher value raises raw-resource stock target. | V7_7_ARCHITECTURE_SPEC §2; owner-defined non-[calib] value. |
 | A Energy Demand Signal | initial_stock | 1100 / 480 | Начальный 3-дневный сигнал спроса на энергию (A 1100 / B 480). | Инициализация ценового сигнала дефицита энергии. |  |
@@ -293,6 +305,7 @@
 | Construction Materials Enabled | switch | 1 | v7.7 master switch. | 0 preserves Modes 0-26 exactly; 1 makes colonial expansion require both Capital Goods and Construction Materials. | V7_7_ARCHITECTURE_SPEC §0–§3. |
 | Construction Materials Energy Enabled | switch | 1 | v7.7.2 Construction Materials energy-coupling master switch. | 0 preserves Modes 0-31 exactly; 1 makes Construction Materials processing request and receive energy through the common colony allocator. | V7_7_2_ARCHITECTURE_SPEC §0–§3. |
 | Intermediate Inputs Enabled | switch | 1 | Переключатель v7.4 (1 в сыром файле; 0 в Modes 0–16; 1 в 17–20). | При 0 — точное воспроизведение v7.3 r2 (Feedstock из ∅ по legacy-цене). При 1 — металл как физический вход, Feedstock Extraction = 0, Feedstock Price = Market Price, Desired Smelting Rate += поставки. Только форма IfThenElse(switch, new, old). | CHECK_CANDIDATE r2: Modes 0–16 changed=0, maxAbs=0. |
+| Regolith Capital Enabled | switch | 1 | Regolith simple-capital master switch, raw value 1. | 0 preserves accepted Modes 0-37 exactly; 1 makes regolith extraction capacity read mine capital and enables mine expansion, depreciation, retirement, and backing-resource sinks. | V7_7_5_ARCHITECTURE_SPEC §0–§3; owner node declaration. |
 | Transport Construction Materials Enabled | switch | 1 | v7.7.1 shared-Transport Construction Materials master switch. | 0 preserves Modes 0-29 exactly; 1 makes shared Transport expansion require both Capital Goods and Construction Materials. | V7_7_1_ARCHITECTURE_SPEC §0–§3. |
 | Priority Stress A Ore Base Cost | test_wiring | 4 | Нейтральная A-сторона override-константа ore base cost для Mode 8. | Равна A Ore Base Cost = 4; позволяет A Effective Ore Base Cost иметь ту же test chain, что B, сохраняя прежний результат. |  |
 | Reverse A Mining Capacity | test_wiring | 70 | Нейтральная A-сторона override-константа mining capacity для Mode 4. | Равна A Mining Capacity = 70; симметризует ветку Reverse Advantage без изменения численного результата A. |  |
@@ -532,7 +545,9 @@
 | A Domestic Supply Signal | initial_stock | A | 16 | **22** | Smoothed recent domestic metal production available to A's buyers. | ✓ |
 | A Local Base Demand | constant | A | 16 | **22** | Local industrial metal demand at the reference price. | ✓ |
 | A Regolith Base Extraction Capacity | constant | A | 7 | **5** | [calib] Baseline Regolith extraction capacity in colony A. | ✓ |
+| A Regolith Demand Signal | initial_stock | A | 0.35 | = | Generated simple_capital demand signal for A Regolith Demand Signal. | ✓ |
 | A Regolith Inventory | initial_stock | A | 40 | = | [calib] Physical Regolith inventory in colony A. | ✓ |
+| A Regolith Mine Capacity | initial_stock | A | 7 | **5** | Generated simple_capital capacity for A Regolith Mine Capacity. | ✓ |
 | A Test 22 Capital Goods Shock Applies | constant | A | 1 | **0** | Applicability flag for Mode 22 capital-goods supply shock in colony A. | ✓ |
 | A Test 28 Construction Materials Shock Applies | constant | A | 1 | **0** | Applicability flag for symmetric Mode 28 Construction Materials shock wiring in colony A. | ✓ |
 | A Test 29 Regolith Shock Applies | constant | A | 1 | **0** | Applicability flag for symmetric Mode 29 Regolith shock wiring in colony A. | ✓ |
@@ -557,7 +572,9 @@
 | B Domestic Supply Signal | initial_stock | B | 22 | **16** | Smoothed recent domestic metal production available to B's buyers. | ✓ |
 | B Local Base Demand | constant | B | 22 | **16** | Local industrial metal demand at the reference price. | ✓ |
 | B Regolith Base Extraction Capacity | constant | B | 5 | **7** | [calib] Baseline Regolith extraction capacity in colony B. | ✓ |
+| B Regolith Demand Signal | initial_stock | B | 0.35 | = | Generated simple_capital demand signal for B Regolith Demand Signal. | ✓ |
 | B Regolith Inventory | initial_stock | B | 40 | = | [calib] Physical Regolith inventory in colony B. | ✓ |
+| B Regolith Mine Capacity | initial_stock | B | 5 | **7** | Generated simple_capital capacity for B Regolith Mine Capacity. | ✓ |
 | B Test 22 Capital Goods Shock Applies | constant | B | 0 | **1** | Applicability flag for Mode 22 capital-goods supply shock in colony B. | ✓ |
 | B Test 28 Construction Materials Shock Applies | constant | B | 0 | **1** | Applicability flag for symmetric Mode 28 Construction Materials shock wiring in colony B. | ✓ |
 | B Test 29 Regolith Shock Applies | constant | B | 0 | **1** | Applicability flag for symmetric Mode 29 Regolith shock wiring in colony B. | ✓ |
@@ -594,6 +611,13 @@
 | Construction Materials Target Days | constant | global | 30 |  | Target Construction Materials inventory coverage in days of desired construction demand. | ✓ |
 | Regolith Adjustment Time | constant | global | 10 |  | First-order inventory correction time for desired Regolith extraction. | ✓ |
 | Regolith Buffer Days | constant | global | 1 |  | Scale-free Regolith availability half-saturation buffer in days of current Regolith requirement. | ✓ |
+| Regolith Demand Signal Adjustment Time | constant | global | 3 |  | Generated simple_capital signal adjustment time for Regolith Demand Signal Adjustment Time. | ✓ |
+| Regolith Mine Capacity Reserve Factor | constant | global | 1.25 |  | Generated simple_capital parameter for Regolith Mine Capacity Reserve Factor. | ✓ |
+| Regolith Mine Capital Goods per Capacity | constant | global | 2 |  | Generated simple_capital parameter for Regolith Mine Capital Goods per Capacity. | ✓ |
+| Regolith Mine Construction Materials per Capacity | constant | global | 2 |  | Generated simple_capital parameter for Regolith Mine Construction Materials per Capacity. | ✓ |
+| Regolith Mine Construction Time | constant | global | 90 |  | Generated simple_capital parameter for Regolith Mine Construction Time. | ✓ |
+| Regolith Mine Depreciation Rate | constant | global | 0.0001 |  | Generated simple_capital parameter for Regolith Mine Depreciation Rate. | ✓ |
+| Regolith Mine Retirement Time | constant | global | 360 |  | Generated simple_capital parameter for Regolith Mine Retirement Time. | ✓ |
 | Regolith per Construction Materials Unit | constant | global | 2 |  | [calib] Regolith units consumed per unit of Construction Materials. | ✓ |
 | Regolith Target Days | constant | global | 10 |  | Target Regolith inventory coverage in days of current Regolith requirement. | ✓ |
 | Supply Mix Adjustment Time | constant | global | 5 |  | Days over which buyers' physically available source mix adjusts to actual domestic production and delivered imports. |  |
@@ -669,6 +693,7 @@
 | Construction Materials Energy Enabled | switch | global | 1 (сценарии: {"0":0,"1":0,"2":0,"3":0,"4":0,"5":0,"6":0,"7":0,"8":0,"9":0…) |  | v7.7.2 switch: makes Construction Materials processing participate in the colony energy allocator. | ✓ |
 | Intermediate Inputs Enabled | switch | global | 1 (сценарии: {"0":0,"1":0,"2":0,"3":0,"4":0,"5":0,"6":0,"7":0,"8":0,"9":0…) |  | Master switch for v7.4 Metal-to-Electronics intermediate-input coupling. Modes 0-16 override to 0; Modes 17+ enable it. | ✓ |
 | Power Resource Enabled | switch | global | 0 (сценарии: {"0":0,"1":0,"2":0,"3":0,"4":0,"5":0,"6":0,"7":0,"8":0,"9":0…) |  | v7.6 master switch. When 0, the accepted v7.5.1 energy path is reproduced; when 1, generation requires a physical operating resource. |  |
+| Regolith Capital Enabled | switch | global | 1 (сценарии: {"0":0,"1":0,"2":0,"3":0,"4":0,"5":0,"6":0,"7":0,"8":0,"9":0…) |  | Generated simple_capital switch for Regolith Capital Enabled. | ✓ |
 | Transport Capital Goods Enabled | switch | global | 1 (сценарии: {"0":0,"1":0,"2":0,"3":0,"4":0,"5":0,"6":0,"7":0,"8":0,"9":0…) |  | v7.5.1 regression switch: when enabled, Transport Capacity Expansion is physically backed by Capital Goods drawn from A/B regional inventories. |  |
 | Transport Construction Materials Enabled | switch | global | 1 (сценарии: {"0":0,"1":0,"2":0,"3":0,"4":0,"5":0,"6":0,"7":0,"8":0,"9":0…) |  | v7.7.1 master switch: shared Transport expansion physically requires Construction Materials. | ✓ |
 

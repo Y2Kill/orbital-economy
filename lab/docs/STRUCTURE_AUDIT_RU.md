@@ -216,11 +216,11 @@ Legacy-процессы учитываются отдельно и не вход
 - `planet_v1` — требует полноту процессов, P2/P3 roles, deposit closure, labor declaration, demand drivers и нулевые reversibility violations; задокументированные P2/P3 exceptions пока разрешены.
 - `planet_strict` — всё из `planet_v1` плюс **ноль P2/P3 exceptions**.
 
-Accepted v7.7.4 r1 в режиме `report` (v7.7.1 r1: P3 4/2/11/0; v7.7.2 r1: P2 7/10/0; v7.7.3 r1: P2 9/8/0):
+Accepted v7.7.5 r1 в режиме `report` (v7.7.1 r1: P3 4/2/11/0; v7.7.2 r1: P2 7/10/0; v7.7.3 r1: P2 9/8/0; v7.7.4 r1: P2 11/0/6/0):
 
 ```text
 processes=17; legacy=2; expected source outputs=16
-P2 capacity: kernel=11; simple=0; exceptions=6; undeclared=0
+P2 capacity: kernel=11; simple=2; exceptions=4; undeclared=0
 P3 energy: requests=6; producer=2; exceptions=9; undeclared=0
 P4 deposits: with=0; without=6
 P5 labor: declared=4; undeclared=13
@@ -228,7 +228,7 @@ P6 demand drivers=4
 reversibility=0
 ```
 
-Это **не** означает завершённую Planet v1: текущие явные долги — шесть extraction без deposit STOCK и 13 process instances без labor declaration; strict дополнительно видит 10 capacity и 11 energy exceptions.
+Это **не** означает завершённую Planet v1: текущие явные долги — шесть extraction без deposit STOCK и 13 process instances без labor declaration; strict дополнительно видит 4 capacity и 9 energy exceptions.
 
 ### Команда и отчёт
 
@@ -249,7 +249,7 @@ PLANET_SELF_TEST.cmd
 
 Интеграция старых plugin-аудитов: `runStructureAudits` объединяет их; статические плагины не порождают runtime-записей (регресс-тест на «Неизвестный plugin» WARN); `compareModels` с асимметричным candidate → `NOT_COMPARED` без симуляции.
 
-`LOOP_SELF_TEST.cmd`: 15 случаев. Accepted v7.7.4 r1 → 10 switches / 1024 combinations / 0 loops (v7.7.1 r1: 7 / 128); v7.6 r1 → 16/32 loop combinations и Modes 25–26; мутация задачи 001 r1 → половина комбинаций и Modes 17–33 (на v7.7.2); lower-case construction-materials mutation → половина и Modes 27–33; unresolved reference → FAIL; дополнительно engine agreement, STOCK/FLOW/self-loop, parser FAIL, static compare gate и deterministic JSON.
+`LOOP_SELF_TEST.cmd`: 15 случаев. Accepted v7.7.5 r1 → 11 switches / 2048 combinations / 0 loops (v7.7.1 r1: 7 / 128); v7.6 r1 → 16/32 loop combinations и Modes 25–26; мутация задачи 001 r1 → половина комбинаций и Modes 17–33 (на v7.7.2); lower-case construction-materials mutation → половина и Modes 27–33; unresolved reference → FAIL; дополнительно engine agreement, STOCK/FLOW/self-loop, parser FAIL, static compare gate и deterministic JSON.
 
 `PLANET_SELF_TEST.cmd`: **16 случаев**. Эталонные P2–P6 counters, L1–L5 false declarations с shortest paths, completeness/enforce modes, reversibility, deposits, demand/labor negatives, case-insensitive names, structure/CLI/static-only integration и deterministic JSON.
 
@@ -267,4 +267,4 @@ PLANET_SELF_TEST.cmd
 
 ### Изменения P2 / boundary в v0.9.9
 
-`simple` — полноценный P2 capital kind, а не exception. Счётчик P2 печатается как `kernel / simple / exceptions / undeclared`; на неизменённой accepted v7.7.4 r1 это `11 / 0 / 6 / 0`. Generated `capital_retirement` — закрытая sink-категория open boundaries для Depreciation/Retirement simple-capital stock. Case 10 node QA на временно раскрытой regolith fixture получает `P2.simple=2`, 0 unclassified boundary flows и 0 algebraic loops.
+`simple` — полноценный P2 capital kind, а не exception. Счётчик P2 печатается как `kernel / simple / exceptions / undeclared`; на неизменённой accepted v7.7.4 r1 это было `11 / 0 / 6 / 0`, на v7.7.5 r1 — `11 / 2 / 4 / 0`. Generated `capital_retirement` — закрытая sink-категория open boundaries для Depreciation/Retirement simple-capital stock. Case 10 node QA на временно раскрытой regolith fixture получает `P2.simple=2`, 0 unclassified boundary flows и 0 algebraic loops.

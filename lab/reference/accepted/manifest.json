@@ -1,15 +1,15 @@
 {
   "status": "ACCEPTED",
-  "model_name": "Orbital Economy v7.7.4 r1 — Capital Goods Capital",
-  "model_file": "orbital_economy_v7_7_4_r1_modeljson.json",
-  "model_sha256": "8a71fe6678c4fc6c532bb8e35b6006280ddb9639a69aed045a6ca25f516f1991",
-  "validation_file": "validation-v7.7.4.json",
-  "validation_sha256": "f75eb9fa4cb93442726a4c01396f98259cdee3f591ff552cb1a18b08bf933ab0",
-  "accepted_date": "2026-09-27",
+  "model_name": "Orbital Economy v7.7.5 r1 — Regolith Capital",
+  "model_file": "orbital_economy_v7_7_5_r1_modeljson.json",
+  "model_sha256": "b0b60e63f24bb1791a1d06d631a681a8d96fd820bcccdf79932715ac0d0f9c8c",
+  "validation_file": "validation-v7.7.5.json",
+  "validation_sha256": "ff548ccb36309b5efdfecd1411656eae5f3e3209c7ecad96c5ccd6bedddd68bd",
+  "accepted_date": "2026-09-28",
   "engine": "simulation@9.0.0",
   "notes": [
-    "v7.7.4: capital-goods production capacity is capital on the lifecycle kernel (a kernel-v2 plant per colony, as the v7.7.3 construction-materials plant), sized to a new smoothed capital-goods demand-signal stock. See docs/tasks/014-capital-goods-capital/.",
-    "Modes 0-35 reproduce v7.7.3 r1 exactly (Capital Goods Capital Enabled = 0); Mode 36 baseline (A plant grows past its starting capacity), Mode 37 transport surge in which colony B rebuilds its capital-goods plant.",
+    "v7.7.5: regolith extraction capacity is simple capital (a simple_capital node per colony, model/nodes/regolith-mine.json), sized to a new smoothed regolith demand-signal stock; the first sector generated from a node declaration of type simple_capital. See docs/tasks/017-regolith-capital/.",
+    "Modes 0-37 reproduce v7.7.4 r1 exactly (Regolith Capital Enabled = 0); Mode 38 baseline (A mine grows, then disposes of surplus), Mode 39 transport surge in which colony B rebuilds its regolith mine.",
     "Exact numbers are defined on the canonical platform (docs/VERSIONING_AND_AUTHORITY.md section 8); series-digest.windows.json is the golden."
   ]
 }

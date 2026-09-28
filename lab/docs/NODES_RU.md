@@ -140,7 +140,7 @@ node src\cli.js expand-nodes <node-or-patch.json> <base-model.json> --out=output
 С merge:
 
 ```cmd
-node src\cli.js expand-nodes <node-or-patch.json> <base-model.json> --out=output\expanded --validation=input\validation\validation-v7.7.4.json
+node src\cli.js expand-nodes <node-or-patch.json> <base-model.json> --out=output\expanded --validation=input\validation\validation-v7.7.5.json
 ```
 
 Дополнительно появляется `validation.merged.json`. Merge идемпотентен:
@@ -151,7 +151,7 @@ node src\cli.js expand-nodes <node-or-patch.json> <base-model.json> --out=output
 
 ## 7. QA и воспроизводимость
 
-`NODE_SELF_TEST.cmd` / `npm run node-qa` содержит 9 случаев. Oracle case 1 строится из **текущей** accepted-модели: две declaration-конструкции снимаются в обратном порядке и собираются заново. Историческое имя/тег модели и фиксированное общее число elements тесту не нужны.
+`NODE_SELF_TEST.cmd` / `npm run node-qa` содержит 15 случаев. Oracle case 1 строится из **текущей** accepted-модели: сначала снимаются принятые `simple_capital` (с v7.7.5 — шахта реголита, она оборачивает замены завода оборудования), затем две declaration-конструкции `capital_lifecycle` в обратном порядке, и они собираются заново. Историческое имя/тег модели и фиксированное общее число elements тесту не нужны.
 
 На baseline v7.7.4 r1 Linux CI задачи 015:
 - Construction Materials Plant — 69 add / 6 replace / 126 LINK;

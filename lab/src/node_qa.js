@@ -197,8 +197,11 @@ function validationMatches(fragment) {
 // Build the historical state immediately before/after each declared node by peeling later generated
 // nodes from the current accepted model in reverse declaration order. This keeps the fixture valid
 // when the accepted model version advances without pinning old tags or model filenames.
+// Accepted simple_capital nodes (v7.7.5 on) are generated after both plants and wrap some of their replacement
+// targets, so they are peeled first, in reverse file order.
 const states = new Array(declarations.length);
 let target = structuredClone(accepted);
+for (const { decl: simple } of [...simpleDeclarations].reverse()) target = stripSimpleNode(target, simple);
 for (let i = declarations.length - 1; i >= 0; i--) {
   const base = stripNode(target, declarations[i]);
   states[i] = { base, target };
@@ -409,7 +412,13 @@ await expect('12. instantaneous VARIABLE sizing signal is NON_CONFORMING', () =>
   const baseModel = simpleState?.base || accepted;
   const expanded = expandNode(bad, baseModel);
   const model = applyPatch(baseModel, { format: PATCH_FORMAT, ...expanded.patch }).model;
-  const merged = mergeNodeValidation(validation, [expanded.validation]);
+  // Since v7.7.5 the accepted validation already holds the good A/B Regolith Mine instances; drop them so the
+  // mutated definition is merged instead of rejected as a conflict.
+  const baseValidation = structuredClone(validation);
+  const accSimple = baseValidation.plugins.find(p => p.type === 'simple_capital');
+  const mutated = new Set((expanded.validation.simple_capital_instances || []).map(x => x.name));
+  if (accSimple) accSimple.instances = accSimple.instances.filter(x => !mutated.has(x.name));
+  const merged = mergeNodeValidation(baseValidation, [expanded.validation]);
   const result = runLifecycleConformance(model, merged);
   const a = result.simpleCapital?.instances?.find(x => x.name === 'A Regolith Mine');
   if (result.status !== 'FAIL' || a?.classification !== 'NON_CONFORMING') {
@@ -423,7 +432,7 @@ await expect('12. instantaneous VARIABLE sizing signal is NON_CONFORMING', () =>
 await expectThrows('13. simple_capital generated name conflict reports the element name', () => {
   const bad = structuredClone(simpleFixture);
   bad.sector = 'Regolith Extraction';
-  expandNode(bad, accepted);
+  expandNode(bad, simpleState?.base || accepted);
 }, /conflicts with base element "A Regolith Extraction Capacity"/);
 
 await expectThrows('14. simple_capital unknown declaration field is rejected with its path', () => {
@@ -433,8 +442,9 @@ await expectThrows('14. simple_capital unknown declaration field is rejected wit
 }, /node\.backings: unknown field/);
 
 await expect('15. simple_capital expansion is byte-deterministic and matches prototype counts', () => {
-  const a = expandNode(simpleFixture, accepted);
-  const b = expandNode(simpleFixture, accepted);
+  // Expanded against the model without the fixture sector (case 10), which the accepted model holds since v7.7.5.
+  const a = expandNode(simpleFixture, simpleState?.base || accepted);
+  const b = expandNode(simpleFixture, simpleState?.base || accepted);
   const sa = JSON.stringify(a), sb = JSON.stringify(b);
   if (sa !== sb) throw new Error('two simple_capital expansions differ byte-for-byte');
   const counts = [a.patch.add_elements.length, a.patch.replace_formulas.length, a.patch.add_links.length];

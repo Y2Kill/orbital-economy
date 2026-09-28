@@ -1,8 +1,8 @@
 CURRENT ACCEPTED BASELINE
 
-Orbital Economy v7.7.4 r1 — Capital Goods Capital
-Model SHA-256: 8a71fe6678c4fc6c532bb8e35b6006280ddb9639a69aed045a6ca25f516f1991
-Validation SHA-256: f75eb9fa4cb93442726a4c01396f98259cdee3f591ff552cb1a18b08bf933ab0
+Orbital Economy v7.7.5 r1 — Regolith Capital
+Model SHA-256: b0b60e63f24bb1791a1d06d631a681a8d96fd820bcccdf79932715ac0d0f9c8c
+Validation SHA-256: ff548ccb36309b5efdfecd1411656eae5f3e3209c7ecad96c5ccd6bedddd68bd
 
 This directory is the accepted reference used by comparison/policy tools.
 

@@ -117,10 +117,10 @@ EVALUATE_POLICY.cmd "output\compare-...\model-comparison.json" "D:\policy\v7_4_p
 
 > Любое изменение, которое не разрешено явным правилом, является policy FAIL.
 
-Для текущего accepted v7.7.4 r1 в комплекте лежит строгий baseline:
+Для текущего accepted v7.7.5 r1 в комплекте лежит строгий baseline:
 
 ```text
-input\policy\change-policy-v7.7.4-strict.json
+input\policy\change-policy-v7.7.5-strict.json
 ```
 
 У него нет allow-rules. Поэтому accepted == candidate проходит, а любое структурное или численное отличие блокируется.

@@ -1,10 +1,10 @@
 # Orbital Economy Lab — Capital Lifecycle Kernel conformance
 
-- generated: 2026-09-27T17:48:31.141Z
-- model: Orbital Economy v7.7.4 r1 — Capital Goods Capital
-- model SHA-256: `8a71fe6678c4fc6c532bb8e35b6006280ddb9639a69aed045a6ca25f516f1991`
-- validation: Orbital Economy v7.7.4 validation r1
-- validation SHA-256: `f75eb9fa4cb93442726a4c01396f98259cdee3f591ff552cb1a18b08bf933ab0`
+- generated: 2026-09-28T13:04:39.718Z
+- model: Orbital Economy v7.7.5 r1 — Regolith Capital
+- model SHA-256: `b0b60e63f24bb1791a1d06d631a681a8d96fd820bcccdf79932715ac0d0f9c8c`
+- validation: Orbital Economy v7.7.5 validation r1
+- validation SHA-256: `ff548ccb36309b5efdfecd1411656eae5f3e3209c7ecad96c5ccd6bedddd68bd`
 - kernel format: orbital-economy-capital-lifecycle-kernel-v1
 - status: **PASS**
 
@@ -465,6 +465,31 @@ Sector-specific variation (informative, not a failure):
 | dismantling_completion | FLOW | B Capital Goods Plant Dismantling Completion |
 | desired_expansion | VARIABLE | B Capital Goods Plant Desired Expansion |
 | capital_goods_consumption | FLOW | B Capital Goods Plant Capital Goods Consumption |
+
+## Simple capital
+
+- status: **PASS**
+- instances: 2
+- CONFORMING: 2
+- NON_CONFORMING: 0
+
+| Instance | Sector | Classification | Checks passed | Failures |
+|---|---|---|---:|---:|
+| A Regolith Mine | Regolith Mine | **CONFORMING** | 23/23 | 0 |
+| B Regolith Mine | Regolith Mine | **CONFORMING** | 23/23 | 0 |
+
+Roles:
+
+- `capacity`: STOCK
+- `desired_capacity`: VARIABLE
+- `shortage`: VARIABLE; reads desired_capacity, capacity
+- `excess`: VARIABLE; reads desired_capacity, capacity
+- `desired_expansion`: VARIABLE; reads shortage
+- `expansion`: FLOW; reads desired_expansion
+- `depreciation`: FLOW; reads capacity
+- `retirement`: FLOW; reads excess
+- `desired_capacity` must directly read the declared STOCK `sizing_signal`.
+- each declared consumption FLOW must be wired STOCK → ∅ and read `expansion`.
 
 ## Kernel contract (reference)
 

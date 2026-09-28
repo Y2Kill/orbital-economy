@@ -1,10 +1,14 @@
 # Roadmap
 
 **Document status:** CURRENT  
-**Base:** Orbital Economy v7.7.4 r1 — Capital Goods Capital (accepted 2026-09-27)  
+**Base:** Orbital Economy v7.7.5 r1 — Regolith Capital (accepted 2026-09-28)  
 **Rule:** roadmap describes intent; executable accepted code remains authoritative for accepted behavior.
 
-## Current implementation — v7.7.4 Capital Goods Capital
+## Current implementation — v7.7.5 Regolith Capital
+
+Regolith extraction capacity is simple capital: each colony has a regolith mine (one capacity stock, expansion from capital goods and construction materials toward a desired capacity sized from a smoothed regolith demand-signal stock, depreciation, retirement of the excess). The first model task written on node declarations: the sector is `model/nodes/regolith-mine.json`, expanded by the bench; only the scenario wiring was hand-written. In Mode 39 colony B rebuilds its mine during the transport surge, and construction materials are short meanwhile — the chain's inertia now starts at the raw material. Planet v1 counter P2: exceptions 6 → 4 (kernel 11, simple 2).
+
+## v7.7.4 Capital Goods Capital
 
 Capital-goods production capacity is capital: each colony has a capital-goods plant on the lifecycle kernel, like the v7.7.3 construction-materials plant, sized to a new smoothed capital-goods demand-signal stock (the plant is built from capital goods, so same-step demand would loop). In Mode 36 A's plant grows past its starting capacity for the first time — the former hard ceiling on all construction is gone; in Mode 37 colony B rebuilds its plant and is short of capital goods meanwhile (fulfillment ≈ 0.19). Planet v1 counter P2: 9 → 11 processes on capital.
 
@@ -118,14 +122,14 @@ Defined 2026-09-26: `docs/PLANET_V1_CONTRACT_RU.md`. The single boundary counter
 | Part | Now (v7.7.1, per colony) | v1 target |
 |---|---|---|
 | P1 capital-backed expansion | 0 external | 0 (closed) |
-| P2 capacity from capital, not a constant | 3 constant/unbounded (v7.7.2: 5; v7.7.3: 4) | 0 undeclared; exceptions with reason, counted separately |
+| P2 capacity from capital, not a constant | 2 constant/unbounded — ore, energy resource (v7.7.2: 5; v7.7.3: 4; v7.7.4: 3) | 0 undeclared; exceptions with reason, counted separately |
 | P3 declared energy use | 4 of 7 processes + transport without energy (v7.7.1: 5 of 7) | 0 undeclared; exceptions with reason |
 | P4 finite deposits | 3 extractions from nothing | deposit stock from a named parameter (v8: derived from planet formation) |
 | P5 declared labor | 2 of 9 | all declared; no labor pool (v2) |
 | P6 final demand | constants | explicit external driver (population and life support: v2) |
 | P7 reproducibility | closed on the canonical platform | platform independence before going public |
 
-Measured by the `planet_closure` validation plugin (task 011, Lab v0.9.6; in the accepted validation since v7.7.1 r2, `report` mode). Next: model steps under the counter. Done: task 012, v7.7.2 construction materials using energy (P3 5 → 4 per colony; bench v0.9.7 `energy_balance` consumers list). Done: task 013, v7.7.3 construction-materials capacity on the capital lifecycle kernel (P2 5 → 4 per colony). Done: task 014, v7.7.4 capital-goods capacity on the capital lifecycle kernel (P2 4 → 3 per colony). In progress: task 017, v7.7.5 regolith extraction as simple capital — the first model task on node declarations (P2 exceptions 3 → 2 per colony). Open: `labor: declared` is trusted until the P5 model step introduces explicit labor-requirement variables (contract P5).
+Measured by the `planet_closure` validation plugin (task 011, Lab v0.9.6; in the accepted validation since v7.7.1 r2, `report` mode). Next: model steps under the counter. Done: task 012, v7.7.2 construction materials using energy (P3 5 → 4 per colony; bench v0.9.7 `energy_balance` consumers list). Done: task 013, v7.7.3 construction-materials capacity on the capital lifecycle kernel (P2 5 → 4 per colony). Done: task 014, v7.7.4 capital-goods capacity on the capital lifecycle kernel (P2 4 → 3 per colony). Done: task 017, v7.7.5 regolith extraction as simple capital — the first model task on node declarations (P2 exceptions 3 → 2 per colony). Open: `labor: declared` is trusted until the P5 model step introduces explicit labor-requirement variables (contract P5).
 
 ## v8 — replicated regions/colonies/planets
 
