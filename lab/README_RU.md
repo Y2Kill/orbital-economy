@@ -1,6 +1,6 @@
-# Orbital Economy Lab v0.9.9
+# Orbital Economy Lab v0.9.10
 
-Локальный стенд для запуска, проверки, regression-анализа, policy-gating, Capital Lifecycle Kernel и статических аудитов структуры для ModelJSON Orbital Economy. v0.9.6 добавляет `planet_closure`: декларативную per-process карту критериев Planet v1 P2–P6 с dependency paths, exceptions/debt counters и режимами `report/classify/planet_v1/planet_strict`.
+Локальный стенд для запуска, проверки, regression-анализа, policy-gating, Capital Lifecycle Kernel и статических аудитов структуры для ModelJSON Orbital Economy. v0.9.10 добавляет строгую статическую схему validation: ошибки формы блокируют запуск до simulation. v0.9.6 добавляет `planet_closure`: декларативную per-process карту критериев Planet v1 P2–P6 с dependency paths, exceptions/debt counters и режимами `report/classify/planet_v1/planet_strict`.
 
 ## Подтверждённая база
 
@@ -29,6 +29,24 @@
 
 ---
 
+
+# 0h. Что изменилось в v0.9.10
+
+Validation теперь проверяется строгой статической схемой до выполнения Modes:
+
+```cmd
+CHECK_VALIDATION.cmd input\validation\validation-v7.7.5.json input\model\orbital_economy_v7_7_5_r1_modeljson.json
+node src\cli.js check-validation <validation.json> [model.json]
+```
+
+- незнакомое поле, check/plugin `type`, неверный `window` или сценарий отсутствующего Mode — HARD schema error с JSON-путём;
+- `RUN_LAB` / `test` завершаются до simulation;
+- `compare` / `CHECK_CANDIDATE` возвращают `NOT_COMPARED`, policy не может разрешить schema error;
+- `note` / `notes` остаются свободными комментариями;
+- `regression_modes` / `regression_tolerance` разрешены как описательные legacy-поля, factual regression выполняет comparator;
+- `QA_SELF_TEST` получил S1–S10, включая исторический дефект validation задачи 014 r2.
+
+Подробная нормативная форма — `docs\VALIDATION_FORMAT_RU.md`.
 
 # 0g. Что изменилось в v0.9.9
 
