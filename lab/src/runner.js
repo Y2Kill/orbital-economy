@@ -9,6 +9,7 @@ import { summarizeStatus, writeReports } from './report.js';
 import { archiveProcessedWebBatch } from './workspace.js';
 import { runLifecycleConformance, printConformance } from './lifecycle_conformance.js';
 import { runStructureAudits, printStructureAudits } from './structure_audit.js';
+import { checkValidationSchema } from './validation_schema.js';
 
 function printCheck(c) {
   const marker = c.status === 'PASS' ? '[PASS]' : c.status === 'WARN' ? '[WARN]' : '[FAIL]';
@@ -82,15 +83,27 @@ export async function runValidation({ modelFile, validationFile, webReferenceDir
   if (validationFile && !fs.existsSync(validationFile)) throw new Error(`Validation file not found: ${validationFile}`);
   const validation = validationFile ? readJson(validationFile) : {};
   const modeVariable = validation.mode_variable || 'Timed Test Mode';
-  const scenarios = listScenarios(raw, modeVariable).filter(s => !modes || modes.has(s.mode));
+  const allScenarios = listScenarios(raw, modeVariable);
+  const scenarios = allScenarios.filter(s => !modes || modes.has(s.mode));
   const staticResult = await inspectModel(modelFile);
+  const validationSchema = checkValidationSchema(validation, { modes: new Set(allScenarios.map(s => s.mode)) });
+  if (validationSchema.status === 'FAIL') {
+    staticResult.status = 'FAIL';
+    for (const e of validationSchema.errors) {
+      staticResult.errors.push(`validation schema ${e.path}: ${e.message}`);
+      console.error(`[FAIL] validation schema ${e.path}: ${e.message}`);
+    }
+  }
 
-  // Static Capital Lifecycle Kernel conformance (topology/wiring), before any simulation.
-  const conformance = runLifecycleConformance(raw, validation);
+  // Validation shape is a HARD gate before specialized validation readers.
+  const conformance = validationSchema.status === 'PASS'
+    ? runLifecycleConformance(raw, validation)
+    : { status: 'SKIPPED', reason: 'validation schema failed' };
   if (conformance.status !== 'SKIPPED') { console.log(''); printConformance(conformance); }
 
-  // Static structure audits: open boundaries (planet meter) + colony symmetry.
-  const structure = runStructureAudits(raw, validation);
+  const structure = validationSchema.status === 'PASS'
+    ? runStructureAudits(raw, validation)
+    : { status: 'SKIPPED', reason: 'validation schema failed' };
   if (structure.status !== 'SKIPPED') { console.log(''); printStructureAudits(structure); }
 
   let web = null;
@@ -121,7 +134,7 @@ export async function runValidation({ modelFile, validationFile, webReferenceDir
       model: { file: path.resolve(modelFile), name: raw.name, sha256: sha256File(modelFile) },
       validation: validationFile ? { file: path.resolve(validationFile), sha256: sha256File(validationFile) } : null,
       webReference: serializableWebInfo(web),
-      static: staticResult, conformance, structure, scenarios: []
+      static: staticResult, validationSchema, conformance, structure, scenarios: []
     };
     writeReports(outDir, report);
     console.error('\n[FAIL] Web-reference preflight failed. Simulation was not started. Fix the reference batch and run again.');
@@ -136,7 +149,7 @@ export async function runValidation({ modelFile, validationFile, webReferenceDir
       model: { file: path.resolve(modelFile), name: raw.name, sha256: sha256File(modelFile) },
       validation: validationFile ? { file: path.resolve(validationFile), sha256: sha256File(validationFile) } : null,
       webReference: serializableWebInfo(web),
-      static: staticResult, conformance, structure, scenarios: []
+      static: staticResult, validationSchema, conformance, structure, scenarios: []
     };
     writeReports(outDir, report);
     return report;
@@ -218,6 +231,7 @@ export async function runValidation({ modelFile, validationFile, webReferenceDir
     validation: validationFile ? { file: path.resolve(validationFile), sha256: sha256File(validationFile) } : null,
     webReference: serializableWebInfo(web),
     static: staticResult,
+    validationSchema,
     conformance,
     structure,
     scenarios: reportScenarios
