@@ -1,0 +1,337 @@
+{
+  "format": "orbital-economy-model-patch-v1",
+  "base_sha256": "8a71fe6678c4fc6c532bb8e35b6006280ddb9639a69aed045a6ca25f516f1991",
+  "name": "Orbital Economy v7.7.5 Regolith Capital candidate r1",
+  "description": "Task 017: regolith extraction capacity becomes simple_capital. Node declaration is supplied verbatim from draft/regolith-mine.json; the only explicit formula replacement is Test 2 Transport Surge Active for Mode 39.",
+  "nodes": [
+    {
+      "type": "simple_capital",
+      "version": 1,
+      "sector": "Regolith Mine",
+      "colonies": [
+        "A",
+        "B"
+      ],
+      "switch": "Regolith Capital Enabled",
+      "initial_capacity": {
+        "A": 7,
+        "B": 5
+      },
+      "parameters": {
+        "Capacity Reserve Factor": 1.25,
+        "Construction Time": 90,
+        "Retirement Time": 360,
+        "Depreciation Rate": 0.0001,
+        "Capital Goods per Capacity": 2,
+        "Construction Materials per Capacity": 2
+      },
+      "sizing": {
+        "signal": {
+          "name": "{C} Regolith Demand Signal",
+          "create": true,
+          "demand": "{C} Regolith Requirement",
+          "initial": 0.35,
+          "adjustment_time": {
+            "name": "Regolith Demand Signal Adjustment Time",
+            "value": 3
+          }
+        }
+      },
+      "capacity_output": {
+        "variable": "{C} Regolith Extraction Capacity",
+        "replaces": "{C} Regolith Base Extraction Capacity"
+      },
+      "backing": [
+        {
+          "good": "Capital Goods",
+          "fulfillment": "{C} Capital Goods Fulfillment",
+          "inventory": "{C} Capital Goods Inventory",
+          "demand": "{C} Capital Goods Demand"
+        },
+        {
+          "good": "Construction Materials",
+          "fulfillment": "{C} Construction Materials Fulfillment",
+          "inventory": "{C} Construction Materials Inventory",
+          "demand": "{C} Construction Materials Demand"
+        }
+      ],
+      "planet_process": "regolith"
+    }
+  ],
+  "add_elements": [],
+  "replace_formulas": [
+    {
+      "name": "Test 2 Transport Surge Active",
+      "value": "IfThenElse([Timed Test Mode] = 2, [Temporary Test Window], IfThenElse([Timed Test Mode] = 24, [Temporary Test Window], IfThenElse([Timed Test Mode] = 31, [Temporary Test Window], IfThenElse([Timed Test Mode] = 35, [Temporary Test Window], IfThenElse([Timed Test Mode] = 37, [Temporary Test Window], IfThenElse([Timed Test Mode] = 39, [Temporary Test Window], 0))))))"
+    }
+  ],
+  "add_links": [],
+  "modify_scenarios": [
+    {
+      "mode": 0,
+      "set": {
+        "Regolith Capital Enabled": 0
+      }
+    },
+    {
+      "mode": 1,
+      "set": {
+        "Regolith Capital Enabled": 0
+      }
+    },
+    {
+      "mode": 2,
+      "set": {
+        "Regolith Capital Enabled": 0
+      }
+    },
+    {
+      "mode": 3,
+      "set": {
+        "Regolith Capital Enabled": 0
+      }
+    },
+    {
+      "mode": 4,
+      "set": {
+        "Regolith Capital Enabled": 0
+      }
+    },
+    {
+      "mode": 5,
+      "set": {
+        "Regolith Capital Enabled": 0
+      }
+    },
+    {
+      "mode": 6,
+      "set": {
+        "Regolith Capital Enabled": 0
+      }
+    },
+    {
+      "mode": 7,
+      "set": {
+        "Regolith Capital Enabled": 0
+      }
+    },
+    {
+      "mode": 8,
+      "set": {
+        "Regolith Capital Enabled": 0
+      }
+    },
+    {
+      "mode": 9,
+      "set": {
+        "Regolith Capital Enabled": 0
+      }
+    },
+    {
+      "mode": 10,
+      "set": {
+        "Regolith Capital Enabled": 0
+      }
+    },
+    {
+      "mode": 11,
+      "set": {
+        "Regolith Capital Enabled": 0
+      }
+    },
+    {
+      "mode": 12,
+      "set": {
+        "Regolith Capital Enabled": 0
+      }
+    },
+    {
+      "mode": 13,
+      "set": {
+        "Regolith Capital Enabled": 0
+      }
+    },
+    {
+      "mode": 14,
+      "set": {
+        "Regolith Capital Enabled": 0
+      }
+    },
+    {
+      "mode": 15,
+      "set": {
+        "Regolith Capital Enabled": 0
+      }
+    },
+    {
+      "mode": 16,
+      "set": {
+        "Regolith Capital Enabled": 0
+      }
+    },
+    {
+      "mode": 17,
+      "set": {
+        "Regolith Capital Enabled": 0
+      }
+    },
+    {
+      "mode": 18,
+      "set": {
+        "Regolith Capital Enabled": 0
+      }
+    },
+    {
+      "mode": 19,
+      "set": {
+        "Regolith Capital Enabled": 0
+      }
+    },
+    {
+      "mode": 20,
+      "set": {
+        "Regolith Capital Enabled": 0
+      }
+    },
+    {
+      "mode": 21,
+      "set": {
+        "Regolith Capital Enabled": 0
+      }
+    },
+    {
+      "mode": 22,
+      "set": {
+        "Regolith Capital Enabled": 0
+      }
+    },
+    {
+      "mode": 23,
+      "set": {
+        "Regolith Capital Enabled": 0
+      }
+    },
+    {
+      "mode": 24,
+      "set": {
+        "Regolith Capital Enabled": 0
+      }
+    },
+    {
+      "mode": 25,
+      "set": {
+        "Regolith Capital Enabled": 0
+      }
+    },
+    {
+      "mode": 26,
+      "set": {
+        "Regolith Capital Enabled": 0
+      }
+    },
+    {
+      "mode": 27,
+      "set": {
+        "Regolith Capital Enabled": 0
+      }
+    },
+    {
+      "mode": 28,
+      "set": {
+        "Regolith Capital Enabled": 0
+      }
+    },
+    {
+      "mode": 29,
+      "set": {
+        "Regolith Capital Enabled": 0
+      }
+    },
+    {
+      "mode": 30,
+      "set": {
+        "Regolith Capital Enabled": 0
+      }
+    },
+    {
+      "mode": 31,
+      "set": {
+        "Regolith Capital Enabled": 0
+      }
+    },
+    {
+      "mode": 32,
+      "set": {
+        "Regolith Capital Enabled": 0
+      }
+    },
+    {
+      "mode": 33,
+      "set": {
+        "Regolith Capital Enabled": 0
+      }
+    },
+    {
+      "mode": 34,
+      "set": {
+        "Regolith Capital Enabled": 0
+      }
+    },
+    {
+      "mode": 35,
+      "set": {
+        "Regolith Capital Enabled": 0
+      }
+    },
+    {
+      "mode": 36,
+      "set": {
+        "Regolith Capital Enabled": 0
+      }
+    },
+    {
+      "mode": 37,
+      "set": {
+        "Regolith Capital Enabled": 0
+      }
+    }
+  ],
+  "add_scenarios": [
+    {
+      "name": "v7.7.5 Regolith Capital Baseline",
+      "description": "Accepted v7.7.4 mechanics plus regolith extraction simple capital; no new transport surge.",
+      "values": {
+        "Timed Test Mode": 38,
+        "Capital Lifecycle Enabled": 1,
+        "Intermediate Inputs Enabled": 1,
+        "Capital Goods Enabled": 1,
+        "Transport Capital Goods Enabled": 1,
+        "Power Resource Enabled": 1,
+        "Construction Materials Enabled": 1,
+        "Transport Construction Materials Enabled": 1,
+        "Construction Materials Energy Enabled": 1,
+        "Construction Materials Capital Enabled": 1,
+        "Capital Goods Capital Enabled": 1,
+        "Regolith Capital Enabled": 1
+      }
+    },
+    {
+      "name": "v7.7.5 Transport Surge on Regolith Capital",
+      "description": "Regolith extraction simple capital under the standard transport-demand surge window; B must rebuild mine capacity.",
+      "values": {
+        "Timed Test Mode": 39,
+        "Capital Lifecycle Enabled": 1,
+        "Intermediate Inputs Enabled": 1,
+        "Capital Goods Enabled": 1,
+        "Transport Capital Goods Enabled": 1,
+        "Power Resource Enabled": 1,
+        "Construction Materials Enabled": 1,
+        "Transport Construction Materials Enabled": 1,
+        "Construction Materials Energy Enabled": 1,
+        "Construction Materials Capital Enabled": 1,
+        "Capital Goods Capital Enabled": 1,
+        "Regolith Capital Enabled": 1
+      }
+    }
+  ]
+}

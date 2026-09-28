@@ -1,0 +1,144 @@
+{
+  "format": "orbital-economy-parameter-annotations-fragment-v1",
+  "model": "Orbital Economy v7.7.5 Regolith Capital candidate r1",
+  "updated": "2026-09-28",
+  "note": "Task 017 fragment. All numeric constants introduced by the Regolith Mine simple_capital declaration are annotated, including the intentionally asymmetric A/B initial capacities 7/5. Reviewer merges accepted entries into the canonical registry.",
+  "parameters": {
+    "Regolith Capital Enabled": {
+      "role": "Regolith simple-capital master switch, raw value 1.",
+      "effect": "0 preserves accepted Modes 0-37 exactly; 1 makes regolith extraction capacity read mine capital and enables mine expansion, depreciation, retirement, and backing-resource sinks.",
+      "evidence": "V7_7_5_ARCHITECTURE_SPEC §0–§3; owner node declaration.",
+      "since": "v7.7.5 candidate r1",
+      "tags": [
+        "regolith",
+        "capital",
+        "switch"
+      ]
+    },
+    "Regolith Mine Capacity Reserve Factor": {
+      "role": "Simple-capital desired-capacity reserve factor, value 1.25.",
+      "effect": "Scales the smoothed Regolith Demand Signal into desired mine capacity.",
+      "evidence": "V7_7_5_ARCHITECTURE_SPEC §1 and draft/regolith-mine.json.",
+      "since": "v7.7.5 candidate r1",
+      "tags": [
+        "regolith",
+        "capital",
+        "sizing"
+      ]
+    },
+    "Regolith Mine Construction Time": {
+      "role": "Mine-capacity construction time, value 90 days.",
+      "effect": "Divides the positive capacity gap to set desired expansion speed before backing-resource coverage limits it.",
+      "evidence": "V7_7_5_ARCHITECTURE_SPEC §1 and draft/regolith-mine.json.",
+      "since": "v7.7.5 candidate r1",
+      "tags": [
+        "regolith",
+        "capital",
+        "construction"
+      ]
+    },
+    "Regolith Mine Retirement Time": {
+      "role": "Mine-capacity surplus retirement time, value 360 days.",
+      "effect": "Controls removal rate of capacity above desired capacity.",
+      "evidence": "V7_7_5_ARCHITECTURE_SPEC §1 and draft/regolith-mine.json.",
+      "since": "v7.7.5 candidate r1",
+      "tags": [
+        "regolith",
+        "capital",
+        "retirement"
+      ]
+    },
+    "Regolith Mine Depreciation Rate": {
+      "role": "Mine-capacity depreciation rate, value 0.0001 per day.",
+      "effect": "Applies continuous physical attrition to Regolith Mine Capacity while the mechanic is enabled.",
+      "evidence": "V7_7_5_ARCHITECTURE_SPEC §1 and draft/regolith-mine.json.",
+      "since": "v7.7.5 candidate r1",
+      "tags": [
+        "regolith",
+        "capital",
+        "depreciation"
+      ]
+    },
+    "Regolith Mine Capital Goods per Capacity": {
+      "role": "Capital Goods requirement per unit of new mine capacity, value 2.",
+      "effect": "Scales Desired Expansion into Capital Goods demand and actual expansion into Capital Goods consumption.",
+      "evidence": "V7_7_5_ARCHITECTURE_SPEC §1 and draft/regolith-mine.json.",
+      "since": "v7.7.5 candidate r1",
+      "tags": [
+        "regolith",
+        "capital",
+        "backing"
+      ]
+    },
+    "Regolith Mine Construction Materials per Capacity": {
+      "role": "Construction Materials requirement per unit of new mine capacity, value 2.",
+      "effect": "Scales Desired Expansion into Construction Materials demand and actual expansion into Construction Materials consumption.",
+      "evidence": "V7_7_5_ARCHITECTURE_SPEC §1 and draft/regolith-mine.json.",
+      "since": "v7.7.5 candidate r1",
+      "tags": [
+        "regolith",
+        "capital",
+        "backing"
+      ]
+    },
+    "A Regolith Mine Capacity": {
+      "role": "Initial simple-capital mine capacity for colony A, value 7.",
+      "effect": "Seeds mine capacity at the accepted A Regolith Base Extraction Capacity; A/B are intentionally asymmetric (7 vs 5).",
+      "evidence": "TASK_RU §2 and V7_7_5_ARCHITECTURE_SPEC §0–§2 explicitly require A=7, B=5.",
+      "since": "v7.7.5 candidate r1",
+      "tags": [
+        "regolith",
+        "capital",
+        "initial",
+        "asymmetry"
+      ],
+      "applies_to_mirror": true
+    },
+    "B Regolith Mine Capacity": {
+      "role": "Initial simple-capital mine capacity for colony B, value 5.",
+      "effect": "Seeds mine capacity at the accepted B Regolith Base Extraction Capacity; A/B are intentionally asymmetric (7 vs 5).",
+      "evidence": "TASK_RU §2 and V7_7_5_ARCHITECTURE_SPEC §0–§2 explicitly require A=7, B=5.",
+      "since": "v7.7.5 candidate r1",
+      "tags": [
+        "regolith",
+        "capital",
+        "initial",
+        "asymmetry"
+      ],
+      "applies_to_mirror": true
+    },
+    "Regolith Demand Signal Adjustment Time": {
+      "role": "Regolith demand-signal adjustment time, value 3 days.",
+      "effect": "Controls lag from instantaneous Regolith Requirement to the STOCK signal used for mine sizing and prevents same-step demand feedback.",
+      "evidence": "V7_7_5_ARCHITECTURE_SPEC §1–§2; simple_capital STOCK sizing rule in lab/docs/NODES_RU.md.",
+      "since": "v7.7.5 candidate r1",
+      "tags": [
+        "regolith",
+        "signal",
+        "causality"
+      ]
+    },
+    "A Regolith Demand Signal": {
+      "role": "Initial smoothed Regolith demand signal for colony A, value 0.35.",
+      "effect": "Seeds the STOCK sizing signal without reading instantaneous demand directly.",
+      "evidence": "draft/regolith-mine.json; V7_7_5_ARCHITECTURE_SPEC §1.",
+      "since": "v7.7.5 candidate r1",
+      "tags": [
+        "regolith",
+        "signal",
+        "initial"
+      ]
+    },
+    "B Regolith Demand Signal": {
+      "role": "Initial smoothed Regolith demand signal for colony B, value 0.35.",
+      "effect": "Seeds the STOCK sizing signal without reading instantaneous demand directly.",
+      "evidence": "draft/regolith-mine.json; V7_7_5_ARCHITECTURE_SPEC §1.",
+      "since": "v7.7.5 candidate r1",
+      "tags": [
+        "regolith",
+        "signal",
+        "initial"
+      ]
+    }
+  }
+}
