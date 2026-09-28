@@ -41,6 +41,11 @@ const accepted = readJson(modelFile);
 const validation = readJson(validationFile);
 const declarations = declarationFiles.map(readJson);
 const simpleFixture = readJson(simpleFixtureFile);
+const simpleDeclarations = fs.readdirSync(nodeDir)
+  .filter(name => name.endsWith('.json'))
+  .map(name => path.join(nodeDir, name))
+  .map(file => ({ file, decl: readJson(file) }))
+  .filter(x => x.decl?.type === 'simple_capital');
 
 let passed = 0, failed = 0;
 function mark(ok, name, detail = '') {
@@ -139,6 +144,35 @@ function linkSet(raw) {
 }
 function sameSet(a, b) {
   return a.size === b.size && [...a].every(x => b.has(x));
+}
+
+function assertSimpleRebuild(decl, expected) {
+  const base = stripSimpleNode(expected, decl);
+  const out = expandNode(decl, base);
+  const expectedByName = new Map(expected.elements.filter(e => e.type !== 'LINK').map(e => [e.name, e]));
+  const baseByName = new Map(base.elements.filter(e => e.type !== 'LINK').map(e => [e.name, e]));
+
+  for (const a of out.patch.add_elements) {
+    const e = expectedByName.get(a.name);
+    if (!e) throw new Error(`${decl.sector}: regenerated element absent from target: ${a.name}`);
+    if (def(e) !== def(a)) throw new Error(`${decl.sector}: regenerated definition differs: ${a.name}`);
+  }
+  const targetAdded = new Set([...expectedByName.keys()].filter(n => !baseByName.has(n)));
+  const generatedAdded = new Set(out.patch.add_elements.map(e => e.name));
+  if (!sameSet(targetAdded, generatedAdded)) {
+    throw new Error(`${decl.sector}: regenerated element set differs (target ${targetAdded.size}, generated ${generatedAdded.size})`);
+  }
+  for (const r of out.patch.replace_formulas) {
+    const e = expectedByName.get(r.name);
+    if (!e || e.behavior.value !== r.value) throw new Error(`${decl.sector}: regenerated replacement differs: ${r.name}`);
+  }
+  const beforeLinks = linkSet(base), afterLinks = linkSet(expected);
+  const targetLinks = new Set([...afterLinks].filter(x => !beforeLinks.has(x)));
+  const generatedLinks = new Set(out.patch.add_links.map(l => `${l.from}|${l.to}`));
+  if (!sameSet(targetLinks, generatedLinks)) {
+    throw new Error(`${decl.sector}: regenerated link set differs (target ${targetLinks.size}, generated ${generatedLinks.size})`);
+  }
+  return out;
 }
 function validationMatches(fragment) {
   const kernel = validation.plugins.find(p => p.type === 'capital_lifecycle_kernel');
@@ -321,6 +355,18 @@ await expect('10. simple_capital fixture integrates with validation and static a
   }
   simpleState = { base: baseModel, model, validation: merged, expanded };
   return `simple instances=2 CONFORMING; loops=0; P2.simple=2; unclassified=0`;
+});
+
+await expect('11. strip and rebuild every simple_capital declaration and the case-10 model', () => {
+  if (!simpleState) throw new Error('case 10 did not produce a simple-capital model');
+  const rebuilt = [];
+  for (const { file, decl } of simpleDeclarations) {
+    assertSimpleRebuild(decl, accepted);
+    rebuilt.push(path.basename(file));
+  }
+  assertSimpleRebuild(simpleFixture, simpleState.model);
+  rebuilt.push('case10:regolith-mine-simple');
+  return `${rebuilt.length} target(s) rebuilt with 0 definition/replacement/link differences: ${rebuilt.join(', ')}`;
 });
 
 await expect('12. instantaneous VARIABLE sizing signal is NON_CONFORMING', () => {
