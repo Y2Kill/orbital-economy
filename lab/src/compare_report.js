@@ -33,6 +33,12 @@ export function writeModelComparisonReports(outDir, report) {
   if (report.comparisonSettings) l.push(`- comparison settings: absTolerance=${report.comparisonSettings.absTolerance}; relTolerance=${report.comparisonSettings.relTolerance == null ? 'disabled' : report.comparisonSettings.relTolerance}; relFloor=${report.comparisonSettings.relFloor}`);
   l.push('');
 
+  l.push('## Validation schema');
+  l.push('');
+  l.push(`- status: **${report.validationSchema?.status || 'SKIPPED'}**`);
+  for (const e of report.validationSchema?.errors || []) l.push(`- FAIL \`${esc(e.path)}\`: ${esc(e.message)}`);
+  l.push('');
+
   l.push('## Static validation');
   l.push('');
   l.push(`- accepted: **${report.static.accepted.status}**`);
