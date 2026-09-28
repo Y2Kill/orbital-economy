@@ -1,4 +1,4 @@
-# Статус проверок Orbital Economy Lab v0.9.9 — baseline v7.7.5 r1
+# Статус проверок Orbital Economy Lab v0.9.10 — baseline v7.7.5 r1
 
 ## Принятая основа
 
@@ -55,6 +55,14 @@ GitHub Actions подтвердил:
 - `guard`, `tools-selftest`, `bench-selftests` — SUCCESS в CI run 36344547409.
 
 Это Linux CI разработки. Канонический Windows-прогон и пересборка SHA256SUMS остаются за reviewer.
+
+## Lab v0.9.10 — строгая схема validation (задача 018)
+
+Harness добавляет статический HARD-gate формы validation до simulation: неизвестные поля/типы, неверные окна и сценарии для отсутствующего Mode больше не могут молча пройти. `compare` / `CHECK_CANDIDATE` при такой ошибке не переходят к численному сравнению и получают `NOT_COMPARED`.
+
+`QA_SELF_TEST` расширен случаями S1–S10 (ожидаемый итог 42/42). Специальная команда `check-validation` позволяет проверить validation до push; с переданным ModelJSON дополнительно проверяется существование Modes.
+
+Accepted model, validation и policy задачей 018 не изменяются. Финальный Linux CI разработки и его run фиксируются в `docs/tasks/018-validation-schema/REPORT_RU.md`; канонический Windows-прогон остаётся за reviewer.
 
 ## Рабочая область
 
