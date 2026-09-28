@@ -12,6 +12,7 @@ import { applyPatch, validatePatch, PATCH_FORMAT } from './patch.js';
 import { inventory, buildRegistry, validateAnnotations } from './parameters.js';
 import { loadModelJSON, assertEngineVersion, EXPECTED_ENGINE_VERSION } from './engine.js';
 import { hashFloat64LE, doubleHex } from './series.js';
+import { checkValidationSchema } from './validation_schema.js';
 
 const root = path.resolve(process.cwd());
 const sourceModel = discoverSingleJson(path.join(root, 'input', 'model'), 'accepted ModelJSON');
@@ -234,6 +235,104 @@ try {
     b.scenarios.push(extra);
     const d = compareModelStructure(a, b, 'Timed Test Mode');
     return d.addedModes.includes(999);
+  });
+
+  // ---- strict validation schema (v0.9.10; task 018 S1-S7)
+  const acceptedValidation = readJson(sourceValidation);
+  const acceptedModelRaw = readJson(sourceModel);
+  const validationModeVariable = acceptedValidation.mode_variable || 'Timed Test Mode';
+  const acceptedModes = new Set((acceptedModelRaw.scenarios || [])
+    .map(s => s?.values?.[validationModeVariable])
+    .filter(x => typeof x === 'number' && Number.isFinite(x)));
+
+  await expect('validation schema S1: accepted validation has zero schema errors', async () => {
+    const r = checkValidationSchema(acceptedValidation, { modes: acceptedModes });
+    return r.status === 'PASS' && r.errors.length === 0;
+  });
+
+  await expect('validation schema S2: task 014 r2 fixture reports exactly the six defective checks', async () => {
+    const fixture = readJson(path.join(root, 'fixtures', 'validation', 'validation-014-r2-excerpt.json'));
+    const r = checkValidationSchema(fixture);
+    const indices = [...new Set(r.errors.map(e => {
+      const m = e.path.match(/\.checks\[(\d+)\]/);
+      return m ? Number(m[1]) : null;
+    }).filter(x => x != null))].sort((a, b) => a - b);
+    const fromDayHint = r.errors.some(e => e.path.endsWith('.from_day') && e.message.includes('window'));
+    const eventHint = r.errors.some(e => e.path.endsWith('.column') && e.message.includes('inside "event"'));
+    return r.status === 'FAIL'
+      && r.errors.length === 15
+      && JSON.stringify(indices) === JSON.stringify([3, 4, 5, 6, 7, 8])
+      && fromDayHint
+      && eventHint;
+  });
+
+  await expect('validation schema S3: unknown check type is a schema error', async () => {
+    const r = checkValidationSchema({ global_checks: [{ type: 'mystery_check', name: 'bad' }] });
+    return r.status === 'FAIL' && r.errors.length === 1 && r.errors[0].path === '$.global_checks[0].type';
+  });
+
+  await expect('validation schema S4: malformed windows are rejected independently', async () => {
+    const metric = window => ({ type: 'metric', name: 'w', column: 'x', metric: 'max', op: '>', value: 0, window });
+    const r = checkValidationSchema({ global_checks: [metric([720]), metric([720, 360]), metric({ from: 360, to: 720 })] });
+    return r.status === 'FAIL'
+      && r.errors.length === 3
+      && r.errors.every((e, i) => e.path === `$.global_checks[${i}].window`);
+  });
+
+  await expect('validation schema S5: unknown fields are rejected at every specified schema level', async () => {
+    const r = checkValidationSchema({
+      mystery_top: true,
+      scenarios: {
+        '0': {
+          mystery_scenario: true,
+          checks: [
+            { type: 'event_exists', name: 'event', event: { column: 'x', mystery_event: true } },
+            { type: 'identity', name: 'identity', terms: [{ column: 'a', coef: 1, mystery_term: true }, { column: 'b', coef: -1 }] }
+          ]
+        }
+      },
+      plugins: [{ type: 'transport_allocator', abs_tol: 1e-8, mystery_plugin: true }]
+    });
+    const paths = new Set(r.errors.map(e => e.path));
+    return r.status === 'FAIL'
+      && r.errors.length === 5
+      && paths.has('$.mystery_top')
+      && paths.has('$.scenarios["0"].mystery_scenario')
+      && paths.has('$.scenarios["0"].checks[0].event.mystery_event')
+      && paths.has('$.scenarios["0"].checks[1].terms[0].mystery_term')
+      && paths.has('$.plugins[0].mystery_plugin');
+  });
+
+  await expect('validation schema S6: note/notes are accepted on top, scenario, check, plugin and event levels', async () => {
+    const r = checkValidationSchema({
+      note: 'top', notes: ['top'],
+      scenarios: {
+        '0': {
+          note: 'scenario', notes: ['scenario'],
+          checks: [{
+            type: 'event_exists', name: 'event',
+            note: 'check', notes: ['check'],
+            event: { column: 'x', note: 'event', notes: ['event'] }
+          }]
+        }
+      },
+      plugins: [{ type: 'transport_allocator', abs_tol: 1e-8, note: 'plugin', notes: ['plugin'] }]
+    });
+    return r.status === 'PASS' && r.errors.length === 0;
+  });
+
+  await expect('validation schema S7: missing model Mode is rejected only when modes are supplied', async () => {
+    const actual = Math.min(...acceptedModes);
+    const missing = Math.max(...acceptedModes) + 1000;
+    const v = { scenarios: { [String(actual)]: { checks: [] }, [String(missing)]: { checks: [] } } };
+    const withModes = checkValidationSchema(v, { modes: acceptedModes });
+    const withoutModes = checkValidationSchema(v);
+    return withModes.status === 'FAIL'
+      && withModes.errors.length === 1
+      && withModes.errors[0].path === `$.scenarios["${missing}"]`
+      && withModes.errors[0].message.includes('would never run')
+      && withoutModes.status === 'PASS'
+      && withoutModes.errors.length === 0;
   });
 
   // ---- declarative HARD invariants (v0.6.1) on a synthetic series context
