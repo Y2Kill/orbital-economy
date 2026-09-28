@@ -98,7 +98,7 @@ export async function runValidation({ modelFile, validationFile, webReferenceDir
   // Validation shape is a HARD gate before specialized validation readers.
   const conformance = validationSchema.status === 'PASS'
     ? runLifecycleConformance(raw, validation)
-    : { status: 'SKIPPED', reason: 'validation schema failed' };
+    : { status: 'SKIPPED', reason: 'validation schema failed', simpleCapital: { status: 'SKIPPED' } };
   if (conformance.status !== 'SKIPPED') { console.log(''); printConformance(conformance); }
 
   const structure = validationSchema.status === 'PASS'
