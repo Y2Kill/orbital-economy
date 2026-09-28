@@ -6,13 +6,15 @@ import path from 'node:path';
 import { discoverWorkspace, prepareWebBatch, archiveProcessedWebBatch } from './workspace.js';
 import { inspectWebReferenceBatch } from './regression.js';
 import { ensureDir, readJson, writeJson } from './util.js';
-import { compareModelStructure } from './compare_models.js';
+import { compareModelStructure, compareModels } from './compare_models.js';
 import { runGenericCheck, checkPlugin } from './checks.js';
 import { applyPatch, validatePatch, PATCH_FORMAT } from './patch.js';
 import { inventory, buildRegistry, validateAnnotations } from './parameters.js';
 import { loadModelJSON, assertEngineVersion, EXPECTED_ENGINE_VERSION } from './engine.js';
 import { hashFloat64LE, doubleHex } from './series.js';
 import { checkValidationSchema } from './validation_schema.js';
+import { runValidation } from './runner.js';
+import { spawnSync } from 'node:child_process';
 
 const root = path.resolve(process.cwd());
 const sourceModel = discoverSingleJson(path.join(root, 'input', 'model'), 'accepted ModelJSON');
@@ -333,6 +335,53 @@ try {
       && withModes.errors[0].message.includes('would never run')
       && withoutModes.status === 'PASS'
       && withoutModes.errors.length === 0;
+  });
+
+  await expect('validation schema S8: RUN_TESTS-style run fails before simulation', async () => {
+    const ws = makeWorkspace(path.join(tmp, 'schema-s8'));
+    const v = readJson(ws.validation);
+    const firstMetric = Object.values(v.scenarios || {}).flatMap(s => s.checks || []).find(c => c.type === 'metric');
+    if (!firstMetric) return false;
+    firstMetric.from_day = 1;
+    writeJson(ws.validation, v);
+    const outDir = path.join(tmp, 'schema-s8', 'output');
+    const r = await runValidation({ modelFile: ws.model, validationFile: ws.validation, modes: null, outDir, archiveWeb: false });
+    return r.overall === 'FAIL'
+      && r.scenarios.length === 0
+      && r.validationSchema?.status === 'FAIL'
+      && r.validationSchema.errors.some(e => e.path.endsWith('.from_day'));
+  });
+
+  await expect('validation schema S9: compare returns NOT_COMPARED before simulation', async () => {
+    const ws = makeWorkspace(path.join(tmp, 'schema-s9'));
+    const v = readJson(ws.validation);
+    const firstMetric = Object.values(v.scenarios || {}).flatMap(s => s.checks || []).find(c => c.type === 'metric');
+    if (!firstMetric) return false;
+    firstMetric.from_day = 1;
+    writeJson(ws.validation, v);
+    const outDir = path.join(tmp, 'schema-s9', 'output');
+    const r = await compareModels({
+      acceptedFile: sourceModel,
+      candidateFile: ws.model,
+      validationFile: ws.validation,
+      modes: null,
+      outDir
+    });
+    return r.overall === 'FAILED'
+      && r.result === 'NOT_COMPARED'
+      && r.scenarios.length === 0
+      && r.validationSchema?.status === 'FAIL';
+  });
+
+  await expect('validation schema S10: check-validation CLI exits 1 on defects and 0 on accepted validation', async () => {
+    const cliFile = path.join(root, 'src', 'cli.js');
+    const bad = path.join(root, 'fixtures', 'validation', 'validation-014-r2-excerpt.json');
+    const badRun = spawnSync(process.execPath, [cliFile, 'check-validation', bad], { cwd: root, encoding: 'utf8' });
+    const goodRun = spawnSync(process.execPath, [cliFile, 'check-validation', sourceValidation, sourceModel], { cwd: root, encoding: 'utf8' });
+    return badRun.status === 1
+      && badRun.stdout.includes('15 error(s)')
+      && goodRun.status === 0
+      && goodRun.stdout.includes('0 error(s)');
   });
 
   // ---- declarative HARD invariants (v0.6.1) on a synthetic series context
