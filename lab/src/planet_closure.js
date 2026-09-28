@@ -2,7 +2,7 @@ import { auditOpenBoundaries } from './structure_audit.js';
 
 const REF_RE = /\[([^\]]+)\]/g;
 const PROCESS_KINDS = new Set(['extraction', 'transformation', 'service']);
-const CAPACITY_KINDS = new Set(['kernel', 'constant', 'unbounded']);
+const CAPACITY_KINDS = new Set(['kernel', 'simple', 'constant', 'unbounded']);
 const ENERGY_KINDS = new Set(['requests', 'none', 'producer']);
 const DEPOSIT_KINDS = new Set(['stock', 'none']);
 const LABOR_KINDS = new Set(['declared', 'undeclared']);
@@ -189,7 +189,7 @@ function validateSpec(plugin) {
     }
 
     if (p?.capacity?.kind != null && !CAPACITY_KINDS.has(p.capacity.kind)) specError(errors, `${where}.capacity.kind is invalid`, { process: p?.id ?? null });
-    if (p?.capacity?.kind === 'kernel' && !p.capacity.stock) specError(errors, `${where}.capacity.stock is required`, { process: p?.id ?? null });
+    if ((p?.capacity?.kind === 'kernel' || p?.capacity?.kind === 'simple') && !p.capacity.stock) specError(errors, `${where}.capacity.stock is required`, { process: p?.id ?? null });
     if (p?.capacity?.kind === 'constant') {
       if (!p.capacity.parameter) specError(errors, `${where}.capacity.parameter is required`, { process: p?.id ?? null });
       if (!p.capacity.reason) specError(errors, `${where}.capacity.reason is required for constant capacity`, { process: p?.id ?? null });
@@ -224,7 +224,7 @@ export function auditPlanetClosure(raw, plugin, openBoundariesPlugin) {
     processes: 0,
     legacy: 0,
     expected_process_outputs: 0,
-    P2: { kernel: 0, exceptions: 0, undeclared: 0 },
+    P2: { kernel: 0, simple: 0, exceptions: 0, undeclared: 0 },
     P3: { requests: 0, producer: 0, exceptions: 0, undeclared: 0 },
     P4: { with_deposit: 0, without_deposit: 0 },
     P5: { declared: 0, undeclared: 0 },
@@ -364,7 +364,7 @@ export function auditPlanetClosure(raw, plugin, openBoundariesPlugin) {
     const outputClosure = closure(index, graph, output.name);
 
     const cap = p.capacity || {};
-    if (cap.kind === 'kernel') {
+    if (cap.kind === 'kernel' || cap.kind === 'simple') {
       const stockName = expand(cap.stock, colony);
       const stock = resolve(stockName);
       if (!stock) processError(errors, record, `capacity stock does not resolve: ${stockName}`, { reference: stockName });
@@ -372,7 +372,7 @@ export function auditPlanetClosure(raw, plugin, openBoundariesPlugin) {
       else {
         const path = addPath(record, 'capacity', within(output.name, stock.name));
         if (!path) processError(errors, record, readsError(record, 'capacity', output.name, stock.name));
-        else counters.P2.kernel++;
+        else counters.P2[cap.kind]++;
       }
     } else if (cap.kind === 'constant') {
       const parameterName = expand(cap.parameter, colony);
