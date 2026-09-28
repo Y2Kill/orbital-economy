@@ -1,5 +1,14 @@
 # Changelog
 
+## v0.9.10 — strict validation schema
+
+- новый `src/validation_schema.js`: строгая статическая форма validation с JSON-путями; неизвестные поля, check/plugin types, malformed windows и сценарии отсутствующих Modes — HARD errors;
+- `RUN_LAB` / `test` блокируются до simulation; comparator / policy возвращают `NOT_COMPARED` до численного сравнения, schema error policy не разрешает;
+- новый `check-validation <validation.json> [model.json]` и `CHECK_VALIDATION.cmd`; exit 1 при schema errors, 0 при корректной схеме;
+- QA S1–S10: accepted validation = 0 errors; выдержка task 014 r2 = 15 errors ровно в checks 3–8; integration gates и CLI exit codes;
+- отчёты RUN_LAB и comparator показывают отдельный список schema errors с путями;
+- package/Lab version → v0.9.10; accepted model, validation, policy, engine, model nodes и plugin runtime semantics не изменены.
+
 ## v0.9.9 — simple capital node
 
 - новый declarative type `simple_capital`: 8 capital roles, optional smoothed demand STOCK, physical backing consumption, switch-gated capacity/output/demand rewrites; fixture задачи 016 = 34 add / 6 replace / 78 LINK;
