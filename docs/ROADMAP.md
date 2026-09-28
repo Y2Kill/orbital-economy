@@ -104,6 +104,13 @@ An outside review of v7.7.3 (not a request for changes). No plan is changed by t
 
 **Open question for the owner — order.** Our decision of 2026-09-21 is "breadth to a self-contained planet (Planet v1) first, then the network (v8)". The review suggests trying A ↔ transport ↔ B ↔ C at the current level earlier and adding mechanisms only where the network shows implausible behaviour. Both positions are coherent; to be discussed after task 014.
 
+**Further external notes (2026-09-28; texts in `docs/external/`, not normative).**
+
+5. **Module boundary criterion.** "If a phenomenon only changes a coefficient of another process, it is a parameter; if it has memory, its own state and evolves by itself, it is a candidate module." This matches our decomposition rule (do not split for detail) and the behavioural criterion of item 3.
+6. **Transport edge for v8.** Beyond capacity, travel time and cost: `risk` and `access` (route security, blockade, sanctions), changed by governance/security, so that war and sanctions act through the ordinary trade mechanisms instead of scripts. Complements the commodity interface of item 4.
+7. **Order of modules for Planet v2** (after the economy): Demography → Resources/Habitat → Governance (as rule changes: priorities, quotas, permissions) → a thin Social State. Resources/Habitat overlaps our P4 (deposits); infrastructure as service capacity overlaps `simple_capital`.
+8. **Automation before labour.** Labour requirement should carry an automation factor from the start (output × base labour intensity × automation factor, with a minimum human fraction), automation being a state of capital that costs capital goods, electronics, energy and time; the economy must work with population = 0. Recorded as design guidance for the P5 step in `PLANET_V1_CONTRACT_RU.md`.
+
 ## Planet v1 acceptance contract
 
 Defined 2026-09-26: `docs/PLANET_V1_CONTRACT_RU.md`. The single boundary counter reached zero (all 122 boundary flows classified, `external_capital` = 0), so Planet v1 is now a set of parts, each with its own counter measured per **process** rather than per boundary flow:
