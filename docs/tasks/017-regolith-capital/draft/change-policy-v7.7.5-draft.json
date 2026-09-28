@@ -1,0 +1,123 @@
+{
+  "format": "orbital-economy-change-policy-v1",
+  "name": "Orbital Economy v7.7.5 Regolith Capital - change contract DRAFT (owner); executor finalises and justifies every change",
+  "description": "Written before implementation from V7_7_5_ARCHITECTURE_SPEC.md. Accepted baseline: v7.7.4 r1. Modes 0-37 must reproduce it exactly; new behaviour lives in Modes 38-39 behind Regolith Capital Enabled. validation_sha256 must be set to the delivered validation.",
+  "accepted_model_sha256": "8a71fe6678c4fc6c532bb8e35b6006280ddb9639a69aed045a6ca25f516f1991",
+  "validation_sha256": "<SHA-256 of the delivered validation.json>",
+  "comparison": {
+    "abs_tolerance": 0,
+    "rel_tolerance": null,
+    "rel_floor": 1e-12
+  },
+  "engine": {
+    "package": "simulation",
+    "version": "9.0.0"
+  },
+  "default_action": "deny",
+  "require_full_mode_coverage": true,
+  "rules": [
+    {
+      "id": "regression-guard-modes-0-37",
+      "action": "deny",
+      "event": "series_changed",
+      "modes": "0-37",
+      "name": "*",
+      "note": "Modes 0-37 set Regolith Capital Enabled = 0 and must reproduce v7.7.4 r1 exactly (first match wins)."
+    },
+    {
+      "id": "forbid-removals-and-structural-drift",
+      "action": "deny",
+      "event": [
+        "element_removed",
+        "series_removed",
+        "mode_removed",
+        "link_removed",
+        "type_changed",
+        "simulation_changed",
+        "time_axis_changed",
+        "scenario_renamed"
+      ],
+      "name": "*"
+    },
+    {
+      "id": "add-regolith-mine",
+      "action": "allow",
+      "event": "element_added",
+      "name": [
+        "Regolith Capital Enabled",
+        "Regolith Demand Signal Adjustment Time",
+        "Regolith Mine *",
+        "? Regolith Mine *",
+        "? Regolith Demand Signal",
+        "? Regolith Demand Signal *"
+      ],
+      "required": true,
+      "note": "the regolith-mine simple_capital node generated from its declaration: switch, demand-signal stock and flows, parameters, capacity stocks, roles, CG and CM consumption (V7_7_5_ARCHITECTURE_SPEC §2)"
+    },
+    {
+      "id": "change-definitions-per-spec",
+      "action": "allow",
+      "event": "definition_changed",
+      "name": [
+        "? Regolith Extraction Capacity",
+        "? Capital Goods Demand",
+        "? Construction Materials Demand",
+        "Test 2 Transport Surge Active"
+      ],
+      "required": true,
+      "note": "under the switch: extraction capacity = mine capacity; mine desired expansion joins CG and CM demand; Test 2 flag + Mode 39 (spec §3)"
+    },
+    {
+      "id": "link-into-changed-definitions",
+      "action": "allow",
+      "event": "link_added",
+      "name": [
+        "* -> ? Regolith Extraction Capacity",
+        "* -> ? Capital Goods Demand",
+        "* -> ? Construction Materials Demand",
+        "* -> Test 2 Transport Surge Active"
+      ]
+    },
+    {
+      "id": "link-into-new-elements",
+      "action": "allow",
+      "event": "link_added",
+      "name": [
+        "* -> Regolith Capital Enabled",
+        "* -> Regolith Demand Signal Adjustment Time",
+        "* -> Regolith Mine *",
+        "* -> ? Regolith Mine *",
+        "* -> ? Regolith Demand Signal",
+        "* -> ? Regolith Demand Signal *"
+      ]
+    },
+    {
+      "id": "add-modes-38-39",
+      "action": "allow",
+      "event": "mode_added",
+      "modes": "38-39",
+      "required": true
+    },
+    {
+      "id": "scenarios-0-37-gain-switch-off",
+      "action": "allow",
+      "event": "scenario_input_changed",
+      "modes": "0-37",
+      "required": true,
+      "note": "only \"Regolith Capital Enabled\": 0"
+    },
+    {
+      "id": "new-series-everywhere",
+      "action": "allow",
+      "event": "series_added",
+      "name": [
+        "Regolith Capital Enabled",
+        "Regolith Demand Signal Adjustment Time",
+        "Regolith Mine *",
+        "? Regolith Mine *",
+        "? Regolith Demand Signal",
+        "? Regolith Demand Signal *"
+      ]
+    }
+  ]
+}

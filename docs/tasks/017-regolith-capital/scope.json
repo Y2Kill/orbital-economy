@@ -1,0 +1,17 @@
+{
+  "task": "017",
+  "title": "v7.7.5 Regolith Capital: regolith extraction capacity as simple capital (first model task on node declarations; Planet v1 P2)",
+  "branch": "task/017-regolith-capital",
+  "allow": [],
+  "allow_binary": [],
+  "allow_protected": [
+    "docs/tasks/017-regolith-capital/candidate/**"
+  ],
+  "required_changes": [
+    "docs/tasks/017-regolith-capital/candidate/model-patch.json",
+    "docs/tasks/017-regolith-capital/candidate/validation.json",
+    "docs/tasks/017-regolith-capital/candidate/change-policy.json",
+    "docs/tasks/017-regolith-capital/candidate/PARAMETER_ANNOTATIONS_fragment.json"
+  ],
+  "sums_by": "reviewer"
+}
