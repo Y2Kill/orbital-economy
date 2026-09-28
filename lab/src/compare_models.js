@@ -127,6 +127,8 @@ function staticCheck(raw, modeVariable = 'Timed Test Mode', validation = null, {
       for (const e of conformance.specErrors || []) errors.push(`kernel spec: ${e}`);
       for (const c of conformance.modelWide || []) if (c.status === 'FAIL') errors.push(`kernel model-wide: ${c.name}: ${c.message}`);
       for (const i of conformance.instances || []) for (const f of i.failures) errors.push(`kernel ${i.name}: ${f}`);
+      for (const e of conformance.simpleCapital?.specErrors || []) errors.push(`simple_capital spec: ${e}`);
+      for (const i of conformance.simpleCapital?.instances || []) for (const f of i.failures) errors.push(`simple_capital ${i.name}: ${f}`);
     }
     const seenModes = new Map();
     const seenSignatures = new Map();
@@ -149,7 +151,14 @@ function staticCheck(raw, modeVariable = 'Timed Test Mode', validation = null, {
           colonySymmetry: structure.colonySymmetry ? structure.colonySymmetry.summary : null }
       : null;
     const conformanceSummary = conformance && conformance.status !== 'SKIPPED'
-      ? { status: conformance.status, instances: (conformance.instances || []).map(i => ({ name: i.name, classification: i.classification })) }
+      ? {
+          status: conformance.status,
+          instances: (conformance.instances || []).map(i => ({ name: i.name, classification: i.classification })),
+          simpleCapital: conformance.simpleCapital?.status === 'SKIPPED' ? null : {
+            status: conformance.simpleCapital?.status,
+            instances: (conformance.simpleCapital?.instances || []).map(i => ({ name: i.name, classification: i.classification }))
+          }
+        }
       : null;
     if (errors.length) return { status: 'FAIL', errors, conformance: conformanceSummary, structure: structureSummary };
     return { status: 'PASS', errors: [], elementCount: model.find().length, conformance: conformanceSummary, structure: structureSummary };
@@ -295,7 +304,7 @@ export async function compareModels({ acceptedFile, candidateFile, validationFil
   console.log(`  SHA-256: ${candidateSha}`);
   console.log(`Byte-identical: ${acceptedSha === candidateSha ? 'YES' : 'NO'}`);
   console.log(`Static accepted: ${acceptedStatic.status}; candidate: ${candidateStatic.status}`);
-  if (candidateStatic.conformance) console.log(`Kernel conformance accepted: ${acceptedStatic.conformance?.status || 'n/a'}; candidate: ${candidateStatic.conformance.status}`);
+  if (candidateStatic.conformance) console.log(`Conformance accepted: ${acceptedStatic.conformance?.status || 'n/a'}; candidate: ${candidateStatic.conformance.status}`);
   if (candidateStatic.structure) console.log(`Structure audits accepted: ${acceptedStatic.structure?.status || 'n/a'} (informational); candidate: ${candidateStatic.structure.status} (closed-world violations: ${candidateStatic.structure.openBoundaries?.closedWorldViolations ?? 'n/a'}; symmetry mismatches: ${candidateStatic.structure.colonySymmetry?.mismatches ?? 'n/a'})`);
   for (const e of candidateStatic.errors || []) console.log(`    [FAIL] candidate static: ${e}`);
   console.log('');
