@@ -79,3 +79,12 @@ Validation r1 закономерно `OVERALL: FAIL`; фактические з�
 CI run https://github.com/Y2Kill/orbital-economy/actions/runs/36410037014 выявил операционное несоответствие: pretty-printed `candidate/validation.json` r1 имеет 1,082,826 байт, а `scope.json` содержит `allow_binary: []`; guard трактует любой файл >1 MiB как запрещённый. Scope изменять нельзя и не нужно. r2 будет содержать тот же JSON семантически в компактном представлении с LF, чтобы остаться ниже 1 MiB. Это изменение форматирования, а не ослабление validation.
 
 Следующий шаг: собрать r2 с исправленным наследованием identities, округлёнными порогами по значениям выше и компактным JSON; затем отдельно зафиксировать и проверить новый candidate.yml.
+
+
+### Ожидаемые прогоны после candidate r2
+
+После push калиброванной компактной validation в `32ebc4684ed42346df75d706af44fa95cf636621` зафиксированы:
+- Candidate acceptance: https://github.com/Y2Kill/orbital-economy/actions/runs/36412223398 — должен подтвердить validation 40/40 и выдать SHA-256 калиброванной validation; policy на этой итерации может оставаться FAIL только из-за ещё не привязанного `validation_sha256`.
+- CI: https://github.com/Y2Kill/orbital-economy/actions/runs/36412223390 — проверяет в том числе, что компактный `validation.json` (692,792 символа + LF) больше не нарушает лимит guard. Этот CI может быть отменён concurrency следующим report-only push; в таком случае результат берётся из заменившего его CI на той же ветке.
+
+Изменение r2 ограничено `candidate/validation.json`: модель и owner-rules policy не менялись. Результаты проверяются отдельным шагом.
