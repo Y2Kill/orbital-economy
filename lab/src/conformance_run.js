@@ -1,7 +1,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { readJson, sha256File, nowIso, writeJson, ensureDir } from './util.js';
-import { runLifecycleConformance, printConformance, KERNEL_ROLES, KERNEL_FLOWS } from './lifecycle_conformance.js';
+import { runLifecycleConformance, printConformance, KERNEL_ROLES, KERNEL_FLOWS, SIMPLE_CAPITAL_ROLES } from './lifecycle_conformance.js';
 
 function esc(s) { return String(s ?? '').replace(/\|/g, '\\|').replace(/\n/g, ' '); }
 
@@ -68,6 +68,36 @@ export function writeConformanceReports(outDir, report) {
     for (const c of i.checks) if (c.name.startsWith('role ') && c.status === 'PASS') l.push(`| ${esc(c.name.slice(5))} | ${esc(c.type)} | ${esc(c.primitive)} |`);
     l.push('');
   }
+  if (report.simpleCapital?.status !== 'SKIPPED') {
+    l.push('## Simple capital');
+    l.push('');
+    l.push(`- status: **${report.simpleCapital.status}**`);
+    l.push(`- instances: ${report.simpleCapital.summary?.instances ?? 0}`);
+    l.push(`- CONFORMING: ${report.simpleCapital.summary?.conforming ?? 0}`);
+    l.push(`- NON_CONFORMING: ${report.simpleCapital.summary?.nonConforming ?? 0}`);
+    for (const e of report.simpleCapital.specErrors || []) l.push(`- spec error: ${esc(e)}`);
+    l.push('');
+    l.push('| Instance | Sector | Classification | Checks passed | Failures |');
+    l.push('|---|---|---|---:|---:|');
+    for (const i of report.simpleCapital.instances || []) l.push(`| ${esc(i.name)} | ${esc(i.sector || '-')} | **${i.classification}** | ${i.checks.length - i.failures.length}/${i.checks.length} | ${i.failures.length} |`);
+    l.push('');
+    for (const i of report.simpleCapital.instances || []) {
+      if (!i.failures.length) continue;
+      l.push(`### ${esc(i.name)} — ${i.classification}`);
+      l.push('');
+      for (const failure of i.failures) l.push(`- ${esc(failure)}`);
+      l.push('');
+    }
+    l.push('Roles:');
+    l.push('');
+    for (const [role, spec] of Object.entries(SIMPLE_CAPITAL_ROLES)) {
+      l.push(`- \`${role}\`: ${spec.kind}${spec.deps?.length ? `; reads ${spec.deps.join(', ')}` : ''}`);
+    }
+    l.push('- `desired_capacity` must directly read the declared STOCK `sizing_signal`.');
+    l.push('- each declared consumption FLOW must be wired STOCK → ∅ and read `expansion`.');
+    l.push('');
+  }
+
   l.push('## Kernel contract (reference)');
   l.push('');
   l.push('Flows and their fixed topology (∅ = outside the model boundary):');
@@ -86,7 +116,7 @@ export function writeConformanceReports(outDir, report) {
 export function runConformanceCommand({ modelFile, validationFile, outDir }) {
   const raw = readJson(modelFile);
   const validation = readJson(validationFile);
-  console.log('Orbital Economy Lab - Capital Lifecycle Kernel conformance (static)');
+  console.log('Orbital Economy Lab - capital conformance (static)');
   console.log(`Model:      ${raw.name || path.basename(modelFile)}`);
   console.log(`  SHA-256:  ${sha256File(modelFile)}`);
   console.log(`Validation: ${validation.name || path.basename(validationFile)}`);
