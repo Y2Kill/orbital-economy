@@ -101,13 +101,13 @@ const openBoundaries = (validation.plugins || []).find(p => p?.type === 'open_bo
 function declaredCounters(d) {
   const cols = (d.colonies || []).length;
   const n = s => (String(s).includes('{C}') ? cols : 1);
-  const c = { processes: 0, legacy: 0, P2: { kernel: 0, exceptions: 0, undeclared: 0 }, P3: { requests: 0, producer: 0, exceptions: 0, undeclared: 0 },
+  const c = { processes: 0, legacy: 0, P2: { kernel: 0, simple: 0, exceptions: 0, undeclared: 0 }, P3: { requests: 0, producer: 0, exceptions: 0, undeclared: 0 },
     P4: { with_deposit: 0, without_deposit: 0 }, P5: { declared: 0, undeclared: 0 }, P6: { drivers: 0 } };
   for (const p of d.processes || []) {
     const k = n(p.output);
     if (p.legacy) { c.legacy += k; continue; }
     c.processes += k;
-    const cap = p.capacity?.kind; if (cap === 'kernel') c.P2.kernel += k; else if (cap === 'constant' || cap === 'unbounded') c.P2.exceptions += k; else c.P2.undeclared += k;
+    const cap = p.capacity?.kind; if (cap === 'kernel') c.P2.kernel += k; else if (cap === 'simple') c.P2.simple += k; else if (cap === 'constant' || cap === 'unbounded') c.P2.exceptions += k; else c.P2.undeclared += k;
     const en = p.energy?.kind; if (en === 'requests') c.P3.requests += k; else if (en === 'producer') c.P3.producer += k; else if (en === 'none') c.P3.exceptions += k; else c.P3.undeclared += k;
     if (p.kind === 'extraction') { if (p.deposit?.kind === 'stock') c.P4.with_deposit += k; else c.P4.without_deposit += k; }
     if (p.labor?.kind === 'declared') c.P5.declared += k; else c.P5.undeclared += k;
@@ -116,7 +116,7 @@ function declaredCounters(d) {
   return c;
 }
 const EXP = declaredCounters(declaration);
-const sig = c => `P2=${c.P2.kernel}/${c.P2.exceptions}/${c.P2.undeclared}; P3=${c.P3.requests}/${c.P3.producer}/${c.P3.exceptions}/${c.P3.undeclared}; P4=${c.P4.with_deposit}/${c.P4.without_deposit}; P5=${c.P5.declared}/${c.P5.undeclared}; P6=${c.P6.drivers}`;
+const sig = c => `P2=${c.P2.kernel}/${c.P2.simple}/${c.P2.exceptions}/${c.P2.undeclared}; P3=${c.P3.requests}/${c.P3.producer}/${c.P3.exceptions}/${c.P3.undeclared}; P4=${c.P4.with_deposit}/${c.P4.without_deposit}; P5=${c.P5.declared}/${c.P5.undeclared}; P6=${c.P6.drivers}`;
 
 console.log('Orbital Economy Lab Planet v1 closure QA');
 console.log('Declaration source: ' + declarationSource);
@@ -356,7 +356,7 @@ try {
       for (const needle of [
         '## Planet closure',
         'processes: 17; legacy: 2; expected source outputs: 16',
-        'P2 capacity: kernel **7** / exceptions **10** / undeclared **0**',
+        'P2 capacity: kernel **7** / simple **0** / exceptions **10** / undeclared **0**',
         'P3 energy: requests **4** / producer **2** / exceptions **11** / undeclared **0**',
         'P4 deposits: with **0** / without **6**',
         'P5 labor: declared **4** / undeclared **13**',
