@@ -8,6 +8,12 @@
 Не подтвердилось: локальный стенд и `check_branch` не запускались — среда работы только через GitHub API, как §9.4; `SHA256SUMS` намеренно не пересобраны (`sums_by: reviewer`).
 Дальше: отдельно проверить Actions для этой головы; затем КТ2 — статический и runtime conformance плагина `simple_capital`.
 
+### КТ2 — 2026-09-28 — conformance `simple_capital`
+Сделано: generated validation fragment подключён к semantic merge как плагин `simple_capital`; статическая часть в общем lifecycle-conformance gate проверяет восемь ролей, топологию, обязательные зависимости, consumption-потоки, тип `sizing_signal = STOCK` и прямую ссылку Desired Capacity на signal. Runtime-ветка `checkPlugin` проверяет `capacity >= 0` и неотрицательность Expansion / Depreciation / Retirement / всех consumption FLOW. Case 10 проверяет полный generated fixture: 2 simple instances CONFORMING, algebraic loops 0, `planet_closure P2.simple = 2`, open boundaries unclassified = 0. Case 12 строит декларацию с `{C} Regolith Requirement` как sizing signal и требует `NON_CONFORMING` с объяснением `expected STOCK, found VARIABLE`.
+Доказательство: implementation head `d2bbd1e836c25ea2644a08216dfbc60fffad1d74`; после push ожидаются CI runs 36397546216 / 36397577554 для этой головы (GitHub создал два запуска; итог проверяется отдельным шагом).
+Не подтвердилось: локальный запуск cases 10/12 и runtime симуляции не выполнялся по §9.4; результаты считаются подтверждёнными только после Actions. Предыдущие КТ1 runs были отменены concurrency последующими обязательными journal/KT2 push; код КТ1 входит без изменений в текущую голову и будет покрыт текущим `bench-selftests`.
+Дальше: проверить Actions отдельно; КТ3 — закончить `capital_retirement`/вид `simple`, case 11 и добиться зелёного полного `bench-selftests`.
+
 ## 2. Устройство `simple_capital`, validation и `planet_closure`
 
 На КТ1 реализован генератор. Для каждой колонии он создаёт STOCK мощности, сглаженный sizing signal при `create: true`, desired/shortage/excess/desired expansion, физически обеспеченный Expansion, depreciation, retirement и consumption-потоки backing-благ. Подмена output-мощности switch-gated и сохраняет старую ветку дословно; backing demand получает добавку от Desired Expansion.
