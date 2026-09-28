@@ -1,4 +1,4 @@
-# QA самого Orbital Economy Lab v0.9.9
+# QA самого Orbital Economy Lab v0.9.10
 
 ## 1. Operational QA
 
@@ -31,7 +31,20 @@ QA создаёт одноразовые временные рабочие ка�
 
 - parameter registry (v0.8.0): инвентарь = все числовые константы + начальные запасы, переключатели распознаны, аннотации сливаются (в т.ч. на зеркало), неизвестные имена — предупреждение, malformed-файл отклоняется.
 
-Ожидаемый итог: **32 passed, 0 failed**.
+Дополнительно v0.9.10 проверяет строгую схему validation (S1–S10):
+
+- S1 — accepted validation против Modes accepted-модели: 0 ошибок;
+- S2 — историческая выдержка 014 r2: 15 ошибок ровно в дефектных `checks[3..8]`, включая подсказки про `window` и вложенный `event`;
+- S3 — незнакомый check `type` = schema error;
+- S4 — три неверных формы `window` отвергаются;
+- S5 — незнакомые поля top/scenario/event/term/plugin дают ошибки с JSON-путями;
+- S6 — `note` / `notes` разрешены на всех поддержанных уровнях;
+- S7 — отсутствующий в модели Mode отклоняется только при переданном наборе Modes;
+- S8 — `runValidation` с schema mutation падает до simulation;
+- S9 — comparator возвращает `NOT_COMPARED` до simulation;
+- S10 — `check-validation` возвращает exit 1 на дефекте и 0 на accepted validation.
+
+Ожидаемый итог v0.9.10: **42 passed, 0 failed**.
 
 ## 2. Integration QA factual comparator
 
