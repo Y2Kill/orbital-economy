@@ -32,7 +32,7 @@ export function writeReports(outDir, report) {
   for (const e of report.static.errors || []) lines.push(`- FAIL: ${esc(e)}`);
   lines.push('');
 
-  lines.push('## Capital Lifecycle Kernel conformance (static)');
+  lines.push('## Capital conformance (static)');
   lines.push('');
   const conf = report.conformance;
   if (!conf || conf.status === 'SKIPPED') {
@@ -53,6 +53,20 @@ export function writeReports(outDir, report) {
         for (const f of i.failures) lines.push(`  - FAIL ${esc(f)}`);
         for (const v of i.variations) lines.push(`  - variation: ${esc(v)}`);
       }
+    }
+  }
+  if (conf?.simpleCapital?.status !== 'SKIPPED') {
+    lines.push('');
+    lines.push('### Simple capital');
+    lines.push('');
+    lines.push(`- status: **${conf.simpleCapital.status}**`);
+    for (const e of conf.simpleCapital.specErrors || []) lines.push(`- FAIL simple_capital spec: ${esc(e)}`);
+    if (conf.simpleCapital.instances?.length) {
+      lines.push('');
+      lines.push('| Instance | Sector | Classification | Checks | Failures |');
+      lines.push('|---|---|---|---:|---:|');
+      for (const i of conf.simpleCapital.instances) lines.push(`| ${esc(i.name)} | ${esc(i.sector || '-')} | **${i.classification}** | ${i.checks.length} | ${i.failures.length} |`);
+      for (const i of conf.simpleCapital.instances) for (const failure of i.failures) lines.push(`- FAIL ${esc(i.name)}: ${esc(failure)}`);
     }
   }
   lines.push('');

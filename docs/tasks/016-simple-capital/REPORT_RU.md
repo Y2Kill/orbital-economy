@@ -24,13 +24,15 @@
 
 На КТ1 реализован генератор. Для каждой колонии он создаёт STOCK мощности, сглаженный sizing signal при `create: true`, desired/shortage/excess/desired expansion, физически обеспеченный Expansion, depreciation, retirement и consumption-потоки backing-благ. Подмена output-мощности switch-gated и сохраняет старую ветку дословно; backing demand получает добавку от Desired Expansion.
 
-Generated validation fragment уже имеет форму прототипа (`simple_capital_instances`, transformation/retirement names, pairs, `planet_closure.capacity.kind = "simple"`), но его semantic merge и исполняемый conformance будут подключены на следующих КТ.
+Generated validation fragment имеет форму прототипа (`simple_capital_instances`, transformation/retirement names, pairs, `planet_closure.capacity.kind = "simple"`). Semantic merge создаёт отсутствующие plugin `simple_capital` и boundary category `capital_retirement`; повторный merge требует семантического совпадения. `simple` в Planet P2 проверяет путь output → capacity STOCK тем же алгоритмом/max_hops, что `kernel`, и считается отдельным видом капитала.
 
-Отличие от reference-прототипа только инфраструктурное: generated ModelJSON elements получают человекочитаемый `description`, как тип `capital_lifecycle`; oracle сравнивает type/endpoints/behavior, а формулы, имена, replacement и validation fragment совпадают.
+Отличие от reference-прототипа только инфраструктурное: generated ModelJSON elements получают человекочитаемый `description`, как тип `capital_lifecycle`; oracle сравнивает type/endpoints/behavior, replacements и LINK, а набор элементов, формулы и validation fragment перенесены без смысловых изменений. Case 15 фиксирует 34 / 6 / 78 и byte-determinism. Case 10 выполняет static integration и runtime Mode 38 probe; численные проверки заданы широким envelope вокруг опубликованных значений прототипа, чтобы ловить изменение поведения, а не FP-шум.
 
 ## 3. Ограничения и замечания к заданию
 
 - Локальный стенд не запускается по условиям выдачи и §9.4. Проверки заменяются чтением кода и CI `bench-selftests`; непроверенное локально не считается проверенным.
 - `SHA256SUMS.txt` и `lab/SHA256SUMS.txt` не изменяются: `scope.json` задаёт `sums_by: reviewer`.
-- На КТ1 плагин conformance, boundary category `capital_retirement` и поддержка `simple` в `planet_closure` ещё не подключены; это ожидаемое промежуточное состояние, а не обход требований.
+- Историческая запись КТ1 описывает состояние именно той контрольной точки; к финалу plugin conformance, `capital_retirement` и `planet_closure.simple` подключены и покрыты CI.
 - Формулировка «фикстура `fixtures/regolith-mine-simple.json`» в краткой выдаче трактуется как путь внутри каталога задачи, что подтверждается фактическим расположением `docs/tasks/016-simple-capital/fixtures/regolith-mine-simple.json`.
+
+- По J4 отдельного Mode-38 файла в reference-каталоге нет. Поэтому self-test не вводит независимую придуманную конфигурацию: он клонирует текущий accepted Mode 37, меняет `Timed Test Mode` на 38 и включает только generated `Regolith Mine Capital Enabled`. Это воспроизводит смысл пробы из §1 и остаётся привязанным к актуальной accepted-модели.

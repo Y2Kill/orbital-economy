@@ -102,6 +102,16 @@
 
 `capacity.kind=constant|unbounded` и `energy.kind=none` требуют `reason`. В `planet_v1` задокументированные P2/P3 exceptions допускаются; `planet_strict` запрещает их. Подробная семантика paths, reversibility, deposits и режимов — `STRUCTURE_AUDIT_RU.md`, раздел `planet_closure`.
 
+### `simple_capital` (v0.9.9)
+
+Статический + runtime контракт простого капитала. Экземпляр: `name`, `sector`, `sizing_signal`, `roles` с восемью ролями (`capacity`, `desired_capacity`, `shortage`, `excess`, `desired_expansion`, `expansion`, `depreciation`, `retirement`) и `consumption[]`.
+
+Статически проверяются типы, топология FLOW, обязательные formula+LINK зависимости, `sizing_signal: STOCK` и прямая ссылка Desired Capacity на этот STOCK. Дефект даёт `NON_CONFORMING` и общий HARD conformance FAIL: RUN_LAB падает, comparator/CHECK_CANDIDATE не переходят к numerical comparison. На simulation проверяются `capacity >= 0` и неотрицательность Expansion/Depreciation/Retirement/consumption FLOW.
+
+Generated `open_boundaries` category `capital_retirement`: `direction: "sink"`, `closed_world: true`, причина «износ и вывод простого капитала: капитал покидает экономику». Она классифицирует `? <sector> Capacity Depreciation` и `? <sector> Capacity Retirement`.
+
+В `planet_closure.capacity` добавлен `kind: "simple"` с обязательным `stock`. Как `kernel`, он доказывается reference path от output до STOCK не длиннее `max_hops`; в `planet_v1` это капитал, не exception. P2 отчёт: `kernel / simple / exceptions / undeclared`.
+
 ### `capital_lifecycle` (v0.3/v0.4, совместимость)
 
 Компактная форма с полем `items`; только три runtime-тождества, без статического слоя:

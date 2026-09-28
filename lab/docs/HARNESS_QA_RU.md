@@ -1,4 +1,4 @@
-# QA самого Orbital Economy Lab v0.9.8
+# QA самого Orbital Economy Lab v0.9.9
 
 ## 1. Operational QA
 
@@ -182,3 +182,13 @@ Policy preflight отдельно проверяет:
 - comparator tolerance contract.
 
 Static/HARD/physics failure нельзя превратить в PASS через policy allow-rule.
+
+## 3f. Simple-capital node QA (v0.9.9)
+
+Cases 1–9 задачи 015 сохранены. Cases 10–15 добавляют: интеграцию regolith fixture с merged validation (2 CONFORMING, loops=0, P2.simple=2, unclassified=0); strip/rebuild всех `simple_capital` из `model/nodes/` плюс временной модели case 10; запрет VARIABLE sizing signal; generated-name conflict; unknown-field path; byte-determinism 34/6/78.
+
+Case 10 также клонирует текущий accepted Mode 37 в временный Mode 38, включает `Regolith Mine Capital Enabled`, выполняет real simulation, общие/runtime plugin checks и проверяет широкий численный envelope reference-прототипа.
+
+Linux CI 36397985918 до добавления Mode 38 probe: `NODE SELF-TEST: 15 passed, 0 failed`, полный `bench-selftests` PASS. Финальная голова обязана пройти тот же набор уже с runtime probe.
+
+Static fail-fast comparator включает failures `simple_capital` в hard-error list; policy не может их разрешить.

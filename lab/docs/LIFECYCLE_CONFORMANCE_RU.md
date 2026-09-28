@@ -148,3 +148,11 @@ Runtime (реальный Mode 0):
 1. прочитать `failures` экземпляра — там точный примитив и причина;
 2. решить, что это: ошибка модели (исправить модель), намеренное архитектурное отклонение (задокументировать; если оно должно стать нормой — изменить `KERNEL_ROLES` отдельным решением с новой ревизией спецификации) или ошибка mapping (исправить validation JSON);
 3. любое изменение validation JSON → новая ревизия change-policy с обновлённым `validation_sha256`.
+
+## 6. Simple capital (Lab v0.9.9)
+
+Тот же статический этап `runLifecycleConformance` проверяет plugin `simple_capital`; общий status становится FAIL, если хотя бы один simple instance `NON_CONFORMING`. Это HARD-блокер для RUN_LAB и comparator/CHECK_CANDIDATE. Отчёты conformance и RUN_LAB показывают simple instances отдельно от kernel instances.
+
+Контракт: восемь ролей и topology из `NODES_RU.md`; shortage/excess читают desired_capacity+capacity, desired_expansion — shortage, expansion — desired_expansion, depreciation — capacity, retirement — excess, каждый consumption — expansion. Отдельно требуется `sizing_signal` типа STOCK и прямая ссылка `desired_capacity` на него. Runtime plugin проверяет неотрицательность capacity и капитальных/consumption потоков.
+
+Case 12 `NODE_SELF_TEST` подставляет `{C} Regolith Requirement` (VARIABLE) как sizing signal и требует явный `NON_CONFORMING: expected STOCK, found VARIABLE`.

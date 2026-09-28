@@ -1,5 +1,14 @@
 # Changelog
 
+## v0.9.9 — simple capital node
+
+- новый declarative type `simple_capital`: 8 capital roles, optional smoothed demand STOCK, physical backing consumption, switch-gated capacity/output/demand rewrites; fixture задачи 016 = 34 add / 6 replace / 78 LINK;
+- generated validation: plugin `simple_capital`, `capital_transformation` + `capital_retirement`, transformation pairs, `planet_closure.capacity.kind=simple`; semantic merge создаёт отсутствующие plugin/category и остаётся идемпотентным;
+- static conformance требует topology/dependencies и STOCK sizing signal; runtime проверяет capacity/flows >= 0; simple failures являются HARD для RUN_LAB и comparator/CHECK_CANDIDATE;
+- Planet P2 расширен до kernel/simple/exceptions/undeclared; simple STOCK использует тот же max_hops proof, что kernel; structure reports обновлены;
+- `NODE_SELF_TEST` 15 cases, включая strip/rebuild, strict schema/conflict/determinism и Mode 38 runtime probe;
+- Lab/package version → v0.9.9; accepted model/validation/policy, model/nodes, tools, vendor и engine не изменены.
+
 ## v0.9.8 — declarative model node generator
 
 - новый `src/nodes/`: строгий registry/schema и генератор `capital_lifecycle` v1; формулы совпадают с прототипом задачи 015, а ссылки, replacement target и конфликты имён проверяются до применения;

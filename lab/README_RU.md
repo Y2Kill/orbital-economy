@@ -1,4 +1,4 @@
-# Orbital Economy Lab v0.9.8
+# Orbital Economy Lab v0.9.9
 
 Локальный стенд для запуска, проверки, regression-анализа, policy-gating, Capital Lifecycle Kernel и статических аудитов структуры для ModelJSON Orbital Economy. v0.9.6 добавляет `planet_closure`: декларативную per-process карту критериев Planet v1 P2–P6 с dependency paths, exceptions/debt counters и режимами `report/classify/planet_v1/planet_strict`.
 
@@ -28,6 +28,14 @@
 
 ---
 
+
+# 0g. Что изменилось в v0.9.9
+
+Добавлен второй declarative node type — `simple_capital`: один capacity STOCK растёт физически обеспеченным Expansion и убывает Depreciation/Retirement без полного Capital Lifecycle Kernel. Generated validation создаёт plugin `simple_capital`, `capital_retirement`, transformation pairs и `planet_closure.capacity.kind=simple`.
+
+Static conformance проверяет роли/topology/dependencies и требует STOCK sizing signal; runtime — capacity/flows >= 0. Нарушение — HARD blocker для RUN_LAB и comparator. Planet P2 теперь печатается как kernel/simple/exceptions/undeclared; неизменённый accepted baseline = 11/0/6/0.
+
+`NODE_SELF_TEST.cmd` теперь 15 случаев. Regolith fixture задачи 016 даёт 34 add / 6 replace / 78 LINK; case 10 проверяет merged validation, loops, P2/open-boundary closure и временный Mode 38, полученный из текущего Mode 37 с включённым simple-capital switch. Подробно: `docs\NODES_RU.md`, `docs\VALIDATION_FORMAT_RU.md`, `docs\LIFECYCLE_CONFORMANCE_RU.md`.
 
 # 0f. Что изменилось в v0.9.8
 

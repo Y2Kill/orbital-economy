@@ -1,4 +1,4 @@
-# Structure audits — границы, A/B-симметрия, алгебраические петли и Planet v1 closure (Lab v0.9.6)
+# Structure audits — границы, A/B-симметрия, алгебраические петли и Planet v1 closure (Lab v0.9.9)
 
 Четыре статические проверки структуры ModelJSON, выполняемые до симуляции. `open_boundaries`, `colony_symmetry` и `planet_closure` объявляются как плагины validation JSON. `algebraic_loops` выполняется **всегда**, независимо от validation. `planet_closure` с v0.9.6 связывает физические source-процессы с декларативным контрактом Planet v1 по мощности, энергии, исчерпаемым запасам, труду и внешнему спросу.
 
@@ -201,7 +201,7 @@ LOOP_SELF_TEST.cmd
 
 ### Роли P2–P6
 
-- **P2 capacity**: `kernel` требует чтение указанного capacity STOCK; `constant` и `unbounded` — явные исключения с обязательным `reason`. Для constant дополнительно проверяется reversibility: параметр не должен использоваться вне dependency closure собственного output.
+- **P2 capacity**: `kernel` и `simple` требуют чтение указанного capacity STOCK; `constant` и `unbounded` — явные исключения с обязательным `reason`. Для constant дополнительно проверяется reversibility: параметр не должен использоваться вне dependency closure собственного output.
 - **P3 energy**: `requests` требует energy request, включённый в total request, чтение fulfillment выпуском и общий planned-rate элемент; `producer` допустим для energy service; `none` — исключение с обязательным reason.
 - **P4 deposits**: extraction может ссылаться на реальный deposit STOCK; отсутствие deposit пока считается отдельным долгом.
 - **P5 labor**: `declared` intensity должна существовать и реально читаться формулой; `undeclared` считается отдельным долгом.
@@ -220,7 +220,7 @@ Accepted v7.7.4 r1 в режиме `report` (v7.7.1 r1: P3 4/2/11/0; v7.7.2 r1: 
 
 ```text
 processes=17; legacy=2; expected source outputs=16
-P2 capacity: kernel=11; exceptions=6; undeclared=0
+P2 capacity: kernel=11; simple=0; exceptions=6; undeclared=0
 P3 energy: requests=6; producer=2; exceptions=9; undeclared=0
 P4 deposits: with=0; without=6
 P5 labor: declared=4; undeclared=13
@@ -264,3 +264,7 @@ PLANET_SELF_TEST.cmd
 - **Алгебраическая петля**: читать `shortestCycle` и разрывать same-step зависимость архитектурно (обычно через state/signal или изменение направления зависимости). Не добавлять allow-list «разрешённых» петель: loop audit — HARD.
 
 - **Planet closure**: не «лечить» FAIL увеличением `max_hops` или формальным reason. Ложную декларацию исправить; реальный Planet v1 debt должен оставаться видимым в соответствующем P2–P6 счётчике.
+
+### Изменения P2 / boundary в v0.9.9
+
+`simple` — полноценный P2 capital kind, а не exception. Счётчик P2 печатается как `kernel / simple / exceptions / undeclared`; на неизменённой accepted v7.7.4 r1 это `11 / 0 / 6 / 0`. Generated `capital_retirement` — закрытая sink-категория open boundaries для Depreciation/Retirement simple-capital stock. Case 10 node QA на временно раскрытой regolith fixture получает `P2.simple=2`, 0 unclassified boundary flows и 0 algebraic loops.

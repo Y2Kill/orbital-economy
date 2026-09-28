@@ -1,4 +1,4 @@
-# Статус проверок Orbital Economy Lab v0.9.8 — baseline v7.7.4 r1
+# Статус проверок Orbital Economy Lab v0.9.9 — baseline v7.7.4 r1
 
 ## Принятая основа
 
@@ -19,7 +19,7 @@
 | Structure audit | **PASS** — 197 FLOW, 154 boundary, unclassified 0, closed-world 0, пары 19 |
 | A/B symmetry | **PASS** — mismatches 0, exceptions 0 |
 | Algebraic loop audit | **PASS** — 10 switches, 1024 combinations, loops 0 |
-| Planet closure (`report`) | **PASS** — P2 11/6/0, P3 6/2/9/0, P4 0/6, P5 4/13, P6 4, reversibility 0 |
+| Planet closure (`report`) | **PASS** — P2 11/0/6/0, P3 6/2/9/0, P4 0/6, P5 4/13, P6 4, reversibility 0 |
 | Parameter registry | 401 параметр; 227 аннотировано; 49 несимметричных пар; 0 без аннотации |
 | Regression Modes 0–35 vs v7.7.3 r1 | **IDENTICAL** — 36 × `common=1168, changed=0, added=76, maxAbs=0` |
 | Policy задачи 014 | **PASS** — 2995 событий, неожиданных 0 |
@@ -38,7 +38,7 @@
 | `CONFORMANCE_SELF_TEST.cmd` | **PASS** 18/18 |
 | `STRUCTURE_SELF_TEST.cmd` | **PASS** 21/21 |
 | `LOOP_SELF_TEST.cmd` | **PASS** 15/15 (Windows, promotion v7.7.2); accepted 10 switches / 1024; v7.6 r1 = 16/32; ожидания для accepted выводятся из модели (с v7.7.2) |
-| `PLANET_SELF_TEST.cmd` | **PASS** 16/16 (Windows, promotion v7.7.2); accepted P2=11/6/0, P3=6/2/9/0, P4=0/6, P5=4/13, P6=4; ожидаемые счётчики выводятся из декларации (с v7.7.2) |
+| `PLANET_SELF_TEST.cmd` | **PASS** 16/16 (Windows, promotion v7.7.2); accepted P2=11/0/6/0, P3=6/2/9/0, P4=0/6, P5=4/13, P6=4; ожидаемые счётчики выводятся из декларации (с v7.7.2) |
 | `NODE_SELF_TEST.cmd` | **PASS** 9/9 (Linux CI задачи 015); case 1 = 69/6/126 и 76/6/138, case 9 = 871633 bytes identical |
 | `COMPARE_SELF_TEST.cmd` | **PASS** |
 
@@ -93,3 +93,9 @@ GitHub Actions подтвердил:
 - все 16 Planet QA cases PASS; остальные bench self-tests остаются PASS.
 
 Это запись Linux CI разработки, а не каноническая Windows-приёмка. Accepted validation v7.7.1 на ветке исполнителя не изменён; декларация проверяется через `--planet-closure` до решения reviewer о promotion.
+
+## Lab v0.9.9 — `simple_capital` (задача 016)
+
+Accepted ModelJSON/validation/policy не менялись, поэтому baseline имеет `P2.simple=0`. Harness добавляет второй declarative node type `simple_capital`, static/runtime conformance, generated `capital_retirement`, P2 kind `simple`, semantic validation merge и cases 10–15.
+
+CI run 36397985918 (Linux, head `94a395531d1300dd6d685cb5d8ca21aee8f68b89`) завершён success: QA 32/32; Structure 21/21; Loop 15/15; Planet 16/16; Conformance 18/18; Policy 10/10; Compare PASS; NODE SELF-TEST 15/15; bench Modes 0/12 `OVERALL: PASS`. Финальная голова задачи дополнительно включает Mode 38 runtime probe и документацию; её run фиксируется в task report.
