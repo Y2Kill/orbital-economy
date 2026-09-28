@@ -240,7 +240,7 @@ export function findKernelPlugin(validation) {
 
 export const SIMPLE_CAPITAL_ROLES = {
   capacity: { kind: 'STOCK' },
-  desired_capacity: { kind: 'VARIABLE', deps: ['capacity'] },
+  desired_capacity: { kind: 'VARIABLE' },
   shortage: { kind: 'VARIABLE', deps: ['desired_capacity', 'capacity'] },
   excess: { kind: 'VARIABLE', deps: ['desired_capacity', 'capacity'] },
   desired_expansion: { kind: 'VARIABLE', deps: ['shortage'] },
