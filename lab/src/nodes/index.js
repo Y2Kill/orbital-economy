@@ -170,8 +170,11 @@ export function mergeNodeValidation(validation, fragments) {
     throw new Error('validation: open_boundaries categories and transformation_pairs are required');
   }
   if (!planet || !Array.isArray(planet.processes)) throw new Error('validation: planet_closure.processes is required');
-  const category = boundaries.categories.find(x => x.id === 'capital_transformation');
-  if (!category || !Array.isArray(category.name)) throw new Error('validation: open_boundaries capital_transformation category is required');
+  const transformation = boundaries.categories.find(x => x.id === 'capital_transformation');
+  if (!transformation || !Array.isArray(transformation.name)) throw new Error('validation: open_boundaries capital_transformation category is required');
+
+  let simple = out.plugins?.find(p => p.type === 'simple_capital') || null;
+  let retirement = boundaries.categories.find(x => x.id === 'capital_retirement') || null;
 
   for (const [fi, fragment] of fragments.entries()) {
     for (const generated of fragment.kernel_instances || []) {
@@ -187,8 +190,38 @@ export function mergeNodeValidation(validation, fragments) {
       }
     }
 
+    if ((fragment.simple_capital_instances || []).length) {
+      if (!simple) {
+        simple = { type: 'simple_capital', abs_tol: 1e-8, instances: [] };
+        out.plugins.push(simple);
+      }
+      if (!Array.isArray(simple.instances)) throw new Error('validation: simple_capital.instances must be an array');
+      for (const generated of fragment.simple_capital_instances) {
+        const existing = simple.instances.find(x => x.name === generated.name);
+        if (!existing) simple.instances.push(structuredClone(generated));
+        else if (!jsonEqual(existing, generated)) {
+          throw new Error(`validation fragment[${fi}]: simple_capital instance "${generated.name}" already exists with a different definition`);
+        }
+      }
+    }
+
     for (const name of fragment.capital_transformation_names || []) {
-      if (!category.name.includes(name)) category.name.push(name);
+      if (!transformation.name.includes(name)) transformation.name.push(name);
+    }
+
+    if ((fragment.capital_retirement_names || []).length) {
+      if (!retirement) {
+        retirement = {
+          id: 'capital_retirement',
+          closed_world: true,
+          direction: 'sink',
+          name: [],
+          reason: 'износ и вывод простого капитала: капитал покидает экономику'
+        };
+        boundaries.categories.push(retirement);
+      }
+      if (!Array.isArray(retirement.name)) throw new Error('validation: open_boundaries capital_retirement.name must be an array');
+      for (const name of fragment.capital_retirement_names) if (!retirement.name.includes(name)) retirement.name.push(name);
     }
 
     for (const generated of fragment.transformation_pairs || []) {
@@ -203,8 +236,12 @@ export function mergeNodeValidation(validation, fragments) {
       const generated = fragment.planet_closure;
       const process = planet.processes.find(x => x.id === generated.process);
       if (!process) throw new Error(`validation fragment[${fi}]: planet process "${generated.process}" does not exist`);
-      if (process.capacity == null) process.capacity = structuredClone(generated.capacity);
-      else if (!jsonEqual(process.capacity, generated.capacity)) {
+      if (process.capacity == null || generated.capacity?.kind === 'simple') {
+        if (process.capacity?.kind === 'simple' && !jsonEqual(process.capacity, generated.capacity)) {
+          throw new Error(`validation fragment[${fi}]: planet process "${generated.process}" simple capacity differs`);
+        }
+        process.capacity = structuredClone(generated.capacity);
+      } else if (!jsonEqual(process.capacity, generated.capacity)) {
         throw new Error(`validation fragment[${fi}]: planet process "${generated.process}" capacity differs`);
       }
     }
