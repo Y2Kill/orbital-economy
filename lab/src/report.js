@@ -31,6 +31,11 @@ export function writeReports(outDir, report) {
   lines.push(`- status: **${report.static.status}**`);
   for (const e of report.static.errors || []) lines.push(`- FAIL: ${esc(e)}`);
   lines.push('');
+  lines.push('## Validation schema');
+  lines.push('');
+  lines.push(`- status: **${report.validationSchema?.status || 'SKIPPED'}**`);
+  for (const e of report.validationSchema?.errors || []) lines.push(`- FAIL \`${esc(e.path)}\`: ${esc(e.message)}`);
+  lines.push('');
 
   lines.push('## Capital conformance (static)');
   lines.push('');
