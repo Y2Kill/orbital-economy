@@ -8,6 +8,7 @@ import { summarizeStatus } from './report.js';
 import { writeModelComparisonReports } from './compare_report.js';
 import { runLifecycleConformance } from './lifecycle_conformance.js';
 import { runStructureAudits, structureAuditErrors } from './structure_audit.js';
+import { checkValidationSchema } from './validation_schema.js';
 
 
 function stable(value) {
@@ -294,8 +295,18 @@ export async function compareModels({ acceptedFile, candidateFile, validationFil
   const modeVariable = validation.mode_variable || 'Timed Test Mode';
   const acceptedSha = sha256File(acceptedFile), candidateSha = sha256File(candidateFile);
   const structure = compareModelStructure(acceptedRaw, candidateRaw, modeVariable);
-  const acceptedStatic = staticCheck(acceptedRaw, modeVariable, validation, { hard: false });
-  const candidateStatic = staticCheck(candidateRaw, modeVariable, validation, { hard: true });
+  const candidateModes = new Set(listScenarios(candidateRaw, modeVariable).map(s => s.mode));
+  const validationSchema = checkValidationSchema(validation, { modes: candidateModes });
+  const acceptedStatic = validationSchema.status === 'PASS'
+    ? staticCheck(acceptedRaw, modeVariable, validation, { hard: false })
+    : { status: 'PASS', errors: [], skippedSpecializedValidation: true };
+  const candidateStatic = validationSchema.status === 'PASS'
+    ? staticCheck(candidateRaw, modeVariable, validation, { hard: true })
+    : {
+        status: 'FAIL',
+        errors: validationSchema.errors.map(e => `validation schema ${e.path}: ${e.message}`),
+        skippedSpecializedValidation: true
+      };
 
   console.log('Orbital Economy Lab - model-to-model comparison');
   console.log(`Accepted:  ${acceptedRaw.name || path.basename(acceptedFile)}`);
@@ -318,6 +329,7 @@ export async function compareModels({ acceptedFile, candidateFile, validationFil
     candidate: { file: path.resolve(candidateFile), name: candidateRaw.name || null, sha256: candidateSha },
     validation: validationFile ? { file: path.resolve(validationFile), sha256: sha256File(validationFile) } : null,
     comparisonSettings: { absTolerance, relTolerance, relFloor },
+    validationSchema,
     static: { accepted: acceptedStatic, candidate: candidateStatic },
     byteIdentical: acceptedSha === candidateSha,
     structure,
