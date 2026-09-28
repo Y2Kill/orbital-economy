@@ -8,6 +8,9 @@ import { spawnSync } from 'node:child_process';
 import { discoverSingleJson } from './workspace.js';
 import { readJson } from './util.js';
 import { PATCH_FORMAT, applyPatch } from './patch.js';
+import { loadModelJSON } from './engine.js';
+import { modelJsonForScenario } from './model.js';
+import { checkFiniteAll, checkNonNegativeRegex, checkPlugin, checkTimeAxis, runGenericCheck, seriesContext } from './checks.js';
 import { expandNode, mergeNodeValidation } from './nodes/index.js';
 import {
   capitalLifecycleGeneratedNames,
@@ -353,8 +356,39 @@ await expect('10. simple_capital fixture integrates with validation and static a
   if (audits.openBoundaries?.summary?.unclassified !== 0) {
     throw new Error(`open_boundaries unclassified = ${audits.openBoundaries?.summary?.unclassified}`);
   }
+  const mode37 = (model.scenarios || []).find(s => s?.values?.['Timed Test Mode'] === 37);
+  if (!mode37) throw new Error('accepted model has no Mode 37 to derive the simple-capital runtime probe');
+  const trial = structuredClone(mode37);
+  trial.name = 'Node QA simple_capital Mode 38';
+  trial.values = { ...trial.values, 'Timed Test Mode': 38, [simpleFixture.switch]: 1 };
+
+  const simModel = loadModelJSON(modelJsonForScenario(model, trial));
+  const modelErrors = simModel.check();
+  if (modelErrors.length) throw new Error(`Mode 38 model.check() returned ${modelErrors.length}: ${modelErrors.map(e => e.message || e).join('; ')}`);
+  const results = simModel.simulate();
+  const ctx = seriesContext(simModel, results);
+  const runtime = [
+    checkTimeAxis(results, merged.expected_time_step ?? model.simulation?.time_step ?? null, merged.time_step_tolerance ?? 1e-12),
+    checkFiniteAll(simModel, results)
+  ];
+  if (merged.non_negative_regex) runtime.push(checkNonNegativeRegex(simModel, results, merged.non_negative_regex.pattern, merged.non_negative_regex.tolerance ?? 1e-10));
+  for (const plugin of merged.plugins || []) runtime.push(...checkPlugin(plugin, ctx));
+  for (const check of merged.global_checks || []) runtime.push(runGenericCheck(check, ctx));
+  const runtimeFail = runtime.filter(x => x.status === 'FAIL');
+  if (runtimeFail.length) throw new Error(`Mode 38 runtime checks failed: ${runtimeFail.map(x => `${x.name}: ${x.message || 'FAIL'}`).join('; ')}`);
+
+  const values = name => Array.from(ctx.get(name), Number);
+  const aCap = values('A Regolith Mine Capacity'), bCap = values('B Regolith Mine Capacity');
+  const aExpansion = values('A Regolith Mine Expansion');
+  const peakA = Math.max(...aCap), maxExpansion = Math.max(...aExpansion);
+  const finalA = aCap[aCap.length - 1], finalB = bCap[bCap.length - 1];
+  if (Math.abs(aCap[0] - 7) > 1e-9 || Math.abs(bCap[0] - 5) > 1e-9) throw new Error(`Mode 38 initial capacities differ: A=${aCap[0]}, B=${bCap[0]}`);
+  if (!(peakA > 8.5 && peakA < 9.2)) throw new Error(`Mode 38 A peak capacity ${peakA} outside prototype envelope 8.5..9.2`);
+  if (!(maxExpansion > 0.05 && maxExpansion < 0.09)) throw new Error(`Mode 38 A Expansion max ${maxExpansion} outside prototype envelope 0.05..0.09`);
+  if (!(finalA > 1.5 && finalA < 3.2 && finalB > 0.1 && finalB < 0.5)) throw new Error(`Mode 38 final capacities outside prototype envelope: A=${finalA}, B=${finalB}`);
+
   simpleState = { base: baseModel, model, validation: merged, expanded };
-  return `simple instances=2 CONFORMING; loops=0; P2.simple=2; unclassified=0`;
+  return `simple=2 CONFORMING; loops=0; P2.simple=2; unclassified=0; Mode38 PASS; A peak=${peakA.toFixed(3)}, expansion max=${maxExpansion.toFixed(4)}, final A/B=${finalA.toFixed(3)}/${finalB.toFixed(3)}`;
 });
 
 await expect('11. strip and rebuild every simple_capital declaration and the case-10 model', () => {
