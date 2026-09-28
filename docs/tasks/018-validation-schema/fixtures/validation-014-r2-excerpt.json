@@ -1,0 +1,117 @@
+{
+  "name": "Excerpt of task 014 candidate r2 validation (commit 9e05f69, blob bf174e24): Mode 37 checks with the silent window defect and the flat event_absent",
+  "mode_variable": "Timed Test Mode",
+  "scenarios": {
+    "37": {
+      "name": "v7.7.4 Transport Surge on Capital Goods Capital",
+      "checks": [
+        {
+          "type": "identity",
+          "name": "Mode 37: A CM plant Capital Goods pair identity",
+          "abs_tol": 1e-8,
+          "terms": [
+            {
+              "column": "A Construction Materials Plant Capital Goods Consumption",
+              "coef": 1
+            },
+            {
+              "column": "A Construction Materials Plant Expansion",
+              "coef": -5
+            }
+          ],
+          "note": "Construction Materials Plant Capital Goods per Capacity = 5."
+        },
+        {
+          "type": "identity",
+          "name": "Mode 37: A CM plant Construction Materials pair identity",
+          "abs_tol": 1e-8,
+          "terms": [
+            {
+              "column": "A Construction Materials Plant Construction Materials Consumption",
+              "coef": 1
+            },
+            {
+              "column": "A Construction Materials Plant Expansion",
+              "coef": -5
+            }
+          ],
+          "note": "Construction Materials Plant Construction Materials per Capacity = 5."
+        },
+        {
+          "type": "identity",
+          "name": "Mode 37: A CM production capacity equals plant active capacity",
+          "abs_tol": 1e-8,
+          "terms": [
+            {
+              "column": "A Construction Materials Production Capacity",
+              "coef": 1
+            },
+            {
+              "column": "A Construction Materials Plant Active Capacity",
+              "coef": -1
+            }
+          ],
+          "note": "No Mode-28 shock is active in Modes 34-35."
+        },
+        {
+          "type": "metric",
+          "name": "Mode 37: B CG plant expansion responds during surge",
+          "column": "B Capital Goods Plant Expansion",
+          "metric": "max",
+          "from_day": 360,
+          "to_day": 720,
+          "op": ">",
+          "value": 0.005
+        },
+        {
+          "type": "metric",
+          "name": "Mode 37: B CG plant Construction Materials consumption is real",
+          "column": "B Capital Goods Plant Construction Materials Consumption",
+          "metric": "max",
+          "from_day": 360,
+          "to_day": 720,
+          "op": ">",
+          "value": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 37: B CG plant Capital Goods consumption is real",
+          "column": "B Capital Goods Plant Capital Goods Consumption",
+          "metric": "max",
+          "from_day": 360,
+          "to_day": 720,
+          "op": ">",
+          "value": 0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 37: B Capital Goods production rate recovers",
+          "column": "B Capital Goods Production Rate",
+          "metric": "max",
+          "from_day": 360,
+          "to_day": 720,
+          "op": ">",
+          "value": 0.9
+        },
+        {
+          "type": "metric",
+          "name": "Mode 37: B Capital Goods fulfillment shows surge pressure",
+          "column": "B Capital Goods Fulfillment",
+          "metric": "min",
+          "from_day": 360,
+          "to_day": 720,
+          "op": "<",
+          "value": 0.3
+        },
+        {
+          "type": "event_absent",
+          "name": "Mode 37: B CG plant does not expand before surge window",
+          "column": "B Capital Goods Plant Expansion",
+          "threshold": 0.000001,
+          "start_day": 0,
+          "end_day": 360
+        }
+      ]
+    }
+  }
+}

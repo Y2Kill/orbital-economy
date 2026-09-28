@@ -77,6 +77,14 @@ Any of these changes the model's numbers everywhere (by 1 ULP and whatever the f
 
 ## Bench and process
 
+### In progress — strict validation schema (task 018, Lab v0.9.10)
+
+The bench ignores fields it does not know: in task 014 r2 five Mode 37 checks carried `from_day`/`to_day` instead of `window`, ran over the whole horizon and passed while checking something other than their names said. Unknown check types only WARN, and checks for a Mode the model does not have never run. Task 018 makes the shape of validation a static HARD check before any simulation (unknown field, unknown type, malformed window, missing Mode → error with a JSON path) and adds `check-validation`. Our prototype over all 40 validation files in git history: 0 errors on every file from v7.5.1 on, exactly the defect on 014 r2.
+
+### Done — guard checks large text as text (2026-09-28)
+
+`tools/check_branch.mjs` treated every file over 1 MB like a binary (allow-list only, no line-ending or leak checks), so the executor of task 017 minified validation to stay under it. Now only binaries and text above 8 MB need `allow_binary`; candidate validation is delivered pretty-printed.
+
 ### Done — static algebraic-loop audit (task 010, Lab v0.9.5)
 
 The engine detects an algebraic loop only at run time and only along the `IfThenElse` branches actually taken, so a loop that exists under some switch value is invisible to every static check. This is how 001 r1 (Modes 17–20) and v7.6 r1 (Modes 25–26) failed. The audit builds the same-step dependency graph (VARIABLE and FLOW; STOCK cuts), prunes `IfThenElse` branches decided by the switches and runs Tarjan on every switch combination (128 for v7.7.1), plus a per-Mode forecast. It reproduces both historical failures exactly and reports zero loops on v7.7.1; it is part of `STRUCTURE_AUDIT` (a loop in any combination is FAIL, `compare` gives `NOT_COMPARED`) and runs on every skeleton before a model task is issued (`node src/cli.js loops`; contract §8 p. 13). Accepted 2026-09-26 (`docs/tasks/010-algebraic-loop-audit/`).

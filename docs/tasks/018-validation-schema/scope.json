@@ -1,0 +1,35 @@
+{
+  "task": "018",
+  "title": "strict validation schema: unknown fields, check types, windows and missing Modes are static errors",
+  "branch": "task/018-validation-schema",
+  "allow": [
+    "lab/src/validation_schema.js",
+    "lab/src/checks.js",
+    "lab/src/runner.js",
+    "lab/src/compare_models.js",
+    "lab/src/compare_report.js",
+    "lab/src/policy_run.js",
+    "lab/src/report.js",
+    "lab/src/cli.js",
+    "lab/src/qa.js",
+    "lab/fixtures/**",
+    "lab/CHECK_VALIDATION.cmd",
+    "lab/package.json",
+    "lab/package-lock.json",
+    "lab/docs/VALIDATION_FORMAT_RU.md",
+    "lab/docs/HARNESS_QA_RU.md",
+    "lab/docs/TEST_STATUS_RU.md",
+    "lab/README_RU.md",
+    "lab/CHANGELOG.md"
+  ],
+  "allow_binary": [],
+  "allow_protected": [],
+  "required_changes": [
+    "lab/src/validation_schema.js",
+    "lab/src/qa.js",
+    "lab/fixtures/validation/validation-014-r2-excerpt.json",
+    "lab/docs/VALIDATION_FORMAT_RU.md",
+    "lab/CHANGELOG.md"
+  ],
+  "sums_by": "reviewer"
+}
