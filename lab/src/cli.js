@@ -14,6 +14,7 @@ import { applyPatch, expandPatchNodes, PATCH_FORMAT } from './patch.js';
 import { expandNodes, mergeNodeValidation } from './nodes/index.js';
 import { runParametersCommand } from './parameters.js';
 import { runSeriesCommand } from './series.js';
+import { checkValidationSchema } from './validation_schema.js';
 
 function defaultOutDir() {
   return path.resolve('output', `run-${new Date().toISOString().replace(/[:.]/g, '-')}`);
@@ -21,7 +22,7 @@ function defaultOutDir() {
 
 function usage() {
   console.log(`
-Orbital Economy Lab v0.9.8
+Orbital Economy Lab v0.9.10
 
 Recommended workspace commands:
   lab [--input=input] [--modes=all] [--out=DIR]
@@ -35,6 +36,7 @@ Recommended workspace commands:
   expand-nodes <node-or-patch.json> <base-model.json> [--out=DIR] [--validation=file.json]
   parameters [model.json] [--annotations=file.json] [--out=DIR]
   series [model.json] [--modes=all] [--out=DIR] [--dump=MODE] [--plan=file.json]
+  check-validation <validation.json> [model.json]
 
 Advanced commands:
   inspect <model.json>
@@ -54,6 +56,7 @@ Examples:
   node src/cli.js expand-nodes ../model/nodes/construction-materials-plant.json base.json --validation=input/validation/validation.json
   node src/cli.js parameters --annotations=../docs/PARAMETER_ANNOTATIONS.json
   node src/cli.js series --modes=all --out=output/series
+  node src/cli.js check-validation input/validation/validation.json input/model/model.json
   node src/cli.js inspect input/model/orbital_economy_v7_3_modeljson.json
   node src/cli.js test model.json validation.json --modes=all --web-reference=input/web_reference/pending
 `);
@@ -64,7 +67,20 @@ const cmd = positional[0];
 if (!cmd || cmd === 'help' || options.help) { usage(); process.exit(0); }
 
 try {
-  if (cmd === 'inspect') {
+  if (cmd === 'check-validation') {
+    if (!positional[1]) throw new Error('Need a path to validation.json');
+    const validation = readJson(positional[1]);
+    let modes = null;
+    if (positional[2]) {
+      const model = readJson(positional[2]);
+      const modeVariable = validation.mode_variable || 'Timed Test Mode';
+      modes = new Set(listScenarios(model, modeVariable).map(s => s.mode));
+    }
+    const result = checkValidationSchema(validation, { modes });
+    console.log(`${result.errors.length} error(s)`);
+    for (const e of result.errors) console.log(`  ${e.path}: ${e.message}`);
+    process.exitCode = result.status === 'PASS' ? 0 : 1;
+  } else if (cmd === 'inspect') {
     if (!positional[1]) throw new Error('Need a path to model.json');
     const r = await inspectModel(positional[1]);
     process.exitCode = r.status === 'PASS' ? 0 : 2;
