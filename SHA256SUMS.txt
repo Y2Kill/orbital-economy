@@ -205,6 +205,10 @@ b0ba530c71e7bba3a49cad98687d152e3de65b553a39541dd0a6c5ae4535c5eb  ./docs/tasks/0
 60774fc0eee0443571c8bb9bc5b0b3972090b91ec6192ff4223f047dae2498b2  ./docs/tasks/015-node-generator/TASK_RU.md
 b36862e2f7d496475af67439f7c9e82e341470d896cb7241bbb6462a146c50d4  ./docs/tasks/015-node-generator/reference/expand_prototype.mjs
 b8bc7680457e04af7beb2261b2869e76294e56c692f96421cea463aa60ac39c5  ./docs/tasks/015-node-generator/scope.json
+8fdce8ebb0027716dcdb2e27d77a20dc23428b91afa4f507bce66b05b56e162e  ./docs/tasks/016-simple-capital/TASK_RU.md
+23acefd090a951a64c88b805dc0b95950710f1cd0653ed796440fa6135f4fea5  ./docs/tasks/016-simple-capital/fixtures/regolith-mine-simple.json
+6cd27d743700c00038c3fb970f9c5379e9106984aa3f2be8dbae2793c31f9d0e  ./docs/tasks/016-simple-capital/reference/expand_simple_prototype.mjs
+b4bcc07bb25a09eaacf176158f55780e1625b4e2965d9115c13a4f1709464670  ./docs/tasks/016-simple-capital/scope.json
 33928a0530eb2a406c7ae381407c111887c7bbcf62708806353596df635343e1  ./docs/tasks/README_RU.md
 bbf818e93b88d606b3137b1bb69d60db8c41c9df4089025a921b1ca00f473244  ./lab/APPLY_PATCH.cmd
 bff88f6b12149a4922895ad46eba75f42297fa5990b0d70ca1e914bd5cf8eff9  ./lab/CHANGELOG.md
