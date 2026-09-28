@@ -22,7 +22,7 @@ docs/tasks/NNN-имя/
   "title": "…",
   "branch": "task/004-имя",
   "allow": ["glob", "…"],
-  "allow_binary": ["glob — бинарные файлы и файлы > 1 МБ, которые задача разрешает"],
+  "allow_binary": ["glob — бинарные файлы и текст > 8 МБ, которые задача разрешает (текст до 8 МБ проверяется как обычный)"],
   "allow_protected": ["glob — защищённые пути, если задача действительно должна их менять"],
   "required_changes": ["glob — без изменения этих путей поставка неполна"],
   "sums_by": "agent | reviewer — кто пересобирает SHA256SUMS (reviewer — для агента без локального git, §9.4)"
@@ -52,7 +52,8 @@ docs/tasks/NNN-имя/
               guard в CI идёт с --in-progress: незавершённая ветка (нет отчёта, обязательного изменения, коммитов)
               получает предупреждение, а не провал; наш guard при приёмке — строгий.
            4b. задачи по модели (с 007): поставка в docs/tasks/NNN-имя/candidate/ (model-patch.json, при нужде
-              validation.json и change-policy.json); каждый push туда запускает candidate.yml — весь цикл приёмки
+              validation.json и change-policy.json; validation — многострочный JSON, JSON.stringify(v, null, 2) + "\n",
+              не в одну строку: иначе при ревью её diff нечитаем); каждый push туда запускает candidate.yml — весь цикл приёмки
               кандидата на Linux; агент доводит его до зелёного. Контракт §9.4 п. 5
            5. REPORT_RU.md; push ветки; PR в main, если может (описание = краткий отчёт)
 мы         6. node tools/check_branch.mjs --scope=docs/tasks/NNN-имя/scope.json

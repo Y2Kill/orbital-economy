@@ -143,15 +143,20 @@ const LEAK = [
   // GitHub noreply addresses are fine; "main@8c45f26" or "recovery@900" have no domain and do not match.
   [/\b[A-Za-z0-9._%+-]+@(?!users\.noreply\.github\.com\b)[A-Za-z0-9-]+(?:\.[A-Za-z0-9-]+)*\.[A-Za-z]{2,}\b/, 'e-mail address'],
 ];
+// Text above this size is handled like a binary (allow_binary only, no byte checks). Below it, large text —
+// such as a validation JSON that grows with every model task — gets the same line-ending and leak checks as
+// any other file; the old 1 MB cut made the executor minify validation to stay under it.
+const TEXT_LIMIT = 8_000_000;
 let byteProblems = 0;
 for (const { status, file } of changes.filter(c => c.status !== 'D')) {
   const b = blob(headSha, file);
   const isBinary = b.includes(0);
-  if (isBinary || b.length > 1_000_000) {
-    if (!matchAny(file, scope.allow_binary)) { byteProblems++; fail(`${file}: ${isBinary ? 'binary' : 'larger than 1 MB'} (${b.length} bytes), not in allow_binary`); }
+  if (isBinary || b.length > TEXT_LIMIT) {
+    if (!matchAny(file, scope.allow_binary)) { byteProblems++; fail(`${file}: ${isBinary ? 'binary' : 'text larger than 8 MB'} (${b.length} bytes), not in allow_binary`); }
     else info(`${file}: ${isBinary ? 'binary' : 'large'} ${b.length} bytes, sha256 ${crypto.createHash('sha256').update(b).digest('hex')} (allowed)`);
     continue;
   }
+  if (b.length > 1_000_000) info(`${file}: large text ${b.length} bytes, checked as text`);
   const now = eol(b);
   if (status === 'M') {
     const was = eol(blob(forkSha, file));

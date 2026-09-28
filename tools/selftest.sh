@@ -115,6 +115,16 @@ expect "binary outside allow_binary fails" FAIL 'lab/fixtures/blob.dat: binary'
 fresh; mkdir -p lab/fixtures; printf 'a\0b' > lab/fixtures/data.bin; deliver bin; publish
 expect "binary inside allow_binary passes" PASS
 
+bigtext() { mkdir -p lab/notes; node -e "process.stdout.write(('x'.repeat(99)+'\n').repeat(+process.argv[1]))" "$1" > lab/notes/README.md; }
+fresh; bigtext 20000; deliver bigtext; publish
+expect "2 MB text file passes as text" PASS
+
+fresh; bigtext 20000; printf 'cache C:\\Users\\someone\\AppData\\npm\n' >> lab/notes/README.md; deliver bigleak; publish
+expect "2 MB text file is still scanned for leaks" FAIL 'lab/notes/README.md: absolute local path'
+
+fresh; bigtext 90000; deliver hugetext; publish
+expect "text above 8 MB outside allow_binary fails" FAIL 'lab/notes/README.md: text larger than 8 MB'
+
 fresh; printf 'rem cache C:\\Users\\someone\\AppData\\npm\n' >> lab/INSTALL.cmd; deliver leak; publish
 expect "absolute local path in an added line fails" FAIL 'absolute local path'
 

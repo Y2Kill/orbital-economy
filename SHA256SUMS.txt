@@ -227,7 +227,7 @@ a95747b4e2686cba2b89c6d94ad5d638f2af24accc555a4c43472128f0113cc0  ./docs/tasks/0
 23acefd090a951a64c88b805dc0b95950710f1cd0653ed796440fa6135f4fea5  ./docs/tasks/017-regolith-capital/draft/regolith-mine.json
 f77d5e91855312fed660116a3c10b84b4ae9b1ff46a2efc9577d5ae32854afab  ./docs/tasks/017-regolith-capital/draft/validation-v7.7.5-draft.json
 dce46a6d2d435cc8f0d00f8ddf3e6811c907613de6cd35fce4f7ce0be7b01e90  ./docs/tasks/017-regolith-capital/scope.json
-33928a0530eb2a406c7ae381407c111887c7bbcf62708806353596df635343e1  ./docs/tasks/README_RU.md
+2ef5e9ee8d9a3f5dab46fa29a1d34edbe42ec6628a59b52accc5aeabe4a85475  ./docs/tasks/README_RU.md
 bbf818e93b88d606b3137b1bb69d60db8c41c9df4089025a921b1ca00f473244  ./lab/APPLY_PATCH.cmd
 53cb7e9766742af29073285a0024ac31944ccb48557ad82dadda948adb09bf1c  ./lab/CHANGELOG.md
 291d9cf375a7f886f02f866b729c47960ef0c5d0af8d45704d1bd6493a4f49b1  ./lab/CHECK_CANDIDATE.cmd
@@ -328,7 +328,7 @@ df1c519a1a102a9188ac97aacb0dcaf36927849192e560d85fdf43428393fce5  ./reference/v7
 292481c670f9562171f79266421e86ab073f45694724d01bf391d21f8756cf5c  ./reference/v7.7.4/policy/change-policy-v7.7.4-strict.json
 f75eb9fa4cb93442726a4c01396f98259cdee3f591ff552cb1a18b08bf933ab0  ./reference/v7.7.4/validation/validation-v7.7.4.json
 39315da9cdeddebe741c3431fc205dc84c4bf6857f2fedff91376ae4b82c2424  ./tools/build_sums.mjs
-69428489d59ed25b1283da0d517fc85742ab9c2a52dd295a13a9b9cfef764aef  ./tools/check_branch.mjs
-fc8ee2b8c1023eff8648d256e85784362aa3aae2a3765e3c7461058545184335  ./tools/selftest.sh
+4dbde23b55ffe34a38601cbaab2076f312c21efbc36c25dc2e83a79d98b96954  ./tools/check_branch.mjs
+6308063b0b6d5a7e124f030bc07d94b06e13707243cd9595031908cd27ed7458  ./tools/selftest.sh
 56925cafdd5d42c93b6542de46a2deaf476118db1f1d40693ec88e21b82031c8  ./tools/verify_series.mjs
 ff548ccb36309b5efdfecd1411656eae5f3e3209c7ecad96c5ccd6bedddd68bd  ./validation/validation-v7.7.5.json
