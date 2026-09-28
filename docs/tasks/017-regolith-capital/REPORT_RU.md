@@ -115,3 +115,12 @@ CI run https://github.com/Y2Kill/orbital-economy/actions/runs/36410037014 выя
 Пороги — округлённые семантические значения с запасом, а не точечная подгонка. Исправление r2 дополнительно удалило ошибочно унаследованное switch-off identity из Modes 38–39; проверки Modes 0–37 не ослаблялись. Компактная сериализация validation сохранена только ради лимита guard >1 MiB и не меняет её семантику.
 
 Следующий шаг для КТ4: привязать policy к SHA validation r2 выше и получить полный `candidate.yml` 5/5 PASS плюс зелёный `ci.yml`.
+
+
+### Ожидаемые прогоны после финальной привязки policy
+
+После push коммита `0340c89b6ee399463e944e8c0c92c13320e75cce` зафиксированы:
+- Candidate acceptance: https://github.com/Y2Kill/orbital-economy/actions/runs/36415909682 — ожидается полный результат 5/5 PASS с policy, привязанной к validation SHA `17c2a896be77c3a1078d061c97269bc747d15e786b9ba6a5de28ad90feba84b1`.
+- CI: https://github.com/Y2Kill/orbital-economy/actions/runs/36415909709 — общий guard/selftests для этой головы; report-only push может отменить его по concurrency, в таком случае будет проверен заменивший его CI.
+
+Результаты проверяются отдельным шагом; один длинный polling/wait не используется.
