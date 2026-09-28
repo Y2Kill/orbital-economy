@@ -8,12 +8,18 @@ import { spawnSync } from 'node:child_process';
 import { discoverSingleJson } from './workspace.js';
 import { readJson } from './util.js';
 import { PATCH_FORMAT, applyPatch } from './patch.js';
-import { expandNode } from './nodes/index.js';
+import { expandNode, mergeNodeValidation } from './nodes/index.js';
 import {
   capitalLifecycleGeneratedNames,
   capitalLifecycleReplacementNames,
   expandCapitalLifecycle
 } from './nodes/capital_lifecycle.js';
+import {
+  simpleCapitalGeneratedNames,
+  simpleCapitalReplacementNames
+} from './nodes/simple_capital.js';
+import { runLifecycleConformance } from './lifecycle_conformance.js';
+import { runStructureAudits } from './structure_audit.js';
 
 const root = path.resolve(process.cwd());
 const modelFile = discoverSingleJson(path.join(root, 'reference', 'accepted', 'model'), 'accepted ModelJSON');
@@ -92,6 +98,22 @@ function stripNode(raw, decl) {
   const out = structuredClone(raw);
   const generated = new Set(capitalLifecycleGeneratedNames(decl));
   const targets = capitalLifecycleReplacementNames(decl);
+  for (const name of targets) {
+    const e = out.elements.find(x => x.type !== 'LINK' && x.name === name);
+    if (!e) throw new Error(`${decl.sector}: replacement target missing while stripping: ${name}`);
+    e.behavior.value = oldBranch(e.behavior.value, decl.switch, name);
+  }
+  out.elements = out.elements.filter(e => {
+    if (e.type === 'LINK') return !generated.has(e.from) && !generated.has(e.to);
+    return !generated.has(e.name);
+  });
+  return out;
+}
+
+function stripSimpleNode(raw, decl) {
+  const out = structuredClone(raw);
+  const generated = new Set(simpleCapitalGeneratedNames(decl));
+  const targets = simpleCapitalReplacementNames(decl);
   for (const name of targets) {
     const e = out.elements.find(x => x.type !== 'LINK' && x.name === name);
     if (!e) throw new Error(`${decl.sector}: replacement target missing while stripping: ${name}`);
@@ -272,6 +294,51 @@ await expect('9. expand-nodes --validation preserves accepted validation byte-fo
   }
 });
 
+
+
+let simpleState = null;
+
+await expect('10. simple_capital fixture integrates with validation and static audits', () => {
+  const alreadyPresent = accepted.elements.some(e => e.type !== 'LINK' && e.name === `${simpleFixture.colonies[0]} ${simpleFixture.sector} Capacity`);
+  const baseModel = alreadyPresent ? stripSimpleNode(accepted, simpleFixture) : accepted;
+  const expanded = expandNode(simpleFixture, baseModel);
+  const model = alreadyPresent ? accepted : applyPatch(baseModel, { format: PATCH_FORMAT, ...expanded.patch }).model;
+  const merged = mergeNodeValidation(validation, [expanded.validation]);
+  const conformance = runLifecycleConformance(model, merged);
+  const audits = runStructureAudits(model, merged);
+  const simple = conformance.simpleCapital;
+  if (simple?.status !== 'PASS' || simple.summary.instances !== 2 || simple.summary.nonConforming !== 0) {
+    throw new Error(`simple conformance mismatch: ${JSON.stringify(simple?.summary || simple)}`);
+  }
+  if (audits.algebraicLoops?.status !== 'PASS' || audits.algebraicLoops.combinationsWithLoops !== 0) {
+    throw new Error(`algebraic loops detected: ${audits.algebraicLoops?.combinationsWithLoops}`);
+  }
+  if (audits.planetClosure?.counters?.P2?.simple !== 2) {
+    throw new Error(`planet_closure P2.simple = ${audits.planetClosure?.counters?.P2?.simple}, expected 2`);
+  }
+  if (audits.openBoundaries?.summary?.unclassified !== 0) {
+    throw new Error(`open_boundaries unclassified = ${audits.openBoundaries?.summary?.unclassified}`);
+  }
+  simpleState = { base: baseModel, model, validation: merged, expanded };
+  return `simple instances=2 CONFORMING; loops=0; P2.simple=2; unclassified=0`;
+});
+
+await expect('12. instantaneous VARIABLE sizing signal is NON_CONFORMING', () => {
+  const bad = structuredClone(simpleFixture);
+  bad.sizing.signal = { name: '{C} Regolith Requirement', create: false };
+  const baseModel = simpleState?.base || accepted;
+  const expanded = expandNode(bad, baseModel);
+  const model = applyPatch(baseModel, { format: PATCH_FORMAT, ...expanded.patch }).model;
+  const merged = mergeNodeValidation(validation, [expanded.validation]);
+  const result = runLifecycleConformance(model, merged);
+  const a = result.simpleCapital?.instances?.find(x => x.name === 'A Regolith Mine');
+  if (result.status !== 'FAIL' || a?.classification !== 'NON_CONFORMING') {
+    throw new Error(`expected NON_CONFORMING, got ${result.status}/${a?.classification}`);
+  }
+  const evidence = (a.failures || []).find(x => x.includes('sizing signal') && x.includes('expected STOCK') && x.includes('VARIABLE'));
+  if (!evidence) throw new Error(`missing STOCK sizing explanation: ${JSON.stringify(a.failures)}`);
+  return evidence;
+});
 
 await expectThrows('13. simple_capital generated name conflict reports the element name', () => {
   const bad = structuredClone(simpleFixture);
