@@ -37,3 +37,34 @@
 - Локально не запускались `check_branch`, стенд и QA, как предписано заданием и §9.4.
 - После этого push ожидается CI для головы ветки; результат проверяется отдельным шагом.
 - Дальше: исправить возможные замечания CI, затем КТ3 — документация и финальная зелёная голова.
+
+
+### КТ3 — документация и зелёная кандидатная голова
+
+- Документация v0.9.10 обновлена: `VALIDATION_FORMAT_RU.md` содержит строгую схему/таблицы, правило существования Mode, описательный статус `regression_modes` / `regression_tolerance` и CLI; обновлены `HARNESS_QA_RU.md`, `TEST_STATUS_RU.md`, `README_RU.md`, `CHANGELOG.md`.
+- Первый полный содержательный прогон документационной головы, CI run **36480791977**, выявил один дефект нового S8: schema gate корректно останавливал run, но synthetic `SKIPPED` conformance-result не содержал прежнюю форму `simpleCapital`, из-за чего Markdown reporter бросал исключение. Guard был PASS; QA: 41 PASS / 1 FAIL. Исправлено без ослабления схемы: SKIPPED-result сохраняет ожидаемую форму отчёта.
+- После исправления commit `9f1a4914bb3a274fd42b180d3798f7905fe6f45e`: CI run **36480886573** — **SUCCESS**.
+  - `guard`: SUCCESS;
+  - `tools-selftest`: SUCCESS;
+  - `bench-selftests`: SUCCESS;
+  - QA: **42 passed, 0 failed**;
+  - Structure: **21 passed, 0 failed**;
+  - Loop: **15 passed, 0 failed**;
+  - Planet: **16 passed, 0 failed**;
+  - Conformance: **18 passed, 0 failed**;
+  - Policy: **10 passed, 0 failed**;
+  - Compare: **PASS**;
+  - Node: **15 passed, 0 failed**;
+  - bench Modes 0,12: **OVERALL: PASS**.
+- Более ранние runs КТ1/КТ2 были отменены механизмом concurrency при последующих push, а не завершились тестовым FAIL; содержательная проверка всей накопленной ветки выполнена run 36480886573.
+- Проверка байтов через GitHub contents подтвердила: `lab/package.json` сохранил CRLF и отсутствие завершающего newline; `package-lock.json` остался LF; новые файлы — LF.
+- `SHA256SUMS` не пересобирались: `scope.json` задаёт `"sums_by": "reviewer"`.
+- Локально не запускались `tools/check_branch.mjs`, стенд, QA или иные self-tests; результаты выше получены только GitHub Actions согласно §9.4 и прямому указанию задачи.
+- После этого journal-only push ожидается отдельный CI финальной головы; его результат проверяется отдельным шагом.
+
+
+## 4. Прототип и отличия реализации
+
+Прототип из `reference/schema_prototype.mjs` использован как ориентир, но не как нормативный код. Реализация сохраняет требуемую наблюдаемую совместимость с фикстурой 014 r2 — **15 schema errors ровно в checks[3..8]** — и дополнительно централизует типовые проверки чисел, event/term shapes, top-level types и Mode existence. Семантика runtime checks/plugins не изменялась.
+
+Schema gate расположен до specialized validation readers в runner и до static/numeric candidate comparison в comparator. В policy отдельного обхода нет: schema FAIL становится candidate static HARD blocker, поэтому policy result остаётся FAIL независимо от allow-rules.
