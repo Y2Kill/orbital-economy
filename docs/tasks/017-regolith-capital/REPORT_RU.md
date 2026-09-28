@@ -36,3 +36,46 @@
 - CI: https://github.com/Y2Kill/orbital-economy/actions/runs/36410009560 — общий guard/selftests Linux для головы r1.
 
 Результаты этих запусков проверяются отдельным шагом; один длинный polling/wait не используется.
+
+
+## Журнал — продолжение
+
+### КТ1 — закрыта по candidate r1
+
+Доказательство: Candidate acceptance run https://github.com/Y2Kill/orbital-economy/actions/runs/36410009451 для candidate-коммита `09368265c5fe7f74f44014d1f8d9f2ee1ffa1018`.
+
+- apply-patch: PASS; candidate SHA-256 `2f7c7e4654e972842eaa8f53064997045bbb22a742f4b7097dba24864f7ad2ca`.
+- conformance: PASS; `A Regolith Mine CONFORMING (23/23 checks)`, `B Regolith Mine CONFORMING (23/23 checks)`.
+- structure audit: PASS.
+- open boundaries: `168`; unclassified=0; closed-world violations=0; transformation pairs=21, unpaired=0.
+- Planet closure: `P2=11/2/4/0` (kernel/simple/exceptions/undeclared).
+- algebraic loops: switches=11; combinations=2048; with loops=0; Modes=none.
+
+Тем самым требования КТ1 выполнены; узел применён стендом именно из секции `nodes`.
+
+### КТ2 — закрыта по candidate r1
+
+В том же run policy-сравнение дало `Observed=1451`, `Unexpected=0`, `Forbidden=0`, `Threshold exceed=0`, `Required missing=0`. `COMPARISON RESULT=OUTPUTS_IDENTICAL_BUT_SCENARIO_CONTRACT_CHANGED`: изменения сценарного контракта — ожидаемые новые Modes 38–39 и переключатель. Два hard blocker относятся не к регрессии: r1 validation содержит намеренные калибровочные FAIL, а `validation_sha256` policy ещё не привязан.
+
+Следовательно неожиданных изменений в Modes 0–37 нет; КТ2 выполнена.
+
+### Первый калибровочный прогон для КТ3
+
+Validation r1 закономерно `OVERALL: FAIL`; фактические значения зондов:
+
+- Mode 38: `A Regolith Mine Capacity max = 8.83297336437531`;
+- Mode 38: `A Regolith Mine Capacity change 0→1080 = -4.70803287983692`;
+- Mode 38: `B Regolith Mine Expansion max <= 1e-6` — PASS;
+- Mode 39, окно 360→720: `B Regolith Mine Expansion max = 0.0437738174128435`;
+- Mode 39: `B Regolith Mine Capacity change 360→720 = +6.09084223078142`;
+- Mode 39: `B Regolith Mine Capital Goods Consumption max > 0` — PASS;
+- Mode 39, окно 360→720: `B Regolith Extraction Rate max = 3.54295805117321`;
+- Mode 39: до дня 360 expansion отсутствует — `event_absent` PASS.
+
+Дополнительно обнаружена ошибка моей сборки validation r1: при формировании Modes 38–39 я копировал identity-проверки из уже дополненного Mode 37, поэтому вместе с legacy-парами ошибочно скопировалось новое switch-off тождество `Regolith Extraction Capacity = Regolith Base Extraction Capacity`. В Modes 38–39 оно по определению ложно, поскольку там switch=1 и правильное тождество — `Extraction Capacity = Mine Capacity`. Исправление r2: наследовать legacy identity до добавления regolith switch-off identity либо явно исключить эту проверку; проверки Modes 0–37 не ослабляются.
+
+### Замечание по scope/guard
+
+CI run https://github.com/Y2Kill/orbital-economy/actions/runs/36410037014 выявил операционное несоответствие: pretty-printed `candidate/validation.json` r1 имеет 1,082,826 байт, а `scope.json` содержит `allow_binary: []`; guard трактует любой файл >1 MiB как запрещённый. Scope изменять нельзя и не нужно. r2 будет содержать тот же JSON семантически в компактном представлении с LF, чтобы остаться ниже 1 MiB. Это изменение форматирования, а не ослабление validation.
+
+Следующий шаг: собрать r2 с исправленным наследованием identities, округлёнными порогами по значениям выше и компактным JSON; затем отдельно зафиксировать и проверить новый candidate.yml.
