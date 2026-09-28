@@ -77,9 +77,9 @@ Any of these changes the model's numbers everywhere (by 1 ULP and whatever the f
 
 ## Bench and process
 
-### In progress — strict validation schema (task 018, Lab v0.9.10)
+### Done — strict validation schema (task 018, Lab v0.9.10)
 
-The bench ignores fields it does not know: in task 014 r2 five Mode 37 checks carried `from_day`/`to_day` instead of `window`, ran over the whole horizon and passed while checking something other than their names said. Unknown check types only WARN, and checks for a Mode the model does not have never run. Task 018 makes the shape of validation a static HARD check before any simulation (unknown field, unknown type, malformed window, missing Mode → error with a JSON path) and adds `check-validation`. Our prototype over all 40 validation files in git history: 0 errors on every file from v7.5.1 on, exactly the defect on 014 r2.
+The bench ignores fields it does not know: in task 014 r2 five Mode 37 checks carried `from_day`/`to_day` instead of `window`, ran over the whole horizon and passed while checking something other than their names said. Unknown check types only WARN, and checks for a Mode the model does not have never run. Task 018 made the shape of validation a static HARD check before any simulation (unknown field, unknown type, malformed window, missing Mode → error with a JSON path) and added `check-validation`. Over all 40 validation files in git history: 0 errors on every file from v7.5.1 on, exactly the defect on 014 r2. Use `check-validation` on our own drafts before issuing a model task.
 
 ### Done — guard checks large text as text (2026-09-28)
 
