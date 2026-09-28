@@ -1,9 +1,9 @@
 {
   "format": "orbital-economy-change-policy-v1",
-  "name": "Orbital Economy v7.7.5 Regolith Capital - change contract candidate r1",
-  "description": "Candidate r1 follows the owner draft unchanged in rules. Modes 0-37 must reproduce v7.7.4 r1 exactly; Modes 38-39 contain new behaviour behind Regolith Capital Enabled. validation_sha256 is intentionally left as the owner placeholder until the calibrated validation is fixed by candidate.yml.",
+  "name": "Orbital Economy v7.7.5 Regolith Capital - change contract candidate r3",
+  "description": "Final candidate policy: owner rules unchanged; Modes 0-37 reproduce v7.7.4 r1 exactly, Modes 38-39 contain Regolith Capital behaviour, and validation_sha256 is bound to the calibrated compact validation r2 verified by candidate run 36412223398.",
   "accepted_model_sha256": "8a71fe6678c4fc6c532bb8e35b6006280ddb9639a69aed045a6ca25f516f1991",
-  "validation_sha256": "<SHA-256 of the delivered validation.json>",
+  "validation_sha256": "17c2a896be77c3a1078d061c97269bc747d15e786b9ba6a5de28ad90feba84b1",
   "comparison": {
     "abs_tolerance": 0,
     "rel_tolerance": null,

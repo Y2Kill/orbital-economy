@@ -88,3 +88,30 @@ CI run https://github.com/Y2Kill/orbital-economy/actions/runs/36410037014 выя
 - CI: https://github.com/Y2Kill/orbital-economy/actions/runs/36412223390 — проверяет в том числе, что компактный `validation.json` (692,792 символа + LF) больше не нарушает лимит guard. Этот CI может быть отменён concurrency следующим report-only push; в таком случае результат берётся из заменившего его CI на той же ветке.
 
 Изменение r2 ограничено `candidate/validation.json`: модель и owner-rules policy не менялись. Результаты проверяются отдельным шагом.
+
+
+### КТ3 — закрыта по validation r2
+
+Доказательство: Candidate acceptance run https://github.com/Y2Kill/orbital-economy/actions/runs/36412223398 для candidate-коммита `32ebc4684ed42346df75d706af44fa95cf636621`.
+
+- Gate 4 validation: `OVERALL: PASS`; покрыты все 40 Modes.
+- Validation SHA-256: `17c2a896be77c3a1078d061c97269bc747d15e786b9ba6a5de28ad90feba84b1`.
+- Policy-сравнение по содержанию чистое: `Observed=1451`, `Unexpected=0`, `Forbidden=0`, `Threshold exceed=0`, `Required missing=0`, `Hard blockers=0`; итоговый FAIL вызван только тем, что policy ещё содержала placeholder вместо SHA validation.
+- Mode 39 подтверждает требуемое восстановление шахты B: expansion и рост Capacity в окне 360–720 PASS, до окна expansion отсутствует.
+
+Калибровка взята из первого полного прогона r1 и подтверждена r2:
+
+| Проверка | Наблюдение r1 | Порог r2 | Запас / смысл |
+|---|---:|---:|---|
+| Mode 38 A Regolith Mine Capacity max | 8.8329733644 | > 8.5 | +0.333; фиксирует рост выше стартовых 7 без подгонки к точке |
+| Mode 38 A Regolith Mine Capacity change 0→1080 | -4.7080328798 | < -4.0 | 0.708 до порога; существенное сворачивание после раннего пика |
+| Mode 38 B Regolith Mine Expansion max | 0 | ≤ 1e-6 | material-zero коридор |
+| Mode 39 B Regolith Mine Expansion max [360,720] | 0.0437738174 | > 0.03 | +0.01377, около 31% наблюдаемого значения |
+| Mode 39 B Regolith Mine Capacity change 360→720 | +6.0908422308 | > 5.0 | +1.091; материальная перестройка мощности |
+| Mode 39 B Regolith Mine Capital Goods Consumption max [360,720] | > 0, PASS | > 0 | подтверждает физический расход backing-ресурса |
+| Mode 39 B Regolith Extraction Rate max [360,720] | 3.5429580512 | > 3.0 | +0.543; существенная добыча после восстановления |
+| Mode 39 B expansion до 360 | отсутствует | event_absent >1e-6 | подтверждает, что rebuild вызван именно окном surge |
+
+Пороги — округлённые семантические значения с запасом, а не точечная подгонка. Исправление r2 дополнительно удалило ошибочно унаследованное switch-off identity из Modes 38–39; проверки Modes 0–37 не ослаблялись. Компактная сериализация validation сохранена только ради лимита guard >1 MiB и не меняет её семантику.
+
+Следующий шаг для КТ4: привязать policy к SHA validation r2 выше и получить полный `candidate.yml` 5/5 PASS плюс зелёный `ci.yml`.
