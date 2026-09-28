@@ -1,6 +1,93 @@
-# Validation format — Lab v0.9.7
+# Validation format — Lab v0.9.10
 
 `validation.json` — изменяемый контракт проверки конкретной версии модели. Ядро runner должно меняться реже, чем этот файл.
+
+## Строгая схема validation (v0.9.10)
+
+До любой симуляции Lab выполняет статическую проверку формы validation. Ошибка схемы — **HARD**: `test` / `lab` завершаются с FAIL до запуска Modes, а `compare` / `policy` возвращают `NOT_COMPARED`. Policy не может разрешить ошибку схемы.
+
+Ошибки содержат JSON-путь и причину, например:
+
+```text
+$.scenarios["37"].checks[3].from_day: unknown field for metric (a window is "window": [from, to])
+```
+
+Для проверки черновика без запуска модели:
+
+```cmd
+node src\cli.js check-validation <validation.json> [model.json]
+CHECK_VALIDATION.cmd <validation.json> [model.json]
+```
+
+Без `model.json` проверяется форма validation, но не существование Mode. С моделью каждый ключ `scenarios` обязан соответствовать Mode этой модели. Exit code: 0 — схема корректна, 1 — найдены ошибки схемы; ошибки чтения/аргументов остаются ошибками CLI.
+
+### Комментарии
+
+Поля `note` и `notes` разрешены на верхнем уровне, в сценарии, проверке, плагине и событии. Они не влияют на проверку. Любое другое незнакомое поле на проверяемом схемой уровне — ошибка.
+
+### Верхний уровень
+
+| Поле | Тип / форма |
+|---|---|
+| `name` | string |
+| `mode_variable` | string |
+| `expected_time_step` | number |
+| `time_step_tolerance` | number |
+| `finite_all` | boolean |
+| `non_negative_regex` | object; поля `pattern` (string), `tolerance` (number) |
+| `regression_modes` | array; **описательное поле**, стенд его сейчас не читает |
+| `regression_tolerance` | number; **описательное поле**, стенд его сейчас не читает |
+| `plugins` | array |
+| `scenarios` | object |
+| `global_checks` | array |
+| `web_crosscheck_abs_tolerance` | number |
+| `web_crosscheck_rel_tolerance` | number или `null` |
+| `web_crosscheck_rel_floor` | number |
+| `note`, `notes` | комментарии |
+
+Точная regression-проверка выполняется factual comparator через `compare`; `regression_modes` и `regression_tolerance` оставлены только как описательная совместимость.
+
+### Сценарии
+
+Ключ `scenarios` — строковый номер Mode из цифр. Разрешённые поля сценария: `name`, `checks`, `note`, `notes`.
+
+Если схема проверяется вместе с моделью, Mode обязан существовать в этой модели; иначе проверки сценария никогда не запустились бы. В `compare` / `policy` существование Mode сверяется **с кандидатом**: новый Mode кандидата допустим, даже если его нет в accepted.
+
+### Generic checks
+
+У всех проверок обязательны `type` и `name`.
+
+| `type` | Обязательные поля | Необязательные поля |
+|---|---|---|
+| `metric` | `column`, `metric` = `max|min|mean|last|first`, `op`, `value` | `tolerance`, `window` |
+| `change` | `column`, `from_day`, `to_day`, `op`, `value` | `tolerance` |
+| `event_exists` | `event` | — |
+| `event_absent` | `event` | — |
+| `event_order` | `events` (array событий) | — |
+| `relation` | `left`, `op` = `<=|>=`, `right` | `abs_tol`, `window` |
+| `identity` | `terms` (не менее двух `{column, coef}`) | `abs_tol`, `window` |
+| `bounded` | `column` | `min`, `max`, `tolerance`, `window` |
+
+Для обычных `op` допустимы `> >= < <= == !=`. `window` имеет строго форму `[from_day, to_day]`: два конечных числа, `from_day <= to_day`.
+
+Событие — объект с обязательным `column`; допустимы также `op`, `value`, `tolerance`, `window`, `name`, `note`, `notes`. Поля события у `event_*` находятся **внутри** `event: {...}`, а не рядом с ним.
+
+### Plugins
+
+Схема проверяет только верхний уровень плагина; внутренние спецификации продолжают проверять специализированные валидаторы.
+
+| `type` | Разрешённые поля кроме `type`, `note`, `notes` |
+|---|---|
+| `energy_balance` | `colonies`, `abs_tol`, `consumers` |
+| `capital_lifecycle` | `abs_tol`, `items` |
+| `capital_lifecycle_kernel` | `format`, `legacy_switch`, `abs_tol`, `instances` |
+| `simple_capital` | `abs_tol`, `instances` |
+| `transport_allocator` | `abs_tol` |
+| `open_boundaries` | `enforce`, `categories`, `transformation_pairs` |
+| `colony_symmetry` | `tokens`, `enforce`, `exceptions` |
+| `planet_closure` | `enforce`, `colonies`, `max_hops`, `process_categories`, `energy`, `processes`, `demand_drivers` |
+
+Незнакомый `type` проверки или плагина — ошибка схемы, а не runtime `WARN`.
 
 ## Верхний уровень
 
