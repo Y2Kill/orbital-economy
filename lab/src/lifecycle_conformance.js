@@ -238,6 +238,133 @@ export function findKernelPlugin(validation) {
   return (validation?.plugins || []).find(p => p?.type === 'capital_lifecycle_kernel') || null;
 }
 
+export const SIMPLE_CAPITAL_ROLES = {
+  capacity: { kind: 'STOCK' },
+  desired_capacity: { kind: 'VARIABLE', deps: ['capacity'] },
+  shortage: { kind: 'VARIABLE', deps: ['desired_capacity', 'capacity'] },
+  excess: { kind: 'VARIABLE', deps: ['desired_capacity', 'capacity'] },
+  desired_expansion: { kind: 'VARIABLE', deps: ['shortage'] },
+  expansion: { kind: 'FLOW', from: null, to: 'capacity', deps: ['desired_expansion'] },
+  depreciation: { kind: 'FLOW', from: 'capacity', to: null, deps: ['capacity'] },
+  retirement: { kind: 'FLOW', from: 'capacity', to: null, deps: ['excess'] }
+};
+
+export function findSimpleCapitalPlugin(validation) {
+  return (validation?.plugins || []).find(p => p?.type === 'simple_capital') || null;
+}
+
+export function validateSimpleCapitalSpec(plugin) {
+  const errors = [];
+  if (!plugin || typeof plugin !== 'object') return ['simple_capital plugin must be an object'];
+  if (!Array.isArray(plugin.instances) || plugin.instances.length === 0) errors.push('simple_capital plugin needs a non-empty "instances" array');
+  const names = new Set();
+  for (const [i, inst] of (plugin.instances || []).entries()) {
+    const p = `instances[${i}]`;
+    if (!inst?.name) errors.push(`${p}.name is required`);
+    else if (names.has(inst.name)) errors.push(`duplicate simple_capital instance name: ${inst.name}`);
+    else names.add(inst.name);
+    if (!inst?.sector) errors.push(`${p}.sector is required`);
+    if (!inst?.sizing_signal || typeof inst.sizing_signal !== 'string') errors.push(`${p}.sizing_signal is required`);
+    if (!inst?.roles || typeof inst.roles !== 'object') { errors.push(`${p}.roles is required`); continue; }
+    for (const role of Object.keys(inst.roles)) if (!SIMPLE_CAPITAL_ROLES[role]) errors.push(`${p}.roles: unknown role "${role}"`);
+    for (const role of Object.keys(SIMPLE_CAPITAL_ROLES)) if (!inst.roles[role]) errors.push(`${p}.roles: required role "${role}" is not mapped`);
+    if (!Array.isArray(inst.consumption)) errors.push(`${p}.consumption must be an array`);
+  }
+  return errors;
+}
+
+export function checkSimpleCapitalInstance(index, inst) {
+  const checks = [];
+  const roles = inst.roles || {};
+  const resolved = new Map();
+  const eq = (a, b) => (a == null && b == null) || (a != null && b != null && String(a).toLowerCase() === String(b).toLowerCase());
+
+  for (const [role, spec] of Object.entries(SIMPLE_CAPITAL_ROLES)) {
+    const name = roles[role];
+    const el = name ? index.get(name) : null;
+    if (!name) { checks.push(fail(`role ${role}`, 'required role is not mapped')); continue; }
+    if (!el) { checks.push(fail(`role ${role}`, `primitive not found: ${name}`)); continue; }
+    if (el.type !== spec.kind) { checks.push(fail(`role ${role}`, `${name}: expected ${spec.kind}, found ${el.type}`)); continue; }
+    resolved.set(role, el);
+    checks.push(pass(`role ${role}`, { primitive: name, type: el.type }));
+  }
+
+  for (const [role, spec] of Object.entries(SIMPLE_CAPITAL_ROLES)) {
+    if (spec.kind !== 'FLOW') continue;
+    const el = resolved.get(role);
+    if (!el) continue;
+    const wantFrom = spec.from ? roles[spec.from] : null;
+    const wantTo = spec.to ? roles[spec.to] : null;
+    const label = `flow ${role}: ${wantFrom ?? '∅'} -> ${wantTo ?? '∅'}`;
+    if (eq(el.from ?? null, wantFrom) && eq(el.to ?? null, wantTo)) checks.push(pass(label));
+    else checks.push(fail(label, `${el.name} is wired ${el.from ?? '∅'} -> ${el.to ?? '∅'}`));
+  }
+
+  for (const [role, spec] of Object.entries(SIMPLE_CAPITAL_ROLES)) {
+    const el = resolved.get(role);
+    if (!el || !spec.deps) continue;
+    const refs = formulaRefs(el);
+    for (const dep of spec.deps) {
+      const depName = roles[dep];
+      const label = `dep ${role} <- ${dep}`;
+      if (!refs.has(String(depName).toLowerCase())) { checks.push(fail(label, `${el.name} does not reference [${depName}]`)); continue; }
+      if (!index.hasLink(depName, el.name)) { checks.push(fail(label, `missing LINK ${depName} -> ${el.name}`)); continue; }
+      checks.push(pass(label));
+    }
+  }
+
+  const signal = index.get(inst.sizing_signal);
+  if (!signal) checks.push(fail('sizing signal', `primitive not found: ${inst.sizing_signal}`));
+  else if (signal.type !== 'STOCK') checks.push(fail('sizing signal', `${signal.name}: expected STOCK, found ${signal.type}`));
+  else {
+    checks.push(pass('sizing signal', { primitive: signal.name, type: signal.type }));
+    const desired = resolved.get('desired_capacity');
+    if (desired) {
+      const refs = formulaRefs(desired);
+      if (!refs.has(signal.name.toLowerCase())) checks.push(fail('desired_capacity <- sizing_signal', `${desired.name} does not directly reference [${signal.name}]`));
+      else if (!index.hasLink(signal.name, desired.name)) checks.push(fail('desired_capacity <- sizing_signal', `missing LINK ${signal.name} -> ${desired.name}`));
+      else checks.push(pass('desired_capacity <- sizing_signal'));
+    }
+  }
+
+  for (const name of inst.consumption || []) {
+    const el = index.get(name);
+    const label = `consumption ${name}`;
+    if (!el) { checks.push(fail(label, 'primitive not found')); continue; }
+    if (el.type !== 'FLOW') { checks.push(fail(label, `expected FLOW, found ${el.type}`)); continue; }
+    const src = el.from ? index.get(el.from) : null;
+    if (!src || src.type !== 'STOCK' || el.to != null) checks.push(fail(label, `${el.name} must be wired <STOCK> -> ∅`));
+    else if (!formulaRefs(el).has(String(roles.expansion).toLowerCase())) checks.push(fail(label, `${el.name} does not reference [${roles.expansion}]`));
+    else if (!index.hasLink(roles.expansion, el.name)) checks.push(fail(label, `missing LINK ${roles.expansion} -> ${el.name}`));
+    else checks.push(pass(label));
+  }
+
+  const failed = checks.filter(x => x.status === 'FAIL');
+  return {
+    name: inst.name,
+    sector: inst.sector || null,
+    classification: failed.length ? 'NON_CONFORMING' : 'CONFORMING',
+    checks,
+    variations: [],
+    failures: failed.map(x => `${x.name}: ${x.message}`)
+  };
+}
+
+export function runSimpleCapitalConformance(raw, validation, index = indexModel(raw)) {
+  const plugin = findSimpleCapitalPlugin(validation);
+  if (!plugin) return { status: 'SKIPPED', instances: [], summary: { instances: 0, conforming: 0, nonConforming: 0 } };
+  const specErrors = validateSimpleCapitalSpec(plugin);
+  if (specErrors.length) return { status: 'FAIL', specErrors, instances: [], summary: { instances: 0, conforming: 0, nonConforming: 0 } };
+  const instances = plugin.instances.map(inst => checkSimpleCapitalInstance(index, inst));
+  const nonConforming = instances.filter(i => i.classification === 'NON_CONFORMING').length;
+  return {
+    status: nonConforming ? 'FAIL' : 'PASS',
+    instances,
+    summary: { instances: instances.length, conforming: instances.length - nonConforming, nonConforming }
+  };
+}
+
+
 // Entry point: raw ModelJSON + validation JSON -> conformance report object.
 export function runLifecycleConformance(raw, validation) {
   const plugin = findKernelPlugin(validation);
@@ -248,10 +375,11 @@ export function runLifecycleConformance(raw, validation) {
   const index = indexModel(raw);
   const modelWide = checkModelWideReferences(index);
   const instances = plugin.instances.map(inst => checkInstance(index, inst, plugin));
+  const simpleCapital = runSimpleCapitalConformance(raw, validation, index);
   const anyNonConforming = instances.some(i => i.classification === 'NON_CONFORMING');
   const modelWideFail = modelWide.some(c => c.status === 'FAIL');
   return {
-    status: anyNonConforming || modelWideFail ? 'FAIL' : 'PASS',
+    status: anyNonConforming || modelWideFail || simpleCapital.status === 'FAIL' ? 'FAIL' : 'PASS',
     format: KERNEL_FORMAT,
     kernel: { roles: Object.keys(KERNEL_ROLES).length, requiredRoles: REQUIRED_ROLES.length, flows: KERNEL_FLOWS.length, stocks: KERNEL_STOCKS.length },
     legacySwitch: plugin.legacy_switch || 'Capital Lifecycle Enabled',
@@ -262,7 +390,8 @@ export function runLifecycleConformance(raw, validation) {
       nonConforming: instances.filter(i => i.classification === 'NON_CONFORMING').length
     },
     modelWide,
-    instances
+    instances,
+    simpleCapital
   };
 }
 
@@ -280,5 +409,14 @@ export function printConformance(report, log = console.log) {
     log(`    ${inst.name.padEnd(16)} ${inst.classification}  (${checked - failed}/${checked} checks)`);
     for (const f of inst.failures) log(`        - ${f}`);
     for (const v of inst.variations) log(`        ~ ${v}`);
+  }
+  if (report.simpleCapital?.status !== 'SKIPPED') {
+    log(`Simple capital conformance: ${report.simpleCapital.status}`);
+    for (const inst of report.simpleCapital.instances || []) {
+      const checked = inst.checks.length, failed = inst.failures.length;
+      log(`    ${inst.name.padEnd(16)} ${inst.classification}  (${checked - failed}/${checked} checks)`);
+      for (const f of inst.failures) log(`        - ${f}`);
+    }
+    for (const e of report.simpleCapital.specErrors || []) log(`    - ${e}`);
   }
 }
