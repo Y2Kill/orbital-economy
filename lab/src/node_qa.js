@@ -23,7 +23,8 @@ const declarationFiles = [
   path.join(nodeDir, 'construction-materials-plant.json'),
   path.join(nodeDir, 'capital-goods-plant.json')
 ];
-for (const f of [modelFile, validationFile, ...declarationFiles]) {
+const simpleFixtureFile = path.join(root, 'fixtures', 'nodes', 'regolith-mine-simple.json');
+for (const f of [modelFile, validationFile, simpleFixtureFile, ...declarationFiles]) {
   if (!fs.existsSync(f)) {
     console.error(`[FAIL] Required node QA input is missing: ${f}`);
     process.exit(2);
@@ -33,6 +34,7 @@ for (const f of [modelFile, validationFile, ...declarationFiles]) {
 const accepted = readJson(modelFile);
 const validation = readJson(validationFile);
 const declarations = declarationFiles.map(readJson);
+const simpleFixture = readJson(simpleFixtureFile);
 
 let passed = 0, failed = 0;
 function mark(ok, name, detail = '') {
@@ -268,6 +270,31 @@ await expect('9. expand-nodes --validation preserves accepted validation byte-fo
   } finally {
     fs.rmSync(tmp, { recursive: true, force: true });
   }
+});
+
+
+await expectThrows('13. simple_capital generated name conflict reports the element name', () => {
+  const bad = structuredClone(simpleFixture);
+  bad.sector = 'Regolith Extraction';
+  expandNode(bad, accepted);
+}, /conflicts with base element "A Regolith Extraction Capacity"/);
+
+await expectThrows('14. simple_capital unknown declaration field is rejected with its path', () => {
+  const bad = structuredClone(simpleFixture);
+  bad.backings = [];
+  expandNode(bad, accepted);
+}, /node\.backings: unknown field/);
+
+await expect('15. simple_capital expansion is byte-deterministic and matches prototype counts', () => {
+  const a = expandNode(simpleFixture, accepted);
+  const b = expandNode(simpleFixture, accepted);
+  const sa = JSON.stringify(a), sb = JSON.stringify(b);
+  if (sa !== sb) throw new Error('two simple_capital expansions differ byte-for-byte');
+  const counts = [a.patch.add_elements.length, a.patch.replace_formulas.length, a.patch.add_links.length];
+  if (counts[0] !== 34 || counts[1] !== 6 || counts[2] !== 78) {
+    throw new Error(`prototype count mismatch: got ${counts.join('/')}, expected 34/6/78`);
+  }
+  return `34 elements / 6 replacements / 78 links; ${sa.length} JSON bytes stable`;
 });
 
 console.log(`\nNODE SELF-TEST: ${passed} passed, ${failed} failed`);

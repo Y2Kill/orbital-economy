@@ -1,0 +1,31 @@
+{
+  "type": "simple_capital",
+  "version": 1,
+  "sector": "Regolith Mine",
+  "colonies": ["A", "B"],
+  "switch": "Regolith Capital Enabled",
+  "initial_capacity": { "A": 7, "B": 5 },
+  "parameters": {
+    "Capacity Reserve Factor": 1.25,
+    "Construction Time": 90,
+    "Retirement Time": 360,
+    "Depreciation Rate": 0.0001,
+    "Capital Goods per Capacity": 2,
+    "Construction Materials per Capacity": 2
+  },
+  "sizing": {
+    "signal": {
+      "name": "{C} Regolith Demand Signal",
+      "create": true,
+      "demand": "{C} Regolith Requirement",
+      "initial": 0.35,
+      "adjustment_time": { "name": "Regolith Demand Signal Adjustment Time", "value": 3 }
+    }
+  },
+  "capacity_output": { "variable": "{C} Regolith Extraction Capacity", "replaces": "{C} Regolith Base Extraction Capacity" },
+  "backing": [
+    { "good": "Capital Goods", "fulfillment": "{C} Capital Goods Fulfillment", "inventory": "{C} Capital Goods Inventory", "demand": "{C} Capital Goods Demand" },
+    { "good": "Construction Materials", "fulfillment": "{C} Construction Materials Fulfillment", "inventory": "{C} Construction Materials Inventory", "demand": "{C} Construction Materials Demand" }
+  ],
+  "planet_process": "regolith"
+}

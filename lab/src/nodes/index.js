@@ -1,4 +1,5 @@
 import { expandCapitalLifecycle } from './capital_lifecycle.js';
+import { expandSimpleCapital } from './simple_capital.js';
 
 const isObj = x => !!x && typeof x === 'object' && !Array.isArray(x);
 const isString = x => typeof x === 'string' && x.length > 0;
@@ -99,7 +100,8 @@ function validateCapitalLifecycle(decl, path, errors) {
 }
 
 const REGISTRY = new Map([
-  ['capital_lifecycle', { validate: validateCapitalLifecycle, expand: expandCapitalLifecycle }]
+  ['capital_lifecycle', { validate: validateCapitalLifecycle, expand: expandCapitalLifecycle }],
+  ['simple_capital', { validate: validateCapitalLifecycle, expand: expandSimpleCapital }]
 ]);
 
 export function validateNodeDeclaration(decl, path = 'node') {
