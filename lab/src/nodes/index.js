@@ -69,7 +69,15 @@ function validateCapitalLifecycle(decl, path, errors) {
       if ('create' in signal && typeof signal.create !== 'boolean') errors.push(`${sp}.create: must be boolean`);
       if (signal.create === true) {
         stringField(signal, 'demand', sp, errors);
-        numberField(signal, 'initial', sp, errors);
+        // initial: one number for all colonies, or an object with a number per colony
+        if (isObj(signal.initial) && Array.isArray(decl.colonies)) {
+          const allowed = new Set(decl.colonies.filter(isString));
+          unknownFields(signal.initial, allowed, `${sp}.initial`, errors);
+          for (const colony of allowed) {
+            if (!(colony in signal.initial)) errors.push(`${sp}.initial.${colony}: required field is missing`);
+            else if (!isNumber(signal.initial[colony])) errors.push(`${sp}.initial.${colony}: must be a finite number`);
+          }
+        } else numberField(signal, 'initial', sp, errors);
         required(signal, 'adjustment_time', sp, errors);
         const at = signal.adjustment_time;
         if (!isObj(at)) errors.push(`${sp}.adjustment_time: must be an object`);
@@ -85,9 +93,16 @@ function validateCapitalLifecycle(decl, path, errors) {
   const cp = `${path}.capacity_output`;
   if (!isObj(decl.capacity_output)) errors.push(`${cp}: must be an object`);
   else {
-    unknownFields(decl.capacity_output, new Set(['variable','replaces']), cp, errors);
+    unknownFields(decl.capacity_output, new Set(['variable','replaces','cap']), cp, errors);
     stringField(decl.capacity_output, 'variable', cp, errors);
-    stringField(decl.capacity_output, 'replaces', cp, errors);
+    // replaces: the capacity constant read by the variable is swapped for the node's capacity.
+    // cap (simple_capital only): the variable is an uncapped rate; the node caps it smoothly by its capacity.
+    const hasCap = 'cap' in decl.capacity_output, hasRep = 'replaces' in decl.capacity_output;
+    if (hasCap && hasRep) errors.push(`${cp}: use either replaces or cap, not both`);
+    else if (hasCap) {
+      if (decl.type !== 'simple_capital') errors.push(`${cp}.cap: only simple_capital supports cap`);
+      else if (decl.capacity_output.cap !== 'smooth') errors.push(`${cp}.cap: must be "smooth"`);
+    } else stringField(decl.capacity_output, 'replaces', cp, errors);
   }
 
   if (!Array.isArray(decl.backing) || decl.backing.length === 0) errors.push(`${path}.backing: must be a non-empty array`);

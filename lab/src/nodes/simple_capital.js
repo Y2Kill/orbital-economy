@@ -33,6 +33,7 @@ export function simpleCapitalGeneratedNames(decl) {
       const signal = X_(sig.name, X);
       names.push(signal, `${signal} Increase`, `${signal} Decrease`);
     }
+    if (decl.capacity_output.cap) names.push(`${p} Uncapped Output`);
     names.push(
       `${p} Capacity`,
       `${p} Desired Capacity`,
@@ -115,7 +116,7 @@ export function expandSimpleCapital(decl, base) {
     if (sig.create) {
       const demand = X_(sig.demand, X), adj = sig.adjustment_time.name;
       requireBase(demand, `sizing.signal.demand[${X}]`);
-      S(signal, sig.initial, 'demand signal');
+      S(signal, typeof sig.initial === 'object' ? sig.initial[X] : sig.initial, 'demand signal');
       F(`${signal} Increase`, null, signal, `IfThenElse([${demand}] > [${signal}], ([${demand}] - [${signal}]) / [${adj}], 0)`, 'demand signal increase');
       F(`${signal} Decrease`, signal, null, `IfThenElse([${signal}] > [${demand}], ([${signal}] - [${demand}]) / [${adj}], 0)`, 'demand signal decrease');
     }
@@ -151,10 +152,17 @@ export function expandSimpleCapital(decl, base) {
     }
 
     const cap = X_(decl.capacity_output.variable, X);
-    const baseRef = `[${X_(decl.capacity_output.replaces, X)}]`;
     const oc = old(cap);
-    if (!oc.includes(baseRef)) throw new Error(`${cap} does not read ${baseRef}`);
-    pushReplacement(cap, `IfThenElse([${SW}] = 1, ${oc.replaceAll(baseRef, `[${p} Capacity]`)}, ${oc})`);
+    if (decl.capacity_output.cap) {
+      // Keep the original rate formula verbatim and apply the same smooth saturation form as ore mining.
+      const U = `${p} Uncapped Output`;
+      V(U, oc, 'uncapped output');
+      pushReplacement(cap, `IfThenElse([${SW}] = 1, [${U}] / (1 + ([${U}] / ([${p} Capacity] + 0.001)) ^ 8) ^ 0.125, ${oc})`);
+    } else {
+      const baseRef = `[${X_(decl.capacity_output.replaces, X)}]`;
+      if (!oc.includes(baseRef)) throw new Error(`${cap} does not read ${baseRef}`);
+      pushReplacement(cap, `IfThenElse([${SW}] = 1, ${oc.replaceAll(baseRef, `[${p} Capacity]`)}, ${oc})`);
+    }
     for (const b of backing) {
       const od = old(b.demand);
       pushReplacement(b.demand, `IfThenElse([${SW}] = 1, ${od} + [${p} Desired Expansion] * [${P} ${b.good} per Capacity], ${od})`);

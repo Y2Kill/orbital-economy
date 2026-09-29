@@ -33,7 +33,8 @@ const declarationFiles = [
   path.join(nodeDir, 'capital-goods-plant.json')
 ];
 const simpleFixtureFile = path.join(root, 'fixtures', 'nodes', 'regolith-mine-simple.json');
-for (const f of [modelFile, validationFile, simpleFixtureFile, ...declarationFiles]) {
+const powerFixtureFile = path.join(root, 'fixtures', 'nodes', 'power-resource-mine-simple.json');
+for (const f of [modelFile, validationFile, simpleFixtureFile, powerFixtureFile, ...declarationFiles]) {
   if (!fs.existsSync(f)) {
     console.error(`[FAIL] Required node QA input is missing: ${f}`);
     process.exit(2);
@@ -44,6 +45,7 @@ const accepted = readJson(modelFile);
 const validation = readJson(validationFile);
 const declarations = declarationFiles.map(readJson);
 const simpleFixture = readJson(simpleFixtureFile);
+const powerFixture = readJson(powerFixtureFile);
 const simpleDeclarations = fs.readdirSync(nodeDir)
   .filter(name => name.endsWith('.json'))
   .map(name => path.join(nodeDir, name))
@@ -72,6 +74,17 @@ async function expectThrows(name, fn, pattern) {
     const message = e?.message || String(e);
     mark(pattern.test(message), name, message);
   }
+}
+
+async function requireThrow(fn, pattern, label) {
+  try {
+    await fn();
+  } catch (e) {
+    const message = e?.message || String(e);
+    if (pattern.test(message)) return message;
+    throw new Error(`${label}: wrong error: ${message}`);
+  }
+  throw new Error(`${label}: expected an exception`);
 }
 
 function splitTopLevelArgs(inner) {
@@ -474,6 +487,72 @@ await expect('15. simple_capital expansion is byte-deterministic and matches pro
     throw new Error(`prototype count mismatch: got ${counts.join('/')}, expected 34/6/78`);
   }
   return `34 elements / 6 replacements / 78 links; ${sa.length} JSON bytes stable`;
+});
+
+
+
+let powerState = null;
+
+await expect('16. smooth-cap fixture expands byte-deterministically with verbatim uncapped/old formulas', () => {
+  const alreadyPresent = accepted.elements.some(e => e.type !== 'LINK' && e.name === `${powerFixture.colonies[0]} ${powerFixture.sector} Capacity`);
+  const acceptedDecl = simpleDeclarations.find(x => x.decl.sector === powerFixture.sector)?.decl || null;
+  const acceptedLayer = alreadyPresent && acceptedDecl ? layers.get(acceptedDecl) : null;
+  if (alreadyPresent && !acceptedLayer) throw new Error(`${powerFixture.sector} is in the accepted model but its simple_capital layer cannot be identified`);
+  const baseModel = alreadyPresent ? acceptedLayer.base : accepted;
+  const a = expandNode(powerFixture, baseModel);
+  const b = expandNode(powerFixture, baseModel);
+  const sa = JSON.stringify(a), sb = JSON.stringify(b);
+  if (sa !== sb) throw new Error('two power-resource expansions differ byte-for-byte');
+  const counts = [a.patch.add_elements.length, a.patch.replace_formulas.length, a.patch.add_links.length];
+  if (counts[0] !== 36 || counts[1] !== 6 || counts[2] !== 94) {
+    throw new Error(`prototype count mismatch: got ${counts.join('/')}, expected 36/6/94`);
+  }
+  for (const X of powerFixture.colonies) {
+    const target = powerFixture.capacity_output.variable.replaceAll('{C}', X);
+    const original = baseModel.elements.find(e => e.type !== 'LINK' && e.name === target)?.behavior?.value;
+    if (original == null) throw new Error(`missing base formula for ${target}`);
+    const uncappedName = `${X} ${powerFixture.sector} Uncapped Output`;
+    const uncapped = a.patch.add_elements.find(e => e.name === uncappedName);
+    if (!uncapped || uncapped.behavior.value !== original) throw new Error(`${uncappedName}: formula is not verbatim base formula`);
+    const replacement = a.patch.replace_formulas.find(r => r.name === target);
+    if (!replacement) throw new Error(`missing replacement for ${target}`);
+    if (oldBranch(replacement.value, powerFixture.switch, target) !== original) throw new Error(`${target}: old branch is not verbatim base formula`);
+  }
+  powerState = { base: baseModel, expanded: a, alreadyPresent, acceptedLayer };
+  return `36 elements / 6 replacements / 94 links; ${sa.length} JSON bytes stable`;
+});
+
+await expect('20. capacity_output rejects replaces+cap, lifecycle cap, and unsupported cap value with paths', async () => {
+  const both = structuredClone(powerFixture);
+  both.capacity_output.replaces = '{C} Mining Capacity';
+  await requireThrow(() => expandNode(both, powerState?.base || accepted), /node\.capacity_output: use either replaces or cap, not both/, 'replaces+cap');
+
+  const lifecycleCap = structuredClone(decl);
+  delete lifecycleCap.capacity_output.replaces;
+  lifecycleCap.capacity_output.cap = 'smooth';
+  await requireThrow(() => expandNode(lifecycleCap, base), /node\.capacity_output\.cap: only simple_capital supports cap/, 'capital_lifecycle cap');
+
+  const hard = structuredClone(powerFixture);
+  hard.capacity_output.cap = 'hard';
+  await requireThrow(() => expandNode(hard, powerState?.base || accepted), /node\.capacity_output\.cap: must be "smooth"/, 'cap hard');
+  return 'all three invalid forms rejected with declaration paths';
+});
+
+await expect('21. per-colony initial requires exact colony keys and initializes each signal stock separately', async () => {
+  const missing = structuredClone(powerFixture);
+  delete missing.sizing.signal.initial.B;
+  await requireThrow(() => expandNode(missing, powerState?.base || accepted), /node\.sizing\.signal\.initial\.B: required field is missing/, 'missing B');
+
+  const extra = structuredClone(powerFixture);
+  extra.sizing.signal.initial.C = 1;
+  await requireThrow(() => expandNode(extra, powerState?.base || accepted), /node\.sizing\.signal\.initial\.C: unknown field/, 'extra C');
+
+  const good = expandNode(powerFixture, powerState?.base || accepted);
+  const a = good.patch.add_elements.find(e => e.name === 'A Power Resource Demand Signal');
+  const b = good.patch.add_elements.find(e => e.name === 'B Power Resource Demand Signal');
+  if (a?.behavior?.initial_value !== powerFixture.sizing.signal.initial.A) throw new Error(`A initial = ${a?.behavior?.initial_value}`);
+  if (b?.behavior?.initial_value !== powerFixture.sizing.signal.initial.B) throw new Error(`B initial = ${b?.behavior?.initial_value}`);
+  return `A=${a.behavior.initial_value}, B=${b.behavior.initial_value}`;
 });
 
 console.log(`\nNODE SELF-TEST: ${passed} passed, ${failed} failed`);
