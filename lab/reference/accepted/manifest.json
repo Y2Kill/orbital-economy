@@ -1,15 +1,15 @@
 {
   "status": "ACCEPTED",
-  "model_name": "Orbital Economy v7.7.5 r1 — Regolith Capital",
-  "model_file": "orbital_economy_v7_7_5_r1_modeljson.json",
-  "model_sha256": "b0b60e63f24bb1791a1d06d631a681a8d96fd820bcccdf79932715ac0d0f9c8c",
-  "validation_file": "validation-v7.7.5.json",
-  "validation_sha256": "ff548ccb36309b5efdfecd1411656eae5f3e3209c7ecad96c5ccd6bedddd68bd",
-  "accepted_date": "2026-09-28",
+  "model_name": "Orbital Economy v7.7.6 r1 — Ore Capital",
+  "model_file": "orbital_economy_v7_7_6_r1_modeljson.json",
+  "model_sha256": "d274f7b9dcc11dbfe3730c1a88fe8fd3cf242e09a52a3e51e9082ab8420de8dd",
+  "validation_file": "validation-v7.7.6.json",
+  "validation_sha256": "0cac6c2436771ceae56fcf2b6a2137c9cc2d976c018b7e388494dffcc749a8d9",
+  "accepted_date": "2026-09-29",
   "engine": "simulation@9.0.0",
   "notes": [
-    "v7.7.5: regolith extraction capacity is simple capital (a simple_capital node per colony, model/nodes/regolith-mine.json), sized to a new smoothed regolith demand-signal stock; the first sector generated from a node declaration of type simple_capital. See docs/tasks/017-regolith-capital/.",
-    "Modes 0-37 reproduce v7.7.4 r1 exactly (Regolith Capital Enabled = 0); Mode 38 baseline (A mine grows, then disposes of surplus), Mode 39 transport surge in which colony B rebuilds its regolith mine.",
+    "v7.7.6: ore mining capacity is simple capital (a simple_capital node per colony, model/nodes/ore-mine.json), sized to a new smoothed ore demand-signal stock; the last constant-capacity process under Planet v1 P2. See docs/tasks/019-ore-capital/.",
+    "Modes 0-39 reproduce v7.7.5 r1 exactly (Ore Capital Enabled = 0); Mode 40 baseline (A mine grows past 70, B winds down), Mode 41 transport surge in which colony B rebuilds its ore mine and draws its ore inventory down.",
     "Exact numbers are defined on the canonical platform (docs/VERSIONING_AND_AUTHORITY.md section 8); series-digest.windows.json is the golden."
   ]
 }

@@ -40,7 +40,9 @@ docs/tasks/NNN-имя/
               от ответа зависят sums_by, объём самопроверки и шаблон выдачи; входные файлы, которые агент
               не может получить сам, кладём в main заранее (§9.4)
            0a. задачи по модели: skeleton-патч → node src/cli.js loops <skeleton.json> → 0 петель (контракт §8 п. 1, 13);
-              черновик validation → node src/cli.js check-validation <draft.json> <skeleton.json> → 0 ошибок (с Lab v0.9.10)
+              черновик validation → node src/cli.js check-validation <draft.json> <skeleton.json> → 0 ошибок (с Lab v0.9.10);
+              самотесты стенда в копии дерева, где skeleton и черновик validation лежат в lab/input и lab/reference/accepted
+              (и декларации — в model/nodes/): то, что сломается при продвижении, чиним в main до выдачи (урок 011–017, задача 019)
            1. TASK_RU.md + scope.json → коммит в main, push
            2. выдаём агенту короткий текст (шаблон ниже)
 агент      3. ветка task/NNN-имя от текущего main; работа; node tools/build_sums.mjs

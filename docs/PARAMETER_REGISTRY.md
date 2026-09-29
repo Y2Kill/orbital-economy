@@ -1,17 +1,17 @@
 # Orbital Economy — реестр внешних параметров
 
-- generated: 2026-09-28T12:55:21.134Z
-- model: Orbital Economy v7.7.5 r1 — Regolith Capital — SHA-256 `b0b60e63f24bb1791a1d06d631a681a8d96fd820bcccdf79932715ac0d0f9c8c`
-- annotations: docs/PARAMETER_ANNOTATIONS.json (SHA-256 `630f5fefed4f3c4652b33d3664472a44c384a2247e599529444aaedc51e4dc35`)
+- generated: 2026-09-29T15:04:25.222Z
+- model: Orbital Economy v7.7.6 r1 — Ore Capital — SHA-256 `d274f7b9dcc11dbfe3730c1a88fe8fd3cf242e09a52a3e51e9082ab8420de8dd`
+- annotations: docs/PARAMETER_ANNOTATIONS.json (SHA-256 `8f2b8daec856f68ffcc6dcd9d8a6e0b7df3f8f9966c41bfe4c92df6bc7b4abf9`)
 
 Всё, что модель не выводит сама: числовые константы, начальные запасы, переключатели, тестовые множители. Инвентарь сгенерирован из ModelJSON; аннотации («роль / что меняет / доказательство») ведутся вручную и версионируются вместе с baseline.
 
 ## Сводка
 
-- внешних величин: **413** (константы 273, начальные запасы 93, переключатели 12, тестовая обвязка 35)
-- по колониям: A 114, B 114, глобальные 185
-- аннотировано: **239 / 413** (58 %)
-- несимметричных пар A/B: **50**, из них без аннотации: **0**
+- внешних величин: **425** (константы 280, начальные запасы 97, переключатели 13, тестовая обвязка 35)
+- по колониям: A 116, B 116, глобальные 193
+- аннотировано: **251 / 425** (59 %)
+- несимметричных пар A/B: **51**, из них без аннотации: **0**
 
 ## Несимметричные пары A/B — что задаёт различия колоний
 
@@ -35,6 +35,7 @@
 | Wage | Labor | 100 | 140 | Входит в Metal Unit Cost (0.1×) и Electronics Unit Cost (0.05×): B дороже на 4/ед. металла и 2/ед. электроники. В v7.4 после исчезновения дешёвого feedstock B — второй фактор, из-за которого B теряет преимущество в электронике. |
 | Mining Capacity | Metal | 70 | 28 | Мягкий потолок Mining Rate. У A в baseline не связывает (добыча ~55); у B в связанном мире добыча ~11 ≪ 28. Именно поэтому шок Mode 18 сделан у A: ×0.5 у A режет плавку 39→25, ×0.5 у B ничего не меняет. |
 | Ore Base Cost | Metal | 4 | 14 | Определяет Ore Price → Metal Unit Cost → Domestic Offer → Market Price. Разрыв ×3.5 делает металл A дешевле (Mode 17 @1080: 30.5 vs 37.4) и задаёт направление торговли металлом A→B на всех сценариях. В v7.4 через Feedstock Price = Market Price это же преимущество переносится на электронику. |
+| Ore Mine Capacity | Metal | 70 | 28 | Seeds mine capacity at the accepted A Mining Capacity; A/B are intentionally asymmetric (70 vs 28). |
 | Refinery Active Capacity | Metal | 35 | 28 | Старт без mothballed-резерва. |
 | Refinery Installed Capacity | Metal | 35 | 28 | Стартовый капитал плавки; далее эндогенно: A растёт до 57–61 к 1080, B сжимается до 2–8 (импорт вместо плавки). |
 | Test 16 Metal Demand Applies | Metal | 0 | 1 | При 1 разрешает существующий множитель v7.3 Sustained Metal Demand Growth Multiplier; при 0 заменяет его точным нейтральным ×1. Сохраняет прежнюю одностороннюю семантику при зеркальной формуле A/B. |
@@ -140,6 +141,8 @@
 | A Metal Target Inventory | constant | 500 | Целевой запас металла (500; симметрично). | Через Metal Shortage задаёт дефицитную надбавку к Domestic Offer Price и слагаемое в Desired Smelting Rate. |  |
 | A Mining Capacity | constant | 70 / 28 | Потолок добычи руды (A 70 / B 28 ore/день). | Мягкий потолок Mining Rate. У A в baseline не связывает (добыча ~55); у B в связанном мире добыча ~11 ≪ 28. Именно поэтому шок Mode 18 сделан у A: ×0.5 у A режет плавку 39→25, ×0.5 у B ничего не меняет. | FEEDBACK_R1 §5; Mode 18 series. |
 | A Ore Base Cost | constant | 4 / 14 | Стоимость руды колонии (A 4 / B 14) — главный источник сравнительного преимущества A в металле. | Определяет Ore Price → Metal Unit Cost → Domestic Offer → Market Price. Разрыв ×3.5 делает металл A дешевле (Mode 17 @1080: 30.5 vs 37.4) и задаёт направление торговли металлом A→B на всех сценариях. В v7.4 через Feedstock Price = Market Price это же преимущество переносится на электронику. | Mode 12/17 таблицы (ACCEPTANCE_R2); Mode 4 (Reverse Advantage) меняет именно этот параметр и разворачивает торговлю. |
+| A Ore Demand Signal | initial_stock | 25 | Initial smoothed ore-demand signal for colony A, value 25. | Seeds the STOCK sizing signal; the shared initial value intentionally differs from A's actual starting demand and converges with a 3-day adjustment time. | draft/ore-mine.json; V7_7_6_ARCHITECTURE_SPEC §1. |
+| A Ore Mine Capacity | initial_stock | 70 / 28 | Initial simple-capital ore-mine capacity for colony A, value 70. | Seeds mine capacity at the accepted A Mining Capacity; A/B are intentionally asymmetric (70 vs 28). | TASK_RU §2 and V7_7_6_ARCHITECTURE_SPEC §0–§2 explicitly require A=70, B=28. |
 | A Ore per Metal | constant | 1.4 | Расход руды на металл (1.4; симметрично). | Материалоёмкость плавки; вместе с Ore Base Cost задаёт сырьевую часть Metal Unit Cost (A 5.6, B 19.6). |  |
 | A Reference Metal Price | constant | 40 | Референсная цена металла для эластичности спроса (40; симметрично). | Local Demand = Base × (40 / Market Price)^elasticity: при цене ниже 40 спрос выше базового и наоборот. В Mode 18 цена B 57 → спрос B падает. | Mode 18 series. |
 | A Refinery Active Capacity | initial_stock | 35 / 28 | Начальная активная мощность refinery (= installed). | Старт без mothballed-резерва. |  |
@@ -159,6 +162,8 @@
 | B Metal Target Inventory | constant | 500 | Целевой запас металла (500; симметрично). | Через Metal Shortage задаёт дефицитную надбавку к Domestic Offer Price и слагаемое в Desired Smelting Rate. |  |
 | B Mining Capacity | constant | 28 / 70 | Потолок добычи руды (A 70 / B 28 ore/день). | Мягкий потолок Mining Rate. У A в baseline не связывает (добыча ~55); у B в связанном мире добыча ~11 ≪ 28. Именно поэтому шок Mode 18 сделан у A: ×0.5 у A режет плавку 39→25, ×0.5 у B ничего не меняет. | FEEDBACK_R1 §5; Mode 18 series. |
 | B Ore Base Cost | constant | 14 / 4 | Стоимость руды колонии (A 4 / B 14) — главный источник сравнительного преимущества A в металле. | Определяет Ore Price → Metal Unit Cost → Domestic Offer → Market Price. Разрыв ×3.5 делает металл A дешевле (Mode 17 @1080: 30.5 vs 37.4) и задаёт направление торговли металлом A→B на всех сценариях. В v7.4 через Feedstock Price = Market Price это же преимущество переносится на электронику. | Mode 12/17 таблицы (ACCEPTANCE_R2); Mode 4 (Reverse Advantage) меняет именно этот параметр и разворачивает торговлю. |
+| B Ore Demand Signal | initial_stock | 25 | Initial smoothed ore-demand signal for colony B, value 25. | Seeds the STOCK sizing signal; the shared initial value intentionally differs from B's actual starting demand and causes only the documented startup transient. | draft/ore-mine.json; V7_7_6_ARCHITECTURE_SPEC §1. |
+| B Ore Mine Capacity | initial_stock | 28 / 70 | Initial simple-capital ore-mine capacity for colony B, value 28. | Seeds mine capacity at the accepted B Mining Capacity; A/B are intentionally asymmetric (70 vs 28). | TASK_RU §2 and V7_7_6_ARCHITECTURE_SPEC §0–§2 explicitly require A=70, B=28. |
 | B Ore per Metal | constant | 1.4 | Расход руды на металл (1.4; симметрично). | Материалоёмкость плавки; вместе с Ore Base Cost задаёт сырьевую часть Metal Unit Cost (A 5.6, B 19.6). |  |
 | B Reference Metal Price | constant | 40 | Референсная цена металла для эластичности спроса (40; симметрично). | Local Demand = Base × (40 / Market Price)^elasticity: при цене ниже 40 спрос выше базового и наоборот. В Mode 18 цена B 57 → спрос B падает. | Mode 18 series. |
 | B Refinery Active Capacity | initial_stock | 28 / 35 | Начальная активная мощность refinery (= installed). | Старт без mothballed-резерва. |  |
@@ -176,6 +181,13 @@
 | Metal Input Adjustment Time | constant | 20 | Время подстройки буфера металла у Electronics (20 д). | Скорость, с которой отклонение буфера от цели превращается в дополнительный спрос на поставки. |  |
 | Metal Input Target Days | constant | 20 | Целевой буфер металла у Electronics в днях планируемого потребления (20). | Определяет Metal Input Target Inventory = pre-energy выпуск × 0.25 × 20 (A ~110, B ~75 единиц). Больше — больше запас и мягче реакция на перебои. | Mode 17 series: A Feedstock Inventory ~115 @1080. |
 | Metal per Capital Goods Unit | constant | 1 | Metal input coefficient of one abstract capital-goods unit. | Scales metal withdrawn from local Metal Inventory by the capital-goods production rate. | Start value 1 is specified by V7_5_ARCHITECTURE_SPEC §2; calibration parameter, no physical justification at this aggregation level. |
+| Ore Demand Signal Adjustment Time | constant | 3 | Ore demand-signal adjustment time, value 3 days. | Controls lag from Positive Desired Mining Rate to the STOCK signal used for mine sizing and avoids same-step demand feedback. | V7_7_6_ARCHITECTURE_SPEC §1–§2; simple_capital STOCK sizing rule in lab/docs/NODES_RU.md. |
+| Ore Mine Capacity Reserve Factor | constant | 1.25 | Ore-mine desired-capacity reserve factor, value 1.25. | Scales the smoothed Ore Demand Signal into desired mine capacity. | V7_7_6_ARCHITECTURE_SPEC §1 and draft/ore-mine.json. |
+| Ore Mine Capital Goods per Capacity | constant | 0.5 | Capital Goods requirement per unit of new ore-mine capacity, value 0.5. | Scales Desired Expansion into Capital Goods demand and actual expansion into Capital Goods consumption. | V7_7_6_ARCHITECTURE_SPEC §1 and draft/ore-mine.json. |
+| Ore Mine Construction Materials per Capacity | constant | 0.5 | Construction Materials requirement per unit of new ore-mine capacity, value 0.5. | Scales Desired Expansion into Construction Materials demand and actual expansion into Construction Materials consumption. | V7_7_6_ARCHITECTURE_SPEC §1 and draft/ore-mine.json. |
+| Ore Mine Construction Time | constant | 90 | Ore-mine capacity construction time, value 90 days. | Divides the positive capacity gap to set desired expansion speed before backing-resource coverage limits it. | V7_7_6_ARCHITECTURE_SPEC §1 and draft/ore-mine.json. |
+| Ore Mine Depreciation Rate | constant | 0.0001 | Ore-mine capacity depreciation rate, value 0.0001 per day. | Applies continuous physical attrition to Ore Mine Capacity while the mechanic is enabled. | V7_7_6_ARCHITECTURE_SPEC §1 and draft/ore-mine.json. |
+| Ore Mine Retirement Time | constant | 360 | Ore-mine capacity surplus retirement time, value 360 days. | Controls removal rate of capacity above desired capacity. | V7_7_6_ARCHITECTURE_SPEC §1 and draft/ore-mine.json. |
 | Refinery Construction Time | constant | 180 | Отраслевая policy kernel капитала (180 д). | Не часть kernel-контракта — отраслевая параметризация (KERNEL_SPEC §4.3). Сравнение секторов: CAPITAL_LIFECYCLE_SECTOR_MAPPING, последняя таблица. |  |
 | Refinery Installed Reserve Factor | constant | 1.15 | Отраслевая policy kernel капитала (1.15). | Не часть kernel-контракта — отраслевая параметризация (KERNEL_SPEC §4.3). Сравнение секторов: CAPITAL_LIFECYCLE_SECTOR_MAPPING, последняя таблица. |  |
 | Refinery Operating Reserve Factor | constant | 1.1 | Отраслевая policy kernel капитала (1.10). | Не часть kernel-контракта — отраслевая параметризация (KERNEL_SPEC §4.3). Сравнение секторов: CAPITAL_LIFECYCLE_SECTOR_MAPPING, последняя таблица. |  |
@@ -305,6 +317,7 @@
 | Construction Materials Enabled | switch | 1 | v7.7 master switch. | 0 preserves Modes 0-26 exactly; 1 makes colonial expansion require both Capital Goods and Construction Materials. | V7_7_ARCHITECTURE_SPEC §0–§3. |
 | Construction Materials Energy Enabled | switch | 1 | v7.7.2 Construction Materials energy-coupling master switch. | 0 preserves Modes 0-31 exactly; 1 makes Construction Materials processing request and receive energy through the common colony allocator. | V7_7_2_ARCHITECTURE_SPEC §0–§3. |
 | Intermediate Inputs Enabled | switch | 1 | Переключатель v7.4 (1 в сыром файле; 0 в Modes 0–16; 1 в 17–20). | При 0 — точное воспроизведение v7.3 r2 (Feedstock из ∅ по legacy-цене). При 1 — металл как физический вход, Feedstock Extraction = 0, Feedstock Price = Market Price, Desired Smelting Rate += поставки. Только форма IfThenElse(switch, new, old). | CHECK_CANDIDATE r2: Modes 0–16 changed=0, maxAbs=0. |
+| Ore Capital Enabled | switch | 1 | Ore-mining simple-capital master switch, raw value 1. | 0 preserves accepted Modes 0-39 exactly; 1 makes effective mining capacity read ore-mine capital and enables mine expansion, depreciation, retirement, and backing-resource sinks. | V7_7_6_ARCHITECTURE_SPEC §0–§3; owner node declaration. |
 | Regolith Capital Enabled | switch | 1 | Regolith simple-capital master switch, raw value 1. | 0 preserves accepted Modes 0-37 exactly; 1 makes regolith extraction capacity read mine capital and enables mine expansion, depreciation, retirement, and backing-resource sinks. | V7_7_5_ARCHITECTURE_SPEC §0–§3; owner node declaration. |
 | Transport Construction Materials Enabled | switch | 1 | v7.7.1 shared-Transport Construction Materials master switch. | 0 preserves Modes 0-29 exactly; 1 makes shared Transport expansion require both Capital Goods and Construction Materials. | V7_7_1_ARCHITECTURE_SPEC §0–§3. |
 | Priority Stress A Ore Base Cost | test_wiring | 4 | Нейтральная A-сторона override-константа ore base cost для Mode 8. | Равна A Ore Base Cost = 4; позволяет A Effective Ore Base Cost иметь ту же test chain, что B, сохраняя прежний результат. |  |
@@ -452,7 +465,9 @@
 | A Ore Adjustment Time | constant | A | 40 | = |  |  |
 | A Ore Base Cost | constant | A | 4 | **14** |  | ✓ |
 | A Ore Buffer | constant | A | 50 | = |  |  |
+| A Ore Demand Signal | initial_stock | A | 25 | = | Generated simple_capital demand signal for A Ore Demand Signal. | ✓ |
 | A Ore Inventory | initial_stock | A | 2500 | = |  |  |
+| A Ore Mine Capacity | initial_stock | A | 70 | **28** | Generated simple_capital capacity for A Ore Mine Capacity. | ✓ |
 | A Ore per Metal | constant | A | 1.4 | = |  | ✓ |
 | A Ore Scarcity Strength | constant | A | 0.4 | = |  |  |
 | A Ore Target Inventory | constant | A | 2500 | = |  |  |
@@ -486,7 +501,9 @@
 | B Ore Adjustment Time | constant | B | 40 | = |  |  |
 | B Ore Base Cost | constant | B | 14 | **4** |  | ✓ |
 | B Ore Buffer | constant | B | 50 | = |  |  |
+| B Ore Demand Signal | initial_stock | B | 25 | = | Generated simple_capital demand signal for B Ore Demand Signal. | ✓ |
 | B Ore Inventory | initial_stock | B | 2500 | = |  |  |
+| B Ore Mine Capacity | initial_stock | B | 28 | **70** | Generated simple_capital capacity for B Ore Mine Capacity. | ✓ |
 | B Ore per Metal | constant | B | 1.4 | = |  | ✓ |
 | B Ore Scarcity Strength | constant | B | 0.4 | = |  |  |
 | B Ore Target Inventory | constant | B | 2500 | = |  |  |
@@ -513,6 +530,13 @@
 | Metal Input Adjustment Time | constant | global | 20 |  | Adjustment time in days for the Electronics Metal input buffer demand. Initial candidate r1 value from the approved specification. | ✓ |
 | Metal Input Target Days | constant | global | 20 |  | Target Electronics-owned Metal/feedstock buffer measured in days of coupled consumption. Initial candidate r1 value from the approved specification. | ✓ |
 | Metal per Capital Goods Unit | constant | global | 1 |  | Physical metal input per abstract capital-goods unit. | ✓ |
+| Ore Demand Signal Adjustment Time | constant | global | 3 |  | Generated simple_capital signal adjustment time for Ore Demand Signal Adjustment Time. | ✓ |
+| Ore Mine Capacity Reserve Factor | constant | global | 1.25 |  | Generated simple_capital parameter for Ore Mine Capacity Reserve Factor. | ✓ |
+| Ore Mine Capital Goods per Capacity | constant | global | 0.5 |  | Generated simple_capital parameter for Ore Mine Capital Goods per Capacity. | ✓ |
+| Ore Mine Construction Materials per Capacity | constant | global | 0.5 |  | Generated simple_capital parameter for Ore Mine Construction Materials per Capacity. | ✓ |
+| Ore Mine Construction Time | constant | global | 90 |  | Generated simple_capital parameter for Ore Mine Construction Time. | ✓ |
+| Ore Mine Depreciation Rate | constant | global | 0.0001 |  | Generated simple_capital parameter for Ore Mine Depreciation Rate. | ✓ |
+| Ore Mine Retirement Time | constant | global | 360 |  | Generated simple_capital parameter for Ore Mine Retirement Time. | ✓ |
 | Refinery Activation Time | constant | global | 20 |  | Days required to bring mothballed refinery capacity back into active service. |  |
 | Refinery Construction Time | constant | global | 180 |  | Physical timescale for closing an installed-capacity shortage through construction. | ✓ |
 | Refinery Decommissioning Time | constant | global | 540 |  | Physical time from decommissioning commitment to fully retired refinery capacity. |  |
@@ -692,6 +716,7 @@
 | Construction Materials Enabled | switch | global | 1 (сценарии: {"0":0,"1":0,"2":0,"3":0,"4":0,"5":0,"6":0,"7":0,"8":0,"9":0…) |  | v7.7 master switch: construction materials physically constrain colonial capacity expansion. | ✓ |
 | Construction Materials Energy Enabled | switch | global | 1 (сценарии: {"0":0,"1":0,"2":0,"3":0,"4":0,"5":0,"6":0,"7":0,"8":0,"9":0…) |  | v7.7.2 switch: makes Construction Materials processing participate in the colony energy allocator. | ✓ |
 | Intermediate Inputs Enabled | switch | global | 1 (сценарии: {"0":0,"1":0,"2":0,"3":0,"4":0,"5":0,"6":0,"7":0,"8":0,"9":0…) |  | Master switch for v7.4 Metal-to-Electronics intermediate-input coupling. Modes 0-16 override to 0; Modes 17+ enable it. | ✓ |
+| Ore Capital Enabled | switch | global | 1 (сценарии: {"0":0,"1":0,"2":0,"3":0,"4":0,"5":0,"6":0,"7":0,"8":0,"9":0…) |  | Generated simple_capital switch for Ore Capital Enabled. | ✓ |
 | Power Resource Enabled | switch | global | 0 (сценарии: {"0":0,"1":0,"2":0,"3":0,"4":0,"5":0,"6":0,"7":0,"8":0,"9":0…) |  | v7.6 master switch. When 0, the accepted v7.5.1 energy path is reproduced; when 1, generation requires a physical operating resource. |  |
 | Regolith Capital Enabled | switch | global | 1 (сценарии: {"0":0,"1":0,"2":0,"3":0,"4":0,"5":0,"6":0,"7":0,"8":0,"9":0…) |  | Generated simple_capital switch for Regolith Capital Enabled. | ✓ |
 | Transport Capital Goods Enabled | switch | global | 1 (сценарии: {"0":0,"1":0,"2":0,"3":0,"4":0,"5":0,"6":0,"7":0,"8":0,"9":0…) |  | v7.5.1 regression switch: when enabled, Transport Capacity Expansion is physically backed by Capital Goods drawn from A/B regional inventories. |  |

@@ -9,6 +9,7 @@ fragments (kernel instance, boundary classification, transformation pairs, Plane
 | `construction-materials-plant.json` | `capital_lifecycle` | v7.7.3 r1 (task 013) | A/B Construction Materials Plant |
 | `capital-goods-plant.json` | `capital_lifecycle` | v7.7.4 r1 (task 014) | A/B Capital Goods Plant |
 | `regolith-mine.json` | `simple_capital` | v7.7.5 r1 (task 017) | A/B Regolith Mine — the first sector written as a declaration from the start |
+| `ore-mine.json` | `simple_capital` | v7.7.6 r1 (task 019) | A/B Ore Mine — wraps the regolith mine on the capital-goods and construction-materials demand formulas |
 
 The seven older lifecycle instances (Electronics, Power, Refinery, Transport) remain hand-written: they carry model
 history (legacy switch gating, finance limits, layered regression branches) and are not generated.
@@ -16,4 +17,4 @@ history (legacy switch gating, finance limits, layered regression branches) and 
 Verified before task 015 by `docs/tasks/015-node-generator/reference/expand_prototype.mjs`: each declaration, expanded
 against the model accepted before its step, reproduces that step's elements, replacements and links with zero
 differences in definitions, and its validation fragments equal the accepted ones. `regolith-mine.json` needed no such
-proof: task 017 delivered it unchanged in the `nodes` section of the model patch, so the accepted model was generated from it.
+proof: task 017 delivered it unchanged in the `nodes` section of the model patch, so the accepted model was generated from it; the same holds for `ore-mine.json` (task 019). Order matters when nodes extend the same formula: the later node wraps the earlier one, and `NODE_SELF_TEST` reads the peel order from the model.

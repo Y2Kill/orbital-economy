@@ -1,17 +1,17 @@
 # Orbital Economy Lab — structure audit
 
-- generated: 2026-09-28T13:04:47.036Z
-- model: Orbital Economy v7.7.5 r1 — Regolith Capital
-- model SHA-256: `b0b60e63f24bb1791a1d06d631a681a8d96fd820bcccdf79932715ac0d0f9c8c`
-- validation: Orbital Economy v7.7.5 validation r1
-- validation SHA-256: `ff548ccb36309b5efdfecd1411656eae5f3e3209c7ecad96c5ccd6bedddd68bd`
+- generated: 2026-09-29T15:04:43.169Z
+- model: Orbital Economy v7.7.6 r1 — Ore Capital
+- model SHA-256: `d274f7b9dcc11dbfe3730c1a88fe8fd3cf242e09a52a3e51e9082ab8420de8dd`
+- validation: Orbital Economy v7.7.6 validation r1
+- validation SHA-256: `0cac6c2436771ceae56fcf2b6a2137c9cc2d976c018b7e388494dffcc749a8d9`
 - status: **PASS**
 
 ## Open boundaries (declared physical-boundary meter)
 
-- flows total: 211; crossing the model boundary: 168; classified: 168; unclassified: 0
+- flows total: 225; crossing the model boundary: 182; classified: 182; unclassified: 0
 - closed-world violations: **0** (mode: `classify`) — zero means the currently declared closed-world boundary contract is satisfied; it is not a Planet v1 completeness claim
-- declared transformation pairs: 21; transformation flows without a pair: 0
+- declared transformation pairs: 23; transformation flows without a pair: 0
 
 | Category | closed-world | Flows | Reason |
 |---|:---:|---:|---|
@@ -21,14 +21,14 @@
 | final_consumption | yes | 4 | final goods leave the economy as consumption |
 | power_resource_consumption | yes | 2 | v7.6 physical operating resource is consumed in exact proportion to actual delivered generation. |
 | unit_transformation | yes | 8 | input stock -> output stock conversion modelled as a sink/source pair (different units); every flow here must belong to a declared transformation pair whose numeric identity is checked at runtime |
-| information_signal | yes | 42 | smoothing / information stocks, not matter |
+| information_signal | yes | 46 | smoothing / information stocks, not matter |
 | financial_accounting | yes | 16 | money bookkeeping, not matter |
 | capital_state_accounting | yes | 33 | Active is an operational-state sub-account of Installed; these flows change state, not physical capital |
-| capital_transformation | yes | 41 | v7.5/v7.5.1: installed capital expansion is a unit transformation of Capital Goods; regional sectors use one local sink, shared Transport uses two A/B regional sinks whose total identity is checked at runtime. v7.7: colonial sector expansion is additionally backed by a local Construction Materials sink. v7.7.1: shared Transport expansion is additionally backed by construction materials from both A and B inventories (two legs). v7.7.3: construction-materials plant expansion is backed by local capital goods and construction materials. v7.7.4: capital-goods plant expansion is backed by local capital goods and construction materials. |
+| capital_transformation | yes | 47 | v7.5/v7.5.1: installed capital expansion is a unit transformation of Capital Goods; regional sectors use one local sink, shared Transport uses two A/B regional sinks whose total identity is checked at runtime. v7.7: colonial sector expansion is additionally backed by a local Construction Materials sink. v7.7.1: shared Transport expansion is additionally backed by construction materials from both A and B inventories (two legs). v7.7.3: construction-materials plant expansion is backed by local capital goods and construction materials. v7.7.4: capital-goods plant expansion is backed by local capital goods and construction materials. |
 | capital_goods_transformation | yes | 6 | metal + electronics -> capital goods (declared pair; identity checked at runtime) |
 | construction_materials_transformation | yes | 4 | v7.7: regolith -> construction materials (declared pair; identity checked at runtime) |
 | external_capital | **no** | 0 | capital created without physical goods; expected count is zero from v7.5.1 onward for the currently declared expansion-boundary audit |
-| capital_retirement | yes | 4 | износ и вывод простого капитала: капитал покидает экономику |
+| capital_retirement | yes | 8 | износ и вывод простого капитала: капитал покидает экономику |
 
 
 Declared unit-transformation pairs (source flow physically backed by sink flows; numeric identity is a runtime check):
@@ -56,6 +56,8 @@ Declared unit-transformation pairs (source flow physically backed by sink flows;
 | B Capital Goods Plant Expansion | B Capital Goods Plant Capital Goods Consumption, B Capital Goods Plant Construction Materials Consumption | B Capital Goods Plant capital goods pair identity | ok |
 | A Regolith Mine Expansion | A Regolith Mine Capital Goods Consumption, A Regolith Mine Construction Materials Consumption | A Regolith Mine capital goods pair identity | ok |
 | B Regolith Mine Expansion | B Regolith Mine Capital Goods Consumption, B Regolith Mine Construction Materials Consumption | B Regolith Mine capital goods pair identity | ok |
+| A Ore Mine Expansion | A Ore Mine Capital Goods Consumption, A Ore Mine Construction Materials Consumption | A Ore Mine capital goods pair identity | ok |
+| B Ore Mine Expansion | B Ore Mine Capital Goods Consumption, B Ore Mine Construction Materials Consumption | B Ore Mine capital goods pair identity | ok |
 
 <details><summary>All boundary flows by category</summary>
 
@@ -99,7 +101,7 @@ Declared unit-transformation pairs (source flow physically backed by sink flows;
 - B Electronics Feedstock Consumption
 - B Electronics Production
 
-**information_signal** (42)
+**information_signal** (46)
 
 - A Electronics Capacity Planning Signal Increase
 - A Electronics Capacity Planning Signal Decrease
@@ -143,6 +145,10 @@ Declared unit-transformation pairs (source flow physically backed by sink flows;
 - A Regolith Demand Signal Decrease
 - B Regolith Demand Signal Increase
 - B Regolith Demand Signal Decrease
+- A Ore Demand Signal Increase
+- A Ore Demand Signal Decrease
+- B Ore Demand Signal Increase
+- B Ore Demand Signal Decrease
 
 **financial_accounting** (16)
 
@@ -199,7 +205,7 @@ Declared unit-transformation pairs (source flow physically backed by sink flows;
 - B Capital Goods Plant Mothballing
 - B Capital Goods Plant Active Depreciation
 
-**capital_transformation** (41)
+**capital_transformation** (47)
 
 - A Refinery Expansion
 - A Electronics Factory Expansion
@@ -242,6 +248,12 @@ Declared unit-transformation pairs (source flow physically backed by sink flows;
 - B Regolith Mine Expansion
 - B Regolith Mine Capital Goods Consumption
 - B Regolith Mine Construction Materials Consumption
+- A Ore Mine Expansion
+- A Ore Mine Capital Goods Consumption
+- A Ore Mine Construction Materials Consumption
+- B Ore Mine Expansion
+- B Ore Mine Capital Goods Consumption
+- B Ore Mine Construction Materials Consumption
 
 **capital_goods_transformation** (6)
 
@@ -262,20 +274,24 @@ Declared unit-transformation pairs (source flow physically backed by sink flows;
 **external_capital** (0)
 
 
-**capital_retirement** (4)
+**capital_retirement** (8)
 
 - A Regolith Mine Capacity Depreciation
 - A Regolith Mine Capacity Retirement
 - B Regolith Mine Capacity Depreciation
 - B Regolith Mine Capacity Retirement
+- A Ore Mine Capacity Depreciation
+- A Ore Mine Capacity Retirement
+- B Ore Mine Capacity Depreciation
+- B Ore Mine Capacity Retirement
 
 </details>
 
 ## Colony symmetry
 
 - tokens: A ↔ B
-- mirrored pairs checked: 1022; mirrored links checked: 2314
-- structural mismatches: **0**; numeric parameter differences (allowed): 112; elements under exceptions: 0
+- mirrored pairs checked: 1048; mirrored links checked: 2392
+- structural mismatches: **0**; numeric parameter differences (allowed): 114; elements under exceptions: 0
 
 <details><summary>Numeric parameter differences between colonies (allowed)</summary>
 
@@ -337,6 +353,7 @@ Declared unit-transformation pairs (source flow physically backed by sink flows;
 | initial_value | A Capital Goods Plant Installed Capacity | 2 | B Capital Goods Plant Installed Capacity | 1 |
 | initial_value | A Capital Goods Plant Active Capacity | 2 | B Capital Goods Plant Active Capacity | 1 |
 | initial_value | A Regolith Mine Capacity | 7 | B Regolith Mine Capacity | 5 |
+| initial_value | A Ore Mine Capacity | 70 | B Ore Mine Capacity | 28 |
 
 </details>
 
@@ -344,7 +361,7 @@ Declared unit-transformation pairs (source flow physically backed by sink flows;
 
 - status: **PASS**; mode: `report`
 - processes: 17; legacy: 2; expected source outputs: 16; undeclared outputs: 0
-- P2 capacity: kernel **11** / simple **2** / exceptions **4** / undeclared **0**
+- P2 capacity: kernel **11** / simple **4** / exceptions **2** / undeclared **0**
 - P3 energy: requests **6** / producer **2** / exceptions **9** / undeclared **0**
 - P4 deposits: with **0** / without **6**
 - P5 labor: declared **4** / undeclared **13**
@@ -353,9 +370,7 @@ Declared unit-transformation pairs (source flow physically backed by sink flows;
 
 | Dimension | Process | Kind | Value | Reason |
 |---|---|---|---|---|
-| P2 | mining[A] | constant | A Mining Capacity | v7.4 fixed ore mining capacity; no mining capital yet (P2) |
 | P3 | mining[A] | none | — | ore mining uses no energy yet (P3) |
-| P2 | mining[B] | constant | B Mining Capacity | v7.4 fixed ore mining capacity; no mining capital yet (P2) |
 | P3 | mining[B] | none | — | ore mining uses no energy yet (P3) |
 | P3 | capital_goods[A] | none | — | capital-goods assembly uses no energy yet (P3) |
 | P3 | capital_goods[B] | none | — | capital-goods assembly uses no energy yet (P3) |
@@ -370,10 +385,10 @@ Declared unit-transformation pairs (source flow physically backed by sink flows;
 <details><summary>Process paths</summary>
 
 **mining[A]**
-- capacity: A Mining → A Mining Rate → A Effective Mining Capacity → A Mining Capacity
+- capacity: A Mining → A Mining Rate → A Effective Mining Capacity → A Ore Mine Capacity
 
 **mining[B]**
-- capacity: B Mining → B Mining Rate → B Effective Mining Capacity → B Mining Capacity
+- capacity: B Mining → B Mining Rate → B Effective Mining Capacity → B Ore Mine Capacity
 
 **smelting[A]**
 - capacity: A Metal Production → A Smelting Rate → A Pre Energy Smelting Rate → A Refinery Active Capacity
@@ -453,6 +468,6 @@ Declared unit-transformation pairs (source flow physically backed by sink flows;
 ## Algebraic loops (switch-aware, unconditional static audit)
 
 - status: **PASS**
-- switches: 11 — Capital Lifecycle Enabled, Intermediate Inputs Enabled, Capital Goods Enabled, Transport Capital Goods Enabled, Power Resource Enabled, Construction Materials Enabled, Transport Construction Materials Enabled, Construction Materials Energy Enabled, Construction Materials Capital Enabled, Capital Goods Capital Enabled, Regolith Capital Enabled
-- combinations: 2048; with loops: **0**
+- switches: 12 — Capital Lifecycle Enabled, Intermediate Inputs Enabled, Capital Goods Enabled, Transport Capital Goods Enabled, Power Resource Enabled, Construction Materials Enabled, Transport Construction Materials Enabled, Construction Materials Energy Enabled, Construction Materials Capital Enabled, Capital Goods Capital Enabled, Regolith Capital Enabled, Ore Capital Enabled
+- combinations: 4096; with loops: **0**
 - Modes with loops: none

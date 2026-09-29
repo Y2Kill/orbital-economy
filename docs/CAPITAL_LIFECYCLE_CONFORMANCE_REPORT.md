@@ -1,10 +1,10 @@
 # Orbital Economy Lab — Capital Lifecycle Kernel conformance
 
-- generated: 2026-09-28T13:04:39.718Z
-- model: Orbital Economy v7.7.5 r1 — Regolith Capital
-- model SHA-256: `b0b60e63f24bb1791a1d06d631a681a8d96fd820bcccdf79932715ac0d0f9c8c`
-- validation: Orbital Economy v7.7.5 validation r1
-- validation SHA-256: `ff548ccb36309b5efdfecd1411656eae5f3e3209c7ecad96c5ccd6bedddd68bd`
+- generated: 2026-09-29T15:04:25.640Z
+- model: Orbital Economy v7.7.6 r1 — Ore Capital
+- model SHA-256: `d274f7b9dcc11dbfe3730c1a88fe8fd3cf242e09a52a3e51e9082ab8420de8dd`
+- validation: Orbital Economy v7.7.6 validation r1
+- validation SHA-256: `0cac6c2436771ceae56fcf2b6a2137c9cc2d976c018b7e388494dffcc749a8d9`
 - kernel format: orbital-economy-capital-lifecycle-kernel-v1
 - status: **PASS**
 
@@ -469,14 +469,16 @@ Sector-specific variation (informative, not a failure):
 ## Simple capital
 
 - status: **PASS**
-- instances: 2
-- CONFORMING: 2
+- instances: 4
+- CONFORMING: 4
 - NON_CONFORMING: 0
 
 | Instance | Sector | Classification | Checks passed | Failures |
 |---|---|---|---:|---:|
 | A Regolith Mine | Regolith Mine | **CONFORMING** | 23/23 | 0 |
 | B Regolith Mine | Regolith Mine | **CONFORMING** | 23/23 | 0 |
+| A Ore Mine | Ore Mine | **CONFORMING** | 23/23 | 0 |
+| B Ore Mine | Ore Mine | **CONFORMING** | 23/23 | 0 |
 
 Roles:
 
