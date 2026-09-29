@@ -1,0 +1,144 @@
+{
+  "format": "orbital-economy-parameter-annotations-fragment-v1",
+  "model": "Orbital Economy v7.7.6 Ore Capital candidate r1",
+  "updated": "2026-09-29",
+  "note": "Task 019 fragment. All numeric constants introduced by the Ore Mine simple_capital declaration are annotated, including the intentionally asymmetric A/B initial capacities 70/28. Reviewer merges accepted entries into the canonical registry.",
+  "parameters": {
+    "Ore Capital Enabled": {
+      "role": "Ore-mining simple-capital master switch, raw value 1.",
+      "effect": "0 preserves accepted Modes 0-39 exactly; 1 makes effective mining capacity read ore-mine capital and enables mine expansion, depreciation, retirement, and backing-resource sinks.",
+      "evidence": "V7_7_6_ARCHITECTURE_SPEC §0–§3; owner node declaration.",
+      "since": "v7.7.6 candidate r1",
+      "tags": [
+        "ore",
+        "capital",
+        "switch"
+      ]
+    },
+    "Ore Mine Capacity Reserve Factor": {
+      "role": "Ore-mine desired-capacity reserve factor, value 1.25.",
+      "effect": "Scales the smoothed Ore Demand Signal into desired mine capacity.",
+      "evidence": "V7_7_6_ARCHITECTURE_SPEC §1 and draft/ore-mine.json.",
+      "since": "v7.7.6 candidate r1",
+      "tags": [
+        "ore",
+        "capital",
+        "sizing"
+      ]
+    },
+    "Ore Mine Construction Time": {
+      "role": "Ore-mine capacity construction time, value 90 days.",
+      "effect": "Divides the positive capacity gap to set desired expansion speed before backing-resource coverage limits it.",
+      "evidence": "V7_7_6_ARCHITECTURE_SPEC §1 and draft/ore-mine.json.",
+      "since": "v7.7.6 candidate r1",
+      "tags": [
+        "ore",
+        "capital",
+        "construction"
+      ]
+    },
+    "Ore Mine Retirement Time": {
+      "role": "Ore-mine capacity surplus retirement time, value 360 days.",
+      "effect": "Controls removal rate of capacity above desired capacity.",
+      "evidence": "V7_7_6_ARCHITECTURE_SPEC §1 and draft/ore-mine.json.",
+      "since": "v7.7.6 candidate r1",
+      "tags": [
+        "ore",
+        "capital",
+        "retirement"
+      ]
+    },
+    "Ore Mine Depreciation Rate": {
+      "role": "Ore-mine capacity depreciation rate, value 0.0001 per day.",
+      "effect": "Applies continuous physical attrition to Ore Mine Capacity while the mechanic is enabled.",
+      "evidence": "V7_7_6_ARCHITECTURE_SPEC §1 and draft/ore-mine.json.",
+      "since": "v7.7.6 candidate r1",
+      "tags": [
+        "ore",
+        "capital",
+        "depreciation"
+      ]
+    },
+    "Ore Mine Capital Goods per Capacity": {
+      "role": "Capital Goods requirement per unit of new ore-mine capacity, value 0.5.",
+      "effect": "Scales Desired Expansion into Capital Goods demand and actual expansion into Capital Goods consumption.",
+      "evidence": "V7_7_6_ARCHITECTURE_SPEC §1 and draft/ore-mine.json.",
+      "since": "v7.7.6 candidate r1",
+      "tags": [
+        "ore",
+        "capital",
+        "backing"
+      ]
+    },
+    "Ore Mine Construction Materials per Capacity": {
+      "role": "Construction Materials requirement per unit of new ore-mine capacity, value 0.5.",
+      "effect": "Scales Desired Expansion into Construction Materials demand and actual expansion into Construction Materials consumption.",
+      "evidence": "V7_7_6_ARCHITECTURE_SPEC §1 and draft/ore-mine.json.",
+      "since": "v7.7.6 candidate r1",
+      "tags": [
+        "ore",
+        "capital",
+        "backing"
+      ]
+    },
+    "A Ore Mine Capacity": {
+      "role": "Initial simple-capital ore-mine capacity for colony A, value 70.",
+      "effect": "Seeds mine capacity at the accepted A Mining Capacity; A/B are intentionally asymmetric (70 vs 28).",
+      "evidence": "TASK_RU §2 and V7_7_6_ARCHITECTURE_SPEC §0–§2 explicitly require A=70, B=28.",
+      "since": "v7.7.6 candidate r1",
+      "tags": [
+        "ore",
+        "capital",
+        "initial",
+        "asymmetry"
+      ],
+      "applies_to_mirror": true
+    },
+    "B Ore Mine Capacity": {
+      "role": "Initial simple-capital ore-mine capacity for colony B, value 28.",
+      "effect": "Seeds mine capacity at the accepted B Mining Capacity; A/B are intentionally asymmetric (70 vs 28).",
+      "evidence": "TASK_RU §2 and V7_7_6_ARCHITECTURE_SPEC §0–§2 explicitly require A=70, B=28.",
+      "since": "v7.7.6 candidate r1",
+      "tags": [
+        "ore",
+        "capital",
+        "initial",
+        "asymmetry"
+      ],
+      "applies_to_mirror": true
+    },
+    "Ore Demand Signal Adjustment Time": {
+      "role": "Ore demand-signal adjustment time, value 3 days.",
+      "effect": "Controls lag from Positive Desired Mining Rate to the STOCK signal used for mine sizing and avoids same-step demand feedback.",
+      "evidence": "V7_7_6_ARCHITECTURE_SPEC §1–§2; simple_capital STOCK sizing rule in lab/docs/NODES_RU.md.",
+      "since": "v7.7.6 candidate r1",
+      "tags": [
+        "ore",
+        "signal",
+        "causality"
+      ]
+    },
+    "A Ore Demand Signal": {
+      "role": "Initial smoothed ore-demand signal for colony A, value 25.",
+      "effect": "Seeds the STOCK sizing signal; the shared initial value intentionally differs from A's actual starting demand and converges with a 3-day adjustment time.",
+      "evidence": "draft/ore-mine.json; V7_7_6_ARCHITECTURE_SPEC §1.",
+      "since": "v7.7.6 candidate r1",
+      "tags": [
+        "ore",
+        "signal",
+        "initial"
+      ]
+    },
+    "B Ore Demand Signal": {
+      "role": "Initial smoothed ore-demand signal for colony B, value 25.",
+      "effect": "Seeds the STOCK sizing signal; the shared initial value intentionally differs from B's actual starting demand and causes only the documented startup transient.",
+      "evidence": "draft/ore-mine.json; V7_7_6_ARCHITECTURE_SPEC §1.",
+      "since": "v7.7.6 candidate r1",
+      "tags": [
+        "ore",
+        "signal",
+        "initial"
+      ]
+    }
+  }
+}

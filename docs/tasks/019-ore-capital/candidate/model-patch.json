@@ -1,0 +1,351 @@
+{
+  "format": "orbital-economy-model-patch-v1",
+  "base_sha256": "b0b60e63f24bb1791a1d06d631a681a8d96fd820bcccdf79932715ac0d0f9c8c",
+  "name": "Orbital Economy v7.7.6 Ore Capital candidate r1",
+  "description": "Task 019: ore mining capacity becomes simple_capital. Node declaration is supplied verbatim from draft/ore-mine.json; the only explicit formula replacement is Test 2 Transport Surge Active for Mode 41.",
+  "nodes": [
+    {
+      "type": "simple_capital",
+      "version": 1,
+      "sector": "Ore Mine",
+      "colonies": [
+        "A",
+        "B"
+      ],
+      "switch": "Ore Capital Enabled",
+      "initial_capacity": {
+        "A": 70,
+        "B": 28
+      },
+      "parameters": {
+        "Capacity Reserve Factor": 1.25,
+        "Construction Time": 90,
+        "Retirement Time": 360,
+        "Depreciation Rate": 0.0001,
+        "Capital Goods per Capacity": 0.5,
+        "Construction Materials per Capacity": 0.5
+      },
+      "sizing": {
+        "signal": {
+          "name": "{C} Ore Demand Signal",
+          "create": true,
+          "demand": "{C} Positive Desired Mining Rate",
+          "initial": 25,
+          "adjustment_time": {
+            "name": "Ore Demand Signal Adjustment Time",
+            "value": 3
+          }
+        }
+      },
+      "capacity_output": {
+        "variable": "{C} Effective Mining Capacity",
+        "replaces": "{C} Mining Capacity"
+      },
+      "backing": [
+        {
+          "good": "Capital Goods",
+          "fulfillment": "{C} Capital Goods Fulfillment",
+          "inventory": "{C} Capital Goods Inventory",
+          "demand": "{C} Capital Goods Demand"
+        },
+        {
+          "good": "Construction Materials",
+          "fulfillment": "{C} Construction Materials Fulfillment",
+          "inventory": "{C} Construction Materials Inventory",
+          "demand": "{C} Construction Materials Demand"
+        }
+      ],
+      "planet_process": "mining"
+    }
+  ],
+  "add_elements": [],
+  "replace_formulas": [
+    {
+      "name": "Test 2 Transport Surge Active",
+      "value": "IfThenElse([Timed Test Mode] = 2, [Temporary Test Window], IfThenElse([Timed Test Mode] = 24, [Temporary Test Window], IfThenElse([Timed Test Mode] = 31, [Temporary Test Window], IfThenElse([Timed Test Mode] = 35, [Temporary Test Window], IfThenElse([Timed Test Mode] = 37, [Temporary Test Window], IfThenElse([Timed Test Mode] = 39, [Temporary Test Window], IfThenElse([Timed Test Mode] = 41, [Temporary Test Window], 0)))))))"
+    }
+  ],
+  "add_links": [],
+  "modify_scenarios": [
+    {
+      "mode": 0,
+      "set": {
+        "Ore Capital Enabled": 0
+      }
+    },
+    {
+      "mode": 1,
+      "set": {
+        "Ore Capital Enabled": 0
+      }
+    },
+    {
+      "mode": 2,
+      "set": {
+        "Ore Capital Enabled": 0
+      }
+    },
+    {
+      "mode": 3,
+      "set": {
+        "Ore Capital Enabled": 0
+      }
+    },
+    {
+      "mode": 4,
+      "set": {
+        "Ore Capital Enabled": 0
+      }
+    },
+    {
+      "mode": 5,
+      "set": {
+        "Ore Capital Enabled": 0
+      }
+    },
+    {
+      "mode": 6,
+      "set": {
+        "Ore Capital Enabled": 0
+      }
+    },
+    {
+      "mode": 7,
+      "set": {
+        "Ore Capital Enabled": 0
+      }
+    },
+    {
+      "mode": 8,
+      "set": {
+        "Ore Capital Enabled": 0
+      }
+    },
+    {
+      "mode": 9,
+      "set": {
+        "Ore Capital Enabled": 0
+      }
+    },
+    {
+      "mode": 10,
+      "set": {
+        "Ore Capital Enabled": 0
+      }
+    },
+    {
+      "mode": 11,
+      "set": {
+        "Ore Capital Enabled": 0
+      }
+    },
+    {
+      "mode": 12,
+      "set": {
+        "Ore Capital Enabled": 0
+      }
+    },
+    {
+      "mode": 13,
+      "set": {
+        "Ore Capital Enabled": 0
+      }
+    },
+    {
+      "mode": 14,
+      "set": {
+        "Ore Capital Enabled": 0
+      }
+    },
+    {
+      "mode": 15,
+      "set": {
+        "Ore Capital Enabled": 0
+      }
+    },
+    {
+      "mode": 16,
+      "set": {
+        "Ore Capital Enabled": 0
+      }
+    },
+    {
+      "mode": 17,
+      "set": {
+        "Ore Capital Enabled": 0
+      }
+    },
+    {
+      "mode": 18,
+      "set": {
+        "Ore Capital Enabled": 0
+      }
+    },
+    {
+      "mode": 19,
+      "set": {
+        "Ore Capital Enabled": 0
+      }
+    },
+    {
+      "mode": 20,
+      "set": {
+        "Ore Capital Enabled": 0
+      }
+    },
+    {
+      "mode": 21,
+      "set": {
+        "Ore Capital Enabled": 0
+      }
+    },
+    {
+      "mode": 22,
+      "set": {
+        "Ore Capital Enabled": 0
+      }
+    },
+    {
+      "mode": 23,
+      "set": {
+        "Ore Capital Enabled": 0
+      }
+    },
+    {
+      "mode": 24,
+      "set": {
+        "Ore Capital Enabled": 0
+      }
+    },
+    {
+      "mode": 25,
+      "set": {
+        "Ore Capital Enabled": 0
+      }
+    },
+    {
+      "mode": 26,
+      "set": {
+        "Ore Capital Enabled": 0
+      }
+    },
+    {
+      "mode": 27,
+      "set": {
+        "Ore Capital Enabled": 0
+      }
+    },
+    {
+      "mode": 28,
+      "set": {
+        "Ore Capital Enabled": 0
+      }
+    },
+    {
+      "mode": 29,
+      "set": {
+        "Ore Capital Enabled": 0
+      }
+    },
+    {
+      "mode": 30,
+      "set": {
+        "Ore Capital Enabled": 0
+      }
+    },
+    {
+      "mode": 31,
+      "set": {
+        "Ore Capital Enabled": 0
+      }
+    },
+    {
+      "mode": 32,
+      "set": {
+        "Ore Capital Enabled": 0
+      }
+    },
+    {
+      "mode": 33,
+      "set": {
+        "Ore Capital Enabled": 0
+      }
+    },
+    {
+      "mode": 34,
+      "set": {
+        "Ore Capital Enabled": 0
+      }
+    },
+    {
+      "mode": 35,
+      "set": {
+        "Ore Capital Enabled": 0
+      }
+    },
+    {
+      "mode": 36,
+      "set": {
+        "Ore Capital Enabled": 0
+      }
+    },
+    {
+      "mode": 37,
+      "set": {
+        "Ore Capital Enabled": 0
+      }
+    },
+    {
+      "mode": 38,
+      "set": {
+        "Ore Capital Enabled": 0
+      }
+    },
+    {
+      "mode": 39,
+      "set": {
+        "Ore Capital Enabled": 0
+      }
+    }
+  ],
+  "add_scenarios": [
+    {
+      "name": "v7.7.6 Ore Capital Baseline",
+      "description": "Accepted v7.7.5 mechanics plus ore-mining simple capital; no new transport surge.",
+      "values": {
+        "Capital Lifecycle Enabled": 1,
+        "Intermediate Inputs Enabled": 1,
+        "Capital Goods Enabled": 1,
+        "Transport Capital Goods Enabled": 1,
+        "Power Resource Enabled": 1,
+        "Construction Materials Enabled": 1,
+        "Transport Construction Materials Enabled": 1,
+        "Construction Materials Energy Enabled": 1,
+        "Construction Materials Capital Enabled": 1,
+        "Capital Goods Capital Enabled": 1,
+        "Regolith Capital Enabled": 1,
+        "Timed Test Mode": 40,
+        "Ore Capital Enabled": 1
+      }
+    },
+    {
+      "name": "v7.7.6 Transport Surge on Ore Capital",
+      "description": "Ore-mining simple capital under the standard transport-demand surge window; B must rebuild ore-mine capacity.",
+      "values": {
+        "Capital Lifecycle Enabled": 1,
+        "Intermediate Inputs Enabled": 1,
+        "Capital Goods Enabled": 1,
+        "Transport Capital Goods Enabled": 1,
+        "Power Resource Enabled": 1,
+        "Construction Materials Enabled": 1,
+        "Transport Construction Materials Enabled": 1,
+        "Construction Materials Energy Enabled": 1,
+        "Construction Materials Capital Enabled": 1,
+        "Capital Goods Capital Enabled": 1,
+        "Regolith Capital Enabled": 1,
+        "Timed Test Mode": 41,
+        "Ore Capital Enabled": 1
+      }
+    }
+  ]
+}

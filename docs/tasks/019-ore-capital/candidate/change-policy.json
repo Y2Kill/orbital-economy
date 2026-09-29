@@ -1,0 +1,123 @@
+{
+  "format": "orbital-economy-change-policy-v1",
+  "name": "Orbital Economy v7.7.6 Ore Capital - change contract r1",
+  "description": "Final task 019 change contract derived from V7_7_6_ARCHITECTURE_SPEC.md. Accepted baseline: v7.7.5 r1. Modes 0-39 must reproduce it exactly; new behaviour lives in Modes 40-41 behind Ore Capital Enabled. validation_sha256 is bound to the delivered owner-draft validation copied byte-for-byte.",
+  "accepted_model_sha256": "b0b60e63f24bb1791a1d06d631a681a8d96fd820bcccdf79932715ac0d0f9c8c",
+  "validation_sha256": "f7f054d268baafd490f14a7b444232ea754e7edba1dc159ae8e31da987fce91b",
+  "comparison": {
+    "abs_tolerance": 0,
+    "rel_tolerance": null,
+    "rel_floor": 1e-12
+  },
+  "engine": {
+    "package": "simulation",
+    "version": "9.0.0"
+  },
+  "default_action": "deny",
+  "require_full_mode_coverage": true,
+  "rules": [
+    {
+      "id": "regression-guard-modes-0-39",
+      "action": "deny",
+      "event": "series_changed",
+      "modes": "0-39",
+      "name": "*",
+      "note": "Modes 0-39 set Ore Capital Enabled = 0 and must reproduce v7.7.5 r1 exactly (first match wins)."
+    },
+    {
+      "id": "forbid-removals-and-structural-drift",
+      "action": "deny",
+      "event": [
+        "element_removed",
+        "series_removed",
+        "mode_removed",
+        "link_removed",
+        "type_changed",
+        "simulation_changed",
+        "time_axis_changed",
+        "scenario_renamed"
+      ],
+      "name": "*"
+    },
+    {
+      "id": "add-ore-mine",
+      "action": "allow",
+      "event": "element_added",
+      "name": [
+        "Ore Capital Enabled",
+        "Ore Demand Signal Adjustment Time",
+        "Ore Mine *",
+        "? Ore Mine *",
+        "? Ore Demand Signal",
+        "? Ore Demand Signal *"
+      ],
+      "required": true,
+      "note": "the ore-mine simple_capital node generated from its declaration: switch, demand-signal stock and flows, parameters, capacity stocks, roles, CG and CM consumption (V7_7_6_ARCHITECTURE_SPEC §2)"
+    },
+    {
+      "id": "change-definitions-per-spec",
+      "action": "allow",
+      "event": "definition_changed",
+      "name": [
+        "? Effective Mining Capacity",
+        "? Capital Goods Demand",
+        "? Construction Materials Demand",
+        "Test 2 Transport Surge Active"
+      ],
+      "required": true,
+      "note": "under the switch: effective mining capacity = ore mine capacity; mine desired expansion joins CG and CM demand; Test 2 flag + Mode 41 (spec §3)"
+    },
+    {
+      "id": "link-into-changed-definitions",
+      "action": "allow",
+      "event": "link_added",
+      "name": [
+        "* -> ? Effective Mining Capacity",
+        "* -> ? Capital Goods Demand",
+        "* -> ? Construction Materials Demand",
+        "* -> Test 2 Transport Surge Active"
+      ]
+    },
+    {
+      "id": "link-into-new-elements",
+      "action": "allow",
+      "event": "link_added",
+      "name": [
+        "* -> Ore Capital Enabled",
+        "* -> Ore Demand Signal Adjustment Time",
+        "* -> Ore Mine *",
+        "* -> ? Ore Mine *",
+        "* -> ? Ore Demand Signal",
+        "* -> ? Ore Demand Signal *"
+      ]
+    },
+    {
+      "id": "add-modes-40-41",
+      "action": "allow",
+      "event": "mode_added",
+      "modes": "40-41",
+      "required": true
+    },
+    {
+      "id": "scenarios-0-39-gain-switch-off",
+      "action": "allow",
+      "event": "scenario_input_changed",
+      "modes": "0-39",
+      "required": true,
+      "note": "only \"Ore Capital Enabled\": 0"
+    },
+    {
+      "id": "new-series-everywhere",
+      "action": "allow",
+      "event": "series_added",
+      "name": [
+        "Ore Capital Enabled",
+        "Ore Demand Signal Adjustment Time",
+        "Ore Mine *",
+        "? Ore Mine *",
+        "? Ore Demand Signal",
+        "? Ore Demand Signal *"
+      ]
+    }
+  ]
+}
