@@ -1,0 +1,17 @@
+{
+  "task": "019",
+  "title": "v7.7.6 Ore Capital: ore mining capacity as simple capital (Planet v1 P2)",
+  "branch": "task/019-ore-capital",
+  "allow": [],
+  "allow_binary": [],
+  "allow_protected": [
+    "docs/tasks/019-ore-capital/candidate/**"
+  ],
+  "required_changes": [
+    "docs/tasks/019-ore-capital/candidate/model-patch.json",
+    "docs/tasks/019-ore-capital/candidate/validation.json",
+    "docs/tasks/019-ore-capital/candidate/change-policy.json",
+    "docs/tasks/019-ore-capital/candidate/PARAMETER_ANNOTATIONS_fragment.json"
+  ],
+  "sums_by": "reviewer"
+}

@@ -1,0 +1,53 @@
+{
+  "type": "simple_capital",
+  "version": 1,
+  "sector": "Ore Mine",
+  "colonies": [
+    "A",
+    "B"
+  ],
+  "switch": "Ore Capital Enabled",
+  "initial_capacity": {
+    "A": 70,
+    "B": 28
+  },
+  "parameters": {
+    "Capacity Reserve Factor": 1.25,
+    "Construction Time": 90,
+    "Retirement Time": 360,
+    "Depreciation Rate": 0.0001,
+    "Capital Goods per Capacity": 0.5,
+    "Construction Materials per Capacity": 0.5
+  },
+  "sizing": {
+    "signal": {
+      "name": "{C} Ore Demand Signal",
+      "create": true,
+      "demand": "{C} Positive Desired Mining Rate",
+      "initial": 25,
+      "adjustment_time": {
+        "name": "Ore Demand Signal Adjustment Time",
+        "value": 3
+      }
+    }
+  },
+  "capacity_output": {
+    "variable": "{C} Effective Mining Capacity",
+    "replaces": "{C} Mining Capacity"
+  },
+  "backing": [
+    {
+      "good": "Capital Goods",
+      "fulfillment": "{C} Capital Goods Fulfillment",
+      "inventory": "{C} Capital Goods Inventory",
+      "demand": "{C} Capital Goods Demand"
+    },
+    {
+      "good": "Construction Materials",
+      "fulfillment": "{C} Construction Materials Fulfillment",
+      "inventory": "{C} Construction Materials Inventory",
+      "demand": "{C} Construction Materials Demand"
+    }
+  ],
+  "planet_process": "mining"
+}
