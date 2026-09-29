@@ -8,6 +8,7 @@
 - QA S1–S10: accepted validation = 0 errors; выдержка task 014 r2 = 15 errors ровно в checks 3–8; integration gates и CLI exit codes;
 - отчёты RUN_LAB и comparator показывают отдельный список schema errors с путями;
 - package/Lab version → v0.9.10; accepted model, validation, policy, engine, model nodes и plugin runtime semantics не изменены.
+- до выдачи задачи 019 (версия та же): `node_qa` читает порядок снятия узлов из модели — следующим снимается узел, чей переключатель внешний на всех его заменах (узлы, дополняющие одни формулы, вкладываются друг в друга); ожидаемое число `simple_capital` в случае 10 берётся из validation; `planet_qa` случаи 8 и 10 сами объявляют добычу руды константой, когда в декларации констант не осталось. Проверено с skeleton v7.7.6 в роли принятой модели.
 
 ## v0.9.9 — simple capital node
 

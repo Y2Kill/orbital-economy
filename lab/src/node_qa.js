@@ -194,19 +194,34 @@ function validationMatches(fragment) {
   return !!proc && JSON.stringify(proc.capacity) === JSON.stringify(fragment.planet_closure.capacity);
 }
 
-// Build the historical state immediately before/after each declared node by peeling later generated
-// nodes from the current accepted model in reverse declaration order. This keeps the fixture valid
-// when the accepted model version advances without pinning old tags or model filenames.
-// Accepted simple_capital nodes (v7.7.5 on) are generated after both plants and wrap some of their replacement
-// targets, so they are peeled first, in reverse file order.
-const states = new Array(declarations.length);
-let target = structuredClone(accepted);
-for (const { decl: simple } of [...simpleDeclarations].reverse()) target = stripSimpleNode(target, simple);
-for (let i = declarations.length - 1; i >= 0; i--) {
-  const base = stripNode(target, declarations[i]);
-  states[i] = { base, target };
-  target = base;
+// Build the historical state immediately before/after each declared node by peeling generated nodes from the
+// current accepted model, outermost first. Nodes that replace the same formula nest: the later node wraps the
+// earlier one's IfThenElse. The peel order is therefore read from the model itself — the next node to peel is
+// one whose switch is the outer switch of every formula it replaces — not from file names or declaration order.
+// This keeps the fixture valid when the accepted model version advances without pinning old tags or filenames.
+function outerSwitchIs(model, name, switchName) {
+  const e = model.elements.find(x => x.type !== 'LINK' && x.name === name);
+  if (!e) return false;
+  try { oldBranch(e.behavior.value, switchName, name); return true; } catch { return false; }
 }
+const layeredNodes = [
+  ...declarations.map(decl => ({ decl, strip: stripNode, targets: capitalLifecycleReplacementNames })),
+  ...simpleDeclarations.map(({ decl }) => ({ decl, strip: stripSimpleNode, targets: simpleCapitalReplacementNames }))
+];
+const layers = new Map();
+{
+  let current = structuredClone(accepted);
+  const remaining = [...layeredNodes];
+  while (remaining.length) {
+    const i = remaining.findIndex(n => n.targets(n.decl).every(t => outerSwitchIs(current, t, n.decl.switch)));
+    if (i < 0) throw new Error(`cannot determine node layering: none of ${remaining.map(n => n.decl.sector).join(', ')} is outermost on all its replacement targets`);
+    const [n] = remaining.splice(i, 1);
+    const base = n.strip(current, n.decl);
+    layers.set(n.decl, { base, target: current });
+    current = base;
+  }
+}
+const states = declarations.map(decl => layers.get(decl));
 
 console.log('Orbital Economy Lab node-generator QA');
 console.log('Case 1: strip generated nodes from the current accepted model and rebuild them.\n');
@@ -340,21 +355,28 @@ let simpleState = null;
 
 await expect('10. simple_capital fixture integrates with validation and static audits', () => {
   const alreadyPresent = accepted.elements.some(e => e.type !== 'LINK' && e.name === `${simpleFixture.colonies[0]} ${simpleFixture.sector} Capacity`);
-  const baseModel = alreadyPresent ? stripSimpleNode(accepted, simpleFixture) : accepted;
+  // When the fixture's sector is an accepted node, peel it at its own layer (later nodes may wrap it).
+  const acceptedLayer = alreadyPresent
+    ? layers.get(simpleDeclarations.find(x => x.decl.sector === simpleFixture.sector)?.decl)
+    : null;
+  if (alreadyPresent && !acceptedLayer) throw new Error(`${simpleFixture.sector} is in the accepted model but not declared in model/nodes/`);
+  const baseModel = alreadyPresent ? acceptedLayer.base : accepted;
   const expanded = expandNode(simpleFixture, baseModel);
   const model = alreadyPresent ? accepted : applyPatch(baseModel, { format: PATCH_FORMAT, ...expanded.patch }).model;
   const merged = mergeNodeValidation(validation, [expanded.validation]);
   const conformance = runLifecycleConformance(model, merged);
   const audits = runStructureAudits(model, merged);
   const simple = conformance.simpleCapital;
-  if (simple?.status !== 'PASS' || simple.summary.instances !== 2 || simple.summary.nonConforming !== 0) {
+  // Expected counts come from the merged validation: the fixture's two instances plus any accepted simple nodes.
+  const expectedSimple = (merged.plugins.find(p => p.type === 'simple_capital')?.instances || []).length;
+  if (simple?.status !== 'PASS' || simple.summary.instances !== expectedSimple || simple.summary.nonConforming !== 0) {
     throw new Error(`simple conformance mismatch: ${JSON.stringify(simple?.summary || simple)}`);
   }
   if (audits.algebraicLoops?.status !== 'PASS' || audits.algebraicLoops.combinationsWithLoops !== 0) {
     throw new Error(`algebraic loops detected: ${audits.algebraicLoops?.combinationsWithLoops}`);
   }
-  if (audits.planetClosure?.counters?.P2?.simple !== 2) {
-    throw new Error(`planet_closure P2.simple = ${audits.planetClosure?.counters?.P2?.simple}, expected 2`);
+  if (audits.planetClosure?.counters?.P2?.simple !== expectedSimple) {
+    throw new Error(`planet_closure P2.simple = ${audits.planetClosure?.counters?.P2?.simple}, expected ${expectedSimple}`);
   }
   if (audits.openBoundaries?.summary?.unclassified !== 0) {
     throw new Error(`open_boundaries unclassified = ${audits.openBoundaries?.summary?.unclassified}`);
@@ -390,18 +412,18 @@ await expect('10. simple_capital fixture integrates with validation and static a
   if (!(maxExpansion > 0.05 && maxExpansion < 0.09)) throw new Error(`Mode 38 A Expansion max ${maxExpansion} outside prototype envelope 0.05..0.09`);
   if (!(finalA > 1.5 && finalA < 3.2 && finalB > 0.1 && finalB < 0.5)) throw new Error(`Mode 38 final capacities outside prototype envelope: A=${finalA}, B=${finalB}`);
 
-  simpleState = { base: baseModel, model, validation: merged, expanded };
-  return `simple=2 CONFORMING; loops=0; P2.simple=2; unclassified=0; Mode38 PASS; A peak=${peakA.toFixed(3)}, expansion max=${maxExpansion.toFixed(4)}, final A/B=${finalA.toFixed(3)}/${finalB.toFixed(3)}`;
+  simpleState = { base: baseModel, model, rebuildTarget: alreadyPresent ? acceptedLayer.target : model, validation: merged, expanded };
+  return `simple=${expectedSimple} CONFORMING; loops=0; P2.simple=${expectedSimple}; unclassified=0; Mode38 PASS; A peak=${peakA.toFixed(3)}, expansion max=${maxExpansion.toFixed(4)}, final A/B=${finalA.toFixed(3)}/${finalB.toFixed(3)}`;
 });
 
 await expect('11. strip and rebuild every simple_capital declaration and the case-10 model', () => {
   if (!simpleState) throw new Error('case 10 did not produce a simple-capital model');
   const rebuilt = [];
   for (const { file, decl } of simpleDeclarations) {
-    assertSimpleRebuild(decl, accepted);
+    assertSimpleRebuild(decl, layers.get(decl).target);
     rebuilt.push(path.basename(file));
   }
-  assertSimpleRebuild(simpleFixture, simpleState.model);
+  assertSimpleRebuild(simpleFixture, simpleState.rebuildTarget);
   rebuilt.push('case10:regolith-mine-simple');
   return `${rebuilt.length} target(s) rebuilt with 0 definition/replacement/link differences: ${rebuilt.join(', ')}`;
 });

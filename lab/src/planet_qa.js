@@ -210,7 +210,9 @@ try {
 
   await expect('8 constant capacity without reason is declaration FAIL', () => {
     const d = structuredClone(declaration);
-    delete proc(d, 'mining').capacity.reason;
+    // Declared constant without a reason; built explicitly because mining itself is capital since v7.7.6 and its
+    // old parameter survives only in the switched-off branch.
+    proc(d, 'mining').capacity = { kind: 'constant', parameter: '{C} Mining Capacity' };
     const r = audit(accepted, d);
     if (r.status !== 'FAIL' || !r.errors.some(e => e.process === 'mining' && /reason/i.test(e.message))) {
       throw new Error(JSON.stringify(r.errors));
@@ -240,14 +242,24 @@ try {
     // The constant is taken from the declaration (first constant-capacity process) and read by a probe variable
     // outside every process, so the case follows Planet v1 steps: capital goods, then regolith (v7.7.5) were
     // fixtures read by A Mining Rate until they moved to capital.
-    const constProc = (declaration.processes || []).find(p => p.capacity?.kind === 'constant');
-    if (!constProc) throw new Error('no constant-capacity process is left in the declaration — rewrite this fixture');
+    // Once no process is on a constant any more (v7.7.6: ore, the last one, moved to simple capital), the fixture
+    // declares mining as constant again: its old parameter still exists, read through the switched-off branch of
+    // the effective mining capacity, so the capacity path proof holds and only the probe violates reversibility.
+    const fixtureDecl = structuredClone(declaration);
+    let constProc = (fixtureDecl.processes || []).find(p => p.capacity?.kind === 'constant');
+    if (!constProc) {
+      constProc = (fixtureDecl.processes || []).find(p => p.id === 'mining');
+      if (!constProc || !raw.elements.some(e => e?.type === 'VARIABLE' && e.name === 'A Mining Capacity')) {
+        throw new Error('no constant-capacity process is left and the mining fallback does not apply — rewrite this fixture');
+      }
+      constProc.capacity = { kind: 'constant', parameter: '{C} Mining Capacity', reason: 'planet QA case 10 fixture' };
+    }
     const param = String(constProc.capacity.parameter).replaceAll('{C}', 'A');
     const probe = 'QA Reversibility Probe';
     raw.elements.push({ type: 'VARIABLE', name: probe, behavior: { value: `0 * [${param}]` } });
     raw.elements.push({ type: 'LINK', from: param, to: probe });
 
-    const rd = structuredClone(declaration);
+    const rd = structuredClone(fixtureDecl);
     rd.enforce = 'report';
     const report = audit(raw, rd);
     if (!(report.status === 'PASS' && report.reversibility.length === 1
@@ -255,7 +267,7 @@ try {
       && report.reversibility[0].reader === probe)) {
       throw new Error(JSON.stringify(report.reversibility));
     }
-    const vd = structuredClone(declaration);
+    const vd = structuredClone(fixtureDecl);
     vd.enforce = 'planet_v1';
     const v1 = audit(raw, vd);
     return v1.status === 'FAIL' && v1.modeFailures.some(x => x.dimension === 'reversibility' && x.count === 1)
