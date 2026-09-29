@@ -34,3 +34,11 @@
 Проверено чтением: декларация `ore-mine` используется как `nodes[0]` без изменений; `replace_formulas` содержит только `Test 2 Transport Surge Active`; Modes 0–39 получают только `Ore Capital Enabled = 0`; Modes 40–41 включают узел.
 Не запускалось: локальный guard и стенд, как перечислено выше.
 Дальше: после push зафиксировать конкретные запуски `candidate.yml` и `ci.yml`, затем проверить их отдельным шагом и закрывать КТ по фактическим логам.
+
+### Ожидаемые прогоны после candidate r1
+
+Для candidate-коммита `d1a7b82df33d7eec835b25f53444ff5d476a508e` зафиксированы:
+- Candidate acceptance: https://github.com/Y2Kill/orbital-economy/actions/runs/36577097529 — ожидаются apply-patch, conformance, audit, validation и policy;
+- CI: https://github.com/Y2Kill/orbital-economy/actions/runs/36577097498 — ожидаются guard и самотесты на Linux.
+
+На момент записи Candidate acceptance был `queued`, CI — `in_progress`. Результаты проверяются отдельным шагом; один длинный polling/wait не используется.
