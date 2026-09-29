@@ -19,7 +19,7 @@ e5363ac0ba6abb39e13b91a896133e79ff6f76d97da167cf14dd41f65667fa80  ./docs/CURRENT
 8f2b8daec856f68ffcc6dcd9d8a6e0b7df3f8f9966c41bfe4c92df6bc7b4abf9  ./docs/PARAMETER_ANNOTATIONS.json
 cb04792874eb891f2bd1e004f34c67537e59102d7e5073c0e232b36628a5d70e  ./docs/PARAMETER_REGISTRY.md
 4e5ae999792f1d46e7d507fad278d3ba93a2937881b7a74cbe3d68ae9a583ead  ./docs/PLANET_V1_CONTRACT_RU.md
-05f8450ac55ad727ef1fe9d20cb6cab0fb68ea6aa528e0a7f1a8bf4b99e379ea  ./docs/ROADMAP.md
+0bc0d631d1ccf97d0a7deae73e4d3d25c92ababf19c302537ca8651342ef4370  ./docs/ROADMAP.md
 c267b8136f784055b0ca4599d236c29ef30055456625190076652f5e973b5e12  ./docs/STRUCTURE_AUDIT_REPORT.md
 3ae639958b7a331cfddf5d730a720990ff0cfb988046709d75391c34967b6baf  ./docs/V7_5_1_TO_V7_6_CHANGE_REPORT.md
 4cadd7f34b7c345f2bb5a18e46a584179eb5ed6b527e4fb4f623059dc001dd35  ./docs/V7_6_1_CALIBRATION_REPORT.md
@@ -246,6 +246,10 @@ f7f054d268baafd490f14a7b444232ea754e7edba1dc159ae8e31da987fce91b  ./docs/tasks/0
 15cab66fefa2b976927c2f69ab6d919f2a302b29071f48aea772d188a95c6a70  ./docs/tasks/019-ore-capital/draft/ore-mine.json
 f7f054d268baafd490f14a7b444232ea754e7edba1dc159ae8e31da987fce91b  ./docs/tasks/019-ore-capital/draft/validation-v7.7.6-draft.json
 588629bc8abad6e35d63097ab3be00d08a9622e3f5f5af1c0d1e057f234b8c11  ./docs/tasks/019-ore-capital/scope.json
+cbefeb27edfcd397a9f99265b53281c09045974cabb30a07a0712031d6f2d096  ./docs/tasks/020-simple-capital-cap/TASK_RU.md
+694700f3227ffea9500a850103b3ac9e47935d6f1edd2d54f56bf4c30c3a084e  ./docs/tasks/020-simple-capital-cap/fixtures/power-resource-mine-simple.json
+0ebbeca0b789a27053d69a14da21a2f254410b6eb047aa31c4e2fa12f4664fa6  ./docs/tasks/020-simple-capital-cap/reference/prototype.diff
+5bb2dfcb760136215a382d20b099febfb6e068567601789a6034b9dd46f27fdf  ./docs/tasks/020-simple-capital-cap/scope.json
 44d2e557f1cb2322739bc95ee2b6dcbf6d6fcb708da14e90d53250936e50da5c  ./docs/tasks/README_RU.md
 bbf818e93b88d606b3137b1bb69d60db8c41c9df4089025a921b1ca00f473244  ./lab/APPLY_PATCH.cmd
 a9806f824c48aadd69f178525243a2aa84439d6855574b8b0421958f36ca88c2  ./lab/CHANGELOG.md

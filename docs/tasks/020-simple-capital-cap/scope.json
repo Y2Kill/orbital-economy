@@ -1,0 +1,29 @@
+{
+  "task": "020",
+  "title": "simple_capital: capacity as a smooth cap on an uncapped rate; per-colony initial demand signal (Lab v0.9.11)",
+  "branch": "task/020-simple-capital-cap",
+  "allow": [
+    "lab/src/nodes/**",
+    "lab/src/node_qa.js",
+    "lab/src/cli.js",
+    "lab/fixtures/**",
+    "lab/package.json",
+    "lab/package-lock.json",
+    "lab/docs/NODES_RU.md",
+    "lab/docs/HARNESS_QA_RU.md",
+    "lab/docs/TEST_STATUS_RU.md",
+    "lab/README_RU.md",
+    "lab/CHANGELOG.md"
+  ],
+  "allow_binary": [],
+  "allow_protected": [],
+  "required_changes": [
+    "lab/src/nodes/simple_capital.js",
+    "lab/src/nodes/index.js",
+    "lab/src/node_qa.js",
+    "lab/fixtures/nodes/power-resource-mine-simple.json",
+    "lab/docs/NODES_RU.md",
+    "lab/CHANGELOG.md"
+  ],
+  "sums_by": "reviewer"
+}
