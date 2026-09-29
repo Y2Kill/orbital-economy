@@ -1,4 +1,4 @@
-# QA самого Orbital Economy Lab v0.9.10
+# QA самого Orbital Economy Lab v0.9.11
 
 ## 1. Operational QA
 
@@ -205,3 +205,15 @@ Case 10 также клонирует текущий accepted Mode 37 в вре�
 Linux CI 36397985918 до добавления Mode 38 probe: `NODE SELF-TEST: 15 passed, 0 failed`, полный `bench-selftests` PASS. Финальная голова обязана пройти тот же набор уже с runtime probe.
 
 Static fail-fast comparator включает failures `simple_capital` в hard-error list; policy не может их разрешить.
+
+
+## 3g. Smooth-cap / per-colony signal QA (v0.9.11)
+
+`NODE_SELF_TEST.cmd` расширен до **21** случаев. Новые cases 16–21 используют `power-resource-mine-simple.json` и работают от слоя без узла, если сектор уже присутствует в accepted.
+
+- 16: 36/6/94, byte-determinism, дословный `Uncapped Output` и старая ветка;
+- 17: все `simple_capital` CONFORMING, loops=0, unclassified=0, P2 +2 simple / −2 exceptions;
+- 18: real simulation последнего Mode с включённым switch; `rate <= Uncapped Output + 1e-9` и `rate <= Capacity + 0.001 + 1e-9` во всех точках; runtime/plugin checks PASS;
+- 19: strip/rebuild без отличий definitions/replacements/LINK;
+- 20: отрицательные формы `capacity_output` отвергаются с путём;
+- 21: object `initial` требует точные colony keys и задаёт разные A/B initial values.

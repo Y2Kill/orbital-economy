@@ -1,4 +1,4 @@
-# Статус проверок Orbital Economy Lab v0.9.10 — baseline v7.7.6 r1
+# Статус проверок Orbital Economy Lab v0.9.11 — baseline v7.7.6 r1
 
 ## Принятая основа
 
@@ -107,3 +107,10 @@ Accepted model, validation и policy задачей 018 не изменяютс�
 Accepted ModelJSON/validation/policy не менялись, поэтому baseline имеет `P2.simple=0`. Harness добавляет второй declarative node type `simple_capital`, static/runtime conformance, generated `capital_retirement`, P2 kind `simple`, semantic validation merge и cases 10–15.
 
 CI run 36397985918 (Linux, head `94a395531d1300dd6d685cb5d8ca21aee8f68b89`) завершён success: QA 32/32; Structure 21/21; Loop 15/15; Planet 16/16; Conformance 18/18; Policy 10/10; Compare PASS; NODE SELF-TEST 15/15; bench Modes 0/12 `OVERALL: PASS`. Финальная голова задачи дополнительно включает Mode 38 runtime probe и документацию; её run фиксируется в task report.
+
+
+## Lab v0.9.11 — smooth capacity cap и per-colony initial (задача 020)
+
+Harness-only изменение `simple_capital`: `capacity_output.cap: "smooth"` для скорости без capacity-параметра и object-form `sizing.signal.initial` по колониям. Существующий `replaces` должен раскрываться без байтовых изменений. Power-resource fixture: 36 add / 6 replace / 94 LINK; NODE QA: 21/21 после успешной CI-проверки.
+
+Accepted ModelJSON, validation и policy задачей 020 не меняются. Linux CI и финальная голова фиксируются в `docs/tasks/020-simple-capital-cap/REPORT_RU.md`; канонический Windows-прогон остаётся за reviewer.
