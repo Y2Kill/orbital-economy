@@ -522,6 +522,117 @@ await expect('16. smooth-cap fixture expands byte-deterministically with verbati
   return `36 elements / 6 replacements / 94 links; ${sa.length} JSON bytes stable`;
 });
 
+
+function validationWithoutSimpleFragment(raw, fragment) {
+  const out = structuredClone(raw);
+  const names = new Set((fragment.simple_capital_instances || []).map(x => x.name));
+  const simple = out.plugins?.find(p => p.type === 'simple_capital');
+  if (simple?.instances) simple.instances = simple.instances.filter(x => !names.has(x.name));
+
+  const boundaries = out.plugins?.find(p => p.type === 'open_boundaries');
+  const transformation = boundaries?.categories?.find(c => c.id === 'capital_transformation');
+  const retirement = boundaries?.categories?.find(c => c.id === 'capital_retirement');
+  const removeTransformation = new Set(fragment.capital_transformation_names || []);
+  const removeRetirement = new Set(fragment.capital_retirement_names || []);
+  if (transformation?.name) transformation.name = transformation.name.filter(x => !removeTransformation.has(x));
+  if (retirement?.name) retirement.name = retirement.name.filter(x => !removeRetirement.has(x));
+  const pairSources = new Set((fragment.transformation_pairs || []).map(x => x.source));
+  if (boundaries?.transformation_pairs) boundaries.transformation_pairs = boundaries.transformation_pairs.filter(x => !pairSources.has(x.source));
+
+  if (fragment.planet_closure) {
+    const planet = out.plugins?.find(p => p.type === 'planet_closure');
+    const process = planet?.processes?.find(x => x.id === fragment.planet_closure.process);
+    if (process) delete process.capacity;
+  }
+  return out;
+}
+
+await expect('17. smooth-cap fixture integrates with validation and closes two P2 exceptions', () => {
+  if (!powerState) throw new Error('case 16 did not produce power-resource expansion');
+  const baselineValidation = powerState.alreadyPresent
+    ? validationWithoutSimpleFragment(validation, powerState.expanded.validation)
+    : validation;
+  const baselineModel = powerState.base;
+  const baselineAudits = runStructureAudits(baselineModel, baselineValidation);
+
+  const model = applyPatch(baselineModel, { format: PATCH_FORMAT, ...powerState.expanded.patch }).model;
+  const merged = mergeNodeValidation(baselineValidation, [powerState.expanded.validation]);
+  const conformance = runLifecycleConformance(model, merged);
+  const audits = runStructureAudits(model, merged);
+  const expectedSimple = (merged.plugins.find(p => p.type === 'simple_capital')?.instances || []).length;
+  const simple = conformance.simpleCapital;
+  if (conformance.status !== 'PASS' || simple?.status !== 'PASS' ||
+      simple.summary.instances !== expectedSimple || simple.summary.nonConforming !== 0) {
+    throw new Error(`simple conformance mismatch: ${JSON.stringify(simple?.summary || simple)}`);
+  }
+  if (audits.algebraicLoops?.status !== 'PASS' || audits.algebraicLoops.combinationsWithLoops !== 0) {
+    throw new Error(`algebraic loops detected: ${audits.algebraicLoops?.combinationsWithLoops}`);
+  }
+  if (audits.openBoundaries?.summary?.unclassified !== 0) {
+    throw new Error(`open_boundaries unclassified = ${audits.openBoundaries?.summary?.unclassified}`);
+  }
+  const beforeP2 = baselineAudits.planetClosure?.counters?.P2;
+  const afterP2 = audits.planetClosure?.counters?.P2;
+  if (!beforeP2 || !afterP2) throw new Error('planet_closure P2 counters are missing');
+  if (afterP2.simple !== beforeP2.simple + powerFixture.colonies.length) {
+    throw new Error(`P2.simple delta = ${afterP2.simple - beforeP2.simple}, expected +${powerFixture.colonies.length}`);
+  }
+  if (afterP2.exceptions !== beforeP2.exceptions - powerFixture.colonies.length) {
+    throw new Error(`P2.exceptions delta = ${afterP2.exceptions - beforeP2.exceptions}, expected -${powerFixture.colonies.length}`);
+  }
+  powerState.model = model;
+  powerState.validation = merged;
+  powerState.target = model;
+  return `simple=${expectedSimple} CONFORMING; loops=0; P2 simple ${beforeP2.simple}->${afterP2.simple}, exceptions ${beforeP2.exceptions}->${afterP2.exceptions}; unclassified=0`;
+});
+
+await expect('18. smooth cap bounds runtime rate by uncapped output and capacity', () => {
+  if (!powerState?.model || !powerState?.validation) throw new Error('case 17 did not produce integrated model/validation');
+  const scenarios = powerState.model.scenarios || [];
+  if (!scenarios.length) throw new Error('model has no scenarios');
+  const source = scenarios[scenarios.length - 1];
+  const trial = structuredClone(source);
+  trial.name = `${source.name || 'last mode'} — Node QA power-resource smooth cap`;
+  trial.values = { ...trial.values, [powerFixture.switch]: 1 };
+
+  const simModel = loadModelJSON(modelJsonForScenario(powerState.model, trial));
+  const modelErrors = simModel.check();
+  if (modelErrors.length) throw new Error(`trial model.check() returned ${modelErrors.length}: ${modelErrors.map(e => e.message || e).join('; ')}`);
+  const results = simModel.simulate();
+  const ctx = seriesContext(simModel, results);
+  const runtime = [
+    checkTimeAxis(results, powerState.validation.expected_time_step ?? powerState.model.simulation?.time_step ?? null, powerState.validation.time_step_tolerance ?? 1e-12),
+    checkFiniteAll(simModel, results)
+  ];
+  if (powerState.validation.non_negative_regex) {
+    runtime.push(checkNonNegativeRegex(simModel, results, powerState.validation.non_negative_regex.pattern, powerState.validation.non_negative_regex.tolerance ?? 1e-10));
+  }
+  for (const plugin of powerState.validation.plugins || []) runtime.push(...checkPlugin(plugin, ctx));
+  for (const check of powerState.validation.global_checks || []) runtime.push(runGenericCheck(check, ctx));
+  const runtimeFail = runtime.filter(x => x.status === 'FAIL');
+  if (runtimeFail.length) throw new Error(`runtime checks failed: ${runtimeFail.map(x => `${x.name}: ${x.message || 'FAIL'}`).join('; ')}`);
+
+  let checked = 0;
+  for (const X of powerFixture.colonies) {
+    const rate = Array.from(ctx.get(`${X} Power Resource Extraction Rate`), Number);
+    const uncapped = Array.from(ctx.get(`${X} Power Resource Mine Uncapped Output`), Number);
+    const capacity = Array.from(ctx.get(`${X} Power Resource Mine Capacity`), Number);
+    if (rate.length !== uncapped.length || rate.length !== capacity.length) throw new Error(`${X}: series length mismatch`);
+    for (let i = 0; i < rate.length; i++) {
+      if (rate[i] > uncapped[i] + 1e-9) throw new Error(`${X} point ${i}: rate ${rate[i]} > uncapped ${uncapped[i]}`);
+      if (rate[i] > capacity[i] + 0.001 + 1e-9) throw new Error(`${X} point ${i}: rate ${rate[i]} > capacity+0.001 ${capacity[i] + 0.001}`);
+      checked++;
+    }
+  }
+  return `${checked} colony-time points satisfy both smooth-cap bounds; runtime plugins PASS`;
+});
+
+await expect('19. strip and rebuild smooth-cap case with zero definition/replacement/link differences', () => {
+  if (!powerState?.target) throw new Error('case 17 did not produce rebuild target');
+  const out = assertSimpleRebuild(powerFixture, powerState.target);
+  return `${out.patch.add_elements.length} definitions, ${out.patch.replace_formulas.length} replacements, ${out.patch.add_links.length} links rebuilt exactly`;
+});
+
 await expect('20. capacity_output rejects replaces+cap, lifecycle cap, and unsupported cap value with paths', async () => {
   const both = structuredClone(powerFixture);
   both.capacity_output.replaces = '{C} Mining Capacity';
