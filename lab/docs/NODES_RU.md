@@ -1,4 +1,4 @@
-# Declarative Nodes — Orbital Economy Lab v0.9.9
+# Declarative Nodes — Orbital Economy Lab v0.9.11
 
 ## 1. Назначение
 
@@ -169,7 +169,7 @@ node src\cli.js expand-nodes <node-or-patch.json> <base-model.json> --out=output
 
 Accepted ModelJSON, validation и policy также не меняются. Генератор — инфраструктура для будущих model tasks и способ доказать, что короткая declaration воспроизводит уже принятую конструкцию.
 
-## 9. `simple_capital` (v0.9.9)
+## 9. `simple_capital` (v0.9.11)
 
 `simple_capital` — мощность как простой капитал без Active/Inactive/Retired lifecycle. Декларация использует ту же закрытую форму верхнего уровня, что `capital_lifecycle`: `sector`, `colonies`, `switch`, `initial_capacity`, числовые `parameters`, `sizing.signal`, `capacity_output`, `backing[]`, `planet_process`. Неизвестные поля отвергаются с точным путём.
 
@@ -178,3 +178,18 @@ Accepted ModelJSON, validation и policy также не меняются. Ге�
 Generated validation fragment содержит `simple_capital_instances`, имена Expansion/consumption для `capital_transformation`, Depreciation/Retirement для `capital_retirement`, transformation pairs и `planet_closure.capacity = {kind:"simple", stock:"{C} <sector> Capacity"}`. При `--validation` отсутствующие plugin `simple_capital` и category `capital_retirement` создаются; повторный merge идемпотентен, несовпадающая существующая запись — ошибка.
 
 Фикстура `lab/fixtures/nodes/regolith-mine-simple.json` раскрывается в **34 add / 6 replace / 78 LINK** — тот же element set, формулы, replacements, links и validation fragment, что reference-прототип задачи 016. `NODE_SELF_TEST` v0.9.9 содержит 15 случаев: прежние 1–9 и cases 10–15 для simple capital, включая strip/rebuild, STOCK sizing rule, conflicts, strict schema, determinism и runtime Mode 38 probe.
+
+
+### 9.1 Мягкий потолок для скорости без исходной мощности (v0.9.11)
+
+`capacity_output` содержит `variable` и ровно один способ привязки мощности: `replaces` либо `cap: "smooth"`. `cap` допустим только у `simple_capital`.
+
+При smooth cap генератор создаёт `X <sector> Uncapped Output` с дословной прежней формулой целевой скорости и заменяет её на:
+`IfThenElse([switch] = 1, [U] / (1 + ([U] / ([Capacity] + 0.001)) ^ 8) ^ 0.125, <прежняя формула дословно>)`.
+Generated `Uncapped Output` участвует в проверке конфликтов имён. Для `capital_lifecycle` прежний `replaces` остаётся обязательным.
+
+### 9.2 Начальный sizing signal по колониям
+
+При `sizing.signal.create=true` `initial` может быть одним конечным числом для всех колоний либо объектом с ровно ключами `colonies`, например `{"A":1350,"B":182.656}`. Отсутствующий/лишний ключ и не конечное число отвергаются с JSON-путём; каждый signal STOCK получает значение своей колонии.
+
+Фикстура `fixtures/nodes/power-resource-mine-simple.json` раскрывается в **36 add / 6 replace / 94 LINK**. NODE QA v0.9.11 = 21 случаев; cases 16–19 проверяют детерминированность, integration/runtime и strip/rebuild, cases 20–21 — schema errors и per-colony initial.

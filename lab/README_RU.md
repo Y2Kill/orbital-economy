@@ -1,6 +1,6 @@
-# Orbital Economy Lab v0.9.10
+# Orbital Economy Lab v0.9.11
 
-Локальный стенд для запуска, проверки, regression-анализа, policy-gating, Capital Lifecycle Kernel и статических аудитов структуры для ModelJSON Orbital Economy. v0.9.10 добавляет строгую статическую схему validation: ошибки формы блокируют запуск до simulation. v0.9.6 добавляет `planet_closure`: декларативную per-process карту критериев Planet v1 P2–P6 с dependency paths, exceptions/debt counters и режимами `report/classify/planet_v1/planet_strict`.
+Локальный стенд для запуска, проверки, regression-анализа, policy-gating, Capital Lifecycle Kernel и статических аудитов структуры для ModelJSON Orbital Economy. v0.9.11 расширяет `simple_capital`: smooth cap для скорости без capacity-параметра и раздельный initial sizing signal по колониям. v0.9.10 добавляет строгую статическую схему validation: ошибки формы блокируют запуск до simulation. v0.9.6 добавляет `planet_closure`: декларативную per-process карту критериев Planet v1 P2–P6 с dependency paths, exceptions/debt counters и режимами `report/classify/planet_v1/planet_strict`.
 
 ## Подтверждённая база
 
@@ -30,6 +30,14 @@
 
 ---
 
+
+# 0i. Что изменилось в v0.9.11
+
+`simple_capital` поддерживает взаимоисключающие `capacity_output.replaces` и `capacity_output.cap: "smooth"`. Smooth cap сохраняет исходную скорость в generated `Uncapped Output` и ограничивает её STOCK-мощностью без изменения выключенной ветки.
+
+`sizing.signal.initial` принимает одно число либо точный объект по колониям. Power-resource fixture даёт 36 add / 6 replace / 94 LINK; `NODE_SELF_TEST.cmd` содержит 21 случай, включая реальную simulation границ cap.
+
+Accepted model/validation/policy и `model/nodes/*` не меняются. Подробно: `docs\\NODES_RU.md`.
 
 # 0h. Что изменилось в v0.9.10
 

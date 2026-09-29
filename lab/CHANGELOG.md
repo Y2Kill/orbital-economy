@@ -1,5 +1,13 @@
 # Changelog
 
+## v0.9.11 — simple_capital smooth cap + per-colony initial
+
+- `capacity_output` требует ровно один из `replaces` / `cap`; `cap: "smooth"` разрешён только у `simple_capital`;
+- smooth cap создаёт `X S Uncapped Output` с дословной прежней формулой и использует насыщение `U / (1 + (U / (C + 0.001)) ^ 8) ^ 0.125`;
+- `sizing.signal.initial` принимает число либо объект с точными ключами `colonies`;
+- power-resource fixture = 36 add / 6 replace / 94 LINK; NODE_SELF_TEST расширен до 21 случаев;
+- package/Lab version → v0.9.11; accepted model, validation, policy, engine и `model/nodes/*` не изменены.
+
 ## v0.9.10 — strict validation schema
 
 - новый `src/validation_schema.js`: строгая статическая форма validation с JSON-путями; неизвестные поля, check/plugin types, malformed windows и сценарии отсутствующих Modes — HARD errors;
