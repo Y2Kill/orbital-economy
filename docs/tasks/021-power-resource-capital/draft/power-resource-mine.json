@@ -1,0 +1,56 @@
+{
+  "type": "simple_capital",
+  "version": 1,
+  "sector": "Power Resource Mine",
+  "colonies": [
+    "A",
+    "B"
+  ],
+  "switch": "Power Resource Capital Enabled",
+  "initial_capacity": {
+    "A": 1750,
+    "B": 650
+  },
+  "parameters": {
+    "Capacity Reserve Factor": 1.25,
+    "Construction Time": 90,
+    "Retirement Time": 360,
+    "Depreciation Rate": 0.0001,
+    "Capital Goods per Capacity": 0.02,
+    "Construction Materials per Capacity": 0.02
+  },
+  "sizing": {
+    "signal": {
+      "name": "{C} Power Resource Demand Signal",
+      "create": true,
+      "demand": "{C} Power Resource Demand",
+      "initial": {
+        "A": 1350,
+        "B": 182.656
+      },
+      "adjustment_time": {
+        "name": "Power Resource Demand Signal Adjustment Time",
+        "value": 3
+      }
+    }
+  },
+  "capacity_output": {
+    "variable": "{C} Power Resource Extraction Rate",
+    "cap": "smooth"
+  },
+  "backing": [
+    {
+      "good": "Capital Goods",
+      "fulfillment": "{C} Capital Goods Fulfillment",
+      "inventory": "{C} Capital Goods Inventory",
+      "demand": "{C} Capital Goods Demand"
+    },
+    {
+      "good": "Construction Materials",
+      "fulfillment": "{C} Construction Materials Fulfillment",
+      "inventory": "{C} Construction Materials Inventory",
+      "demand": "{C} Construction Materials Demand"
+    }
+  ],
+  "planet_process": "power_resource"
+}

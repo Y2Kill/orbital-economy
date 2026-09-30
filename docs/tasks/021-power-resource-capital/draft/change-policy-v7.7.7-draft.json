@@ -1,0 +1,123 @@
+{
+  "format": "orbital-economy-change-policy-v1",
+  "name": "Orbital Economy v7.7.7 Power Resource Capital - change contract DRAFT (owner); executor finalises and justifies every change",
+  "description": "Written before implementation from V7_7_7_ARCHITECTURE_SPEC.md. Accepted baseline: v7.7.6 r1. Modes 0-41 must reproduce it exactly; new behaviour lives in Modes 42-43 behind Power Resource Capital Enabled. validation_sha256 must be set to the delivered validation.",
+  "accepted_model_sha256": "d274f7b9dcc11dbfe3730c1a88fe8fd3cf242e09a52a3e51e9082ab8420de8dd",
+  "validation_sha256": "cd4a7f287d0fcea071e0e7228978b841a7da0f35c31144e78303e09fc520da43",
+  "comparison": {
+    "abs_tolerance": 0,
+    "rel_tolerance": null,
+    "rel_floor": 1e-12
+  },
+  "engine": {
+    "package": "simulation",
+    "version": "9.0.0"
+  },
+  "default_action": "deny",
+  "require_full_mode_coverage": true,
+  "rules": [
+    {
+      "id": "regression-guard-modes-0-41",
+      "action": "deny",
+      "event": "series_changed",
+      "modes": "0-41",
+      "name": "*",
+      "note": "Modes 0-41 set Power Resource Capital Enabled = 0 and must reproduce v7.7.6 r1 exactly (first match wins)."
+    },
+    {
+      "id": "forbid-removals-and-structural-drift",
+      "action": "deny",
+      "event": [
+        "element_removed",
+        "series_removed",
+        "mode_removed",
+        "link_removed",
+        "type_changed",
+        "simulation_changed",
+        "time_axis_changed",
+        "scenario_renamed"
+      ],
+      "name": "*"
+    },
+    {
+      "id": "add-power-resource-mine",
+      "action": "allow",
+      "event": "element_added",
+      "name": [
+        "Power Resource Capital Enabled",
+        "Power Resource Demand Signal Adjustment Time",
+        "Power Resource Mine *",
+        "? Power Resource Mine *",
+        "? Power Resource Demand Signal",
+        "? Power Resource Demand Signal *"
+      ],
+      "required": true,
+      "note": "the power-resource-mine simple_capital node (with its uncapped-output variables) generated from its declaration: switch, demand-signal stock and flows, parameters, capacity stocks, roles, CG and CM consumption (V7_7_7_ARCHITECTURE_SPEC §2)"
+    },
+    {
+      "id": "change-definitions-per-spec",
+      "action": "allow",
+      "event": "definition_changed",
+      "name": [
+        "? Power Resource Extraction Rate",
+        "? Capital Goods Demand",
+        "? Construction Materials Demand",
+        "Test 2 Transport Surge Active"
+      ],
+      "required": true,
+      "note": "under the switch: extraction rate = smooth cap of the uncapped rate by mine capacity; mine desired expansion joins CG and CM demand; Test 2 flag + Mode 43 (spec §3)"
+    },
+    {
+      "id": "link-into-changed-definitions",
+      "action": "allow",
+      "event": "link_added",
+      "name": [
+        "* -> ? Power Resource Extraction Rate",
+        "* -> ? Capital Goods Demand",
+        "* -> ? Construction Materials Demand",
+        "* -> Test 2 Transport Surge Active"
+      ]
+    },
+    {
+      "id": "link-into-new-elements",
+      "action": "allow",
+      "event": "link_added",
+      "name": [
+        "* -> Power Resource Capital Enabled",
+        "* -> Power Resource Demand Signal Adjustment Time",
+        "* -> Power Resource Mine *",
+        "* -> ? Power Resource Mine *",
+        "* -> ? Power Resource Demand Signal",
+        "* -> ? Power Resource Demand Signal *"
+      ]
+    },
+    {
+      "id": "add-modes-42-43",
+      "action": "allow",
+      "event": "mode_added",
+      "modes": "42-43",
+      "required": true
+    },
+    {
+      "id": "scenarios-0-41-gain-switch-off",
+      "action": "allow",
+      "event": "scenario_input_changed",
+      "modes": "0-41",
+      "required": true,
+      "note": "only \"Power Resource Capital Enabled\": 0"
+    },
+    {
+      "id": "new-series-everywhere",
+      "action": "allow",
+      "event": "series_added",
+      "name": [
+        "Power Resource Capital Enabled",
+        "Power Resource Demand Signal Adjustment Time",
+        "Power Resource Mine *",
+        "? Power Resource Mine *",
+        "? Power Resource Demand Signal",
+        "? Power Resource Demand Signal *"
+      ]
+    }
+  ]
+}

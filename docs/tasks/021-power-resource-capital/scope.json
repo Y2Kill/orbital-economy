@@ -1,0 +1,17 @@
+{
+  "task": "021",
+  "title": "v7.7.7 Power Resource Capital: energy-resource extraction capacity as simple capital (smooth cap; closes Planet v1 P2)",
+  "branch": "task/021-power-resource-capital",
+  "allow": [],
+  "allow_binary": [],
+  "allow_protected": [
+    "docs/tasks/021-power-resource-capital/candidate/**"
+  ],
+  "required_changes": [
+    "docs/tasks/021-power-resource-capital/candidate/model-patch.json",
+    "docs/tasks/021-power-resource-capital/candidate/validation.json",
+    "docs/tasks/021-power-resource-capital/candidate/change-policy.json",
+    "docs/tasks/021-power-resource-capital/candidate/PARAMETER_ANNOTATIONS_fragment.json"
+  ],
+  "sums_by": "reviewer"
+}
