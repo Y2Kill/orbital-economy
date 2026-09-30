@@ -1,0 +1,35 @@
+{
+  "type": "deposit",
+  "version": 1,
+  "colonies": ["A", "B"],
+  "switch": "Deposits Enabled",
+  "resources": [
+    {
+      "resource": "Ore",
+      "extraction": { "flow": "{C} Mining", "rate": "{C} Mining Rate" },
+      "initial": { "undiscovered": { "A": 20000000, "B": 3600000 }, "proven": { "A": 200000, "B": 36000 } },
+      "parameters": { "Target Reserve Life": 5400, "Exploration Time": 1800, "Capital Goods per Discovery": 0.0002, "Depletion Buffer Days": 30 },
+      "signal": { "name": "{C} Ore Extraction Signal", "initial": { "A": 42.227, "B": 8.373 }, "adjustment_time": { "name": "Ore Extraction Signal Adjustment Time", "value": 30 } },
+      "backing": [ { "good": "Capital Goods", "fulfillment": "{C} Capital Goods Fulfillment", "inventory": "{C} Capital Goods Inventory", "demand": "{C} Capital Goods Demand" } ],
+      "planet_process": "mining"
+    },
+    {
+      "resource": "Regolith",
+      "extraction": { "flow": "{C} Regolith Extraction", "rate": "{C} Regolith Extraction Rate" },
+      "initial": { "undiscovered": { "A": 540000, "B": 360000 }, "proven": { "A": 5400, "B": 3600 } },
+      "parameters": { "Target Reserve Life": 5400, "Exploration Time": 1800, "Capital Goods per Discovery": 0.0005, "Depletion Buffer Days": 30 },
+      "signal": { "name": "{C} Regolith Extraction Signal", "initial": { "A": 0, "B": 0 }, "adjustment_time": { "name": "Regolith Extraction Signal Adjustment Time", "value": 30 } },
+      "backing": [ { "good": "Capital Goods", "fulfillment": "{C} Capital Goods Fulfillment", "inventory": "{C} Capital Goods Inventory", "demand": "{C} Capital Goods Demand" } ],
+      "planet_process": "regolith"
+    },
+    {
+      "resource": "Power Resource",
+      "extraction": { "flow": "{C} Power Resource Extraction", "rate": "{C} Power Resource Extraction Rate" },
+      "initial": { "undiscovered": { "A": 500000000, "B": 150000000 }, "proven": { "A": 5000000, "B": 1500000 } },
+      "parameters": { "Target Reserve Life": 5400, "Exploration Time": 1800, "Capital Goods per Discovery": 0.000007, "Depletion Buffer Days": 30 },
+      "signal": { "name": "{C} Power Resource Extraction Signal", "initial": { "A": 1373.679, "B": 30.983 }, "adjustment_time": { "name": "Power Resource Extraction Signal Adjustment Time", "value": 30 } },
+      "backing": [ { "good": "Capital Goods", "fulfillment": "{C} Capital Goods Fulfillment", "inventory": "{C} Capital Goods Inventory", "demand": "{C} Capital Goods Demand" } ],
+      "planet_process": "power_resource"
+    }
+  ]
+}

@@ -4,10 +4,12 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import os from 'node:os';
+import crypto from 'node:crypto';
 import { spawnSync } from 'node:child_process';
 import { discoverSingleJson } from './workspace.js';
 import { readJson } from './util.js';
 import { PATCH_FORMAT, applyPatch } from './patch.js';
+import { compareModelStructure } from './compare_models.js';
 import { loadModelJSON } from './engine.js';
 import { modelJsonForScenario } from './model.js';
 import { checkFiniteAll, checkNonNegativeRegex, checkPlugin, checkTimeAxis, runGenericCheck, seriesContext } from './checks.js';
@@ -21,6 +23,11 @@ import {
   simpleCapitalGeneratedNames,
   simpleCapitalReplacementNames
 } from './nodes/simple_capital.js';
+import {
+  depositGeneratedNames,
+  depositReplacementNames,
+  depositRetargetFlowNames
+} from './nodes/deposit.js';
 import { runLifecycleConformance } from './lifecycle_conformance.js';
 import { runStructureAudits } from './structure_audit.js';
 
@@ -34,7 +41,8 @@ const declarationFiles = [
 ];
 const simpleFixtureFile = path.join(root, 'fixtures', 'nodes', 'regolith-mine-simple.json');
 const powerFixtureFile = path.join(root, 'fixtures', 'nodes', 'power-resource-mine-simple.json');
-for (const f of [modelFile, validationFile, simpleFixtureFile, powerFixtureFile, ...declarationFiles]) {
+const depositFixtureFile = path.join(root, 'fixtures', 'nodes', 'deposits.json');
+for (const f of [modelFile, validationFile, simpleFixtureFile, powerFixtureFile, depositFixtureFile, ...declarationFiles]) {
   if (!fs.existsSync(f)) {
     console.error(`[FAIL] Required node QA input is missing: ${f}`);
     process.exit(2);
@@ -46,11 +54,13 @@ const validation = readJson(validationFile);
 const declarations = declarationFiles.map(readJson);
 const simpleFixture = readJson(simpleFixtureFile);
 const powerFixture = readJson(powerFixtureFile);
-const simpleDeclarations = fs.readdirSync(nodeDir)
+const depositFixture = readJson(depositFixtureFile);
+const allNodeDeclarations = fs.readdirSync(nodeDir)
   .filter(name => name.endsWith('.json'))
   .map(name => path.join(nodeDir, name))
-  .map(file => ({ file, decl: readJson(file) }))
-  .filter(x => x.decl?.type === 'simple_capital');
+  .map(file => ({ file, decl: readJson(file) }));
+const simpleDeclarations = allNodeDeclarations.filter(x => x.decl?.type === 'simple_capital');
+const depositDeclarations = allNodeDeclarations.filter(x => x.decl?.type === 'deposit');
 
 let passed = 0, failed = 0;
 function mark(ok, name, detail = '') {
@@ -147,6 +157,35 @@ function stripSimpleNode(raw, decl) {
   return out;
 }
 
+function stripDepositNode(raw, decl) {
+  const out = structuredClone(raw);
+  const generated = new Set(depositGeneratedNames(decl));
+  for (const name of depositReplacementNames(decl)) {
+    const e = out.elements.find(x => x.type !== 'LINK' && x.name === name);
+    if (!e) throw new Error(`deposit: replacement target missing while stripping: ${name}`);
+    let value = e.behavior.value, peeled = 0;
+    while (true) {
+      try { value = oldBranch(value, decl.switch, name); peeled++; }
+      catch { break; }
+    }
+    if (!peeled) throw new Error(`deposit: replacement target is not wrapped by ${decl.switch}: ${name}`);
+    e.behavior.value = value;
+  }
+  for (const r of decl.resources || []) for (const X of decl.colonies || []) {
+    const flowName = r.extraction.flow.replaceAll('{C}', X);
+    const expectedSource = `${X} ${r.resource} Proven Reserves`;
+    const flow = out.elements.find(e => e.type === 'FLOW' && e.name === flowName);
+    if (!flow) throw new Error(`deposit: retargeted flow missing while stripping: ${flowName}`);
+    if (flow.from !== expectedSource) throw new Error(`deposit: ${flowName} source is ${flow.from ?? '∅'}, expected ${expectedSource}`);
+    flow.from = null;
+  }
+  out.elements = out.elements.filter(e => {
+    if (e.type === 'LINK') return !generated.has(e.from) && !generated.has(e.to);
+    return !generated.has(e.name);
+  });
+  return out;
+}
+
 function def(e) {
   return JSON.stringify({
     type: e.type,
@@ -219,7 +258,8 @@ function outerSwitchIs(model, name, switchName) {
 }
 const layeredNodes = [
   ...declarations.map(decl => ({ decl, strip: stripNode, targets: capitalLifecycleReplacementNames })),
-  ...simpleDeclarations.map(({ decl }) => ({ decl, strip: stripSimpleNode, targets: simpleCapitalReplacementNames }))
+  ...simpleDeclarations.map(({ decl }) => ({ decl, strip: stripSimpleNode, targets: simpleCapitalReplacementNames })),
+  ...depositDeclarations.map(({ decl }) => ({ decl, strip: stripDepositNode, targets: depositReplacementNames }))
 ];
 const layers = new Map();
 {
@@ -227,7 +267,7 @@ const layers = new Map();
   const remaining = [...layeredNodes];
   while (remaining.length) {
     const i = remaining.findIndex(n => n.targets(n.decl).every(t => outerSwitchIs(current, t, n.decl.switch)));
-    if (i < 0) throw new Error(`cannot determine node layering: none of ${remaining.map(n => n.decl.sector).join(', ')} is outermost on all its replacement targets`);
+    if (i < 0) throw new Error(`cannot determine node layering: none of ${remaining.map(n => n.decl.sector || n.decl.switch || n.decl.type).join(', ')} is outermost on all its replacement targets`);
     const [n] = remaining.splice(i, 1);
     const base = n.strip(current, n.decl);
     layers.set(n.decl, { base, target: current });
@@ -667,6 +707,76 @@ await expect('21. per-colony initial requires exact colony keys and initializes 
   if (a?.behavior?.initial_value !== powerFixture.sizing.signal.initial.A) throw new Error(`A initial = ${a?.behavior?.initial_value}`);
   if (b?.behavior?.initial_value !== powerFixture.sizing.signal.initial.B) throw new Error(`B initial = ${b?.behavior?.initial_value}`);
   return `A=${a.behavior.initial_value}, B=${b.behavior.initial_value}`;
+});
+
+
+
+let depositState = null;
+
+function definitionFingerprint(raw) {
+  const itemKey = e => e.type === 'LINK' ? `L|${e.from}|${e.to}` : `${e.type}|${e.name}`;
+  const itemDef = e => JSON.stringify({ t: e.type, f: e.from ?? null, to: e.to ?? null, b: e.behavior });
+  const text = raw.elements.map(e => `${itemKey(e)}=${itemDef(e)}`).sort().join('\n');
+  return crypto.createHash('sha256').update(text).digest('hex').slice(0, 16);
+}
+
+await expect('22. deposit fixture expands and APPLY_PATCH matches prototype counts/fingerprint', () => {
+  const probe = `${depositFixture.colonies[0]} ${depositFixture.resources[0].resource} Proven Reserves`;
+  const alreadyPresent = accepted.elements.some(e => e.type !== 'LINK' && e.name === probe);
+  const acceptedDecl = depositDeclarations.find(x => x.decl.switch === depositFixture.switch)?.decl || null;
+  const acceptedLayer = alreadyPresent && acceptedDecl ? layers.get(acceptedDecl) : null;
+  if (alreadyPresent && !acceptedLayer) throw new Error('deposit layer is present in accepted model but its declaration/layer cannot be identified');
+  const baseModel = alreadyPresent ? acceptedLayer.base : accepted;
+  const expanded = expandNode(depositFixture, baseModel);
+  const model = applyPatch(baseModel, { format: PATCH_FORMAT, ...expanded.patch }).model;
+  const counts = [expanded.patch.add_elements.length, expanded.patch.replace_formulas.length, expanded.patch.retarget_flows?.length || 0, expanded.patch.add_links.length];
+  if (counts.join('/') !== '100/8/6/212') throw new Error(`prototype count mismatch: got ${counts.join('/')}, expected 100/8/6/212`);
+  const fp = definitionFingerprint(model);
+  if (fp !== '7d8fe41cc6df5c1a') throw new Error(`definition fingerprint ${fp}, expected 7d8fe41cc6df5c1a`);
+  for (const name of depositRetargetFlowNames(depositFixture)) {
+    const flow = model.elements.find(e => e.type === 'FLOW' && e.name === name);
+    if (!flow?.from?.endsWith(' Proven Reserves')) throw new Error(`${name}: extraction was not re-sourced to proven reserves`);
+  }
+  depositState = { base: baseModel, model, expanded, alreadyPresent, acceptedLayer };
+  return `100 elements / 8 replacements / 6 retargets / 212 links; fingerprint=${fp}`;
+});
+
+await expect('26. deposit/retarget schema rejects four required invalid cases with paths/names', async () => {
+  const extra = structuredClone(depositFixture);
+  extra.resources[0].parameters.Unexpected = 1;
+  await requireThrow(() => expandNode(extra, depositState?.base || accepted), /node\.resources\[0\]\.parameters\.Unexpected: unknown field/, 'extra parameter');
+
+  const missingColony = structuredClone(depositFixture);
+  delete missingColony.resources[0].initial.proven.B;
+  await requireThrow(() => expandNode(missingColony, depositState?.base || accepted), /node\.resources\[0\]\.initial\.proven\.B: required field is missing/, 'initial without colony');
+
+  const wired = structuredClone(depositState?.base || accepted);
+  const mining = wired.elements.find(e => e.type === 'FLOW' && e.name === 'A Mining');
+  if (!mining) throw new Error('A Mining missing from fixture base');
+  mining.from = 'A Capital Goods Inventory';
+  await requireThrow(() => expandNode(depositFixture, wired), /A Mining must be a FLOW from ∅/, 'extraction flow not from boundary');
+
+  await requireThrow(() => applyPatch(depositState?.base || accepted, {
+    format: PATCH_FORMAT,
+    nodes: [depositFixture],
+    retarget_flows: [{ name: 'A Mining', from: null, to: null }]
+  }), /nodes: generated flow "A Mining" is also retargeted explicitly/, 'node plus explicit retarget');
+  return 'extra parameter, missing colony, non-boundary extraction, and duplicate node/explicit retarget all rejected';
+});
+
+await expect('27. explicit retarget_flows applies after add_elements and compare sees definition_changed', () => {
+  const baseModel = depositState?.base || accepted;
+  const stock = 'Node QA Proven Reserves';
+  const out = applyPatch(baseModel, {
+    format: PATCH_FORMAT,
+    add_elements: [{ type: 'STOCK', name: stock, behavior: { initial_value: 1000000000, non_negative: true } }],
+    retarget_flows: [{ name: 'A Mining', from: stock, to: null }]
+  }).model;
+  const flow = out.elements.find(e => e.type === 'FLOW' && e.name === 'A Mining');
+  if (flow?.from !== stock || flow?.to != null) throw new Error(`A Mining endpoints = ${flow?.from ?? '∅'} -> ${flow?.to ?? '∅'}`);
+  const structure = compareModelStructure(baseModel, out);
+  if (!structure.changedDefinitions.includes('A Mining')) throw new Error(`changedDefinitions lacks A Mining: ${JSON.stringify(structure.changedDefinitions)}`);
+  return `A Mining re-sourced to new stock; compare definition_changed=A Mining`;
 });
 
 console.log(`\nNODE SELF-TEST: ${passed} passed, ${failed} failed`);

@@ -1,5 +1,6 @@
 import { expandCapitalLifecycle } from './capital_lifecycle.js';
 import { expandSimpleCapital } from './simple_capital.js';
+import { expandDeposit, validateDepositDeclaration } from './deposit.js';
 
 const isObj = x => !!x && typeof x === 'object' && !Array.isArray(x);
 const isString = x => typeof x === 'string' && x.length > 0;
@@ -116,7 +117,8 @@ function validateCapitalLifecycle(decl, path, errors) {
 
 const REGISTRY = new Map([
   ['capital_lifecycle', { validate: validateCapitalLifecycle, expand: expandCapitalLifecycle }],
-  ['simple_capital', { validate: validateCapitalLifecycle, expand: expandSimpleCapital }]
+  ['simple_capital', { validate: validateCapitalLifecycle, expand: expandSimpleCapital }],
+  ['deposit', { validate: validateDepositDeclaration, expand: expandDeposit }]
 ]);
 
 export function validateNodeDeclaration(decl, path = 'node') {
@@ -150,19 +152,31 @@ function applyGeneratedFragment(model, fragment) {
     if (r.value != null) el.behavior.value = r.value;
     else el.behavior.initial_value = r.initial_value;
   }
+  for (const r of fragment.retarget_flows || []) {
+    const el = byName.get(String(r.name).toLowerCase());
+    if (!el || el.type !== 'FLOW') throw new Error(`generated retarget target is not a FLOW: ${r.name}`);
+    for (const end of ['from', 'to']) {
+      if (r[end] == null) continue;
+      const stock = byName.get(String(r[end]).toLowerCase());
+      if (!stock || stock.type !== 'STOCK') throw new Error(`generated retarget ${r.name} ${end} is not a STOCK: ${r[end]}`);
+    }
+    el.from = r.from ?? null;
+    el.to = r.to ?? null;
+  }
   for (const link of fragment.add_links) out.elements.push({ type: 'LINK', from: link.from, to: link.to });
   return out;
 }
 
 export function expandNodes(declarations, base, { path = 'nodes' } = {}) {
   if (!Array.isArray(declarations)) throw new Error(`${path}: must be an array`);
-  const patch = { add_elements: [], replace_formulas: [], add_links: [] };
+  const patch = { add_elements: [], replace_formulas: [], retarget_flows: [], add_links: [] };
   const validation = [];
   let working = structuredClone(base);
   for (const [i, decl] of declarations.entries()) {
     const out = expandNode(decl, working, { path: `${path}[${i}]` });
     patch.add_elements.push(...out.patch.add_elements);
     patch.replace_formulas.push(...out.patch.replace_formulas);
+    patch.retarget_flows.push(...(out.patch.retarget_flows || []));
     patch.add_links.push(...out.patch.add_links);
     validation.push(out.validation);
     working = applyGeneratedFragment(working, out.patch);

@@ -11,6 +11,7 @@ import { expandNodes, validateNodeDeclaration } from './nodes/index.js';
 //   "description": "<optional>",
 //   "add_elements":     [ { "type": "VARIABLE|STOCK|FLOW", "name": "...", "from": "...", "to": "...", "behavior": { ... }, "description": "..." } ],
 //   "replace_formulas": [ { "name": "<existing>", "value": "<new formula>" } | { "name": "<existing STOCK>", "initial_value": ... } ],
+//   "retarget_flows":   [ { "name": "<existing FLOW>", "from": "<STOCK>|null", "to": "<STOCK>|null" } ],
 //   "add_links":        [ { "from": "...", "to": "..." } ],
 //   "modify_scenarios": [ { "mode": 0, "set": { "Intermediate Inputs Enabled": 0 } } ],
 //   "add_scenarios":    [ { "name": "...", "description": "...", "values": { "Timed Test Mode": 17, ... } } ]
@@ -30,7 +31,7 @@ export function validatePatch(patch) {
   if (patch.format !== PATCH_FORMAT) errors.push(`format must be "${PATCH_FORMAT}"`);
   if (patch.base_sha256 != null && !/^[0-9a-f]{64}$/i.test(patch.base_sha256)) errors.push('base_sha256 must be a 64-hex SHA-256 or omitted');
   if (patch.name != null && typeof patch.name !== 'string') errors.push('name must be a string');
-  for (const key of ['nodes', 'add_elements', 'replace_formulas', 'add_links', 'modify_scenarios', 'add_scenarios']) {
+  for (const key of ['nodes', 'add_elements', 'replace_formulas', 'retarget_flows', 'add_links', 'modify_scenarios', 'add_scenarios']) {
     if (patch[key] != null && !Array.isArray(patch[key])) errors.push(`${key} must be an array`);
   }
   if (Array.isArray(patch.nodes)) {
@@ -52,6 +53,22 @@ export function validatePatch(patch) {
     if (!isObj(r) || !r.name) { errors.push(`${p}.name is required`); continue; }
     if (r.value == null && r.initial_value == null) errors.push(`${p} needs value or initial_value`);
     if (r.value != null && r.initial_value != null) errors.push(`${p}: give either value or initial_value, not both`);
+  }
+  const retargetNames = new Set();
+  for (const [i, r] of (patch.retarget_flows || []).entries()) {
+    const p = `retarget_flows[${i}]`;
+    if (!isObj(r)) { errors.push(`${p} must be an object`); continue; }
+    for (const key of Object.keys(r)) if (!['name','from','to'].includes(key)) errors.push(`${p}.${key}: unknown field`);
+    if (!r.name || typeof r.name !== 'string') errors.push(`${p}.name is required`);
+    else {
+      const k = r.name.toLowerCase();
+      if (retargetNames.has(k)) errors.push(`${p}.name: flow "${r.name}" is retargeted more than once`);
+      retargetNames.add(k);
+    }
+    for (const end of ['from','to']) {
+      if (!(end in r)) errors.push(`${p}.${end} is required (null = model boundary)`);
+      else if (r[end] !== null && typeof r[end] !== 'string') errors.push(`${p}.${end} must be a string or null`);
+    }
   }
   for (const [i, l] of (patch.add_links || []).entries()) {
     if (!isObj(l) || !l.from || !l.to) errors.push(`add_links[${i}] needs from and to`);
@@ -83,11 +100,17 @@ export function expandPatchNodes(base, patch) {
   for (const name of explicitTouched) {
     if (generatedTouched.has(name)) throw new Error(`nodes: generated element "${name}" is also added or replaced explicitly`);
   }
+  const generatedRetargets = new Map((generated.retarget_flows || []).map(x => [String(x.name).toLowerCase(), x.name]));
+  for (const r of patch.retarget_flows || []) {
+    const k = String(r.name).toLowerCase();
+    if (generatedRetargets.has(k)) throw new Error(`nodes: generated flow "${generatedRetargets.get(k)}" is also retargeted explicitly`);
+  }
 
   const merged = structuredClone(patch);
   delete merged.nodes;
   merged.add_elements = [...generated.add_elements, ...(patch.add_elements || [])];
   merged.replace_formulas = [...generated.replace_formulas, ...(patch.replace_formulas || [])];
+  merged.retarget_flows = [...(generated.retarget_flows || []), ...(patch.retarget_flows || [])];
   merged.add_links = [...generated.add_links, ...(patch.add_links || [])];
   return merged;
 }
@@ -123,6 +146,25 @@ export function applyPatch(base, patch, { baseSha256 = null, modeVariable = 'Tim
     model.elements.push(out);
     byName.set(el.name.toLowerCase(), out);
     log.push(`+ ${el.type} ${el.name}${el.type === 'FLOW' ? ` (${el.from ?? '∅'} -> ${el.to ?? '∅'})` : ''}`);
+  }
+
+  const addedInPatch = new Set((patch.add_elements || []).map(x => String(x.name).toLowerCase()));
+  for (const r of patch.retarget_flows || []) {
+    const k = String(r.name).toLowerCase();
+    if (addedInPatch.has(k)) throw new Error(`retarget_flows: FLOW "${r.name}" cannot be added and retargeted in the same patch`);
+    const el = byName.get(k);
+    if (!el) throw new Error(`retarget_flows: "${r.name}" does not exist`);
+    if (el.type !== 'FLOW') throw new Error(`retarget_flows: "${r.name}" is not a FLOW`);
+    for (const end of ['from', 'to']) {
+      if (r[end] == null) continue;
+      const stock = byName.get(String(r[end]).toLowerCase());
+      if (!stock) throw new Error(`retarget_flows: FLOW "${r.name}" ${end} "${r[end]}" does not exist`);
+      if (stock.type !== 'STOCK') throw new Error(`retarget_flows: FLOW "${r.name}" ${end} "${r[end]}" is not a STOCK`);
+    }
+    const oldFrom = el.from ?? null, oldTo = el.to ?? null;
+    el.from = r.from ?? null;
+    el.to = r.to ?? null;
+    log.push(`~ FLOW ${el.name}: endpoints ${oldFrom ?? '∅'} -> ${oldTo ?? '∅'} changed to ${el.from ?? '∅'} -> ${el.to ?? '∅'}`);
   }
 
   for (const r of patch.replace_formulas || []) {
