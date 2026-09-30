@@ -577,8 +577,11 @@ await expect('17. smooth-cap fixture integrates with validation and closes two P
   if (afterP2.simple !== beforeP2.simple + powerFixture.colonies.length) {
     throw new Error(`P2.simple delta = ${afterP2.simple - beforeP2.simple}, expected +${powerFixture.colonies.length}`);
   }
-  if (afterP2.exceptions !== beforeP2.exceptions - powerFixture.colonies.length) {
-    throw new Error(`P2.exceptions delta = ${afterP2.exceptions - beforeP2.exceptions}, expected -${powerFixture.colonies.length}`);
+  // When the node is already accepted, its layer is peeled together with the process's capacity declaration,
+  // so before the node the process counts as undeclared rather than as an exception: compare the sum.
+  const openBefore = beforeP2.exceptions + beforeP2.undeclared, openAfter = afterP2.exceptions + afterP2.undeclared;
+  if (openAfter !== openBefore - powerFixture.colonies.length) {
+    throw new Error(`P2 exceptions+undeclared delta = ${openAfter - openBefore}, expected -${powerFixture.colonies.length}`);
   }
   powerState.model = model;
   powerState.validation = merged;

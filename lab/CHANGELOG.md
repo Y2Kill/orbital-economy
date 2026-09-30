@@ -7,6 +7,7 @@
 - `sizing.signal.initial` принимает число либо объект с точными ключами `colonies`;
 - power-resource fixture = 36 add / 6 replace / 94 LINK; NODE_SELF_TEST расширен до 21 случаев;
 - package/Lab version → v0.9.11; accepted model, validation, policy, engine и `model/nodes/*` не изменены.
+- до выдачи задачи 021 (версия та же; найдено прогоном самотестов со skeleton v7.7.7 в роли принятой модели): `node_qa` случай 17 сравнивает сумму «исключения + необъявленные» P2 — при уже принятом узле его слой снимается вместе с объявлением мощности процесса, и тот считается необъявленным; `planet_qa` случай 9 ждёт провала только по ненулевым долгам (P2 exceptions станут 0) и PASS, если долгов нет.
 
 ## v0.9.10 — strict validation schema
 
