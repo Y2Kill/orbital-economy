@@ -308,6 +308,32 @@ export function checkPlugin(plugin, ctx) {
     return results;
   }
 
+  if (plugin.type === 'deposit') {
+    const tol = plugin.abs_tol ?? 1e-8;
+    const safe = (name, fn) => { try { return fn(); } catch (e) { return fail(name, e.message || String(e)); } };
+    for (const inst of plugin.instances || []) {
+      results.push(safe(`${inst.name}: deposit stocks >= 0`, () => checkNonNegativeColumns(ctx, { name: `${inst.name}: deposit stocks >= 0`, abs_tol: tol, columns: [inst.undiscovered, inst.proven] })));
+      results.push(safe(`${inst.name}: deposit flows >= 0`, () => checkNonNegativeColumns(ctx, { name: `${inst.name}: deposit flows >= 0`, abs_tol: tol, columns: [inst.exploration, ...(inst.consumption || [])] })));
+      const prefix = `${inst.name.slice(0, -' Deposit'.length)} Exploration `;
+      for (const consumption of inst.consumption || []) {
+        const good = consumption.startsWith(prefix) && consumption.endsWith(' Consumption') ? consumption.slice(prefix.length, -' Consumption'.length) : null;
+        const parameter = good ? `${inst.resource} Deposit ${good} per Discovery` : null;
+        results.push(safe(`${inst.name}: ${good || consumption} consumption identity`, () => {
+          if (!parameter) throw new Error(`cannot derive per-Discovery parameter from ${consumption}`);
+          const exploration = ctx.get(inst.exploration), expense = ctx.get(consumption), rate = ctx.get(parameter);
+          let maxAbs = 0, maxTime = null;
+          for (let i = 0; i < ctx.times.length; i++) {
+            const err = Math.abs(expense[i] - exploration[i] * rate[i]);
+            if (err > maxAbs) { maxAbs = err; maxTime = ctx.times[i]; }
+          }
+          const name = `${inst.name}: ${good} consumption identity`;
+          return maxAbs <= tol ? pass(name, { maxAbsError: maxAbs, maxTime }) : fail(name, `max abs error ${maxAbs} > ${tol} at day ${maxTime}`);
+        }));
+      }
+    }
+    return results;
+  }
+
   if (plugin.type === 'transport_allocator') {
     const tol = plugin.abs_tol ?? 1e-8;
     const total = plugin.total || 'Priority Allocated Total Load';

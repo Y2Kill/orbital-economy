@@ -741,6 +741,98 @@ await expect('22. deposit fixture expands and APPLY_PATCH matches prototype coun
   return `100 elements / 8 replacements / 6 retargets / 212 links; fingerprint=${fp}`;
 });
 
+
+
+function validationWithoutDepositFragment(raw, fragment) {
+  const out = structuredClone(raw);
+  const plugin = out.plugins?.find(p => p.type === 'deposit');
+  const names = new Set((fragment.deposit_instances || []).map(x => x.name));
+  if (plugin?.instances) plugin.instances = plugin.instances.filter(x => !names.has(x.name));
+  if (plugin?.instances?.length === 0) out.plugins = out.plugins.filter(p => p !== plugin);
+
+  const boundaries = out.plugins?.find(p => p.type === 'open_boundaries');
+  const exploration = boundaries?.categories?.find(c => c.id === 'exploration_expenditure');
+  const expNames = new Set(fragment.exploration_expenditure_names || []);
+  if (exploration?.name) exploration.name = exploration.name.filter(x => !expNames.has(x));
+  if (exploration?.name?.length === 0) boundaries.categories = boundaries.categories.filter(c => c !== exploration);
+  const information = boundaries?.categories?.find(c => c.id === 'information_signal');
+  const infoNames = new Set(fragment.information_signal_names || []);
+  if (information?.name) information.name = information.name.filter(x => !infoNames.has(x));
+
+  const planet = out.plugins?.find(p => p.type === 'planet_closure');
+  for (const generated of fragment.planet_deposits || []) {
+    const process = planet?.processes?.find(x => x.id === generated.process);
+    if (process && JSON.stringify(process.deposit) === JSON.stringify(generated.deposit)) delete process.deposit;
+  }
+  return out;
+}
+
+function assertDepositRebuild(decl, target) {
+  const baseModel = stripDepositNode(target, decl);
+  const expanded = expandNode(decl, baseModel);
+  const rebuilt = applyPatch(baseModel, { format: PATCH_FORMAT, ...expanded.patch }).model;
+  const a = new Map(target.elements.filter(e => e.type !== 'LINK').map(e => [e.name, def(e)]));
+  const b = new Map(rebuilt.elements.filter(e => e.type !== 'LINK').map(e => [e.name, def(e)]));
+  if (a.size !== b.size) throw new Error(`element count differs: ${a.size} vs ${b.size}`);
+  for (const [name, definition] of a) if (b.get(name) !== definition) throw new Error(`definition differs after rebuild: ${name}`);
+  if (!sameSet(linkSet(target), linkSet(rebuilt))) throw new Error('link set differs after deposit rebuild');
+  return expanded;
+}
+
+await expect('23. deposit fragments merge: 6 static instances, loops 0, P4 +6, no unclassified boundaries', () => {
+  if (!depositState) throw new Error('case 22 did not produce deposit state');
+  const baselineValidation = depositState.alreadyPresent ? validationWithoutDepositFragment(validation, depositState.expanded.validation) : validation;
+  const baselineAudits = runStructureAudits(depositState.base, baselineValidation);
+  const merged = mergeNodeValidation(baselineValidation, [depositState.expanded.validation]);
+  const twice = mergeNodeValidation(merged, [depositState.expanded.validation]);
+  if (JSON.stringify(merged) !== JSON.stringify(twice)) throw new Error('deposit validation merge is not idempotent');
+  const conformance = runLifecycleConformance(depositState.model, merged);
+  const audits = runStructureAudits(depositState.model, merged);
+  const dep = conformance.deposit;
+  if (conformance.status !== 'PASS' || dep?.status !== 'PASS' || dep.summary.instances !== 6 || dep.summary.nonConforming !== 0) throw new Error(`deposit conformance mismatch: ${JSON.stringify(dep?.summary || dep)}`);
+  if (audits.algebraicLoops?.status !== 'PASS' || audits.algebraicLoops.combinationsWithLoops !== 0) throw new Error(`algebraic loops detected: ${audits.algebraicLoops?.combinationsWithLoops}`);
+  const before = baselineAudits.planetClosure?.counters?.P4?.with_deposit ?? 0;
+  const after = audits.planetClosure?.counters?.P4?.with_deposit ?? 0;
+  if (after !== before + 6) throw new Error(`P4.with_deposit delta = ${after - before}, expected +6`);
+  if (audits.openBoundaries?.summary?.unclassified !== 0) throw new Error(`open_boundaries unclassified = ${audits.openBoundaries?.summary?.unclassified}`);
+  depositState.validation = merged;
+  return `deposit=6 CONFORMING; loops=0; P4.with_deposit ${before}->${after}; unclassified=0; merge idempotent`;
+});
+
+await expect('24. deposit trial Mode passes runtime checks and proven reserves can grow', () => {
+  if (!depositState?.validation) throw new Error('case 23 did not produce merged validation');
+  const scenarios = depositState.model.scenarios || [];
+  if (!scenarios.length) throw new Error('model has no scenarios');
+  const source = scenarios[scenarios.length - 1];
+  const trial = structuredClone(source);
+  trial.name = `${source.name || 'last mode'} — Node QA deposit`;
+  trial.values = { ...trial.values, [depositFixture.switch]: 1 };
+  const simModel = loadModelJSON(modelJsonForScenario(depositState.model, trial));
+  const modelErrors = simModel.check();
+  if (modelErrors.length) throw new Error(`trial model.check() returned ${modelErrors.length}: ${modelErrors.map(e => e.message || e).join('; ')}`);
+  const results = simModel.simulate();
+  const ctx = seriesContext(simModel, results);
+  const runtime = [checkTimeAxis(results, depositState.validation.expected_time_step ?? depositState.model.simulation?.time_step ?? null, depositState.validation.time_step_tolerance ?? 1e-12), checkFiniteAll(simModel, results)];
+  if (depositState.validation.non_negative_regex) runtime.push(checkNonNegativeRegex(simModel, results, depositState.validation.non_negative_regex.pattern, depositState.validation.non_negative_regex.tolerance ?? 1e-10));
+  for (const plugin of depositState.validation.plugins || []) runtime.push(...checkPlugin(plugin, ctx));
+  for (const check of depositState.validation.global_checks || []) runtime.push(runGenericCheck(check, ctx));
+  const runtimeFail = runtime.filter(x => x.status === 'FAIL');
+  if (runtimeFail.length) throw new Error(`runtime checks failed: ${runtimeFail.map(x => `${x.name}: ${x.message || 'FAIL'}`).join('; ')}`);
+  const growth = [];
+  for (const inst of depositState.expanded.validation.deposit_instances) {
+    const s = Array.from(ctx.get(inst.proven), Number), initial = s[0], peak = Math.max(...s);
+    if (peak > initial + 1e-9) growth.push(`${inst.proven}: ${initial}->${peak}`);
+  }
+  if (!growth.length) throw new Error('no proven-reserves series rose above its initial value');
+  return `runtime deposit checks PASS; growing reserves: ${growth.slice(0, 3).join('; ')}`;
+});
+
+await expect('25. strip and rebuild deposit model including extraction flow endpoints with zero differences', () => {
+  if (!depositState?.model) throw new Error('case 22 did not produce deposit model');
+  const out = assertDepositRebuild(depositFixture, depositState.model);
+  return `${out.patch.add_elements.length} definitions, ${out.patch.replace_formulas.length} replacements, ${out.patch.retarget_flows.length} retargets, ${out.patch.add_links.length} links rebuilt exactly`;
+});
+
 await expect('26. deposit/retarget schema rejects four required invalid cases with paths/names', async () => {
   const extra = structuredClone(depositFixture);
   extra.resources[0].parameters.Unexpected = 1;

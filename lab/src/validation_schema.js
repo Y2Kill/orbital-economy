@@ -38,6 +38,7 @@ const PLUGIN_FIELDS = {
   capital_lifecycle: ['abs_tol', 'items'],
   capital_lifecycle_kernel: ['format', 'legacy_switch', 'abs_tol', 'instances'],
   simple_capital: ['abs_tol', 'instances'],
+  deposit: ['abs_tol', 'instances'],
   transport_allocator: ['abs_tol'],
   open_boundaries: ['enforce', 'categories', 'transformation_pairs'],
   colony_symmetry: ['tokens', 'enforce', 'exceptions'],

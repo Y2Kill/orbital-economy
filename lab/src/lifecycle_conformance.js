@@ -1,3 +1,5 @@
+import { runDepositConformance } from './deposit.js';
+
 // Static (pre-simulation) conformance check of Capital Lifecycle Kernel instances.
 //
 // The kernel is a topology + dependency contract over ModelJSON, not a formula contract.
@@ -376,10 +378,11 @@ export function runLifecycleConformance(raw, validation) {
   const modelWide = checkModelWideReferences(index);
   const instances = plugin.instances.map(inst => checkInstance(index, inst, plugin));
   const simpleCapital = runSimpleCapitalConformance(raw, validation, index);
+  const deposit = runDepositConformance(raw, validation, index);
   const anyNonConforming = instances.some(i => i.classification === 'NON_CONFORMING');
   const modelWideFail = modelWide.some(c => c.status === 'FAIL');
   return {
-    status: anyNonConforming || modelWideFail || simpleCapital.status === 'FAIL' ? 'FAIL' : 'PASS',
+    status: anyNonConforming || modelWideFail || simpleCapital.status === 'FAIL' || deposit.status === 'FAIL' ? 'FAIL' : 'PASS',
     format: KERNEL_FORMAT,
     kernel: { roles: Object.keys(KERNEL_ROLES).length, requiredRoles: REQUIRED_ROLES.length, flows: KERNEL_FLOWS.length, stocks: KERNEL_STOCKS.length },
     legacySwitch: plugin.legacy_switch || 'Capital Lifecycle Enabled',
@@ -391,7 +394,8 @@ export function runLifecycleConformance(raw, validation) {
     },
     modelWide,
     instances,
-    simpleCapital
+    simpleCapital,
+    deposit
   };
 }
 
@@ -418,5 +422,14 @@ export function printConformance(report, log = console.log) {
       for (const f of inst.failures) log(`        - ${f}`);
     }
     for (const e of report.simpleCapital.specErrors || []) log(`    - ${e}`);
+  }
+  if (report.deposit?.status !== 'SKIPPED') {
+    log(`Deposit conformance: ${report.deposit.status}`);
+    for (const inst of report.deposit.instances || []) {
+      const checked = inst.checks.length, failed = inst.failures.length;
+      log(`    ${inst.name.padEnd(24)} ${inst.classification}  (${checked - failed}/${checked} checks)`);
+      for (const f of inst.failures) log(`        - ${f}`);
+    }
+    for (const e of report.deposit.specErrors || []) log(`    - ${e}`);
   }
 }

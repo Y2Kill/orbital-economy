@@ -203,7 +203,10 @@ export function mergeNodeValidation(validation, fragments) {
   if (!transformation || !Array.isArray(transformation.name)) throw new Error('validation: open_boundaries capital_transformation category is required');
 
   let simple = out.plugins?.find(p => p.type === 'simple_capital') || null;
+  let deposit = out.plugins?.find(p => p.type === 'deposit') || null;
   let retirement = boundaries.categories.find(x => x.id === 'capital_retirement') || null;
+  let exploration = boundaries.categories.find(x => x.id === 'exploration_expenditure') || null;
+  const information = boundaries.categories.find(x => x.id === 'information_signal') || null;
 
   for (const [fi, fragment] of fragments.entries()) {
     for (const generated of fragment.kernel_instances || []) {
@@ -232,6 +235,40 @@ export function mergeNodeValidation(validation, fragments) {
           throw new Error(`validation fragment[${fi}]: simple_capital instance "${generated.name}" already exists with a different definition`);
         }
       }
+    }
+
+    if ((fragment.deposit_instances || []).length) {
+      if (!deposit) {
+        deposit = { type: 'deposit', abs_tol: 1e-8, instances: [] };
+        out.plugins.push(deposit);
+      }
+      if (!Array.isArray(deposit.instances)) throw new Error('validation: deposit.instances must be an array');
+      for (const generated of fragment.deposit_instances) {
+        const existing = deposit.instances.find(x => x.name === generated.name);
+        if (!existing) deposit.instances.push(structuredClone(generated));
+        else if (!jsonEqual(existing, generated)) throw new Error(`validation fragment[${fi}]: deposit instance "${generated.name}" already exists with a different definition`);
+      }
+    }
+
+    if ((fragment.exploration_expenditure_names || []).length) {
+      if (!exploration) {
+        exploration = { id: 'exploration_expenditure', closed_world: true, direction: 'sink', name: [], reason: 'capital goods spent on resource exploration leave the economy' };
+        boundaries.categories.push(exploration);
+      }
+      if (!Array.isArray(exploration.name)) throw new Error('validation: open_boundaries exploration_expenditure.name must be an array');
+      for (const name of fragment.exploration_expenditure_names) if (!exploration.name.includes(name)) exploration.name.push(name);
+    }
+
+    if ((fragment.information_signal_names || []).length) {
+      if (!information || !Array.isArray(information.name)) throw new Error('validation: open_boundaries information_signal category is required');
+      for (const name of fragment.information_signal_names) if (!information.name.includes(name)) information.name.push(name);
+    }
+
+    for (const generated of fragment.planet_deposits || []) {
+      const process = planet.processes.find(x => x.id === generated.process);
+      if (!process) throw new Error(`validation fragment[${fi}]: planet process "${generated.process}" does not exist`);
+      if (process.deposit == null) process.deposit = structuredClone(generated.deposit);
+      else if (!jsonEqual(process.deposit, generated.deposit)) throw new Error(`validation fragment[${fi}]: planet process "${generated.process}" deposit differs`);
     }
 
     for (const name of fragment.capital_transformation_names || []) {

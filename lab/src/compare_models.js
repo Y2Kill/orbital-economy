@@ -130,6 +130,8 @@ function staticCheck(raw, modeVariable = 'Timed Test Mode', validation = null, {
       for (const i of conformance.instances || []) for (const f of i.failures) errors.push(`kernel ${i.name}: ${f}`);
       for (const e of conformance.simpleCapital?.specErrors || []) errors.push(`simple_capital spec: ${e}`);
       for (const i of conformance.simpleCapital?.instances || []) for (const f of i.failures) errors.push(`simple_capital ${i.name}: ${f}`);
+      for (const e of conformance.deposit?.specErrors || []) errors.push(`deposit spec: ${e}`);
+      for (const i of conformance.deposit?.instances || []) for (const f of i.failures) errors.push(`deposit ${i.name}: ${f}`);
     }
     const seenModes = new Map();
     const seenSignatures = new Map();

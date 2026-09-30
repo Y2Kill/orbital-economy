@@ -98,6 +98,21 @@ export function writeConformanceReports(outDir, report) {
     l.push('');
   }
 
+  if (report.deposit?.status !== 'SKIPPED') {
+    l.push('## Deposit');
+    l.push('');
+    l.push(`- status: **${report.deposit.status}**`);
+    l.push(`- instances: ${report.deposit.summary?.instances ?? 0}`);
+    l.push(`- CONFORMING: ${report.deposit.summary?.conforming ?? 0}`);
+    l.push(`- NON_CONFORMING: ${report.deposit.summary?.nonConforming ?? 0}`);
+    for (const e of report.deposit.specErrors || []) l.push(`- spec error: ${esc(e)}`);
+    l.push('');
+    l.push('| Instance | Resource | Classification | Checks passed | Failures |');
+    l.push('|---|---|---|---:|---:|');
+    for (const i of report.deposit.instances || []) l.push(`| ${esc(i.name)} | ${esc(i.resource)} | **${i.classification}** | ${i.checks.length - i.failures.length}/${i.checks.length} | ${i.failures.length} |`);
+    l.push('');
+  }
+
   l.push('## Kernel contract (reference)');
   l.push('');
   l.push('Flows and their fixed topology (∅ = outside the model boundary):');

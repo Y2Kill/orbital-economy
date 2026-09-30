@@ -198,7 +198,7 @@ export function expandDeposit(decl, base) {
   V(decl.switch, 1);
   const retarget_flows = [];
   const retargetSeen = new Set();
-  const validation = { deposit_instances: [], planet_deposits: [], exploration_expenditure_names: [] };
+  const validation = { deposit_instances: [], planet_deposits: [], exploration_expenditure_names: [], information_signal_names: [] };
 
   for (const r of decl.resources) {
     const R = r.resource;
@@ -225,6 +225,9 @@ export function expandDeposit(decl, base) {
       S(sig, r.signal.initial[X]);
       F(`${sig} Increase`, null, sig, `IfThenElse([${rate}] > [${sig}], ([${rate}] - [${sig}]) / [${adj}], 0)`);
       F(`${sig} Decrease`, sig, null, `IfThenElse([${sig}] > [${rate}], ([${sig}] - [${rate}]) / [${adj}], 0)`);
+      for (const pattern of [`? ${R} Extraction Signal Increase`, `? ${R} Extraction Signal Decrease`]) {
+        if (!validation.information_signal_names.includes(pattern)) validation.information_signal_names.push(pattern);
+      }
       V(`${X} ${R} Target Proven Reserves`, `[${sig}] * [${P('Target Reserve Life')}]`);
       V(`${X} ${R} Reserve Gap`, mx(`[${X} ${R} Target Proven Reserves]`, `[${Pr}]`));
       V(`${X} ${R} Discovery Factor`, `[${U}] / [${U} Initial]`);
