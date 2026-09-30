@@ -34,3 +34,12 @@
 Проверено чтением: декларация `power-resource-mine` используется как `nodes[0]` без изменений; `replace_formulas` содержит только `Test 2 Transport Surge Active`; Modes 0–41 получают только `Power Resource Capital Enabled = 0`; Modes 42–43 включают узел.
 Не запускалось: локальный guard и стенд, как перечислено выше.
 Дальше: после push зафиксировать конкретные запуски `candidate.yml` и `ci.yml`, затем проверить их отдельным шагом и закрывать КТ по фактическим логам.
+
+
+### Ожидаемые прогоны после candidate r1
+
+Для candidate-коммита `fd7e4bdf0a569f722e3579707ca5e98e870cb5e9` зафиксированы:
+- Candidate acceptance: https://github.com/Y2Kill/orbital-economy/actions/runs/36689942663 — ожидаются apply-patch, conformance, audit, validation и policy;
+- CI: https://github.com/Y2Kill/orbital-economy/actions/runs/36689942654 — ожидаются guard и самотесты на Linux.
+
+На момент записи Candidate acceptance был `in_progress`, CI — `pending`. Результаты проверяются отдельным шагом; один длинный polling/wait не используется.
