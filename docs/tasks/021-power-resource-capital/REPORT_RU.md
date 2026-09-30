@@ -57,3 +57,75 @@
 Следовательно, патч с секцией `nodes` применяется, lifecycle conformance и structure audit приняты текущим `candidate.yml`. Точные строки со счётчиками (`simple_capital`, boundaries, loops, Planet closure) GitHub API до завершения job не отдаёт: download job logs возвращается только после окончания всего job. Их нельзя подменять числами owner-skeleton из спецификации; они будут дописаны отдельной записью после завершения run.
 
 Gate 4 `validation` к этому моменту также уже завершён `success`; Gate 5 `policy` всё ещё выполняется. Workflow имеет штатный `timeout-minutes: 60` и Gate 5 запускает полный `policy ... --modes=all`.
+
+
+### КТ1 — закрыта полностью по candidate r1
+
+Доказательство: Candidate acceptance https://github.com/Y2Kill/orbital-economy/actions/runs/36689942663 — `success`, candidate-коммит `fd7e4bdf0a569f722e3579707ca5e98e870cb5e9`.
+
+- candidate SHA-256: `8d3ddb4aed6e5e03999cf647b08b74ca74126a41b370d415819dbaf133e02211`;
+- `A/B Regolith Mine`, `A/B Ore Mine`, `A/B Power Resource Mine`: все шесть экземпляров `simple_capital` — `CONFORMING (23/23 checks)`;
+- `CONFORMANCE RESULT: PASS`;
+- `STRUCTURE AUDIT RESULT: PASS`;
+- open boundaries: `196`; unclassified=`0`; closed-world violations=`0`;
+- transformation pairs: `25`, unpaired=`0`;
+- Planet closure: `P2=11/6/0/0`;
+- algebraic loops: switches=`13`; combinations=`8192`; with loops=`0`; Modes=`none`.
+
+Тем самым подтверждены именно текущим candidate-run, а не перенесены из owner-skeleton, все счётчики КТ1.
+
+### КТ2 — закрыта: Modes 0–41 без регрессии
+
+В полном policy-сравнении каждый из 42 прежних Modes дал:
+`common=1312, changed=0, added=36, removed=0, maxAbs=0`.
+
+36 добавленных рядов — выключенный в legacy Modes новый узел/сигналы; общие series принятой v7.7.6 не изменились.
+
+Итог Gate 5:
+- `POLICY RESULT: PASS`;
+- observed changes: `1693`;
+- expected/allowed: `1693`;
+- unexpected: `0`;
+- forbidden: `0`;
+- threshold exceed: `0`;
+- required missing: `0`;
+- hard blockers: `0`.
+
+### КТ3 — закрыта: validation 44/44 PASS, B строит шахту заново
+
+Gate 4 того же Candidate acceptance: `OVERALL: PASS` во всех 44 Modes, всего `11 531` сценарная проверка, FAIL = 0.
+
+Validation SHA-256: `cd4a7f287d0fcea071e0e7228978b841a7da0f35c31144e78303e09fc520da43`; он совпадает с `candidate/change-policy.json`.
+
+Owner-пороги из `draft/validation-v7.7.7-draft.json` не менялись и не подгонялись после этого прогона:
+
+| Проверка | Значение | Порог | Запас |
+|---|---:|---:|---:|
+| Mode 42: A Power Resource Mine Capacity, max | 1889.690667 | > 1850 | +39.690667 |
+| Mode 42: B Power Resource Mine Capacity, Δ day 0→1080 | -179.134638 | < -120 | 59.134638 в требуемую сторону |
+| Mode 43: B Power Resource Mine Expansion, max [360,720] | 0.519443 | > 0.3 | +0.219443 |
+| Mode 43: B Power Resource Mine Capacity, Δ day 360→720 | 76.024538 | > 40 | +36.024538 |
+| Mode 43: B Power Resource Mine Capital Goods Consumption, max [360,720] | 0.010389 | > 0 | +0.010389 |
+| Mode 43: B Power Resource Inventory, min [360,720] | 1605.656805 | < 1900 | 294.343195 ниже предела |
+| Mode 43: expansion до surge, окно [250,359.75] | 0 событий | event > 1e-6 отсутствует | PASS; числовой запас для `event_absent` не определяется |
+
+Главная проверка выполнена: в Mode 43 B заново расширяет шахту энергоресурса (`Expansion max = 0.519443`), а её мощность за окно 360→720 растёт на `76.024538`.
+
+### КТ4 — закрыта: поставка полная
+
+Candidate acceptance https://github.com/Y2Kill/orbital-economy/actions/runs/36689942663 — `success`, все пять gate:
+- apply-patch — PASS;
+- conformance — PASS;
+- audit — PASS;
+- validation — PASS;
+- policy — PASS.
+
+CI https://github.com/Y2Kill/orbital-economy/actions/runs/36689981294 — `success`: `guard`, `tools-selftest`, `bench-selftests` PASS; `integrity` штатно skipped при `sums_by: reviewer`.
+
+Первый CI `36689942654` был отменён concurrency после report-only push; это не результат проверки кандидата. Следующий CI `36689981294` завершился зелёным.
+
+Финальные идентификаторы поставки:
+- candidate SHA-256: `8d3ddb4aed6e5e03999cf647b08b74ca74126a41b370d415819dbaf133e02211`;
+- validation SHA-256: `cd4a7f287d0fcea071e0e7228978b841a7da0f35c31144e78303e09fc520da43`.
+
+Локально по-прежнему не запускались `check_branch`, стенд, канонический Windows acceptance, `bench-full`, `build_sums`; `SHA256SUMS` не менялись. Это заменено указанными выше GitHub Actions в пределах §9.4.
