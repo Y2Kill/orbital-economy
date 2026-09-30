@@ -1,0 +1,368 @@
+{
+  "format": "orbital-economy-model-patch-v1",
+  "base_sha256": "d274f7b9dcc11dbfe3730c1a88fe8fd3cf242e09a52a3e51e9082ab8420de8dd",
+  "name": "Orbital Economy v7.7.7 Power Resource Capital candidate r1",
+  "description": "Task 021: power-resource extraction capacity becomes simple_capital with the smooth cap. Node declaration is supplied verbatim from draft/power-resource-mine.json; the only explicit formula replacement is Test 2 Transport Surge Active for Mode 43.",
+  "nodes": [
+    {
+      "type": "simple_capital",
+      "version": 1,
+      "sector": "Power Resource Mine",
+      "colonies": [
+        "A",
+        "B"
+      ],
+      "switch": "Power Resource Capital Enabled",
+      "initial_capacity": {
+        "A": 1750,
+        "B": 650
+      },
+      "parameters": {
+        "Capacity Reserve Factor": 1.25,
+        "Construction Time": 90,
+        "Retirement Time": 360,
+        "Depreciation Rate": 0.0001,
+        "Capital Goods per Capacity": 0.02,
+        "Construction Materials per Capacity": 0.02
+      },
+      "sizing": {
+        "signal": {
+          "name": "{C} Power Resource Demand Signal",
+          "create": true,
+          "demand": "{C} Power Resource Demand",
+          "initial": {
+            "A": 1350,
+            "B": 182.656
+          },
+          "adjustment_time": {
+            "name": "Power Resource Demand Signal Adjustment Time",
+            "value": 3
+          }
+        }
+      },
+      "capacity_output": {
+        "variable": "{C} Power Resource Extraction Rate",
+        "cap": "smooth"
+      },
+      "backing": [
+        {
+          "good": "Capital Goods",
+          "fulfillment": "{C} Capital Goods Fulfillment",
+          "inventory": "{C} Capital Goods Inventory",
+          "demand": "{C} Capital Goods Demand"
+        },
+        {
+          "good": "Construction Materials",
+          "fulfillment": "{C} Construction Materials Fulfillment",
+          "inventory": "{C} Construction Materials Inventory",
+          "demand": "{C} Construction Materials Demand"
+        }
+      ],
+      "planet_process": "power_resource"
+    }
+  ],
+  "add_elements": [],
+  "replace_formulas": [
+    {
+      "name": "Test 2 Transport Surge Active",
+      "value": "IfThenElse([Timed Test Mode] = 2, [Temporary Test Window], IfThenElse([Timed Test Mode] = 24, [Temporary Test Window], IfThenElse([Timed Test Mode] = 31, [Temporary Test Window], IfThenElse([Timed Test Mode] = 35, [Temporary Test Window], IfThenElse([Timed Test Mode] = 37, [Temporary Test Window], IfThenElse([Timed Test Mode] = 39, [Temporary Test Window], IfThenElse([Timed Test Mode] = 41, [Temporary Test Window], IfThenElse([Timed Test Mode] = 43, [Temporary Test Window], 0))))))))"
+    }
+  ],
+  "add_links": [],
+  "modify_scenarios": [
+    {
+      "mode": 0,
+      "set": {
+        "Power Resource Capital Enabled": 0
+      }
+    },
+    {
+      "mode": 1,
+      "set": {
+        "Power Resource Capital Enabled": 0
+      }
+    },
+    {
+      "mode": 2,
+      "set": {
+        "Power Resource Capital Enabled": 0
+      }
+    },
+    {
+      "mode": 3,
+      "set": {
+        "Power Resource Capital Enabled": 0
+      }
+    },
+    {
+      "mode": 4,
+      "set": {
+        "Power Resource Capital Enabled": 0
+      }
+    },
+    {
+      "mode": 5,
+      "set": {
+        "Power Resource Capital Enabled": 0
+      }
+    },
+    {
+      "mode": 6,
+      "set": {
+        "Power Resource Capital Enabled": 0
+      }
+    },
+    {
+      "mode": 7,
+      "set": {
+        "Power Resource Capital Enabled": 0
+      }
+    },
+    {
+      "mode": 8,
+      "set": {
+        "Power Resource Capital Enabled": 0
+      }
+    },
+    {
+      "mode": 9,
+      "set": {
+        "Power Resource Capital Enabled": 0
+      }
+    },
+    {
+      "mode": 10,
+      "set": {
+        "Power Resource Capital Enabled": 0
+      }
+    },
+    {
+      "mode": 11,
+      "set": {
+        "Power Resource Capital Enabled": 0
+      }
+    },
+    {
+      "mode": 12,
+      "set": {
+        "Power Resource Capital Enabled": 0
+      }
+    },
+    {
+      "mode": 13,
+      "set": {
+        "Power Resource Capital Enabled": 0
+      }
+    },
+    {
+      "mode": 14,
+      "set": {
+        "Power Resource Capital Enabled": 0
+      }
+    },
+    {
+      "mode": 15,
+      "set": {
+        "Power Resource Capital Enabled": 0
+      }
+    },
+    {
+      "mode": 16,
+      "set": {
+        "Power Resource Capital Enabled": 0
+      }
+    },
+    {
+      "mode": 17,
+      "set": {
+        "Power Resource Capital Enabled": 0
+      }
+    },
+    {
+      "mode": 18,
+      "set": {
+        "Power Resource Capital Enabled": 0
+      }
+    },
+    {
+      "mode": 19,
+      "set": {
+        "Power Resource Capital Enabled": 0
+      }
+    },
+    {
+      "mode": 20,
+      "set": {
+        "Power Resource Capital Enabled": 0
+      }
+    },
+    {
+      "mode": 21,
+      "set": {
+        "Power Resource Capital Enabled": 0
+      }
+    },
+    {
+      "mode": 22,
+      "set": {
+        "Power Resource Capital Enabled": 0
+      }
+    },
+    {
+      "mode": 23,
+      "set": {
+        "Power Resource Capital Enabled": 0
+      }
+    },
+    {
+      "mode": 24,
+      "set": {
+        "Power Resource Capital Enabled": 0
+      }
+    },
+    {
+      "mode": 25,
+      "set": {
+        "Power Resource Capital Enabled": 0
+      }
+    },
+    {
+      "mode": 26,
+      "set": {
+        "Power Resource Capital Enabled": 0
+      }
+    },
+    {
+      "mode": 27,
+      "set": {
+        "Power Resource Capital Enabled": 0
+      }
+    },
+    {
+      "mode": 28,
+      "set": {
+        "Power Resource Capital Enabled": 0
+      }
+    },
+    {
+      "mode": 29,
+      "set": {
+        "Power Resource Capital Enabled": 0
+      }
+    },
+    {
+      "mode": 30,
+      "set": {
+        "Power Resource Capital Enabled": 0
+      }
+    },
+    {
+      "mode": 31,
+      "set": {
+        "Power Resource Capital Enabled": 0
+      }
+    },
+    {
+      "mode": 32,
+      "set": {
+        "Power Resource Capital Enabled": 0
+      }
+    },
+    {
+      "mode": 33,
+      "set": {
+        "Power Resource Capital Enabled": 0
+      }
+    },
+    {
+      "mode": 34,
+      "set": {
+        "Power Resource Capital Enabled": 0
+      }
+    },
+    {
+      "mode": 35,
+      "set": {
+        "Power Resource Capital Enabled": 0
+      }
+    },
+    {
+      "mode": 36,
+      "set": {
+        "Power Resource Capital Enabled": 0
+      }
+    },
+    {
+      "mode": 37,
+      "set": {
+        "Power Resource Capital Enabled": 0
+      }
+    },
+    {
+      "mode": 38,
+      "set": {
+        "Power Resource Capital Enabled": 0
+      }
+    },
+    {
+      "mode": 39,
+      "set": {
+        "Power Resource Capital Enabled": 0
+      }
+    },
+    {
+      "mode": 40,
+      "set": {
+        "Power Resource Capital Enabled": 0
+      }
+    },
+    {
+      "mode": 41,
+      "set": {
+        "Power Resource Capital Enabled": 0
+      }
+    }
+  ],
+  "add_scenarios": [
+    {
+      "name": "v7.7.7 Power Resource Capital Baseline",
+      "description": "Accepted v7.7.6 mechanics plus power-resource simple capital; no new transport surge.",
+      "values": {
+        "Capital Lifecycle Enabled": 1,
+        "Intermediate Inputs Enabled": 1,
+        "Capital Goods Enabled": 1,
+        "Transport Capital Goods Enabled": 1,
+        "Power Resource Enabled": 1,
+        "Construction Materials Enabled": 1,
+        "Transport Construction Materials Enabled": 1,
+        "Construction Materials Energy Enabled": 1,
+        "Construction Materials Capital Enabled": 1,
+        "Capital Goods Capital Enabled": 1,
+        "Regolith Capital Enabled": 1,
+        "Ore Capital Enabled": 1,
+        "Timed Test Mode": 42,
+        "Power Resource Capital Enabled": 1
+      }
+    },
+    {
+      "name": "v7.7.7 Transport Surge on Power Resource Capital",
+      "description": "Power-resource simple capital under the standard transport-demand surge window; B must rebuild power-resource mine capacity.",
+      "values": {
+        "Capital Lifecycle Enabled": 1,
+        "Intermediate Inputs Enabled": 1,
+        "Capital Goods Enabled": 1,
+        "Transport Capital Goods Enabled": 1,
+        "Power Resource Enabled": 1,
+        "Construction Materials Enabled": 1,
+        "Transport Construction Materials Enabled": 1,
+        "Construction Materials Energy Enabled": 1,
+        "Construction Materials Capital Enabled": 1,
+        "Capital Goods Capital Enabled": 1,
+        "Regolith Capital Enabled": 1,
+        "Ore Capital Enabled": 1,
+        "Timed Test Mode": 43,
+        "Power Resource Capital Enabled": 1
+      }
+    }
+  ]
+}
