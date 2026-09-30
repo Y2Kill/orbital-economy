@@ -1,17 +1,17 @@
 # Orbital Economy — реестр внешних параметров
 
-- generated: 2026-09-29T15:04:25.222Z
-- model: Orbital Economy v7.7.6 r1 — Ore Capital — SHA-256 `d274f7b9dcc11dbfe3730c1a88fe8fd3cf242e09a52a3e51e9082ab8420de8dd`
-- annotations: docs/PARAMETER_ANNOTATIONS.json (SHA-256 `8f2b8daec856f68ffcc6dcd9d8a6e0b7df3f8f9966c41bfe4c92df6bc7b4abf9`)
+- generated: 2026-09-30T11:02:12.780Z
+- model: Orbital Economy v7.7.7 r1 — Power Resource Capital — SHA-256 `befccae91083e44c32ddeb25783a3f45a8ef32fa60965e61a210ebfc4c7b8f94`
+- annotations: docs/PARAMETER_ANNOTATIONS.json (SHA-256 `d9cf0dcd0eefb309ff273473fb168f3496c9b4e76b22ce84d8303c4ac4457813`)
 
 Всё, что модель не выводит сама: числовые константы, начальные запасы, переключатели, тестовые множители. Инвентарь сгенерирован из ModelJSON; аннотации («роль / что меняет / доказательство») ведутся вручную и версионируются вместе с baseline.
 
 ## Сводка
 
-- внешних величин: **425** (константы 280, начальные запасы 97, переключатели 13, тестовая обвязка 35)
-- по колониям: A 116, B 116, глобальные 193
-- аннотировано: **251 / 425** (59 %)
-- несимметричных пар A/B: **51**, из них без аннотации: **0**
+- внешних величин: **437** (константы 287, начальные запасы 101, переключатели 14, тестовая обвязка 35)
+- по колониям: A 118, B 118, глобальные 201
+- аннотировано: **263 / 437** (60 %)
+- несимметричных пар A/B: **53**, из них без аннотации: **0**
 
 ## Несимметричные пары A/B — что задаёт различия колоний
 
@@ -67,6 +67,8 @@
 | Power Capacity Planning Signal | Power | 1316.4467 | 537.2232 | Инициализация в согласии с baseline-нагрузкой, чтобы Mode 12 не начинался с искусственного планового скачка. |
 | Power Generation Cost | Power | 0.08 | 0.03 | Базовая цена энергии до дефицитной надбавки; B энергетически дешевле, но энергия не торгуется, поэтому это влияет только на локальные unit cost (Energy per Metal 30 → 2.4 vs 0.9 на единицу металла). |
 | Power Installed Generation Capital | Power | 1350 | 550 | Стартовая точка lifecycle-энергетики; A с большим промышленным сектором стартует с большим парком. В связанном baseline A растёт до 1610 к 1080 при требуемых 1701 — источник остаточного энергодефицита A. |
+| Power Resource Demand Signal | Power | 1350 | 182.656 | Seeds the STOCK sizing signal at A's measured starting demand; A/B are intentionally asymmetric (1350 vs 182.656). |
+| Power Resource Mine Capacity | Power | 1750 | 650 | Seeds A mine capacity with intentional A/B asymmetry (1750 vs 650), chosen to start above current demand while leaving the smooth-cap mechanic observable. |
 | Test 11 Generation Shock Applies | Power | 1 | 0 | Оборачивает существующий общий power multiplier через IfThenElse(flag=1, multiplier, 1), сохраняя старую одностороннюю тестовую обвязку при зеркальной формуле. |
 | Test 25 Power Resource Shock Applies | Power | 1 | 0 | 1 applies the shared Power Resource Shock Factor (0.1) to A extraction inside the standard shock window; 0 substitutes the exact neutral multiplier 1. A=1, B=0 keeps the experiment one-sided while both formulas stay mirrored. |
 | Test 26 Energy Kernel Capacity Shock Applies | Power | 1 | 0 | 1 applies the shared Energy Kernel Capacity Shock Factor to A active generation capacity; 0 substitutes the exact neutral multiplier 1. A=1, B=0. |
@@ -281,6 +283,8 @@
 | A Power Construction Materials per Capacity | constant | 1 | [calib] physical-material norm, value 1. | Scales Power Construction Materials demand and sink flow. | Order-of-magnitude matched to Capital Goods norm 0.5 per spec; candidate run checks consequences. |
 | A Power Generation Cost | constant | 0.08 / 0.03 | Себестоимость генерации (A 0.08 / B 0.03 за единицу энергии). | Базовая цена энергии до дефицитной надбавки; B энергетически дешевле, но энергия не торгуется, поэтому это влияет только на локальные unit cost (Energy per Metal 30 → 2.4 vs 0.9 на единицу металла). | Mode 10 (Cheap Energy) тестирует именно этот канал. |
 | A Power Installed Generation Capital | initial_stock | 1350 / 550 | Начальная установленная генерация (A 1350 / B 550). | Стартовая точка lifecycle-энергетики; A с большим промышленным сектором стартует с большим парком. В связанном baseline A растёт до 1610 к 1080 при требуемых 1701 — источник остаточного энергодефицита A. | Mode 17: A Power Installed 1402 → 1610. |
+| A Power Resource Demand Signal | initial_stock | 1350 / 182.656 | Initial smoothed power-resource-demand signal for colony A, value 1350. | Seeds the STOCK sizing signal at A's measured starting demand; A/B are intentionally asymmetric (1350 vs 182.656). | TASK_RU §2, V7_7_7_ARCHITECTURE_SPEC §1, and draft/power-resource-mine.json. |
+| A Power Resource Mine Capacity | initial_stock | 1750 / 650 | Initial simple-capital power-resource-mine capacity for colony A, value 1750. | Seeds A mine capacity with intentional A/B asymmetry (1750 vs 650), chosen to start above current demand while leaving the smooth-cap mechanic observable. | TASK_RU §2 and V7_7_7_ARCHITECTURE_SPEC §1–§2 explicitly require A=1750, B=650. |
 | A Test 11 Generation Shock Applies | constant | 1 / 0 | Флаг применимости generation shock Mode 11 к колонии A; значение 1. | Оборачивает существующий общий power multiplier через IfThenElse(flag=1, multiplier, 1), сохраняя старую одностороннюю тестовую обвязку при зеркальной формуле. |  |
 | A Test 25 Power Resource Shock Applies | constant | 1 / 0 | Applicability flag for the Mode 25 power-resource supply shock in colony A. | 1 applies the shared Power Resource Shock Factor (0.1) to A extraction inside the standard shock window; 0 substitutes the exact neutral multiplier 1. A=1, B=0 keeps the experiment one-sided while both formulas stay mirrored. | Mode 25 run (r2 acceptance, 2026-09-25): A fulfillment 1.00 -> 0.107 inside [360,720], B stays at 1.00 throughout. |
 | A Test 26 Energy Kernel Capacity Shock Applies | constant | 1 / 0 | Applicability flag for the Mode 26 capacity-only control shock in colony A. | 1 applies the shared Energy Kernel Capacity Shock Factor to A active generation capacity; 0 substitutes the exact neutral multiplier 1. A=1, B=0. | Mode 26 run (r2 acceptance, 2026-09-25): A capacity 1359 -> 660 inside the window with resource fulfillment held at 1.00; B unaffected. |
@@ -293,6 +297,8 @@
 | B Power Construction Materials per Capacity | constant | 1 | [calib] physical-material norm, value 1. | Scales Power Construction Materials demand and sink flow. | Order-of-magnitude matched to Capital Goods norm 0.5 per spec; candidate run checks consequences. |
 | B Power Generation Cost | constant | 0.03 / 0.08 | Себестоимость генерации (A 0.08 / B 0.03 за единицу энергии). | Базовая цена энергии до дефицитной надбавки; B энергетически дешевле, но энергия не торгуется, поэтому это влияет только на локальные unit cost (Energy per Metal 30 → 2.4 vs 0.9 на единицу металла). | Mode 10 (Cheap Energy) тестирует именно этот канал. |
 | B Power Installed Generation Capital | initial_stock | 550 / 1350 | Начальная установленная генерация (A 1350 / B 550). | Стартовая точка lifecycle-энергетики; A с большим промышленным сектором стартует с большим парком. В связанном baseline A растёт до 1610 к 1080 при требуемых 1701 — источник остаточного энергодефицита A. | Mode 17: A Power Installed 1402 → 1610. |
+| B Power Resource Demand Signal | initial_stock | 182.656 / 1350 | Initial smoothed power-resource-demand signal for colony B, value 182.656. | Seeds the STOCK sizing signal at B's measured starting demand; A/B are intentionally asymmetric (182.656 vs 1350). | TASK_RU §2, V7_7_7_ARCHITECTURE_SPEC §1, and draft/power-resource-mine.json. |
+| B Power Resource Mine Capacity | initial_stock | 650 / 1750 | Initial simple-capital power-resource-mine capacity for colony B, value 650. | Seeds B mine capacity with intentional A/B asymmetry (650 vs 1750); B first adjusts to its rising startup demand and can rebuild under the Mode 43 surge. | TASK_RU §2 and V7_7_7_ARCHITECTURE_SPEC §1–§2 explicitly require A=1750, B=650. |
 | B Test 11 Generation Shock Applies | constant | 0 / 1 | Флаг применимости generation shock Mode 11 к колонии B; значение 0. | Оборачивает существующий общий power multiplier через IfThenElse(flag=1, multiplier, 1), сохраняя старую одностороннюю тестовую обвязку при зеркальной формуле. |  |
 | B Test 25 Power Resource Shock Applies | constant | 0 / 1 | Applicability flag for the Mode 25 power-resource supply shock in colony B. | 1 applies the shared Power Resource Shock Factor (0.1) to B extraction inside the standard shock window; 0 substitutes the exact neutral multiplier 1. A=1, B=0 keeps the experiment one-sided while both formulas stay mirrored. | Mode 25 run (r2 acceptance, 2026-09-25): A fulfillment 1.00 -> 0.107 inside [360,720], B stays at 1.00 throughout. |
 | B Test 26 Energy Kernel Capacity Shock Applies | constant | 0 / 1 | Applicability flag for the Mode 26 capacity-only control shock in colony B. | 1 applies the shared Energy Kernel Capacity Shock Factor to B active generation capacity; 0 substitutes the exact neutral multiplier 1. A=1, B=0. | Mode 26 run (r2 acceptance, 2026-09-25): A capacity 1359 -> 660 inside the window with resource fulfillment held at 1.00; B unaffected. |
@@ -304,8 +310,15 @@
 | Power Construction Time | constant | 360 | Время строительства генерации (360 д). | Вторая причина медленной сходимости энергетики. |  |
 | Power Operating Reserve Factor | constant | 1.02 | Отраслевая policy kernel капитала (1.02). | Не часть kernel-контракта — отраслевая параметризация (KERNEL_SPEC §4.3). Сравнение секторов: CAPITAL_LIFECYCLE_SECTOR_MAPPING, последняя таблица. |  |
 | Power Resource Buffer Days | constant | 2 | Target inventory coverage for the operating resource. | Controls how much stock is considered sufficient for full resource fulfillment and extraction planning. | v7.6 Energy Kernel v2 specification and Modes 25/26 validation contract. |
+| Power Resource Demand Signal Adjustment Time | constant | 3 | Power-resource demand-signal adjustment time, value 3 days. | Controls lag from Power Resource Demand to the STOCK sizing signal and avoids same-step demand feedback. | V7_7_7_ARCHITECTURE_SPEC §1–§2; simple_capital STOCK sizing rule in lab/docs/NODES_RU.md. |
 | Power Resource Extraction Adjustment Time | constant | 30 | Extraction-planning response time. | Controls recovery/replenishment dynamics of the abstract primary energy resource. | v7.6 Energy Kernel v2 specification and Modes 25/26 validation contract. |
 | Power Resource Extraction Headroom | constant | 1.1 | Normal extraction headroom. | Allows replenishment above instantaneous demand and rebuilding of inventory. | v7.6 Energy Kernel v2 specification and Modes 25/26 validation contract. |
+| Power Resource Mine Capacity Reserve Factor | constant | 1.25 | Power-resource-mine desired-capacity reserve factor, value 1.25. | Scales the smoothed Power Resource Demand Signal into desired mine capacity. | V7_7_7_ARCHITECTURE_SPEC §1 and draft/power-resource-mine.json. |
+| Power Resource Mine Capital Goods per Capacity | constant | 0.02 | Capital Goods requirement per unit of new power-resource-mine capacity, value 0.02. | Scales Desired Expansion into Capital Goods demand and actual expansion into Capital Goods consumption. | V7_7_7_ARCHITECTURE_SPEC §1 and draft/power-resource-mine.json. |
+| Power Resource Mine Construction Materials per Capacity | constant | 0.02 | Construction Materials requirement per unit of new power-resource-mine capacity, value 0.02. | Scales Desired Expansion into Construction Materials demand and actual expansion into Construction Materials consumption. | V7_7_7_ARCHITECTURE_SPEC §1 and draft/power-resource-mine.json. |
+| Power Resource Mine Construction Time | constant | 90 | Power-resource-mine capacity construction time, value 90 days. | Divides the positive capacity gap to set desired expansion speed before backing-resource coverage limits it. | V7_7_7_ARCHITECTURE_SPEC §1 and draft/power-resource-mine.json. |
+| Power Resource Mine Depreciation Rate | constant | 0.0001 | Power-resource-mine capacity depreciation rate, value 0.0001 per day. | Applies continuous physical attrition to Power Resource Mine Capacity while the mechanic is enabled. | V7_7_7_ARCHITECTURE_SPEC §1 and draft/power-resource-mine.json. |
+| Power Resource Mine Retirement Time | constant | 360 | Power-resource-mine capacity surplus retirement time, value 360 days. | Controls removal rate of capacity above desired capacity. | V7_7_7_ARCHITECTURE_SPEC §1 and draft/power-resource-mine.json. |
 | Power Resource per Energy | constant | 1 | Physical intensity of the Energy Kernel v2 operating resource. | Scales resource demand and actual physical consumption per delivered energy unit. | v7.6 Energy Kernel v2 specification and Modes 25/26 validation contract. |
 | Power Resource Scarcity Price Strength | constant | 4 | Resource scarcity price sensitivity. | Raises physical resource price as fulfillment falls. | v7.6 Energy Kernel v2 specification and Modes 25/26 validation contract. |
 | Power Resource Shock Factor | constant | 0.5 | Mode-25 test multiplier. | Creates a temporary A-only resource-supply shock; test wiring only. 0.5 (since v7.6.1; 0.1 before) keeps A energy at ~45 % of the no-shock control over the window and leaves the same capital scar as the Mode 26 capacity control; 0.1 was a cut-off (~7 %). | v7.6 Energy Kernel v2 specification and Modes 25/26 validation contract; calibration sweep in docs/V7_6_1_CALIBRATION_REPORT.md; Mode 25 check "A energy is rationed, not cut off". |
@@ -318,6 +331,7 @@
 | Construction Materials Energy Enabled | switch | 1 | v7.7.2 Construction Materials energy-coupling master switch. | 0 preserves Modes 0-31 exactly; 1 makes Construction Materials processing request and receive energy through the common colony allocator. | V7_7_2_ARCHITECTURE_SPEC §0–§3. |
 | Intermediate Inputs Enabled | switch | 1 | Переключатель v7.4 (1 в сыром файле; 0 в Modes 0–16; 1 в 17–20). | При 0 — точное воспроизведение v7.3 r2 (Feedstock из ∅ по legacy-цене). При 1 — металл как физический вход, Feedstock Extraction = 0, Feedstock Price = Market Price, Desired Smelting Rate += поставки. Только форма IfThenElse(switch, new, old). | CHECK_CANDIDATE r2: Modes 0–16 changed=0, maxAbs=0. |
 | Ore Capital Enabled | switch | 1 | Ore-mining simple-capital master switch, raw value 1. | 0 preserves accepted Modes 0-39 exactly; 1 makes effective mining capacity read ore-mine capital and enables mine expansion, depreciation, retirement, and backing-resource sinks. | V7_7_6_ARCHITECTURE_SPEC §0–§3; owner node declaration. |
+| Power Resource Capital Enabled | switch | 1 | Power-resource-extraction simple-capital master switch, raw value 1. | 0 preserves accepted Modes 0-41 exactly; 1 applies the smooth mine-capacity cap and enables mine expansion, depreciation, retirement, and backing-resource sinks. | V7_7_7_ARCHITECTURE_SPEC §0–§3; owner node declaration. |
 | Regolith Capital Enabled | switch | 1 | Regolith simple-capital master switch, raw value 1. | 0 preserves accepted Modes 0-37 exactly; 1 makes regolith extraction capacity read mine capital and enables mine expansion, depreciation, retirement, and backing-resource sinks. | V7_7_5_ARCHITECTURE_SPEC §0–§3; owner node declaration. |
 | Transport Construction Materials Enabled | switch | 1 | v7.7.1 shared-Transport Construction Materials master switch. | 0 preserves Modes 0-29 exactly; 1 makes shared Transport expansion require both Capital Goods and Construction Materials. | V7_7_1_ARCHITECTURE_SPEC §0–§3. |
 | Priority Stress A Ore Base Cost | test_wiring | 4 | Нейтральная A-сторона override-константа ore base cost для Mode 8. | Равна A Ore Base Cost = 4; позволяет A Effective Ore Base Cost иметь ту же test chain, что B, сохраняя прежний результат. |  |
@@ -662,7 +676,9 @@
 | A Power Decommissioning Generation Capital | initial_stock | A | 0 | = | A generation capital committed to permanent retirement but not yet fully dismantled. |  |
 | A Power Generation Cost | constant | A | 0.08 | **0.03** | Baseline variable generation cost per energy unit. This replaces the old exogenous A Energy Price as the fundamental cost input. | ✓ |
 | A Power Installed Generation Capital | initial_stock | A | 1350 | **550** | Physical installed firm generation capital in A. v7.3 construction, depreciation and permanent retirement act on this stock. | ✓ |
+| A Power Resource Demand Signal | initial_stock | A | 1350 | **182.656** | Generated simple_capital demand signal for A Power Resource Demand Signal. | ✓ |
 | A Power Resource Inventory | initial_stock | A | 5000 | = | Physical operating-resource inventory used by power generation in colony A. |  |
+| A Power Resource Mine Capacity | initial_stock | A | 1750 | **650** | Generated simple_capital capacity for A Power Resource Mine Capacity. | ✓ |
 | A Power Retired Generation Capital | initial_stock | A | 0 | = | Cumulative permanently retired generation capacity in A. |  |
 | A Test 11 Generation Shock Applies | constant | A | 1 | **0** | Applicability flag for symmetric power test wiring. | ✓ |
 | A Test 25 Power Resource Shock Applies | constant | A | 1 | **0** | Applicability flag for symmetric Energy Kernel v2 resource-shock wiring. | ✓ |
@@ -678,7 +694,9 @@
 | B Power Decommissioning Generation Capital | initial_stock | B | 0 | = | B generation capital committed to permanent retirement but not yet fully dismantled. |  |
 | B Power Generation Cost | constant | B | 0.03 | **0.08** | Baseline variable generation cost per energy unit. This replaces the old exogenous B Energy Price as the fundamental cost input. | ✓ |
 | B Power Installed Generation Capital | initial_stock | B | 550 | **1350** | Physical installed firm generation capital in B. v7.3 construction, depreciation and permanent retirement act on this stock. | ✓ |
+| B Power Resource Demand Signal | initial_stock | B | 182.656 | **1350** | Generated simple_capital demand signal for B Power Resource Demand Signal. | ✓ |
 | B Power Resource Inventory | initial_stock | B | 5000 | = | Physical operating-resource inventory used by power generation in colony B. |  |
+| B Power Resource Mine Capacity | initial_stock | B | 650 | **1750** | Generated simple_capital capacity for B Power Resource Mine Capacity. | ✓ |
 | B Power Retired Generation Capital | initial_stock | B | 0 | = | Cumulative permanently retired generation capacity in B. |  |
 | B Test 11 Generation Shock Applies | constant | B | 0 | **1** | Applicability flag for symmetric power test wiring. | ✓ |
 | B Test 25 Power Resource Shock Applies | constant | B | 0 | **1** | Applicability flag for symmetric Energy Kernel v2 resource-shock wiring. | ✓ |
@@ -696,8 +714,15 @@
 | Power Mothball Time | constant | global | 45 |  | Time scale for idling generation capacity after a persistent load decline. |  |
 | Power Operating Reserve Factor | constant | global | 1.02 |  | Required firm active generation relative to smoothed industrial load. Capacity in this simplified model is already treated as firm/available, so only a small explicit reserve margin is added. | ✓ |
 | Power Resource Buffer Days | constant | global | 2 |  | Target operating-resource inventory coverage used by extraction planning and fulfillment. | ✓ |
+| Power Resource Demand Signal Adjustment Time | constant | global | 3 |  | Generated simple_capital signal adjustment time for Power Resource Demand Signal Adjustment Time. | ✓ |
 | Power Resource Extraction Adjustment Time | constant | global | 30 |  | Days over which primary-resource extraction adjusts toward demand plus target-inventory correction. | ✓ |
 | Power Resource Extraction Headroom | constant | global | 1.1 |  | Normal extraction headroom multiplier applied after inventory correction. | ✓ |
+| Power Resource Mine Capacity Reserve Factor | constant | global | 1.25 |  | Generated simple_capital parameter for Power Resource Mine Capacity Reserve Factor. | ✓ |
+| Power Resource Mine Capital Goods per Capacity | constant | global | 0.02 |  | Generated simple_capital parameter for Power Resource Mine Capital Goods per Capacity. | ✓ |
+| Power Resource Mine Construction Materials per Capacity | constant | global | 0.02 |  | Generated simple_capital parameter for Power Resource Mine Construction Materials per Capacity. | ✓ |
+| Power Resource Mine Construction Time | constant | global | 90 |  | Generated simple_capital parameter for Power Resource Mine Construction Time. | ✓ |
+| Power Resource Mine Depreciation Rate | constant | global | 0.0001 |  | Generated simple_capital parameter for Power Resource Mine Depreciation Rate. | ✓ |
+| Power Resource Mine Retirement Time | constant | global | 360 |  | Generated simple_capital parameter for Power Resource Mine Retirement Time. | ✓ |
 | Power Resource per Energy | constant | global | 1 |  | Physical operating-resource units consumed per delivered energy unit in Energy Kernel v2. | ✓ |
 | Power Resource Scarcity Price Strength | constant | global | 4 |  | Scarcity premium strength applied to the power-resource price. | ✓ |
 | Power Resource Shock Factor | constant | global | 0.5 |  | Mode 25 temporary multiplier on A power-resource extraction. 0.5 since v7.6.1 (was 0.1): impact-matched to the Mode 26 capacity control; see docs/V7_6_1_CALIBRATION_REPORT.md. | ✓ |
@@ -717,6 +742,7 @@
 | Construction Materials Energy Enabled | switch | global | 1 (сценарии: {"0":0,"1":0,"2":0,"3":0,"4":0,"5":0,"6":0,"7":0,"8":0,"9":0…) |  | v7.7.2 switch: makes Construction Materials processing participate in the colony energy allocator. | ✓ |
 | Intermediate Inputs Enabled | switch | global | 1 (сценарии: {"0":0,"1":0,"2":0,"3":0,"4":0,"5":0,"6":0,"7":0,"8":0,"9":0…) |  | Master switch for v7.4 Metal-to-Electronics intermediate-input coupling. Modes 0-16 override to 0; Modes 17+ enable it. | ✓ |
 | Ore Capital Enabled | switch | global | 1 (сценарии: {"0":0,"1":0,"2":0,"3":0,"4":0,"5":0,"6":0,"7":0,"8":0,"9":0…) |  | Generated simple_capital switch for Ore Capital Enabled. | ✓ |
+| Power Resource Capital Enabled | switch | global | 1 (сценарии: {"0":0,"1":0,"2":0,"3":0,"4":0,"5":0,"6":0,"7":0,"8":0,"9":0…) |  | Generated simple_capital switch for Power Resource Capital Enabled. | ✓ |
 | Power Resource Enabled | switch | global | 0 (сценарии: {"0":0,"1":0,"2":0,"3":0,"4":0,"5":0,"6":0,"7":0,"8":0,"9":0…) |  | v7.6 master switch. When 0, the accepted v7.5.1 energy path is reproduced; when 1, generation requires a physical operating resource. |  |
 | Regolith Capital Enabled | switch | global | 1 (сценарии: {"0":0,"1":0,"2":0,"3":0,"4":0,"5":0,"6":0,"7":0,"8":0,"9":0…) |  | Generated simple_capital switch for Regolith Capital Enabled. | ✓ |
 | Transport Capital Goods Enabled | switch | global | 1 (сценарии: {"0":0,"1":0,"2":0,"3":0,"4":0,"5":0,"6":0,"7":0,"8":0,"9":0…) |  | v7.5.1 regression switch: when enabled, Transport Capacity Expansion is physically backed by Capital Goods drawn from A/B regional inventories. |  |

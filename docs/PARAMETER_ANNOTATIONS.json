@@ -1,7 +1,7 @@
 {
   "format": "orbital-economy-parameter-annotations-v1",
-  "model": "Orbital Economy v7.7.6 r1 — Ore Capital",
-  "updated": "2026-09-29",
+  "model": "Orbital Economy v7.7.7 r1 — Power Resource Capital",
+  "updated": "2026-09-30",
   "policy": "Каждый внешний параметр, влияющий на структуру поведения (сравнительные преимущества, нормирование, планирование), должен иметь аннотацию: роль, что меняет, доказательство (ссылка на прогон/документ). Несимметричные пары A/B аннотируются в первую очередь. Изменение значения = изменение модели → через change-policy, с обновлением аннотации.",
   "embedded_literals": [
     {
@@ -2468,6 +2468,146 @@
         "signal",
         "initial"
       ]
+    },
+    "Power Resource Capital Enabled": {
+      "role": "Power-resource-extraction simple-capital master switch, raw value 1.",
+      "effect": "0 preserves accepted Modes 0-41 exactly; 1 applies the smooth mine-capacity cap and enables mine expansion, depreciation, retirement, and backing-resource sinks.",
+      "evidence": "V7_7_7_ARCHITECTURE_SPEC §0–§3; owner node declaration.",
+      "since": "v7.7.7 r1",
+      "tags": [
+        "power-resource",
+        "capital",
+        "switch"
+      ]
+    },
+    "Power Resource Mine Capacity Reserve Factor": {
+      "role": "Power-resource-mine desired-capacity reserve factor, value 1.25.",
+      "effect": "Scales the smoothed Power Resource Demand Signal into desired mine capacity.",
+      "evidence": "V7_7_7_ARCHITECTURE_SPEC §1 and draft/power-resource-mine.json.",
+      "since": "v7.7.7 r1",
+      "tags": [
+        "power-resource",
+        "capital",
+        "sizing"
+      ]
+    },
+    "Power Resource Mine Construction Time": {
+      "role": "Power-resource-mine capacity construction time, value 90 days.",
+      "effect": "Divides the positive capacity gap to set desired expansion speed before backing-resource coverage limits it.",
+      "evidence": "V7_7_7_ARCHITECTURE_SPEC §1 and draft/power-resource-mine.json.",
+      "since": "v7.7.7 r1",
+      "tags": [
+        "power-resource",
+        "capital",
+        "construction"
+      ]
+    },
+    "Power Resource Mine Retirement Time": {
+      "role": "Power-resource-mine capacity surplus retirement time, value 360 days.",
+      "effect": "Controls removal rate of capacity above desired capacity.",
+      "evidence": "V7_7_7_ARCHITECTURE_SPEC §1 and draft/power-resource-mine.json.",
+      "since": "v7.7.7 r1",
+      "tags": [
+        "power-resource",
+        "capital",
+        "retirement"
+      ]
+    },
+    "Power Resource Mine Depreciation Rate": {
+      "role": "Power-resource-mine capacity depreciation rate, value 0.0001 per day.",
+      "effect": "Applies continuous physical attrition to Power Resource Mine Capacity while the mechanic is enabled.",
+      "evidence": "V7_7_7_ARCHITECTURE_SPEC §1 and draft/power-resource-mine.json.",
+      "since": "v7.7.7 r1",
+      "tags": [
+        "power-resource",
+        "capital",
+        "depreciation"
+      ]
+    },
+    "Power Resource Mine Capital Goods per Capacity": {
+      "role": "Capital Goods requirement per unit of new power-resource-mine capacity, value 0.02.",
+      "effect": "Scales Desired Expansion into Capital Goods demand and actual expansion into Capital Goods consumption.",
+      "evidence": "V7_7_7_ARCHITECTURE_SPEC §1 and draft/power-resource-mine.json.",
+      "since": "v7.7.7 r1",
+      "tags": [
+        "power-resource",
+        "capital",
+        "backing"
+      ]
+    },
+    "Power Resource Mine Construction Materials per Capacity": {
+      "role": "Construction Materials requirement per unit of new power-resource-mine capacity, value 0.02.",
+      "effect": "Scales Desired Expansion into Construction Materials demand and actual expansion into Construction Materials consumption.",
+      "evidence": "V7_7_7_ARCHITECTURE_SPEC §1 and draft/power-resource-mine.json.",
+      "since": "v7.7.7 r1",
+      "tags": [
+        "power-resource",
+        "capital",
+        "backing"
+      ]
+    },
+    "A Power Resource Mine Capacity": {
+      "role": "Initial simple-capital power-resource-mine capacity for colony A, value 1750.",
+      "effect": "Seeds A mine capacity with intentional A/B asymmetry (1750 vs 650), chosen to start above current demand while leaving the smooth-cap mechanic observable.",
+      "evidence": "TASK_RU §2 and V7_7_7_ARCHITECTURE_SPEC §1–§2 explicitly require A=1750, B=650.",
+      "since": "v7.7.7 r1",
+      "tags": [
+        "power-resource",
+        "capital",
+        "initial",
+        "asymmetry"
+      ],
+      "applies_to_mirror": true
+    },
+    "B Power Resource Mine Capacity": {
+      "role": "Initial simple-capital power-resource-mine capacity for colony B, value 650.",
+      "effect": "Seeds B mine capacity with intentional A/B asymmetry (650 vs 1750); B first adjusts to its rising startup demand and can rebuild under the Mode 43 surge.",
+      "evidence": "TASK_RU §2 and V7_7_7_ARCHITECTURE_SPEC §1–§2 explicitly require A=1750, B=650.",
+      "since": "v7.7.7 r1",
+      "tags": [
+        "power-resource",
+        "capital",
+        "initial",
+        "asymmetry"
+      ],
+      "applies_to_mirror": true
+    },
+    "Power Resource Demand Signal Adjustment Time": {
+      "role": "Power-resource demand-signal adjustment time, value 3 days.",
+      "effect": "Controls lag from Power Resource Demand to the STOCK sizing signal and avoids same-step demand feedback.",
+      "evidence": "V7_7_7_ARCHITECTURE_SPEC §1–§2; simple_capital STOCK sizing rule in lab/docs/NODES_RU.md.",
+      "since": "v7.7.7 r1",
+      "tags": [
+        "power-resource",
+        "signal",
+        "causality"
+      ]
+    },
+    "A Power Resource Demand Signal": {
+      "role": "Initial smoothed power-resource-demand signal for colony A, value 1350.",
+      "effect": "Seeds the STOCK sizing signal at A's measured starting demand; A/B are intentionally asymmetric (1350 vs 182.656).",
+      "evidence": "TASK_RU §2, V7_7_7_ARCHITECTURE_SPEC §1, and draft/power-resource-mine.json.",
+      "since": "v7.7.7 r1",
+      "tags": [
+        "power-resource",
+        "signal",
+        "initial",
+        "asymmetry"
+      ],
+      "applies_to_mirror": true
+    },
+    "B Power Resource Demand Signal": {
+      "role": "Initial smoothed power-resource-demand signal for colony B, value 182.656.",
+      "effect": "Seeds the STOCK sizing signal at B's measured starting demand; A/B are intentionally asymmetric (182.656 vs 1350).",
+      "evidence": "TASK_RU §2, V7_7_7_ARCHITECTURE_SPEC §1, and draft/power-resource-mine.json.",
+      "since": "v7.7.7 r1",
+      "tags": [
+        "power-resource",
+        "signal",
+        "initial",
+        "asymmetry"
+      ],
+      "applies_to_mirror": true
     }
   }
 }

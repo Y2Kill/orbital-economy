@@ -1,10 +1,14 @@
 # Roadmap
 
 **Document status:** CURRENT  
-**Base:** Orbital Economy v7.7.6 r1 — Ore Capital (accepted 2026-09-29)  
+**Base:** Orbital Economy v7.7.7 r1 — Power Resource Capital (accepted 2026-09-30)  
 **Rule:** roadmap describes intent; executable accepted code remains authoritative for accepted behavior.
 
-## Current implementation — v7.7.6 Ore Capital
+## Current implementation — v7.7.7 Power Resource Capital
+
+Energy-resource extraction has a mine on simple capital. It had no capacity variable at all, so the bench first learned to cap an uncapped rate smoothly (task 020, Lab v0.9.11: the old rate is kept as `Uncapped Output`); the model step followed (task 021). The two-day inventory buffer absorbs most of the cap; in Mode 43 colony B rebuilds its mine during the transport surge and draws its power-resource inventory down meanwhile. **Planet v1 P2 is closed: every production capacity in the model is capital (kernel 11 / simple 6 / exceptions 0).** The executor delivered the owner's declaration and validation byte-identical; the model equals the skeleton.
+
+## v7.7.6 Ore Capital
 
 Ore mining capacity is simple capital, the same node type as the regolith mine: each colony has an ore mine (start A 70, B 28) sized from a smoothed ore demand-signal stock and expanded from capital goods and construction materials. A's mining is no longer capped at 70 (Mode 40: the mine grows to ≈ 75); in Mode 41 colony B rebuilds its ore mine during the transport surge and draws its ore inventory down meanwhile. The executor delivered the owner's declaration and validation byte-identical; the model equals the skeleton. Planet v1 counter P2: exceptions 4 → 2 — only the energy resource (unbounded extraction) is left.
 
@@ -134,14 +138,14 @@ Defined 2026-09-26: `docs/PLANET_V1_CONTRACT_RU.md`. The single boundary counter
 | Part | Now (v7.7.1, per colony) | v1 target |
 |---|---|---|
 | P1 capital-backed expansion | 0 external | 0 (closed) |
-| P2 capacity from capital, not a constant | 1 — the energy resource, unbounded (v7.7.2: 5; v7.7.3: 4; v7.7.4: 3; v7.7.5: 2) | 0 undeclared; exceptions with reason, counted separately |
+| P2 capacity from capital, not a constant | **0 — closed in v7.7.7** (v7.7.2: 5; v7.7.3: 4; v7.7.4: 3; v7.7.5: 2; v7.7.6: 1) | 0 undeclared; exceptions with reason, counted separately |
 | P3 declared energy use | 4 of 7 processes + transport without energy (v7.7.1: 5 of 7) | 0 undeclared; exceptions with reason |
 | P4 finite deposits | 3 extractions from nothing | deposit stock from a named parameter (v8: derived from planet formation) |
 | P5 declared labor | 2 of 9 | all declared; no labor pool (v2) |
 | P6 final demand | constants | explicit external driver (population and life support: v2) |
 | P7 reproducibility | closed on the canonical platform | platform independence before going public |
 
-Measured by the `planet_closure` validation plugin (task 011, Lab v0.9.6; in the accepted validation since v7.7.1 r2, `report` mode). Next: model steps under the counter. Done: task 012, v7.7.2 construction materials using energy (P3 5 → 4 per colony; bench v0.9.7 `energy_balance` consumers list). Done: task 013, v7.7.3 construction-materials capacity on the capital lifecycle kernel (P2 5 → 4 per colony). Done: task 014, v7.7.4 capital-goods capacity on the capital lifecycle kernel (P2 4 → 3 per colony). Done: task 017, v7.7.5 regolith extraction as simple capital — the first model task on node declarations (P2 exceptions 3 → 2 per colony). Done: task 019, v7.7.6 ore mining as simple capital (P2 exceptions 2 → 1 per colony; only the energy resource is left). Done: task 020 (bench, Lab v0.9.11) — `simple_capital` learned to cap an uncapped rate (`capacity_output.cap`) and per-colony initial signals, because the energy resource has no capacity variable to replace; then the model task v7.7.7 puts it on capital and closes P2 (skeleton on the prototype: P2 11/6/0/0, loops 0/8192). In progress: task 021, v7.7.7 power resource mine on the smooth cap — closes P2. Open: `labor: declared` is trusted until the P5 model step introduces explicit labor-requirement variables (contract P5).
+Measured by the `planet_closure` validation plugin (task 011, Lab v0.9.6; in the accepted validation since v7.7.1 r2, `report` mode). Next: model steps under the counter. Done: task 012, v7.7.2 construction materials using energy (P3 5 → 4 per colony; bench v0.9.7 `energy_balance` consumers list). Done: task 013, v7.7.3 construction-materials capacity on the capital lifecycle kernel (P2 5 → 4 per colony). Done: task 014, v7.7.4 capital-goods capacity on the capital lifecycle kernel (P2 4 → 3 per colony). Done: task 017, v7.7.5 regolith extraction as simple capital — the first model task on node declarations (P2 exceptions 3 → 2 per colony). Done: task 019, v7.7.6 ore mining as simple capital (P2 exceptions 2 → 1 per colony; only the energy resource is left). Done: task 020 (bench, Lab v0.9.11) — `simple_capital` learned to cap an uncapped rate (`capacity_output.cap`) and per-colony initial signals, because the energy resource has no capacity variable to replace; then the model task v7.7.7 puts it on capital and closes P2 (skeleton on the prototype: P2 11/6/0/0, loops 0/8192). Done: task 021, v7.7.7 power resource mine on the smooth cap — P2 closed. Open: `labor: declared` is trusted until the P5 model step introduces explicit labor-requirement variables (contract P5).
 
 ## v8 — replicated regions/colonies/planets
 

@@ -1,8 +1,8 @@
 CURRENT ACCEPTED BASELINE
 
-Orbital Economy v7.7.6 r1 — Ore Capital
-Model SHA-256: d274f7b9dcc11dbfe3730c1a88fe8fd3cf242e09a52a3e51e9082ab8420de8dd
-Validation SHA-256: 0cac6c2436771ceae56fcf2b6a2137c9cc2d976c018b7e388494dffcc749a8d9
+Orbital Economy v7.7.7 r1 — Power Resource Capital
+Model SHA-256: befccae91083e44c32ddeb25783a3f45a8ef32fa60965e61a210ebfc4c7b8f94
+Validation SHA-256: 8b15f29a00a4868594fa0e8f36b51284e54cc0bd1f2f35ebcb4fb29c33cc12a5
 
 This directory is the accepted reference used by comparison/policy tools.
 

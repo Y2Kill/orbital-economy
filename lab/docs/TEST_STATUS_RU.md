@@ -1,28 +1,28 @@
-# Статус проверок Orbital Economy Lab v0.9.11 — baseline v7.7.6 r1
+# Статус проверок Orbital Economy Lab v0.9.11 — baseline v7.7.7 r1
 
 ## Принятая основа
 
-- Модель: **Orbital Economy v7.7.6 r1 — Ore Capital** — ACCEPTED 2026-09-29.
-- SHA-256: `d274f7b9dcc11dbfe3730c1a88fe8fd3cf242e09a52a3e51e9082ab8420de8dd`.
-- Validation: `validation/validation-v7.7.6.json`.
-- Policy: `policy/change-policy-v7.7.6-strict.json` (default deny, rules: []).
+- Модель: **Orbital Economy v7.7.7 r1 — Power Resource Capital** — ACCEPTED 2026-09-30.
+- SHA-256: `befccae91083e44c32ddeb25783a3f45a8ef32fa60965e61a210ebfc4c7b8f94`.
+- Validation: `validation/validation-v7.7.7.json`.
+- Policy: `policy/change-policy-v7.7.7-strict.json` (default deny, rules: []).
 - Engine: `simulation@9.0.0` pinned; каноническая платформа Windows x64 · Node 24.11.1 (`../../docs/VERSIONING_AND_AUTHORITY.md` §8), эталон `reference/accepted/series-digest.windows.json`.
-- Scenarios: Modes 0–41.
-- Предшественник: v7.7.5 r1 (`b0b60e63f24bb1791a1d06d631a681a8d96fd820bcccdf79932715ac0d0f9c8c`), лежит в `reference/v7.7.5/`.
+- Scenarios: Modes 0–43.
+- Предшественник: v7.7.6 r1 (`d274f7b9dcc11dbfe3730c1a88fe8fd3cf242e09a52a3e51e9082ab8420de8dd`), лежит в `reference/v7.7.6/`.
 
-## Проверки promotion v7.7.6 (прогон 2026-09-29, каноническая платформа)
+## Проверки promotion v7.7.7 (прогон 2026-09-30, каноническая платформа)
 
 | Проверка | Результат |
 |---|---|
-| Validation Modes 0–41 | **PASS** — 42/42, 10342 проверки |
-| Capital Lifecycle conformance | **PASS** — 11 instances ядра, 0 NON_CONFORMING; `simple_capital` 4 instances CONFORMING |
-| Structure audit | **PASS** — 225 FLOW, 182 boundary, unclassified 0, closed-world 0, пары 23 |
+| Validation Modes 0–43 | **PASS** — 44/44, 11531 проверка |
+| Capital Lifecycle conformance | **PASS** — 11 instances ядра, 0 NON_CONFORMING; `simple_capital` 6 instances CONFORMING |
+| Structure audit | **PASS** — 239 FLOW, 196 boundary, unclassified 0, closed-world 0, пары 25 |
 | A/B symmetry | **PASS** — mismatches 0, exceptions 0 |
-| Algebraic loop audit | **PASS** — 12 switches, 4096 combinations, loops 0 |
-| Planet closure (`report`) | **PASS** — P2 11/4/2/0, P3 6/2/9/0, P4 0/6, P5 4/13, P6 4, reversibility 0 |
-| Parameter registry | 425 параметров; 251 аннотировано; 51 несимметричная пара; 0 без аннотации |
-| Regression Modes 0–39 vs v7.7.5 r1 | **IDENTICAL** — 40 × `common=1278, changed=0, added=34, maxAbs=0` |
-| Policy задачи 019 | **PASS** — 1521 событие, неожиданных 0 |
+| Algebraic loop audit | **PASS** — 13 switches, 8192 combinations, loops 0 |
+| Planet closure (`report`) | **PASS** — P2 11/6/0/0, P3 6/2/9/0, P4 0/6, P5 4/13, P6 4, reversibility 0 |
+| Parameter registry | 437 параметров; 263 аннотировано; 53 несимметричные пары; 0 без аннотации |
+| Regression Modes 0–41 vs v7.7.6 r1 | **IDENTICAL** — 42 × `common=1312, changed=0, added=36, maxAbs=0` |
+| Policy задачи 021 | **PASS** — 1693 события, неожиданных 0 |
 
 Прежние приёмки — `../../docs/ACCEPTANCE_STATUS.md`, раздел «Previous acceptances».
 
@@ -33,13 +33,13 @@
 | Скрипт | Результат |
 |---|---|
 | `SELF_TEST.cmd` (Modes 0, 12) | **PASS** |
-| `QA_SELF_TEST.cmd` | **PASS** 42/42 (Windows, promotion v7.7.6; v0.9.10: случаи S1–S10 строгой схемы validation) |
+| `QA_SELF_TEST.cmd` | **PASS** 42/42 (Windows, promotion v7.7.7) |
 | `POLICY_SELF_TEST.cmd` | **PASS** 10/10 |
 | `CONFORMANCE_SELF_TEST.cmd` | **PASS** 18/18 |
 | `STRUCTURE_SELF_TEST.cmd` | **PASS** 21/21 |
-| `LOOP_SELF_TEST.cmd` | **PASS** 15/15 (Windows, promotion v7.7.6); accepted 12 switches / 4096; v7.6 r1 = 16/32; ожидания для accepted выводятся из модели (с v7.7.2) |
-| `PLANET_SELF_TEST.cmd` | **PASS** 16/16 (Windows, promotion v7.7.6; случаи 8 и 10 сами объявляют добычу руды константой); accepted P2=11/4/2/0, P3=6/2/9/0, P4=0/6, P5=4/13, P6=4; ожидаемые счётчики выводятся из декларации (с v7.7.2) |
-| `NODE_SELF_TEST.cmd` | **PASS** 15/15 (Windows, promotion v7.7.6); порядок снятия узлов читается из модели (шахта руды поверх шахты реголита); case 1 = 69/6/126 и 76/6/138, case 10 = 4 `simple_capital`, case 11 — `ore-mine.json`, `regolith-mine.json` |
+| `LOOP_SELF_TEST.cmd` | **PASS** 15/15 (Windows, promotion v7.7.7); accepted 13 switches / 8192; v7.6 r1 = 16/32; ожидания для accepted выводятся из модели (с v7.7.2) |
+| `PLANET_SELF_TEST.cmd` | **PASS** 16/16 (Windows, promotion v7.7.7; случай 9 — провал только по ненулевым долгам; случаи 8 и 10 сами объявляют добычу руды константой); accepted P2=11/6/0/0, P3=6/2/9/0, P4=0/6, P5=4/13, P6=4; ожидаемые счётчики выводятся из декларации (с v7.7.2) |
+| `NODE_SELF_TEST.cmd` | **PASS** 21/21 (Windows, promotion v7.7.7); порядок снятия узлов читается из модели; case 10 = 6 `simple_capital`; cases 16–21 — режим `cap: "smooth"`, на принятой модели шахта энергоресурса снимается по слою |
 | `COMPARE_SELF_TEST.cmd` | **PASS** |
 
 ## Lab v0.9.8 — декларативный генератор узлов (задача 015)
@@ -66,7 +66,7 @@ Accepted model, validation и policy задачей 018 не изменяютс�
 
 ## Рабочая область
 
-`input/model`, `input/validation`, `input/policy` и `reference/accepted/model` содержат принятые артефакты v7.7.6 r1, поэтому `RUN_LAB.cmd` и `CHECK_CANDIDATE.cmd` запускаются без аргументов; `CHECK_CANDIDATE` на нетронутой области даёт `BYTE_IDENTICAL`. Отчёты предыдущих прогонов в `output/` не входят в поставку: актуальные копии лежат в `docs/CAPITAL_LIFECYCLE_CONFORMANCE_REPORT.md`, `docs/STRUCTURE_AUDIT_REPORT.md`, `docs/PARAMETER_REGISTRY.md` пакета.
+`input/model`, `input/validation`, `input/policy` и `reference/accepted/model` содержат принятые артефакты v7.7.7 r1, поэтому `RUN_LAB.cmd` и `CHECK_CANDIDATE.cmd` запускаются без аргументов; `CHECK_CANDIDATE` на нетронутой области даёт `BYTE_IDENTICAL`. Отчёты предыдущих прогонов в `output/` не входят в поставку: актуальные копии лежат в `docs/CAPITAL_LIFECYCLE_CONFORMANCE_REPORT.md`, `docs/STRUCTURE_AUDIT_REPORT.md`, `docs/PARAMETER_REGISTRY.md` пакета.
 
 Канонический разбор дефектов r1 и того, что именно изменено в r2, — `docs/V7_6_R1_TO_R2_FIX_REPORT.md`; порядок команд воспроизведения — `docs/ACCEPTANCE_STATUS.md`.
 

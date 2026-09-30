@@ -1,15 +1,15 @@
 {
   "status": "ACCEPTED",
-  "model_name": "Orbital Economy v7.7.6 r1 — Ore Capital",
-  "model_file": "orbital_economy_v7_7_6_r1_modeljson.json",
-  "model_sha256": "d274f7b9dcc11dbfe3730c1a88fe8fd3cf242e09a52a3e51e9082ab8420de8dd",
-  "validation_file": "validation-v7.7.6.json",
-  "validation_sha256": "0cac6c2436771ceae56fcf2b6a2137c9cc2d976c018b7e388494dffcc749a8d9",
-  "accepted_date": "2026-09-29",
+  "model_name": "Orbital Economy v7.7.7 r1 — Power Resource Capital",
+  "model_file": "orbital_economy_v7_7_7_r1_modeljson.json",
+  "model_sha256": "befccae91083e44c32ddeb25783a3f45a8ef32fa60965e61a210ebfc4c7b8f94",
+  "validation_file": "validation-v7.7.7.json",
+  "validation_sha256": "8b15f29a00a4868594fa0e8f36b51284e54cc0bd1f2f35ebcb4fb29c33cc12a5",
+  "accepted_date": "2026-09-30",
   "engine": "simulation@9.0.0",
   "notes": [
-    "v7.7.6: ore mining capacity is simple capital (a simple_capital node per colony, model/nodes/ore-mine.json), sized to a new smoothed ore demand-signal stock; the last constant-capacity process under Planet v1 P2. See docs/tasks/019-ore-capital/.",
-    "Modes 0-39 reproduce v7.7.5 r1 exactly (Ore Capital Enabled = 0); Mode 40 baseline (A mine grows past 70, B winds down), Mode 41 transport surge in which colony B rebuilds its ore mine and draws its ore inventory down.",
+    "v7.7.7: energy-resource extraction capacity is simple capital (a simple_capital node per colony, model/nodes/power-resource-mine.json) in smooth-cap mode: the former uncapped extraction rate is kept as X Power Resource Mine Uncapped Output and capped by the mine capacity; Planet v1 P2 has no exceptions left. See docs/tasks/021-power-resource-capital/.",
+    "Modes 0-41 reproduce v7.7.6 r1 exactly (Power Resource Capital Enabled = 0); Mode 42 baseline (A mine grows, B builds up then winds down), Mode 43 transport surge in which colony B rebuilds its power-resource mine and draws its inventory down.",
     "Exact numbers are defined on the canonical platform (docs/VERSIONING_AND_AUTHORITY.md section 8); series-digest.windows.json is the golden."
   ]
 }

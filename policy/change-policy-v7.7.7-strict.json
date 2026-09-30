@@ -1,0 +1,19 @@
+{
+  "format": "orbital-economy-change-policy-v1",
+  "name": "Orbital Economy v7.7.7 r1 strict accepted-baseline policy",
+  "description": "Default-deny change contract bound to accepted v7.7.7 r1 (Power Resource Capital). Any candidate must be compared against this model with this validation file.",
+  "accepted_model_sha256": "befccae91083e44c32ddeb25783a3f45a8ef32fa60965e61a210ebfc4c7b8f94",
+  "validation_sha256": "8b15f29a00a4868594fa0e8f36b51284e54cc0bd1f2f35ebcb4fb29c33cc12a5",
+  "comparison": {
+    "abs_tolerance": 0,
+    "rel_tolerance": null,
+    "rel_floor": 1e-12
+  },
+  "default_action": "deny",
+  "rules": [],
+  "require_full_mode_coverage": true,
+  "engine": {
+    "package": "simulation",
+    "version": "9.0.0"
+  }
+}
