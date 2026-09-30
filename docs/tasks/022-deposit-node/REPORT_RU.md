@@ -57,3 +57,10 @@ Endpoint extraction FLOW намеренно не switch-gated: при выклю
 ## Ограничения и не запускавшиеся проверки
 
 Перечень из начальной секции «Не запускалось» остаётся в силе: локальные `check_branch`, `NODE_SELF_TEST`/`bench-selftests`, стенд и `bench-full` исполнителем не запускались. `SHA256SUMS` не пересобирался, потому что `scope.json` задаёт `"sums_by": "reviewer"`. Единственное исполняемое доказательство от исполнителя — GitHub Actions, результат финальной головы фиксируется отдельной записью после push.
+
+### КТ3 — корректировка по CI run 36763668863
+Финальный run головы `2b9e740c3ff7bc2796ad966378e8e546c2998183`: guard/tools/QA/Structure/Loop/Planet/Conformance/Policy/Compare — SUCCESS; `Node self-test` — FAIL, итог 25/27. Cases 22, 25, 26, 27 PASS; case 23 остановился на `validation fragment[0]: planet process "mining" deposit differs`, case 24 вследствие этого не запускал свою интеграцию.
+
+Причина: accepted `planet_closure` уже содержит для `mining`, `regolith`, `power_resource` явный P4-placeholder `deposit: {"kind":"none"}`. Generated fragment должен заменять именно этот объявленный долг на `kind:"stock"`; прежняя реализация трактовала любой non-null deposit как содержательную конфликтующую декларацию.
+
+Исправление: merge разрешает replacement только если deposit отсутствует либо `kind === "none"`; уже существующий содержательный deposit по-прежнему обязан совпадать byte-semantically, иначе HARD conflict. После push ожидается новый CI run головы корректирующего коммита; результат проверяется отдельно.

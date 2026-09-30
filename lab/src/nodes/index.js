@@ -267,7 +267,7 @@ export function mergeNodeValidation(validation, fragments) {
     for (const generated of fragment.planet_deposits || []) {
       const process = planet.processes.find(x => x.id === generated.process);
       if (!process) throw new Error(`validation fragment[${fi}]: planet process "${generated.process}" does not exist`);
-      if (process.deposit == null) process.deposit = structuredClone(generated.deposit);
+      if (process.deposit == null || process.deposit?.kind === 'none') process.deposit = structuredClone(generated.deposit);
       else if (!jsonEqual(process.deposit, generated.deposit)) throw new Error(`validation fragment[${fi}]: planet process "${generated.process}" deposit differs`);
     }
 
