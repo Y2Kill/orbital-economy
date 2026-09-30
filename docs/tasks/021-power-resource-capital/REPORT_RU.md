@@ -43,3 +43,17 @@
 - CI: https://github.com/Y2Kill/orbital-economy/actions/runs/36689942654 — ожидаются guard и самотесты на Linux.
 
 На момент записи Candidate acceptance был `in_progress`, CI — `pending`. Результаты проверяются отдельным шагом; один длинный polling/wait не используется.
+
+
+### КТ1 — достигнута по candidate r1; детальные счётчики ожидают завершения job
+
+Доказательство: Candidate acceptance https://github.com/Y2Kill/orbital-economy/actions/runs/36689942663 для candidate-коммита `fd7e4bdf0a569f722e3579707ca5e98e870cb5e9`.
+
+На момент этой записи три требуемых структурных gate завершены `success`:
+- Gate 1 `apply-patch`;
+- Gate 2 `conformance`;
+- Gate 3 `audit`.
+
+Следовательно, патч с секцией `nodes` применяется, lifecycle conformance и structure audit приняты текущим `candidate.yml`. Точные строки со счётчиками (`simple_capital`, boundaries, loops, Planet closure) GitHub API до завершения job не отдаёт: download job logs возвращается только после окончания всего job. Их нельзя подменять числами owner-skeleton из спецификации; они будут дописаны отдельной записью после завершения run.
+
+Gate 4 `validation` к этому моменту также уже завершён `success`; Gate 5 `policy` всё ещё выполняется. Workflow имеет штатный `timeout-minutes: 60` и Gate 5 запускает полный `policy ... --modes=all`.
