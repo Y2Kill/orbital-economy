@@ -1,4 +1,4 @@
-# Model patch — формат поставки изменений модели (Lab v0.9.8)
+# Model patch — формат поставки изменений модели (Lab v0.9.12)
 
 ## Зачем
 
@@ -37,6 +37,9 @@ APPLY_PATCH.cmd "delivery\model-patch.json" "input\model\candidate.json"
     { "name": "A Electronics Feedstock Price", "value": "IfThenElse([Intermediate Inputs Enabled] = 1, [A Market Price], <старая формула без изменений>)" },
     { "name": "Some Stock", "initial_value": 10 }
   ],
+  "retarget_flows": [
+    { "name": "A Mining", "from": "A Ore Proven Reserves", "to": null }
+  ],
   "add_links": [
     { "from": "Intermediate Inputs Enabled", "to": "A Electronics Feedstock Price" },
     { "from": "A Market Price", "to": "A Electronics Feedstock Price" }
@@ -55,13 +58,14 @@ APPLY_PATCH.cmd "delivery\model-patch.json" "input\model\candidate.json"
 | `nodes` | необязательный массив строгих деклараций узлов. Перед обычными секциями они детерминированно раскрываются относительно той же base-модели; каждый следующий узел видит результат предыдущего. Неизвестный тип/поле, отсутствующее обязательное поле или ссылка на отсутствующий элемент — отказ с путём поля. Если узел и явная секция одновременно добавляют/заменяют один элемент — отказ. Подробно: `NODES_RU.md`. |
 | `add_elements` | имя не должно существовать; `VARIABLE`/`FLOW` требуют `behavior.value`, `STOCK` — `behavior.initial_value`; у `FLOW` поля `from`/`to` обязательны явно (`null` = граница модели) и должны указывать на существующие **STOCK**; `display` не передавать; `FLOW` получает `non_negative: true`, если не указано иное |
 | `replace_formulas` | цель должна существовать; для не-STOCK — `value`, для STOCK — `initial_value`; **вся** новая формула целиком (не диф) |
+| `retarget_flows` | изменение только endpoints существующего FLOW: `name`, обязательные `from`/`to`, где `null` = граница; ненулевой endpoint обязан существовать и быть STOCK. Один FLOW нельзя retarget дважды, generated node-retarget нельзя дублировать explicit-записью. |
 | `add_links` | оба конца существуют (в том числе только что добавленные); дубликаты — отказ. Ссылка `[X]` в формуле без LINK `X → элемент` — это ошибка модели, которую поймает `LIFECYCLE_CONFORMANCE` / `STRUCTURE_AUDIT` (model-wide references) |
 | `modify_scenarios` | Mode должен существовать; ключи — существующие элементы; `Timed Test Mode` менять нельзя |
 | `add_scenarios` | `values` обязан содержать числовой `Timed Test Mode`, которого ещё нет; все ключи — существующие элементы |
 
-Не поддерживается намеренно: удаление, переименование, изменение типа, изменение `from`/`to` существующего FLOW, изменение `simulation`. Всё это — структурные регрессии, которые policy отклонит; если такое действительно нужно, это предмет отдельного решения, а не патча.
+Не поддерживается намеренно: удаление, переименование, изменение типа и изменение `simulation`. Изменение `from`/`to` существующего FLOW допускается только через строгую секцию `retarget_flows`. Всё это — структурные регрессии, которые policy отклонит; если такое действительно нужно, это предмет отдельного решения, а не патча.
 
-Порядок применения: раскрытие `nodes` → объединение с явными `add_elements` / `replace_formulas` / `add_links` → `add_elements` → `replace_formulas` → `add_links` → `modify_scenarios` → `add_scenarios`. Старые патчи без `nodes` проходят прежним путём без изменения семантики. Поэтому формулы в `add_elements` могут ссылаться на элементы, добавленные в том же патче, а `add_links` могут связывать новые элементы.
+Порядок применения: раскрытие `nodes` → объединение с явными секциями → `add_elements` → `retarget_flows` → `replace_formulas` → `add_links` → `modify_scenarios` → `add_scenarios`. Старые патчи без `nodes` и `retarget_flows` проходят прежним путём без изменения семантики. `retarget_flows` может ссылаться на STOCK, добавленный тем же патчем; формулы в `add_elements` также могут ссылаться на элементы того же патча, а `add_links` — связывать новые элементы.
 
 ## Декларативные узлы (Lab v0.9.8)
 
@@ -74,7 +78,7 @@ node src\cli.js expand-nodes <node-or-patch.json> <base-model.json> --out=output
 
 Команда пишет `patch.expanded.json` и `validation.fragments.json`; с `--validation` также `validation.merged.json`. Уже присутствующий generated validation-фрагмент не дублируется: он обязан совпасть (для kernel instance допускается только дополнительный `policy_notes` у принятой записи). Если merge ничего не меняет, validation копируется побайтно.
 
-Сейчас поддерживается `capital_lifecycle` v1. Две декларации лежат в `../model/nodes/`; семь более ранних kernel-экземпляров остаются рукописными и этой задачей не переписываются. Схема, границы ответственности и QA: `NODES_RU.md`.
+Сейчас поддерживаются `capital_lifecycle`, `simple_capital` и `deposit` v1. Две декларации лежат в `../model/nodes/`; семь более ранних kernel-экземпляров остаются рукописными и этой задачей не переписываются. Схема, границы ответственности и QA: `NODES_RU.md`.
 
 ## Синтаксис формул (то, что нужно знать автору патча)
 

@@ -1,5 +1,14 @@
 # Changelog
 
+## v0.9.12 — deposit node + retarget_flows
+
+- новый declarative type `deposit`: конечные undiscovered/proven запасы, smoothed extraction signal, exploration с physical backing и smooth depletion cap; fixture = 100 add / 8 replace / 6 retarget / 212 LINK, fingerprint `7d8fe41cc6df5c1a`;
+- model patch v1 получил строгий `retarget_flows`; endpoints existing FLOW меняются после `add_elements`, ненулевые endpoints обязаны быть STOCK, double/generated+explicit retarget отвергаются;
+- generated validation создаёт plugin `deposit`, `exploration_expenditure`, signal patterns `information_signal` и `planet_closure.deposit`; merge идемпотентен;
+- static conformance проверяет типы/topology/dependencies; runtime — неотрицательность deposit stocks/flows и identity backing consumption;
+- NODE_SELF_TEST расширен до 27 cases (22–27: prototype fingerprint/counts, validation/P4/loops, runtime growth, strip/rebuild, schema conflicts, explicit retarget comparator event);
+- package/Lab version → v0.9.12; accepted model, validation, policy, engine и `model/nodes/*` не изменены.
+
 ## v0.9.11 — simple_capital smooth cap + per-colony initial
 
 - `capacity_output` требует ровно один из `replaces` / `cap`; `cap: "smooth"` разрешён только у `simple_capital`;

@@ -1,8 +1,8 @@
-# Validation format — Lab v0.9.10
+# Validation format — Lab v0.9.12
 
 `validation.json` — изменяемый контракт проверки конкретной версии модели. Ядро runner должно меняться реже, чем этот файл.
 
-## Строгая схема validation (v0.9.10)
+## Строгая схема validation (v0.9.12)
 
 До любой симуляции Lab выполняет статическую проверку формы validation. Ошибка схемы — **HARD**: `test` / `lab` завершаются с FAIL до запуска Modes, а `compare` / `policy` возвращают `NOT_COMPARED`. Policy не может разрешить ошибку схемы.
 
@@ -82,6 +82,7 @@ CHECK_VALIDATION.cmd <validation.json> [model.json]
 | `capital_lifecycle` | `abs_tol`, `items` |
 | `capital_lifecycle_kernel` | `format`, `legacy_switch`, `abs_tol`, `instances` |
 | `simple_capital` | `abs_tol`, `instances` |
+| `deposit` | `abs_tol`, `instances` |
 | `transport_allocator` | `abs_tol` |
 | `open_boundaries` | `enforce`, `categories`, `transformation_pairs` |
 | `colony_symmetry` | `tokens`, `enforce`, `exceptions` |
@@ -198,6 +199,21 @@ CHECK_VALIDATION.cmd <validation.json> [model.json]
 Generated `open_boundaries` category `capital_retirement`: `direction: "sink"`, `closed_world: true`, причина «износ и вывод простого капитала: капитал покидает экономику». Она классифицирует `? <sector> Capacity Depreciation` и `? <sector> Capacity Retirement`.
 
 В `planet_closure.capacity` добавлен `kind: "simple"` с обязательным `stock`. Как `kernel`, он доказывается reference path от output до STOCK не длиннее `max_hops`; в `planet_v1` это капитал, не exception. P2 отчёт: `kernel / simple / exceptions / undeclared`.
+
+### `deposit` (v0.9.12)
+
+Статический + runtime контракт конечных залежей. Экземпляр имеет поля `name`, `resource`, `undiscovered`, `proven`, `exploration`, `extraction`, `signal`, `consumption[]`.
+
+Статически HARD проверяются:
+- undiscovered/proven/signal — STOCK;
+- exploration — FLOW undiscovered → proven;
+- extraction — FLOW с source = proven;
+- `X R Target Proven Reserves` — VARIABLE, непосредственно читает signal и имеет LINK;
+- каждый consumption — FLOW из STOCK в ∅, непосредственно читает exploration и имеет LINK.
+
+Runtime на каждом Mode: undiscovered/proven >= 0; exploration и все consumption FLOW >= 0; для каждого backing-блага `Consumption = Exploration × <R Deposit good per Discovery>` с `abs_tol`.
+
+Generated merge также объявляет `planet_closure.processes[].deposit = {kind:"stock", stock:"{C} R Proven Reserves"}`, category `exploration_expenditure` и signal boundary patterns в существующей `information_signal`. Это закрывает P4 для соответствующих extraction-процессов и не оставляет новые boundary FLOW неклассифицированными.
 
 ### `capital_lifecycle` (v0.3/v0.4, совместимость)
 

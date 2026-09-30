@@ -1,4 +1,4 @@
-# Declarative Nodes — Orbital Economy Lab v0.9.11
+# Declarative Nodes — Orbital Economy Lab v0.9.12
 
 ## 1. Назначение
 
@@ -13,7 +13,7 @@ Node declaration — короткое строгое описание повто
 
 ## 2. Поддерживаемый тип
 
-Registry содержит два типа: `capital_lifecycle`, `version: 1`, и `simple_capital`, `version: 1`.
+Registry содержит три типа: `capital_lifecycle`, `simple_capital` и `deposit`, все `version: 1`.
 
 Минимальная форма:
 
@@ -193,3 +193,19 @@ Generated `Uncapped Output` участвует в проверке конфли�
 При `sizing.signal.create=true` `initial` может быть одним конечным числом для всех колоний либо объектом с ровно ключами `colonies`, например `{"A":1350,"B":182.656}`. Отсутствующий/лишний ключ и не конечное число отвергаются с JSON-путём; каждый signal STOCK получает значение своей колонии.
 
 Фикстура `fixtures/nodes/power-resource-mine-simple.json` раскрывается в **36 add / 6 replace / 94 LINK**. NODE QA v0.9.11 = 21 случаев; cases 16–19 проверяют детерминированность, integration/runtime и strip/rebuild, cases 20–21 — schema errors и per-colony initial.
+
+## 10. `deposit` (v0.9.12)
+
+`deposit` добавляет конечный ресурсный слой поверх уже существующих добывающих потоков. Одна декларация задаёт несколько ресурсов и колоний, общий switch и для каждого ресурса: существующий extraction FLOW/rate, начальные undiscovered/proven запасы, параметры разведки, сглаженный extraction signal, физический backing и `planet_process`.
+
+Фикстура: `fixtures/nodes/deposits.json`. Для трёх ресурсов × двух колоний она раскрывается детерминированно в **100 add / 8 уникальных replace / 6 retarget / 212 LINK**. Definition fingerprint эталона: `7d8fe41cc6df5c1a`.
+
+На пару «колония × ресурс» создаются `Undiscovered Resource` и `Proven Reserves` STOCK; STOCK `Extraction Signal` и Increase/Decrease FLOW; `Target Proven Reserves`, `Reserve Gap`, `Discovery Factor`, `Desired Exploration`; FLOW `Exploration` undiscovered → proven; backing consumption FLOW inventory STOCK → ∅; и `Deposit Unlimited Rate`, сохраняющий прежнюю extraction-rate формулу.
+
+Extraction rate получает switch-gated smooth depletion cap. Существующий extraction FLOW не заменяется: его endpoint переносится из ∅ в соответствующий `Proven Reserves` через `retarget_flows`. Endpoint не switchable; при выключенном deposit-switch формула скорости остаётся дословно старой, а поток физически берёт этот объём из proven reserves.
+
+Схема закрытая. `parameters` содержит общие `Target Reserve Life`, `Exploration Time`, `Depletion Buffer Days` и ровно `<good> per Discovery` для каждого элемента `backing[]`. `initial.undiscovered`, `initial.proven` и `signal.initial` обязаны иметь ровно ключи `colonies`.
+
+Generated validation fragment содержит `deposit_instances`, `planet_deposits`, имена `exploration_expenditure` и signal-flow patterns для существующей `information_signal`. Merge создаёт plugin `deposit` и при необходимости category `exploration_expenditure`, заполняет `planet_closure.processes[].deposit`; несовпадающая существующая запись — ошибка, повторный merge идемпотентен.
+
+NODE QA v0.9.12 = **27 случаев**. Cases 22–27 покрывают эталонные counts/fingerprint, validation/static/runtime integration, strip/rebuild с возвратом extraction FLOW в ∅, schema/conflict errors и явный `retarget_flows`.

@@ -1,4 +1,4 @@
-# QA самого Orbital Economy Lab v0.9.11
+# QA самого Orbital Economy Lab v0.9.12
 
 ## 1. Operational QA
 
@@ -217,3 +217,16 @@ Static fail-fast comparator включает failures `simple_capital` в hard-e
 - 19: strip/rebuild без отличий definitions/replacements/LINK;
 - 20: отрицательные формы `capacity_output` отвергаются с путём;
 - 21: object `initial` требует точные colony keys и задаёт разные A/B initial values.
+
+## 3h. Deposit node + retarget QA (v0.9.12)
+
+`NODE_SELF_TEST.cmd` расширен с 21 до **27** случаев. Cases 22–27:
+
+- 22 — `deposits.json` раскрывается в 100 add / 8 replace / 6 retarget / 212 LINK; APPLY_PATCH даёт definition fingerprint `7d8fe41cc6df5c1a`;
+- 23 — validation merge идемпотентен; 6 deposit instances CONFORMING; loops=0; Planet P4.with_deposit растёт на 6; open-boundary unclassified=0;
+- 24 — real simulation клона последнего Mode с `Deposits Enabled=1`: общие/runtime plugin checks PASS, и хотя бы один Proven Reserves STOCK поднимается выше initial;
+- 25 — deposit-слой снимается (включая возврат extraction FLOW в ∅) и собирается заново без различий definitions/endpoints/LINK;
+- 26 — отвергаются extra parameter, отсутствующий colony-key, extraction FLOW уже не из ∅ и конфликт node-generated/explicit retarget;
+- 27 — явный `retarget_flows` может сослаться на STOCK из того же `add_elements`, а comparator классифицирует изменение endpoint как `definition_changed`.
+
+Фактический PASS для конкретной головы ветки фиксируется Actions/отчётом задачи; этот раздел описывает ожидаемый self-test contract, а не заменяет прогон.

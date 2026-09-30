@@ -1,6 +1,6 @@
-# Orbital Economy Lab v0.9.11
+# Orbital Economy Lab v0.9.12
 
-Локальный стенд для запуска, проверки, regression-анализа, policy-gating, Capital Lifecycle Kernel и статических аудитов структуры для ModelJSON Orbital Economy. v0.9.11 расширяет `simple_capital`: smooth cap для скорости без capacity-параметра и раздельный initial sizing signal по колониям. v0.9.10 добавляет строгую статическую схему validation: ошибки формы блокируют запуск до simulation. v0.9.6 добавляет `planet_closure`: декларативную per-process карту критериев Planet v1 P2–P6 с dependency paths, exceptions/debt counters и режимами `report/classify/planet_v1/planet_strict`.
+Локальный стенд для запуска, проверки, regression-анализа, policy-gating, Capital Lifecycle Kernel и статических аудитов структуры для ModelJSON Orbital Economy. v0.9.12 добавляет node `deposit`, безопасный `retarget_flows` для endpoints существующих FLOW и deposit conformance/runtime checks. v0.9.11 расширяет `simple_capital`: smooth cap для скорости без capacity-параметра и раздельный initial sizing signal по колониям. v0.9.10 добавляет строгую статическую схему validation: ошибки формы блокируют запуск до simulation. v0.9.6 добавляет `planet_closure`: декларативную per-process карту критериев Planet v1 P2–P6 с dependency paths, exceptions/debt counters и режимами `report/classify/planet_v1/planet_strict`.
 
 ## Подтверждённая база
 
@@ -31,6 +31,16 @@
 
 ---
 
+
+# 0j. Что изменилось в v0.9.12
+
+Добавлен declarative node `deposit`: undiscovered/proven STOCK, сглаженный extraction signal, физически обеспеченная разведка и smooth depletion cap. Эталонная fixture задачи 022 раскрывается в 100 add / 8 replace / 6 retarget / 212 LINK с fingerprint `7d8fe41cc6df5c1a`.
+
+Model patch v1 получил `retarget_flows`: existing FLOW меняет только `from`/`to`; `null` означает границу, ненулевой endpoint обязан быть STOCK. Retarget применяется после `add_elements`, поэтому может ссылаться на новый STOCK; двойной retarget и пересечение generated/explicit запрещены.
+
+Validation получил plugin `deposit`: static topology/dependency checks и runtime non-negative/consumption identity. Generated merge закрывает Planet P4 через proven-reserves STOCK и классифицирует exploration/signal boundary FLOW. `NODE_SELF_TEST.cmd` расширен до 27 случаев.
+
+Accepted model/validation/policy и `model/nodes/*` не меняются. Подробно: `docs\NODES_RU.md`, `docs\MODEL_PATCH_RU.md`, `docs\VALIDATION_FORMAT_RU.md`.
 
 # 0i. Что изменилось в v0.9.11
 

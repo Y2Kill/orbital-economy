@@ -30,3 +30,30 @@ CI КТ1: при отдельной проверке сразу после push 
 Не подтвердилось: фактические runtime-числа и полный набор self-tests до CI не подтверждены.
 
 Дальше: отдельно проверить CI КТ2; затем КТ3 — версия 0.9.12 и документация.
+
+### КТ3 — 2026-09-30 — документация и Lab v0.9.12
+Сделано: версия Lab поднята до 0.9.12 в package/package-lock/CLI; обновлены `NODES_RU.md`, `MODEL_PATCH_RU.md`, `VALIDATION_FORMAT_RU.md`, `HARNESS_QA_RU.md`, `TEST_STATUS_RU.md`, `README_RU.md`, `CHANGELOG.md`. Документированы deposit, `retarget_flows`, validation/runtime contract и cases 22–27.
+
+CI: run КТ1 `36762213852` завершён как `cancelled` после публикации более новой головы КТ2; это отмена superseded-run, не PASS/FAIL реализации. Для КТ2 `8e991bcd3bea22b1d7dd0651c9a98cc0e3565620` ожидается run `36763097194`; на момент этой записи он `in_progress`. После push КТ3 будет отдельно проверен новый финальный run.
+
+Не подтвердилось: финальный зелёный CI на момент записи КТ3 ещё отсутствует.
+
+Дальше: проверить Actions финальной головы отдельным шагом; при FAIL разобрать конкретный job и исправить в той же ветке с новой записью журнала.
+
+## Архитектура реализации
+
+- `lab/src/nodes/deposit.js` — строгая декларация `deposit`, генерация 100/8/6/212 для эталонной fixture, последовательное оборачивание общих demand-formulas и generated validation fragment.
+- `lab/src/patch.js` — новая секция `retarget_flows`; endpoints применяются после `add_elements`, до formula replacements, валидируются как FLOW → STOCK/null и участвуют в node/explicit conflict detection.
+- `lab/src/deposit.js` + `lifecycle_conformance.js` — статический HARD conformance deposit; `checks.js` — runtime non-negative и backing-consumption identity.
+- `mergeNodeValidation` — идемпотентное добавление plugin `deposit`, `exploration_expenditure`, patterns существующей `information_signal` и `planet_closure.process.deposit`.
+- Comparator уже считает изменение `from/to` частью semantic definition; case 27 проверяет, что retarget существующего FLOW виден как `definition_changed`.
+
+## Отличия / замечания к заданию
+
+Фраза про `parameters` допускает двоякое чтение: «ровно четыре перечисленных, плюс `<good> per Discovery`». В reference fixture и прототипе для одного backing присутствуют три общих параметра (`Target Reserve Life`, `Exploration Time`, `Depletion Buffer Days`) плюс один `Capital Goods per Discovery`. Реализация трактует контракт как **три общих параметра + ровно по одному `<good> per Discovery` на каждый backing**. Это единственное чтение, согласованное одновременно с выданной fixture, reference-прототипом и требованием поддержать произвольный список backing.
+
+Endpoint extraction FLOW намеренно не switch-gated: при выключенном `Deposits Enabled` старая rate-formula сохраняется дословно, но физический источник остаётся Proven Reserves, как прямо требует TASK_RU.
+
+## Ограничения и не запускавшиеся проверки
+
+Перечень из начальной секции «Не запускалось» остаётся в силе: локальные `check_branch`, `NODE_SELF_TEST`/`bench-selftests`, стенд и `bench-full` исполнителем не запускались. `SHA256SUMS` не пересобирался, потому что `scope.json` задаёт `"sums_by": "reviewer"`. Единственное исполняемое доказательство от исполнителя — GitHub Actions, результат финальной головы фиксируется отдельной записью после push.

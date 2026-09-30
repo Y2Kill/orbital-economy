@@ -1,4 +1,4 @@
-# Статус проверок Orbital Economy Lab v0.9.11 — baseline v7.7.7 r1
+# Статус проверок Orbital Economy Lab v0.9.12 — baseline v7.7.7 r1
 
 ## Принятая основа
 
@@ -114,3 +114,11 @@ CI run 36397985918 (Linux, head `94a395531d1300dd6d685cb5d8ca21aee8f68b89`) за
 Harness-only изменение `simple_capital`: `capacity_output.cap: "smooth"` для скорости без capacity-параметра и object-form `sizing.signal.initial` по колониям. Существующий `replaces` должен раскрываться без байтовых изменений. Power-resource fixture: 36 add / 6 replace / 94 LINK; NODE QA: 21/21 после успешной CI-проверки.
 
 Accepted ModelJSON, validation и policy задачей 020 не меняются. Linux CI и финальная голова фиксируются в `docs/tasks/020-simple-capital-cap/REPORT_RU.md`; канонический Windows-прогон остаётся за reviewer.
+
+## Lab v0.9.12 — deposit node / retarget_flows (задача 022)
+
+Ветка задачи добавляет harness-only node `deposit`, patch-секцию `retarget_flows`, статический/runtime plugin `deposit` и cases 22–27 NODE QA. Accepted model, validation, policy и `model/nodes/*` задачей 022 не меняются.
+
+Ожидаемый контракт self-test: `NODE SELF-TEST: 27 passed, 0 failed`; deposit fixture = 100 add / 8 replace / 6 retarget / 212 LINK, fingerprint `7d8fe41cc6df5c1a`; merged validation = 6 deposit instances CONFORMING, loops=0, P4.with_deposit +6, unclassified=0; runtime trial должен показать хотя бы один Proven Reserves выше initial.
+
+Статус этой ветки здесь не объявляется PASS до фактического GitHub Actions/reviewer-прогона. Локальные `check_branch` и bench исполнителем задачи 022 не запускаются по контракту §9.4.
