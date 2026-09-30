@@ -1,0 +1,43 @@
+{
+  "task": "022",
+  "title": "deposit node type: proven reserves, capital-backed exploration, extraction flow re-sourcing (retarget_flows); validation plugin deposit (Lab v0.9.12)",
+  "branch": "task/022-deposit-node",
+  "allow": [
+    "lab/src/nodes/**",
+    "lab/src/node_qa.js",
+    "lab/src/patch.js",
+    "lab/src/cli.js",
+    "lab/src/checks.js",
+    "lab/src/lifecycle_conformance.js",
+    "lab/src/conformance_run.js",
+    "lab/src/deposit.js",
+    "lab/src/validation_schema.js",
+    "lab/src/structure_audit.js",
+    "lab/src/compare_models.js",
+    "lab/src/report.js",
+    "lab/src/runner.js",
+    "lab/src/qa.js",
+    "lab/fixtures/**",
+    "lab/package.json",
+    "lab/package-lock.json",
+    "lab/docs/NODES_RU.md",
+    "lab/docs/MODEL_PATCH_RU.md",
+    "lab/docs/VALIDATION_FORMAT_RU.md",
+    "lab/docs/LIFECYCLE_CONFORMANCE_RU.md",
+    "lab/docs/HARNESS_QA_RU.md",
+    "lab/docs/TEST_STATUS_RU.md",
+    "lab/README_RU.md",
+    "lab/CHANGELOG.md"
+  ],
+  "allow_binary": [],
+  "allow_protected": [],
+  "required_changes": [
+    "lab/src/nodes/index.js",
+    "lab/src/patch.js",
+    "lab/src/node_qa.js",
+    "lab/fixtures/nodes/deposits.json",
+    "lab/docs/NODES_RU.md",
+    "lab/CHANGELOG.md"
+  ],
+  "sums_by": "reviewer"
+}
