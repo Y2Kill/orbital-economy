@@ -38,3 +38,11 @@
 Проверено чтением кода и спецификации: `deposit` раскрывает 100 add / 8 unique replace / 6 retarget / 212 LINK; explicit `replace_formulas` поставки содержит только `Test 2 Transport Surge Active`; `retarget_flows` вручную не добавлялись, их создаёт node-expansion.
 Не запускалось: локальный guard и стенд, перечисленные выше.
 Дальше: после push зафиксировать конкретные запуски `candidate.yml` и `ci.yml`, затем отдельным шагом прочитать их результат и закрывать КТ только по фактическим логам.
+
+### Ожидаемые прогоны после candidate r1
+
+Для candidate-коммита `3d6eceef9253a44f2942bb69d2a596ecaa08879b` зафиксированы:
+- Candidate acceptance: https://github.com/Y2Kill/orbital-economy/actions/runs/36832709528 — ожидаются apply-patch, conformance, audit, validation и policy;
+- CI: https://github.com/Y2Kill/orbital-economy/actions/runs/36832709612 — ожидаются guard и самотесты на Linux.
+
+На момент записи Candidate acceptance был `in_progress`, CI — `pending`. Результаты проверяются отдельным шагом; один длинный polling/wait не используется.
