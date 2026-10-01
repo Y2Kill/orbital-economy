@@ -8,6 +8,7 @@
 - static conformance проверяет типы/topology/dependencies; runtime — неотрицательность deposit stocks/flows и identity backing consumption;
 - NODE_SELF_TEST расширен до 27 cases (22–27: prototype fingerprint/counts, validation/P4/loops, runtime growth, strip/rebuild, schema conflicts, explicit retarget comparator event);
 - package/Lab version → v0.9.12; accepted model, validation, policy, engine и `model/nodes/*` не изменены.
+- до выдачи задачи 023 (версия та же; найдено прогоном самотестов со skeleton v7.7.8 в роли принятой модели): `node_qa` — отпечаток месторождений сверяется, только пока слой не принят (после — снятие и пересборка, случай 25); случай 17 убирает из validation фрагменты слоёв, снятых выше шахты энергоресурса; пробный Mode случая 18 отбрасывает значения сценариев для переключателей снятых слоёв. `planet_qa` — случай 1 не держит число «expected source outputs» (добыча из месторождений перестаёт быть выходом из ∅); случай 7 выбирает удаляемый процесс по модели; случай 11 работает и когда все добычи уже из месторождений (односторонний возврат потока B в ∅); случай 15 даёт CLI текущую декларацию и сверяет отчёт с её счётчиками.
 
 ## v0.9.11 — simple_capital smooth cap + per-colony initial
 

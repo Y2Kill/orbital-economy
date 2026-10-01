@@ -589,9 +589,11 @@ function validationWithoutSimpleFragment(raw, fragment) {
 
 await expect('17. smooth-cap fixture integrates with validation and closes two P2 exceptions', () => {
   if (!powerState) throw new Error('case 16 did not produce power-resource expansion');
-  const baselineValidation = powerState.alreadyPresent
+  // Layers peeled above the power-resource mine (the deposit layer, v7.7.8 on) must leave the validation too,
+  // or their plugins look for stocks the peeled model no longer has.
+  const baselineValidation = withoutAbsentDepositLayers(powerState.alreadyPresent
     ? validationWithoutSimpleFragment(validation, powerState.expanded.validation)
-    : validation;
+    : validation, powerState.base);
   const baselineModel = powerState.base;
   const baselineAudits = runStructureAudits(baselineModel, baselineValidation);
 
@@ -636,9 +638,13 @@ await expect('18. smooth cap bounds runtime rate by uncapped output and capacity
   const source = scenarios[scenarios.length - 1];
   const trial = structuredClone(source);
   trial.name = `${source.name || 'last mode'} — Node QA power-resource smooth cap`;
-  trial.values = { ...trial.values, [powerFixture.switch]: 1 };
+  // A peeled model lacks the switches of layers above it (e.g. Deposits Enabled): drop scenario values it cannot take.
+  const names = new Set(powerState.model.elements.filter(e => e.type !== 'LINK' && e.name).map(e => e.name.toLowerCase()));
+  trial.values = Object.fromEntries(Object.entries({ ...trial.values, [powerFixture.switch]: 1 }).filter(([k]) => names.has(k.toLowerCase())));
+  const keep = values => Object.fromEntries(Object.entries(values || {}).filter(([k]) => names.has(k.toLowerCase())));
+  const simRaw = { ...powerState.model, scenarios: (powerState.model.scenarios || []).map(s => ({ ...s, values: keep(s.values) })) };
 
-  const simModel = loadModelJSON(modelJsonForScenario(powerState.model, trial));
+  const simModel = loadModelJSON(modelJsonForScenario(simRaw, trial));
   const modelErrors = simModel.check();
   if (modelErrors.length) throw new Error(`trial model.check() returned ${modelErrors.length}: ${modelErrors.map(e => e.message || e).join('; ')}`);
   const results = simModel.simulate();
@@ -732,7 +738,10 @@ await expect('22. deposit fixture expands and APPLY_PATCH matches prototype coun
   const counts = [expanded.patch.add_elements.length, expanded.patch.replace_formulas.length, expanded.patch.retarget_flows?.length || 0, expanded.patch.add_links.length];
   if (counts.join('/') !== '100/8/6/212') throw new Error(`prototype count mismatch: got ${counts.join('/')}, expected 100/8/6/212`);
   const fp = definitionFingerprint(model);
-  if (fp !== '7d8fe41cc6df5c1a') throw new Error(`definition fingerprint ${fp}, expected 7d8fe41cc6df5c1a`);
+  // The prototype fingerprint is defined against accepted v7.7.7. Once the deposit layer is accepted (v7.7.8 on),
+  // the peeled base differs from v7.7.7 by later scenario wiring, so the fingerprint no longer applies; case 25
+  // (strip and rebuild against the accepted layer) is then the equality check.
+  if (!alreadyPresent && fp !== '7d8fe41cc6df5c1a') throw new Error(`definition fingerprint ${fp}, expected 7d8fe41cc6df5c1a`);
   for (const name of depositRetargetFlowNames(depositFixture)) {
     const flow = model.elements.find(e => e.type === 'FLOW' && e.name === name);
     if (!flow?.from?.endsWith(' Proven Reserves')) throw new Error(`${name}: extraction was not re-sourced to proven reserves`);
@@ -742,6 +751,18 @@ await expect('22. deposit fixture expands and APPLY_PATCH matches prototype coun
 });
 
 
+
+function withoutAbsentDepositLayers(raw, model) {
+  let out = raw;
+  const has = name => model.elements.some(e => e.type !== 'LINK' && e.name === name);
+  for (const { decl } of depositDeclarations) {
+    const probe = `${decl.colonies[0]} ${decl.resources[0].resource} Proven Reserves`;
+    const layer = layers.get(decl);
+    if (has(probe) || !layer) continue;
+    out = validationWithoutDepositFragment(out, expandNode(decl, layer.base).validation);
+  }
+  return out;
+}
 
 function validationWithoutDepositFragment(raw, fragment) {
   const out = structuredClone(raw);

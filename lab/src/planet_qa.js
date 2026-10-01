@@ -131,14 +131,13 @@ try {
       && r.errors.length === 0
       && JSON.stringify(got) === JSON.stringify(EXP)
       && EXP.processes === 17 && EXP.legacy === 2
-      && r.counters.expected_process_outputs === 16
       && r.reversibility.length === 0
       && r.undeclared.length === 0
       && r.processes.length === 19
       && r.exceptions.filter(x => x.dimension === 'P2').length === EXP.P2.exceptions
       && r.exceptions.filter(x => x.dimension === 'P3').length === EXP.P3.exceptions;
     if (!ok) throw new Error(JSON.stringify({ expected: EXP, audit: r }));
-    return `PASS; processes=17 legacy=2 expected=16; ${sig(EXP)}; reversibility=0`;
+    return `PASS; processes=17 legacy=2 expected=${r.counters.expected_process_outputs}; ${sig(EXP)}; reversibility=0`;
   });
 
   await expect('2 L1 mining cannot claim Refinery kernel capacity within max_hops', () => {
@@ -193,14 +192,21 @@ try {
     return `electronics[A] shortest=${p.length - 1} hops: ${p.join(' -> ')}`;
   });
 
-  await expect('7 missing regolith declaration is metric in report and FAIL in classify', () => {
+  await expect('7 missing process declaration is metric in report and FAIL in classify', () => {
+    // The removed process must have a source output (a flow from the void): extractions stop being source outputs
+    // once they draw from deposits (v7.7.8), so the process is chosen from the model, not named.
+    const sourceFlow = n => accepted.elements.some(e => e.type === 'FLOW' && e.name === n && e.from == null);
+    const victim = declaration.processes.find(p => !p.legacy && String(p.output).includes('{C}')
+      && ['A', 'B'].every(c => sourceFlow(String(p.output).replaceAll('{C}', c))));
+    if (!victim) throw new Error('no per-colony process with a source output left — rewrite this fixture');
     const d = structuredClone(declaration);
-    d.processes = d.processes.filter(p => p.id !== 'regolith');
+    d.processes = d.processes.filter(p => p.id !== victim.id);
     d.enforce = 'report';
     const report = audit(accepted, d);
     const names = report.undeclared.map(x => x.output).sort();
+    const want = ['A', 'B'].map(c => String(victim.output).replaceAll('{C}', c)).sort();
     if (!(report.status === 'PASS' && report.undeclared.length === 2
-      && names.join('|') === ['A Regolith Extraction', 'B Regolith Extraction'].sort().join('|'))) {
+      && names.join('|') === want.join('|'))) {
       throw new Error('report mismatch: ' + JSON.stringify({ status: report.status, undeclared: report.undeclared }));
     }
     d.enforce = 'classify';
@@ -280,28 +286,39 @@ try {
       : false;
   });
 
-  await expect('11 deposit stocks close two regolith extractions; asymmetric deposit declaration fails', () => {
-    const raw = structuredClone(accepted);
-    for (const c of ['A', 'B']) {
-      raw.elements.push({ type: 'STOCK', name: `${c} Regolith Deposit`, behavior: { initial_value: 1000000, non_negative: true } });
-      const flow = raw.elements.find(e => e?.name === `${c} Regolith Extraction` && e.type === 'FLOW');
-      if (!flow) throw new Error(`${c} Regolith Extraction fixture missing`);
-      flow.from = `${c} Regolith Deposit`;
+  await expect('11 deposit stocks close extractions; asymmetric deposit declaration fails', () => {
+    const outFlow = (raw, p, c) => raw.elements.find(e => e?.type === 'FLOW' && e.name === String(p.output).replaceAll('{C}', c));
+    const open = declaration.processes.find(p => p.kind === 'extraction' && !p.legacy && (p.deposit?.kind ?? 'none') === 'none'
+      && ['A', 'B'].every(c => outFlow(accepted, p, c)?.from == null));
+    if (open) {
+      // A process still extracting from the void: give it deposit stocks in both colonies, then in A only.
+      const stock = c => `${c} ${open.id} QA Deposit`;
+      const raw = structuredClone(accepted);
+      for (const c of ['A', 'B']) {
+        raw.elements.push({ type: 'STOCK', name: stock(c), behavior: { initial_value: 1000000, non_negative: true } });
+        outFlow(raw, open, c).from = stock(c);
+      }
+      const d = structuredClone(declaration);
+      proc(d, open.id).deposit = { kind: 'stock', stock: `{C} ${open.id} QA Deposit` };
+      const r = audit(raw, d);
+      if (!(r.status === 'PASS' && r.counters.P4.with_deposit === EXP.P4.with_deposit + 2 && r.counters.P4.without_deposit === EXP.P4.without_deposit - 2)) {
+        throw new Error(JSON.stringify({ status: r.status, P4: r.counters.P4, errors: r.errors }));
+      }
+      const one = structuredClone(accepted);
+      one.elements.push({ type: 'STOCK', name: stock('A'), behavior: { initial_value: 1000000, non_negative: true } });
+      outFlow(one, open, 'A').from = stock('A');
+      const be = mustFailFor(audit(one, d), open.id, 'B');
+      return `${open.id}: both deposits PASS; one-sided FAIL ${open.id}[B]: ${be.message}`;
     }
-    const d = structuredClone(declaration);
-    proc(d, 'regolith').deposit = { kind: 'stock', stock: '{C} Regolith Deposit' };
-    const r = audit(raw, d);
-    if (!(r.status === 'PASS' && r.counters.P4.with_deposit === 2 && r.counters.P4.without_deposit === 4)) {
-      throw new Error(JSON.stringify({ status: r.status, P4: r.counters.P4, errors: r.errors }));
-    }
-
+    // Every extraction already draws from its declared deposit (v7.7.8 on): send B's flow back to the void.
+    const closed = declaration.processes.find(p => p.kind === 'extraction' && !p.legacy && p.deposit?.kind === 'stock');
+    if (!closed) throw new Error('no extraction process with or without a deposit — rewrite this fixture');
+    const r = audit(accepted, declaration);
+    if (!(r.status === 'PASS' && r.counters.P4.with_deposit === EXP.P4.with_deposit)) throw new Error(JSON.stringify({ P4: r.counters.P4, errors: r.errors }));
     const one = structuredClone(accepted);
-    one.elements.push({ type: 'STOCK', name: 'A Regolith Deposit', behavior: { initial_value: 1000000, non_negative: true } });
-    const af = one.elements.find(e => e?.name === 'A Regolith Extraction' && e.type === 'FLOW');
-    af.from = 'A Regolith Deposit';
-    const bad = audit(one, d);
-    const be = mustFailFor(bad, 'regolith', 'B');
-    return `both deposits P4=2/4 PASS; one-sided FAIL regolith[B]: ${be.message}`;
+    outFlow(one, closed, 'B').from = null;
+    const be = mustFailFor(audit(one, declaration), closed.id, 'B');
+    return `${closed.id}: accepted deposits P4=${r.counters.P4.with_deposit}/${r.counters.P4.without_deposit} PASS; B flow back to the void FAIL: ${be.message}`;
   });
 
   await expect('12 demand driver that depends on a stock is declaration FAIL', () => {
@@ -360,10 +377,15 @@ try {
     }
 
     const tmp = fs.mkdtempSync(path.join(os.tmpdir(), 'orbital-economy-planet-cli-'));
+    // The override is the current declaration written to a file, and the expected report lines come from its
+    // own counters: the historical v7.7.1 declaration no longer fits a model whose extractions draw from deposits.
+    const overrideFile = path.join(tmp, 'planet_closure.json');
+    fs.writeFileSync(overrideFile, JSON.stringify(declaration, null, 2));
+    const rc = audit(accepted, declaration).counters;
     try {
       const cli = spawnSync(process.execPath, [
         'src/cli.js', 'audit', acceptedFile, validationFile,
-        `--planet-closure=${fallbackFile}`,
+        `--planet-closure=${overrideFile}`,
         `--out=${tmp}`
       ], { cwd: process.cwd(), encoding: 'utf8' });
       if (cli.status !== 0) throw new Error(`audit CLI exit=${cli.status}; stderr=${cli.stderr}; stdout=${cli.stdout}`);
@@ -372,12 +394,12 @@ try {
       const md = fs.readFileSync(mdFile, 'utf8');
       for (const needle of [
         '## Planet closure',
-        'processes: 17; legacy: 2; expected source outputs: 16',
-        'P2 capacity: kernel **7** / simple **0** / exceptions **10** / undeclared **0**',
-        'P3 energy: requests **4** / producer **2** / exceptions **11** / undeclared **0**',
-        'P4 deposits: with **0** / without **6**',
-        'P5 labor: declared **4** / undeclared **13**',
-        'P6 demand drivers: **4**'
+        `processes: ${rc.processes}; legacy: ${rc.legacy}; expected source outputs: ${rc.expected_process_outputs}`,
+        `P2 capacity: kernel **${rc.P2.kernel}** / simple **${rc.P2.simple ?? 0}** / exceptions **${rc.P2.exceptions}** / undeclared **${rc.P2.undeclared}**`,
+        `P3 energy: requests **${rc.P3.requests}** / producer **${rc.P3.producer}** / exceptions **${rc.P3.exceptions}** / undeclared **${rc.P3.undeclared}**`,
+        `P4 deposits: with **${rc.P4.with_deposit}** / without **${rc.P4.without_deposit}**`,
+        `P5 labor: declared **${rc.P5.declared}** / undeclared **${rc.P5.undeclared}**`,
+        `P6 demand drivers: **${rc.P6.drivers}**`
       ]) {
         if (!md.includes(needle)) throw new Error(`structure-audit.md missing: ${needle}`);
       }
