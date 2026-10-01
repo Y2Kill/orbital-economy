@@ -1,0 +1,466 @@
+{
+  "format": "orbital-economy-model-patch-v1",
+  "base_sha256": "befccae91083e44c32ddeb25783a3f45a8ef32fa60965e61a210ebfc4c7b8f94",
+  "name": "Orbital Economy v7.7.8 Deposits candidate r1",
+  "description": "Task 023: finite deposits with proven reserves and capital-goods-backed exploration for ore, regolith and the power resource. The deposit declaration is taken unchanged from draft/deposits.json; the only explicit formula replacement is Test 2 Transport Surge Active for Mode 45.",
+  "nodes": [
+    {
+      "type": "deposit",
+      "version": 1,
+      "colonies": [
+        "A",
+        "B"
+      ],
+      "switch": "Deposits Enabled",
+      "resources": [
+        {
+          "resource": "Ore",
+          "extraction": {
+            "flow": "{C} Mining",
+            "rate": "{C} Mining Rate"
+          },
+          "initial": {
+            "undiscovered": {
+              "A": 20000000,
+              "B": 3600000
+            },
+            "proven": {
+              "A": 200000,
+              "B": 36000
+            }
+          },
+          "parameters": {
+            "Target Reserve Life": 5400,
+            "Exploration Time": 1800,
+            "Capital Goods per Discovery": 0.0002,
+            "Depletion Buffer Days": 30
+          },
+          "signal": {
+            "name": "{C} Ore Extraction Signal",
+            "initial": {
+              "A": 42.227,
+              "B": 8.373
+            },
+            "adjustment_time": {
+              "name": "Ore Extraction Signal Adjustment Time",
+              "value": 30
+            }
+          },
+          "backing": [
+            {
+              "good": "Capital Goods",
+              "fulfillment": "{C} Capital Goods Fulfillment",
+              "inventory": "{C} Capital Goods Inventory",
+              "demand": "{C} Capital Goods Demand"
+            }
+          ],
+          "planet_process": "mining"
+        },
+        {
+          "resource": "Regolith",
+          "extraction": {
+            "flow": "{C} Regolith Extraction",
+            "rate": "{C} Regolith Extraction Rate"
+          },
+          "initial": {
+            "undiscovered": {
+              "A": 540000,
+              "B": 360000
+            },
+            "proven": {
+              "A": 5400,
+              "B": 3600
+            }
+          },
+          "parameters": {
+            "Target Reserve Life": 5400,
+            "Exploration Time": 1800,
+            "Capital Goods per Discovery": 0.0005,
+            "Depletion Buffer Days": 30
+          },
+          "signal": {
+            "name": "{C} Regolith Extraction Signal",
+            "initial": {
+              "A": 0,
+              "B": 0
+            },
+            "adjustment_time": {
+              "name": "Regolith Extraction Signal Adjustment Time",
+              "value": 30
+            }
+          },
+          "backing": [
+            {
+              "good": "Capital Goods",
+              "fulfillment": "{C} Capital Goods Fulfillment",
+              "inventory": "{C} Capital Goods Inventory",
+              "demand": "{C} Capital Goods Demand"
+            }
+          ],
+          "planet_process": "regolith"
+        },
+        {
+          "resource": "Power Resource",
+          "extraction": {
+            "flow": "{C} Power Resource Extraction",
+            "rate": "{C} Power Resource Extraction Rate"
+          },
+          "initial": {
+            "undiscovered": {
+              "A": 500000000,
+              "B": 150000000
+            },
+            "proven": {
+              "A": 5000000,
+              "B": 1500000
+            }
+          },
+          "parameters": {
+            "Target Reserve Life": 5400,
+            "Exploration Time": 1800,
+            "Capital Goods per Discovery": 0.000007,
+            "Depletion Buffer Days": 30
+          },
+          "signal": {
+            "name": "{C} Power Resource Extraction Signal",
+            "initial": {
+              "A": 1373.679,
+              "B": 30.983
+            },
+            "adjustment_time": {
+              "name": "Power Resource Extraction Signal Adjustment Time",
+              "value": 30
+            }
+          },
+          "backing": [
+            {
+              "good": "Capital Goods",
+              "fulfillment": "{C} Capital Goods Fulfillment",
+              "inventory": "{C} Capital Goods Inventory",
+              "demand": "{C} Capital Goods Demand"
+            }
+          ],
+          "planet_process": "power_resource"
+        }
+      ]
+    }
+  ],
+  "add_elements": [],
+  "replace_formulas": [
+    {
+      "name": "Test 2 Transport Surge Active",
+      "value": "IfThenElse([Timed Test Mode] = 2, [Temporary Test Window], IfThenElse([Timed Test Mode] = 24, [Temporary Test Window], IfThenElse([Timed Test Mode] = 31, [Temporary Test Window], IfThenElse([Timed Test Mode] = 35, [Temporary Test Window], IfThenElse([Timed Test Mode] = 37, [Temporary Test Window], IfThenElse([Timed Test Mode] = 39, [Temporary Test Window], IfThenElse([Timed Test Mode] = 41, [Temporary Test Window], IfThenElse([Timed Test Mode] = 43, [Temporary Test Window], IfThenElse([Timed Test Mode] = 45, [Temporary Test Window], 0)))))))))"
+    }
+  ],
+  "add_links": [],
+  "modify_scenarios": [
+    {
+      "mode": 0,
+      "set": {
+        "Deposits Enabled": 0
+      }
+    },
+    {
+      "mode": 1,
+      "set": {
+        "Deposits Enabled": 0
+      }
+    },
+    {
+      "mode": 2,
+      "set": {
+        "Deposits Enabled": 0
+      }
+    },
+    {
+      "mode": 3,
+      "set": {
+        "Deposits Enabled": 0
+      }
+    },
+    {
+      "mode": 4,
+      "set": {
+        "Deposits Enabled": 0
+      }
+    },
+    {
+      "mode": 5,
+      "set": {
+        "Deposits Enabled": 0
+      }
+    },
+    {
+      "mode": 6,
+      "set": {
+        "Deposits Enabled": 0
+      }
+    },
+    {
+      "mode": 7,
+      "set": {
+        "Deposits Enabled": 0
+      }
+    },
+    {
+      "mode": 8,
+      "set": {
+        "Deposits Enabled": 0
+      }
+    },
+    {
+      "mode": 9,
+      "set": {
+        "Deposits Enabled": 0
+      }
+    },
+    {
+      "mode": 10,
+      "set": {
+        "Deposits Enabled": 0
+      }
+    },
+    {
+      "mode": 11,
+      "set": {
+        "Deposits Enabled": 0
+      }
+    },
+    {
+      "mode": 12,
+      "set": {
+        "Deposits Enabled": 0
+      }
+    },
+    {
+      "mode": 13,
+      "set": {
+        "Deposits Enabled": 0
+      }
+    },
+    {
+      "mode": 14,
+      "set": {
+        "Deposits Enabled": 0
+      }
+    },
+    {
+      "mode": 15,
+      "set": {
+        "Deposits Enabled": 0
+      }
+    },
+    {
+      "mode": 16,
+      "set": {
+        "Deposits Enabled": 0
+      }
+    },
+    {
+      "mode": 17,
+      "set": {
+        "Deposits Enabled": 0
+      }
+    },
+    {
+      "mode": 18,
+      "set": {
+        "Deposits Enabled": 0
+      }
+    },
+    {
+      "mode": 19,
+      "set": {
+        "Deposits Enabled": 0
+      }
+    },
+    {
+      "mode": 20,
+      "set": {
+        "Deposits Enabled": 0
+      }
+    },
+    {
+      "mode": 21,
+      "set": {
+        "Deposits Enabled": 0
+      }
+    },
+    {
+      "mode": 22,
+      "set": {
+        "Deposits Enabled": 0
+      }
+    },
+    {
+      "mode": 23,
+      "set": {
+        "Deposits Enabled": 0
+      }
+    },
+    {
+      "mode": 24,
+      "set": {
+        "Deposits Enabled": 0
+      }
+    },
+    {
+      "mode": 25,
+      "set": {
+        "Deposits Enabled": 0
+      }
+    },
+    {
+      "mode": 26,
+      "set": {
+        "Deposits Enabled": 0
+      }
+    },
+    {
+      "mode": 27,
+      "set": {
+        "Deposits Enabled": 0
+      }
+    },
+    {
+      "mode": 28,
+      "set": {
+        "Deposits Enabled": 0
+      }
+    },
+    {
+      "mode": 29,
+      "set": {
+        "Deposits Enabled": 0
+      }
+    },
+    {
+      "mode": 30,
+      "set": {
+        "Deposits Enabled": 0
+      }
+    },
+    {
+      "mode": 31,
+      "set": {
+        "Deposits Enabled": 0
+      }
+    },
+    {
+      "mode": 32,
+      "set": {
+        "Deposits Enabled": 0
+      }
+    },
+    {
+      "mode": 33,
+      "set": {
+        "Deposits Enabled": 0
+      }
+    },
+    {
+      "mode": 34,
+      "set": {
+        "Deposits Enabled": 0
+      }
+    },
+    {
+      "mode": 35,
+      "set": {
+        "Deposits Enabled": 0
+      }
+    },
+    {
+      "mode": 36,
+      "set": {
+        "Deposits Enabled": 0
+      }
+    },
+    {
+      "mode": 37,
+      "set": {
+        "Deposits Enabled": 0
+      }
+    },
+    {
+      "mode": 38,
+      "set": {
+        "Deposits Enabled": 0
+      }
+    },
+    {
+      "mode": 39,
+      "set": {
+        "Deposits Enabled": 0
+      }
+    },
+    {
+      "mode": 40,
+      "set": {
+        "Deposits Enabled": 0
+      }
+    },
+    {
+      "mode": 41,
+      "set": {
+        "Deposits Enabled": 0
+      }
+    },
+    {
+      "mode": 42,
+      "set": {
+        "Deposits Enabled": 0
+      }
+    },
+    {
+      "mode": 43,
+      "set": {
+        "Deposits Enabled": 0
+      }
+    }
+  ],
+  "add_scenarios": [
+    {
+      "name": "v7.7.8 Deposits Baseline",
+      "description": "Accepted v7.7.7 mechanics with the deposit layer enabled; no new transport surge.",
+      "values": {
+        "Capital Lifecycle Enabled": 1,
+        "Intermediate Inputs Enabled": 1,
+        "Capital Goods Enabled": 1,
+        "Transport Capital Goods Enabled": 1,
+        "Power Resource Enabled": 1,
+        "Construction Materials Enabled": 1,
+        "Transport Construction Materials Enabled": 1,
+        "Construction Materials Energy Enabled": 1,
+        "Construction Materials Capital Enabled": 1,
+        "Capital Goods Capital Enabled": 1,
+        "Regolith Capital Enabled": 1,
+        "Ore Capital Enabled": 1,
+        "Timed Test Mode": 44,
+        "Power Resource Capital Enabled": 1,
+        "Deposits Enabled": 1
+      }
+    },
+    {
+      "name": "v7.7.8 Transport Surge on Deposits",
+      "description": "Deposit layer enabled under the standard transport-demand surge window; exploration competes with construction for capital goods in colony B.",
+      "values": {
+        "Capital Lifecycle Enabled": 1,
+        "Intermediate Inputs Enabled": 1,
+        "Capital Goods Enabled": 1,
+        "Transport Capital Goods Enabled": 1,
+        "Power Resource Enabled": 1,
+        "Construction Materials Enabled": 1,
+        "Transport Construction Materials Enabled": 1,
+        "Construction Materials Energy Enabled": 1,
+        "Construction Materials Capital Enabled": 1,
+        "Capital Goods Capital Enabled": 1,
+        "Regolith Capital Enabled": 1,
+        "Ore Capital Enabled": 1,
+        "Timed Test Mode": 45,
+        "Power Resource Capital Enabled": 1,
+        "Deposits Enabled": 1
+      }
+    }
+  ]
+}
