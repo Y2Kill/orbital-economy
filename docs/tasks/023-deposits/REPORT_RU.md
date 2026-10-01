@@ -59,3 +59,11 @@
 Тем самым подтверждено текущим `candidate.yml`, что патч с `nodes` применяется, lifecycle conformance проходит и structure audit не обнаруживает HARD-дефектов. Точные строки со счётчиками (6 `deposit` CONFORMING, boundaries, loops, Planet P4) GitHub API до окончания job не отдаёт через downloadable log; их не подменяю числами owner-skeleton и допишу после завершения run.
 
 Gate 4 `validation` уже запущен. КТ2–КТ4 пока не закрыты.
+
+### КТ3 — достигнута по Gate 4; числовая детализация ожидает завершения job
+
+Candidate acceptance https://github.com/Y2Kill/orbital-economy/actions/runs/36832709528: Gate 4 `validation` завершён `success` на candidate-коммите `3d6eceef9253a44f2942bb69d2a596ecaa08879b`.
+
+Это подтверждает прохождение delivered `candidate/validation.json` для всех сценариев кандидата, включая Mode 44 и Mode 45 с проверками разведки и конкуренции за Capital Goods. Точные фактические значения метрик, итоговое число проверок и validation SHA беру только из завершённого job log и допишу после окончания run; skeleton-числа не выдаю за результат текущего прогона.
+
+Gate 5 `policy` на момент записи выполняется, поэтому КТ2 ещё не закрыта.
