@@ -1,0 +1,17 @@
+{
+  "task": "023",
+  "title": "v7.7.8 Deposits: proven reserves and capital-backed exploration for ore, regolith and the energy resource (closes Planet v1 P4)",
+  "branch": "task/023-deposits",
+  "allow": [],
+  "allow_binary": [],
+  "allow_protected": [
+    "docs/tasks/023-deposits/candidate/**"
+  ],
+  "required_changes": [
+    "docs/tasks/023-deposits/candidate/model-patch.json",
+    "docs/tasks/023-deposits/candidate/validation.json",
+    "docs/tasks/023-deposits/candidate/change-policy.json",
+    "docs/tasks/023-deposits/candidate/PARAMETER_ANNOTATIONS_fragment.json"
+  ],
+  "sums_by": "reviewer"
+}

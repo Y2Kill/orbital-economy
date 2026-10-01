@@ -1,0 +1,161 @@
+{
+  "format": "orbital-economy-change-policy-v1",
+  "name": "Orbital Economy v7.7.8 Deposits - change contract DRAFT (owner); executor finalises and justifies every change",
+  "description": "Written before implementation from V7_7_8_ARCHITECTURE_SPEC.md. Accepted baseline: v7.7.7 r1. Modes 0-43 must reproduce it exactly; new behaviour lives in Modes 44-45 behind Deposits Enabled. validation_sha256 must be set to the delivered validation.",
+  "accepted_model_sha256": "befccae91083e44c32ddeb25783a3f45a8ef32fa60965e61a210ebfc4c7b8f94",
+  "validation_sha256": "bda42a20d8dd545a4befd2e5d02516315a9e47ccee0c5305ece7c838c17bdac3",
+  "comparison": {
+    "abs_tolerance": 0,
+    "rel_tolerance": null,
+    "rel_floor": 1e-12
+  },
+  "engine": {
+    "package": "simulation",
+    "version": "9.0.0"
+  },
+  "default_action": "deny",
+  "require_full_mode_coverage": true,
+  "rules": [
+    {
+      "id": "regression-guard-modes-0-43",
+      "action": "deny",
+      "event": "series_changed",
+      "modes": "0-43",
+      "name": "*",
+      "note": "Modes 0-43 set Deposits Enabled = 0 and must reproduce v7.7.7 r1 exactly (first match wins)."
+    },
+    {
+      "id": "forbid-removals-and-structural-drift",
+      "action": "deny",
+      "event": [
+        "element_removed",
+        "series_removed",
+        "mode_removed",
+        "link_removed",
+        "type_changed",
+        "simulation_changed",
+        "time_axis_changed",
+        "scenario_renamed"
+      ],
+      "name": "*"
+    },
+    {
+      "id": "add-deposits",
+      "action": "allow",
+      "event": "element_added",
+      "name": [
+        "Deposits Enabled",
+        "* Extraction Signal Adjustment Time",
+        "* Deposit *",
+        "? * Undiscovered Resource",
+        "? * Undiscovered Resource Initial",
+        "? * Proven Reserves",
+        "? * Proven Reserves Initial",
+        "? * Extraction Signal",
+        "? * Extraction Signal *",
+        "? * Target Proven Reserves",
+        "? * Reserve Gap",
+        "? * Discovery Factor",
+        "? * Desired Exploration",
+        "? * Exploration",
+        "? * Exploration Capital Goods Consumption",
+        "? * Deposit Unlimited Rate"
+      ],
+      "required": true,
+      "note": "the deposit node (undiscovered resource, proven reserves, extraction signal, exploration and its capital-goods consumption, unlimited rates, parameters) generated from its declaration: switch, demand-signal stock and flows, parameters, capacity stocks, roles, CG and CM consumption (V7_7_8_ARCHITECTURE_SPEC §2)"
+    },
+    {
+      "id": "change-definitions-per-spec",
+      "action": "allow",
+      "event": "definition_changed",
+      "name": [
+        "? Mining Rate",
+        "? Regolith Extraction Rate",
+        "? Power Resource Extraction Rate",
+        "? Capital Goods Demand",
+        "? Mining",
+        "? Regolith Extraction",
+        "? Power Resource Extraction",
+        "Test 2 Transport Surge Active"
+      ],
+      "required": true,
+      "note": "under the switch: extraction rates capped by proven reserves; desired exploration joins capital-goods demand; extraction flows re-sourced from the void to proven reserves (definition change); Test 2 flag + Mode 45 (spec §3)"
+    },
+    {
+      "id": "link-into-changed-definitions",
+      "action": "allow",
+      "event": "link_added",
+      "name": [
+        "* -> ? Mining Rate",
+        "* -> ? Regolith Extraction Rate",
+        "* -> ? Power Resource Extraction Rate",
+        "* -> ? Capital Goods Demand",
+        "* -> ? Mining",
+        "* -> ? Regolith Extraction",
+        "* -> ? Power Resource Extraction",
+        "* -> Test 2 Transport Surge Active"
+      ]
+    },
+    {
+      "id": "link-into-new-elements",
+      "action": "allow",
+      "event": "link_added",
+      "name": [
+        "* -> Deposits Enabled",
+        "* -> * Extraction Signal Adjustment Time",
+        "* -> * Deposit *",
+        "* -> ? * Undiscovered Resource",
+        "* -> ? * Undiscovered Resource Initial",
+        "* -> ? * Proven Reserves",
+        "* -> ? * Proven Reserves Initial",
+        "* -> ? * Extraction Signal",
+        "* -> ? * Extraction Signal *",
+        "* -> ? * Target Proven Reserves",
+        "* -> ? * Reserve Gap",
+        "* -> ? * Discovery Factor",
+        "* -> ? * Desired Exploration",
+        "* -> ? * Exploration",
+        "* -> ? * Exploration Capital Goods Consumption",
+        "* -> ? * Deposit Unlimited Rate"
+      ]
+    },
+    {
+      "id": "add-modes-44-45",
+      "action": "allow",
+      "event": "mode_added",
+      "modes": "44-45",
+      "required": true
+    },
+    {
+      "id": "scenarios-0-43-gain-switch-off",
+      "action": "allow",
+      "event": "scenario_input_changed",
+      "modes": "0-43",
+      "required": true,
+      "note": "only \"Deposits Enabled\": 0"
+    },
+    {
+      "id": "new-series-everywhere",
+      "action": "allow",
+      "event": "series_added",
+      "name": [
+        "Deposits Enabled",
+        "* Extraction Signal Adjustment Time",
+        "* Deposit *",
+        "? * Undiscovered Resource",
+        "? * Undiscovered Resource Initial",
+        "? * Proven Reserves",
+        "? * Proven Reserves Initial",
+        "? * Extraction Signal",
+        "? * Extraction Signal *",
+        "? * Target Proven Reserves",
+        "? * Reserve Gap",
+        "? * Discovery Factor",
+        "? * Desired Exploration",
+        "? * Exploration",
+        "? * Exploration Capital Goods Consumption",
+        "? * Deposit Unlimited Rate"
+      ]
+    }
+  ]
+}
