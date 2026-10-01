@@ -46,3 +46,16 @@
 - CI: https://github.com/Y2Kill/orbital-economy/actions/runs/36832709612 — ожидаются guard и самотесты на Linux.
 
 На момент записи Candidate acceptance был `in_progress`, CI — `pending`. Результаты проверяются отдельным шагом; один длинный polling/wait не используется.
+
+### КТ1 — достигнута по candidate r1; детальные счётчики ожидают завершения job
+
+Доказательство: Candidate acceptance https://github.com/Y2Kill/orbital-economy/actions/runs/36832709528 для candidate-коммита `3d6eceef9253a44f2942bb69d2a596ecaa08879b`.
+
+На момент этой записи три требуемых структурных gate завершены `success`:
+- Gate 1 `apply-patch`;
+- Gate 2 `conformance`;
+- Gate 3 `audit`.
+
+Тем самым подтверждено текущим `candidate.yml`, что патч с `nodes` применяется, lifecycle conformance проходит и structure audit не обнаруживает HARD-дефектов. Точные строки со счётчиками (6 `deposit` CONFORMING, boundaries, loops, Planet P4) GitHub API до окончания job не отдаёт через downloadable log; их не подменяю числами owner-skeleton и допишу после завершения run.
+
+Gate 4 `validation` уже запущен. КТ2–КТ4 пока не закрыты.
