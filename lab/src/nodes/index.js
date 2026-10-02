@@ -1,6 +1,7 @@
 import { expandCapitalLifecycle } from './capital_lifecycle.js';
 import { expandSimpleCapital } from './simple_capital.js';
 import { expandDeposit, validateDepositDeclaration } from './deposit.js';
+import { expandEnergyConsumer, validateEnergyConsumerDeclaration } from './energy_consumer.js';
 
 const isObj = x => !!x && typeof x === 'object' && !Array.isArray(x);
 const isString = x => typeof x === 'string' && x.length > 0;
@@ -118,7 +119,8 @@ function validateCapitalLifecycle(decl, path, errors) {
 const REGISTRY = new Map([
   ['capital_lifecycle', { validate: validateCapitalLifecycle, expand: expandCapitalLifecycle }],
   ['simple_capital', { validate: validateCapitalLifecycle, expand: expandSimpleCapital }],
-  ['deposit', { validate: validateDepositDeclaration, expand: expandDeposit }]
+  ['deposit', { validate: validateDepositDeclaration, expand: expandDeposit }],
+  ['energy_consumer', { validate: validateEnergyConsumerDeclaration, expand: expandEnergyConsumer }]
 ]);
 
 export function validateNodeDeclaration(decl, path = 'node') {

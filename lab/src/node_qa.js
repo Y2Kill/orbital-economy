@@ -42,7 +42,8 @@ const declarationFiles = [
 const simpleFixtureFile = path.join(root, 'fixtures', 'nodes', 'regolith-mine-simple.json');
 const powerFixtureFile = path.join(root, 'fixtures', 'nodes', 'power-resource-mine-simple.json');
 const depositFixtureFile = path.join(root, 'fixtures', 'nodes', 'deposits.json');
-for (const f of [modelFile, validationFile, simpleFixtureFile, powerFixtureFile, depositFixtureFile, ...declarationFiles]) {
+const energyFixtureFile = path.join(root, 'fixtures', 'nodes', 'process-energy.json');
+for (const f of [modelFile, validationFile, simpleFixtureFile, powerFixtureFile, depositFixtureFile, energyFixtureFile, ...declarationFiles]) {
   if (!fs.existsSync(f)) {
     console.error(`[FAIL] Required node QA input is missing: ${f}`);
     process.exit(2);
@@ -55,6 +56,7 @@ const declarations = declarationFiles.map(readJson);
 const simpleFixture = readJson(simpleFixtureFile);
 const powerFixture = readJson(powerFixtureFile);
 const depositFixture = readJson(depositFixtureFile);
+const energyFixture = readJson(energyFixtureFile);
 const allNodeDeclarations = fs.readdirSync(nodeDir)
   .filter(name => name.endsWith('.json'))
   .map(name => path.join(nodeDir, name))
@@ -890,6 +892,55 @@ await expect('27. explicit retarget_flows applies after add_elements and compare
   const structure = compareModelStructure(baseModel, out);
   if (!structure.changedDefinitions.includes('A Mining')) throw new Error(`changedDefinitions lacks A Mining: ${JSON.stringify(structure.changedDefinitions)}`);
   return `A Mining re-sourced to new stock; compare definition_changed=A Mining`;
+});
+
+
+
+let energyState = null;
+
+await expect('28. energy_consumer fixture expands and APPLY_PATCH matches prototype counts/fingerprint', () => {
+  const expanded = expandNode(energyFixture, accepted);
+  const model = applyPatch(accepted, { format: PATCH_FORMAT, ...expanded.patch }).model;
+  const counts = [expanded.patch.add_elements.length, expanded.patch.replace_formulas.length, expanded.patch.add_links.length];
+  if (counts.join('/') !== '71/14/232') throw new Error(`prototype count mismatch: got ${counts.join('/')}, expected 71/14/232`);
+  const fp = definitionFingerprint(model);
+  if (fp !== 'fe5f022b5d81ec3b') throw new Error(`definition fingerprint ${fp}, expected fe5f022b5d81ec3b`);
+  energyState = { base: accepted, model, expanded };
+  return `71 elements / 14 replacements / 232 links; fingerprint=${fp}`;
+});
+
+await expect('32. energy_consumer schema/base checks reject five required invalid cases with paths/names', async () => {
+  const extra = structuredClone(energyFixture);
+  extra.consumers[0].unexpected = true;
+  await requireThrow(() => expandNode(extra, accepted), /node\.consumers\[0\]\.unexpected: unknown field/, 'extra consumer field');
+
+  const missingColony = structuredClone(energyFixture);
+  delete missingColony.consumers[0].signal.initial.B;
+  await requireThrow(() => expandNode(missingColony, accepted), /node\.consumers\[0\]\.signal\.initial\.B: required field is missing/, 'signal initial without colony');
+
+  const zero = structuredClone(energyFixture);
+  zero.consumers[0].energy_per_unit = 0;
+  await requireThrow(() => expandNode(zero, accepted), /node\.consumers\[0\]\.energy_per_unit: must be > 0/, 'zero energy_per_unit');
+
+  const missingAllocator = structuredClone(energyFixture);
+  missingAllocator.allocator.available = '{C} Missing Available Generation';
+  await requireThrow(() => expandNode(missingAllocator, accepted), /allocator\.available\[A\] references missing base element "A Missing Available Generation"/, 'missing allocator.available');
+
+  const connected = structuredClone(energyFixture);
+  connected.consumers[0].consumer = 'Metal';
+  await requireThrow(() => expandNode(connected, accepted), /consumer "Metal" is already connected in base: "A Metal Requested Energy" exists/, 'already connected consumer');
+  return 'extra field, missing colony initial, zero energy_per_unit, missing allocator, and existing consumer all rejected';
+});
+
+await expect('33. energy_consumer without priority leaves general allocator ratio untouched', () => {
+  const noPriority = structuredClone(energyFixture);
+  for (const c of noPriority.consumers) delete c.priority;
+  const expanded = expandNode(noPriority, accepted);
+  if (expanded.patch.replace_formulas.length !== 12) throw new Error(`replacement count ${expanded.patch.replace_formulas.length}, expected 12`);
+  const ratioTargets = new Set(noPriority.colonies.map(X => noPriority.allocator.ratio.replaceAll('{C}', X)));
+  const touched = expanded.patch.replace_formulas.filter(r => ratioTargets.has(r.name));
+  if (touched.length) throw new Error(`general ratio unexpectedly replaced: ${touched.map(x => x.name).join(', ')}`);
+  return `replacements=12; general ratio replacements=0 (two fewer than priority fixture)`;
 });
 
 console.log(`\nNODE SELF-TEST: ${passed} passed, ${failed} failed`);

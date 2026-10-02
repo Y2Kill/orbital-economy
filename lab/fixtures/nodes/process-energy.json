@@ -1,0 +1,82 @@
+{
+  "type": "energy_consumer",
+  "version": 1,
+  "colonies": [
+    "A",
+    "B"
+  ],
+  "switch": "Process Energy Enabled",
+  "allocator": {
+    "total": "{C} Total Requested Energy",
+    "available": "{C} Available Generation",
+    "supply": "{C} Energy Supply",
+    "ratio": "{C} Energy Fulfillment Ratio"
+  },
+  "consumers": [
+    {
+      "consumer": "Mining",
+      "rate": "{C} Mining Rate",
+      "energy_per_unit": 1,
+      "signal": {
+        "initial": {
+          "A": 42.227,
+          "B": 8.373
+        },
+        "adjustment_time": {
+          "name": "Mining Energy Signal Adjustment Time",
+          "value": 3
+        }
+      },
+      "planet_process": "mining"
+    },
+    {
+      "consumer": "Regolith Extraction",
+      "rate": "{C} Regolith Extraction Rate",
+      "energy_per_unit": 10,
+      "signal": {
+        "initial": {
+          "A": 0,
+          "B": 0
+        },
+        "adjustment_time": {
+          "name": "Regolith Extraction Energy Signal Adjustment Time",
+          "value": 3
+        }
+      },
+      "planet_process": "regolith"
+    },
+    {
+      "consumer": "Power Resource Extraction",
+      "rate": "{C} Power Resource Extraction Rate",
+      "energy_per_unit": 0.05,
+      "priority": true,
+      "signal": {
+        "initial": {
+          "A": 1373.679,
+          "B": 30.983
+        },
+        "adjustment_time": {
+          "name": "Power Resource Extraction Energy Signal Adjustment Time",
+          "value": 3
+        }
+      },
+      "planet_process": "power_resource"
+    },
+    {
+      "consumer": "Capital Goods",
+      "rate": "{C} Capital Goods Production Rate",
+      "energy_per_unit": 50,
+      "signal": {
+        "initial": {
+          "A": 0,
+          "B": 0
+        },
+        "adjustment_time": {
+          "name": "Capital Goods Energy Signal Adjustment Time",
+          "value": 3
+        }
+      },
+      "planet_process": "capital_goods"
+    }
+  ]
+}
