@@ -48,6 +48,8 @@ Harness-only оптимизация `loop_audit.js`: candidate SCC filtering, co
 
 LOOP QA расширен до 19 cases. Главный критерий — побайтное равенство fast/exhaustive audit JSON и `algebraicLoopCombinationDetails`; точные CI run/timings КТ1 и КТ2 находятся в отчёте задачи 025.
 
+Round 2 ограничивает exhaustive-oracle case 16 максимум десятью scenario switches через `pinSwitches`: accepted и mutation 001 сравниваются fast/exhaustive на ≤1024 комбинациях, при этом `Intermediate Inputs Enabled` обязательно сохраняется и mutation остаётся loop-positive. Case 1 по-прежнему проверяет fast path на полной принятой модели.
+
 Accepted model, validation и policy не меняются.
 
 ## Lab v0.9.13 — energy_consumer (задача 024)

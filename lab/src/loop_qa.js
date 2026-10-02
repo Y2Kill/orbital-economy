@@ -60,6 +60,30 @@ function mutation001(raw0) {
   return raw;
 }
 
+function pinSwitches(raw0, budget, mandatory = []) {
+  const raw = structuredClone(raw0);
+  const switches = auditAlgebraicLoops(raw0).switches;
+  const required = new Set(mandatory);
+  for (const name of required) {
+    if (!switches.includes(name)) throw new Error(`mandatory switch not found: ${name}`);
+  }
+  if (!Number.isInteger(budget) || budget < required.size) {
+    throw new Error(`switch budget ${budget} is smaller than mandatory set ${required.size}`);
+  }
+
+  const keep = new Set(required);
+  for (const name of switches) {
+    if (keep.size >= budget) break;
+    keep.add(name);
+  }
+  const drop = switches.filter(name => !keep.has(name));
+  for (const scenario of raw.scenarios || []) {
+    if (!scenario?.values) continue;
+    for (const name of drop) delete scenario.values[name];
+  }
+  return raw;
+}
+
 function addVariable(raw, name, value) {
   raw.elements.push({ type: 'VARIABLE', name, behavior: { value } });
 }
@@ -357,8 +381,19 @@ try {
         && /definitely missing element/i.test(x.message));
   });
 
-  await expect('16 fast path is byte-identical to exhaustive on accepted, v7.6 r1 and mutation 001', () => {
-    for (const [label, raw] of [['accepted', accepted], ['v7.6 r1', v76r1], ['mutation 001', mut001]]) {
+  await expect('16 fast path is byte-identical to exhaustive on pinned accepted/mutation and v7.6 r1', () => {
+    const acceptedPinned = pinSwitches(accepted, 10, []);
+    const mut001Pinned = pinSwitches(mut001, 10, ['Intermediate Inputs Enabled']);
+    const pinned = [['accepted pinned', acceptedPinned], ['mutation 001 pinned', mut001Pinned]];
+
+    for (const [label, raw] of pinned) {
+      const shape = auditAlgebraicLoops(raw);
+      if (shape.switches.length > 10 || shape.combinations > 1024) {
+        throw new Error(`${label}: pinning failed, switches=${shape.switches.length}, combinations=${shape.combinations}`);
+      }
+    }
+
+    for (const [label, raw] of [['accepted pinned', acceptedPinned], ['v7.6 r1', v76r1], ['mutation 001 pinned', mut001Pinned]]) {
       const fastAudit = JSON.stringify(auditAlgebraicLoops(raw));
       const exhaustiveAudit = JSON.stringify(auditAlgebraicLoops(raw, { exhaustive: true }));
       if (fastAudit !== exhaustiveAudit) throw new Error(`${label}: audit JSON differs`);
@@ -366,9 +401,12 @@ try {
       const exhaustiveDetails = JSON.stringify(algebraicLoopCombinationDetails(raw, { exhaustive: true }));
       if (fastDetails !== exhaustiveDetails) throw new Error(`${label}: details JSON differs`);
     }
-    const mut = auditAlgebraicLoops(mut001);
-    if (mut.combinationsWithLoops <= 0 || mut.loops.length === 0) throw new Error('mutation 001 comparison was not substantive');
-    return `accepted/v7.6/mutation audit+details identical; mutation loops=${mut.loops.length}, combinationsWithLoops=${mut.combinationsWithLoops}`;
+
+    const mut = auditAlgebraicLoops(mut001Pinned);
+    if (mut.combinationsWithLoops <= 0 || mut.loops.length === 0) {
+      throw new Error('pinned mutation 001 comparison was not substantive');
+    }
+    return `pinned accepted/mutation <=10 switches and <=1024 combinations; v7.6 unchanged; mutation loops=${mut.loops.length}, combinationsWithLoops=${mut.combinationsWithLoops}`;
   });
 
   await expect('17 relevant-switch projection preserves counts and examples on six-switch synthetic model', () => {

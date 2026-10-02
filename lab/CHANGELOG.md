@@ -8,6 +8,7 @@
 - LOOP_SELF_TEST расширен с 15 до 19 cases: real-model equality, six-switch projection, undecidable non-switch condition, warm-cache determinism;
 - алгоритм остаётся синхронным; worker threads не вводятся;
 - Lab/package/CLI version → v0.9.14; accepted model, validation, policy, engine, `model/nodes/*`, tools и vendor не изменены.
+- Round 2: case 16 pins accepted/mutation exhaustive checks to at most 10 scenario switches (mandatory `Intermediate Inputs Enabled` retained for mutation 001), keeping the oracle substantive while preventing QA time from doubling with every future model switch.
 
 
 ## v0.9.13 — energy_consumer node

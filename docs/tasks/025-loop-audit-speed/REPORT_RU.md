@@ -108,3 +108,18 @@ Reference-прототип остаётся только проверочным 
 Финал:
 - после этой report-only записи проверяется CI точной финальной головы;
 - код/документация КТ2 остаются на `48e07b2b…`; финальный commit меняет только `REPORT_RU.md`.
+
+### Раунд 2 — 2026-10-02 — ограничение exhaustive-oracle case 16
+Причина:
+- Windows-проверка подтвердила N1 и N3 полностью, включая четыре эталонные модели, stress 32768/16384/48, побайтовое равенство `--exhaustive` старому `loop_audit.js`, `loops` accepted = 1.65 с и все self-tests PASS;
+- обнаружено противоречие исходного критерия времени самому case 16: exhaustive на полной accepted/mutation масштабируется как 2^n и удваивает время при каждом новом switch.
+
+Изменение:
+- добавлен helper `pinSwitches(raw, budget, mandatory)`: clone модели, switch-order берётся из `auditAlgebraicLoops(raw).switches`; обязательные switches сохраняются, затем первые по исходному порядку до budget; остальные удаляются из `scenario.values`, поэтому перестают быть switches, а их `IfThenElse` условия остаются нерешёнными и проверяют консервативный путь;
+- case 16 теперь сравнивает fast/exhaustive audit и details на `pinSwitches(accepted, 10, [])`, `pinSwitches(mut001, 10, ['Intermediate Inputs Enabled'])` и неизменённой v7.6 r1;
+- для двух pinned-моделей проверяется `switches.length <= 10` и `combinations <= 1024`; pinned mutation обязана иметь `combinationsWithLoops > 0` и непустой loop list;
+- cases 1–15 и 17–19 не изменены; case 1 по-прежнему запускает fast path на полной accepted-модели;
+- версия остаётся Lab v0.9.14.
+
+Доказательство:
+- CI новой головы будет указан после завершения; требуется зелёный полный run и фактическое время шага `Loop self-test`.
