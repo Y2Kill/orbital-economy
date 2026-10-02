@@ -1,8 +1,8 @@
-# Validation format — Lab v0.9.12
+# Validation format — Lab v0.9.13
 
 `validation.json` — изменяемый контракт проверки конкретной версии модели. Ядро runner должно меняться реже, чем этот файл.
 
-## Строгая схема validation (v0.9.12)
+## Строгая схема validation (v0.9.13)
 
 До любой симуляции Lab выполняет статическую проверку формы validation. Ошибка схемы — **HARD**: `test` / `lab` завершаются с FAIL до запуска Modes, а `compare` / `policy` возвращают `NOT_COMPARED`. Policy не может разрешить ошибку схемы.
 
@@ -78,7 +78,7 @@ CHECK_VALIDATION.cmd <validation.json> [model.json]
 
 | `type` | Разрешённые поля кроме `type`, `note`, `notes` |
 |---|---|
-| `energy_balance` | `colonies`, `abs_tol`, `consumers` |
+| `energy_balance` | `colonies`, `abs_tol`, `consumers`, `priority` |
 | `capital_lifecycle` | `abs_tol`, `items` |
 | `capital_lifecycle_kernel` | `format`, `legacy_switch`, `abs_tol`, `instances` |
 | `simple_capital` | `abs_tol`, `instances` |
@@ -131,6 +131,8 @@ CHECK_VALIDATION.cmd <validation.json> [model.json]
 
 `consumers` (с v0.9.7) — потребители общего аллокатора колонии; по умолчанию `["Metal", "Electronics"]` (как до v0.9.7: те же проверки, те же имена). Новый потребитель энергии (например, `"Construction Materials"` в v7.7.2) добавляется в validation, а не в код стенда.
 
+`priority` (с v0.9.13) — опциональный массив имён consumer. Для каждого `K` дополнительно проверяется `X K Energy Fulfillment Ratio >= X Energy Fulfillment Ratio` с тем же `abs_tol`. Если поля нет, набор прежних runtime-проверок не меняется.
+
 ### `capital_lifecycle_kernel` (v0.5.0, основной)
 
 Машинная форма контракта Capital Lifecycle Kernel. Один плагин выполняет **две** работы:
@@ -171,6 +173,7 @@ CHECK_VALIDATION.cmd <validation.json> [model.json]
 - `process_categories`: категории `open_boundaries`, определяющие ожидаемые source outputs;
 - `processes[]`: `id`, `kind`, `output` и роли `capacity`, `energy`, `deposit`, `labor`;
 - `energy.total_request` / `energy.fulfillment`: общая энергетическая обвязка;
+- для `processes[].energy.kind="requests"`: обязательный `request`, опциональный `signal` и опциональный per-process `fulfillment`, переопределяющий глобальный `energy.fulfillment`;
 - `demand_drivers.parameters/consumption/reason`: явные внешние драйверы спроса.
 
 Имена ссылок декларации разрешаются как ModelJSON-ссылки стенда: `trim().toLowerCase()`, отчёты используют канонические имена элементов.
@@ -183,12 +186,19 @@ CHECK_VALIDATION.cmd <validation.json> [model.json]
   "kind": "transformation",
   "output": "{C} Metal Production",
   "capacity": { "kind": "kernel", "stock": "{C} Refinery Active Capacity" },
-  "energy": { "kind": "requests", "request": "{C} Metal Requested Energy" },
+  "energy": { "kind": "requests", "request": "{C} Metal Requested Energy", "signal": "{C} Metal Energy Signal" },
   "labor": { "kind": "declared", "intensity": "{C} Refinery Labor per Capacity" }
 }
 ```
 
 `capacity.kind=constant|unbounded` и `energy.kind=none` требуют `reason`. В `planet_v1` задокументированные P2/P3 exceptions допускаются; `planet_strict` запрещает их. Подробная семантика paths, reversibility, deposits и режимов — `STRUCTURE_AUDIT_RU.md`, раздел `planet_closure`.
+
+Специальная семантика `energy.signal` (v0.9.13):
+- имя обязано разрешаться в STOCK;
+- `request` обязан непосредственно читать этот STOCK ровно один раз;
+- подключённые к signal STOCK FLOW допустимы только как `∅ → signal` или `signal → ∅` и обязаны классифицироваться как `information_signal`;
+- только для такого объявленного signal audit разрешает один переход через STOCK при поиске общего planned-rate; общий traversal через STOCK остаётся запрещён;
+- per-process `energy.fulfillment`, если задан, используется вместо глобального target и обязан разрешаться по output dependency path.
 
 ### `simple_capital` (v0.9.9)
 

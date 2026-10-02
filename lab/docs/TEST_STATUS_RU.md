@@ -1,4 +1,4 @@
-# Статус проверок Orbital Economy Lab v0.9.12 — baseline v7.7.8 r1
+# Статус проверок Orbital Economy Lab v0.9.13 — baseline v7.7.8 r1
 
 ## Принятая основа
 
@@ -33,14 +33,20 @@
 | Скрипт | Результат |
 |---|---|
 | `SELF_TEST.cmd` (Modes 0, 12) | **PASS** |
-| `QA_SELF_TEST.cmd` | **PASS** 42/42 (Windows, promotion v7.7.8) |
+| `QA_SELF_TEST.cmd` | **PASS** 43/43 (Linux CI task 024; promotion v7.7.8 Windows baseline до расширения: 42/42) |
 | `POLICY_SELF_TEST.cmd` | **PASS** 10/10 |
 | `CONFORMANCE_SELF_TEST.cmd` | **PASS** 18/18 |
 | `STRUCTURE_SELF_TEST.cmd` | **PASS** 21/21 |
 | `LOOP_SELF_TEST.cmd` | **PASS** 15/15 (Windows, promotion v7.7.8); accepted 14 switches / 16384; v7.6 r1 = 16/32; ожидания для accepted выводятся из модели (с v7.7.2) |
-| `PLANET_SELF_TEST.cmd` | **PASS** 16/16 (Windows, promotion v7.7.8; случаи 1, 7, 11, 15 — независимы от того, идёт ли добыча из ∅; случай 9 — провал только по ненулевым долгам; случаи 8 и 10 сами объявляют добычу руды константой); accepted P2=11/6/0/0, P4=6/0, P3=6/2/9/0, P4=0/6, P5=4/13, P6=4; ожидаемые счётчики выводятся из декларации (с v7.7.2) |
-| `NODE_SELF_TEST.cmd` | **PASS** 27/27 (Windows, promotion v7.7.8); слои снимаются по модели (месторождения поверх шахт); cases 22–27 — `deposit` и `retarget_flows`, на принятой модели слой месторождений снимается и собирается заново |
+| `PLANET_SELF_TEST.cmd` | **PASS** 18/18 (Linux CI task 024; cases 17–18 — energy signal/fulfillment) |
+| `NODE_SELF_TEST.cmd` | **PASS** 33/33 (Linux CI task 024); cases 28–33 — `energy_consumer`, fingerprint `fe5f022b5d81ec3b`, integration и strip/rebuild |
 | `COMPARE_SELF_TEST.cmd` | **PASS** |
+
+## Lab v0.9.13 — energy_consumer (задача 024)
+
+Harness-only изменение: accepted model, accepted validation и policy не меняются. Добавлены declarative node `energy_consumer`, `planet_closure.energy.signal/fulfillment` и `energy_balance.priority`.
+
+КТ2: GitHub Actions https://github.com/Y2Kill/orbital-economy/actions/runs/37006501565 — `completed/success`; QA 43/43, Planet 18/18, Structure 21/21, Loop 15/15, Conformance 18/18, Policy 10/10, Compare PASS, Bench Modes 0,12 `OVERALL: PASS`. Case 29 сравнивает число loop-combinations с baseline-аудитом; на v7.7.8 это 16384/0 loops, поскольку `Process Energy Enabled` ещё не является сценарной осью до задачи 025.
 
 ## Lab v0.9.8 — декларативный генератор узлов (задача 015)
 

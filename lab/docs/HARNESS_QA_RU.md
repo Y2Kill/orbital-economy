@@ -1,4 +1,4 @@
-# QA самого Orbital Economy Lab v0.9.12
+# QA самого Orbital Economy Lab v0.9.13
 
 ## 1. Operational QA
 
@@ -230,3 +230,14 @@ Static fail-fast comparator включает failures `simple_capital` в hard-e
 - 27 — явный `retarget_flows` может сослаться на STOCK из того же `add_elements`, а comparator классифицирует изменение endpoint как `definition_changed`.
 
 Фактический PASS для конкретной головы ветки фиксируется Actions/отчётом задачи; этот раздел описывает ожидаемый self-test contract, а не заменяет прогон.
+
+
+## 3i. Energy consumer QA (v0.9.13)
+
+`NODE_SELF_TEST.cmd` расширен с 27 до **33** случаев. Cases 28–33: prototype 71/14/232 + fingerprint `fe5f022b5d81ec3b`; validation merge/loops/P3; deficit priority runtime; strip/rebuild; schema/reference negatives; отсутствие замены общей ratio без priority.
+
+`PLANET_SELF_TEST.cmd` расширен до **18** случаев: case 17 проверяет declared signal STOCK bridge и per-process fulfillment override; case 18 — пять отрицательных signal/fulfillment topology/schema случаев.
+
+`QA_SELF_TEST.cmd` расширен до **43** случаев: новый runtime case проверяет `energy_balance.priority` на FAIL, PASS, `abs_tol` и backward compatibility без `priority`.
+
+Linux CI КТ2: https://github.com/Y2Kill/orbital-economy/actions/runs/37006501565 — полностью зелёный: QA 43/43, Planet 18/18, Structure 21/21, Loop 15/15, Conformance 18/18, Policy 10/10, Compare PASS, Bench Modes 0,12 OVERALL PASS. Case 29 требует loops=0 и число combinations, равное baseline-аудиту; на принятой v7.7.8 это 16384.

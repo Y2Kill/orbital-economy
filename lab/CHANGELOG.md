@@ -1,5 +1,18 @@
 # Changelog
 
+## v0.9.13 — energy_consumer node
+
+- новый declarative type `energy_consumer`: process rates → smoothed energy signal → requested/allocated energy → fulfillment-limited rate;
+- fixture `process-energy.json` = 71 add / 14 replace / 232 LINK, prototype fingerprint `fe5f022b5d81ec3b`;
+- опциональный `priority:true`: priority allocation выполняется до общей доли; без priority общая ratio не заменяется;
+- generated validation дополняет `energy_balance.consumers/priority`, `information_signal` и `planet_closure.processes[].energy`;
+- `planet_closure.energy.signal` разрешает только declared signal STOCK bridge и проверяет boundary/information topology; per-process `energy.fulfillment` переопределяет глобальный;
+- `energy_balance.priority` проверяет `priority fulfillment >= general fulfillment` с `abs_tol`;
+- NODE_SELF_TEST 33, PLANET_SELF_TEST 18, QA_SELF_TEST 43; КТ2 CI run 37006501565 полностью PASS;
+- Lab/package/CLI version → v0.9.13; accepted model, validation, policy, engine, `model/nodes/*` и vendor не изменены;
+- N3 задачи 024 уточнён владельцем: loop combinations сравниваются с baseline-аудитом (v7.7.8: 16384), потому что `Process Energy Enabled` ещё не проводится Modes до задачи 025.
+
+
 ## v0.9.12 — deposit node + retarget_flows
 
 - новый declarative type `deposit`: конечные undiscovered/proven запасы, smoothed extraction signal, exploration с physical backing и smooth depletion cap; fixture = 100 add / 8 replace / 6 retarget / 212 LINK, fingerprint `7d8fe41cc6df5c1a`;

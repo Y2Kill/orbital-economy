@@ -1,4 +1,4 @@
-# Declarative Nodes — Orbital Economy Lab v0.9.12
+# Declarative Nodes — Orbital Economy Lab v0.9.13
 
 ## 1. Назначение
 
@@ -13,7 +13,7 @@ Node declaration — короткое строгое описание повто
 
 ## 2. Поддерживаемый тип
 
-Registry содержит три типа: `capital_lifecycle`, `simple_capital` и `deposit`, все `version: 1`.
+Registry содержит четыре типа: `capital_lifecycle`, `simple_capital`, `deposit` и `energy_consumer`, все `version: 1`.
 
 Минимальная форма:
 
@@ -209,3 +209,63 @@ Extraction rate получает switch-gated smooth depletion cap. Сущест
 Generated validation fragment содержит `deposit_instances`, `planet_deposits`, имена `exploration_expenditure` и signal-flow patterns для существующей `information_signal`. Merge создаёт plugin `deposit` и при необходимости category `exploration_expenditure`, заполняет `planet_closure.processes[].deposit`; несовпадающая существующая запись — ошибка, повторный merge идемпотентен.
 
 NODE QA v0.9.12 = **27 случаев**. Cases 22–27 покрывают эталонные counts/fingerprint, validation/static/runtime integration, strip/rebuild с возвратом extraction FLOW в ∅, schema/conflict errors и явный `retarget_flows`.
+
+
+## 11. `energy_consumer` (v0.9.13)
+
+`energy_consumer` подключает уже существующие скорости процессов к общему энергетическому аллокатору колонии. Декларация содержит `colonies`, общий `switch`, четыре ссылки `allocator` (`total`, `available`, `supply`, `ratio`) и непустой `consumers[]`.
+
+Каждый consumer задаёт `consumer`, существующий `rate`, `energy_per_unit > 0`, сглаживающий `signal` с initial по всем колониям и adjustment time, `planet_process`, а опционально — `priority: true`.
+
+На consumer × colony создаются `Pre Energy Rate`, STOCK `Energy Signal` с boundary FLOW Increase/Decrease, `Requested Energy`, `Allocated Energy` и собственный `Energy Fulfillment Ratio`. Исходная скорость switch-gated: при включённом узле `Pre Energy Rate × own fulfillment`, при выключенном — дословная прежняя формула.
+
+### 11.1 Почему запрос читает сигнал
+
+Запрос считается из сглаженного STOCK-сигнала, а не из уже ограниченной энергетикой текущей скорости. Иначе цепочка rate → request → allocator ratio → allocation → fulfillment → rate образует алгебраическую петлю.
+
+Generated validation добавляет signal-flow patterns в `open_boundaries.information_signal`, а `planet_closure.energy.signal` разрешает только явно объявленный переход через этот STOCK при доказательстве общего planned-rate. Произвольный обход через другие STOCK не разрешается.
+
+### 11.2 Приоритет
+
+Если хотя бы один consumer имеет `priority: true`, на колонию создаются `Priority Requested Energy`, `Priority Energy Fulfillment Ratio` и `Priority Allocated Energy`. Сначала обслуживается приоритетный спрос; общая `allocator.ratio` для остальных считается из остатка доступной генерации.
+
+Generated validation добавляет такого consumer в `energy_balance.priority`; runtime-инвариант требует `X K Energy Fulfillment Ratio >= X Energy Fulfillment Ratio` с `abs_tol`.
+
+Если приоритетных consumer нет, priority-элементы не создаются и общая `allocator.ratio` не заменяется. Для эталонной четырёхпотребительской fixture это 12 replacements вместо 14.
+
+### 11.3 Generated validation
+
+Фрагмент содержит `energy_balance_consumers`, `energy_balance_priority`, `planet_energies[]` и `information_signal_names`. Merge идемпотентно дополняет `energy_balance`, `open_boundaries.information_signal` и `planet_closure.processes[].energy`; несовпадающая уже существующая Planet energy-role считается конфликтом.
+
+### 11.4 Пример
+
+```json
+{
+  "type": "energy_consumer",
+  "version": 1,
+  "colonies": ["A", "B"],
+  "switch": "Process Energy Enabled",
+  "allocator": {
+    "total": "{C} Total Requested Energy",
+    "available": "{C} Available Generation",
+    "supply": "{C} Energy Supply",
+    "ratio": "{C} Energy Fulfillment Ratio"
+  },
+  "consumers": [{
+    "consumer": "Power Resource Extraction",
+    "rate": "{C} Power Resource Extraction Rate",
+    "energy_per_unit": 0.05,
+    "priority": true,
+    "signal": {
+      "initial": {"A": 1373.679, "B": 30.983},
+      "adjustment_time": {
+        "name": "Power Resource Extraction Energy Signal Adjustment Time",
+        "value": 3
+      }
+    },
+    "planet_process": "power_resource"
+  }]
+}
+```
+
+Эталон `fixtures/nodes/process-energy.json` раскрывается в **71 add / 14 replace / 232 LINK**. Definition fingerprint после `APPLY_PATCH` относительно v7.7.8: `fe5f022b5d81ec3b`.

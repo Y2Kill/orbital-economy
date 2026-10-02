@@ -57,3 +57,53 @@
 
 Дальше:
 - КТ3 по §4: версия Lab 0.9.13, документация, статусные файлы и финальный отчёт.
+
+
+## Устройство `energy_consumer`
+
+Узел не создаёт новый производственный процесс: он оборачивает уже существующие process rates энергетическим контуром. Исходная формула каждой скорости сохраняется в `X K Pre Energy Rate`; сглаженный STOCK `X K Energy Signal` следует этой плановой скорости; запрос энергии считается как `signal × energy_per_unit`; allocation даёт собственный fulfillment, которым ограничивается реальная скорость. Switch сохраняет дословную старую ветку.
+
+Такое разделение нужно, чтобы запрос не читал уже ограниченную энергией текущую скорость и не замыкал алгебраическую петлю. `planet_closure.energy.signal` формализует эту связь: разрешён только явно объявленный STOCK-сигнал, который request читает напрямую, а его FLOW обязаны быть boundary FLOW категории `information_signal`.
+
+Для `priority:true` сначала вычисляются суммарный priority request, priority fulfillment и priority allocation. Общая allocator ratio получает только остаток доступной генерации после приоритетной доли. Runtime `energy_balance.priority` независимо проверяет, что fulfillment каждого приоритетного consumer не ниже общей доли. Если приоритетных consumer нет, общая ratio не заменяется.
+
+Generated validation fragment несёт consumer list, priority list, information-signal patterns и per-process Planet energy declarations. Merge идемпотентен и не допускает молчаливой замены несовпадающей существующей Planet energy-role.
+
+## Отличия
+
+Единственное содержательное отличие от первоначально записанного N3 — число комбинаций algebraic-loop audit. В исходном тексте было `0/32768`, но `Process Energy Enabled` не задаётся сценариями принятой v7.7.8 и поэтому не входит в перебираемые switch combinations. По уточнению владельца case 29 проверяет `combinationsWithLoops === 0` и равенство `combinations` числу базового аудита того же случая; сейчас это **16384**.
+
+Ветка была перенесена владельцем на новый `main` для увеличения timeout `bench-selftests` до 60 минут и пересборки манифестов. Старые SHA журнала сохранены как исторические. Предыдущие отменённые/таймаутные CI до переноса не трактуются как дефект реализации.
+
+Других намеренных расхождений с прототипом нет: эталонные 71/14/232 и fingerprint `fe5f022b5d81ec3b` сохранены.
+
+## Ограничения и замечания
+
+- задача harness-only: accepted ModelJSON, validation и policy не изменяются;
+- `Process Energy Enabled` пока не проведён через Modes; модельная интеграция отложена в задачу 025;
+- priority — бинарная принадлежность consumer к единственной приоритетной группе, не многоуровневая очередь;
+- special STOCK traversal разрешён только для объявленного `energy.signal`; это не общий механизм обхода stateful dependencies;
+- канонический Windows acceptance и SHA256SUMS остаются за reviewer по `sums_by: reviewer`;
+- локальный `check_branch` не запускался в API-режиме; branch guard выполняет CI.
+
+
+### КТ3 — 2026-10-02 — версия 0.9.13 и документация
+Сделано:
+- версия Lab поднята до 0.9.13 в `package.json`, `package-lock.json` и строке CLI;
+- `package.json` сохранён CRLF без завершающего перевода строки;
+- документирован `energy_consumer`: декларация, раскрытие, signal, priority, отсутствие замены общей ratio без priority и пример;
+- документированы `energy_balance.priority`, `planet_closure.energy.signal` и per-process `energy.fulfillment`;
+- обновлены HARNESS_QA, TEST_STATUS, README и CHANGELOG;
+- добавлены итоговые разделы отчёта «Устройство», «Отличия», «Ограничения и замечания».
+
+Доказательство:
+- КТ2 code/QA baseline: https://github.com/Y2Kill/orbital-economy/actions/runs/37006501565 — SUCCESS;
+- финальная голова КТ3 проверяется полным Actions CI ветки; точный run будет добавлен после завершения.
+
+Не запускалось:
+- локальный Windows acceptance;
+- SHA256SUMS не пересобирались (`sums_by: reviewer`).
+
+Дальше:
+- убедиться, что CI точной финальной головы `completed/success`;
+- сверить финальный diff со scope и передать ветку reviewer.

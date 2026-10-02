@@ -1,6 +1,6 @@
-# Orbital Economy Lab v0.9.12
+# Orbital Economy Lab v0.9.13
 
-Локальный стенд для запуска, проверки, regression-анализа, policy-gating, Capital Lifecycle Kernel и статических аудитов структуры для ModelJSON Orbital Economy. v0.9.12 добавляет node `deposit`, безопасный `retarget_flows` для endpoints существующих FLOW и deposit conformance/runtime checks. v0.9.11 расширяет `simple_capital`: smooth cap для скорости без capacity-параметра и раздельный initial sizing signal по колониям. v0.9.10 добавляет строгую статическую схему validation: ошибки формы блокируют запуск до simulation. v0.9.6 добавляет `planet_closure`: декларативную per-process карту критериев Planet v1 P2–P6 с dependency paths, exceptions/debt counters и режимами `report/classify/planet_v1/planet_strict`.
+Локальный стенд для запуска, проверки, regression-анализа, policy-gating, Capital Lifecycle Kernel и статических аудитов структуры для ModelJSON Orbital Economy. v0.9.13 добавляет declarative `energy_consumer`, явный STOCK-сигнал энергетического запроса в Planet closure и runtime-проверку приоритетных потребителей. v0.9.12 добавляет node `deposit`, безопасный `retarget_flows` для endpoints существующих FLOW и deposit conformance/runtime checks. v0.9.11 расширяет `simple_capital`: smooth cap для скорости без capacity-параметра и раздельный initial sizing signal по колониям. v0.9.10 добавляет строгую статическую схему validation: ошибки формы блокируют запуск до simulation. v0.9.6 добавляет `planet_closure`: декларативную per-process карту критериев Planet v1 P2–P6 с dependency paths, exceptions/debt counters и режимами `report/classify/planet_v1/planet_strict`.
 
 ## Подтверждённая база
 
@@ -32,6 +32,16 @@
 
 ---
 
+
+# 0k. Что изменилось в v0.9.13
+
+Добавлен declarative node `energy_consumer`: существующие process rates подключаются к общему энергетическому аллокатору через сглаженные STOCK-сигналы. Эталон `fixtures/nodes/process-energy.json` раскрывается в 71 add / 14 replace / 232 LINK; prototype fingerprint = `fe5f022b5d81ec3b`.
+
+Приоритетный consumer получает отдельную priority allocation до общей доли; без приоритетных consumers `allocator.ratio` не заменяется. Generated validation дополняет `energy_balance.consumers/priority`, `open_boundaries.information_signal` и `planet_closure.processes[].energy`.
+
+`planet_closure` получил `energy.signal` с узким one-STOCK bridge и per-process `energy.fulfillment`; `energy_balance.priority` проверяет, что fulfillment приоритетного потребителя не ниже общего. NODE/Planet/QA self-tests расширены до 33/18/43.
+
+Accepted model, validation, policy, `model/nodes/*`, engine и vendor не меняются. `Process Energy Enabled` будет проведён в Modes отдельной модельной задачей 025.
 
 # 0j. Что изменилось в v0.9.12
 
