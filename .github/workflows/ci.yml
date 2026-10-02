@@ -97,7 +97,9 @@ jobs:
     runs-on: ubuntu-latest
     # 15 minutes stopped being enough on 2026-09-30 (a run took 15m17s against 10.5 the same morning):
     # the self-test set grows with every node type and GitHub runner speed varies.
-    timeout-minutes: 30
+    # 30 minutes stopped being enough on 2026-10-02 (task 024): main needs ~19 min, the loop self-test
+    # grows 2x per model switch, node QA went 1:45 -> 6:40, and a slow runner ran every step ~1.8x longer.
+    timeout-minutes: 60
     steps:
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
         with:
