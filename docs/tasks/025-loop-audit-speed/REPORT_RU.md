@@ -60,3 +60,51 @@ Reference-прототип остаётся только проверочным 
 - worker_threads/async не вводились: публичный audit остаётся синхронным;
 - model, validation, policy, engine, tools, vendor, `model/nodes/*` и `.github` не меняются;
 - SHA256SUMS не пересобираются: `sums_by: reviewer`.
+
+### КТ2 — 2026-10-02 — Lab v0.9.14, документация и финальный implementation CI
+Сделано:
+- версия стенда поднята до 0.9.14 в `package.json`, `package-lock.json` и CLI;
+- `package.json` сохранён CRLF без завершающего перевода строки;
+- `STRUCTURE_AUDIT_RU.md` документирует четыре точных сокращения, доказательство точности и `--exhaustive`;
+- обновлены HARNESS_QA, TEST_STATUS, README и CHANGELOG;
+- scope-diff относительно `main=258002e40…` содержит только разрешённые task-025 файлы плюс обязательный `REPORT_RU.md`; model/validation/policy не менялись.
+
+Доказательство:
+- implementation head: `48e07b2b1b8058aeec1113917236f6cd96fb4a65`;
+- GitHub Actions: https://github.com/Y2Kill/orbital-economy/actions/runs/37038865059 — `completed / success`;
+- guard PASS; tools-selftest PASS; полный `bench-selftests` PASS.
+
+## Время bench-selftests: main → v0.9.14
+
+Источник baseline: main `06ca7ad1dc51d5fa026abc57200bbae59da9b3e0`, CI run https://github.com/Y2Kill/orbital-economy/actions/runs/37027025364.
+Источник v0.9.14: implementation head `48e07b2b1b8058aeec1113917236f6cd96fb4a65`, CI run https://github.com/Y2Kill/orbital-economy/actions/runs/37038865059.
+
+| Шаг | main | v0.9.14 | Ускорение |
+|---|---:|---:|---:|
+| QA self-test | 0:04 | 0:04 | ×1.00 |
+| Structure self-test | 3:13 | 0:05 | ×38.60 |
+| Loop self-test | 16:34 | 3:52 | ×4.28 |
+| Planet self-test | 1:34 | 0:02 | ×47.00 |
+| Conformance self-test | 2:10 | 0:42 | ×3.10 |
+| Policy self-test | 2:03 | 0:34 | ×3.62 |
+| Compare self-test | 4:15 | 1:07 | ×3.81 |
+| Node self-test | 5:08 | 1:04 | ×4.81 |
+| Bench self-test (Modes 0,12) | 1:24 | 0:33 | ×2.55 |
+| **bench-selftests job** | **36:36** | **8:15** | **×4.44** |
+
+`Loop self-test` v0.9.14 намеренно включает cases 16–18 с полным exhaustive oracle, поэтому его собственное ускорение существенно меньше, чем у обычных потребителей fast audit. В КТ1 тот же loop self-test занял 2:59; разброс runner допустим.
+
+### Проверка N3 и ограничения исполнения
+
+- cases 16–18 подтверждают byte-identical `JSON.stringify` fast/exhaustive для audit и details на accepted v7.7.8, v7.6 r1, mutation 001 и двух синтетических моделях;
+- supplied `reference/compare_loop_audit.mjs` и skeleton/stress модели не запускались отдельно в локальном checkout: работа выполнялась через GitHub API по §9.4, а skeleton v7.7.9 не хранится отдельным ModelJSON в task-025 tree;
+- поэтому четыре-model reference script остаётся дополнительной reviewer-проверкой N3; production fast path при этом буквально основан на supplied prototype, а exhaustive path — на прежнем `main` модуле;
+- отдельное измерение CLI `loops accepted <= 5 s` вне CI не выполнялось; косвенно fast audit подтверждён резким сокращением всех вызывающих его self-tests, но это не подменяется числом в отчёте.
+
+Не запускалось:
+- канонический Windows acceptance;
+- SHA256SUMS не пересобирались (`sums_by: reviewer`).
+
+Финал:
+- после этой report-only записи проверяется CI точной финальной головы;
+- код/документация КТ2 остаются на `48e07b2b…`; финальный commit меняет только `REPORT_RU.md`.
