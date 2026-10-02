@@ -202,7 +202,6 @@ export function mergeNodeValidation(validation, fragments) {
     throw new Error('validation: open_boundaries categories and transformation_pairs are required');
   }
   if (!planet || !Array.isArray(planet.processes)) throw new Error('validation: planet_closure.processes is required');
-  if (!energyBalance || !Array.isArray(energyBalance.consumers)) throw new Error('validation: energy_balance.consumers is required');
   const transformation = boundaries.categories.find(x => x.id === 'capital_transformation');
   if (!transformation || !Array.isArray(transformation.name)) throw new Error('validation: open_boundaries capital_transformation category is required');
 
@@ -268,13 +267,16 @@ export function mergeNodeValidation(validation, fragments) {
       for (const name of fragment.information_signal_names) if (!information.name.includes(name)) information.name.push(name);
     }
 
-    for (const name of fragment.energy_balance_consumers || []) {
-      if (!energyBalance.consumers.includes(name)) energyBalance.consumers.push(name);
-    }
-    if ((fragment.energy_balance_priority || []).length) {
-      if (energyBalance.priority == null) energyBalance.priority = [];
-      if (!Array.isArray(energyBalance.priority)) throw new Error('validation: energy_balance.priority must be an array');
-      for (const name of fragment.energy_balance_priority) if (!energyBalance.priority.includes(name)) energyBalance.priority.push(name);
+    const energyConsumers = fragment.energy_balance_consumers || [];
+    const energyPriority = fragment.energy_balance_priority || [];
+    if (energyConsumers.length || energyPriority.length) {
+      if (!energyBalance || !Array.isArray(energyBalance.consumers)) throw new Error('validation: energy_balance.consumers is required for energy_consumer fragment');
+      for (const name of energyConsumers) if (!energyBalance.consumers.includes(name)) energyBalance.consumers.push(name);
+      if (energyPriority.length) {
+        if (energyBalance.priority == null) energyBalance.priority = [];
+        if (!Array.isArray(energyBalance.priority)) throw new Error('validation: energy_balance.priority must be an array');
+        for (const name of energyPriority) if (!energyBalance.priority.includes(name)) energyBalance.priority.push(name);
+      }
     }
     for (const generated of fragment.planet_energies || []) {
       const process = planet.processes.find(x => x.id === generated.process);

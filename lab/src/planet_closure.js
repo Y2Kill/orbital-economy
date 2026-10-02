@@ -3,7 +3,7 @@ import { auditOpenBoundaries } from './structure_audit.js';
 const REF_RE = /\[([^\]]+)\]/g;
 const PROCESS_KINDS = new Set(['extraction', 'transformation', 'service']);
 const CAPACITY_KINDS = new Set(['kernel', 'simple', 'constant', 'unbounded']);
-const ENERGY_KINDS = new Set(['requests', 'none', 'producer']);
+const ENERGY_KINDS = new Set(['requests', 'none', 'exception', 'producer']);
 const DEPOSIT_KINDS = new Set(['stock', 'none']);
 const LABOR_KINDS = new Set(['declared', 'undeclared']);
 const MODES = new Set(['report', 'classify', 'planet_v1', 'planet_strict']);
@@ -218,7 +218,7 @@ function validateSpec(plugin) {
     if (p?.energy?.kind === 'requests' && !p.energy.request) specError(errors, `${where}.energy.request is required`, { process: p?.id ?? null });
     if (p?.energy?.signal != null && (typeof p.energy.signal !== 'string' || !p.energy.signal.trim())) specError(errors, `${where}.energy.signal must be a non-empty string`, { process: p?.id ?? null });
     if (p?.energy?.fulfillment != null && (typeof p.energy.fulfillment !== 'string' || !p.energy.fulfillment.trim())) specError(errors, `${where}.energy.fulfillment must be a non-empty string`, { process: p?.id ?? null });
-    if (p?.energy?.kind === 'none' && !p.energy.reason) specError(errors, `${where}.energy.reason is required for energy none`, { process: p?.id ?? null });
+    if ((p?.energy?.kind === 'none' || p?.energy?.kind === 'exception') && !p.energy.reason) specError(errors, `${where}.energy.reason is required for energy ${p.energy.kind}`, { process: p?.id ?? null });
 
     if (p?.deposit != null && p.kind !== 'extraction') specError(errors, `${where}.deposit is only valid for extraction`, { process: p?.id ?? null });
     if (p?.deposit?.kind != null && !DEPOSIT_KINDS.has(p.deposit.kind)) specError(errors, `${where}.deposit.kind is invalid`, { process: p?.id ?? null });
@@ -486,9 +486,9 @@ export function auditPlanetClosure(raw, plugin, openBoundariesPlugin) {
     } else if (en.kind === 'producer') {
       if (p.kind !== 'service') processError(errors, record, 'energy producer is only valid for a service');
       else counters.P3.producer++;
-    } else if (en.kind === 'none') {
+    } else if (en.kind === 'none' || en.kind === 'exception') {
       counters.P3.exceptions++;
-      exceptions.push({ dimension: 'P3', process: record.id, colony, instance: record.instance, kind: 'none', value: null, reason: en.reason });
+      exceptions.push({ dimension: 'P3', process: record.id, colony, instance: record.instance, kind: en.kind, value: null, reason: en.reason });
     } else {
       counters.P3.undeclared++;
     }
