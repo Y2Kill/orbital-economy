@@ -420,7 +420,8 @@ try {
 
   function energySignalFixture() {
     const raw = { elements: [
-      { type: 'VARIABLE', name: 'A QA Planned Rate', behavior: { value: 10 } },
+      { type: 'VARIABLE', name: 'A QA Planned Driver', behavior: { value: 10 } },
+      { type: 'VARIABLE', name: 'A QA Planned Rate', behavior: { value: '[A QA Planned Driver]' } },
       { type: 'STOCK', name: 'A QA Signal', behavior: { initial_value: 10, non_negative: true } },
       { type: 'FLOW', name: 'A QA Signal Increase', from: null, to: 'A QA Signal', behavior: { value: 'IfThenElse([A QA Planned Rate] > [A QA Signal], [A QA Planned Rate] - [A QA Signal], 0)', non_negative: true } },
       { type: 'FLOW', name: 'A QA Signal Decrease', from: 'A QA Signal', to: null, behavior: { value: 'IfThenElse([A QA Signal] > [A QA Planned Rate], [A QA Signal] - [A QA Planned Rate], 0)', non_negative: true } },
