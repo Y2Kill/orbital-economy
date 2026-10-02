@@ -196,11 +196,13 @@ export function mergeNodeValidation(validation, fragments) {
   const kernel = out.plugins?.find(p => p.type === 'capital_lifecycle_kernel');
   const boundaries = out.plugins?.find(p => p.type === 'open_boundaries');
   const planet = out.plugins?.find(p => p.type === 'planet_closure');
+  const energyBalance = out.plugins?.find(p => p.type === 'energy_balance');
   if (!kernel || !Array.isArray(kernel.instances)) throw new Error('validation: capital_lifecycle_kernel.instances is required');
   if (!boundaries || !Array.isArray(boundaries.categories) || !Array.isArray(boundaries.transformation_pairs)) {
     throw new Error('validation: open_boundaries categories and transformation_pairs are required');
   }
   if (!planet || !Array.isArray(planet.processes)) throw new Error('validation: planet_closure.processes is required');
+  if (!energyBalance || !Array.isArray(energyBalance.consumers)) throw new Error('validation: energy_balance.consumers is required');
   const transformation = boundaries.categories.find(x => x.id === 'capital_transformation');
   if (!transformation || !Array.isArray(transformation.name)) throw new Error('validation: open_boundaries capital_transformation category is required');
 
@@ -264,6 +266,22 @@ export function mergeNodeValidation(validation, fragments) {
     if ((fragment.information_signal_names || []).length) {
       if (!information || !Array.isArray(information.name)) throw new Error('validation: open_boundaries information_signal category is required');
       for (const name of fragment.information_signal_names) if (!information.name.includes(name)) information.name.push(name);
+    }
+
+    for (const name of fragment.energy_balance_consumers || []) {
+      if (!energyBalance.consumers.includes(name)) energyBalance.consumers.push(name);
+    }
+    if ((fragment.energy_balance_priority || []).length) {
+      if (energyBalance.priority == null) energyBalance.priority = [];
+      if (!Array.isArray(energyBalance.priority)) throw new Error('validation: energy_balance.priority must be an array');
+      for (const name of fragment.energy_balance_priority) if (!energyBalance.priority.includes(name)) energyBalance.priority.push(name);
+    }
+    for (const generated of fragment.planet_energies || []) {
+      const process = planet.processes.find(x => x.id === generated.process);
+      if (!process) throw new Error(`validation fragment[${fi}]: planet process "${generated.process}" does not exist`);
+      const current = process.energy;
+      if (current == null || current?.kind === 'none' || current?.kind === 'exception') process.energy = structuredClone(generated.energy);
+      else if (!jsonEqual(current, generated.energy)) throw new Error(`validation fragment[${fi}]: planet process "${generated.process}" energy differs`);
     }
 
     for (const generated of fragment.planet_deposits || []) {

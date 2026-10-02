@@ -60,7 +60,7 @@ function makeGraph(index) {
   return { refs, readers };
 }
 
-function shortestPath(index, graph, fromName, toName, maxHops = Infinity) {
+function shortestPath(index, graph, fromName, toName, maxHops = Infinity, bridgeStock = null) {
   const startEl = index.byKey.get(key(fromName));
   const goalEl = index.byKey.get(key(toName));
   if (!startEl || !goalEl) return null;
@@ -75,8 +75,15 @@ function shortestPath(index, graph, fromName, toName, maxHops = Infinity) {
     if (v === goal) break;
     if (d >= maxHops) continue;
     const t = index.byKey.get(key(v))?.type;
-    if (v !== start && t !== 'VARIABLE' && t !== 'FLOW') continue;
-    for (const n of graph.refs.get(v) || []) {
+    const bridge = bridgeStock && t === 'STOCK' && key(v) === key(bridgeStock);
+    if (v !== start && t !== 'VARIABLE' && t !== 'FLOW' && !bridge) continue;
+    const nextNames = [...(graph.refs.get(v) || [])];
+    if (bridge) {
+      for (const el of index.elements) {
+        if (el?.type === 'FLOW' && (key(el.from) === key(v) || key(el.to) === key(v))) nextNames.push(el.name);
+      }
+    }
+    for (const n of nextNames) {
       if (prev.has(n)) continue;
       prev.set(n, v);
       depth.set(n, d + 1);
@@ -111,7 +118,7 @@ function hasStock(index, names) {
   return [...names].some(n => index.byKey.get(key(n))?.type === 'STOCK');
 }
 
-function near(index, graph, fromName, hops) {
+function near(index, graph, fromName, hops, bridgeStock = null) {
   const start = index.byKey.get(key(fromName))?.name;
   const seen = new Set();
   let frontier = start ? [start] : [];
@@ -119,8 +126,15 @@ function near(index, graph, fromName, hops) {
     const next = [];
     for (const v of frontier) {
       const t = index.byKey.get(key(v))?.type;
-      if (h > 0 && t !== 'VARIABLE' && t !== 'FLOW') continue;
-      for (const n of graph.refs.get(v) || []) {
+      const bridge = bridgeStock && t === 'STOCK' && key(v) === key(bridgeStock);
+      if (h > 0 && t !== 'VARIABLE' && t !== 'FLOW' && !bridge) continue;
+      const nextNames = [...(graph.refs.get(v) || [])];
+      if (bridge) {
+        for (const el of index.elements) {
+          if (el?.type === 'FLOW' && (key(el.from) === key(v) || key(el.to) === key(v))) nextNames.push(el.name);
+        }
+      }
+      for (const n of nextNames) {
         if (seen.has(n)) continue;
         seen.add(n);
         next.push(n);
@@ -196,8 +210,14 @@ function validateSpec(plugin) {
     }
     if (p?.capacity?.kind === 'unbounded' && !p.capacity.reason) specError(errors, `${where}.capacity.reason is required for unbounded capacity`, { process: p?.id ?? null });
 
+    if (p?.energy != null && typeof p.energy === 'object') {
+      const allowedEnergy = new Set(['kind','request','reason','signal','fulfillment']);
+      for (const field of Object.keys(p.energy)) if (!allowedEnergy.has(field)) specError(errors, `${where}.energy.${field} is an unknown field`, { process: p?.id ?? null });
+    }
     if (p?.energy?.kind != null && !ENERGY_KINDS.has(p.energy.kind)) specError(errors, `${where}.energy.kind is invalid`, { process: p?.id ?? null });
     if (p?.energy?.kind === 'requests' && !p.energy.request) specError(errors, `${where}.energy.request is required`, { process: p?.id ?? null });
+    if (p?.energy?.signal != null && (typeof p.energy.signal !== 'string' || !p.energy.signal.trim())) specError(errors, `${where}.energy.signal must be a non-empty string`, { process: p?.id ?? null });
+    if (p?.energy?.fulfillment != null && (typeof p.energy.fulfillment !== 'string' || !p.energy.fulfillment.trim())) specError(errors, `${where}.energy.fulfillment must be a non-empty string`, { process: p?.id ?? null });
     if (p?.energy?.kind === 'none' && !p.energy.reason) specError(errors, `${where}.energy.reason is required for energy none`, { process: p?.id ?? null });
 
     if (p?.deposit != null && p.kind !== 'extraction') specError(errors, `${where}.deposit is only valid for extraction`, { process: p?.id ?? null });
@@ -410,12 +430,34 @@ export function auditPlanetClosure(raw, plugin, openBoundariesPlugin) {
       const request = resolve(requestName);
       const totalName = expand(plugin.energy?.total_request, colony);
       const total = resolve(totalName);
-      const fulfillmentName = expand(plugin.energy?.fulfillment, colony);
+      const fulfillmentName = expand(en.fulfillment ?? plugin.energy?.fulfillment, colony);
       const fulfillment = resolve(fulfillmentName);
       if (!request) processError(errors, record, `energy request does not resolve: ${requestName}`, { reference: requestName });
       else if (request.type !== 'VARIABLE') processError(errors, record, `energy request ${request.name} is not a VARIABLE`);
       if (!total) processError(errors, record, `energy total_request does not resolve: ${totalName}`, { reference: totalName });
       if (!fulfillment) processError(errors, record, `energy fulfillment does not resolve: ${fulfillmentName}`, { reference: fulfillmentName });
+
+      let signal = null;
+      if (en.signal != null) {
+        const signalName = expand(en.signal, colony);
+        signal = resolve(signalName);
+        if (!signal) processError(errors, record, `energy signal does not resolve: ${signalName}`, { reference: signalName });
+        else if (signal.type !== 'STOCK') processError(errors, record, `energy signal ${signal.name} is not a STOCK`);
+        else if (request) {
+          const direct = refsOf(request).filter(n => key(n) === key(signal.name));
+          if (direct.length !== 1) processError(errors, record, `energy request ${request.name} must read signal ${signal.name} directly exactly once`);
+          const flows = index.elements.filter(e => e?.type === 'FLOW' && (key(e.from) === key(signal.name) || key(e.to) === key(signal.name)));
+          if (!flows.length) processError(errors, record, `energy signal ${signal.name} has no flows`);
+          for (const flow of flows) {
+            const boundary = (flow.from == null && key(flow.to) === key(signal.name)) || (key(flow.from) === key(signal.name) && flow.to == null);
+            if (!boundary) processError(errors, record, `energy signal ${signal.name} flow ${flow.name} must connect only ∅ and the signal stock`);
+            const classified = ob?.flows?.find(x => key(x.name) === key(flow.name));
+            if (!classified || classified.category !== 'information_signal') {
+              processError(errors, record, `energy signal flow ${flow.name} must be classified as information_signal`);
+            }
+          }
+        }
+      }
 
       if (request && total && fulfillment) {
         const requestPath = addPath(record, 'energy_total_to_request', within(total.name, request.name));
@@ -424,7 +466,8 @@ export function auditPlanetClosure(raw, plugin, openBoundariesPlugin) {
         if (!fulfillmentPath) processError(errors, record, readsError(record, 'energy_output_to_fulfillment', output.name, fulfillment.name));
 
         if (requestPath && fulfillmentPath) {
-          const fromRequest = near(index, graph, request.name, maxHops);
+          const bridge = signal?.type === 'STOCK' ? signal.name : null;
+          const fromRequest = near(index, graph, request.name, maxHops, bridge);
           const fromOutput = near(index, graph, output.name, maxHops);
           const shared = [...fromRequest].filter(n => fromOutput.has(n));
           shared.sort((a, b) => (index.order.get(a) ?? Number.MAX_SAFE_INTEGER) - (index.order.get(b) ?? Number.MAX_SAFE_INTEGER));
@@ -433,7 +476,7 @@ export function auditPlanetClosure(raw, plugin, openBoundariesPlugin) {
             const planned = shared[0];
             record.paths.energy_shared_planned = {
               element: planned,
-              request: within(request.name, planned),
+              request: shortestPath(index, graph, request.name, planned, maxHops, bridge),
               output: within(output.name, planned)
             };
             counters.P3.requests++;

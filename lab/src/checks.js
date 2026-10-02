@@ -255,6 +255,15 @@ export function checkPlugin(plugin, ctx) {
       for (const k of consumers) {
         results.push(checkRelation(ctx, { name: `${c} ${k} allocated <= requested`, left: `${c} ${k} Allocated Energy`, right: `${c} ${k} Requested Energy`, op: '<=', abs_tol: tol }));
       }
+      for (const k of plugin.priority || []) {
+        results.push(checkRelation(ctx, {
+          name: `${c} ${k} priority fulfillment >= general fulfillment`,
+          left: `${c} ${k} Energy Fulfillment Ratio`,
+          right: `${c} Energy Fulfillment Ratio`,
+          op: '>=',
+          abs_tol: tol
+        }));
+      }
       results.push(checkRelation(ctx, { name: `${c} Energy supply <= active generation`, left: supply, right: active, op: '<=', abs_tol: tol }));
       results.push(checkLinearIdentity(ctx, { name: `${c} supply allocation identity`, abs_tol: tol, terms: [
         { column: supply, coef: 1 }, ...consumers.map(k => ({ column: `${c} ${k} Allocated Energy`, coef: -1 }))

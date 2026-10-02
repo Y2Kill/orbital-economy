@@ -34,7 +34,7 @@ const CHECK_SPECS = {
 
 const EVENT_FIELDS = new Set(['column', 'op', 'value', 'tolerance', 'window', 'name']);
 const PLUGIN_FIELDS = {
-  energy_balance: ['colonies', 'abs_tol', 'consumers'],
+  energy_balance: ['colonies', 'abs_tol', 'consumers', 'priority'],
   capital_lifecycle: ['abs_tol', 'items'],
   capital_lifecycle_kernel: ['format', 'legacy_switch', 'abs_tol', 'instances'],
   simple_capital: ['abs_tol', 'instances'],
