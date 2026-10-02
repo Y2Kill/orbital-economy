@@ -449,16 +449,31 @@ try {
     return { raw, ob, decl };
   }
 
-  await expect('17 energy.signal bridge crosses only the declared signal stock; process fulfillment overrides global fulfillment', () => {
-    const { raw, ob, decl } = energySignalFixture();
-    const r = auditPlanetClosure(raw, decl, ob);
+  await expect('17 energy.signal enables the one-stock bridge and process fulfillment overrides the global target', () => {
+    const base = energySignalFixture();
+
+    const noSignal = structuredClone(base.decl);
+    delete noSignal.processes[0].energy.signal;
+    const beforeSignal = auditPlanetClosure(base.raw, noSignal, base.ob);
+    if (beforeSignal.status !== 'FAIL' || !beforeSignal.errors.some(e => /shares no planned-rate element/.test(e.message))) {
+      throw new Error(`without signal should fail proximity: ${JSON.stringify(beforeSignal.errors)}`);
+    }
+
+    const noOverride = structuredClone(base.decl);
+    delete noOverride.processes[0].energy.fulfillment;
+    const beforeOverride = auditPlanetClosure(base.raw, noOverride, base.ob);
+    if (beforeOverride.status !== 'FAIL' || !beforeOverride.errors.some(e => /energy_output_to_fulfillment|reads .* only|does not read/.test(e.message))) {
+      throw new Error(`without process fulfillment should fail output path: ${JSON.stringify(beforeOverride.errors)}`);
+    }
+
+    const r = auditPlanetClosure(base.raw, base.decl, base.ob);
     const rec = r.processes.find(x => x.id === 'qa_energy' && x.colony === 'A');
     if (r.status !== 'PASS' || r.counters.P3.requests !== 1) throw new Error(JSON.stringify({ status: r.status, P3: r.counters.P3, errors: r.errors }));
     const path = rec?.paths?.energy_shared_planned?.request || [];
     if (!path.includes('A QA Signal') || !path.includes('A QA Planned Rate')) throw new Error(`signal bridge path missing: ${JSON.stringify(path)}`);
     const fulfill = rec?.paths?.energy_output_to_fulfillment || [];
     if (!fulfill.includes('A QA Priority Fulfillment') || fulfill.includes('A Energy Fulfillment Ratio')) throw new Error(`fulfillment override not used: ${JSON.stringify(fulfill)}`);
-    return `P3.requests=1; request path=${path.join(' -> ')}; process fulfillment override used`;
+    return `without signal FAIL; with signal PASS via ${path.join(' -> ')}; without fulfillment override FAIL; override PASS`;
   });
 
   await expect('18 energy.signal/fulfillment reject five invalid declarations/topologies', () => {
