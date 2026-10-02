@@ -292,6 +292,11 @@ d85df745ccdfd14f9449b6ab99ed2c48f32279ffbe6dbe43d82b341ed9073c7c  ./docs/tasks/0
 acbec86cbb28343cf6c71820df4c3a8fa43c24c16c6ac1ff16baad2d8778c89b  ./docs/tasks/024-energy-consumer-node/reference/definition_fingerprint.mjs
 fbc3eaa16d72347a6f60f6d7bf4977daf6d9160e6b01a18d91b2ab0816c4ab5d  ./docs/tasks/024-energy-consumer-node/reference/energy_consumer_prototype.mjs
 551747b9207a8530c1a94396880ea33c99f4524418fd5074913b57f92b0555c3  ./docs/tasks/024-energy-consumer-node/scope.json
+e49949cc53232fd6d0a5807156aa21ee08f5d128a0295992a8e0b70529829dcf  ./docs/tasks/025-loop-audit-speed/TASK_RU.md
+942d7d299b46d74c7d428757d18f31f6dfaada087995dc7cd291cf831989fd39  ./docs/tasks/025-loop-audit-speed/reference/compare_loop_audit.mjs
+ac1c3c38b7d2ae91b17c8f8fe5aaf55bd918c29aa0d7fe492ce215d28cc027f9  ./docs/tasks/025-loop-audit-speed/reference/loop_audit_prototype.js
+c3282dd85d2d9c02eb740e0474bb7700ddf3c92b130c64c5b521b4f8837bca15  ./docs/tasks/025-loop-audit-speed/reference/make_stress_model.mjs
+7b092870e8c297ba4b06dc8bf592484391bfb96097ccd5baaec809ec6fa9a210  ./docs/tasks/025-loop-audit-speed/scope.json
 44d2e557f1cb2322739bc95ee2b6dcbf6d6fcb708da14e90d53250936e50da5c  ./docs/tasks/README_RU.md
 bbf818e93b88d606b3137b1bb69d60db8c41c9df4089025a921b1ca00f473244  ./lab/APPLY_PATCH.cmd
 9c496bf483e679bad312ae612564f1bcfa8bd539cce1c4e408b96aed27782e52  ./lab/CHANGELOG.md

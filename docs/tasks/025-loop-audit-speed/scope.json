@@ -1,0 +1,27 @@
+{
+  "task": "025",
+  "title": "exact loop audit speed-up: candidate SCC nodes, condition cache, static formulas and component cache, relevant-switch projection; --exhaustive reference path (Lab v0.9.14)",
+  "branch": "task/025-loop-audit-speed",
+  "allow": [
+    "lab/src/loop_audit.js",
+    "lab/src/loop_qa.js",
+    "lab/src/audit_run.js",
+    "lab/src/cli.js",
+    "lab/package.json",
+    "lab/package-lock.json",
+    "lab/docs/STRUCTURE_AUDIT_RU.md",
+    "lab/docs/HARNESS_QA_RU.md",
+    "lab/docs/TEST_STATUS_RU.md",
+    "lab/README_RU.md",
+    "lab/CHANGELOG.md"
+  ],
+  "allow_binary": [],
+  "allow_protected": [],
+  "required_changes": [
+    "lab/src/loop_audit.js",
+    "lab/src/loop_qa.js",
+    "lab/docs/STRUCTURE_AUDIT_RU.md",
+    "lab/CHANGELOG.md"
+  ],
+  "sums_by": "reviewer"
+}
