@@ -1,7 +1,7 @@
 e3e17a68147b548710eb8750b9c9917d89b9f2923098dbcef77861d4fd374fe4  ./.gitattributes
 5ec2b39f89176037b885fce0ae73a5000b5961f718a3b70f1d21772e2a0d9e96  ./.github/workflows/bench-full.yml
 639f97076156bf790609a251cf1561ea4ad035afd6e3831bfd84e2846f09b6e3  ./.github/workflows/candidate.yml
-1871cc79343cfce6a34349301c914ee6bd0c459589be96eb2d62301f9297adef  ./.github/workflows/ci.yml
+3e05642ff0e2ddc08f7e019897e906dc15a81a68b888b2b72cfb8f00896a749c  ./.github/workflows/ci.yml
 39a069346ae5c7e06a0868fe493c0e2cf6491644a36cf80ac56c4842a5ebbc25  ./.github/workflows/cross-os.yml
 240161132e72dc13384c6f5d0876f409c1b7e6c396fb98e4c46b9c20f0237b72  ./.gitignore
 ad1cf26d5e3794272dbbc9208ec88563fc3e12518352b09588240ef945b2a139  ./BASELINE_MANIFEST.json
@@ -18,7 +18,7 @@ c68d21011a7955bea82c9d8cae956c7da5f7c048b83c5436c2ae3fc8624d7227  ./docs/CONTRAC
 caca50e9bfc2035acc4cb0635120767c23c82ad38d80d3d727199b7c42102589  ./docs/HISTORY_RU.md
 443a4cb195dfed88978d3661ae22c63ed2a407c574c2a3902bb24beb370fe333  ./docs/PARAMETER_ANNOTATIONS.json
 754cd2f0901d2a9f0b7e767e27d6f12aaa2ae76c9c74dd190ea9228bdd4872c2  ./docs/PARAMETER_REGISTRY.md
-6bc8d4296b99836505ff267320c24d1f7e4bcb3fae753fcbb70d5b7330843b5e  ./docs/PLANET_V1_CONTRACT_RU.md
+07a5ffa357dc56fb3b893b43c2ce87eaf640eab1e4c3daea56051c7f8cfe49c3  ./docs/PLANET_V1_CONTRACT_RU.md
 1319d7bda13d93fa0ee9c5fbd0949e5e8395ce26552b2aea9ddb1b1d6a402689  ./docs/ROADMAP.md
 fb3527116a76ffacf19414dfbe7ea30b74584ec2351b27f66feaf23ae22ada20  ./docs/STRUCTURE_AUDIT_REPORT.md
 3ae639958b7a331cfddf5d730a720990ff0cfb988046709d75391c34967b6baf  ./docs/V7_5_1_TO_V7_6_CHANGE_REPORT.md
@@ -285,6 +285,11 @@ ce2b6e67d021f7d51d2af88836a91385fea78c431d86142b28befed94ef8ba78  ./docs/tasks/0
 ed2cd63a7971db47b26c6044215dd190f8fdba6256bcc3c0e62e6cf5d4c1daf6  ./docs/tasks/023-deposits/draft/deposits.json
 bda42a20d8dd545a4befd2e5d02516315a9e47ccee0c5305ece7c838c17bdac3  ./docs/tasks/023-deposits/draft/validation-v7.7.8-draft.json
 e12ec0f0ed69415c099ef3bcb18a97915b9a964a62ab80eb39de3e24f3c0e745  ./docs/tasks/023-deposits/scope.json
+13323c2ca71b3dfaaf54f396e120a23f889c1585f7462635b2e9675b4ec40da2  ./docs/tasks/024-energy-consumer-node/TASK_RU.md
+d85df745ccdfd14f9449b6ab99ed2c48f32279ffbe6dbe43d82b341ed9073c7c  ./docs/tasks/024-energy-consumer-node/fixtures/process-energy.json
+acbec86cbb28343cf6c71820df4c3a8fa43c24c16c6ac1ff16baad2d8778c89b  ./docs/tasks/024-energy-consumer-node/reference/definition_fingerprint.mjs
+fbc3eaa16d72347a6f60f6d7bf4977daf6d9160e6b01a18d91b2ab0816c4ab5d  ./docs/tasks/024-energy-consumer-node/reference/energy_consumer_prototype.mjs
+551747b9207a8530c1a94396880ea33c99f4524418fd5074913b57f92b0555c3  ./docs/tasks/024-energy-consumer-node/scope.json
 44d2e557f1cb2322739bc95ee2b6dcbf6d6fcb708da14e90d53250936e50da5c  ./docs/tasks/README_RU.md
 bbf818e93b88d606b3137b1bb69d60db8c41c9df4089025a921b1ca00f473244  ./lab/APPLY_PATCH.cmd
 8adf72dd1c88343e9a40906d500c1f1a70322fbb8101d9b87ee9cb0c72895005  ./lab/CHANGELOG.md
