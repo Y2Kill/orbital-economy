@@ -158,4 +158,5 @@ Only after Planet v1 is sufficiently rich:
 - replace hard-coded A/B demonstration topology with reusable templates;
 - support a graph/network of settlements/planets and transport links;
 - enable resource/energy/industry/logistics-driven specialization;
+- levels of economy (owner, 2026-10-02): a planetary economy (possibly one shared transport), metropolis/colony (its own mechanism), interstate trade (its own rules); shared transport's energy and similar cross-economy interactions are decided at that level, not in Planet v1;
 - preserve deterministic reproducibility and accepted checkpoints.
