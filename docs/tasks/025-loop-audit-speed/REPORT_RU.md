@@ -122,4 +122,8 @@ Reference-прототип остаётся только проверочным 
 - версия остаётся Lab v0.9.14.
 
 Доказательство:
-- CI новой головы будет указан после завершения; требуется зелёный полный run и фактическое время шага `Loop self-test`.
+- code head раунда 2: `1ff612dbbe54de77a868960c31e69fbcd6cc8c81`;
+- GitHub Actions: https://github.com/Y2Kill/orbital-economy/actions/runs/37051035110 — `completed / success`;
+- `Loop self-test`: 19/19 PASS, 18:58:53–18:59:57 UTC = **1:04**;
+- весь `bench-selftests`: 18:58:35–19:03:57 UTC = **5:22**;
+- на Windows по reviewer-проверке ожидаемый/наблюдаемый contract раунда 2: loop QA ≤ 2 мин; N1/N3 и остальные self-tests уже были подтверждены до этой правки.
