@@ -990,8 +990,10 @@ await expect('29. energy_consumer fragments merge idempotently; loops/audit PASS
   if (conformance.status !== 'PASS') throw new Error(`conformance status=${conformance.status}`);
   const audits = runStructureAudits(energyState.model, merged);
   if (audits.status !== 'PASS') throw new Error(`structure audit status=${audits.status}`);
-  if (audits.algebraicLoops?.combinations !== 32768 || audits.algebraicLoops?.combinationsWithLoops !== 0) {
-    throw new Error(`loops=${audits.algebraicLoops?.combinationsWithLoops}/${audits.algebraicLoops?.combinations}, expected 0/32768`);
+  const baselineCombinations = baselineAudits.algebraicLoops?.combinations;
+  if (!Number.isInteger(baselineCombinations)) throw new Error(`baseline loop combinations missing: ${baselineCombinations}`);
+  if (audits.algebraicLoops?.combinations !== baselineCombinations || audits.algebraicLoops?.combinationsWithLoops !== 0) {
+    throw new Error(`loops=${audits.algebraicLoops?.combinationsWithLoops}/${audits.algebraicLoops?.combinations}, expected 0/${baselineCombinations} (same as baseline)`);
   }
   if (audits.openBoundaries?.summary?.unclassified !== 0) throw new Error(`unclassified=${audits.openBoundaries?.summary?.unclassified}`);
   const before = baselineAudits.planetClosure?.counters?.P3?.requests ?? 0;
@@ -1000,7 +1002,7 @@ await expect('29. energy_consumer fragments merge idempotently; loops/audit PASS
   const energyErrors = (audits.planetClosure?.errors || []).filter(e => /energy/i.test(e.message));
   if (energyErrors.length) throw new Error(`planet energy errors: ${energyErrors.map(e => e.message).join('; ')}`);
   energyState.validation = merged;
-  return `conformance PASS; loops=0/32768; unclassified=0; P3.requests ${before}->${after}; merge idempotent`;
+  return `conformance PASS; loops=0/${baselineCombinations} (same as baseline); unclassified=0; P3.requests ${before}->${after}; merge idempotent`;
 });
 
 await expect('30. deficit trial keeps priority fulfillment >= general fulfillment', () => {

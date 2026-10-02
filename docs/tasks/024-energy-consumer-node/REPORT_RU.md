@@ -25,3 +25,8 @@
 Дальше:
 - проверить CI КТ1 отдельно;
 - КТ2: validation fragments/merge, `planet_closure energy.signal/fulfillment`, `energy_balance priority`, QA 29–31, planet 17–18 и QA 43.
+
+### Перенос ветки — 2026-10-02 — новый main и лимит CI
+Ветка перенесена владельцем на новый `main` `beeeff0d5b298cfddc1a1282e16c62a8a06199e3`; продолжение начинается с головы `c62ec8daad3460d373d11cd2708178d9d888cb5a`. Старые SHA выше сохранены как исторические записи журнала. Лимит `bench-selftests` в CI поднят до 60 минут и манифесты пересобраны владельцем. Предыдущий длинный прогон был остановлен таймаутом CI, а не диагностированным дефектом кода.
+
+Уточнение приёмочного oracle для case 29/N3: `Process Energy Enabled` ещё не проводится сценариями принятой модели (это задача 025), поэтому аудит петель не добавляет новую перебираемую ось. Case 29 должен требовать `combinationsWithLoops === 0` и `combinations === baselineAudits.algebraicLoops.combinations` того же случая, без константы 32768.
