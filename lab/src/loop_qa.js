@@ -89,7 +89,7 @@ const modesWith = (raw, sw) => raw.scenarios.map((s, i) => [Number(s.values?.['T
 const tmp = fs.mkdtempSync(path.join(os.tmpdir(), 'orbital-economy-loop-qa-'));
 
 console.log('Orbital Economy Lab algebraic-loop QA');
-console.log('15 switch-aware static-audit cases.\n');
+console.log('19 switch-aware static-audit cases.\n');
 
 try {
   await expect('1 accepted model has no algebraic loops', () => {
@@ -355,6 +355,74 @@ try {
         && x.reference === ' definitely missing element '
         && /unresolved reference/i.test(x.message)
         && /definitely missing element/i.test(x.message));
+  });
+
+  await expect('16 fast path is byte-identical to exhaustive on accepted, v7.6 r1 and mutation 001', () => {
+    for (const [label, raw] of [['accepted', accepted], ['v7.6 r1', v76r1], ['mutation 001', mut001]]) {
+      const fastAudit = JSON.stringify(auditAlgebraicLoops(raw));
+      const exhaustiveAudit = JSON.stringify(auditAlgebraicLoops(raw, { exhaustive: true }));
+      if (fastAudit !== exhaustiveAudit) throw new Error(`${label}: audit JSON differs`);
+      const fastDetails = JSON.stringify(algebraicLoopCombinationDetails(raw));
+      const exhaustiveDetails = JSON.stringify(algebraicLoopCombinationDetails(raw, { exhaustive: true }));
+      if (fastDetails !== exhaustiveDetails) throw new Error(`${label}: details JSON differs`);
+    }
+    const mut = auditAlgebraicLoops(mut001);
+    if (mut.combinationsWithLoops <= 0 || mut.loops.length === 0) throw new Error('mutation 001 comparison was not substantive');
+    return `accepted/v7.6/mutation audit+details identical; mutation loops=${mut.loops.length}, combinationsWithLoops=${mut.combinationsWithLoops}`;
+  });
+
+  await expect('17 relevant-switch projection preserves counts and examples on six-switch synthetic model', () => {
+    const raw = { name: 'QA relevant-switch projection', elements: [], scenarios: [{ name: 'Mode 0', values: {} }] };
+    for (let i = 1; i <= 6; i++) {
+      addVariable(raw, `S${i}`, 0);
+      raw.scenarios[0].values[`S${i}`] = 0;
+    }
+    addVariable(raw, 'QA L1 A', 'IfThenElse([S1] = 1, [QA L1 B], 0)');
+    addVariable(raw, 'QA L1 B', '[QA L1 A]');
+    addVariable(raw, 'QA L2 A', 'IfThenElse([S2] = 1, IfThenElse([S3] = 0, [QA L2 B], 0), 0)');
+    addVariable(raw, 'QA L2 B', '[QA L2 A]');
+    addVariable(raw, 'QA Outside S4', 'IfThenElse([S4] = 1, 4, 0)');
+    addVariable(raw, 'QA Outside S5', 'IfThenElse([S5] = 1, 5, 0)');
+    addVariable(raw, 'QA Outside Sink', '[QA Outside S4] + [QA Outside S5]');
+
+    const fast = auditAlgebraicLoops(raw);
+    const exhaustive = auditAlgebraicLoops(raw, { exhaustive: true });
+    const fastDetails = algebraicLoopCombinationDetails(raw);
+    const exhaustiveDetails = algebraicLoopCombinationDetails(raw, { exhaustive: true });
+    if (JSON.stringify(fast) !== JSON.stringify(exhaustive)) throw new Error('audit differs from exhaustive');
+    if (JSON.stringify(fastDetails) !== JSON.stringify(exhaustiveDetails)) throw new Error('details differ from exhaustive');
+    if (fast.switches.join(',') !== 'S1,S2,S3,S4,S5,S6' || fast.combinations !== 64) throw new Error(`switch shape mismatch: ${JSON.stringify(fast.switches)} / ${fast.combinations}`);
+    const l1 = fast.loops.find(x => x.members.includes('QA L1 A'));
+    const l2 = fast.loops.find(x => x.members.includes('QA L2 A'));
+    if (!l1 || l1.combinations !== 32 || l1.example.join(',') !== 'S1') throw new Error(`L1 mismatch: ${JSON.stringify(l1)}`);
+    if (!l2 || l2.combinations !== 16 || l2.example.join(',') !== 'S2') throw new Error(`L2 mismatch: ${JSON.stringify(l2)}`);
+    return '64 combinations; L1=32 example S1; L2=16 example S2; audit/details identical';
+  });
+
+  await expect('18 undecidable non-switch condition remains conservative and byte-identical to exhaustive', () => {
+    const raw = { name: 'QA undecidable condition', elements: [], scenarios: [{ name: 'Mode 0', values: { S1: 0 } }] };
+    addVariable(raw, 'S1', 0);
+    addVariable(raw, 'QA Non Switch Gate', 1);
+    addVariable(raw, 'QA Unknown A', 'IfThenElse([QA Non Switch Gate] > 0, IfThenElse([S1] = 1, [QA Unknown B], 0), 0)');
+    addVariable(raw, 'QA Unknown B', '[QA Unknown A]');
+    const fast = auditAlgebraicLoops(raw);
+    const exhaustive = auditAlgebraicLoops(raw, { exhaustive: true });
+    const fastDetails = algebraicLoopCombinationDetails(raw);
+    const exhaustiveDetails = algebraicLoopCombinationDetails(raw, { exhaustive: true });
+    if (JSON.stringify(fast) !== JSON.stringify(exhaustive)) throw new Error('audit differs from exhaustive');
+    if (JSON.stringify(fastDetails) !== JSON.stringify(exhaustiveDetails)) throw new Error('details differ from exhaustive');
+    if (fast.combinations !== 2 || fast.combinationsWithLoops !== 1 || fast.loops.length !== 1) throw new Error(JSON.stringify(fast));
+    if (fast.loops[0].example.join(',') !== 'S1') throw new Error(`unexpected example: ${JSON.stringify(fast.loops[0].example)}`);
+    return 'undecidable gate retained conservatively; 1/2 combinations loop; identical to exhaustive';
+  });
+
+  await expect('19 fast path is deterministic across consecutive runs with warm caches', () => {
+    const a1 = JSON.stringify(auditAlgebraicLoops(mut001));
+    const d1 = JSON.stringify(algebraicLoopCombinationDetails(mut001));
+    const a2 = JSON.stringify(auditAlgebraicLoops(mut001));
+    const d2 = JSON.stringify(algebraicLoopCombinationDetails(mut001));
+    if (a1 !== a2 || d1 !== d2) throw new Error('warm-cache fast results differ');
+    return 'audit and details byte-identical across consecutive fast runs';
   });
 } catch (e) {
   console.error('[FAIL] loop QA crashed:', e?.message || e);

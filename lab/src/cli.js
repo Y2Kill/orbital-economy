@@ -31,6 +31,7 @@ Recommended workspace commands:
   policy [accepted.json] [candidate.json] [validation.json] [policy.json] [--modes=all] [--out=DIR]
   evaluate-policy <model-comparison.json> [policy.json] [--out=DIR]
   conformance [model.json] [validation.json] [--out=DIR]
+  loops <model.json> [--exhaustive] [--out=DIR]
   audit [model.json] [validation.json] [--planet-closure=file.json] [--out=DIR]
   apply-patch <patch.json> [base.json] [--out=candidate.json]
   expand-nodes <node-or-patch.json> <base-model.json> [--out=DIR] [--validation=file.json]
@@ -188,7 +189,7 @@ try {
     if (!positional[1]) throw new Error('Need a path to model.json');
     const modelFile = positional[1];
     const outDir = ensureDir(options.out || path.resolve('output', `loops-${new Date().toISOString().replace(/[:.]/g, '-')}`));
-    const report = runLoopsCommand({ modelFile, outDir });
+    const report = runLoopsCommand({ modelFile, outDir, exhaustive: !!options.exhaustive });
     process.exitCode = report.status === 'FAIL' ? 1 : 0;
   } else if (cmd === 'audit') {
     let modelFile = positional[1] || null;

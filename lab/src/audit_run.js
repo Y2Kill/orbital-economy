@@ -269,10 +269,10 @@ function writeLoopReports(outDir, report) {
   fs.writeFileSync(path.join(outDir, 'algebraic-loops.md'), l.join('\n'), 'utf8');
 }
 
-export function runLoopsCommand({ modelFile, outDir }) {
+export function runLoopsCommand({ modelFile, outDir, exhaustive = false }) {
   const raw = readJson(modelFile);
   const started = process.hrtime.bigint();
-  const result = auditAlgebraicLoops(raw);
+  const result = auditAlgebraicLoops(raw, { exhaustive });
   const runtimeSeconds = Number(process.hrtime.bigint() - started) / 1e9;
   const report = {
     generated: nowIso(),
