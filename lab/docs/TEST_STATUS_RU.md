@@ -1,4 +1,4 @@
-# Статус проверок Orbital Economy Lab v0.9.13 — baseline v7.7.8 r1
+# Статус проверок Orbital Economy Lab v0.9.14 — baseline v7.7.8 r1
 
 ## Принятая основа
 
@@ -37,10 +37,18 @@
 | `POLICY_SELF_TEST.cmd` | **PASS** 10/10 |
 | `CONFORMANCE_SELF_TEST.cmd` | **PASS** 18/18 |
 | `STRUCTURE_SELF_TEST.cmd` | **PASS** 21/21 |
-| `LOOP_SELF_TEST.cmd` | **PASS** 15/15 (Windows, promotion v7.7.8); accepted 14 switches / 16384; v7.6 r1 = 16/32; ожидания для accepted выводятся из модели (с v7.7.2) |
+| `LOOP_SELF_TEST.cmd` | **19 cases в v0.9.14**; fast/exhaustive byte identity — финальный CI задачи 025 фиксируется в `docs/tasks/025-loop-audit-speed/REPORT_RU.md` |
 | `PLANET_SELF_TEST.cmd` | **PASS** 18/18 (Linux CI task 024; cases 17–18 — energy signal/fulfillment) |
 | `NODE_SELF_TEST.cmd` | **PASS** 33/33 (Linux CI task 024); cases 28–33 — `energy_consumer`, fingerprint `fe5f022b5d81ec3b`, integration и strip/rebuild |
 | `COMPARE_SELF_TEST.cmd` | **PASS** |
+
+## Lab v0.9.14 — exact loop-audit speed-up (задача 025)
+
+Harness-only оптимизация `loop_audit.js`: candidate SCC filtering, condition cache, static formula/component cache и relevant-switch projection. Формат algebraic-loop отчёта не меняется; `{ exhaustive: true }` и CLI `--exhaustive` сохраняют прежний полный 2^n путь как встроенный эталон.
+
+LOOP QA расширен до 19 cases. Главный критерий — побайтное равенство fast/exhaustive audit JSON и `algebraicLoopCombinationDetails`; точные CI run/timings КТ1 и КТ2 находятся в отчёте задачи 025.
+
+Accepted model, validation и policy не меняются.
 
 ## Lab v0.9.13 — energy_consumer (задача 024)
 

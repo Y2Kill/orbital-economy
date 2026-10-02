@@ -1,6 +1,6 @@
-# Orbital Economy Lab v0.9.13
+# Orbital Economy Lab v0.9.14
 
-Локальный стенд для запуска, проверки, regression-анализа, policy-gating, Capital Lifecycle Kernel и статических аудитов структуры для ModelJSON Orbital Economy. v0.9.13 добавляет declarative `energy_consumer`, явный STOCK-сигнал энергетического запроса в Planet closure и runtime-проверку приоритетных потребителей. v0.9.12 добавляет node `deposit`, безопасный `retarget_flows` для endpoints существующих FLOW и deposit conformance/runtime checks. v0.9.11 расширяет `simple_capital`: smooth cap для скорости без capacity-параметра и раздельный initial sizing signal по колониям. v0.9.10 добавляет строгую статическую схему validation: ошибки формы блокируют запуск до simulation. v0.9.6 добавляет `planet_closure`: декларативную per-process карту критериев Planet v1 P2–P6 с dependency paths, exceptions/debt counters и режимами `report/classify/planet_v1/planet_strict`.
+Локальный стенд для запуска, проверки, regression-анализа, policy-gating, Capital Lifecycle Kernel и статических аудитов структуры для ModelJSON Orbital Economy. v0.9.14 ускоряет switch-aware algebraic-loop audit точными сокращениями без изменения результата и сохраняет полный `--exhaustive` путь как эталон. v0.9.13 добавляет declarative `energy_consumer`, явный STOCK-сигнал энергетического запроса в Planet closure и runtime-проверку приоритетных потребителей. v0.9.12 добавляет node `deposit`, безопасный `retarget_flows` для endpoints существующих FLOW и deposit conformance/runtime checks. v0.9.11 расширяет `simple_capital`: smooth cap для скорости без capacity-параметра и раздельный initial sizing signal по колониям. v0.9.10 добавляет строгую статическую схему validation: ошибки формы блокируют запуск до simulation. v0.9.6 добавляет `planet_closure`: декларативную per-process карту критериев Planet v1 P2–P6 с dependency paths, exceptions/debt counters и режимами `report/classify/planet_v1/planet_strict`.
 
 ## Подтверждённая база
 
@@ -32,6 +32,14 @@
 
 ---
 
+
+# 0l. Что изменилось в v0.9.14
+
+Algebraic-loop audit ускорен без изменения публичного результата: перебор ограничивается candidate SCC nodes объединённого графа, решения условий кэшируются, статические формулы и SCC одинаковых графов переиспользуются, а switch masks проектируются на реально значимые для candidate graph переключатели.
+
+Полный прежний алгоритм сохранён как `auditAlgebraicLoops(raw, { exhaustive: true })` / `algebraicLoopCombinationDetails(raw, { exhaustive: true })` и CLI `loops model.json --exhaustive`. Default остаётся синхронным и использует быстрый точный путь.
+
+LOOP_SELF_TEST расширен до 19 случаев с byte-identical fast/exhaustive oracle. Model, validation, policy, engine, vendor, tools и `model/nodes/*` не меняются.
 
 # 0k. Что изменилось в v0.9.13
 

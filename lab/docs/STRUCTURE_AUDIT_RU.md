@@ -1,4 +1,4 @@
-# Structure audits — границы, A/B-симметрия, алгебраические петли и Planet v1 closure (Lab v0.9.9)
+# Structure audits — границы, A/B-симметрия, алгебраические петли и Planet v1 closure (Lab v0.9.14)
 
 Четыре статические проверки структуры ModelJSON, выполняемые до симуляции. `open_boundaries`, `colony_symmetry` и `planet_closure` объявляются как плагины validation JSON. `algebraic_loops` выполняется **всегда**, независимо от validation. `planet_closure` с v0.9.6 связывает физические source-процессы с декларативным контрактом Planet v1 по мощности, энергии, исчерпаемым запасам, труду и внешнему спросу.
 
@@ -249,7 +249,7 @@ PLANET_SELF_TEST.cmd
 
 Интеграция старых plugin-аудитов: `runStructureAudits` объединяет их; статические плагины не порождают runtime-записей (регресс-тест на «Неизвестный plugin» WARN); `compareModels` с асимметричным candidate → `NOT_COMPARED` без симуляции.
 
-`LOOP_SELF_TEST.cmd`: 15 случаев. Accepted v7.7.8 r1 → 14 switches / 16384 combinations / 0 loops (v7.7.1 r1: 7 / 128); v7.6 r1 → 16/32 loop combinations и Modes 25–26; мутация задачи 001 r1 → половина комбинаций и Modes 17–33 (на v7.7.2); lower-case construction-materials mutation → половина и Modes 27–33; unresolved reference → FAIL; дополнительно engine agreement, STOCK/FLOW/self-loop, parser FAIL, static compare gate и deterministic JSON.
+ `LOOP_SELF_TEST.cmd`: **19 случаев**. Cases 1–15 сохраняют прежние ожидания. Cases 16–19 доказывают byte-identical fast/exhaustive audit+details на реальных и синтетических моделях, корректность relevant-switch projection, консервативность неразрешимого non-switch условия и детерминизм прогретых кэшей.
 
 `PLANET_SELF_TEST.cmd`: **16 случаев**. Эталонные P2–P6 counters, L1–L5 false declarations с shortest paths, completeness/enforce modes, reversibility, deposits, demand/labor negatives, case-insensitive names, structure/CLI/static-only integration и deterministic JSON.
 
@@ -268,3 +268,34 @@ PLANET_SELF_TEST.cmd
 ### Изменения P2 / boundary в v0.9.9
 
 `simple` — полноценный P2 capital kind, а не exception. Счётчик P2 печатается как `kernel / simple / exceptions / undeclared`; на неизменённой accepted v7.7.4 r1 это было `11 / 0 / 6 / 0`, на v7.7.5 r1 — `11 / 2 / 4 / 0`, на v7.7.6 r1 — `11 / 4 / 2 / 0`, на v7.7.7 r1 — `11 / 6 / 0 / 0`. Generated `capital_retirement` — закрытая sink-категория open boundaries для Depreciation/Retirement simple-capital stock. Case 10 node QA на временно раскрытой regolith fixture получает `P2.simple=2`, 0 unclassified boundary flows и 0 algebraic loops.
+
+
+### Точное ускорение algebraic-loop audit (v0.9.14)
+
+Публичный отчёт и семантика проверки не изменены. По умолчанию `auditAlgebraicLoops` использует четыре точных сокращения:
+
+1. **Candidate SCC nodes.** Сначала строится объединённый граф с пустым окружением: все неразрешимые условия сохраняют обе ветки и зависимости условия. Граф любой switch-комбинации является его подграфом, поэтому любая возможная петля целиком лежит в нетривиальной SCC этого объединённого графа (self-loop тоже считается). Далее перебор ограничен этими узлами, сохраняя исходный порядок элементов.
+2. **Condition cache.** `decideCondition` кэшируется по уже подставленной строке условия; результат — чистая функция этой строки.
+3. **Static formulas + component cache.** Формулы без `IfThenElse` рендерятся один раз. Для switch-зависимых candidate formulas строится подпись графа; одинаковая подпись повторно использует уже найденные SCC и shortest cycles.
+4. **Relevant-switch projection.** Значимы только scenario switches, читаемые условиями `IfThenElse` в candidate formulas. Перебираются только их маски; каждая такая маска имеет вес `2^(n-r)`. Эти веса точно восстанавливают `combinationsWithLoops` и `loops[].combinations`. Встраивание маски сохраняет порядок битов, поэтому `example` остаётся тем же, что при полном переборе. `algebraicLoopCombinationDetails` по-прежнему перечисляет все `2^n` комбинаций, но SCC берёт по projected mask.
+
+Почему это точные, а не эвристические оптимизации: сокращения не добавляют и не удаляют рёбра внутри SCC конкретной комбинации; они только заранее отбрасывают узлы, которые не могут лежать ни в одной петле, и переиспользуют результаты для доказанно одинаковых графов.
+
+Modes проверяются через тот же component cache, но scenario environment сохраняет все переданные числовые значения, включая не-switch параметры; поэтому scenario-specific pruning остаётся прежним.
+
+#### Exhaustive reference path
+
+Для проверки эквивалентности сохранён прежний полный алгоритм:
+
+```js
+auditAlgebraicLoops(raw, { exhaustive: true })
+algebraicLoopCombinationDetails(raw, { exhaustive: true })
+```
+
+CLI:
+
+```cmd
+node src\cli.js loops model.json --exhaustive --out=output\loops-exhaustive
+```
+
+Без `--exhaustive` используется быстрый путь. Формат JSON/Markdown, состав и порядок полей не меняются; exhaustive нужен как эталон и диагностический режим, а не как отдельный вид отчёта.

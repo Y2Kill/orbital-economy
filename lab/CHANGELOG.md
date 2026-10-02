@@ -1,5 +1,15 @@
 # Changelog
 
+## v0.9.14 — exact algebraic-loop audit speed-up
+
+- default `auditAlgebraicLoops` использует четыре точных сокращения: candidate SCC nodes, condition cache, static formula/component cache, relevant-switch projection;
+- прежний полный 2^n алгоритм сохранён как `{ exhaustive: true }`; CLI: `loops <model.json> --exhaustive`;
+- публичная форма audit/details и порядок полей не меняются; основной oracle — byte-identical fast/exhaustive JSON;
+- LOOP_SELF_TEST расширен с 15 до 19 cases: real-model equality, six-switch projection, undecidable non-switch condition, warm-cache determinism;
+- алгоритм остаётся синхронным; worker threads не вводятся;
+- Lab/package/CLI version → v0.9.14; accepted model, validation, policy, engine, `model/nodes/*`, tools и vendor не изменены.
+
+
 ## v0.9.13 — energy_consumer node
 
 - новый declarative type `energy_consumer`: process rates → smoothed energy signal → requested/allocated energy → fulfillment-limited rate;

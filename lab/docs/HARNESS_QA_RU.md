@@ -1,4 +1,4 @@
-# QA самого Orbital Economy Lab v0.9.13
+# QA самого Orbital Economy Lab v0.9.14
 
 ## 1. Operational QA
 
@@ -241,3 +241,15 @@ Static fail-fast comparator включает failures `simple_capital` в hard-e
 `QA_SELF_TEST.cmd` расширен до **43** случаев: новый runtime case проверяет `energy_balance.priority` на FAIL, PASS, `abs_tol` и backward compatibility без `priority`.
 
 Linux CI КТ2: https://github.com/Y2Kill/orbital-economy/actions/runs/37006501565 — полностью зелёный: QA 43/43, Planet 18/18, Structure 21/21, Loop 15/15, Conformance 18/18, Policy 10/10, Compare PASS, Bench Modes 0,12 OVERALL PASS. Case 29 требует loops=0 и число combinations, равное baseline-аудиту; на принятой v7.7.8 это 16384.
+
+
+## 3j. Exact loop-audit speed QA (v0.9.14)
+
+`LOOP_SELF_TEST.cmd` расширен с 15 до **19** случаев, при этом cases 1–15 не меняют ожиданий.
+
+- 16 — быстрый и `{ exhaustive: true }` пути дают byte-identical audit JSON и combination details на accepted v7.7.8, v7.6 r1 и содержательной mutation 001;
+- 17 — синтетика с 6 switches проверяет веса relevant-switch projection, `loops[].combinations` и `example` против полного перебора;
+- 18 — условие с non-switch variable остаётся неразрешимым/консервативным и совпадает с exhaustive;
+- 19 — два последовательных fast-прогона в одном процессе дают побайтно одинаковые audit/details при прогретом condition cache.
+
+`loops --exhaustive` проводит CLI к сохранённому прежнему 2^n алгоритму; default CLI использует быстрый точный путь. Главный oracle — `JSON.stringify(fast) === JSON.stringify(exhaustive)` для audit и details, а не только совпадение счётчиков.
