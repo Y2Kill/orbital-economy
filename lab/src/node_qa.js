@@ -28,6 +28,10 @@ import {
   depositReplacementNames,
   depositRetargetFlowNames
 } from './nodes/deposit.js';
+import {
+  energyConsumerGeneratedNames,
+  energyConsumerReplacementNames
+} from './nodes/energy_consumer.js';
 import { runLifecycleConformance } from './lifecycle_conformance.js';
 import { runStructureAudits } from './structure_audit.js';
 
@@ -63,6 +67,7 @@ const allNodeDeclarations = fs.readdirSync(nodeDir)
   .map(file => ({ file, decl: readJson(file) }));
 const simpleDeclarations = allNodeDeclarations.filter(x => x.decl?.type === 'simple_capital');
 const depositDeclarations = allNodeDeclarations.filter(x => x.decl?.type === 'deposit');
+const energyDeclarations = allNodeDeclarations.filter(x => x.decl?.type === 'energy_consumer');
 
 let passed = 0, failed = 0;
 function mark(ok, name, detail = '') {
@@ -188,6 +193,21 @@ function stripDepositNode(raw, decl) {
   return out;
 }
 
+function stripEnergyConsumerNode(raw, decl) {
+  const out = structuredClone(raw);
+  const generated = new Set(energyConsumerGeneratedNames(decl));
+  for (const name of energyConsumerReplacementNames(decl)) {
+    const e = out.elements.find(x => x.type !== 'LINK' && x.name === name);
+    if (!e) throw new Error(`energy_consumer: replacement target missing while stripping: ${name}`);
+    e.behavior.value = oldBranch(e.behavior.value, decl.switch, name);
+  }
+  out.elements = out.elements.filter(e => {
+    if (e.type === 'LINK') return !generated.has(e.from) && !generated.has(e.to);
+    return !generated.has(e.name);
+  });
+  return out;
+}
+
 function def(e) {
   return JSON.stringify({
     type: e.type,
@@ -261,7 +281,8 @@ function outerSwitchIs(model, name, switchName) {
 const layeredNodes = [
   ...declarations.map(decl => ({ decl, strip: stripNode, targets: capitalLifecycleReplacementNames })),
   ...simpleDeclarations.map(({ decl }) => ({ decl, strip: stripSimpleNode, targets: simpleCapitalReplacementNames })),
-  ...depositDeclarations.map(({ decl }) => ({ decl, strip: stripDepositNode, targets: depositReplacementNames }))
+  ...depositDeclarations.map(({ decl }) => ({ decl, strip: stripDepositNode, targets: depositReplacementNames })),
+  ...energyDeclarations.map(({ decl }) => ({ decl, strip: stripEnergyConsumerNode, targets: energyConsumerReplacementNames }))
 ];
 const layers = new Map();
 {
@@ -898,49 +919,158 @@ await expect('27. explicit retarget_flows applies after add_elements and compare
 
 let energyState = null;
 
+function validationWithoutEnergyFragment(raw, fragment) {
+  const out = structuredClone(raw);
+  const eb = out.plugins?.find(p => p.type === 'energy_balance');
+  if (eb) {
+    const consumers = new Set(fragment.energy_balance_consumers || []);
+    eb.consumers = (eb.consumers || []).filter(x => !consumers.has(x));
+    const priority = new Set(fragment.energy_balance_priority || []);
+    if (Array.isArray(eb.priority)) {
+      eb.priority = eb.priority.filter(x => !priority.has(x));
+      if (!eb.priority.length) delete eb.priority;
+    }
+  }
+  const boundaries = out.plugins?.find(p => p.type === 'open_boundaries');
+  const information = boundaries?.categories?.find(c => c.id === 'information_signal');
+  const info = new Set(fragment.information_signal_names || []);
+  if (information?.name) information.name = information.name.filter(x => !info.has(x));
+  const planet = out.plugins?.find(p => p.type === 'planet_closure');
+  for (const generated of fragment.planet_energies || []) {
+    const p = planet?.processes?.find(x => x.id === generated.process);
+    if (p && JSON.stringify(p.energy) === JSON.stringify(generated.energy)) {
+      p.energy = { kind: 'none', reason: 'node QA peeled energy_consumer layer' };
+    }
+  }
+  return out;
+}
+
+function assertEnergyRebuild(decl, target) {
+  const baseModel = stripEnergyConsumerNode(target, decl);
+  const expanded = expandNode(decl, baseModel);
+  const rebuilt = applyPatch(baseModel, { format: PATCH_FORMAT, ...expanded.patch }).model;
+  const a = new Map(target.elements.filter(e => e.type !== 'LINK').map(e => [e.name, def(e)]));
+  const b = new Map(rebuilt.elements.filter(e => e.type !== 'LINK').map(e => [e.name, def(e)]));
+  if (a.size !== b.size) throw new Error(`element count differs: ${a.size} vs ${b.size}`);
+  for (const [name, definition] of a) if (b.get(name) !== definition) throw new Error(`definition differs after rebuild: ${name}`);
+  if (!sameSet(linkSet(target), linkSet(rebuilt))) throw new Error('link set differs after energy_consumer rebuild');
+  return expanded;
+}
+
 await expect('28. energy_consumer fixture expands and APPLY_PATCH matches prototype counts/fingerprint', () => {
-  const expanded = expandNode(energyFixture, accepted);
-  const model = applyPatch(accepted, { format: PATCH_FORMAT, ...expanded.patch }).model;
+  const probe = `${energyFixture.colonies[0]} ${energyFixture.consumers[0].consumer} Requested Energy`;
+  const alreadyPresent = accepted.elements.some(e => e.type !== 'LINK' && e.name === probe);
+  const acceptedDecl = energyDeclarations.find(x => x.decl.switch === energyFixture.switch)?.decl || null;
+  const acceptedLayer = alreadyPresent && acceptedDecl ? layers.get(acceptedDecl) : null;
+  if (alreadyPresent && !acceptedLayer) throw new Error('energy_consumer layer is present in accepted model but its declaration/layer cannot be identified');
+  const baseModel = alreadyPresent ? acceptedLayer.base : accepted;
+  const target = alreadyPresent ? acceptedLayer.target : null;
+  const expanded = expandNode(energyFixture, baseModel);
+  const model = alreadyPresent ? target : applyPatch(baseModel, { format: PATCH_FORMAT, ...expanded.patch }).model;
   const counts = [expanded.patch.add_elements.length, expanded.patch.replace_formulas.length, expanded.patch.add_links.length];
   if (counts.join('/') !== '71/14/232') throw new Error(`prototype count mismatch: got ${counts.join('/')}, expected 71/14/232`);
   const fp = definitionFingerprint(model);
-  if (fp !== 'fe5f022b5d81ec3b') throw new Error(`definition fingerprint ${fp}, expected fe5f022b5d81ec3b`);
-  energyState = { base: accepted, model, expanded };
+  if (!alreadyPresent && fp !== 'fe5f022b5d81ec3b') throw new Error(`definition fingerprint ${fp}, expected fe5f022b5d81ec3b`);
+  energyState = { base: baseModel, model, expanded, alreadyPresent, target: model };
   return `71 elements / 14 replacements / 232 links; fingerprint=${fp}`;
 });
 
+await expect('29. energy_consumer fragments merge idempotently; loops/audit PASS and P3 requests +8', () => {
+  if (!energyState) throw new Error('case 28 did not produce energy state');
+  const baselineValidation = energyState.alreadyPresent ? validationWithoutEnergyFragment(validation, energyState.expanded.validation) : validation;
+  const baselineAudits = runStructureAudits(energyState.base, baselineValidation);
+  const merged = mergeNodeValidation(baselineValidation, [energyState.expanded.validation]);
+  const twice = mergeNodeValidation(merged, [energyState.expanded.validation]);
+  if (JSON.stringify(merged) !== JSON.stringify(twice)) throw new Error('energy validation merge is not idempotent');
+  const eb = merged.plugins.find(p => p.type === 'energy_balance');
+  for (const k of energyState.expanded.validation.energy_balance_consumers) if (!eb?.consumers?.includes(k)) throw new Error(`energy_balance consumer missing: ${k}`);
+  for (const k of energyState.expanded.validation.energy_balance_priority) if (!eb?.priority?.includes(k)) throw new Error(`energy_balance priority missing: ${k}`);
+  const audits = runStructureAudits(energyState.model, merged);
+  if (audits.status !== 'PASS') throw new Error(`structure audit status=${audits.status}`);
+  if (audits.algebraicLoops?.combinationsWithLoops !== 0) throw new Error(`loops=${audits.algebraicLoops?.combinationsWithLoops}`);
+  if (audits.openBoundaries?.summary?.unclassified !== 0) throw new Error(`unclassified=${audits.openBoundaries?.summary?.unclassified}`);
+  const before = baselineAudits.planetClosure?.counters?.P3?.requests ?? 0;
+  const after = audits.planetClosure?.counters?.P3?.requests ?? 0;
+  if (after !== before + 8) throw new Error(`P3.requests delta=${after - before}, expected +8`);
+  const energyErrors = (audits.planetClosure?.errors || []).filter(e => /energy/i.test(e.message));
+  if (energyErrors.length) throw new Error(`planet energy errors: ${energyErrors.map(e => e.message).join('; ')}`);
+  energyState.validation = merged;
+  return `loops=0; unclassified=0; P3.requests ${before}->${after}; merge idempotent`;
+});
+
+await expect('30. deficit trial keeps priority fulfillment >= general fulfillment', () => {
+  if (!energyState?.validation) throw new Error('case 29 did not produce merged validation');
+  const scenarios = energyState.model.scenarios || [];
+  if (!scenarios.length) throw new Error('model has no scenarios');
+  const source = scenarios[scenarios.length - 1];
+  const trial = structuredClone(source);
+  trial.name = `${source.name || 'last mode'} — Node QA energy consumer deficit`;
+  trial.values = { ...trial.values, [energyFixture.switch]: 1 };
+  const simModel = loadModelJSON(modelJsonForScenario(energyState.model, trial));
+  const modelErrors = simModel.check();
+  if (modelErrors.length) throw new Error(`trial model.check() returned ${modelErrors.length}: ${modelErrors.map(e => e.message || e).join('; ')}`);
+  const results = simModel.simulate();
+  const ctx = seriesContext(simModel, results);
+  const runtime = [checkTimeAxis(results, energyState.validation.expected_time_step ?? energyState.model.simulation?.time_step ?? null, energyState.validation.time_step_tolerance ?? 1e-12), checkFiniteAll(simModel, results)];
+  if (energyState.validation.non_negative_regex) runtime.push(checkNonNegativeRegex(simModel, results, energyState.validation.non_negative_regex.pattern, energyState.validation.non_negative_regex.tolerance ?? 1e-10));
+  for (const plugin of energyState.validation.plugins || []) runtime.push(...checkPlugin(plugin, ctx));
+  for (const check of energyState.validation.global_checks || []) runtime.push(runGenericCheck(check, ctx));
+  const fail = runtime.filter(x => x.status === 'FAIL');
+  if (fail.length) throw new Error(`runtime checks failed: ${fail.map(x => `${x.name}: ${x.message || 'FAIL'}`).join('; ')}`);
+
+  let deficitPoints = 0, compared = 0;
+  for (const X of energyFixture.colonies) {
+    const general = Array.from(ctx.get(`${X} Energy Fulfillment Ratio`), Number);
+    const priority = Array.from(ctx.get(`${X} Priority Energy Fulfillment Ratio`), Number);
+    for (let i = 0; i < general.length; i++) {
+      if (general[i] < 1 - 1e-9) deficitPoints++;
+      if (priority[i] + 1e-8 < general[i]) throw new Error(`${X} day ${ctx.times[i]}: priority ${priority[i]} < general ${general[i]}`);
+      compared++;
+    }
+  }
+  if (!deficitPoints) throw new Error('trial produced no energy-deficit point (general fulfillment never below 1)');
+  return `${compared} priority/general points checked; deficit points=${deficitPoints}`;
+});
+
+await expect('31. strip and rebuild energy_consumer with zero definition/replacement/link differences', () => {
+  if (!energyState?.target) throw new Error('case 28 did not produce rebuild target');
+  const out = assertEnergyRebuild(energyFixture, energyState.target);
+  return `${out.patch.add_elements.length} definitions, ${out.patch.replace_formulas.length} replacements, ${out.patch.add_links.length} links rebuilt exactly`;
+});
+
 await expect('32. energy_consumer schema/base checks reject five required invalid cases with paths/names', async () => {
+  const baseModel = energyState?.base || accepted;
   const extra = structuredClone(energyFixture);
   extra.consumers[0].unexpected = true;
-  await requireThrow(() => expandNode(extra, accepted), /node\.consumers\[0\]\.unexpected: unknown field/, 'extra consumer field');
+  await requireThrow(() => expandNode(extra, baseModel), /node\.consumers\[0\]\.unexpected: unknown field/, 'extra consumer field');
 
   const missingColony = structuredClone(energyFixture);
   delete missingColony.consumers[0].signal.initial.B;
-  await requireThrow(() => expandNode(missingColony, accepted), /node\.consumers\[0\]\.signal\.initial\.B: required field is missing/, 'signal initial without colony');
+  await requireThrow(() => expandNode(missingColony, baseModel), /node\.consumers\[0\]\.signal\.initial\.B: required field is missing/, 'signal initial without colony');
 
   const zero = structuredClone(energyFixture);
   zero.consumers[0].energy_per_unit = 0;
-  await requireThrow(() => expandNode(zero, accepted), /node\.consumers\[0\]\.energy_per_unit: must be > 0/, 'zero energy_per_unit');
+  await requireThrow(() => expandNode(zero, baseModel), /node\.consumers\[0\]\.energy_per_unit: must be > 0/, 'zero energy_per_unit');
 
   const missingAllocator = structuredClone(energyFixture);
   missingAllocator.allocator.available = '{C} Missing Available Generation';
-  await requireThrow(() => expandNode(missingAllocator, accepted), /allocator\.available\[A\] references missing base element "A Missing Available Generation"/, 'missing allocator.available');
+  await requireThrow(() => expandNode(missingAllocator, baseModel), /allocator\.available\[A\] references missing base element "A Missing Available Generation"/, 'missing allocator.available');
 
   const connected = structuredClone(energyFixture);
   connected.consumers[0].consumer = 'Metal';
-  await requireThrow(() => expandNode(connected, accepted), /consumer "Metal" is already connected in base: "A Metal Requested Energy" exists/, 'already connected consumer');
+  await requireThrow(() => expandNode(connected, baseModel), /consumer "Metal" is already connected in base: "A Metal Requested Energy" exists/, 'already connected consumer');
   return 'extra field, missing colony initial, zero energy_per_unit, missing allocator, and existing consumer all rejected';
 });
 
 await expect('33. energy_consumer without priority leaves general allocator ratio untouched', () => {
   const noPriority = structuredClone(energyFixture);
   for (const c of noPriority.consumers) delete c.priority;
-  const expanded = expandNode(noPriority, accepted);
+  const expanded = expandNode(noPriority, energyState?.base || accepted);
   if (expanded.patch.replace_formulas.length !== 12) throw new Error(`replacement count ${expanded.patch.replace_formulas.length}, expected 12`);
   const ratioTargets = new Set(noPriority.colonies.map(X => noPriority.allocator.ratio.replaceAll('{C}', X)));
   const touched = expanded.patch.replace_formulas.filter(r => ratioTargets.has(r.name));
   if (touched.length) throw new Error(`general ratio unexpectedly replaced: ${touched.map(x => x.name).join(', ')}`);
-  return `replacements=12; general ratio replacements=0 (two fewer than priority fixture)`;
+  return 'replacements=12; general ratio replacements=0 (two fewer than priority fixture)';
 });
 
 console.log(`\nNODE SELF-TEST: ${passed} passed, ${failed} failed`);
