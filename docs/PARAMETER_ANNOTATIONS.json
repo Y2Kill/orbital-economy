@@ -1,7 +1,7 @@
 {
   "format": "orbital-economy-parameter-annotations-v1",
-  "model": "Orbital Economy v7.7.7 r1 — Power Resource Capital",
-  "updated": "2026-09-30",
+  "model": "Orbital Economy v7.7.8 r1 — Deposits",
+  "updated": "2026-10-02",
   "policy": "Каждый внешний параметр, влияющий на структуру поведения (сравнительные преимущества, нормирование, планирование), должен иметь аннотацию: роль, что меняет, доказательство (ссылка на прогон/документ). Несимметричные пары A/B аннотируются в первую очередь. Изменение значения = изменение модели → через change-policy, с обновлением аннотации.",
   "embedded_literals": [
     {
@@ -2603,6 +2603,425 @@
       "since": "v7.7.7 r1",
       "tags": [
         "power-resource",
+        "signal",
+        "initial",
+        "asymmetry"
+      ],
+      "applies_to_mirror": true
+    },
+    "Deposits Enabled": {
+      "role": "Deposit-layer master switch, raw value 1.",
+      "effect": "0 preserves legacy extraction-rate formulas in Modes 0-43; 1 enables reserve targeting, exploration demand/consumption, and the smooth depletion cap. Extraction FLOW endpoints remain retargeted to Proven Reserves in all modes.",
+      "evidence": "V7_7_8_ARCHITECTURE_SPEC §1–§2 and draft/deposits.json.",
+      "since": "v7.7.8 r1",
+      "tags": [
+        "deposits",
+        "switch"
+      ]
+    },
+    "Ore Deposit Target Reserve Life": {
+      "role": "Ore target proven-reserve life, value 5400 days.",
+      "effect": "Multiplies the smoothed Ore extraction signal to set Target Proven Reserves.",
+      "evidence": "V7_7_8_ARCHITECTURE_SPEC §1–§2 and draft/deposits.json.",
+      "since": "v7.7.8 r1",
+      "tags": [
+        "ore",
+        "deposits",
+        "target"
+      ]
+    },
+    "Ore Deposit Exploration Time": {
+      "role": "Ore exploration adjustment time, value 1800 days.",
+      "effect": "Divides the positive reserve gap to set Desired Exploration before the remaining-resource and capital-goods factors.",
+      "evidence": "V7_7_8_ARCHITECTURE_SPEC §1–§2 and draft/deposits.json.",
+      "since": "v7.7.8 r1",
+      "tags": [
+        "ore",
+        "deposits",
+        "exploration"
+      ]
+    },
+    "Ore Deposit Capital Goods per Discovery": {
+      "role": "Capital Goods requirement per unit of newly proven Ore, value 0.0002.",
+      "effect": "Converts Desired Exploration into Capital Goods demand and actual Exploration into Capital Goods consumption.",
+      "evidence": "V7_7_8_ARCHITECTURE_SPEC §1–§2 and draft/deposits.json.",
+      "since": "v7.7.8 r1",
+      "tags": [
+        "ore",
+        "deposits",
+        "exploration",
+        "capital-goods"
+      ]
+    },
+    "Ore Deposit Depletion Buffer Days": {
+      "role": "Ore smooth-depletion buffer, value 30 days.",
+      "effect": "Sets the reserve-based soft ceiling for the extraction rate when the deposit layer is enabled.",
+      "evidence": "V7_7_8_ARCHITECTURE_SPEC §1–§2 and draft/deposits.json.",
+      "since": "v7.7.8 r1",
+      "tags": [
+        "ore",
+        "deposits",
+        "depletion"
+      ]
+    },
+    "Ore Extraction Signal Adjustment Time": {
+      "role": "Ore extraction-signal adjustment time, value 30 days.",
+      "effect": "Controls lag from the current extraction rate to the Ore Extraction Signal STOCK used for reserve targeting.",
+      "evidence": "V7_7_8_ARCHITECTURE_SPEC §1–§2 and draft/deposits.json.",
+      "since": "v7.7.8 r1",
+      "tags": [
+        "ore",
+        "deposits",
+        "signal",
+        "causality"
+      ]
+    },
+    "A Ore Undiscovered Resource Initial": {
+      "role": "Initial undiscovered Ore resource for colony A, value 20000000.",
+      "effect": "Seeds the finite planetary-scale undiscovered-resource STOCK; A/B pair is 20000000/3600000.",
+      "evidence": "V7_7_8_ARCHITECTURE_SPEC §1–§2 and draft/deposits.json.",
+      "since": "v7.7.8 r1",
+      "tags": [
+        "ore",
+        "deposits",
+        "initial",
+        "asymmetry"
+      ],
+      "applies_to_mirror": true
+    },
+    "A Ore Proven Reserves Initial": {
+      "role": "Initial proven Ore reserves for colony A, value 200000.",
+      "effect": "Seeds the stock that supplies extraction; A/B pair is 200000/36000.",
+      "evidence": "V7_7_8_ARCHITECTURE_SPEC §1–§2 and draft/deposits.json.",
+      "since": "v7.7.8 r1",
+      "tags": [
+        "ore",
+        "deposits",
+        "initial",
+        "asymmetry"
+      ],
+      "applies_to_mirror": true
+    },
+    "A Ore Extraction Signal": {
+      "role": "Initial smoothed Ore extraction signal for colony A, value 42.227.",
+      "effect": "Seeds the reserve-target signal with the intentional A/B pair 42.227/8.373.",
+      "evidence": "V7_7_8_ARCHITECTURE_SPEC §1–§2 and draft/deposits.json.",
+      "since": "v7.7.8 r1",
+      "tags": [
+        "ore",
+        "deposits",
+        "signal",
+        "initial",
+        "asymmetry"
+      ],
+      "applies_to_mirror": true
+    },
+    "B Ore Undiscovered Resource Initial": {
+      "role": "Initial undiscovered Ore resource for colony B, value 3600000.",
+      "effect": "Seeds the finite planetary-scale undiscovered-resource STOCK; A/B pair is 20000000/3600000.",
+      "evidence": "V7_7_8_ARCHITECTURE_SPEC §1–§2 and draft/deposits.json.",
+      "since": "v7.7.8 r1",
+      "tags": [
+        "ore",
+        "deposits",
+        "initial",
+        "asymmetry"
+      ],
+      "applies_to_mirror": true
+    },
+    "B Ore Proven Reserves Initial": {
+      "role": "Initial proven Ore reserves for colony B, value 36000.",
+      "effect": "Seeds the stock that supplies extraction; A/B pair is 200000/36000.",
+      "evidence": "V7_7_8_ARCHITECTURE_SPEC §1–§2 and draft/deposits.json.",
+      "since": "v7.7.8 r1",
+      "tags": [
+        "ore",
+        "deposits",
+        "initial",
+        "asymmetry"
+      ],
+      "applies_to_mirror": true
+    },
+    "B Ore Extraction Signal": {
+      "role": "Initial smoothed Ore extraction signal for colony B, value 8.373.",
+      "effect": "Seeds the reserve-target signal with the intentional A/B pair 42.227/8.373.",
+      "evidence": "V7_7_8_ARCHITECTURE_SPEC §1–§2 and draft/deposits.json.",
+      "since": "v7.7.8 r1",
+      "tags": [
+        "ore",
+        "deposits",
+        "signal",
+        "initial",
+        "asymmetry"
+      ],
+      "applies_to_mirror": true
+    },
+    "Regolith Deposit Target Reserve Life": {
+      "role": "Regolith target proven-reserve life, value 5400 days.",
+      "effect": "Multiplies the smoothed Regolith extraction signal to set Target Proven Reserves.",
+      "evidence": "V7_7_8_ARCHITECTURE_SPEC §1–§2 and draft/deposits.json.",
+      "since": "v7.7.8 r1",
+      "tags": [
+        "regolith",
+        "deposits",
+        "target"
+      ]
+    },
+    "Regolith Deposit Exploration Time": {
+      "role": "Regolith exploration adjustment time, value 1800 days.",
+      "effect": "Divides the positive reserve gap to set Desired Exploration before the remaining-resource and capital-goods factors.",
+      "evidence": "V7_7_8_ARCHITECTURE_SPEC §1–§2 and draft/deposits.json.",
+      "since": "v7.7.8 r1",
+      "tags": [
+        "regolith",
+        "deposits",
+        "exploration"
+      ]
+    },
+    "Regolith Deposit Capital Goods per Discovery": {
+      "role": "Capital Goods requirement per unit of newly proven Regolith, value 0.0005.",
+      "effect": "Converts Desired Exploration into Capital Goods demand and actual Exploration into Capital Goods consumption.",
+      "evidence": "V7_7_8_ARCHITECTURE_SPEC §1–§2 and draft/deposits.json.",
+      "since": "v7.7.8 r1",
+      "tags": [
+        "regolith",
+        "deposits",
+        "exploration",
+        "capital-goods"
+      ]
+    },
+    "Regolith Deposit Depletion Buffer Days": {
+      "role": "Regolith smooth-depletion buffer, value 30 days.",
+      "effect": "Sets the reserve-based soft ceiling for the extraction rate when the deposit layer is enabled.",
+      "evidence": "V7_7_8_ARCHITECTURE_SPEC §1–§2 and draft/deposits.json.",
+      "since": "v7.7.8 r1",
+      "tags": [
+        "regolith",
+        "deposits",
+        "depletion"
+      ]
+    },
+    "Regolith Extraction Signal Adjustment Time": {
+      "role": "Regolith extraction-signal adjustment time, value 30 days.",
+      "effect": "Controls lag from the current extraction rate to the Regolith Extraction Signal STOCK used for reserve targeting.",
+      "evidence": "V7_7_8_ARCHITECTURE_SPEC §1–§2 and draft/deposits.json.",
+      "since": "v7.7.8 r1",
+      "tags": [
+        "regolith",
+        "deposits",
+        "signal",
+        "causality"
+      ]
+    },
+    "A Regolith Undiscovered Resource Initial": {
+      "role": "Initial undiscovered Regolith resource for colony A, value 540000.",
+      "effect": "Seeds the finite planetary-scale undiscovered-resource STOCK; A/B pair is 540000/360000.",
+      "evidence": "V7_7_8_ARCHITECTURE_SPEC §1–§2 and draft/deposits.json.",
+      "since": "v7.7.8 r1",
+      "tags": [
+        "regolith",
+        "deposits",
+        "initial",
+        "asymmetry"
+      ],
+      "applies_to_mirror": true
+    },
+    "A Regolith Proven Reserves Initial": {
+      "role": "Initial proven Regolith reserves for colony A, value 5400.",
+      "effect": "Seeds the stock that supplies extraction; A/B pair is 5400/3600.",
+      "evidence": "V7_7_8_ARCHITECTURE_SPEC §1–§2 and draft/deposits.json.",
+      "since": "v7.7.8 r1",
+      "tags": [
+        "regolith",
+        "deposits",
+        "initial",
+        "asymmetry"
+      ],
+      "applies_to_mirror": true
+    },
+    "A Regolith Extraction Signal": {
+      "role": "Initial smoothed Regolith extraction signal for colony A, value 0.",
+      "effect": "Seeds the reserve-target signal; both colonies intentionally start at the same value 0.",
+      "evidence": "V7_7_8_ARCHITECTURE_SPEC §1–§2 and draft/deposits.json.",
+      "since": "v7.7.8 r1",
+      "tags": [
+        "regolith",
+        "deposits",
+        "signal",
+        "initial"
+      ],
+      "applies_to_mirror": true
+    },
+    "B Regolith Undiscovered Resource Initial": {
+      "role": "Initial undiscovered Regolith resource for colony B, value 360000.",
+      "effect": "Seeds the finite planetary-scale undiscovered-resource STOCK; A/B pair is 540000/360000.",
+      "evidence": "V7_7_8_ARCHITECTURE_SPEC §1–§2 and draft/deposits.json.",
+      "since": "v7.7.8 r1",
+      "tags": [
+        "regolith",
+        "deposits",
+        "initial",
+        "asymmetry"
+      ],
+      "applies_to_mirror": true
+    },
+    "B Regolith Proven Reserves Initial": {
+      "role": "Initial proven Regolith reserves for colony B, value 3600.",
+      "effect": "Seeds the stock that supplies extraction; A/B pair is 5400/3600.",
+      "evidence": "V7_7_8_ARCHITECTURE_SPEC §1–§2 and draft/deposits.json.",
+      "since": "v7.7.8 r1",
+      "tags": [
+        "regolith",
+        "deposits",
+        "initial",
+        "asymmetry"
+      ],
+      "applies_to_mirror": true
+    },
+    "B Regolith Extraction Signal": {
+      "role": "Initial smoothed Regolith extraction signal for colony B, value 0.",
+      "effect": "Seeds the reserve-target signal; both colonies intentionally start at the same value 0.",
+      "evidence": "V7_7_8_ARCHITECTURE_SPEC §1–§2 and draft/deposits.json.",
+      "since": "v7.7.8 r1",
+      "tags": [
+        "regolith",
+        "deposits",
+        "signal",
+        "initial"
+      ],
+      "applies_to_mirror": true
+    },
+    "Power Resource Deposit Target Reserve Life": {
+      "role": "Power Resource target proven-reserve life, value 5400 days.",
+      "effect": "Multiplies the smoothed Power Resource extraction signal to set Target Proven Reserves.",
+      "evidence": "V7_7_8_ARCHITECTURE_SPEC §1–§2 and draft/deposits.json.",
+      "since": "v7.7.8 r1",
+      "tags": [
+        "power-resource",
+        "deposits",
+        "target"
+      ]
+    },
+    "Power Resource Deposit Exploration Time": {
+      "role": "Power Resource exploration adjustment time, value 1800 days.",
+      "effect": "Divides the positive reserve gap to set Desired Exploration before the remaining-resource and capital-goods factors.",
+      "evidence": "V7_7_8_ARCHITECTURE_SPEC §1–§2 and draft/deposits.json.",
+      "since": "v7.7.8 r1",
+      "tags": [
+        "power-resource",
+        "deposits",
+        "exploration"
+      ]
+    },
+    "Power Resource Deposit Capital Goods per Discovery": {
+      "role": "Capital Goods requirement per unit of newly proven Power Resource, value 0.000007.",
+      "effect": "Converts Desired Exploration into Capital Goods demand and actual Exploration into Capital Goods consumption.",
+      "evidence": "V7_7_8_ARCHITECTURE_SPEC §1–§2 and draft/deposits.json.",
+      "since": "v7.7.8 r1",
+      "tags": [
+        "power-resource",
+        "deposits",
+        "exploration",
+        "capital-goods"
+      ]
+    },
+    "Power Resource Deposit Depletion Buffer Days": {
+      "role": "Power Resource smooth-depletion buffer, value 30 days.",
+      "effect": "Sets the reserve-based soft ceiling for the extraction rate when the deposit layer is enabled.",
+      "evidence": "V7_7_8_ARCHITECTURE_SPEC §1–§2 and draft/deposits.json.",
+      "since": "v7.7.8 r1",
+      "tags": [
+        "power-resource",
+        "deposits",
+        "depletion"
+      ]
+    },
+    "Power Resource Extraction Signal Adjustment Time": {
+      "role": "Power Resource extraction-signal adjustment time, value 30 days.",
+      "effect": "Controls lag from the current extraction rate to the Power Resource Extraction Signal STOCK used for reserve targeting.",
+      "evidence": "V7_7_8_ARCHITECTURE_SPEC §1–§2 and draft/deposits.json.",
+      "since": "v7.7.8 r1",
+      "tags": [
+        "power-resource",
+        "deposits",
+        "signal",
+        "causality"
+      ]
+    },
+    "A Power Resource Undiscovered Resource Initial": {
+      "role": "Initial undiscovered Power Resource resource for colony A, value 500000000.",
+      "effect": "Seeds the finite planetary-scale undiscovered-resource STOCK; A/B pair is 500000000/150000000.",
+      "evidence": "V7_7_8_ARCHITECTURE_SPEC §1–§2 and draft/deposits.json.",
+      "since": "v7.7.8 r1",
+      "tags": [
+        "power-resource",
+        "deposits",
+        "initial",
+        "asymmetry"
+      ],
+      "applies_to_mirror": true
+    },
+    "A Power Resource Proven Reserves Initial": {
+      "role": "Initial proven Power Resource reserves for colony A, value 5000000.",
+      "effect": "Seeds the stock that supplies extraction; A/B pair is 5000000/1500000.",
+      "evidence": "V7_7_8_ARCHITECTURE_SPEC §1–§2 and draft/deposits.json.",
+      "since": "v7.7.8 r1",
+      "tags": [
+        "power-resource",
+        "deposits",
+        "initial",
+        "asymmetry"
+      ],
+      "applies_to_mirror": true
+    },
+    "A Power Resource Extraction Signal": {
+      "role": "Initial smoothed Power Resource extraction signal for colony A, value 1373.679.",
+      "effect": "Seeds the reserve-target signal with the intentional A/B pair 1373.679/30.983.",
+      "evidence": "V7_7_8_ARCHITECTURE_SPEC §1–§2 and draft/deposits.json.",
+      "since": "v7.7.8 r1",
+      "tags": [
+        "power-resource",
+        "deposits",
+        "signal",
+        "initial",
+        "asymmetry"
+      ],
+      "applies_to_mirror": true
+    },
+    "B Power Resource Undiscovered Resource Initial": {
+      "role": "Initial undiscovered Power Resource resource for colony B, value 150000000.",
+      "effect": "Seeds the finite planetary-scale undiscovered-resource STOCK; A/B pair is 500000000/150000000.",
+      "evidence": "V7_7_8_ARCHITECTURE_SPEC §1–§2 and draft/deposits.json.",
+      "since": "v7.7.8 r1",
+      "tags": [
+        "power-resource",
+        "deposits",
+        "initial",
+        "asymmetry"
+      ],
+      "applies_to_mirror": true
+    },
+    "B Power Resource Proven Reserves Initial": {
+      "role": "Initial proven Power Resource reserves for colony B, value 1500000.",
+      "effect": "Seeds the stock that supplies extraction; A/B pair is 5000000/1500000.",
+      "evidence": "V7_7_8_ARCHITECTURE_SPEC §1–§2 and draft/deposits.json.",
+      "since": "v7.7.8 r1",
+      "tags": [
+        "power-resource",
+        "deposits",
+        "initial",
+        "asymmetry"
+      ],
+      "applies_to_mirror": true
+    },
+    "B Power Resource Extraction Signal": {
+      "role": "Initial smoothed Power Resource extraction signal for colony B, value 30.983.",
+      "effect": "Seeds the reserve-target signal with the intentional A/B pair 1373.679/30.983.",
+      "evidence": "V7_7_8_ARCHITECTURE_SPEC §1–§2 and draft/deposits.json.",
+      "since": "v7.7.8 r1",
+      "tags": [
+        "power-resource",
+        "deposits",
         "signal",
         "initial",
         "asymmetry"

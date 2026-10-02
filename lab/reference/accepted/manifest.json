@@ -1,15 +1,15 @@
 {
   "status": "ACCEPTED",
-  "model_name": "Orbital Economy v7.7.7 r1 — Power Resource Capital",
-  "model_file": "orbital_economy_v7_7_7_r1_modeljson.json",
-  "model_sha256": "befccae91083e44c32ddeb25783a3f45a8ef32fa60965e61a210ebfc4c7b8f94",
-  "validation_file": "validation-v7.7.7.json",
-  "validation_sha256": "8b15f29a00a4868594fa0e8f36b51284e54cc0bd1f2f35ebcb4fb29c33cc12a5",
-  "accepted_date": "2026-09-30",
+  "model_name": "Orbital Economy v7.7.8 r1 — Deposits",
+  "model_file": "orbital_economy_v7_7_8_r1_modeljson.json",
+  "model_sha256": "17794e6c6acec9a965473bc170f1c71e31a82fe7a095ec1391c86eb681c1b50e",
+  "validation_file": "validation-v7.7.8.json",
+  "validation_sha256": "b0ccff9eded06c40bf428b6b7b2e1d92e6f6d34b2335035652145b3122071631",
+  "accepted_date": "2026-10-02",
   "engine": "simulation@9.0.0",
   "notes": [
-    "v7.7.7: energy-resource extraction capacity is simple capital (a simple_capital node per colony, model/nodes/power-resource-mine.json) in smooth-cap mode: the former uncapped extraction rate is kept as X Power Resource Mine Uncapped Output and capped by the mine capacity; Planet v1 P2 has no exceptions left. See docs/tasks/021-power-resource-capital/.",
-    "Modes 0-41 reproduce v7.7.6 r1 exactly (Power Resource Capital Enabled = 0); Mode 42 baseline (A mine grows, B builds up then winds down), Mode 43 transport surge in which colony B rebuilds its power-resource mine and draws its inventory down.",
+    "v7.7.8: every extraction (ore, regolith, energy resource) draws from proven reserves, replenished by capital-backed exploration from planetary-scale undiscovered resource (one deposit node, model/nodes/deposits.json; extraction flows re-sourced from the void). Planet v1 P4 has no extraction without a deposit left. See docs/tasks/023-deposits/.",
+    "Modes 0-43 reproduce v7.7.7 r1 exactly (Deposits Enabled = 0); Mode 44 baseline (exploration keeps proven reserves near target, B ore reserves grow), Mode 45 transport surge in which exploration competes with construction for colony B capital goods.",
     "Exact numbers are defined on the canonical platform (docs/VERSIONING_AND_AUTHORITY.md section 8); series-digest.windows.json is the golden."
   ]
 }

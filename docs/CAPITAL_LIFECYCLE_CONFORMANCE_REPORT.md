@@ -1,10 +1,10 @@
 # Orbital Economy Lab — Capital Lifecycle Kernel conformance
 
-- generated: 2026-09-30T11:02:13.155Z
-- model: Orbital Economy v7.7.7 r1 — Power Resource Capital
-- model SHA-256: `befccae91083e44c32ddeb25783a3f45a8ef32fa60965e61a210ebfc4c7b8f94`
-- validation: Orbital Economy v7.7.7 validation r1
-- validation SHA-256: `8b15f29a00a4868594fa0e8f36b51284e54cc0bd1f2f35ebcb4fb29c33cc12a5`
+- generated: 2026-10-02T07:44:17.819Z
+- model: Orbital Economy v7.7.8 r1 — Deposits
+- model SHA-256: `17794e6c6acec9a965473bc170f1c71e31a82fe7a095ec1391c86eb681c1b50e`
+- validation: Orbital Economy v7.7.8 validation r1
+- validation SHA-256: `b0ccff9eded06c40bf428b6b7b2e1d92e6f6d34b2335035652145b3122071631`
 - kernel format: orbital-economy-capital-lifecycle-kernel-v1
 - status: **PASS**
 
@@ -494,6 +494,22 @@ Roles:
 - `retirement`: FLOW; reads excess
 - `desired_capacity` must directly read the declared STOCK `sizing_signal`.
 - each declared consumption FLOW must be wired STOCK → ∅ and read `expansion`.
+
+## Deposit
+
+- status: **PASS**
+- instances: 6
+- CONFORMING: 6
+- NON_CONFORMING: 0
+
+| Instance | Resource | Classification | Checks passed | Failures |
+|---|---|---|---:|---:|
+| A Ore Deposit | Ore | **CONFORMING** | 9/9 | 0 |
+| B Ore Deposit | Ore | **CONFORMING** | 9/9 | 0 |
+| A Regolith Deposit | Regolith | **CONFORMING** | 9/9 | 0 |
+| B Regolith Deposit | Regolith | **CONFORMING** | 9/9 | 0 |
+| A Power Resource Deposit | Power Resource | **CONFORMING** | 9/9 | 0 |
+| B Power Resource Deposit | Power Resource | **CONFORMING** | 9/9 | 0 |
 
 ## Kernel contract (reference)
 

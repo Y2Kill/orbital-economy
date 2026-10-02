@@ -1,27 +1,27 @@
 # Orbital Economy Lab — structure audit
 
-- generated: 2026-09-30T11:02:45.234Z
-- model: Orbital Economy v7.7.7 r1 — Power Resource Capital
-- model SHA-256: `befccae91083e44c32ddeb25783a3f45a8ef32fa60965e61a210ebfc4c7b8f94`
-- validation: Orbital Economy v7.7.7 validation r1
-- validation SHA-256: `8b15f29a00a4868594fa0e8f36b51284e54cc0bd1f2f35ebcb4fb29c33cc12a5`
+- generated: 2026-10-02T07:45:33.397Z
+- model: Orbital Economy v7.7.8 r1 — Deposits
+- model SHA-256: `17794e6c6acec9a965473bc170f1c71e31a82fe7a095ec1391c86eb681c1b50e`
+- validation: Orbital Economy v7.7.8 validation r1
+- validation SHA-256: `b0ccff9eded06c40bf428b6b7b2e1d92e6f6d34b2335035652145b3122071631`
 - status: **PASS**
 
 ## Open boundaries (declared physical-boundary meter)
 
-- flows total: 239; crossing the model boundary: 196; classified: 196; unclassified: 0
+- flows total: 263; crossing the model boundary: 208; classified: 208; unclassified: 0
 - closed-world violations: **0** (mode: `classify`) — zero means the currently declared closed-world boundary contract is satisfied; it is not a Planet v1 completeness claim
 - declared transformation pairs: 25; transformation flows without a pair: 0
 
 | Category | closed-world | Flows | Reason |
 |---|:---:|---:|---|
-| primary_extraction | yes | 4 | primary resources enter from the planet itself |
-| power_resource_extraction | yes | 2 | v7.6 primary planetary energy resource enters regional physical inventory through explicit extraction. |
-| regolith_extraction | yes | 2 | v7.7 primary bulk resource (regolith) enters regional physical inventory through explicit extraction. |
+| primary_extraction | yes | 2 | primary resources enter from the planet itself |
+| power_resource_extraction | yes | 0 | v7.6 primary planetary energy resource enters regional physical inventory through explicit extraction. |
+| regolith_extraction | yes | 0 | v7.7 primary bulk resource (regolith) enters regional physical inventory through explicit extraction. |
 | final_consumption | yes | 4 | final goods leave the economy as consumption |
 | power_resource_consumption | yes | 2 | v7.6 physical operating resource is consumed in exact proportion to actual delivered generation. |
 | unit_transformation | yes | 8 | input stock -> output stock conversion modelled as a sink/source pair (different units); every flow here must belong to a declared transformation pair whose numeric identity is checked at runtime |
-| information_signal | yes | 50 | smoothing / information stocks, not matter |
+| information_signal | yes | 62 | smoothing / information stocks, not matter |
 | financial_accounting | yes | 16 | money bookkeeping, not matter |
 | capital_state_accounting | yes | 33 | Active is an operational-state sub-account of Installed; these flows change state, not physical capital |
 | capital_transformation | yes | 53 | v7.5/v7.5.1: installed capital expansion is a unit transformation of Capital Goods; regional sectors use one local sink, shared Transport uses two A/B regional sinks whose total identity is checked at runtime. v7.7: colonial sector expansion is additionally backed by a local Construction Materials sink. v7.7.1: shared Transport expansion is additionally backed by construction materials from both A and B inventories (two legs). v7.7.3: construction-materials plant expansion is backed by local capital goods and construction materials. v7.7.4: capital-goods plant expansion is backed by local capital goods and construction materials. |
@@ -29,6 +29,7 @@
 | construction_materials_transformation | yes | 4 | v7.7: regolith -> construction materials (declared pair; identity checked at runtime) |
 | external_capital | **no** | 0 | capital created without physical goods; expected count is zero from v7.5.1 onward for the currently declared expansion-boundary audit |
 | capital_retirement | yes | 12 | износ и вывод простого капитала: капитал покидает экономику |
+| exploration_expenditure | yes | 6 | capital goods spent on resource exploration leave the economy |
 
 
 Declared unit-transformation pairs (source flow physically backed by sink flows; numeric identity is a runtime check):
@@ -63,22 +64,16 @@ Declared unit-transformation pairs (source flow physically backed by sink flows;
 
 <details><summary>All boundary flows by category</summary>
 
-**primary_extraction** (4)
+**primary_extraction** (2)
 
-- A Mining
-- B Mining
 - A Electronics Feedstock Extraction
 - B Electronics Feedstock Extraction
 
-**power_resource_extraction** (2)
+**power_resource_extraction** (0)
 
-- A Power Resource Extraction
-- B Power Resource Extraction
 
-**regolith_extraction** (2)
+**regolith_extraction** (0)
 
-- A Regolith Extraction
-- B Regolith Extraction
 
 **final_consumption** (4)
 
@@ -103,7 +98,7 @@ Declared unit-transformation pairs (source flow physically backed by sink flows;
 - B Electronics Feedstock Consumption
 - B Electronics Production
 
-**information_signal** (50)
+**information_signal** (62)
 
 - A Electronics Capacity Planning Signal Increase
 - A Electronics Capacity Planning Signal Decrease
@@ -155,6 +150,18 @@ Declared unit-transformation pairs (source flow physically backed by sink flows;
 - A Power Resource Demand Signal Decrease
 - B Power Resource Demand Signal Increase
 - B Power Resource Demand Signal Decrease
+- A Ore Extraction Signal Increase
+- A Ore Extraction Signal Decrease
+- B Ore Extraction Signal Increase
+- B Ore Extraction Signal Decrease
+- A Regolith Extraction Signal Increase
+- A Regolith Extraction Signal Decrease
+- B Regolith Extraction Signal Increase
+- B Regolith Extraction Signal Decrease
+- A Power Resource Extraction Signal Increase
+- A Power Resource Extraction Signal Decrease
+- B Power Resource Extraction Signal Increase
+- B Power Resource Extraction Signal Decrease
 
 **financial_accounting** (16)
 
@@ -301,13 +308,22 @@ Declared unit-transformation pairs (source flow physically backed by sink flows;
 - B Power Resource Mine Capacity Depreciation
 - B Power Resource Mine Capacity Retirement
 
+**exploration_expenditure** (6)
+
+- A Ore Exploration Capital Goods Consumption
+- B Ore Exploration Capital Goods Consumption
+- A Regolith Exploration Capital Goods Consumption
+- B Regolith Exploration Capital Goods Consumption
+- A Power Resource Exploration Capital Goods Consumption
+- B Power Resource Exploration Capital Goods Consumption
+
 </details>
 
 ## Colony symmetry
 
 - tokens: A ↔ B
-- mirrored pairs checked: 1076; mirrored links checked: 2486
-- structural mismatches: **0**; numeric parameter differences (allowed): 118; elements under exceptions: 0
+- mirrored pairs checked: 1160; mirrored links checked: 2698
+- structural mismatches: **0**; numeric parameter differences (allowed): 134; elements under exceptions: 0
 
 <details><summary>Numeric parameter differences between colonies (allowed)</summary>
 
@@ -372,16 +388,24 @@ Declared unit-transformation pairs (source flow physically backed by sink flows;
 | initial_value | A Ore Mine Capacity | 70 | B Ore Mine Capacity | 28 |
 | initial_value | A Power Resource Demand Signal | 1350 | B Power Resource Demand Signal | 182.656 |
 | initial_value | A Power Resource Mine Capacity | 1750 | B Power Resource Mine Capacity | 650 |
+| value | A Ore Undiscovered Resource Initial | 20000000 | B Ore Undiscovered Resource Initial | 3600000 |
+| value | A Ore Proven Reserves Initial | 200000 | B Ore Proven Reserves Initial | 36000 |
+| initial_value | A Ore Extraction Signal | 42.227 | B Ore Extraction Signal | 8.373 |
+| value | A Regolith Undiscovered Resource Initial | 540000 | B Regolith Undiscovered Resource Initial | 360000 |
+| value | A Regolith Proven Reserves Initial | 5400 | B Regolith Proven Reserves Initial | 3600 |
+| value | A Power Resource Undiscovered Resource Initial | 500000000 | B Power Resource Undiscovered Resource Initial | 150000000 |
+| value | A Power Resource Proven Reserves Initial | 5000000 | B Power Resource Proven Reserves Initial | 1500000 |
+| initial_value | A Power Resource Extraction Signal | 1373.679 | B Power Resource Extraction Signal | 30.983 |
 
 </details>
 
 ## Planet closure (per-process Planet v1 contract)
 
 - status: **PASS**; mode: `report`
-- processes: 17; legacy: 2; expected source outputs: 16; undeclared outputs: 0
+- processes: 17; legacy: 2; expected source outputs: 10; undeclared outputs: 0
 - P2 capacity: kernel **11** / simple **6** / exceptions **0** / undeclared **0**
 - P3 energy: requests **6** / producer **2** / exceptions **9** / undeclared **0**
-- P4 deposits: with **0** / without **6**
+- P4 deposits: with **6** / without **0**
 - P5 labor: declared **4** / undeclared **13**
 - P6 demand drivers: **4**
 - reversibility violations: **0**
@@ -490,6 +514,6 @@ Declared unit-transformation pairs (source flow physically backed by sink flows;
 ## Algebraic loops (switch-aware, unconditional static audit)
 
 - status: **PASS**
-- switches: 13 — Capital Lifecycle Enabled, Intermediate Inputs Enabled, Capital Goods Enabled, Transport Capital Goods Enabled, Power Resource Enabled, Construction Materials Enabled, Transport Construction Materials Enabled, Construction Materials Energy Enabled, Construction Materials Capital Enabled, Capital Goods Capital Enabled, Regolith Capital Enabled, Ore Capital Enabled, Power Resource Capital Enabled
-- combinations: 8192; with loops: **0**
+- switches: 14 — Capital Lifecycle Enabled, Intermediate Inputs Enabled, Capital Goods Enabled, Transport Capital Goods Enabled, Power Resource Enabled, Construction Materials Enabled, Transport Construction Materials Enabled, Construction Materials Energy Enabled, Construction Materials Capital Enabled, Capital Goods Capital Enabled, Regolith Capital Enabled, Ore Capital Enabled, Power Resource Capital Enabled, Deposits Enabled
+- combinations: 16384; with loops: **0**
 - Modes with loops: none

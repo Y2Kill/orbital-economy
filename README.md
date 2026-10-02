@@ -2,14 +2,14 @@
 
 A deterministic System Dynamics model of a two-region planetary economy, together with the bench that accepts changes to it.
 
-**Accepted baseline:** v7.7.7 r1 — Power Resource Capital
-**Model SHA-256:** `befccae91083e44c32ddeb25783a3f45a8ef32fa60965e61a210ebfc4c7b8f94`
+**Accepted baseline:** v7.7.8 r1 — Deposits
+**Model SHA-256:** `17794e6c6acec9a965473bc170f1c71e31a82fe7a095ec1391c86eb681c1b50e`
 **Engine contract:** `simulation@9.0.0` (pinned)
 **Canonical platform:** Windows x64 · Node 24.11.1 — bit-exact numbers are defined here only; Linux differs in the last bits (`docs/VERSIONING_AND_AUTHORITY.md` §8)
-**Scenarios:** Modes 0–43 · 0..1080 days · dt 0.25 · RK1
-**Accepted:** 2026-09-30 — validation 44/44 PASS; Modes 0–41 bit-identical to the previous accepted baseline (v7.7.6 r1) on the canonical platform
+**Scenarios:** Modes 0–45 · 0..1080 days · dt 0.25 · RK1
+**Accepted:** 2026-10-02 — validation 46/46 PASS; Modes 0–43 bit-identical to the previous accepted baseline (v7.7.7 r1) on the canonical platform
 
-Two regions (A and B) each run ore → metal → electronics, a power sector, and a capital-goods sector that physically backs capacity expansion; they trade over shared transport with endogenous prices. Capital has an explicit lifecycle (installed / active / mothballed / decommissioned), expansion consumes capital goods, since v7.6 generation consumes a physical operating resource, and since v7.7 every capacity expansion (colonial, and since v7.7.1 shared transport) also needs construction materials processed from extracted regolith, since v7.7.2 that processing draws energy from the same allocator as smelting and electronics, since v7.7.3 its capacity is capital — a construction-materials plant on the same lifecycle kernel as the other sectors — since v7.7.4 capital-goods production capacity is capital too, since v7.7.5 regolith extraction runs on a mine that is simple capital, generated from a node declaration (`model/nodes/`), since v7.7.6 ore mining does too, and since v7.7.7 energy-resource extraction has a mine as well — every production capacity is now capital.
+Two regions (A and B) each run ore → metal → electronics, a power sector, and a capital-goods sector that physically backs capacity expansion; they trade over shared transport with endogenous prices. Capital has an explicit lifecycle (installed / active / mothballed / decommissioned), expansion consumes capital goods, since v7.6 generation consumes a physical operating resource, and since v7.7 every capacity expansion (colonial, and since v7.7.1 shared transport) also needs construction materials processed from extracted regolith, since v7.7.2 that processing draws energy from the same allocator as smelting and electronics, since v7.7.3 its capacity is capital — a construction-materials plant on the same lifecycle kernel as the other sectors — since v7.7.4 capital-goods production capacity is capital too, since v7.7.5 regolith extraction runs on a mine that is simple capital, generated from a node declaration (`model/nodes/`), since v7.7.6 ore mining does too, since v7.7.7 energy-resource extraction has a mine as well — every production capacity is now capital — and since v7.7.8 every extraction draws from proven reserves that capital-backed exploration replenishes from a planetary-scale undiscovered resource.
 
 ## Repository layout
 
@@ -19,7 +19,7 @@ validation/     executable validation contract (HARD invariants, plugins, per-Mo
 policy/         strict default-deny change policy, bound to the SHA-256 of both files above
 docs/           documentation aligned to the accepted model, generated audit reports, version history
 lab/            Orbital Economy Lab — the bench: run, compare, audit, policy-check, apply patches
-reference/      the previous accepted baseline (v7.7.6 r1), kept for exact regression comparison
+reference/      the previous accepted baseline (v7.7.7 r1), kept for exact regression comparison
 tools/          repository tooling: integrity manifests (build_sums), task-branch acceptance guard (check_branch)
 BASELINE_MANIFEST.json   what is accepted, with every SHA-256 and every gate result
 SHA256SUMS.txt           integrity of the whole tree (lab/ has its own for the bench)
@@ -33,19 +33,19 @@ INSTALL.cmd
 RUN_LAB.cmd
 ```
 
-`INSTALL.cmd` installs the pinned dependencies only from the vendored npm tarballs in `lab/vendor/`, using a temporary isolated cache and `npm ci --offline` (`lab/node_modules` is not in git). The bench then verifies the actually installed `simulation` version before engine-backed commands run. `RUN_LAB.cmd` needs no arguments: `lab/input/` and `lab/reference/accepted/` already hold the accepted artefacts, so it runs all 44 Modes of the accepted model against the accepted validation contract. Expected: `OVERALL: PASS`.
+`INSTALL.cmd` installs the pinned dependencies only from the vendored npm tarballs in `lab/vendor/`, using a temporary isolated cache and `npm ci --offline` (`lab/node_modules` is not in git). The bench then verifies the actually installed `simulation` version before engine-backed commands run. `RUN_LAB.cmd` needs no arguments: `lab/input/` and `lab/reference/accepted/` already hold the accepted artefacts, so it runs all 46 Modes of the accepted model against the accepted validation contract. Expected: `OVERALL: PASS`.
 
 Everything else is one command:
 
 ```bat
-RUN_TESTS.cmd ..\model\orbital_economy_v7_7_7_r1_modeljson.json ..\validation\validation-v7.7.7.json all
-COMPARE_MODELS.cmd ..\reference\v7.7.6\model\orbital_economy_v7_7_6_r1_modeljson.json ..\model\orbital_economy_v7_7_7_r1_modeljson.json ..\validation\validation-v7.7.7.json 0-41
+RUN_TESTS.cmd ..\model\orbital_economy_v7_7_8_r1_modeljson.json ..\validation\validation-v7.7.8.json all
+COMPARE_MODELS.cmd ..\reference\v7.7.7\model\orbital_economy_v7_7_7_r1_modeljson.json ..\model\orbital_economy_v7_7_8_r1_modeljson.json ..\validation\validation-v7.7.8.json 0-43
 LIFECYCLE_CONFORMANCE.cmd   STRUCTURE_AUDIT.cmd   PARAMETER_REGISTRY.cmd
 CHECK_CANDIDATE.cmd         (accepted vs candidate + change policy — the acceptance gate)
 QA_SELF_TEST.cmd  POLICY_SELF_TEST.cmd  CONFORMANCE_SELF_TEST.cmd  STRUCTURE_SELF_TEST.cmd  COMPARE_SELF_TEST.cmd
 ```
 
-On a clean checkout `CHECK_CANDIDATE.cmd` reports `BYTE_IDENTICAL` and `POLICY RESULT: PASS`: the accepted model is its own candidate. The `COMPARE_MODELS` line above reports `changed=0, maxAbs=0` in every Mode 0–41 (36 added series each).
+On a clean checkout `CHECK_CANDIDATE.cmd` reports `BYTE_IDENTICAL` and `POLICY RESULT: PASS`: the accepted model is its own candidate. The `COMPARE_MODELS` line above reports `changed=0, maxAbs=0` in every Mode 0–43 (100 added series each).
 
 
 ## CI
@@ -94,6 +94,7 @@ Rules that do not bend:
 | Regolith extraction on simple capital (v7.7.5), first sector from a node declaration | `docs/tasks/017-regolith-capital/`, `model/nodes/` |
 | Ore mining on simple capital (v7.7.6) | `docs/tasks/019-ore-capital/` |
 | Energy-resource extraction on simple capital, smooth cap (v7.7.7) | `docs/tasks/020-simple-capital-cap/`, `docs/tasks/021-power-resource-capital/` |
+| Deposits: proven reserves and capital-backed exploration (v7.7.8) | `docs/tasks/022-deposit-node/`, `docs/tasks/023-deposits/` |
 | What Planet v1 means and how it is counted | `docs/PLANET_V1_CONTRACT_RU.md` |
 | Capital lifecycle contract and role mapping | `docs/CAPITAL_LIFECYCLE_KERNEL_SPEC.md`, `docs/CAPITAL_LIFECYCLE_SECTOR_MAPPING.md` |
 | Structure of the whole economy | `docs/ARCHITECTURE.md` |
@@ -107,7 +108,7 @@ Documentation is mixed-language by history: model documentation is English, proc
 
 ## Versioning
 
-One accepted baseline lives in the tree; earlier ones are commits and tags (`v7.6-r2`, `v7.6.1-r1`, `v7.7-r1`, `v7.7.1-r1`, `v7.7.2-r1`, `v7.7.3-r1`, `v7.7.4-r1`, `v7.7.5-r1`, `v7.7.6-r1`, `v7.7.7-r1`), not directories. `reference/` carries only the immediately previous accepted model, because exact regression is measured against it. Model, validation and policy are rewritten together at acceptance, and `BASELINE_MANIFEST.json` plus both `SHA256SUMS.txt` are regenerated in the same commit.
+One accepted baseline lives in the tree; earlier ones are commits and tags (`v7.6-r2`, `v7.6.1-r1`, `v7.7-r1`, `v7.7.1-r1`, `v7.7.2-r1`, `v7.7.3-r1`, `v7.7.4-r1`, `v7.7.5-r1`, `v7.7.6-r1`, `v7.7.7-r1`, `v7.7.8-r1`), not directories. `reference/` carries only the immediately previous accepted model, because exact regression is measured against it. Model, validation and policy are rewritten together at acceptance, and `BASELINE_MANIFEST.json` plus both `SHA256SUMS.txt` are regenerated in the same commit.
 
 The engine is frozen at `simulation@9.0.0`; upgrading it requires a new golden cross-check, not a dependency bump (`lab/ENGINE_PIN.md`).
 
