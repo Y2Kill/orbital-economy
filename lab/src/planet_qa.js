@@ -110,7 +110,7 @@ function declaredCounters(d) {
     if (p.legacy) { c.legacy += k; continue; }
     c.processes += k;
     const cap = p.capacity?.kind; if (cap === 'kernel') c.P2.kernel += k; else if (cap === 'simple') c.P2.simple += k; else if (cap === 'constant' || cap === 'unbounded') c.P2.exceptions += k; else c.P2.undeclared += k;
-    const en = p.energy?.kind; if (en === 'requests') c.P3.requests += k; else if (en === 'producer') c.P3.producer += k; else if (en === 'none') c.P3.exceptions += k; else c.P3.undeclared += k;
+    const en = p.energy?.kind; if (en === 'requests') c.P3.requests += k; else if (en === 'producer') c.P3.producer += k; else if (en === 'none' || en === 'exception') c.P3.exceptions += k; else c.P3.undeclared += k;
     if (p.kind === 'extraction') { if (p.deposit?.kind === 'stock') c.P4.with_deposit += k; else c.P4.without_deposit += k; }
     if (p.labor?.kind === 'declared') c.P5.declared += k; else c.P5.undeclared += k;
   }
