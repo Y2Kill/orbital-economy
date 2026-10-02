@@ -75,6 +75,8 @@ function mutateDeclarationNames(decl) {
     if (p.capacity?.stock) p.capacity.stock = weirdName(p.capacity.stock);
     if (p.capacity?.parameter) p.capacity.parameter = weirdName(p.capacity.parameter);
     if (p.energy?.request) p.energy.request = weirdName(p.energy.request);
+    if (p.energy?.signal) p.energy.signal = weirdName(p.energy.signal);
+    if (p.energy?.fulfillment) p.energy.fulfillment = weirdName(p.energy.fulfillment);
     if (p.deposit?.stock) p.deposit.stock = weirdName(p.deposit.stock);
     if (p.labor?.intensity) p.labor.intensity = weirdName(p.labor.intensity);
   }
@@ -414,6 +416,70 @@ try {
     const b = JSON.stringify(audit(accepted, declaration));
     if (a !== b) throw new Error('JSON output differs between identical runs');
     return 'byte-identical JSON.stringify output';
+  });
+
+  function energySignalFixture() {
+    const raw = { elements: [
+      { type: 'VARIABLE', name: 'A QA Planned Rate', behavior: { value: 10 } },
+      { type: 'STOCK', name: 'A QA Signal', behavior: { initial_value: 10, non_negative: true } },
+      { type: 'FLOW', name: 'A QA Signal Increase', from: null, to: 'A QA Signal', behavior: { value: 'IfThenElse([A QA Planned Rate] > [A QA Signal], [A QA Planned Rate] - [A QA Signal], 0)', non_negative: true } },
+      { type: 'FLOW', name: 'A QA Signal Decrease', from: 'A QA Signal', to: null, behavior: { value: 'IfThenElse([A QA Signal] > [A QA Planned Rate], [A QA Signal] - [A QA Planned Rate], 0)', non_negative: true } },
+      { type: 'VARIABLE', name: 'A QA Requested Energy', behavior: { value: '[A QA Signal] * 0.1' } },
+      { type: 'VARIABLE', name: 'A Total Requested Energy', behavior: { value: '[A QA Requested Energy]' } },
+      { type: 'VARIABLE', name: 'A Energy Fulfillment Ratio', behavior: { value: 0.5 } },
+      { type: 'VARIABLE', name: 'A QA Priority Fulfillment', behavior: { value: 0.8 } },
+      { type: 'VARIABLE', name: 'A QA Output', behavior: { value: '[A QA Planned Rate] * [A QA Priority Fulfillment]' } },
+      { type: 'FLOW', name: 'QA Boundary Process', from: null, to: null, behavior: { value: 0, non_negative: true } }
+    ] };
+    const ob = { type: 'open_boundaries', enforce: 'report', categories: [
+      { id: 'process_source', closed_world: true, name: ['QA Boundary Process'] },
+      { id: 'information_signal', closed_world: true, name: ['? QA Signal Increase', '? QA Signal Decrease'] }
+    ], transformation_pairs: [] };
+    const decl = { type: 'planet_closure', enforce: 'report', colonies: ['A'], max_hops: 4,
+      process_categories: ['process_source'],
+      energy: { total_request: '{C} Total Requested Energy', fulfillment: '{C} Energy Fulfillment Ratio' },
+      processes: [{
+        id: 'qa_energy', kind: 'service', output: '{C} QA Output',
+        capacity: { kind: 'unbounded', reason: 'synthetic QA service' },
+        energy: { kind: 'requests', request: '{C} QA Requested Energy', signal: '{C} QA Signal', fulfillment: '{C} QA Priority Fulfillment' },
+        labor: { kind: 'undeclared' }
+      }]
+    };
+    return { raw, ob, decl };
+  }
+
+  await expect('17 energy.signal bridge crosses only the declared signal stock; process fulfillment overrides global fulfillment', () => {
+    const { raw, ob, decl } = energySignalFixture();
+    const r = auditPlanetClosure(raw, decl, ob);
+    const rec = r.processes.find(x => x.id === 'qa_energy' && x.colony === 'A');
+    if (r.status !== 'PASS' || r.counters.P3.requests !== 1) throw new Error(JSON.stringify({ status: r.status, P3: r.counters.P3, errors: r.errors }));
+    const path = rec?.paths?.energy_shared_planned?.request || [];
+    if (!path.includes('A QA Signal') || !path.includes('A QA Planned Rate')) throw new Error(`signal bridge path missing: ${JSON.stringify(path)}`);
+    const fulfill = rec?.paths?.energy_output_to_fulfillment || [];
+    if (!fulfill.includes('A QA Priority Fulfillment') || fulfill.includes('A Energy Fulfillment Ratio')) throw new Error(`fulfillment override not used: ${JSON.stringify(fulfill)}`);
+    return `P3.requests=1; request path=${path.join(' -> ')}; process fulfillment override used`;
+  });
+
+  await expect('18 energy.signal/fulfillment reject five invalid declarations/topologies', () => {
+    const fail = (mutate, pattern, label) => {
+      const x = energySignalFixture();
+      mutate(x);
+      const r = auditPlanetClosure(x.raw, x.decl, x.ob);
+      if (r.status !== 'FAIL' || !r.errors.some(e => pattern.test(e.message))) {
+        throw new Error(`${label}: expected ${pattern}, got ${JSON.stringify(r.errors)}`);
+      }
+    };
+
+    fail(x => { x.decl.processes[0].energy.signal = '{C} QA Planned Rate'; }, /energy signal .* is not a STOCK/, 'signal-not-stock');
+    fail(x => { x.raw.elements.find(e => e.name === 'A QA Requested Energy').behavior.value = '[A QA Planned Rate] * 0.1'; }, /must read signal .* directly exactly once/, 'request-does-not-read-signal');
+    fail(x => {
+      x.raw.elements.push({ type: 'STOCK', name: 'A QA Other Stock', behavior: { initial_value: 0, non_negative: true } });
+      x.raw.elements.push({ type: 'FLOW', name: 'A QA Signal Internal', from: 'A QA Signal', to: 'A QA Other Stock', behavior: { value: '0', non_negative: true } });
+    }, /must connect only .* signal stock/, 'signal-flow-not-boundary');
+    fail(x => { x.ob.categories.find(c => c.id === 'information_signal').name = ['? QA Signal Increase']; }, /must be classified as information_signal/, 'signal-flow-not-information');
+    fail(x => { x.decl.processes[0].energy.fulfillment = '{C} Missing Fulfillment'; }, /energy fulfillment does not resolve/, 'missing-fulfillment');
+
+    return 'signal type/direct read/boundary/classification and fulfillment resolution all rejected';
   });
 } catch (e) {
   console.error('[FAIL] planet QA crashed:', e?.message || e);

@@ -488,6 +488,41 @@ try {
     if (two.length !== 5 || id(two).status !== 'FAIL' || !two.some(r => r.name === 'A Metal allocated <= requested')) throw new Error(JSON.stringify(two.map(r => [r.name, r.status])));
     return 'three consumers: 6 PASS; default two: supply identity FAIL (construction materials unaccounted)';
   });
+  await expect('energy_balance priority: lower fulfillment fails, equal/higher or within tolerance passes; absent keeps old checks', async () => {
+    const times = [0, 1];
+    const base = {
+      'A Metal Requested Energy': [10, 10],
+      'A Metal Allocated Energy': [5, 5],
+      'A Metal Energy Fulfillment Ratio': [0.6, 0.6],
+      'A Energy Fulfillment Ratio': [0.5, 0.5],
+      'A Energy Supply': [5, 5],
+      'A Total Requested Energy': [10, 10],
+      'A Energy Unserved Demand': [5, 5],
+      'A Power Active Generation Capacity': [5, 5]
+    };
+    const ctx = values => ({ times, get(n) { if (!(n in values)) throw new Error(`unknown series ${n}`); return values[n]; }, has: n => n in values });
+    const plugin = { type: 'energy_balance', colonies: ['A'], consumers: ['Metal'], priority: ['Metal'], abs_tol: 1e-8 };
+    const passHigh = checkPlugin(plugin, ctx(base));
+    if (passHigh.some(r => r.status !== 'PASS')) throw new Error(`higher priority case failed: ${JSON.stringify(passHigh)}`);
+
+    const low = structuredClone(base);
+    low['A Metal Energy Fulfillment Ratio'] = [0.49, 0.49];
+    const failLow = checkPlugin(plugin, ctx(low));
+    const priorityFail = failLow.find(r => r.name.includes('priority fulfillment'));
+    if (priorityFail?.status !== 'FAIL') throw new Error(`lower priority case did not fail: ${JSON.stringify(failLow)}`);
+
+    const close = structuredClone(base);
+    close['A Metal Energy Fulfillment Ratio'] = [0.5 - 5e-9, 0.5 - 5e-9];
+    const passTol = checkPlugin(plugin, ctx(close));
+    if (passTol.some(r => r.status !== 'PASS')) throw new Error(`abs_tol case failed: ${JSON.stringify(passTol)}`);
+
+    const old = checkPlugin({ type: 'energy_balance', colonies: ['A'], consumers: ['Metal'], abs_tol: 1e-8 }, ctx(base));
+    if (old.some(r => r.name.includes('priority fulfillment')) || old.length !== passHigh.length - 1) {
+      throw new Error(`priority-absent check set changed: old=${old.length}, priority=${passHigh.length}`);
+    }
+    return `priority check FAIL/PASS/tolerance verified; absent keeps ${old.length} legacy checks`;
+  });
+
   await expect('parameter registry: malformed annotations are rejected', async () => {
     return validateAnnotations({ format: 'x', parameters: { 'A Wage': { role: 'only role' } } }).length >= 2;
   });
