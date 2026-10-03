@@ -236,14 +236,14 @@ try {
     // Expected failing dimensions are the non-zero debts only: a dimension that reaches zero (P2 exceptions
     // since v7.7.7) no longer fails, and with no debts left the mode passes.
     const sig = parts => parts.filter(([, n]) => n > 0).map(([d, n]) => `${d}:${n}`).join(',');
-    const v1want = sig([['P4', EXP.P4.without_deposit], ['P5', EXP.P5.undeclared]]);
+    const v1want = sig([['P4', EXP.P4.without_deposit], ['P5', EXP.P5.undeclared], ['P5', EXP.P5.declared]]);
     if (!(v1.status === (v1want ? 'FAIL' : 'PASS') && v1sig === v1want)) throw new Error('planet_v1: ' + v1sig);
 
     const sd = structuredClone(declaration);
     sd.enforce = 'planet_strict';
     const strict = audit(accepted, sd);
     const ssig = strict.modeFailures.map(x => `${x.dimension}:${x.count}`).join(',');
-    const swant = sig([['P4', EXP.P4.without_deposit], ['P5', EXP.P5.undeclared], ['P2 exceptions', EXP.P2.exceptions], ['P3 exceptions', EXP.P3.exceptions]]);
+    const swant = sig([['P4', EXP.P4.without_deposit], ['P5', EXP.P5.undeclared], ['P5', EXP.P5.declared], ['P2 exceptions', EXP.P2.exceptions], ['P3 exceptions', EXP.P3.exceptions]]);
     if (!(strict.status === (swant ? 'FAIL' : 'PASS') && ssig === swant)) {
       throw new Error('planet_strict: ' + ssig);
     }
