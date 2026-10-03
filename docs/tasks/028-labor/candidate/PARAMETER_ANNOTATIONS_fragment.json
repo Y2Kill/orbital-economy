@@ -9,16 +9,22 @@
       "effect": "Sets the irreducible human share in every generated Automation Factor.",
       "evidence": "V7_7_10_ARCHITECTURE_SPEC §1–§2 and draft/process-labor.json.",
       "since": "v7.7.10 candidate r1",
-      "tags": "labor",
-      "applies_to_mirror": true
+      "tags": [
+        "labor",
+        "automation",
+        "coefficient"
+      ]
     },
     "Automation Labor Exponent": {
       "role": "Automation response exponent, value 1.",
       "effect": "Shapes the relation between Automation Level and Automation Factor; value 1 gives a linear response above the human-share floor.",
       "evidence": "V7_7_10_ARCHITECTURE_SPEC §1–§2 and draft/process-labor.json.",
       "since": "v7.7.10 candidate r1",
-      "tags": "labor",
-      "applies_to_mirror": true
+      "tags": [
+        "labor",
+        "automation",
+        "coefficient"
+      ]
     },
     "A Mining Labor per Unit": {
       "role": "Mining labor intensity for colony A, value 0.05.",
