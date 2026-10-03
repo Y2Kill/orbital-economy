@@ -1,0 +1,17 @@
+{
+  "task": "028",
+  "title": "v7.7.10 Labor: labor requirement of every process with an automation factor (labor node, automation 0, no switch); automation probe Mode 48; planet_closure in planet_v1 mode (Planet v1 P5 17/0)",
+  "branch": "task/028-labor",
+  "allow": [],
+  "allow_binary": [],
+  "allow_protected": [
+    "docs/tasks/028-labor/candidate/**"
+  ],
+  "required_changes": [
+    "docs/tasks/028-labor/candidate/model-patch.json",
+    "docs/tasks/028-labor/candidate/validation.json",
+    "docs/tasks/028-labor/candidate/change-policy.json",
+    "docs/tasks/028-labor/candidate/PARAMETER_ANNOTATIONS_fragment.json"
+  ],
+  "sums_by": "reviewer"
+}

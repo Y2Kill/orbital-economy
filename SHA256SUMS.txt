@@ -319,6 +319,13 @@ e1f776991d6143ac2a02c85553b32c5e8b6ac7096f10c69c13cb667069c8a0a8  ./docs/tasks/0
 acbec86cbb28343cf6c71820df4c3a8fa43c24c16c6ac1ff16baad2d8778c89b  ./docs/tasks/027-labor-node/reference/definition_fingerprint.mjs
 300ff0bf57ed046e85eda41259baec025dbd5958705ece2328841962b97edc83  ./docs/tasks/027-labor-node/reference/labor_prototype.mjs
 2b19ec9a4bd348fcf10301daa6b29cefac10e39c6d0b2d145797c3a1bbbc1898  ./docs/tasks/027-labor-node/scope.json
+6fb85bd85b190f0f3e5edd79d50bd409db4a0c587e4a5051f82f505c61d0691e  ./docs/tasks/028-labor/TASK_RU.md
+d2407bef6aa6a4bc6ea2da0a689569d7da4061b07b9b9cf07d103f4f40da517f  ./docs/tasks/028-labor/V7_7_10_ARCHITECTURE_SPEC.md
+2ec96d5849b5763ab9e0bc3865479c06648db21e47141ccabd940a86eecb2dae  ./docs/tasks/028-labor/V7_7_10_TEST_PLAN.md
+038a38a37f43131a14ded02077cfca0ab33130fb9bd84d60ba775c867dfb9d12  ./docs/tasks/028-labor/draft/change-policy-v7.7.10-draft.json
+e1f776991d6143ac2a02c85553b32c5e8b6ac7096f10c69c13cb667069c8a0a8  ./docs/tasks/028-labor/draft/process-labor.json
+43736f0e201fa1437f16d580c89bd3d3a13d6c7cc85206714e720d1ed7cf8f1c  ./docs/tasks/028-labor/draft/validation-v7.7.10-draft.json
+d4b5bb2b1c5a0aff42905ed0eac14b3b21aba5b8ea410fd64a883637b1e11e33  ./docs/tasks/028-labor/scope.json
 44d2e557f1cb2322739bc95ee2b6dcbf6d6fcb708da14e90d53250936e50da5c  ./docs/tasks/README_RU.md
 bbf818e93b88d606b3137b1bb69d60db8c41c9df4089025a921b1ca00f473244  ./lab/APPLY_PATCH.cmd
 22c364b2d41df6b53ebdf6c33edc898b8943dfea554b4eee9628e011cc22768e  ./lab/CHANGELOG.md
@@ -346,7 +353,7 @@ d43711fd8a54e95aaba0b5ae0473a4fa453e4e9813eb3e7178df45ce59452e18  ./lab/QUICK_ST
 52bcfc0749480fa5467e713f3a6948258dccb560357eef5822f8bcee070c652c  ./lab/RUN_LAB.cmd
 324ccedcd35621f7716bc905acc67d09076f040075e68d8e1c5e657a32f48499  ./lab/RUN_TESTS.cmd
 b08fd6ad35bba528bf455553dfd5d9f7c68b81658f2cbf6cf2a3989afb647629  ./lab/SELF_TEST.cmd
-73bede993100fd131620cb61d04b4b2da8325fe2c07f8e3a4272c836954c4c78  ./lab/SHA256SUMS.txt
+e67f1a394721e9cdc5d2fda051b94503d6926b62900b3e152d399dc58e73dd29  ./lab/SHA256SUMS.txt
 75120cad55eab07655f699135bd7997c2a18db496be28dbd8741ddecedd4bdda  ./lab/STRUCTURE_AUDIT.cmd
 7396a4da60a41cc41a67c7bb8baa619b0ad5be9e745c0c08f17c1a26a56a18e5  ./lab/STRUCTURE_SELF_TEST.cmd
 58cb8e2bf5a04de53a4c568c22bd8f840585e27dec55b701520b28472e6652b8  ./lab/docs/ARCHITECTURE_RU.md
@@ -392,7 +399,7 @@ e980c535ef0ade1768c9f4cdbf1058e219ad3e0eb21cc8fc9c4221a12f33c720  ./lab/src/depo
 1ffae379e11c3962d782cb10ea3bdd637ac4f0541d80e484d1501798d6184a26  ./lab/src/loop_audit.js
 d50e351606b701badfeba199e4adef824e30b1c6e14e1d27593c1a5347399d8e  ./lab/src/loop_qa.js
 6c8dbd8fc2705b12c0130e2226276328c9f84d2d6aa6c22a845e7ad53c1fadf8  ./lab/src/model.js
-57d07392ff86ae5aa087448f5800af1a3a060a0490b9bed5527e111e6fcc6eea  ./lab/src/node_qa.js
+3927c22e0419dae418647d4ab4d6ffd0ef86080b1f5fa27b6fa1c675d28db498  ./lab/src/node_qa.js
 334743997c6b2bd14177298d69dabd1472b17ed1f8ec29e352ac856373b30f05  ./lab/src/nodes/capital_lifecycle.js
 db5abb1bd96c438a0ca066cc300df8b8f691d083e6770814cd86a86cd1809b74  ./lab/src/nodes/deposit.js
 db55cf5aae42467bacd9fc0003e81fb75399bf9dd813009c2bb51701ba213fd4  ./lab/src/nodes/energy_consumer.js
@@ -402,7 +409,7 @@ db55cf5aae42467bacd9fc0003e81fb75399bf9dd813009c2bb51701ba213fd4  ./lab/src/node
 1913c9aa55218ec302128b218dc448a8abaf4c5009641bf239791def84f65de9  ./lab/src/parameters.js
 9e3270f021505e686538e44e673e8ff010974c2335723dde8c3a87722da347e3  ./lab/src/patch.js
 accca1c80f92b585650cdfe1f0f9fbc2f58bde0ef6dcf8598537501fb68aff80  ./lab/src/planet_closure.js
-f1432544c35fceee00f1da90457a0076743b72ca8ac08d085f089e2643041828  ./lab/src/planet_qa.js
+895e8a08561f54caaaa40fbdb6c16c0d4b4e5c25fa682b09ab6ea3a58f446381  ./lab/src/planet_qa.js
 c3c1412ddbd2745d01fa40023a70b713b8dc6ad2f0ba14fe0fd70fe668138036  ./lab/src/policy.js
 630aeb7fd6c7f09d6f42089a0225e39f0f7c966b27b5ec4a2e17b5321d118b58  ./lab/src/policy_qa.js
 b0162ce5bc02de93c6b5a36c1f93caf5455b9f0de7ae8fb5cfd19396ef3bc3fa  ./lab/src/policy_run.js

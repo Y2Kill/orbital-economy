@@ -129,7 +129,7 @@ try {
     const r = auditPlanetClosure(accepted, declaration, openBoundaries);
     const got = { processes: r.counters.processes, legacy: r.counters.legacy, P2: r.counters.P2, P3: r.counters.P3, P4: r.counters.P4, P5: r.counters.P5, P6: r.counters.P6 };
     const ok = r.status === 'PASS'
-      && r.mode === 'report'
+      && r.mode === (declaration.enforce || 'report')
       && r.errors.length === 0
       && JSON.stringify(got) === JSON.stringify(EXP)
       && EXP.processes === 17 && EXP.legacy === 2
@@ -236,14 +236,18 @@ try {
     // Expected failing dimensions are the non-zero debts only: a dimension that reaches zero (P2 exceptions
     // since v7.7.7) no longer fails, and with no debts left the mode passes.
     const sig = parts => parts.filter(([, n]) => n > 0).map(([d, n]) => `${d}:${n}`).join(',');
-    const v1want = sig([['P4', EXP.P4.without_deposit], ['P5', EXP.P5.undeclared], ['P5', EXP.P5.declared]]);
+    // P5 also fails for each declared labor role without a requirement variable (task 027); count them from the
+    // declaration (colony processes once per colony, shared processes once), not from all declared roles.
+    const noRequirement = (declaration.processes || []).filter(p => p.labor?.kind === 'declared' && !p.labor.requirement)
+      .reduce((n, p) => n + (String(p.output ?? '').includes('{C}') ? (declaration.colonies || []).length : 1), 0);
+    const v1want = sig([['P4', EXP.P4.without_deposit], ['P5', EXP.P5.undeclared], ['P5', noRequirement]]);
     if (!(v1.status === (v1want ? 'FAIL' : 'PASS') && v1sig === v1want)) throw new Error('planet_v1: ' + v1sig);
 
     const sd = structuredClone(declaration);
     sd.enforce = 'planet_strict';
     const strict = audit(accepted, sd);
     const ssig = strict.modeFailures.map(x => `${x.dimension}:${x.count}`).join(',');
-    const swant = sig([['P4', EXP.P4.without_deposit], ['P5', EXP.P5.undeclared], ['P5', EXP.P5.declared], ['P2 exceptions', EXP.P2.exceptions], ['P3 exceptions', EXP.P3.exceptions]]);
+    const swant = sig([['P4', EXP.P4.without_deposit], ['P5', EXP.P5.undeclared], ['P5', noRequirement], ['P2 exceptions', EXP.P2.exceptions], ['P3 exceptions', EXP.P3.exceptions]]);
     if (!(strict.status === (swant ? 'FAIL' : 'PASS') && ssig === swant)) {
       throw new Error('planet_strict: ' + ssig);
     }

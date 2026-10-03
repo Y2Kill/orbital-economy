@@ -326,7 +326,12 @@ const layers = new Map();
   let current = structuredClone(accepted);
   const remaining = [...layeredNodes];
   while (remaining.length) {
-    const i = remaining.findIndex(n => n.targets(n.decl).every(t => outerSwitchIs(current, t, n.decl.switch)));
+    // A node without a switch (labor) does not wrap formulas in IfThenElse; it is peelable when no other
+    // remaining node replaces any of the formulas it edits.
+    const peelable = n => n.decl.switch
+      ? n.targets(n.decl).every(t => outerSwitchIs(current, t, n.decl.switch))
+      : n.targets(n.decl).every(t => !remaining.some(o => o !== n && o.targets(o.decl).includes(t)));
+    const i = remaining.findIndex(peelable);
     if (i < 0) throw new Error(`cannot determine node layering: none of ${remaining.map(n => n.decl.sector || n.decl.switch || n.decl.type).join(', ')} is outermost on all its replacement targets`);
     const [n] = remaining.splice(i, 1);
     const base = n.strip(current, n.decl);
@@ -1206,9 +1211,14 @@ await expect('36. labor trial on last Mode passes runtime and every requirement 
 
 await expect('37. A Smelting automation 0.5 yields factor 0.525, lowers cost, runtime labor PASS', () => {
   if(!laborState?.validation)throw new Error('case 35 did not produce merged validation');
-  const before=simulateLaborModel(laborState.model,laborState.validation),m=structuredClone(laborState.model),level=m.elements.find(e=>e.type!=='LINK'&&e.name==='A Smelting Automation Level');
-  if(!level)throw new Error('A Smelting Automation Level missing');level.behavior.value=.5;
-  const after=simulateLaborModel(m,laborState.validation),f=Array.from(after.ctx.get('A Smelting Automation Factor'),Number);if(!f.every(v=>Math.abs(v-.525)<=1e-12))throw new Error(`factor ${f.slice(0,3)}`);
+  // Set the level explicitly on both sides, in the element and in every scenario that carries it: once a model
+  // task has added an automation probe Mode (v7.7.10 Mode 48), the last scenario already sets it to 0.5.
+  const withLevel=v=>{const m=structuredClone(laborState.model),level=m.elements.find(e=>e.type!=='LINK'&&e.name==='A Smelting Automation Level');
+    if(!level)throw new Error('A Smelting Automation Level missing');level.behavior.value=v;
+    for(const sc of m.scenarios||[])if(sc.values&&Object.keys(sc.values).some(k=>k.toLowerCase()==='a smelting automation level'))for(const k of Object.keys(sc.values))if(k.toLowerCase()==='a smelting automation level')sc.values[k]=v;
+    return m;};
+  const before=simulateLaborModel(withLevel(0),laborState.validation);
+  const after=simulateLaborModel(withLevel(.5),laborState.validation),f=Array.from(after.ctx.get('A Smelting Automation Factor'),Number);if(!f.every(v=>Math.abs(v-.525)<=1e-12))throw new Error(`factor ${f.slice(0,3)}`);
   const out=Array.from(after.ctx.get('A Metal Production'),Number),a=Array.from(before.ctx.get('A Metal Unit Cost'),Number),b=Array.from(after.ctx.get('A Metal Unit Cost'),Number);let n=0;
   for(let i=0;i<out.length;i++)if(out[i]>0){n++;if(!(b[i]<a[i]))throw new Error(`day ${after.ctx.times[i]} cost ${b[i]} !< ${a[i]}`);}
   if(!n)throw new Error('no positive A Metal Production');return `factor=0.525; lower cost at ${n} positive-output points; runtime PASS`;
