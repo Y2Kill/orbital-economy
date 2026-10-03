@@ -1,21 +1,21 @@
 # Current State
 
 **Document status:** CURRENT  
-**Describes code:** Orbital Economy v7.7.8 r1 — Deposits  
-**Base:** accepted v7.7.7 r1 (Power Resource Capital)  
-**Model SHA-256:** `17794e6c6acec9a965473bc170f1c71e31a82fe7a095ec1391c86eb681c1b50e`
+**Describes code:** Orbital Economy v7.7.9 r1 — Process Energy  
+**Base:** accepted v7.7.8 r1 (Deposits)  
+**Model SHA-256:** `fb27f258e5fca6d236513399f7b29082b483b97b3f7a1d2c5eed00a5bc3754f8`
 
 ## 1. Checkpoint
 
 | Property | Value |
 |---|---:|
-| ModelJSON elements | 4337 |
-| VARIABLE | 1064 |
-| STOCK | 121 |
-| FLOW | 263 |
-| LINK | 2889 |
-| Named primitives | 1448 |
-| Scenarios | 46 |
+| ModelJSON elements | 4640 |
+| VARIABLE | 1111 |
+| STOCK | 129 |
+| FLOW | 279 |
+| LINK | 3121 |
+| Named primitives | 1519 |
+| Scenarios | 48 |
 | Simulation | 0..1080 days |
 | Time step | 0.25 day |
 | Engine | `simulation@9.0.0` |
@@ -86,6 +86,10 @@ Energy-resource extraction had no capacity at all: `X Power Resource Extraction 
 
 Every extraction — ore, regolith, the energy resource — now draws from **proven reserves** (`X R Proven Reserves`, about 10 years of extraction at start), not from ∅. **Exploration** (`X R Exploration`) moves a planetary-scale **undiscovered resource** (`X R Undiscovered Resource`, about 1000 years; both initial values are named parameters, in v8 they come from planet formation) into proven reserves, aiming at 15 years of the smoothed extraction (`X R Extraction Signal`), slowing as the undiscovered stock runs low, and paid in capital goods per unit discovered. Extraction is capped smoothly by proven reserves (not binding on the horizon). One `deposit` node (`model/nodes/deposits.json`), one switch `Deposits Enabled`. The extraction flows are re-sourced to proven reserves (`retarget_flows`) and cannot be switched off: in Modes 0–43 they draw proven reserves down with unchanged values. Planet v1 counter P4: **6 / 0** — every extraction draws from a declared deposit (owner decision 5, 2026-09-30).
 
+### 2i. Process energy (v7.7.9)
+
+Ore mining, regolith extraction, energy-resource extraction and capital-goods production now draw energy from their colony allocator, as smelting, electronics and construction materials already did. For each process the old rate is kept verbatim as `X K Pre Energy Rate`; the request `X K Requested Energy` reads a 3-day smoothed signal of it (`X K Energy Signal`) × energy per unit — mining 1, regolith 10, energy resource 0.05 (one unit of the resource yields one unit of energy: EROI 20), capital goods 50; the rate becomes the pre-energy rate × its own fulfillment. Without the signal every one of the four requests closes an algebraic loop through the allocator. Energy-resource extraction is the energy sector's own use and is served first (`X Priority Energy Fulfillment Ratio`); the rest share what is left. Proportional rationing of fuel extraction is a positive loop with an absorbing zero: on the skeleton without the priority colony B fell to zero energy and zero fuel for good. One `energy_consumer` node (`model/nodes/process-energy.json`), one switch `Process Energy Enabled`. Planet v1 counter P3: **14 / 2 / 1 / 0** — only shared transport stays an exception, decided at the level-of-economy step (owner decisions, 2026-10-02).
+
 ## 3. Energy Kernel v2
 
 The old abstraction was effectively:
@@ -150,7 +154,7 @@ Extraction adjusts toward current resource demand plus a target-inventory correc
 - `0`: all new resource flows are inert; `Available Generation` falls back to the accepted active-capacity path; generation cost falls back to the accepted v7.5.1 expression.
 - `1`: Energy Kernel v2 operates.
 
-In v7.6, Modes **0–24** were the exact-regression scope against v7.5.1 and Modes **25–26** were new. In v7.6.1, Modes **0–24** and **26** reproduced v7.6 r2 exactly (every series except the recalibrated constant's own series). In v7.7, Modes **0–26** set `Construction Materials Enabled = 0` and reproduce v7.6.1 r1 bit for bit on the canonical platform; Modes **27–29** are new. In v7.7.1, Modes **0–29** reproduce v7.7 r1 (switch `Transport Construction Materials Enabled`); in v7.7.2, Modes **0–31** set `Construction Materials Energy Enabled = 0` and reproduce v7.7.1 r1 bit for bit; Modes **32–33** are new. In v7.7.3, Modes **0–33** set `Construction Materials Capital Enabled = 0` and reproduce v7.7.2 r1 bit for bit; Modes **34–35** are new. In v7.7.4, Modes **0–35** set `Capital Goods Capital Enabled = 0` and reproduce v7.7.3 r1 bit for bit; Modes **36–37** are new. In v7.7.5, Modes **0–37** set `Regolith Capital Enabled = 0` and reproduce v7.7.4 r1 bit for bit; Modes **38–39** are new. In v7.7.6, Modes **0–39** set `Ore Capital Enabled = 0` and reproduce v7.7.5 r1 bit for bit; Modes **40–41** are new. In v7.7.7, Modes **0–41** set `Power Resource Capital Enabled = 0` and reproduce v7.7.6 r1 bit for bit; Modes **42–43** are new. In v7.7.8, Modes **0–43** set `Deposits Enabled = 0` and reproduce v7.7.7 r1 bit for bit; Modes **44–45** are new.
+In v7.6, Modes **0–24** were the exact-regression scope against v7.5.1 and Modes **25–26** were new. In v7.6.1, Modes **0–24** and **26** reproduced v7.6 r2 exactly (every series except the recalibrated constant's own series). In v7.7, Modes **0–26** set `Construction Materials Enabled = 0` and reproduce v7.6.1 r1 bit for bit on the canonical platform; Modes **27–29** are new. In v7.7.1, Modes **0–29** reproduce v7.7 r1 (switch `Transport Construction Materials Enabled`); in v7.7.2, Modes **0–31** set `Construction Materials Energy Enabled = 0` and reproduce v7.7.1 r1 bit for bit; Modes **32–33** are new. In v7.7.3, Modes **0–33** set `Construction Materials Capital Enabled = 0` and reproduce v7.7.2 r1 bit for bit; Modes **34–35** are new. In v7.7.4, Modes **0–35** set `Capital Goods Capital Enabled = 0` and reproduce v7.7.3 r1 bit for bit; Modes **36–37** are new. In v7.7.5, Modes **0–37** set `Regolith Capital Enabled = 0` and reproduce v7.7.4 r1 bit for bit; Modes **38–39** are new. In v7.7.6, Modes **0–39** set `Ore Capital Enabled = 0` and reproduce v7.7.5 r1 bit for bit; Modes **40–41** are new. In v7.7.7, Modes **0–41** set `Power Resource Capital Enabled = 0` and reproduce v7.7.6 r1 bit for bit; Modes **42–43** are new. In v7.7.8, Modes **0–43** set `Deposits Enabled = 0` and reproduce v7.7.7 r1 bit for bit; Modes **44–45** are new. In v7.7.9, Modes **0–45** set `Process Energy Enabled = 0` and reproduce v7.7.8 r1 bit for bit; Modes **46–47** are new.
 
 ## 5. New scenarios
 
@@ -240,24 +244,32 @@ Everything on, no stimulus. Exploration keeps proven reserves near their target 
 
 The transport-demand surge with everything on. During the surge B starts exploring regolith (up to ≈ 2.4/day) and steps up exploration of the energy resource (up to ≈ 885/day); B's proven ore reaches ≈ 38 140. **Exploration competes with construction for capital goods**: B's capital-goods fulfillment falls to ≈ 0.12 in the surge window (≈ 0.17 in v7.7.7 Mode 43).
 
+### Mode 46 — Process Energy Baseline
+
+Everything on, no stimulus. Energy demand grows: A's mean 1500.7 → 1619.4 (+7.9 %), B's 417.2 → 502.7 (+20.5 %), the planet's +10.6 % — inside the owner's 10–20 % corridor. A's energy fulfillment falls on average from 0.947 to 0.919; B stays fully served after the first year. The energy sector's own use is always fully served; B's fuel inventory never falls below ≈ 1843.
+
+### Mode 47 — Transport Surge on Process Energy
+
+The transport-demand surge with everything on. B's energy shortage deepens in the surge window (minimum fulfillment 0.765 → 0.691, A 0.845 → 0.808) while the energy sector's own use stays fully served; B's capital-goods production draws up to ≈ 54 energy a day and its regolith extraction up to ≈ 37. No fuel collapse; recovery after the window.
+
 ## 6. Static QA
 
-| Metric | v7.7.8 r1 |
+| Metric | v7.7.9 r1 |
 |---|---:|
-| FLOW | 263 |
-| Boundary flows | 208 |
+| FLOW | 279 |
+| Boundary flows | 224 |
 | Unclassified boundary flows | 0 |
 | Declared transformation pairs | 25 |
 | Unpaired transformation flows | 0 |
 | Declared external-capital violations | **0** |
 | A/B symmetry mismatches | **0** |
-| A/B parameter differences | 134 |
+| A/B parameter differences | 138 |
 | Capital lifecycle instances | 11 |
 | Capital lifecycle non-conforming | **0** |
 | Simple capital instances | 6 (non-conforming **0**) |
 | Deposit instances | 6 (non-conforming **0**) |
 
-Executable validation Modes 0–45 (`validation/validation-v7.7.8.json`) was run on the canonical platform on 2026-10-02: **46/46 PASS** (13600 checks); Modes 0–43 reproduce v7.7.7 r1 exactly (44 × `common=1348, changed=0, maxAbs=0`, 100 added series). v7.7.7 had reproduced v7.7.6 r1 exactly in Modes 0–41. v7.7.6 had reproduced v7.7.5 r1 exactly in Modes 0–39. v7.7.5 had reproduced v7.7.4 r1 exactly in Modes 0–37. v7.7.4 had reproduced v7.7.3 r1 exactly in Modes 0–35. v7.7.3 had reproduced v7.7.2 r1 exactly in Modes 0–33. v7.7.2 had reproduced v7.7.1 r1 exactly in Modes 0–31. v7.7.1 had reproduced v7.7 r1 exactly in Modes 0–29. Static: algebraic loops 0 of 16384 switch combinations; Planet v1 closure P2 11/6/0/0, P4 6/0, P3 6/2/9/0, P4 0/6, P5 4/13, P6 4. v7.7 had reproduced v7.6.1 r1 exactly in Modes 0–26. v7.6.1 had reproduced v7.6 r2 in Modes 0–24 and 26 apart from the recalibrated constant's own series. v7.6 r2 in its turn reproduced v7.5.1 r1 exactly in Modes 0–24 (25 × `common=963, changed=0, maxAbs=0`, 41 added series). See `ACCEPTANCE_STATUS.md`.
+Executable validation Modes 0–47 (`validation/validation-v7.7.9.json`) was run on the canonical platform on 2026-10-03: **48/48 PASS** (15414 checks); Modes 0–45 reproduce v7.7.8 r1 exactly (46 × `common=1448, changed=0, maxAbs=0`, 71 added series). v7.7.8 had reproduced v7.7.7 r1 exactly in Modes 0–43. v7.7.6 had reproduced v7.7.5 r1 exactly in Modes 0–39. v7.7.5 had reproduced v7.7.4 r1 exactly in Modes 0–37. v7.7.4 had reproduced v7.7.3 r1 exactly in Modes 0–35. v7.7.3 had reproduced v7.7.2 r1 exactly in Modes 0–33. v7.7.2 had reproduced v7.7.1 r1 exactly in Modes 0–31. v7.7.1 had reproduced v7.7 r1 exactly in Modes 0–29. Static: algebraic loops 0 of 32768 switch combinations; Planet v1 closure P2 11/6/0/0, P3 14/2/1/0, P4 6/0, P3 6/2/9/0, P4 0/6, P5 4/13, P6 4. v7.7 had reproduced v7.6.1 r1 exactly in Modes 0–26. v7.6.1 had reproduced v7.6 r2 in Modes 0–24 and 26 apart from the recalibrated constant's own series. v7.6 r2 in its turn reproduced v7.5.1 r1 exactly in Modes 0–24 (25 × `common=963, changed=0, maxAbs=0`, 41 added series). See `ACCEPTANCE_STATUS.md`.
 
 ## 7. What v7.6 deliberately does not implement
 

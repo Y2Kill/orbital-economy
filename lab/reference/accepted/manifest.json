@@ -1,15 +1,15 @@
 {
   "status": "ACCEPTED",
-  "model_name": "Orbital Economy v7.7.8 r1 — Deposits",
-  "model_file": "orbital_economy_v7_7_8_r1_modeljson.json",
-  "model_sha256": "17794e6c6acec9a965473bc170f1c71e31a82fe7a095ec1391c86eb681c1b50e",
-  "validation_file": "validation-v7.7.8.json",
-  "validation_sha256": "b0ccff9eded06c40bf428b6b7b2e1d92e6f6d34b2335035652145b3122071631",
-  "accepted_date": "2026-10-02",
+  "model_name": "Orbital Economy v7.7.9 r1 — Process Energy",
+  "model_file": "orbital_economy_v7_7_9_r1_modeljson.json",
+  "model_sha256": "fb27f258e5fca6d236513399f7b29082b483b97b3f7a1d2c5eed00a5bc3754f8",
+  "validation_file": "validation-v7.7.9.json",
+  "validation_sha256": "d48f5fbfbaf10bd532f50cec567cc2a08f4c0c72232bf3281bf1406daa925da6",
+  "accepted_date": "2026-10-03",
   "engine": "simulation@9.0.0",
   "notes": [
-    "v7.7.8: every extraction (ore, regolith, energy resource) draws from proven reserves, replenished by capital-backed exploration from planetary-scale undiscovered resource (one deposit node, model/nodes/deposits.json; extraction flows re-sourced from the void). Planet v1 P4 has no extraction without a deposit left. See docs/tasks/023-deposits/.",
-    "Modes 0-43 reproduce v7.7.7 r1 exactly (Deposits Enabled = 0); Mode 44 baseline (exploration keeps proven reserves near target, B ore reserves grow), Mode 45 transport surge in which exploration competes with construction for colony B capital goods.",
+    "v7.7.9: ore mining, regolith extraction, energy-resource extraction and capital-goods production draw energy from their colony allocator (one energy_consumer node, model/nodes/process-energy.json): requests read a smoothed signal of the planned rate (a same-step request closes an algebraic loop through the allocator), and energy-sector own use is served first. Planet v1 P3 is 14/2/1/0 - only shared transport stays an exception. See docs/tasks/026-process-energy/.",
+    "Modes 0-45 reproduce v7.7.8 r1 exactly (Process Energy Enabled = 0); Mode 46 baseline (planet energy demand +10.6 %), Mode 47 transport surge with a deeper B energy shortage but no fuel collapse.",
     "Exact numbers are defined on the canonical platform (docs/VERSIONING_AND_AUTHORITY.md section 8); series-digest.windows.json is the golden."
   ]
 }

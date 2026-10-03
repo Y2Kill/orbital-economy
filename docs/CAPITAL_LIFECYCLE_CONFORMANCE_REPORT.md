@@ -1,10 +1,10 @@
 # Orbital Economy Lab — Capital Lifecycle Kernel conformance
 
-- generated: 2026-10-02T07:44:17.819Z
-- model: Orbital Economy v7.7.8 r1 — Deposits
-- model SHA-256: `17794e6c6acec9a965473bc170f1c71e31a82fe7a095ec1391c86eb681c1b50e`
-- validation: Orbital Economy v7.7.8 validation r1
-- validation SHA-256: `b0ccff9eded06c40bf428b6b7b2e1d92e6f6d34b2335035652145b3122071631`
+- generated: 2026-10-03T09:54:04.365Z
+- model: Orbital Economy v7.7.9 r1 — Process Energy
+- model SHA-256: `fb27f258e5fca6d236513399f7b29082b483b97b3f7a1d2c5eed00a5bc3754f8`
+- validation: Orbital Economy v7.7.9 validation r1
+- validation SHA-256: `d48f5fbfbaf10bd532f50cec567cc2a08f4c0c72232bf3281bf1406daa925da6`
 - kernel format: orbital-economy-capital-lifecycle-kernel-v1
 - status: **PASS**
 

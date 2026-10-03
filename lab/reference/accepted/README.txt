@@ -1,8 +1,8 @@
 CURRENT ACCEPTED BASELINE
 
-Orbital Economy v7.7.8 r1 — Deposits
-Model SHA-256: 17794e6c6acec9a965473bc170f1c71e31a82fe7a095ec1391c86eb681c1b50e
-Validation SHA-256: b0ccff9eded06c40bf428b6b7b2e1d92e6f6d34b2335035652145b3122071631
+Orbital Economy v7.7.9 r1 — Process Energy
+Model SHA-256: fb27f258e5fca6d236513399f7b29082b483b97b3f7a1d2c5eed00a5bc3754f8
+Validation SHA-256: d48f5fbfbaf10bd532f50cec567cc2a08f4c0c72232bf3281bf1406daa925da6
 
 This directory is the accepted reference used by comparison/policy tools.
 

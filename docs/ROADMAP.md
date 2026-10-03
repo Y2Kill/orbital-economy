@@ -1,10 +1,14 @@
 # Roadmap
 
 **Document status:** CURRENT  
-**Base:** Orbital Economy v7.7.8 r1 — Deposits (accepted 2026-10-02)  
+**Base:** Orbital Economy v7.7.9 r1 — Process Energy (accepted 2026-10-03)  
 **Rule:** roadmap describes intent; executable accepted code remains authoritative for accepted behavior.
 
-## Current implementation — v7.7.8 Deposits
+## Current implementation — v7.7.9 Process Energy
+
+Ore, regolith and energy-resource extraction and capital-goods production draw energy from their colony allocator (owner decisions 2026-10-02: energy-resource extraction uses energy too, new consumers add 10–20 % to energy demand, shared transport stays an exception). The bench first learned an `energy_consumer` node type — smoothed requests and a priority group for the energy sector's own use (task 024, Lab v0.9.13) — and an exact loop-audit speed-up (task 025, Lab v0.9.14); the model step followed (task 026). Planet energy demand +10.6 %; in the transport surge colony B's shortage deepens but the energy sector stays fully served. **Planet v1 P3 is 14/2/1/0 — only shared transport is left, decided at the level-of-economy step.** The executor delivered the owner's declaration and validation byte-identical; the model equals the skeleton.
+
+## v7.7.8 Deposits
 
 Every extraction draws from proven reserves, which capital-backed exploration replenishes from a planetary-scale undiscovered resource (owner decision 2026-09-30: deposits are proven, not total reserves, and can grow as well as shrink). The bench first learned a `deposit` node type and to re-source a flow from ∅ to a stock (task 022, Lab v0.9.12); the model step followed (task 023). Exploration keeps reserves near their target and, in the transport surge, competes with construction for capital goods in colony B. **Planet v1 P4 is closed (6/0); with P2 closed in v7.7.7, every production capacity is capital and every extraction draws from a declared deposit.** The executor delivered the owner's declaration and validation byte-identical; the model equals the skeleton.
 
@@ -143,7 +147,7 @@ Defined 2026-09-26: `docs/PLANET_V1_CONTRACT_RU.md`. The single boundary counter
 |---|---|---|
 | P1 capital-backed expansion | 0 external | 0 (closed) |
 | P2 capacity from capital, not a constant | **0 — closed in v7.7.7** (v7.7.2: 5; v7.7.3: 4; v7.7.4: 3; v7.7.5: 2; v7.7.6: 1) | 0 undeclared; exceptions with reason, counted separately |
-| P3 declared energy use | 4 of 7 processes + transport without energy (v7.7.1: 5 of 7) | 0 undeclared; exceptions with reason |
+| P3 declared energy use | **shared transport only — v7.7.9**: every colony process draws energy from its allocator (P3 14/2/1/0; v7.7.8: 4 of 7 processes + transport without energy) | 0 undeclared; exceptions with reason |
 | P4 finite deposits | **0 — closed in v7.7.8**: every extraction draws from proven reserves fed by exploration (v7.7.7: 3 per colony from nothing) | deposit stock from a named parameter (v8: derived from planet formation) |
 | P5 declared labor | 2 of 9 | all declared; no labor pool (v2) |
 | P6 final demand | constants | explicit external driver (population and life support: v2) |

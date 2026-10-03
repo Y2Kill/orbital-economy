@@ -73,7 +73,7 @@ APPLY_PATCH.cmd "delivery\model-patch.json" "input\model\candidate.json"
 
 ```cmd
 node src\cli.js expand-nodes <node-or-patch.json> <base-model.json> --out=output\expanded
-node src\cli.js expand-nodes <node-or-patch.json> <base-model.json> --out=output\expanded --validation=input\validation\validation-v7.7.8.json
+node src\cli.js expand-nodes <node-or-patch.json> <base-model.json> --out=output\expanded --validation=input\validation\validation-v7.7.9.json
 ```
 
 Команда пишет `patch.expanded.json` и `validation.fragments.json`; с `--validation` также `validation.merged.json`. Уже присутствующий generated validation-фрагмент не дублируется: он обязан совпасть (для kernel instance допускается только дополнительный `policy_notes` у принятой записи). Если merge ничего не меняет, validation копируется побайтно.

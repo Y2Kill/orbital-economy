@@ -1,15 +1,15 @@
 # Orbital Economy Lab — structure audit
 
-- generated: 2026-10-02T07:45:33.397Z
-- model: Orbital Economy v7.7.8 r1 — Deposits
-- model SHA-256: `17794e6c6acec9a965473bc170f1c71e31a82fe7a095ec1391c86eb681c1b50e`
-- validation: Orbital Economy v7.7.8 validation r1
-- validation SHA-256: `b0ccff9eded06c40bf428b6b7b2e1d92e6f6d34b2335035652145b3122071631`
+- generated: 2026-10-03T09:54:06.852Z
+- model: Orbital Economy v7.7.9 r1 — Process Energy
+- model SHA-256: `fb27f258e5fca6d236513399f7b29082b483b97b3f7a1d2c5eed00a5bc3754f8`
+- validation: Orbital Economy v7.7.9 validation r1
+- validation SHA-256: `d48f5fbfbaf10bd532f50cec567cc2a08f4c0c72232bf3281bf1406daa925da6`
 - status: **PASS**
 
 ## Open boundaries (declared physical-boundary meter)
 
-- flows total: 263; crossing the model boundary: 208; classified: 208; unclassified: 0
+- flows total: 279; crossing the model boundary: 224; classified: 224; unclassified: 0
 - closed-world violations: **0** (mode: `classify`) — zero means the currently declared closed-world boundary contract is satisfied; it is not a Planet v1 completeness claim
 - declared transformation pairs: 25; transformation flows without a pair: 0
 
@@ -21,7 +21,7 @@
 | final_consumption | yes | 4 | final goods leave the economy as consumption |
 | power_resource_consumption | yes | 2 | v7.6 physical operating resource is consumed in exact proportion to actual delivered generation. |
 | unit_transformation | yes | 8 | input stock -> output stock conversion modelled as a sink/source pair (different units); every flow here must belong to a declared transformation pair whose numeric identity is checked at runtime |
-| information_signal | yes | 62 | smoothing / information stocks, not matter |
+| information_signal | yes | 78 | smoothing / information stocks, not matter |
 | financial_accounting | yes | 16 | money bookkeeping, not matter |
 | capital_state_accounting | yes | 33 | Active is an operational-state sub-account of Installed; these flows change state, not physical capital |
 | capital_transformation | yes | 53 | v7.5/v7.5.1: installed capital expansion is a unit transformation of Capital Goods; regional sectors use one local sink, shared Transport uses two A/B regional sinks whose total identity is checked at runtime. v7.7: colonial sector expansion is additionally backed by a local Construction Materials sink. v7.7.1: shared Transport expansion is additionally backed by construction materials from both A and B inventories (two legs). v7.7.3: construction-materials plant expansion is backed by local capital goods and construction materials. v7.7.4: capital-goods plant expansion is backed by local capital goods and construction materials. |
@@ -98,7 +98,7 @@ Declared unit-transformation pairs (source flow physically backed by sink flows;
 - B Electronics Feedstock Consumption
 - B Electronics Production
 
-**information_signal** (62)
+**information_signal** (78)
 
 - A Electronics Capacity Planning Signal Increase
 - A Electronics Capacity Planning Signal Decrease
@@ -162,6 +162,22 @@ Declared unit-transformation pairs (source flow physically backed by sink flows;
 - A Power Resource Extraction Signal Decrease
 - B Power Resource Extraction Signal Increase
 - B Power Resource Extraction Signal Decrease
+- A Mining Energy Signal Increase
+- A Mining Energy Signal Decrease
+- A Regolith Extraction Energy Signal Increase
+- A Regolith Extraction Energy Signal Decrease
+- A Power Resource Extraction Energy Signal Increase
+- A Power Resource Extraction Energy Signal Decrease
+- A Capital Goods Energy Signal Increase
+- A Capital Goods Energy Signal Decrease
+- B Mining Energy Signal Increase
+- B Mining Energy Signal Decrease
+- B Regolith Extraction Energy Signal Increase
+- B Regolith Extraction Energy Signal Decrease
+- B Power Resource Extraction Energy Signal Increase
+- B Power Resource Extraction Energy Signal Decrease
+- B Capital Goods Energy Signal Increase
+- B Capital Goods Energy Signal Decrease
 
 **financial_accounting** (16)
 
@@ -322,8 +338,8 @@ Declared unit-transformation pairs (source flow physically backed by sink flows;
 ## Colony symmetry
 
 - tokens: A ↔ B
-- mirrored pairs checked: 1160; mirrored links checked: 2698
-- structural mismatches: **0**; numeric parameter differences (allowed): 134; elements under exceptions: 0
+- mirrored pairs checked: 1222; mirrored links checked: 2930
+- structural mismatches: **0**; numeric parameter differences (allowed): 138; elements under exceptions: 0
 
 <details><summary>Numeric parameter differences between colonies (allowed)</summary>
 
@@ -396,6 +412,8 @@ Declared unit-transformation pairs (source flow physically backed by sink flows;
 | value | A Power Resource Undiscovered Resource Initial | 500000000 | B Power Resource Undiscovered Resource Initial | 150000000 |
 | value | A Power Resource Proven Reserves Initial | 5000000 | B Power Resource Proven Reserves Initial | 1500000 |
 | initial_value | A Power Resource Extraction Signal | 1373.679 | B Power Resource Extraction Signal | 30.983 |
+| initial_value | A Mining Energy Signal | 42.227 | B Mining Energy Signal | 8.373 |
+| initial_value | A Power Resource Extraction Energy Signal | 1373.679 | B Power Resource Extraction Energy Signal | 30.983 |
 
 </details>
 
@@ -404,7 +422,7 @@ Declared unit-transformation pairs (source flow physically backed by sink flows;
 - status: **PASS**; mode: `report`
 - processes: 17; legacy: 2; expected source outputs: 10; undeclared outputs: 0
 - P2 capacity: kernel **11** / simple **6** / exceptions **0** / undeclared **0**
-- P3 energy: requests **6** / producer **2** / exceptions **9** / undeclared **0**
+- P3 energy: requests **14** / producer **2** / exceptions **1** / undeclared **0**
 - P4 deposits: with **6** / without **0**
 - P5 labor: declared **4** / undeclared **13**
 - P6 demand drivers: **4**
@@ -412,23 +430,25 @@ Declared unit-transformation pairs (source flow physically backed by sink flows;
 
 | Dimension | Process | Kind | Value | Reason |
 |---|---|---|---|---|
-| P3 | mining[A] | none | — | ore mining uses no energy yet (P3) |
-| P3 | mining[B] | none | — | ore mining uses no energy yet (P3) |
-| P3 | capital_goods[A] | none | — | capital-goods assembly uses no energy yet (P3) |
-| P3 | capital_goods[B] | none | — | capital-goods assembly uses no energy yet (P3) |
-| P3 | regolith[A] | none | — | v7.7 regolith extraction uses no energy by design (P3) |
-| P3 | regolith[B] | none | — | v7.7 regolith extraction uses no energy by design (P3) |
-| P3 | power_resource[A] | none | — | extraction energy is not modelled; treated as part of generation efficiency (P3) |
-| P3 | power_resource[B] | none | — | extraction energy is not modelled; treated as part of generation efficiency (P3) |
 | P3 | transport | none | — | shared transport uses no fuel or energy yet (P3) |
 
 <details><summary>Process paths</summary>
 
 **mining[A]**
 - capacity: A Mining → A Mining Rate → A Effective Mining Capacity → A Ore Mine Capacity
+- energy_total_to_request: A Total Requested Energy → A Mining Requested Energy
+- energy_output_to_fulfillment: A Mining → A Mining Rate → A Mining Energy Fulfillment Ratio → A Mining Allocated Energy → A Energy Fulfillment Ratio
+- energy_shared_planned: shared A Positive Desired Mining Rate
+  - request: A Mining Requested Energy → A Mining Energy Signal → A Mining Energy Signal Increase → A Mining Pre Energy Rate → A Positive Desired Mining Rate
+  - output: A Mining → A Mining Rate → A Positive Desired Mining Rate
 
 **mining[B]**
 - capacity: B Mining → B Mining Rate → B Effective Mining Capacity → B Ore Mine Capacity
+- energy_total_to_request: B Total Requested Energy → B Mining Requested Energy
+- energy_output_to_fulfillment: B Mining → B Mining Rate → B Mining Energy Fulfillment Ratio → B Mining Allocated Energy → B Energy Fulfillment Ratio
+- energy_shared_planned: shared B Positive Desired Mining Rate
+  - request: B Mining Requested Energy → B Mining Energy Signal → B Mining Energy Signal Increase → B Mining Pre Energy Rate → B Positive Desired Mining Rate
+  - output: B Mining → B Mining Rate → B Positive Desired Mining Rate
 
 **smelting[A]**
 - capacity: A Metal Production → A Smelting Rate → A Pre Energy Smelting Rate → A Refinery Active Capacity
@@ -468,15 +488,35 @@ Declared unit-transformation pairs (source flow physically backed by sink flows;
 
 **capital_goods[A]**
 - capacity: A Capital Goods Production → A Capital Goods Production Rate → A Capital Goods Production Capacity → A Capital Goods Plant Active Capacity
+- energy_total_to_request: A Total Requested Energy → A Capital Goods Requested Energy
+- energy_output_to_fulfillment: A Capital Goods Production → A Capital Goods Production Rate → A Capital Goods Energy Fulfillment Ratio → A Capital Goods Allocated Energy → A Energy Fulfillment Ratio
+- energy_shared_planned: shared A Capital Goods Production Capacity
+  - request: A Capital Goods Requested Energy → A Capital Goods Energy Signal → A Capital Goods Energy Signal Increase → A Capital Goods Pre Energy Rate → A Capital Goods Production Capacity
+  - output: A Capital Goods Production → A Capital Goods Production Rate → A Capital Goods Production Capacity
 
 **capital_goods[B]**
 - capacity: B Capital Goods Production → B Capital Goods Production Rate → B Capital Goods Production Capacity → B Capital Goods Plant Active Capacity
+- energy_total_to_request: B Total Requested Energy → B Capital Goods Requested Energy
+- energy_output_to_fulfillment: B Capital Goods Production → B Capital Goods Production Rate → B Capital Goods Energy Fulfillment Ratio → B Capital Goods Allocated Energy → B Energy Fulfillment Ratio
+- energy_shared_planned: shared B Capital Goods Production Capacity
+  - request: B Capital Goods Requested Energy → B Capital Goods Energy Signal → B Capital Goods Energy Signal Increase → B Capital Goods Pre Energy Rate → B Capital Goods Production Capacity
+  - output: B Capital Goods Production → B Capital Goods Production Rate → B Capital Goods Production Capacity
 
 **regolith[A]**
 - capacity: A Regolith Extraction → A Regolith Extraction Rate → A Regolith Extraction Capacity → A Regolith Mine Capacity
+- energy_total_to_request: A Total Requested Energy → A Regolith Extraction Requested Energy
+- energy_output_to_fulfillment: A Regolith Extraction → A Regolith Extraction Rate → A Regolith Extraction Energy Fulfillment Ratio → A Regolith Extraction Allocated Energy → A Energy Fulfillment Ratio
+- energy_shared_planned: shared A Regolith Extraction Capacity
+  - request: A Regolith Extraction Requested Energy → A Regolith Extraction Energy Signal → A Regolith Extraction Energy Signal Increase → A Regolith Extraction Pre Energy Rate → A Regolith Extraction Capacity
+  - output: A Regolith Extraction → A Regolith Extraction Rate → A Regolith Extraction Capacity
 
 **regolith[B]**
 - capacity: B Regolith Extraction → B Regolith Extraction Rate → B Regolith Extraction Capacity → B Regolith Mine Capacity
+- energy_total_to_request: B Total Requested Energy → B Regolith Extraction Requested Energy
+- energy_output_to_fulfillment: B Regolith Extraction → B Regolith Extraction Rate → B Regolith Extraction Energy Fulfillment Ratio → B Regolith Extraction Allocated Energy → B Energy Fulfillment Ratio
+- energy_shared_planned: shared B Regolith Extraction Capacity
+  - request: B Regolith Extraction Requested Energy → B Regolith Extraction Energy Signal → B Regolith Extraction Energy Signal Increase → B Regolith Extraction Pre Energy Rate → B Regolith Extraction Capacity
+  - output: B Regolith Extraction → B Regolith Extraction Rate → B Regolith Extraction Capacity
 
 **construction_materials[A]**
 - capacity: A Construction Materials Production → A Construction Materials Production Rate → A Construction Materials Production Capacity → A Construction Materials Plant Active Capacity
@@ -496,9 +536,19 @@ Declared unit-transformation pairs (source flow physically backed by sink flows;
 
 **power_resource[A]**
 - capacity: A Power Resource Extraction → A Power Resource Extraction Rate → A Power Resource Mine Capacity
+- energy_total_to_request: A Total Requested Energy → A Power Resource Extraction Requested Energy
+- energy_output_to_fulfillment: A Power Resource Extraction → A Power Resource Extraction Rate → A Power Resource Extraction Energy Fulfillment Ratio → A Power Resource Extraction Allocated Energy → A Priority Energy Fulfillment Ratio
+- energy_shared_planned: shared A Power Resource Demand
+  - request: A Power Resource Extraction Requested Energy → A Power Resource Extraction Energy Signal → A Power Resource Extraction Energy Signal Increase → A Power Resource Extraction Pre Energy Rate → A Power Resource Demand
+  - output: A Power Resource Extraction → A Power Resource Extraction Rate → A Power Resource Demand
 
 **power_resource[B]**
 - capacity: B Power Resource Extraction → B Power Resource Extraction Rate → B Power Resource Mine Capacity
+- energy_total_to_request: B Total Requested Energy → B Power Resource Extraction Requested Energy
+- energy_output_to_fulfillment: B Power Resource Extraction → B Power Resource Extraction Rate → B Power Resource Extraction Energy Fulfillment Ratio → B Power Resource Extraction Allocated Energy → B Priority Energy Fulfillment Ratio
+- energy_shared_planned: shared B Power Resource Demand
+  - request: B Power Resource Extraction Requested Energy → B Power Resource Extraction Energy Signal → B Power Resource Extraction Energy Signal Increase → B Power Resource Extraction Pre Energy Rate → B Power Resource Demand
+  - output: B Power Resource Extraction → B Power Resource Extraction Rate → B Power Resource Demand
 
 **generation[A]**
 - capacity: A Available Generation → A Power Active Generation Capacity → A Power Active Generation Capital
@@ -514,6 +564,6 @@ Declared unit-transformation pairs (source flow physically backed by sink flows;
 ## Algebraic loops (switch-aware, unconditional static audit)
 
 - status: **PASS**
-- switches: 14 — Capital Lifecycle Enabled, Intermediate Inputs Enabled, Capital Goods Enabled, Transport Capital Goods Enabled, Power Resource Enabled, Construction Materials Enabled, Transport Construction Materials Enabled, Construction Materials Energy Enabled, Construction Materials Capital Enabled, Capital Goods Capital Enabled, Regolith Capital Enabled, Ore Capital Enabled, Power Resource Capital Enabled, Deposits Enabled
-- combinations: 16384; with loops: **0**
+- switches: 15 — Capital Lifecycle Enabled, Intermediate Inputs Enabled, Capital Goods Enabled, Transport Capital Goods Enabled, Power Resource Enabled, Construction Materials Enabled, Transport Construction Materials Enabled, Construction Materials Energy Enabled, Construction Materials Capital Enabled, Capital Goods Capital Enabled, Regolith Capital Enabled, Ore Capital Enabled, Power Resource Capital Enabled, Deposits Enabled, Process Energy Enabled
+- combinations: 32768; with loops: **0**
 - Modes with loops: none
