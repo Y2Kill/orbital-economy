@@ -1,0 +1,218 @@
+{
+  "format": "orbital-economy-parameter-annotations-fragment-v1",
+  "model": "Orbital Economy v7.7.9 Process Energy candidate r1",
+  "updated": "2026-10-03",
+  "note": "Task 026 fragment. Numeric constants introduced by the energy_consumer declaration are annotated: layer switch, energy-per-unit coefficients, signal adjustment times, and A/B initial energy signals. Mining and Power Resource Extraction signals are asymmetric; Regolith Extraction and Capital Goods are intentionally 0/0 as specified by the architecture and draft declaration.",
+  "parameters": {
+    "Process Energy Enabled": {
+      "role": "Process-energy layer master switch, raw value 1.",
+      "effect": "0 preserves accepted v7.7.8 process-rate and allocator behaviour in Modes 0-45; 1 enables energy requests and fulfillment-limited process rates in Modes 46-47.",
+      "evidence": "V7_7_9_ARCHITECTURE_SPEC §1–§2 and draft/process-energy.json.",
+      "since": "v7.7.9 candidate r1",
+      "tags": [
+        "process-energy",
+        "switch"
+      ]
+    },
+    "Mining Energy per Unit": {
+      "role": "Mining process energy coefficient, value 1.",
+      "effect": "Multiplies the smoothed Mining Energy Signal to form Requested Energy.",
+      "evidence": "V7_7_9_ARCHITECTURE_SPEC §1–§2 and draft/process-energy.json.",
+      "since": "v7.7.9 candidate r1",
+      "tags": [
+        "mining",
+        "process-energy",
+        "coefficient"
+      ]
+    },
+    "Mining Energy Signal Adjustment Time": {
+      "role": "Mining energy-signal adjustment time, value 3 days.",
+      "effect": "Controls the lag from Pre Energy Rate to the smoothed Energy Signal used for the allocator request.",
+      "evidence": "V7_7_9_ARCHITECTURE_SPEC §1–§2 and draft/process-energy.json.",
+      "since": "v7.7.9 candidate r1",
+      "tags": [
+        "mining",
+        "process-energy",
+        "signal",
+        "causality"
+      ]
+    },
+    "A Mining Energy Signal": {
+      "role": "Initial smoothed Mining energy signal for colony A, value 42.227.",
+      "effect": "Seeds the request signal; A/B pair is 42.227/8.373.",
+      "evidence": "V7_7_9_ARCHITECTURE_SPEC §1–§2 and draft/process-energy.json.",
+      "since": "v7.7.9 candidate r1",
+      "tags": [
+        "mining",
+        "process-energy",
+        "signal",
+        "initial",
+        "asymmetry"
+      ],
+      "applies_to_mirror": true
+    },
+    "B Mining Energy Signal": {
+      "role": "Initial smoothed Mining energy signal for colony B, value 8.373.",
+      "effect": "Seeds the request signal; A/B pair is 42.227/8.373.",
+      "evidence": "V7_7_9_ARCHITECTURE_SPEC §1–§2 and draft/process-energy.json.",
+      "since": "v7.7.9 candidate r1",
+      "tags": [
+        "mining",
+        "process-energy",
+        "signal",
+        "initial",
+        "asymmetry"
+      ],
+      "applies_to_mirror": true
+    },
+    "Regolith Extraction Energy per Unit": {
+      "role": "Regolith Extraction process energy coefficient, value 10.",
+      "effect": "Multiplies the smoothed Regolith Extraction Energy Signal to form Requested Energy.",
+      "evidence": "V7_7_9_ARCHITECTURE_SPEC §1–§2 and draft/process-energy.json.",
+      "since": "v7.7.9 candidate r1",
+      "tags": [
+        "regolith",
+        "process-energy",
+        "coefficient"
+      ]
+    },
+    "Regolith Extraction Energy Signal Adjustment Time": {
+      "role": "Regolith Extraction energy-signal adjustment time, value 3 days.",
+      "effect": "Controls the lag from Pre Energy Rate to the smoothed Energy Signal used for the allocator request.",
+      "evidence": "V7_7_9_ARCHITECTURE_SPEC §1–§2 and draft/process-energy.json.",
+      "since": "v7.7.9 candidate r1",
+      "tags": [
+        "regolith",
+        "process-energy",
+        "signal",
+        "causality"
+      ]
+    },
+    "A Regolith Extraction Energy Signal": {
+      "role": "Initial smoothed Regolith Extraction energy signal for colony A, value 0.",
+      "effect": "Seeds the request signal; A/B pair is 0/0.",
+      "evidence": "V7_7_9_ARCHITECTURE_SPEC §1–§2 and draft/process-energy.json.",
+      "since": "v7.7.9 candidate r1",
+      "tags": [
+        "regolith",
+        "process-energy",
+        "signal",
+        "initial"
+      ],
+      "applies_to_mirror": true
+    },
+    "B Regolith Extraction Energy Signal": {
+      "role": "Initial smoothed Regolith Extraction energy signal for colony B, value 0.",
+      "effect": "Seeds the request signal; A/B pair is 0/0.",
+      "evidence": "V7_7_9_ARCHITECTURE_SPEC §1–§2 and draft/process-energy.json.",
+      "since": "v7.7.9 candidate r1",
+      "tags": [
+        "regolith",
+        "process-energy",
+        "signal",
+        "initial"
+      ],
+      "applies_to_mirror": true
+    },
+    "Power Resource Extraction Energy per Unit": {
+      "role": "Power Resource Extraction process energy coefficient, value 0.05.",
+      "effect": "Multiplies the smoothed Power Resource Extraction Energy Signal to form Requested Energy.",
+      "evidence": "V7_7_9_ARCHITECTURE_SPEC §1–§2 and draft/process-energy.json.",
+      "since": "v7.7.9 candidate r1",
+      "tags": [
+        "power-resource",
+        "process-energy",
+        "coefficient"
+      ]
+    },
+    "Power Resource Extraction Energy Signal Adjustment Time": {
+      "role": "Power Resource Extraction energy-signal adjustment time, value 3 days.",
+      "effect": "Controls the lag from Pre Energy Rate to the smoothed Energy Signal used for the allocator request.",
+      "evidence": "V7_7_9_ARCHITECTURE_SPEC §1–§2 and draft/process-energy.json.",
+      "since": "v7.7.9 candidate r1",
+      "tags": [
+        "power-resource",
+        "process-energy",
+        "signal",
+        "causality"
+      ]
+    },
+    "A Power Resource Extraction Energy Signal": {
+      "role": "Initial smoothed Power Resource Extraction energy signal for colony A, value 1373.679.",
+      "effect": "Seeds the request signal; A/B pair is 1373.679/30.983.",
+      "evidence": "V7_7_9_ARCHITECTURE_SPEC §1–§2 and draft/process-energy.json.",
+      "since": "v7.7.9 candidate r1",
+      "tags": [
+        "power-resource",
+        "process-energy",
+        "signal",
+        "initial",
+        "asymmetry"
+      ],
+      "applies_to_mirror": true
+    },
+    "B Power Resource Extraction Energy Signal": {
+      "role": "Initial smoothed Power Resource Extraction energy signal for colony B, value 30.983.",
+      "effect": "Seeds the request signal; A/B pair is 1373.679/30.983.",
+      "evidence": "V7_7_9_ARCHITECTURE_SPEC §1–§2 and draft/process-energy.json.",
+      "since": "v7.7.9 candidate r1",
+      "tags": [
+        "power-resource",
+        "process-energy",
+        "signal",
+        "initial",
+        "asymmetry"
+      ],
+      "applies_to_mirror": true
+    },
+    "Capital Goods Energy per Unit": {
+      "role": "Capital Goods process energy coefficient, value 50.",
+      "effect": "Multiplies the smoothed Capital Goods Energy Signal to form Requested Energy.",
+      "evidence": "V7_7_9_ARCHITECTURE_SPEC §1–§2 and draft/process-energy.json.",
+      "since": "v7.7.9 candidate r1",
+      "tags": [
+        "capital-goods",
+        "process-energy",
+        "coefficient"
+      ]
+    },
+    "Capital Goods Energy Signal Adjustment Time": {
+      "role": "Capital Goods energy-signal adjustment time, value 3 days.",
+      "effect": "Controls the lag from Pre Energy Rate to the smoothed Energy Signal used for the allocator request.",
+      "evidence": "V7_7_9_ARCHITECTURE_SPEC §1–§2 and draft/process-energy.json.",
+      "since": "v7.7.9 candidate r1",
+      "tags": [
+        "capital-goods",
+        "process-energy",
+        "signal",
+        "causality"
+      ]
+    },
+    "A Capital Goods Energy Signal": {
+      "role": "Initial smoothed Capital Goods energy signal for colony A, value 0.",
+      "effect": "Seeds the request signal; A/B pair is 0/0.",
+      "evidence": "V7_7_9_ARCHITECTURE_SPEC §1–§2 and draft/process-energy.json.",
+      "since": "v7.7.9 candidate r1",
+      "tags": [
+        "capital-goods",
+        "process-energy",
+        "signal",
+        "initial"
+      ],
+      "applies_to_mirror": true
+    },
+    "B Capital Goods Energy Signal": {
+      "role": "Initial smoothed Capital Goods energy signal for colony B, value 0.",
+      "effect": "Seeds the request signal; A/B pair is 0/0.",
+      "evidence": "V7_7_9_ARCHITECTURE_SPEC §1–§2 and draft/process-energy.json.",
+      "since": "v7.7.9 candidate r1",
+      "tags": [
+        "capital-goods",
+        "process-energy",
+        "signal",
+        "initial"
+      ],
+      "applies_to_mirror": true
+    }
+  }
+}

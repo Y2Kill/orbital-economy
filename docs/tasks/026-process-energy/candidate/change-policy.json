@@ -1,0 +1,152 @@
+{
+  "format": "orbital-economy-change-policy-v1",
+  "name": "Orbital Economy v7.7.9 Process Energy candidate r1 - change contract",
+  "description": "Task 026 delivered change contract from V7_7_9_ARCHITECTURE_SPEC.md. Accepted baseline: v7.7.8 r1. Modes 0-45 must reproduce it exactly; new behaviour lives in Modes 46-47 behind Process Energy Enabled. validation_sha256 is the owner-draft value and must be confirmed by candidate.yml.",
+  "accepted_model_sha256": "17794e6c6acec9a965473bc170f1c71e31a82fe7a095ec1391c86eb681c1b50e",
+  "validation_sha256": "03a732ce96cf39a17064233c463a873505c3c510892ac216cae3d42a8ae8529b",
+  "comparison": {
+    "abs_tolerance": 0,
+    "rel_tolerance": null,
+    "rel_floor": 1e-12
+  },
+  "engine": {
+    "package": "simulation",
+    "version": "9.0.0"
+  },
+  "default_action": "deny",
+  "require_full_mode_coverage": true,
+  "rules": [
+    {
+      "id": "regression-guard-modes-0-45",
+      "action": "deny",
+      "event": "series_changed",
+      "modes": "0-45",
+      "name": "*",
+      "note": "Modes 0-45 set Process Energy Enabled = 0 and must reproduce v7.7.8 r1 exactly (first match wins)."
+    },
+    {
+      "id": "forbid-removals-and-structural-drift",
+      "action": "deny",
+      "event": [
+        "element_removed",
+        "series_removed",
+        "mode_removed",
+        "link_removed",
+        "type_changed",
+        "simulation_changed",
+        "time_axis_changed",
+        "scenario_renamed"
+      ],
+      "name": "*"
+    },
+    {
+      "id": "add-process-energy",
+      "action": "allow",
+      "event": "element_added",
+      "name": [
+        "Process Energy Enabled",
+        "* Energy per Unit",
+        "* Energy Signal Adjustment Time",
+        "? * Pre Energy Rate",
+        "? * Energy Signal",
+        "? * Energy Signal Increase",
+        "? * Energy Signal Decrease",
+        "? * Requested Energy",
+        "? * Allocated Energy",
+        "? * Energy Fulfillment Ratio",
+        "? Priority Requested Energy",
+        "? Priority Energy Fulfillment Ratio",
+        "? Priority Allocated Energy"
+      ],
+      "required": true,
+      "note": "the energy_consumer node generated from its declaration: switch, energy per unit and signal adjustment times, per consumer and colony the pre-energy rate, the smoothed request signal (stock and flows), request, allocation and fulfillment, and the priority group (V7_7_9_ARCHITECTURE_SPEC §2)"
+    },
+    {
+      "id": "change-definitions-per-spec",
+      "action": "allow",
+      "event": "definition_changed",
+      "name": [
+        "? Mining Rate",
+        "? Regolith Extraction Rate",
+        "? Power Resource Extraction Rate",
+        "? Capital Goods Production Rate",
+        "? Total Requested Energy",
+        "? Energy Supply",
+        "? Energy Fulfillment Ratio",
+        "Test 2 Transport Surge Active"
+      ],
+      "required": true,
+      "note": "under the switch: the four process rates scale by their own energy fulfillment; the colony allocator total and supply add the new consumers; the general fulfillment ratio serves the priority group first; Test 2 flag + Mode 47 (spec §3)"
+    },
+    {
+      "id": "link-into-changed-definitions",
+      "action": "allow",
+      "event": "link_added",
+      "name": [
+        "* -> ? Mining Rate",
+        "* -> ? Regolith Extraction Rate",
+        "* -> ? Power Resource Extraction Rate",
+        "* -> ? Capital Goods Production Rate",
+        "* -> ? Total Requested Energy",
+        "* -> ? Energy Supply",
+        "* -> ? Energy Fulfillment Ratio",
+        "* -> Test 2 Transport Surge Active"
+      ]
+    },
+    {
+      "id": "link-into-new-elements",
+      "action": "allow",
+      "event": "link_added",
+      "name": [
+        "* -> Process Energy Enabled",
+        "* -> * Energy per Unit",
+        "* -> * Energy Signal Adjustment Time",
+        "* -> ? * Pre Energy Rate",
+        "* -> ? * Energy Signal",
+        "* -> ? * Energy Signal Increase",
+        "* -> ? * Energy Signal Decrease",
+        "* -> ? * Requested Energy",
+        "* -> ? * Allocated Energy",
+        "* -> ? * Energy Fulfillment Ratio",
+        "* -> ? Priority Requested Energy",
+        "* -> ? Priority Energy Fulfillment Ratio",
+        "* -> ? Priority Allocated Energy"
+      ]
+    },
+    {
+      "id": "add-modes-46-47",
+      "action": "allow",
+      "event": "mode_added",
+      "modes": "46-47",
+      "required": true
+    },
+    {
+      "id": "scenarios-0-45-gain-switch-off",
+      "action": "allow",
+      "event": "scenario_input_changed",
+      "modes": "0-45",
+      "required": true,
+      "note": "only \"Process Energy Enabled\": 0"
+    },
+    {
+      "id": "new-series-everywhere",
+      "action": "allow",
+      "event": "series_added",
+      "name": [
+        "Process Energy Enabled",
+        "* Energy per Unit",
+        "* Energy Signal Adjustment Time",
+        "? * Pre Energy Rate",
+        "? * Energy Signal",
+        "? * Energy Signal Increase",
+        "? * Energy Signal Decrease",
+        "? * Requested Energy",
+        "? * Allocated Energy",
+        "? * Energy Fulfillment Ratio",
+        "? Priority Requested Energy",
+        "? Priority Energy Fulfillment Ratio",
+        "? Priority Allocated Energy"
+      ]
+    }
+  ]
+}
