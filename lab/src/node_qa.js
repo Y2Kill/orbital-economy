@@ -318,7 +318,8 @@ const layeredNodes = [
   ...declarations.map(decl => ({ decl, strip: stripNode, targets: capitalLifecycleReplacementNames })),
   ...simpleDeclarations.map(({ decl }) => ({ decl, strip: stripSimpleNode, targets: simpleCapitalReplacementNames })),
   ...depositDeclarations.map(({ decl }) => ({ decl, strip: stripDepositNode, targets: depositReplacementNames })),
-  ...energyDeclarations.map(({ decl }) => ({ decl, strip: stripEnergyConsumerNode, targets: energyConsumerReplacementNames }))
+  ...energyDeclarations.map(({ decl }) => ({ decl, strip: stripEnergyConsumerNode, targets: energyConsumerReplacementNames })),
+  ...laborDeclarations.map(({ decl }) => ({ decl, strip: stripLaborNode, targets: laborReplacementNames }))
 ];
 const layers = new Map();
 {
@@ -1157,6 +1158,60 @@ await expect('34. labor fixture expands and APPLY_PATCH matches prototype counts
   if (!alreadyPresent && fp !== '8da2d7d17c679eda') throw new Error(`definition fingerprint ${fp}, expected 8da2d7d17c679eda`);
   laborState = { base: baseModel, model, target: model, expanded, alreadyPresent };
   return `69 elements / 4 replacements / 123 links; instances=17; fingerprint=${fp}`;
+});
+
+function validationWithoutLaborFragment(raw, fragment) {
+  const out=structuredClone(raw), lp=out.plugins?.find(p=>p.type==='labor'), names=new Set((fragment.labor_instances||[]).map(x=>x.name));
+  if(lp?.instances) lp.instances=lp.instances.filter(x=>!names.has(x.name));
+  if(lp?.instances?.length===0) out.plugins=out.plugins.filter(p=>p!==lp);
+  const planet=out.plugins?.find(p=>p.type==='planet_closure');
+  for(const g of fragment.planet_labors||[]){const p=planet?.processes?.find(x=>x.id===g.process);if(!p||JSON.stringify(p.labor)!==JSON.stringify(g.labor))continue;p.labor=['smelting','electronics'].includes(g.process)?{kind:'declared',intensity:g.labor.intensity}:{kind:'undeclared'};}
+  return out;
+}
+
+await expect('35. labor fragments merge idempotently; static/P5/loops/planet_v1 PASS', () => {
+  if(!laborState) throw new Error('case 34 did not produce labor state');
+  const baseline=laborState.alreadyPresent?validationWithoutLaborFragment(validation,laborState.expanded.validation):validation;
+  const baseAudit=runStructureAudits(laborState.base,baseline);
+  const merged=mergeNodeValidation(baseline,[laborState.expanded.validation]), twice=mergeNodeValidation(merged,[laborState.expanded.validation]);
+  if(JSON.stringify(merged)!==JSON.stringify(twice)) throw new Error('labor validation merge is not idempotent');
+  const conf=runLifecycleConformance(laborState.model,merged);
+  if(conf.labor?.status!=='PASS'||conf.labor.summary.instances!==17||conf.labor.summary.nonConforming!==0) throw new Error(`labor conformance mismatch: ${JSON.stringify(conf.labor)}`);
+  const audits=runStructureAudits(laborState.model,merged);
+  if(audits.status!=='PASS') throw new Error(`audit status=${audits.status}`);
+  if(audits.planetClosure?.counters?.P5?.declared!==17||audits.planetClosure?.counters?.P5?.undeclared!==0) throw new Error(`P5=${JSON.stringify(audits.planetClosure?.counters?.P5)}`);
+  if(audits.algebraicLoops?.combinationsWithLoops!==0||audits.algebraicLoops?.combinations!==baseAudit.algebraicLoops?.combinations) throw new Error(`loops mismatch ${audits.algebraicLoops?.combinationsWithLoops}/${audits.algebraicLoops?.combinations} vs base ${baseAudit.algebraicLoops?.combinations}`);
+  const pv=structuredClone(merged);pv.plugins.find(p=>p.type==='planet_closure').enforce='planet_v1';
+  const strict=runStructureAudits(laborState.model,pv);if(strict.status!=='PASS')throw new Error(`planet_v1 audit status=${strict.status}: ${JSON.stringify(strict.planetClosure?.modeFailures||strict.planetClosure?.errors)}`);
+  laborState.validation=merged;
+  return `labor=17 CONFORMING; P5=17/0; loops=0/${audits.algebraicLoops.combinations}; planet_v1 PASS; merge idempotent`;
+});
+
+function simulateLaborModel(raw, v) {
+  const source=(raw.scenarios||[]).at(-1);if(!source)throw new Error('model has no scenarios');
+  const sim=loadModelJSON(modelJsonForScenario(raw,source)), errs=sim.check();if(errs.length)throw new Error(`model.check: ${errs.map(e=>e.message||e).join('; ')}`);
+  const results=sim.simulate(),ctx=seriesContext(sim,results),runtime=[checkTimeAxis(results,v.expected_time_step??raw.simulation?.time_step??null,v.time_step_tolerance??1e-12),checkFiniteAll(sim,results)];
+  if(v.non_negative_regex)runtime.push(checkNonNegativeRegex(sim,results,v.non_negative_regex.pattern,v.non_negative_regex.tolerance??1e-10));
+  for(const p of v.plugins||[])runtime.push(...checkPlugin(p,ctx));for(const c of v.global_checks||[])runtime.push(runGenericCheck(c,ctx));
+  const fail=runtime.filter(x=>x.status==='FAIL');if(fail.length)throw new Error(`runtime: ${fail.map(x=>`${x.name}: ${x.message||'FAIL'}`).join('; ')}`);
+  return {sim,results,ctx};
+}
+
+await expect('36. labor trial on last Mode passes runtime and every requirement becomes positive', () => {
+  if(!laborState?.validation)throw new Error('case 35 did not produce merged validation');
+  const {ctx}=simulateLaborModel(laborState.model,laborState.validation);let n=0;
+  for(const inst of laborState.expanded.validation.labor_instances){const a=Array.from(ctx.get(inst.requirement),Number);if(a.some(v=>v<-1e-9))throw new Error(`${inst.requirement} negative`);if(!a.some(v=>v>0))throw new Error(`${inst.requirement} never positive`);n++;}
+  return `runtime labor PASS; positive requirements=${n}/17`;
+});
+
+await expect('37. A Smelting automation 0.5 yields factor 0.525, lowers cost, runtime labor PASS', () => {
+  if(!laborState?.validation)throw new Error('case 35 did not produce merged validation');
+  const before=simulateLaborModel(laborState.model,laborState.validation),m=structuredClone(laborState.model),level=m.elements.find(e=>e.type!=='LINK'&&e.name==='A Smelting Automation Level');
+  if(!level)throw new Error('A Smelting Automation Level missing');level.behavior.value=.5;
+  const after=simulateLaborModel(m,laborState.validation),f=Array.from(after.ctx.get('A Smelting Automation Factor'),Number);if(!f.every(v=>Math.abs(v-.525)<=1e-12))throw new Error(`factor ${f.slice(0,3)}`);
+  const out=Array.from(after.ctx.get('A Metal Production'),Number),a=Array.from(before.ctx.get('A Metal Unit Cost'),Number),b=Array.from(after.ctx.get('A Metal Unit Cost'),Number);let n=0;
+  for(let i=0;i<out.length;i++)if(out[i]>0){n++;if(!(b[i]<a[i]))throw new Error(`day ${after.ctx.times[i]} cost ${b[i]} !< ${a[i]}`);}
+  if(!n)throw new Error('no positive A Metal Production');return `factor=0.525; lower cost at ${n} positive-output points; runtime PASS`;
 });
 
 await expect('38. strip and rebuild labor model with zero definition/replacement/link differences', () => {

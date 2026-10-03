@@ -527,6 +527,16 @@ try {
     return validateAnnotations({ format: 'x', parameters: { 'A Wage': { role: 'only role' } } }).length >= 2;
   });
 
+  await expect('44 labor plugin: product identity passes; +1% requirement and factor below minimum fail', async () => {
+    const times=[0,1,2],base={output:[10,20,30],intensity:[.2,.2,.2],level:[0,.5,1],human:[.05,.05,.05],factor:[1,.525,.05],requirement:[2,2.1,.3]};
+    const cx=v=>({times,has:n=>n in v,get(n){if(!(n in v))throw new Error(`unknown series ${n}`);return v[n];}});
+    const plugin={type:'labor',abs_tol:1e-9,min_human_share:'human',instances:[{name:'QA labor',output:'output',intensity:'intensity',automation_level:'level',automation_factor:'factor',requirement:'requirement'}]};
+    const good=checkPlugin(plugin,cx(base));if(good.some(r=>r.status!=='PASS'))throw new Error(`good: ${JSON.stringify(good)}`);
+    const high=structuredClone(base);high.requirement=base.requirement.map(v=>v*1.01);const bp=checkPlugin(plugin,cx(high));if(!bp.some(r=>r.name.includes('product identity')&&r.status==='FAIL'))throw new Error('+1% requirement did not fail');
+    const low=structuredClone(base);low.factor=[1,.04,.05];low.requirement=low.output.map((v,i)=>v*low.intensity[i]*low.factor[i]);const bf=checkPlugin(plugin,cx(low));if(!bf.some(r=>r.name.includes('automation factor')&&r.status==='FAIL'))throw new Error('factor below min did not fail');
+    return 'product PASS; +1% FAIL; factor below min FAIL';
+  });
+
 } finally {
   fs.rmSync(tmp, { recursive: true, force: true });
 }

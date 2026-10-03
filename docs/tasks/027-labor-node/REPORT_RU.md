@@ -8,3 +8,9 @@
 Не запускалось локально: среда имеет только GitHub API-коннектор, без сетевого локального git/стенда; `check_branch` и Node self-tests по §9.4 не запускались; `SHA256SUMS` не пересобирался (`sums_by: reviewer`).
 CI: будет проверен отдельным шагом после push этой контрольной точки.
 Дальше: КТ2 — validation fragments/merge, статический и runtime plugin `labor`, строгий `planet_closure labor.requirement`, self-tests 35–37, planet 19–20, QA 44.
+
+### КТ2 — 2026-10-03 — validation, `planet_closure labor.requirement`, static/runtime plugin `labor`, self-tests 35–37/19–20/44
+Сделано: добавлено идемпотентное слияние `labor` и Planet P5; строгая проверка `requirement`; статический HARD conformance и runtime-проверки диапазонов/произведения; самотесты задания.
+Проверки КТ1: GitHub Actions CI run `37124982126` был запущен отдельным шагом; окончательный результат проверяется после push КТ2 вместе с `bench-selftests`.
+Не запускалось локально: по §9.4 локального стенда нет; `check_branch`/Node self-tests не запускались локально; `SHA256SUMS` не менялся.
+Дальше: проверить CI КТ2; при зелёном результате — КТ3 (Lab 0.9.15, документация, финальный журнал).

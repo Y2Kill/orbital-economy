@@ -497,6 +497,23 @@ try {
 
     return 'signal type/direct read/boundary/classification and fulfillment resolution all rejected';
   });
+  function laborRequirementFixture(withRequirement = true) {
+    const x=energySignalFixture();
+    x.raw.elements.push({type:'VARIABLE',name:'A QA Labor Intensity',behavior:{value:.2}},{type:'VARIABLE',name:'A QA Labor Reader',behavior:{value:'[A QA Labor Intensity]'}});
+    if(withRequirement)x.raw.elements.push({type:'VARIABLE',name:'A QA Labor Requirement',behavior:{value:'[A QA Output] * [A QA Labor Intensity]'});x.decl.processes[0].labor={kind:'declared',intensity:'{C} QA Labor Intensity'};if(withRequirement)x.decl.processes[0].labor.requirement='{C} QA Labor Requirement';return x;
+  }
+  await expect('19 labor.requirement must be VARIABLE and directly read output + intensity', () => {
+    const g=laborRequirementFixture(true),p=auditPlanetClosure(g.raw,g.decl,g.ob);if(p.status!=='PASS')throw new Error(`valid failed: ${JSON.stringify(p.errors)}`);
+    const n=laborRequirementFixture(true);n.raw.elements.find(e=>e.name==='A QA Labor Requirement').behavior.value='[A QA Labor Intensity]';const a=auditPlanetClosure(n.raw,n.decl,n.ob);if(a.status!=='FAIL'||!a.errors.some(e=>/does not directly read A QA Output/.test(e.message)))throw new Error(`missing output: ${JSON.stringify(a.errors)}`);
+    const q=laborRequirementFixture(true),req=q.raw.elements.find(e=>e.name==='A QA Labor Requirement');req.type='STOCK';req.behavior={initial_value:1};const b=auditPlanetClosure(q.raw,q.decl,q.ob);if(b.status!=='FAIL'||!b.errors.some(e=>/labor requirement .* is not a VARIABLE/.test(e.message)))throw new Error(`stock: ${JSON.stringify(b.errors)}`);
+    return 'valid PASS; missing output FAIL; STOCK requirement FAIL';
+  });
+  await expect('20 declared labor without requirement stays report-compatible but fails planet_v1 P5', () => {
+    const x=laborRequirementFixture(false);x.decl.enforce='report';const r=auditPlanetClosure(x.raw,x.decl,x.ob);if(r.status!=='PASS')throw new Error(`report changed: ${JSON.stringify(r.errors)}`);
+    x.decl.enforce='planet_v1';const v=auditPlanetClosure(x.raw,x.decl,x.ob);if(v.status!=='FAIL'||!v.modeFailures.some(f=>f.message==='P5: labor declared without a requirement variable'))throw new Error(`missing P5: ${JSON.stringify(v.modeFailures)}`);
+    return 'report PASS; planet_v1 FAIL: P5 requirement';
+  });
+
 } catch (e) {
   console.error('[FAIL] planet QA crashed:', e?.message || e);
   failed++;
