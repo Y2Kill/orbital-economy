@@ -500,7 +500,7 @@ try {
   function laborRequirementFixture(withRequirement = true) {
     const x=energySignalFixture();
     x.raw.elements.push({type:'VARIABLE',name:'A QA Labor Intensity',behavior:{value:.2}},{type:'VARIABLE',name:'A QA Labor Reader',behavior:{value:'[A QA Labor Intensity]'}});
-    if(withRequirement)x.raw.elements.push({type:'VARIABLE',name:'A QA Labor Requirement',behavior:{value:'[A QA Output] * [A QA Labor Intensity]'});x.decl.processes[0].labor={kind:'declared',intensity:'{C} QA Labor Intensity'};if(withRequirement)x.decl.processes[0].labor.requirement='{C} QA Labor Requirement';return x;
+    if(withRequirement)x.raw.elements.push({type:'VARIABLE',name:'A QA Labor Requirement',behavior:{value:'[A QA Output] * [A QA Labor Intensity]'}});x.decl.processes[0].labor={kind:'declared',intensity:'{C} QA Labor Intensity'};if(withRequirement)x.decl.processes[0].labor.requirement='{C} QA Labor Requirement';return x;
   }
   await expect('19 labor.requirement must be VARIABLE and directly read output + intensity', () => {
     const g=laborRequirementFixture(true),p=auditPlanetClosure(g.raw,g.decl,g.ob);if(p.status!=='PASS')throw new Error(`valid failed: ${JSON.stringify(p.errors)}`);
