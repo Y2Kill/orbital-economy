@@ -36,3 +36,11 @@
 Проверено чтением спецификации: ожидаются 71 generated element, 14 replace targets, 232 links, boundaries 224, loops 0/32768 и Planet P3 14/2/1/0; это пока owner-skeleton ожидания, не результат текущего прогона.
 Не запускалось: локальный guard и стенд, перечисленные выше.
 Дальше: после push зафиксировать конкретные запуски `candidate.yml` и `ci.yml`, затем отдельным шагом прочитать их результат и закрывать КТ только по фактическим логам.
+
+### Ожидаемые прогоны после candidate r1
+
+Для candidate-коммита `e3102703f8872e0ac49a9eddb829541dbd0a0a1b` зафиксированы:
+- Candidate acceptance: https://github.com/Y2Kill/orbital-economy/actions/runs/37108034775 — ожидаются apply-patch, conformance, audit, validation и policy;
+- CI: https://github.com/Y2Kill/orbital-economy/actions/runs/37108034807 — ожидаются guard и самотесты на Linux.
+
+На момент записи Candidate acceptance был `in_progress`, CI — `pending`. Результаты проверяются отдельным шагом; один длинный polling/wait не используется.
