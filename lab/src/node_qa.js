@@ -614,9 +614,9 @@ await expect('17. smooth-cap fixture integrates with validation and closes two P
   if (!powerState) throw new Error('case 16 did not produce power-resource expansion');
   // Layers peeled above the power-resource mine (the deposit layer, v7.7.8 on) must leave the validation too,
   // or their plugins look for stocks the peeled model no longer has.
-  const baselineValidation = withoutAbsentDepositLayers(powerState.alreadyPresent
+  const baselineValidation = withoutAbsentEnergyLayers(withoutAbsentDepositLayers(powerState.alreadyPresent
     ? validationWithoutSimpleFragment(validation, powerState.expanded.validation)
-    : validation, powerState.base);
+    : validation, powerState.base), powerState.base);
   const baselineModel = powerState.base;
   const baselineAudits = runStructureAudits(baselineModel, baselineValidation);
 
@@ -775,6 +775,20 @@ await expect('22. deposit fixture expands and APPLY_PATCH matches prototype coun
 
 
 
+// Energy-consumer layers peeled above a node (v7.7.9 on) must leave the validation too, or energy_balance and
+// planet_closure look for consumers the peeled model no longer has.
+function withoutAbsentEnergyLayers(raw, model) {
+  let out = raw;
+  const has = name => model.elements.some(e => e.type !== 'LINK' && e.name === name);
+  for (const { decl } of energyDeclarations) {
+    const probe = `${decl.colonies[0]} ${decl.consumers[0].consumer} Requested Energy`;
+    const layer = layers.get(decl);
+    if (has(probe) || !layer) continue;
+    out = validationWithoutEnergyFragment(out, expandNode(decl, layer.base).validation);
+  }
+  return out;
+}
+
 function withoutAbsentDepositLayers(raw, model) {
   let out = raw;
   const has = name => model.elements.some(e => e.type !== 'LINK' && e.name === name);
@@ -825,7 +839,7 @@ function assertDepositRebuild(decl, target) {
 
 await expect('23. deposit fragments merge: 6 static instances, loops 0, P4 +6, no unclassified boundaries', () => {
   if (!depositState) throw new Error('case 22 did not produce deposit state');
-  const baselineValidation = depositState.alreadyPresent ? validationWithoutDepositFragment(validation, depositState.expanded.validation) : validation;
+  const baselineValidation = withoutAbsentEnergyLayers(depositState.alreadyPresent ? validationWithoutDepositFragment(validation, depositState.expanded.validation) : validation, depositState.base);
   const baselineAudits = runStructureAudits(depositState.base, baselineValidation);
   const merged = mergeNodeValidation(baselineValidation, [depositState.expanded.validation]);
   const twice = mergeNodeValidation(merged, [depositState.expanded.validation]);
@@ -850,8 +864,12 @@ await expect('24. deposit trial Mode passes runtime checks and proven reserves c
   const source = scenarios[scenarios.length - 1];
   const trial = structuredClone(source);
   trial.name = `${source.name || 'last mode'} — Node QA deposit`;
-  trial.values = { ...trial.values, [depositFixture.switch]: 1 };
-  const simModel = loadModelJSON(modelJsonForScenario(depositState.model, trial));
+  // A peeled model lacks the switches of layers above it (e.g. Process Energy Enabled): drop scenario values it cannot take.
+  const names = new Set(depositState.model.elements.filter(e => e.type !== 'LINK' && e.name).map(e => e.name.toLowerCase()));
+  const keep = values => Object.fromEntries(Object.entries(values || {}).filter(([k]) => names.has(k.toLowerCase())));
+  trial.values = keep({ ...trial.values, [depositFixture.switch]: 1 });
+  const simRaw = { ...depositState.model, scenarios: (depositState.model.scenarios || []).map(s => ({ ...s, values: keep(s.values) })) };
+  const simModel = loadModelJSON(modelJsonForScenario(simRaw, trial));
   const modelErrors = simModel.check();
   if (modelErrors.length) throw new Error(`trial model.check() returned ${modelErrors.length}: ${modelErrors.map(e => e.message || e).join('; ')}`);
   const results = simModel.simulate();
@@ -992,8 +1010,14 @@ await expect('29. energy_consumer fragments merge idempotently; loops/audit PASS
   if (audits.status !== 'PASS') throw new Error(`structure audit status=${audits.status}`);
   const baselineCombinations = baselineAudits.algebraicLoops?.combinations;
   if (!Number.isInteger(baselineCombinations)) throw new Error(`baseline loop combinations missing: ${baselineCombinations}`);
-  if (audits.algebraicLoops?.combinations !== baselineCombinations || audits.algebraicLoops?.combinationsWithLoops !== 0) {
-    throw new Error(`loops=${audits.algebraicLoops?.combinationsWithLoops}/${audits.algebraicLoops?.combinations}, expected 0/${baselineCombinations} (same as baseline)`);
+  // The node does not wire its switch into Modes; once a model task has (node already accepted), the audit
+  // enumerates it as one more switch: twice the baseline combinations, the baseline itself must not have it.
+  const key = s => String(s).trim().toLowerCase();
+  if ((baselineAudits.algebraicLoops?.switches || []).some(s => key(s) === key(energyFixture.switch))) throw new Error('baseline already enumerates the energy_consumer switch');
+  const wired = (audits.algebraicLoops?.switches || []).some(s => key(s) === key(energyFixture.switch));
+  const expectedCombinations = baselineCombinations * (wired ? 2 : 1);
+  if (audits.algebraicLoops?.combinations !== expectedCombinations || audits.algebraicLoops?.combinationsWithLoops !== 0) {
+    throw new Error(`loops=${audits.algebraicLoops?.combinationsWithLoops}/${audits.algebraicLoops?.combinations}, expected 0/${expectedCombinations} (baseline ${baselineCombinations}${wired ? ' x2: switch wired into Modes' : ''})`);
   }
   if (audits.openBoundaries?.summary?.unclassified !== 0) throw new Error(`unclassified=${audits.openBoundaries?.summary?.unclassified}`);
   const before = baselineAudits.planetClosure?.counters?.P3?.requests ?? 0;
@@ -1002,7 +1026,7 @@ await expect('29. energy_consumer fragments merge idempotently; loops/audit PASS
   const energyErrors = (audits.planetClosure?.errors || []).filter(e => /energy/i.test(e.message));
   if (energyErrors.length) throw new Error(`planet energy errors: ${energyErrors.map(e => e.message).join('; ')}`);
   energyState.validation = merged;
-  return `conformance PASS; loops=0/${baselineCombinations} (same as baseline); unclassified=0; P3.requests ${before}->${after}; merge idempotent`;
+  return `conformance PASS; loops=0/${expectedCombinations} (baseline ${baselineCombinations}${wired ? ' x2' : ''}); unclassified=0; P3.requests ${before}->${after}; merge idempotent`;
 });
 
 await expect('30. deficit trial keeps priority fulfillment >= general fulfillment', () => {

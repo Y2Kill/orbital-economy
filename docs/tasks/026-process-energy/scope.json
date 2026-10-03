@@ -1,0 +1,17 @@
+{
+  "task": "026",
+  "title": "v7.7.9 Process Energy: mining, regolith, energy-resource extraction and capital goods join the colony energy allocator (energy_consumer node; Planet v1 P3 14/2/1/0)",
+  "branch": "task/026-process-energy",
+  "allow": [],
+  "allow_binary": [],
+  "allow_protected": [
+    "docs/tasks/026-process-energy/candidate/**"
+  ],
+  "required_changes": [
+    "docs/tasks/026-process-energy/candidate/model-patch.json",
+    "docs/tasks/026-process-energy/candidate/validation.json",
+    "docs/tasks/026-process-energy/candidate/change-policy.json",
+    "docs/tasks/026-process-energy/candidate/PARAMETER_ANNOTATIONS_fragment.json"
+  ],
+  "sums_by": "reviewer"
+}
