@@ -44,3 +44,22 @@
 - CI: https://github.com/Y2Kill/orbital-economy/actions/runs/37108034807 — ожидаются guard и самотесты на Linux.
 
 На момент записи Candidate acceptance был `in_progress`, CI — `pending`. Результаты проверяются отдельным шагом; один длинный polling/wait не используется.
+
+### КТ1 — достигнута по Gate 1–3 candidate r1
+
+Доказательство: Candidate acceptance https://github.com/Y2Kill/orbital-economy/actions/runs/37108034775 для candidate-коммита `e3102703f8872e0ac49a9eddb829541dbd0a0a1b`.
+
+На момент записи три требуемых структурных gate завершены `success`:
+- Gate 1 `apply-patch`;
+- Gate 2 `conformance`;
+- Gate 3 `audit`.
+
+Это подтверждает, что delivered patch с `nodes` применяется и structural/conformance gates проходят. Точные строки со счётчиками boundaries, loops и Planet P3 будут внесены только из завершённого job log; owner-skeleton числа не выдаются за текущий run.
+
+### КТ3 — достигнута по Gate 4 candidate r1
+
+Candidate acceptance https://github.com/Y2Kill/orbital-economy/actions/runs/37108034775: Gate 4 `validation` завершён `success` на candidate-коммите `e3102703f8872e0ac49a9eddb829541dbd0a0a1b`.
+
+Это подтверждает прохождение delivered `candidate/validation.json` на полном наборе Modes, включая Modes 46–47. Таблица «проверка → значение → порог → запас», итог 48/48 и точные значения приоритетной доли / отсутствия топливного коллапса будут внесены по завершённому validation log, а не по owner-skeleton.
+
+Gate 5 `policy` на момент записи выполняется, поэтому КТ2 ещё не закрыта. КТ4 также не закрыта.
