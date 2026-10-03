@@ -1,0 +1,130 @@
+{
+  "format": "orbital-economy-change-policy-v1",
+  "name": "Orbital Economy v7.7.10 Labor candidate r1 - change contract",
+  "description": "Task 028 change contract from V7_7_10_ARCHITECTURE_SPEC.md. Accepted baseline: v7.7.9 r1. No switch: Modes 0-47 must reproduce it exactly; Mode 48 is the automation probe. validation_sha256 is the owner-draft value for the byte-identical validation candidate and is to be confirmed by candidate.yml.",
+  "accepted_model_sha256": "fb27f258e5fca6d236513399f7b29082b483b97b3f7a1d2c5eed00a5bc3754f8",
+  "validation_sha256": "43736f0e201fa1437f16d580c89bd3d3a13d6c7cc85206714e720d1ed7cf8f1c",
+  "comparison": {
+    "abs_tolerance": 0,
+    "rel_tolerance": null,
+    "rel_floor": 1e-12
+  },
+  "engine": {
+    "package": "simulation",
+    "version": "9.0.0"
+  },
+  "default_action": "deny",
+  "require_full_mode_coverage": true,
+  "rules": [
+    {
+      "id": "regression-guard-modes-0-47",
+      "action": "deny",
+      "event": "series_changed",
+      "modes": "0-47",
+      "name": "*",
+      "note": "No switch: at automation 0 every factor is exactly 1, so Modes 0-47 must reproduce v7.7.9 r1 exactly (first match wins)."
+    },
+    {
+      "id": "forbid-removals-and-structural-drift",
+      "action": "deny",
+      "event": [
+        "element_removed",
+        "series_removed",
+        "mode_removed",
+        "link_removed",
+        "type_changed",
+        "simulation_changed",
+        "time_axis_changed",
+        "scenario_renamed",
+        "scenario_input_changed"
+      ],
+      "name": "*"
+    },
+    {
+      "id": "add-labor",
+      "action": "allow",
+      "event": "element_added",
+      "name": [
+        "Minimum Human Labor Share",
+        "Automation Labor Exponent",
+        "? * Labor per Unit",
+        "Transport Labor per Unit",
+        "? * Automation Level",
+        "Transport Automation Level",
+        "? * Automation Factor",
+        "Transport Automation Factor",
+        "? * Labor Requirement",
+        "Transport Labor Requirement",
+        "? Total Labor Requirement",
+        "Shared Labor Requirement"
+      ],
+      "required": true,
+      "note": "the labor node generated from its declaration: automation share and exponent, per process the new labor intensities, automation level and factor, labor requirement; colony and shared totals (V7_7_10_ARCHITECTURE_SPEC §2)"
+    },
+    {
+      "id": "change-definitions-per-spec",
+      "action": "allow",
+      "event": "definition_changed",
+      "name": [
+        "? Metal Unit Cost",
+        "? Electronics Unit Cost"
+      ],
+      "required": true,
+      "note": "metal and electronics unit costs read labor intensity x automation factor (bit-identical at factor 1; spec §1)"
+    },
+    {
+      "id": "link-into-changed-definitions",
+      "action": "allow",
+      "event": "link_added",
+      "name": [
+        "* -> ? Metal Unit Cost",
+        "* -> ? Electronics Unit Cost"
+      ]
+    },
+    {
+      "id": "link-into-new-elements",
+      "action": "allow",
+      "event": "link_added",
+      "name": [
+        "* -> Minimum Human Labor Share",
+        "* -> Automation Labor Exponent",
+        "* -> ? * Labor per Unit",
+        "* -> Transport Labor per Unit",
+        "* -> ? * Automation Level",
+        "* -> Transport Automation Level",
+        "* -> ? * Automation Factor",
+        "* -> Transport Automation Factor",
+        "* -> ? * Labor Requirement",
+        "* -> Transport Labor Requirement",
+        "* -> ? Total Labor Requirement",
+        "* -> Shared Labor Requirement"
+      ]
+    },
+    {
+      "id": "add-mode-48",
+      "action": "allow",
+      "event": "mode_added",
+      "modes": "48",
+      "required": true
+    },
+    {
+      "id": "new-series-everywhere",
+      "action": "allow",
+      "event": "series_added",
+      "name": [
+        "Minimum Human Labor Share",
+        "Automation Labor Exponent",
+        "? * Labor per Unit",
+        "Transport Labor per Unit",
+        "? * Automation Level",
+        "Transport Automation Level",
+        "? * Automation Factor",
+        "Transport Automation Factor",
+        "? * Labor Requirement",
+        "Transport Labor Requirement",
+        "? Total Labor Requirement",
+        "Shared Labor Requirement"
+      ]
+    }
+  ]
+}

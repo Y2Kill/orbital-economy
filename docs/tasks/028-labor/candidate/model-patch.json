@@ -1,0 +1,178 @@
+{
+  "format": "orbital-economy-model-patch-v1",
+  "base_sha256": "fb27f258e5fca6d236513399f7b29082b483b97b3f7a1d2c5eed00a5bc3754f8",
+  "name": "Orbital Economy v7.7.10 Labor candidate r1",
+  "description": "Task 028: declarative labor node for all Planet v1 processes; automation starts at 0 with no switch. Modes 0-47 are untouched; Mode 48 probes A-side automation at 0.5.",
+  "nodes": [
+    {
+      "type": "labor",
+      "version": 1,
+      "colonies": [
+        "A",
+        "B"
+      ],
+      "automation": {
+        "min_human_share": {
+          "name": "Minimum Human Labor Share",
+          "value": 0.05
+        },
+        "exponent": {
+          "name": "Automation Labor Exponent",
+          "value": 1
+        }
+      },
+      "processes": [
+        {
+          "process": "Mining",
+          "output": "{C} Mining",
+          "intensity": {
+            "value": 0.05
+          },
+          "automation": {
+            "A": 0,
+            "B": 0
+          },
+          "planet_process": "mining"
+        },
+        {
+          "process": "Smelting",
+          "output": "{C} Metal Production",
+          "intensity": {
+            "existing": "{C} Labor per Metal"
+          },
+          "automation": {
+            "A": 0,
+            "B": 0
+          },
+          "cost": [
+            "{C} Metal Unit Cost"
+          ],
+          "planet_process": "smelting"
+        },
+        {
+          "process": "Electronics",
+          "output": "{C} Electronics Production",
+          "intensity": {
+            "existing": "{C} Electronics Labor per Unit"
+          },
+          "automation": {
+            "A": 0,
+            "B": 0
+          },
+          "cost": [
+            "{C} Electronics Unit Cost"
+          ],
+          "planet_process": "electronics"
+        },
+        {
+          "process": "Capital Goods",
+          "output": "{C} Capital Goods Production",
+          "intensity": {
+            "value": 2
+          },
+          "automation": {
+            "A": 0,
+            "B": 0
+          },
+          "planet_process": "capital_goods"
+        },
+        {
+          "process": "Regolith Extraction",
+          "output": "{C} Regolith Extraction",
+          "intensity": {
+            "value": 0.2
+          },
+          "automation": {
+            "A": 0,
+            "B": 0
+          },
+          "planet_process": "regolith"
+        },
+        {
+          "process": "Construction Materials",
+          "output": "{C} Construction Materials Production",
+          "intensity": {
+            "value": 0.3
+          },
+          "automation": {
+            "A": 0,
+            "B": 0
+          },
+          "planet_process": "construction_materials"
+        },
+        {
+          "process": "Power Resource Extraction",
+          "output": "{C} Power Resource Extraction",
+          "intensity": {
+            "value": 0.002
+          },
+          "automation": {
+            "A": 0,
+            "B": 0
+          },
+          "planet_process": "power_resource"
+        },
+        {
+          "process": "Generation",
+          "output": "{C} Available Generation",
+          "intensity": {
+            "value": 0.001
+          },
+          "automation": {
+            "A": 0,
+            "B": 0
+          },
+          "planet_process": "generation"
+        },
+        {
+          "process": "Transport",
+          "scope": "shared",
+          "output": "Capacity Limited Total Transport Load",
+          "intensity": {
+            "value": 0.1
+          },
+          "automation": {
+            "shared": 0
+          },
+          "planet_process": "transport"
+        }
+      ]
+    }
+  ],
+  "add_elements": [],
+  "replace_formulas": [],
+  "add_links": [],
+  "modify_scenarios": [],
+  "add_scenarios": [
+    {
+      "name": "v7.7.10 Automation Probe",
+      "description": "Clone of accepted Mode 46 with Timed Test Mode 48 and Automation Level = 0.5 for all eight colony-A processes; probe only, not a start-state change.",
+      "values": {
+        "Capital Lifecycle Enabled": 1,
+        "Intermediate Inputs Enabled": 1,
+        "Capital Goods Enabled": 1,
+        "Transport Capital Goods Enabled": 1,
+        "Power Resource Enabled": 1,
+        "Construction Materials Enabled": 1,
+        "Transport Construction Materials Enabled": 1,
+        "Construction Materials Energy Enabled": 1,
+        "Construction Materials Capital Enabled": 1,
+        "Capital Goods Capital Enabled": 1,
+        "Regolith Capital Enabled": 1,
+        "Ore Capital Enabled": 1,
+        "Timed Test Mode": 48,
+        "Power Resource Capital Enabled": 1,
+        "Deposits Enabled": 1,
+        "Process Energy Enabled": 1,
+        "A Mining Automation Level": 0.5,
+        "A Smelting Automation Level": 0.5,
+        "A Electronics Automation Level": 0.5,
+        "A Capital Goods Automation Level": 0.5,
+        "A Regolith Extraction Automation Level": 0.5,
+        "A Construction Materials Automation Level": 0.5,
+        "A Power Resource Extraction Automation Level": 0.5,
+        "A Generation Automation Level": 0.5
+      }
+    }
+  ]
+}
