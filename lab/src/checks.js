@@ -243,6 +243,31 @@ const STATIC_ONLY_PLUGINS = new Set(['open_boundaries', 'colony_symmetry', 'plan
 export function checkPlugin(plugin, ctx) {
   const results = [];
   if (STATIC_ONLY_PLUGINS.has(plugin.type)) return results;
+  if (plugin.type === 'labor') {
+    const tol = plugin.abs_tol ?? 1e-9;
+    const safe = (name, fn) => { try { return fn(); } catch (e) { return fail(name, e.message || String(e)); } };
+    for (const inst of plugin.instances || []) {
+      const label = inst.name || inst.requirement || 'labor';
+      results.push(safe(`${label}: automation level in [0,1]`, () => {
+        const a=ctx.get(inst.automation_level); let bad=null;
+        for(let i=0;i<ctx.times.length;i++) if(a[i]<-tol||a[i]>1+tol){bad={time:ctx.times[i],value:a[i]};break;}
+        return bad?fail(`${label}: automation level in [0,1]`,`${inst.automation_level} = ${bad.value} at day ${bad.time}`,bad):pass(`${label}: automation level in [0,1]`,{points:ctx.times.length});
+      }));
+      results.push(safe(`${label}: automation factor in [min human share,1]`, () => {
+        const f=ctx.get(inst.automation_factor),h=ctx.get(plugin.min_human_share);let bad=null;
+        for(let i=0;i<ctx.times.length;i++)if(f[i]<h[i]-tol||f[i]>1+tol){bad={time:ctx.times[i],value:f[i],min:h[i]};break;}
+        return bad?fail(`${label}: automation factor in [min human share,1]`,`${inst.automation_factor} = ${bad.value} at day ${bad.time}; min=${bad.min}`,bad):pass(`${label}: automation factor in [min human share,1]`,{points:ctx.times.length});
+      }));
+      results.push(safe(`${label}: labor requirement >= 0`,()=>checkNonNegativeColumns(ctx,{name:`${label}: labor requirement >= 0`,abs_tol:tol,columns:[inst.requirement]})));
+      results.push(safe(`${label}: labor product identity`,()=>{
+        const o=ctx.get(inst.output),q=ctx.get(inst.intensity),f=ctx.get(inst.automation_factor),r=ctx.get(inst.requirement);let worst=0,absWorst=0,when=null;
+        for(let i=0;i<ctx.times.length;i++){const e=o[i]*q[i]*f[i],a=Math.abs(r[i]-e),rel=a/Math.max(1,Math.abs(e));if(rel>worst){worst=rel;absWorst=a;when=ctx.times[i];}}
+        const name=`${label}: labor product identity`;return worst<=tol?pass(name,{worstRelativeError:worst,worstAbsError:absWorst,worstTime:when}):fail(name,`relative error ${worst} > ${tol} at day ${when}`,{worstRelativeError:worst,worstAbsError:absWorst,worstTime:when});
+      }));
+    }
+    return results;
+  }
+
   if (plugin.type === 'energy_balance') {
     const tol = plugin.abs_tol ?? 1e-8;
     // consumers: energy users sharing the colony allocator; default = the two v7.2 industries.

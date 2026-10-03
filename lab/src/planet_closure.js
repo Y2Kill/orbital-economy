@@ -226,6 +226,7 @@ function validateSpec(plugin) {
 
     if (p?.labor?.kind != null && !LABOR_KINDS.has(p.labor.kind)) specError(errors, `${where}.labor.kind is invalid`, { process: p?.id ?? null });
     if (p?.labor?.kind === 'declared' && !p.labor.intensity) specError(errors, `${where}.labor.intensity is required`, { process: p?.id ?? null });
+    if (p?.labor?.requirement != null && (typeof p.labor.requirement !== 'string' || !p.labor.requirement.trim())) specError(errors, `${where}.labor.requirement must be a non-empty string`, { process: p?.id ?? null });
   }
 
   const dd = plugin?.demand_drivers;
@@ -255,6 +256,7 @@ export function auditPlanetClosure(raw, plugin, openBoundariesPlugin) {
   const undeclared = [];
   const reversibility = [];
   const modeFailures = [];
+  let laborDeclaredWithoutRequirement = 0;
 
   if (!plugin || typeof plugin !== 'object') {
     specError(errors, 'planet_closure plugin must be an object');
@@ -512,21 +514,25 @@ export function auditPlanetClosure(raw, plugin, openBoundariesPlugin) {
 
     const labor = p.labor || {};
     if (labor.kind === 'declared') {
-      const intensityName = expand(labor.intensity, colony);
-      const intensity = resolve(intensityName);
+      const intensityName = expand(labor.intensity, colony), intensity = resolve(intensityName);
       if (!intensity) processError(errors, record, `labor intensity does not resolve: ${intensityName}`, { reference: intensityName });
       else if (intensity.type !== 'VARIABLE') processError(errors, record, `labor intensity ${intensity.name} is not a VARIABLE`);
-      else {
+      else if (labor.requirement == null) {
+        laborDeclaredWithoutRequirement++;
         const readers = graph.readers.get(key(intensity.name)) || [];
         if (!readers.length) processError(errors, record, `labor intensity ${intensity.name} is not read by any formula`);
+        else { record.paths.labor_readers = readers; counters.P5.declared++; }
+      } else {
+        const requirementName=expand(labor.requirement,colony), requirement=resolve(requirementName);
+        if (!requirement) processError(errors, record, `labor requirement does not resolve: ${requirementName}`, { reference: requirementName });
+        else if (requirement.type !== 'VARIABLE') processError(errors, record, `labor requirement ${requirement.name} is not a VARIABLE`);
         else {
-          record.paths.labor_readers = readers;
-          counters.P5.declared++;
+          const direct=refsOf(requirement).map(key),missing=[]; if(!direct.includes(key(output.name)))missing.push(output.name);if(!direct.includes(key(intensity.name)))missing.push(intensity.name);
+          if(missing.length)processError(errors,record,`labor requirement ${requirement.name} does not directly read ${missing.join(' and ')}`);
+          else { record.paths.labor_requirement=[output.name,intensity.name,requirement.name]; counters.P5.declared++; }
         }
       }
-    } else {
-      counters.P5.undeclared++;
-    }
+    } else counters.P5.undeclared++;
 
     record.status = record.errors.length ? 'FAIL' : 'PASS';
   }
@@ -577,6 +583,7 @@ export function auditPlanetClosure(raw, plugin, openBoundariesPlugin) {
     if (counters.P3.undeclared) modeFailures.push({ dimension: 'P3', count: counters.P3.undeclared, message: 'undeclared energy roles' });
     if (counters.P4.without_deposit) modeFailures.push({ dimension: 'P4', count: counters.P4.without_deposit, message: 'extraction processes without deposit stocks' });
     if (counters.P5.undeclared) modeFailures.push({ dimension: 'P5', count: counters.P5.undeclared, message: 'undeclared labor roles' });
+    if (laborDeclaredWithoutRequirement) modeFailures.push({ dimension: 'P5', count: laborDeclaredWithoutRequirement, message: 'P5: labor declared without a requirement variable' });
     if (!dd || !(dd.parameters || []).length || counters.P6.drivers === 0) modeFailures.push({ dimension: 'P6', count: 0, message: 'demand drivers are not declared' });
     if (reversibility.length) modeFailures.push({ dimension: 'reversibility', count: reversibility.length, message: 'constant-capacity reversibility violations' });
   }

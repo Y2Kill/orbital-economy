@@ -209,6 +209,7 @@ export function mergeNodeValidation(validation, fragments) {
 
   let simple = out.plugins?.find(p => p.type === 'simple_capital') || null;
   let deposit = out.plugins?.find(p => p.type === 'deposit') || null;
+  let labor = out.plugins?.find(p => p.type === 'labor') || null;
   let retirement = boundaries.categories.find(x => x.id === 'capital_retirement') || null;
   let exploration = boundaries.categories.find(x => x.id === 'exploration_expenditure') || null;
   const information = boundaries.categories.find(x => x.id === 'information_signal') || null;
@@ -279,6 +280,29 @@ export function mergeNodeValidation(validation, fragments) {
         if (!Array.isArray(energyBalance.priority)) throw new Error('validation: energy_balance.priority must be an array');
         for (const name of energyPriority) if (!energyBalance.priority.includes(name)) energyBalance.priority.push(name);
       }
+    }
+    if ((fragment.labor_instances || []).length) {
+      const absTol = fragment.labor_abs_tol ?? 1e-9;
+      const minHumanShare = fragment.labor_min_human_share;
+      if (!labor) { labor = { type: 'labor', abs_tol: absTol, min_human_share: minHumanShare, instances: [] }; out.plugins.push(labor); }
+      if (!Array.isArray(labor.instances)) throw new Error('validation: labor.instances must be an array');
+      if (labor.min_human_share !== minHumanShare) throw new Error(`validation fragment[${fi}]: labor min_human_share differs`);
+      if ((labor.abs_tol ?? 1e-9) !== absTol) throw new Error(`validation fragment[${fi}]: labor abs_tol differs`);
+      for (const generated of fragment.labor_instances) {
+        const existing = labor.instances.find(x => x.name === generated.name);
+        if (!existing) labor.instances.push(structuredClone(generated));
+        else if (!jsonEqual(existing, generated)) throw new Error(`validation fragment[${fi}]: labor instance "${generated.name}" already exists with a different definition`);
+      }
+    }
+    for (const generated of fragment.planet_labors || []) {
+      const process = planet.processes.find(x => x.id === generated.process);
+      if (!process) throw new Error(`validation fragment[${fi}]: planet process "${generated.process}" does not exist`);
+      const current = process.labor;
+      if (current == null || current?.kind === 'undeclared') process.labor = structuredClone(generated.labor);
+      else if (current?.kind === 'declared' && current.requirement == null) {
+        if (current.intensity !== generated.labor.intensity) throw new Error(`validation fragment[${fi}]: planet process "${generated.process}" labor intensity differs`);
+        process.labor = structuredClone(generated.labor);
+      } else if (!jsonEqual(current, generated.labor)) throw new Error(`validation fragment[${fi}]: planet process "${generated.process}" labor differs`);
     }
     for (const generated of fragment.planet_energies || []) {
       const process = planet.processes.find(x => x.id === generated.process);

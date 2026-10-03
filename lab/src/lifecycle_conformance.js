@@ -367,6 +367,26 @@ export function runSimpleCapitalConformance(raw, validation, index = indexModel(
 }
 
 
+export function findLaborPlugin(validation) { return (validation?.plugins || []).find(p => p?.type === 'labor') || null; }
+export function validateLaborSpec(plugin) {
+  const errors=[]; if(!plugin||typeof plugin!=='object') return ['labor plugin must be an object'];
+  if(typeof plugin.min_human_share!=='string'||!plugin.min_human_share) errors.push('labor.min_human_share is required');
+  if(!(typeof plugin.abs_tol==='number'&&Number.isFinite(plugin.abs_tol)&&plugin.abs_tol>0)) errors.push('labor.abs_tol must be a finite number > 0');
+  if(!Array.isArray(plugin.instances)||!plugin.instances.length) errors.push('labor plugin needs a non-empty "instances" array');
+  const names=new Set(),roles=['output','intensity','automation_level','automation_factor','requirement'];
+  for(const [i,inst] of (plugin.instances||[]).entries()){const p=`instances[${i}]`;if(!inst?.name)errors.push(`${p}.name is required`);else if(names.has(inst.name))errors.push(`duplicate labor instance name: ${inst.name}`);else names.add(inst.name);for(const role of roles)if(typeof inst?.[role]!=='string'||!inst[role])errors.push(`${p}.${role} is required`);}
+  return errors;
+}
+export function checkLaborInstance(index,inst,plugin){
+  const checks=[],resolved={},roles={output:['VARIABLE','FLOW'],intensity:['VARIABLE'],automation_level:['VARIABLE'],automation_factor:['VARIABLE'],requirement:['VARIABLE']};
+  for(const [role,kinds] of Object.entries(roles)){const el=index.get(inst[role]);if(!el){checks.push(fail(`role ${role}`,`primitive not found: ${inst[role]}`));continue;}if(!kinds.includes(el.type)){checks.push(fail(`role ${role}`,`${el.name}: expected ${kinds.join(' or ')}, found ${el.type}`));continue;}resolved[role]=el;checks.push(pass(`role ${role}`,{primitive:el.name,type:el.type}));}
+  const h=index.get(plugin.min_human_share);if(!h)checks.push(fail('min_human_share',`primitive not found: ${plugin.min_human_share}`));else if(h.type!=='VARIABLE')checks.push(fail('min_human_share',`${h.name}: expected VARIABLE, found ${h.type}`));else checks.push(pass('min_human_share',{primitive:h.name,type:h.type}));
+  const dep=(tr,sn,sl)=>{const t=resolved[tr];if(!t||!sn)return;const label=`dep ${tr} <- ${sl}`;if(!formulaRefs(t).has(String(sn).toLowerCase()))checks.push(fail(label,`${t.name} does not reference [${sn}]`));else if(!index.hasLink(sn,t.name))checks.push(fail(label,`missing LINK ${sn} -> ${t.name}`));else checks.push(pass(label));};
+  dep('requirement',inst.output,'output');dep('requirement',inst.intensity,'intensity');dep('requirement',inst.automation_factor,'automation_factor');dep('automation_factor',inst.automation_level,'automation_level');dep('automation_factor',plugin.min_human_share,'min_human_share');
+  const failed=checks.filter(x=>x.status==='FAIL');return{name:inst.name,classification:failed.length?'NON_CONFORMING':'CONFORMING',checks,variations:[],failures:failed.map(x=>`${x.name}: ${x.message}`)};
+}
+export function runLaborConformance(raw,validation,index=indexModel(raw)){const plugin=findLaborPlugin(validation);if(!plugin)return{status:'SKIPPED',instances:[],summary:{instances:0,conforming:0,nonConforming:0}};const specErrors=validateLaborSpec(plugin);if(specErrors.length)return{status:'FAIL',specErrors,instances:[],summary:{instances:0,conforming:0,nonConforming:0}};const instances=plugin.instances.map(i=>checkLaborInstance(index,i,plugin)),n=instances.filter(i=>i.classification==='NON_CONFORMING').length;return{status:n?'FAIL':'PASS',instances,summary:{instances:instances.length,conforming:instances.length-n,nonConforming:n}};}
+
 // Entry point: raw ModelJSON + validation JSON -> conformance report object.
 export function runLifecycleConformance(raw, validation) {
   const plugin = findKernelPlugin(validation);
@@ -379,10 +399,11 @@ export function runLifecycleConformance(raw, validation) {
   const instances = plugin.instances.map(inst => checkInstance(index, inst, plugin));
   const simpleCapital = runSimpleCapitalConformance(raw, validation, index);
   const deposit = runDepositConformance(raw, validation, index);
+  const labor = runLaborConformance(raw, validation, index);
   const anyNonConforming = instances.some(i => i.classification === 'NON_CONFORMING');
   const modelWideFail = modelWide.some(c => c.status === 'FAIL');
   return {
-    status: anyNonConforming || modelWideFail || simpleCapital.status === 'FAIL' || deposit.status === 'FAIL' ? 'FAIL' : 'PASS',
+    status: anyNonConforming || modelWideFail || simpleCapital.status === 'FAIL' || deposit.status === 'FAIL' || labor.status === 'FAIL' ? 'FAIL' : 'PASS',
     format: KERNEL_FORMAT,
     kernel: { roles: Object.keys(KERNEL_ROLES).length, requiredRoles: REQUIRED_ROLES.length, flows: KERNEL_FLOWS.length, stocks: KERNEL_STOCKS.length },
     legacySwitch: plugin.legacy_switch || 'Capital Lifecycle Enabled',
@@ -395,7 +416,8 @@ export function runLifecycleConformance(raw, validation) {
     modelWide,
     instances,
     simpleCapital,
-    deposit
+    deposit,
+    labor
   };
 }
 
@@ -422,6 +444,10 @@ export function printConformance(report, log = console.log) {
       for (const f of inst.failures) log(`        - ${f}`);
     }
     for (const e of report.simpleCapital.specErrors || []) log(`    - ${e}`);
+  }
+  if (report.labor?.status !== 'SKIPPED') {
+    log(`Labor conformance: ${report.labor.status}`);
+    for(const inst of report.labor.instances||[]){const checked=inst.checks.length,failed=inst.failures.length;log(`    ${inst.name.padEnd(32)} ${inst.classification}  (${checked-failed}/${checked} checks)`);for(const f of inst.failures)log(`        - ${f}`);}for(const e of report.labor.specErrors||[])log(`    - ${e}`);
   }
   if (report.deposit?.status !== 'SKIPPED') {
     log(`Deposit conformance: ${report.deposit.status}`);
