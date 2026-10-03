@@ -63,3 +63,68 @@ Candidate acceptance https://github.com/Y2Kill/orbital-economy/actions/runs/3710
 Это подтверждает прохождение delivered `candidate/validation.json` на полном наборе Modes, включая Modes 46–47. Таблица «проверка → значение → порог → запас», итог 48/48 и точные значения приоритетной доли / отсутствия топливного коллапса будут внесены по завершённому validation log, а не по owner-skeleton.
 
 Gate 5 `policy` на момент записи выполняется, поэтому КТ2 ещё не закрыта. КТ4 также не закрыта.
+
+
+### Детализация КТ1 по завершённому artifact
+
+Candidate acceptance: https://github.com/Y2Kill/orbital-economy/actions/runs/37108034775, artifact `candidate-37108034775` (ID `11269186412`).
+
+Фактические строки `audit.log`:
+- open boundaries: **224** из 279 flows; unclassified = 0; closed-world violations = 0;
+- Planet closure: **P3 = 14/2/1/0**; P2 = 11/6/0/0; P4 = 6/0;
+- algebraic loops: switches = 15; combinations = **32768**; with loops = **0**; Modes = none.
+
+Таким образом КТ1 закрыта полностью: apply-patch, conformance и audit — PASS; требуемые структурные счётчики совпали со спецификацией.
+
+### КТ2 — policy/regression закрыта
+
+Доказательство: тот же Candidate acceptance https://github.com/Y2Kill/orbital-economy/actions/runs/37108034775, Gate 5 `policy` = PASS.
+
+Фактические результаты:
+- Modes **0–45**: все **46** сравнений имеют `common=1448, changed=0, added=71, removed=0, maxAbs=0`, result = `IDENTICAL`;
+- policy: observed = **3632**, expected/allowed = **3632**, unexpected = **0**, forbidden = **0**, threshold exceed = **0**, required missing = **0**, hard blockers = **0**;
+- итог сравнения: `OUTPUTS_IDENTICAL_BUT_SCENARIO_CONTRACT_CHANGED` — ожидаемое изменение сценарного контракта за счёт нового switch и Modes 46–47.
+
+Отрицательных результатов или неожиданных событий в Modes 0–45 нет.
+
+### Детализация КТ3 — Modes 46–47
+
+Gate 4 `validation` = PASS; фактически выбрано **48** сценариев, все **48 PASS**; `OVERALL: PASS`. Delivered validation SHA-256: `03a732ce96cf39a17064233c463a873505c3c510892ac216cae3d42a8ae8529b`, то есть owner draft SHA подтверждён первым candidate-run и policy менять не потребовалось.
+
+| Проверка | Значение | Порог | Запас |
+|---|---:|---:|---:|
+| M46 A priority fulfillment min | 1.000000 | ≥ 0.999 | +0.001000 |
+| M46 B priority fulfillment min | 1.000000 | ≥ 0.999 | +0.001000 |
+| M46 A Total Requested Energy mean | 1619.389367 | > 1560 | +59.389367 |
+| M46 B Total Requested Energy mean | 502.714488 | > 460 | +42.714488 |
+| M46 A Energy Fulfillment Ratio mean | 0.919322 | < 0.935 | 0.015678 ниже потолка |
+| M46 A Power Resource Extraction Requested Energy min | 67.742557 | > 50 | +17.742557 |
+| M46 A Mining Requested Energy mean | 55.620436 | > 40 | +15.620436 |
+| M46 A Capital Goods Requested Energy max | 82.431966 | > 40 | +42.431966 |
+| M46 A Regolith Extraction Requested Energy max | 77.646080 | > 40 | +37.646080 |
+| M46 B Energy Fulfillment Ratio min [360,1080] | 1.000000 | ≥ 0.95 | +0.050000 |
+| M46 B Power Resource Inventory min | 1843.208985 | > 1000 | +843.208985 |
+| M47 A priority fulfillment min | 1.000000 | ≥ 0.999 | +0.001000 |
+| M47 B priority fulfillment min | 1.000000 | ≥ 0.999 | +0.001000 |
+| M47 B Energy Fulfillment Ratio min [360,720], дефицит | 0.690727 | < 0.9 | 0.209273 ниже потолка |
+| M47 B Energy Fulfillment Ratio min [360,720], без коллапса | 0.690727 | > 0.5 | +0.190727 |
+| M47 A Energy Fulfillment Ratio min [360,720] | 0.808237 | > 0.7 | +0.108237 |
+| M47 B Capital Goods Requested Energy max [360,720] | 54.036011 | > 20 | +34.036011 |
+| M47 B Regolith Extraction Requested Energy max [360,720] | 37.305740 | > 15 | +22.305740 |
+| M47 B Power Resource Inventory min | 1587.229049 | > 1000 | +587.229049 |
+
+Приоритетная доля ровно 1 у A и B в обоих новых Modes. У B топливного коллапса нет: минимальный fulfillment в surge = 0.690727, минимальный Power Resource Inventory = 1587.229049.
+
+### КТ4 — поставка полная
+
+Candidate acceptance https://github.com/Y2Kill/orbital-economy/actions/runs/37108034775 завершён `success`: **5/5 PASS**:
+- apply-patch PASS (0 s);
+- conformance PASS (0 s);
+- audit PASS (1 s);
+- validation PASS (453 s);
+- policy PASS (911 s).
+
+Candidate SHA-256: `5964a0c3ef3f29c071a016d8cc75a74bc8a57d7bf4897682147af2f00ff8a335`.
+Validation SHA-256: `03a732ce96cf39a17064233c463a873505c3c510892ac216cae3d42a8ae8529b`.
+
+CI https://github.com/Y2Kill/orbital-economy/actions/runs/37108057223 завершён `success` после первой journal-записи; candidate-файлы после candidate-run не менялись. Последующие изменения ветки — только дополнение `REPORT_RU.md` доказательствами контрольных точек. После этой записи ожидается очередной CI на финальной голове; его результат проверяется отдельным шагом без изменения candidate.
