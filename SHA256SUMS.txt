@@ -312,6 +312,11 @@ a1fc07bae6f6181db49f24039a291bd47e28112343def74031ac5742af58c745  ./docs/tasks/0
 d85df745ccdfd14f9449b6ab99ed2c48f32279ffbe6dbe43d82b341ed9073c7c  ./docs/tasks/026-process-energy/draft/process-energy.json
 03a732ce96cf39a17064233c463a873505c3c510892ac216cae3d42a8ae8529b  ./docs/tasks/026-process-energy/draft/validation-v7.7.9-draft.json
 108077041a0f555d7dabdb40b11ee4e67d6e48a3cde83b61673e5a11127104c5  ./docs/tasks/026-process-energy/scope.json
+ecb28fef940a673b4bfcc2caa6960d17d92387aa9aedcb0b10d4075d860ff005  ./docs/tasks/027-labor-node/TASK_RU.md
+e1f776991d6143ac2a02c85553b32c5e8b6ac7096f10c69c13cb667069c8a0a8  ./docs/tasks/027-labor-node/fixtures/process-labor.json
+acbec86cbb28343cf6c71820df4c3a8fa43c24c16c6ac1ff16baad2d8778c89b  ./docs/tasks/027-labor-node/reference/definition_fingerprint.mjs
+300ff0bf57ed046e85eda41259baec025dbd5958705ece2328841962b97edc83  ./docs/tasks/027-labor-node/reference/labor_prototype.mjs
+2b19ec9a4bd348fcf10301daa6b29cefac10e39c6d0b2d145797c3a1bbbc1898  ./docs/tasks/027-labor-node/scope.json
 44d2e557f1cb2322739bc95ee2b6dcbf6d6fcb708da14e90d53250936e50da5c  ./docs/tasks/README_RU.md
 bbf818e93b88d606b3137b1bb69d60db8c41c9df4089025a921b1ca00f473244  ./lab/APPLY_PATCH.cmd
 c77e8cbb4c4c11c700eb6cda34e22b42b747177299c2d2dd734e66bd6284b8ed  ./lab/CHANGELOG.md
