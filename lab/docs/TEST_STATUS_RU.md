@@ -139,3 +139,9 @@ Accepted ModelJSON, validation и policy задачей 020 не меняютс�
 Ожидаемый контракт self-test: `NODE SELF-TEST: 27 passed, 0 failed`; deposit fixture = 100 add / 8 replace / 6 retarget / 212 LINK, fingerprint `7d8fe41cc6df5c1a`; merged validation = 6 deposit instances CONFORMING, loops=0, P4.with_deposit +6, unclassified=0; runtime trial должен показать хотя бы один Proven Reserves выше initial.
 
 Статус этой ветки здесь не объявляется PASS до фактического GitHub Actions/reviewer-прогона. Локальные `check_branch` и bench исполнителем задачи 022 не запускаются по контракту §9.4.
+
+## Task 027 / Lab v0.9.15
+
+Новый declarative node `labor` проверяется на четырёх уровнях: generator oracle, semantic validation merge, static conformance/Planet P5 и runtime identity. Эталон фикстуры: 69 добавлений, 4 замены, 123 LINK, 17 labor instances, fingerprint `8da2d7d17c679eda`.
+
+Целевые self-test totals: QA **44/44**, Planet **20/20**, Node **39/39**. Канонические model/validation/policy этой задачей не изменяются; их продвижение выполняется отдельной задачей.

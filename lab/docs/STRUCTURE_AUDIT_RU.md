@@ -299,3 +299,9 @@ node src\cli.js loops model.json --exhaustive --out=output\loops-exhaustive
 ```
 
 Без `--exhaustive` используется быстрый путь. Формат JSON/Markdown, состав и порядок полей не меняются; exhaustive нужен как эталон и диагностический режим, а не как отдельный вид отчёта.
+
+## P5 labor requirement (v0.9.15)
+
+Для `labor.kind = "declared"` поле `intensity` сохраняет прежнюю проверку. Новое необязательное в режиме `report` поле `requirement` при наличии обязано разрешаться в VARIABLE и непосредственно читать выход данного процесса и его labor intensity. Поэтому отчёты старых деклараций без `requirement` сохраняют прежнее поведение.
+
+В `planet_v1` и `planet_strict` совместимость намеренно строже: каждая declared labor role без `requirement` создаёт mode failure `P5: labor declared without a requirement variable`. После слияния узла `labor` эталон задачи 027 имеет P5 = **17 declared / 0 undeclared**.

@@ -253,3 +253,13 @@ Linux CI КТ2: https://github.com/Y2Kill/orbital-economy/actions/runs/370065015
 - 19 — два последовательных fast-прогона в одном процессе дают побайтно одинаковые audit/details при прогретом condition cache.
 
 `loops --exhaustive` проводит CLI к сохранённому прежнему 2^n алгоритму; default CLI использует быстрый точный путь. Главный oracle — `JSON.stringify(fast) === JSON.stringify(exhaustive)` для audit и details, а не только совпадение счётчиков.
+
+## v0.9.15 — labor node QA
+
+К набору добавлены проверки задания 027:
+
+- NODE QA 34–39: эталонное раскрытие 69/4/123, fingerprint `8da2d7d17c679eda`, validation/static/Planet/runtime integration, trial автоматизации A Smelting = 0.5, strip/rebuild и пять отрицательных schema/base случаев;
+- PLANET QA 19–20: строгая форма `labor.requirement` и совместимость `report` против обязательности в `planet_v1`;
+- QA 44: runtime plugin `labor` — произведение, +1% ошибка requirement и factor ниже `min_human_share`.
+
+Ожидаемые итоги v0.9.15: **NODE 39/39**, **PLANET 20/20**, **QA 44/44**.

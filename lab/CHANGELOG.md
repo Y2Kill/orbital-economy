@@ -1,3 +1,13 @@
+## v0.9.15 — labor node
+
+- новый declarative type `labor`: labor requirement = output × intensity × automation factor, без switch; automation factor при уровне 0 равен ровно 1;
+- process fixture задачи 027: 69 add / 4 replace / 123 LINK, 17 instances, fingerprint `8da2d7d17c679eda`;
+- generated validation: plugin `labor` + `planet_closure.labor.requirement`, идемпотентный merge и conflict checks;
+- static HARD conformance и runtime проверки диапазонов/неотрицательности/product identity;
+- Planet P5 сохраняет старый `report`, но `planet_v1`/strict требуют requirement;
+- self-tests расширены до QA 44, Planet 20, Node 39;
+- package/Lab version → v0.9.15; accepted model, validation, policy и `model/nodes/*` не изменены.
+
 # Changelog
 
 ## v0.9.14 — exact algebraic-loop audit speed-up
