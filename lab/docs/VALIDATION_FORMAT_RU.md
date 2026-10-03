@@ -315,3 +315,27 @@ Generated merge также объявляет `planet_closure.processes[].deposi
 - `SKIPPED` — проверка неприменима/не запрошена; например web CSV отсутствуют.
 
 В v0.2 отсутствие web CSV не влияет на `OVERALL`.
+
+## Plugin `labor` (v0.9.15)
+
+```json
+{
+  "type": "labor",
+  "abs_tol": 1e-9,
+  "min_human_share": "Minimum Human Labor Share",
+  "instances": [
+    {
+      "name": "A Smelting labor",
+      "output": "A Metal Production",
+      "intensity": "A Labor per Metal",
+      "automation_level": "A Smelting Automation Level",
+      "automation_factor": "A Smelting Automation Factor",
+      "requirement": "A Smelting Labor Requirement"
+    }
+  ]
+}
+```
+
+Статический conformance требует корректные типы ролей и прямые зависимости: `requirement` читает `output`, `intensity`, `automation_factor`; `automation_factor` читает `automation_level` и `min_human_share`. Runtime проверяет уровень автоматизации в [0,1], коэффициент в [`min_human_share`,1], неотрицательность `requirement` и тождество `requirement = output × intensity × automation_factor` с относительным допуском `abs_tol`.
+
+В `planet_closure.processes[].labor` для `kind: "declared"` поддерживается поле `requirement`. Оно должно разрешаться в VARIABLE, которая непосредственно читает выход процесса и параметр `intensity`. В режиме `report` прежняя декларация без `requirement` остаётся допустимой; `planet_v1` и `planet_strict` дают mode failure `P5: labor declared without a requirement variable`.

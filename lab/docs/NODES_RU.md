@@ -13,7 +13,7 @@ Node declaration — короткое строгое описание повто
 
 ## 2. Поддерживаемый тип
 
-Registry содержит четыре типа: `capital_lifecycle`, `simple_capital`, `deposit` и `energy_consumer`, все `version: 1`.
+Registry содержит пять типов: `capital_lifecycle`, `simple_capital`, `deposit`, `energy_consumer` и `labor`, все `version: 1`.
 
 Минимальная форма:
 
@@ -269,3 +269,42 @@ Generated validation добавляет такого consumer в `energy_balance
 ```
 
 Эталон `fixtures/nodes/process-energy.json` раскрывается в **71 add / 14 replace / 232 LINK**. Definition fingerprint после `APPLY_PATCH` относительно v7.7.8: `fe5f022b5d81ec3b`.
+
+## 12. `labor` (v0.9.15)
+
+`labor` объявляет потребность в труде для каждого процесса без ограничения общим пулом рабочей силы. Декларация содержит `colonies`, общие параметры автоматизации `min_human_share` и `exponent`, а также `processes[]`. Для колониального процесса `output` содержит `{C}`; для `scope: "shared"` — не содержит. `intensity` задаётся ровно одним из `existing` или положительного `value`; `automation` содержит ровно ключи колоний либо только `shared`.
+
+Для каждого экземпляра P/X создаются `Automation Level`, `Automation Factor` и `Labor Requirement`; при числовой трудоёмкости также создаётся `Labor per Unit`. Формулы:
+
+- `Automation Factor = 1 - (1 - [h]) * (1 - (1 - [Automation Level]) ^ [k])`;
+- `Labor Requirement = [output] * [intensity] * [Automation Factor]`.
+
+Форма коэффициента выбрана намеренно: при `Automation Level = 0` она вычисляется ровно в 1 для любого `h`, поэтому добавление узла не меняет прежние ряды. Переключателя нет: автоматизация является параметром процесса и с самого начала входит в труд и, где указано `cost`, в себестоимость. Ссылки `[intensity]` в перечисленных формулах себестоимости заменяются на `([intensity] * [Automation Factor])`.
+
+Итоги: `X Total Labor Requirement` суммирует колониальные процессы, `Shared Labor Requirement` — общие. Generated validation создаёт plugin `labor` и заполняет `planet_closure.processes[].labor.requirement`. Повторное слияние идемпотентно; существующая `declared` запись без `requirement` заменяется только при совпадающей `intensity`.
+
+Фикстура `fixtures/nodes/process-labor.json` даёт **69 add / 4 replace / 123 LINK**, **17** экземпляров; эталонный definition fingerprint — `8da2d7d17c679eda`.
+
+Пример:
+
+```json
+{
+  "type": "labor",
+  "version": 1,
+  "colonies": ["A", "B"],
+  "automation": {
+    "min_human_share": { "name": "Minimum Human Labor Share", "value": 0.05 },
+    "exponent": { "name": "Automation Labor Exponent", "value": 1 }
+  },
+  "processes": [
+    {
+      "process": "Smelting",
+      "output": "{C} Metal Production",
+      "intensity": { "existing": "{C} Labor per Metal" },
+      "automation": { "A": 0, "B": 0 },
+      "cost": ["{C} Metal Unit Cost"],
+      "planet_process": "smelting"
+    }
+  ]
+}
+```
