@@ -32,6 +32,10 @@ import {
   energyConsumerGeneratedNames,
   energyConsumerReplacementNames
 } from './nodes/energy_consumer.js';
+import {
+  laborGeneratedNames,
+  laborReplacementNames
+} from './nodes/labor.js';
 import { runLifecycleConformance } from './lifecycle_conformance.js';
 import { runStructureAudits } from './structure_audit.js';
 
@@ -47,7 +51,8 @@ const simpleFixtureFile = path.join(root, 'fixtures', 'nodes', 'regolith-mine-si
 const powerFixtureFile = path.join(root, 'fixtures', 'nodes', 'power-resource-mine-simple.json');
 const depositFixtureFile = path.join(root, 'fixtures', 'nodes', 'deposits.json');
 const energyFixtureFile = path.join(root, 'fixtures', 'nodes', 'process-energy.json');
-for (const f of [modelFile, validationFile, simpleFixtureFile, powerFixtureFile, depositFixtureFile, energyFixtureFile, ...declarationFiles]) {
+const laborFixtureFile = path.join(root, 'fixtures', 'nodes', 'process-labor.json');
+for (const f of [modelFile, validationFile, simpleFixtureFile, powerFixtureFile, depositFixtureFile, energyFixtureFile, laborFixtureFile, ...declarationFiles]) {
   if (!fs.existsSync(f)) {
     console.error(`[FAIL] Required node QA input is missing: ${f}`);
     process.exit(2);
@@ -61,6 +66,7 @@ const simpleFixture = readJson(simpleFixtureFile);
 const powerFixture = readJson(powerFixtureFile);
 const depositFixture = readJson(depositFixtureFile);
 const energyFixture = readJson(energyFixtureFile);
+const laborFixture = readJson(laborFixtureFile);
 const allNodeDeclarations = fs.readdirSync(nodeDir)
   .filter(name => name.endsWith('.json'))
   .map(name => path.join(nodeDir, name))
@@ -68,6 +74,7 @@ const allNodeDeclarations = fs.readdirSync(nodeDir)
 const simpleDeclarations = allNodeDeclarations.filter(x => x.decl?.type === 'simple_capital');
 const depositDeclarations = allNodeDeclarations.filter(x => x.decl?.type === 'deposit');
 const energyDeclarations = allNodeDeclarations.filter(x => x.decl?.type === 'energy_consumer');
+const laborDeclarations = allNodeDeclarations.filter(x => x.decl?.type === 'labor');
 
 let passed = 0, failed = 0;
 function mark(ok, name, detail = '') {
@@ -200,6 +207,35 @@ function stripEnergyConsumerNode(raw, decl) {
     const e = out.elements.find(x => x.type !== 'LINK' && x.name === name);
     if (!e) throw new Error(`energy_consumer: replacement target missing while stripping: ${name}`);
     e.behavior.value = oldBranch(e.behavior.value, decl.switch, name);
+  }
+  out.elements = out.elements.filter(e => {
+    if (e.type === 'LINK') return !generated.has(e.from) && !generated.has(e.to);
+    return !generated.has(e.name);
+  });
+  return out;
+}
+
+function stripLaborNode(raw, decl) {
+  const out = structuredClone(raw);
+  const generated = new Set(laborGeneratedNames(decl));
+  const byName = new Map(out.elements.filter(e => e.type !== 'LINK' && e.name).map(e => [e.name.toLowerCase(), e]));
+  for (const p of decl.processes || []) {
+    const scopes = p.scope === 'shared' ? [null] : (decl.colonies || []);
+    for (const X of scopes) {
+      const pre = X ? `${X} ${p.process}` : p.process;
+      const intensity = p.intensity?.existing
+        ? (X ? p.intensity.existing.replaceAll('{C}', X) : p.intensity.existing)
+        : `${pre} Labor per Unit`;
+      const factor = `${pre} Automation Factor`;
+      const needle = `([${intensity}] * [${factor}])`;
+      for (const target of p.cost || []) {
+        const name = X ? target.replaceAll('{C}', X) : target;
+        const e = byName.get(name.toLowerCase());
+        if (!e) throw new Error(`labor: replacement target missing while stripping: ${name}`);
+        if (!String(e.behavior?.value ?? '').includes(needle)) throw new Error(`labor: replacement target is not labor-adjusted: ${name}`);
+        e.behavior.value = e.behavior.value.replaceAll(needle, `[${intensity}]`);
+      }
+    }
   }
   out.elements = out.elements.filter(e => {
     if (e.type === 'LINK') return !generated.has(e.from) && !generated.has(e.to);
@@ -1102,6 +1138,66 @@ await expect('33. energy_consumer without priority leaves general allocator rati
   const touched = expanded.patch.replace_formulas.filter(r => ratioTargets.has(r.name));
   if (touched.length) throw new Error(`general ratio unexpectedly replaced: ${touched.map(x => x.name).join(', ')}`);
   return 'replacements=12; general ratio replacements=0 (two fewer than priority fixture)';
+});
+
+
+let laborState = null;
+
+await expect('34. labor fixture expands and APPLY_PATCH matches prototype counts/fingerprint', () => {
+  const probe = laborFixture.automation.min_human_share.name;
+  const alreadyPresent = accepted.elements.some(e => e.type !== 'LINK' && e.name === probe);
+  const acceptedDecl = laborDeclarations.find(x => x.decl?.automation?.min_human_share?.name === probe)?.decl || laborFixture;
+  const baseModel = alreadyPresent ? stripLaborNode(accepted, acceptedDecl) : accepted;
+  const expanded = expandNode(laborFixture, baseModel);
+  const model = applyPatch(baseModel, { format: PATCH_FORMAT, ...expanded.patch }).model;
+  const counts = [expanded.patch.add_elements.length, expanded.patch.replace_formulas.length, expanded.patch.add_links.length];
+  if (counts.join('/') !== '69/4/123') throw new Error(`prototype count mismatch: got ${counts.join('/')}, expected 69/4/123`);
+  if (expanded.validation.labor_instances.length !== 17) throw new Error(`labor instances=${expanded.validation.labor_instances.length}, expected 17`);
+  const fp = definitionFingerprint(model);
+  if (!alreadyPresent && fp !== '8da2d7d17c679eda') throw new Error(`definition fingerprint ${fp}, expected 8da2d7d17c679eda`);
+  laborState = { base: baseModel, model, target: model, expanded, alreadyPresent };
+  return `69 elements / 4 replacements / 123 links; instances=17; fingerprint=${fp}`;
+});
+
+await expect('38. strip and rebuild labor model with zero definition/replacement/link differences', () => {
+  if (!laborState?.target) throw new Error('case 34 did not produce labor target');
+  const stripped = stripLaborNode(laborState.target, laborFixture);
+  const expanded = expandNode(laborFixture, stripped);
+  const rebuilt = applyPatch(stripped, { format: PATCH_FORMAT, ...expanded.patch }).model;
+  const a = new Map(laborState.target.elements.filter(e => e.type !== 'LINK').map(e => [e.name, def(e)]));
+  const b = new Map(rebuilt.elements.filter(e => e.type !== 'LINK').map(e => [e.name, def(e)]));
+  if (a.size !== b.size) throw new Error(`element count differs: ${a.size} vs ${b.size}`);
+  for (const [name, definition] of a) if (b.get(name) !== definition) throw new Error(`definition differs after labor rebuild: ${name}`);
+  if (!sameSet(linkSet(laborState.target), linkSet(rebuilt))) throw new Error('link set differs after labor rebuild');
+  return '0 definition/replacement/link differences';
+});
+
+await expect('39. labor schema/base checks reject five required invalid cases with paths/names', async () => {
+  const baseModel = laborState?.base || accepted;
+
+  const both = structuredClone(laborFixture);
+  both.processes[0].intensity.existing = '{C} Labor per Metal';
+  await requireThrow(() => expandNode(both, baseModel), /node\.processes\[0\]\.intensity: exactly one of existing or value is required/, 'intensity both fields');
+
+  const missingColony = structuredClone(laborFixture);
+  delete missingColony.processes[0].automation.B;
+  await requireThrow(() => expandNode(missingColony, baseModel), /node\.processes\[0\]\.automation\.B: required field is missing/, 'automation without colony');
+
+  const outOfRange = structuredClone(laborFixture);
+  outOfRange.processes[0].automation.A = 1.5;
+  await requireThrow(() => expandNode(outOfRange, baseModel), /node\.processes\[0\]\.automation\.A: must be in \[0, 1\]/, 'automation out of range');
+
+  const badCost = structuredClone(laborFixture);
+  const smelting = badCost.processes.find(p => p.process === 'Smelting');
+  smelting.cost = ['{C} Electronics Unit Cost'];
+  await requireThrow(() => expandNode(badCost, baseModel), /cost A Electronics Unit Cost does not read A Labor per Metal/, 'cost not reading intensity');
+
+  const sharedOutput = structuredClone(laborFixture);
+  const transport = sharedOutput.processes.find(p => p.scope === 'shared');
+  transport.output = '{C} Capacity Limited Total Transport Load';
+  await requireThrow(() => expandNode(sharedOutput, baseModel), /\.output: shared process output must not contain \{C\}/, 'shared output with colony token');
+
+  return 'both intensity fields, missing automation colony, out-of-range automation, unrelated cost, and shared {C} output rejected';
 });
 
 console.log(`\nNODE SELF-TEST: ${passed} passed, ${failed} failed`);
