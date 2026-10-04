@@ -1,0 +1,30 @@
+{
+  "type": "population",
+  "version": 1,
+  "colonies": ["A", "B"],
+  "initial": { "A": 28, "B": 8.5 },
+  "parameters": {
+    "Population Birth Rate": 0.0000333333333333,
+    "Population Base Death Rate": 0.0000277777777778,
+    "Death Living Standard Sensitivity": 1,
+    "Labor Participation Share": 0.5,
+    "Migration Max Rate": 0.0000555555555556,
+    "Migration Gap Sensitivity": 4,
+    "Attractiveness Perception Time": 360,
+    "Attractiveness Wage Weight": 1,
+    "Attractiveness Jobs Weight": 1,
+    "Attractiveness Living Weight": 1,
+    "Reference Real Wage": 100
+  },
+  "inputs": {
+    "wage": "{C} Effective Wage",
+    "labor_requirement": "{C} Total Labor Requirement",
+    "prices": [
+      { "price": "{C} Market Price", "reference": "{C} Reference Metal Price" },
+      { "price": "{C} Electronics Market Price", "reference": "{C} Electronics Reference Price" }
+    ],
+    "living": [
+      { "name": "Energy", "column": "{C} Energy Fulfillment Ratio", "weight": 1 }
+    ]
+  }
+}

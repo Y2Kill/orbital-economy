@@ -36,6 +36,10 @@ import {
   laborGeneratedNames,
   laborReplacementNames
 } from './nodes/labor.js';
+import {
+  populationGeneratedNames,
+  populationReplacementNames
+} from './nodes/population.js';
 import { runLifecycleConformance } from './lifecycle_conformance.js';
 import { runStructureAudits } from './structure_audit.js';
 
@@ -52,7 +56,8 @@ const powerFixtureFile = path.join(root, 'fixtures', 'nodes', 'power-resource-mi
 const depositFixtureFile = path.join(root, 'fixtures', 'nodes', 'deposits.json');
 const energyFixtureFile = path.join(root, 'fixtures', 'nodes', 'process-energy.json');
 const laborFixtureFile = path.join(root, 'fixtures', 'nodes', 'process-labor.json');
-for (const f of [modelFile, validationFile, simpleFixtureFile, powerFixtureFile, depositFixtureFile, energyFixtureFile, laborFixtureFile, ...declarationFiles]) {
+const populationFixtureFile = path.join(root, 'fixtures', 'nodes', 'population.json');
+for (const f of [modelFile, validationFile, simpleFixtureFile, powerFixtureFile, depositFixtureFile, energyFixtureFile, laborFixtureFile, populationFixtureFile, ...declarationFiles]) {
   if (!fs.existsSync(f)) {
     console.error(`[FAIL] Required node QA input is missing: ${f}`);
     process.exit(2);
@@ -67,6 +72,7 @@ const powerFixture = readJson(powerFixtureFile);
 const depositFixture = readJson(depositFixtureFile);
 const energyFixture = readJson(energyFixtureFile);
 const laborFixture = readJson(laborFixtureFile);
+const populationFixture = readJson(populationFixtureFile);
 const allNodeDeclarations = fs.readdirSync(nodeDir)
   .filter(name => name.endsWith('.json'))
   .map(name => path.join(nodeDir, name))
@@ -75,6 +81,7 @@ const simpleDeclarations = allNodeDeclarations.filter(x => x.decl?.type === 'sim
 const depositDeclarations = allNodeDeclarations.filter(x => x.decl?.type === 'deposit');
 const energyDeclarations = allNodeDeclarations.filter(x => x.decl?.type === 'energy_consumer');
 const laborDeclarations = allNodeDeclarations.filter(x => x.decl?.type === 'labor');
+const populationDeclarations = allNodeDeclarations.filter(x => x.decl?.type === 'population');
 
 let passed = 0, failed = 0;
 function mark(ok, name, detail = '') {
@@ -244,6 +251,16 @@ function stripLaborNode(raw, decl) {
   return out;
 }
 
+function stripPopulationNode(raw, decl) {
+  const out = structuredClone(raw);
+  const generated = new Set(populationGeneratedNames(decl));
+  out.elements = out.elements.filter(e => {
+    if (e.type === 'LINK') return !generated.has(e.from) && !generated.has(e.to);
+    return !generated.has(e.name);
+  });
+  return out;
+}
+
 function def(e) {
   return JSON.stringify({
     type: e.type,
@@ -319,14 +336,15 @@ const layeredNodes = [
   ...simpleDeclarations.map(({ decl }) => ({ decl, strip: stripSimpleNode, targets: simpleCapitalReplacementNames })),
   ...depositDeclarations.map(({ decl }) => ({ decl, strip: stripDepositNode, targets: depositReplacementNames })),
   ...energyDeclarations.map(({ decl }) => ({ decl, strip: stripEnergyConsumerNode, targets: energyConsumerReplacementNames })),
-  ...laborDeclarations.map(({ decl }) => ({ decl, strip: stripLaborNode, targets: laborReplacementNames }))
+  ...laborDeclarations.map(({ decl }) => ({ decl, strip: stripLaborNode, targets: laborReplacementNames })),
+  ...populationDeclarations.map(({ decl }) => ({ decl, strip: stripPopulationNode, targets: populationReplacementNames }))
 ];
 const layers = new Map();
 {
   let current = structuredClone(accepted);
   const remaining = [...layeredNodes];
   while (remaining.length) {
-    // A node without a switch (labor) does not wrap formulas in IfThenElse; it is peelable when no other
+    // A node without a switch (labor/population) does not wrap formulas in IfThenElse; it is peelable when no other
     // remaining node replaces any of the formulas it edits.
     const peelable = n => n.decl.switch
       ? n.targets(n.decl).every(t => outerSwitchIs(current, t, n.decl.switch))
@@ -1263,6 +1281,69 @@ await expect('39. labor schema/base checks reject five required invalid cases wi
   await requireThrow(() => expandNode(sharedOutput, baseModel), /\.output: shared process output must not contain \{C\}/, 'shared output with colony token');
 
   return 'both intensity fields, missing automation colony, out-of-range automation, unrelated cost, and shared {C} output rejected';
+});
+
+
+let populationState = null;
+
+await expect('40. population fixture expands and APPLY_PATCH matches prototype counts/fingerprint', () => {
+  const probe = populationFixture.colonies[0] + ' Population';
+  const alreadyPresent = accepted.elements.some(e => e.type !== 'LINK' && e.name === probe);
+  const acceptedDecl = populationDeclarations.find(x =>
+    JSON.stringify(x.decl?.colonies) === JSON.stringify(populationFixture.colonies))?.decl || null;
+  const acceptedLayer = alreadyPresent && acceptedDecl ? layers.get(acceptedDecl) : null;
+  if (alreadyPresent && !acceptedLayer) throw new Error('population layer is present in accepted model but its declaration/layer cannot be identified');
+  const baseModel = alreadyPresent ? acceptedLayer.base : accepted;
+  const expanded = expandNode(populationFixture, baseModel);
+  const model = applyPatch(baseModel, { format: PATCH_FORMAT, ...expanded.patch }).model;
+  const counts = [expanded.patch.add_elements.length, expanded.patch.replace_formulas.length, expanded.patch.add_links.length];
+  if (counts.join('/') !== '49/0/90') throw new Error('prototype count mismatch: got ' + counts.join('/') + ', expected 49/0/90');
+  const migrations = expanded.patch.add_elements.filter(e => e.type === 'FLOW' && e.name.startsWith('Migration '));
+  if (migrations.length !== 2) throw new Error('migration flows=' + migrations.length + ', expected 2');
+  const fp = definitionFingerprint(model);
+  if (!alreadyPresent && fp !== '35d24655fc422942') throw new Error('definition fingerprint ' + fp + ', expected 35d24655fc422942');
+  populationState = { base: baseModel, model, target: alreadyPresent ? acceptedLayer.target : model, expanded, alreadyPresent };
+  return '49 elements / 0 replacements / 90 links; migration flows=2; fingerprint=' + fp;
+});
+
+await expect('44. strip and rebuild population model with zero definition/replacement/link differences', () => {
+  if (!populationState?.target) throw new Error('case 40 did not produce population target');
+  const stripped = stripPopulationNode(populationState.target, populationFixture);
+  const expanded = expandNode(populationFixture, stripped);
+  const rebuilt = applyPatch(stripped, { format: PATCH_FORMAT, ...expanded.patch }).model;
+  const a = new Map(populationState.target.elements.filter(e => e.type !== 'LINK').map(e => [e.name, def(e)]));
+  const b = new Map(rebuilt.elements.filter(e => e.type !== 'LINK').map(e => [e.name, def(e)]));
+  if (a.size !== b.size) throw new Error('element count differs: ' + a.size + ' vs ' + b.size);
+  for (const [name, definition] of a) if (b.get(name) !== definition) throw new Error('definition differs after population rebuild: ' + name);
+  if (!sameSet(linkSet(populationState.target), linkSet(rebuilt))) throw new Error('link set differs after population rebuild');
+  return '0 definition/replacement/link differences';
+});
+
+await expect('45. population schema/base checks reject five required invalid cases with paths/names', async () => {
+  const baseModel = populationState?.base || accepted;
+
+  const extraParameter = structuredClone(populationFixture);
+  extraParameter.parameters['Unexpected Population Parameter'] = 1;
+  await requireThrow(() => expandNode(extraParameter, baseModel), /node\.parameters\.Unexpected Population Parameter: unknown field/, 'extra parameter');
+
+  const missingInitial = structuredClone(populationFixture);
+  delete missingInitial.initial.B;
+  await requireThrow(() => expandNode(missingInitial, baseModel), /node\.initial\.B: required field is missing/, 'initial without colony');
+
+  const emptyLiving = structuredClone(populationFixture);
+  emptyLiving.inputs.living = [];
+  await requireThrow(() => expandNode(emptyLiving, baseModel), /node\.inputs\.living: must be a non-empty array/, 'empty living');
+
+  const missingInput = structuredClone(populationFixture);
+  missingInput.inputs.wage = '{C} Missing Wage';
+  await requireThrow(() => expandNode(missingInput, baseModel), /inputs\.wage\[A\] references missing base element "A Missing Wage"/, 'missing input');
+
+  const oneRegion = structuredClone(populationFixture);
+  oneRegion.colonies = ['A'];
+  oneRegion.initial = { A: populationFixture.initial.A };
+  await requireThrow(() => expandNode(oneRegion, baseModel), /node\.colonies: must contain at least 2 regions/, 'one region');
+
+  return 'extra parameter, missing initial colony, empty living, missing input, and one region rejected';
 });
 
 console.log(`\nNODE SELF-TEST: ${passed} passed, ${failed} failed`);
