@@ -1,15 +1,15 @@
 {
   "status": "ACCEPTED",
-  "model_name": "Orbital Economy v7.7.9 r1 — Process Energy",
-  "model_file": "orbital_economy_v7_7_9_r1_modeljson.json",
-  "model_sha256": "fb27f258e5fca6d236513399f7b29082b483b97b3f7a1d2c5eed00a5bc3754f8",
-  "validation_file": "validation-v7.7.9.json",
-  "validation_sha256": "d48f5fbfbaf10bd532f50cec567cc2a08f4c0c72232bf3281bf1406daa925da6",
-  "accepted_date": "2026-10-03",
+  "model_name": "Orbital Economy v7.7.10 r1 — Labor",
+  "model_file": "orbital_economy_v7_7_10_r1_modeljson.json",
+  "model_sha256": "3cb40c883703936af3550a82a731d4af17f3818afe80b69c0c8f92e0878ab903",
+  "validation_file": "validation-v7.7.10.json",
+  "validation_sha256": "1cd6480d478f7e4a2c9b3fb5cfe4a55b2d2be2312b7be85c984c246be6095cec",
+  "accepted_date": "2026-10-04",
   "engine": "simulation@9.0.0",
   "notes": [
-    "v7.7.9: ore mining, regolith extraction, energy-resource extraction and capital-goods production draw energy from their colony allocator (one energy_consumer node, model/nodes/process-energy.json): requests read a smoothed signal of the planned rate (a same-step request closes an algebraic loop through the allocator), and energy-sector own use is served first. Planet v1 P3 is 14/2/1/0 - only shared transport stays an exception. See docs/tasks/026-process-energy/.",
-    "Modes 0-45 reproduce v7.7.8 r1 exactly (Process Energy Enabled = 0); Mode 46 baseline (planet energy demand +10.6 %), Mode 47 transport surge with a deeper B energy shortage but no fuel collapse.",
+    "v7.7.10: every process declares its labor requirement = output x labor intensity x automation factor (one labor node, model/nodes/process-labor.json; automation 0 at start, no switch; metal and electronics unit costs read intensity x factor). Planet v1 P5 is 17/0 and planet_closure runs in planet_v1 mode: Planet v1 is closed. See docs/tasks/028-labor/.",
+    "Modes 0-47 reproduce v7.7.9 r1 exactly (no switch: every automation factor is exactly 1); Mode 48 is the automation probe (Mode 46 with colony A automation 0.5: labor -43 %, metal unit cost -18 %).",
     "Exact numbers are defined on the canonical platform (docs/VERSIONING_AND_AUTHORITY.md section 8); series-digest.windows.json is the golden."
   ]
 }

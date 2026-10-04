@@ -140,7 +140,7 @@ node src\cli.js expand-nodes <node-or-patch.json> <base-model.json> --out=output
 С merge:
 
 ```cmd
-node src\cli.js expand-nodes <node-or-patch.json> <base-model.json> --out=output\expanded --validation=input\validation\validation-v7.7.9.json
+node src\cli.js expand-nodes <node-or-patch.json> <base-model.json> --out=output\expanded --validation=input\validation\validation-v7.7.10.json
 ```
 
 Дополнительно появляется `validation.merged.json`. Merge идемпотентен:

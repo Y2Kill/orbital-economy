@@ -1,7 +1,7 @@
 {
   "engine": "SIMULATION_PACKAGE",
-  "name": "Orbital Economy v7.7.9 r1 — Process Energy",
-  "description": "Task 026: mining, regolith extraction, power-resource extraction and capital-goods production receive energy through the colony allocator. The energy_consumer declaration is taken unchanged from draft/process-energy.json; the only explicit formula replacement is Test 2 Transport Surge Active for Mode 47.",
+  "name": "Orbital Economy v7.7.10 r1 — Labor",
+  "description": "Task 028: declarative labor node for all Planet v1 processes; automation starts at 0 with no switch. Modes 0-47 are untouched; Mode 48 probes A-side automation at 0.5.",
   "simulation": {
     "algorithm": "RK1",
     "time_start": 0,
@@ -524,7 +524,7 @@
       "type": "VARIABLE",
       "name": "A Metal Unit Cost",
       "behavior": {
-        "value": "[A Ore per Metal] * [A Ore Price] + [A Energy per Metal] * [A Effective Energy Price] + [A Labor per Metal] * [A Effective Wage]"
+        "value": "[A Ore per Metal] * [A Ore Price] + [A Energy per Metal] * [A Effective Energy Price] + ([A Labor per Metal] * [A Smelting Automation Factor]) * [A Effective Wage]"
       },
       "display": {
         "coordinates": [
@@ -4614,7 +4614,7 @@
       "type": "VARIABLE",
       "name": "B Metal Unit Cost",
       "behavior": {
-        "value": "[B Ore per Metal] * [B Ore Price] + [B Energy per Metal] * [B Effective Energy Price] + [B Labor per Metal] * [B Effective Wage]"
+        "value": "[B Ore per Metal] * [B Ore Price] + [B Energy per Metal] * [B Effective Energy Price] + ([B Labor per Metal] * [B Smelting Automation Factor]) * [B Effective Wage]"
       },
       "display": {
         "coordinates": [
@@ -11764,7 +11764,7 @@
       "type": "VARIABLE",
       "name": "A Electronics Unit Cost",
       "behavior": {
-        "value": "IfThenElse([Intermediate Inputs Enabled] = 1, [Metal per Electronics] * [A Electronics Feedstock Price] + [A Electronics Energy per Unit] * [A Energy Price] + [A Electronics Labor per Unit] * [A Wage], [A Feedstock per Electronics] * [A Electronics Feedstock Price] + [A Electronics Energy per Unit] * [A Energy Price] + [A Electronics Labor per Unit] * [A Wage])"
+        "value": "IfThenElse([Intermediate Inputs Enabled] = 1, [Metal per Electronics] * [A Electronics Feedstock Price] + [A Electronics Energy per Unit] * [A Energy Price] + ([A Electronics Labor per Unit] * [A Electronics Automation Factor]) * [A Wage], [A Feedstock per Electronics] * [A Electronics Feedstock Price] + [A Electronics Energy per Unit] * [A Energy Price] + ([A Electronics Labor per Unit] * [A Electronics Automation Factor]) * [A Wage])"
       },
       "display": {
         "coordinates": [
@@ -12280,7 +12280,7 @@
       "type": "VARIABLE",
       "name": "B Electronics Unit Cost",
       "behavior": {
-        "value": "IfThenElse([Intermediate Inputs Enabled] = 1, [Metal per Electronics] * [B Electronics Feedstock Price] + [B Electronics Energy per Unit] * [B Energy Price] + [B Electronics Labor per Unit] * [B Wage], [B Feedstock per Electronics] * [B Electronics Feedstock Price] + [B Electronics Energy per Unit] * [B Energy Price] + [B Electronics Labor per Unit] * [B Wage])"
+        "value": "IfThenElse([Intermediate Inputs Enabled] = 1, [Metal per Electronics] * [B Electronics Feedstock Price] + [B Electronics Energy per Unit] * [B Energy Price] + ([B Electronics Labor per Unit] * [B Electronics Automation Factor]) * [B Wage], [B Feedstock per Electronics] * [B Electronics Feedstock Price] + [B Electronics Energy per Unit] * [B Energy Price] + ([B Electronics Labor per Unit] * [B Electronics Automation Factor]) * [B Wage])"
       },
       "display": {
         "coordinates": [
@@ -35895,6 +35895,1173 @@
       "type": "LINK",
       "from": "B Capital Goods Allocated Energy",
       "to": "B Energy Supply"
+    },
+    {
+      "type": "VARIABLE",
+      "name": "Minimum Human Labor Share",
+      "behavior": {
+        "value": 0.05
+      },
+      "description": "Generated labor element for Minimum Human Labor Share."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "Automation Labor Exponent",
+      "behavior": {
+        "value": 1
+      },
+      "description": "Generated labor element for Automation Labor Exponent."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "A Mining Labor per Unit",
+      "behavior": {
+        "value": 0.05
+      },
+      "description": "Generated labor element for A Mining Labor per Unit."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "A Mining Automation Level",
+      "behavior": {
+        "value": 0
+      },
+      "description": "Generated labor element for A Mining Automation Level."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "A Mining Automation Factor",
+      "behavior": {
+        "value": "1 - (1 - [Minimum Human Labor Share]) * (1 - (1 - [A Mining Automation Level]) ^ [Automation Labor Exponent])"
+      },
+      "description": "Generated labor element for A Mining Automation Factor."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "A Mining Labor Requirement",
+      "behavior": {
+        "value": "[A Mining] * [A Mining Labor per Unit] * [A Mining Automation Factor]"
+      },
+      "description": "Generated labor element for A Mining Labor Requirement."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "B Mining Labor per Unit",
+      "behavior": {
+        "value": 0.05
+      },
+      "description": "Generated labor element for B Mining Labor per Unit."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "B Mining Automation Level",
+      "behavior": {
+        "value": 0
+      },
+      "description": "Generated labor element for B Mining Automation Level."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "B Mining Automation Factor",
+      "behavior": {
+        "value": "1 - (1 - [Minimum Human Labor Share]) * (1 - (1 - [B Mining Automation Level]) ^ [Automation Labor Exponent])"
+      },
+      "description": "Generated labor element for B Mining Automation Factor."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "B Mining Labor Requirement",
+      "behavior": {
+        "value": "[B Mining] * [B Mining Labor per Unit] * [B Mining Automation Factor]"
+      },
+      "description": "Generated labor element for B Mining Labor Requirement."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "A Smelting Automation Level",
+      "behavior": {
+        "value": 0
+      },
+      "description": "Generated labor element for A Smelting Automation Level."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "A Smelting Automation Factor",
+      "behavior": {
+        "value": "1 - (1 - [Minimum Human Labor Share]) * (1 - (1 - [A Smelting Automation Level]) ^ [Automation Labor Exponent])"
+      },
+      "description": "Generated labor element for A Smelting Automation Factor."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "A Smelting Labor Requirement",
+      "behavior": {
+        "value": "[A Metal Production] * [A Labor per Metal] * [A Smelting Automation Factor]"
+      },
+      "description": "Generated labor element for A Smelting Labor Requirement."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "B Smelting Automation Level",
+      "behavior": {
+        "value": 0
+      },
+      "description": "Generated labor element for B Smelting Automation Level."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "B Smelting Automation Factor",
+      "behavior": {
+        "value": "1 - (1 - [Minimum Human Labor Share]) * (1 - (1 - [B Smelting Automation Level]) ^ [Automation Labor Exponent])"
+      },
+      "description": "Generated labor element for B Smelting Automation Factor."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "B Smelting Labor Requirement",
+      "behavior": {
+        "value": "[B Metal Production] * [B Labor per Metal] * [B Smelting Automation Factor]"
+      },
+      "description": "Generated labor element for B Smelting Labor Requirement."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "A Electronics Automation Level",
+      "behavior": {
+        "value": 0
+      },
+      "description": "Generated labor element for A Electronics Automation Level."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "A Electronics Automation Factor",
+      "behavior": {
+        "value": "1 - (1 - [Minimum Human Labor Share]) * (1 - (1 - [A Electronics Automation Level]) ^ [Automation Labor Exponent])"
+      },
+      "description": "Generated labor element for A Electronics Automation Factor."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "A Electronics Labor Requirement",
+      "behavior": {
+        "value": "[A Electronics Production] * [A Electronics Labor per Unit] * [A Electronics Automation Factor]"
+      },
+      "description": "Generated labor element for A Electronics Labor Requirement."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "B Electronics Automation Level",
+      "behavior": {
+        "value": 0
+      },
+      "description": "Generated labor element for B Electronics Automation Level."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "B Electronics Automation Factor",
+      "behavior": {
+        "value": "1 - (1 - [Minimum Human Labor Share]) * (1 - (1 - [B Electronics Automation Level]) ^ [Automation Labor Exponent])"
+      },
+      "description": "Generated labor element for B Electronics Automation Factor."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "B Electronics Labor Requirement",
+      "behavior": {
+        "value": "[B Electronics Production] * [B Electronics Labor per Unit] * [B Electronics Automation Factor]"
+      },
+      "description": "Generated labor element for B Electronics Labor Requirement."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "A Capital Goods Labor per Unit",
+      "behavior": {
+        "value": 2
+      },
+      "description": "Generated labor element for A Capital Goods Labor per Unit."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "A Capital Goods Automation Level",
+      "behavior": {
+        "value": 0
+      },
+      "description": "Generated labor element for A Capital Goods Automation Level."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "A Capital Goods Automation Factor",
+      "behavior": {
+        "value": "1 - (1 - [Minimum Human Labor Share]) * (1 - (1 - [A Capital Goods Automation Level]) ^ [Automation Labor Exponent])"
+      },
+      "description": "Generated labor element for A Capital Goods Automation Factor."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "A Capital Goods Labor Requirement",
+      "behavior": {
+        "value": "[A Capital Goods Production] * [A Capital Goods Labor per Unit] * [A Capital Goods Automation Factor]"
+      },
+      "description": "Generated labor element for A Capital Goods Labor Requirement."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "B Capital Goods Labor per Unit",
+      "behavior": {
+        "value": 2
+      },
+      "description": "Generated labor element for B Capital Goods Labor per Unit."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "B Capital Goods Automation Level",
+      "behavior": {
+        "value": 0
+      },
+      "description": "Generated labor element for B Capital Goods Automation Level."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "B Capital Goods Automation Factor",
+      "behavior": {
+        "value": "1 - (1 - [Minimum Human Labor Share]) * (1 - (1 - [B Capital Goods Automation Level]) ^ [Automation Labor Exponent])"
+      },
+      "description": "Generated labor element for B Capital Goods Automation Factor."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "B Capital Goods Labor Requirement",
+      "behavior": {
+        "value": "[B Capital Goods Production] * [B Capital Goods Labor per Unit] * [B Capital Goods Automation Factor]"
+      },
+      "description": "Generated labor element for B Capital Goods Labor Requirement."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "A Regolith Extraction Labor per Unit",
+      "behavior": {
+        "value": 0.2
+      },
+      "description": "Generated labor element for A Regolith Extraction Labor per Unit."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "A Regolith Extraction Automation Level",
+      "behavior": {
+        "value": 0
+      },
+      "description": "Generated labor element for A Regolith Extraction Automation Level."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "A Regolith Extraction Automation Factor",
+      "behavior": {
+        "value": "1 - (1 - [Minimum Human Labor Share]) * (1 - (1 - [A Regolith Extraction Automation Level]) ^ [Automation Labor Exponent])"
+      },
+      "description": "Generated labor element for A Regolith Extraction Automation Factor."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "A Regolith Extraction Labor Requirement",
+      "behavior": {
+        "value": "[A Regolith Extraction] * [A Regolith Extraction Labor per Unit] * [A Regolith Extraction Automation Factor]"
+      },
+      "description": "Generated labor element for A Regolith Extraction Labor Requirement."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "B Regolith Extraction Labor per Unit",
+      "behavior": {
+        "value": 0.2
+      },
+      "description": "Generated labor element for B Regolith Extraction Labor per Unit."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "B Regolith Extraction Automation Level",
+      "behavior": {
+        "value": 0
+      },
+      "description": "Generated labor element for B Regolith Extraction Automation Level."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "B Regolith Extraction Automation Factor",
+      "behavior": {
+        "value": "1 - (1 - [Minimum Human Labor Share]) * (1 - (1 - [B Regolith Extraction Automation Level]) ^ [Automation Labor Exponent])"
+      },
+      "description": "Generated labor element for B Regolith Extraction Automation Factor."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "B Regolith Extraction Labor Requirement",
+      "behavior": {
+        "value": "[B Regolith Extraction] * [B Regolith Extraction Labor per Unit] * [B Regolith Extraction Automation Factor]"
+      },
+      "description": "Generated labor element for B Regolith Extraction Labor Requirement."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "A Construction Materials Labor per Unit",
+      "behavior": {
+        "value": 0.3
+      },
+      "description": "Generated labor element for A Construction Materials Labor per Unit."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "A Construction Materials Automation Level",
+      "behavior": {
+        "value": 0
+      },
+      "description": "Generated labor element for A Construction Materials Automation Level."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "A Construction Materials Automation Factor",
+      "behavior": {
+        "value": "1 - (1 - [Minimum Human Labor Share]) * (1 - (1 - [A Construction Materials Automation Level]) ^ [Automation Labor Exponent])"
+      },
+      "description": "Generated labor element for A Construction Materials Automation Factor."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "A Construction Materials Labor Requirement",
+      "behavior": {
+        "value": "[A Construction Materials Production] * [A Construction Materials Labor per Unit] * [A Construction Materials Automation Factor]"
+      },
+      "description": "Generated labor element for A Construction Materials Labor Requirement."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "B Construction Materials Labor per Unit",
+      "behavior": {
+        "value": 0.3
+      },
+      "description": "Generated labor element for B Construction Materials Labor per Unit."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "B Construction Materials Automation Level",
+      "behavior": {
+        "value": 0
+      },
+      "description": "Generated labor element for B Construction Materials Automation Level."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "B Construction Materials Automation Factor",
+      "behavior": {
+        "value": "1 - (1 - [Minimum Human Labor Share]) * (1 - (1 - [B Construction Materials Automation Level]) ^ [Automation Labor Exponent])"
+      },
+      "description": "Generated labor element for B Construction Materials Automation Factor."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "B Construction Materials Labor Requirement",
+      "behavior": {
+        "value": "[B Construction Materials Production] * [B Construction Materials Labor per Unit] * [B Construction Materials Automation Factor]"
+      },
+      "description": "Generated labor element for B Construction Materials Labor Requirement."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "A Power Resource Extraction Labor per Unit",
+      "behavior": {
+        "value": 0.002
+      },
+      "description": "Generated labor element for A Power Resource Extraction Labor per Unit."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "A Power Resource Extraction Automation Level",
+      "behavior": {
+        "value": 0
+      },
+      "description": "Generated labor element for A Power Resource Extraction Automation Level."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "A Power Resource Extraction Automation Factor",
+      "behavior": {
+        "value": "1 - (1 - [Minimum Human Labor Share]) * (1 - (1 - [A Power Resource Extraction Automation Level]) ^ [Automation Labor Exponent])"
+      },
+      "description": "Generated labor element for A Power Resource Extraction Automation Factor."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "A Power Resource Extraction Labor Requirement",
+      "behavior": {
+        "value": "[A Power Resource Extraction] * [A Power Resource Extraction Labor per Unit] * [A Power Resource Extraction Automation Factor]"
+      },
+      "description": "Generated labor element for A Power Resource Extraction Labor Requirement."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "B Power Resource Extraction Labor per Unit",
+      "behavior": {
+        "value": 0.002
+      },
+      "description": "Generated labor element for B Power Resource Extraction Labor per Unit."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "B Power Resource Extraction Automation Level",
+      "behavior": {
+        "value": 0
+      },
+      "description": "Generated labor element for B Power Resource Extraction Automation Level."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "B Power Resource Extraction Automation Factor",
+      "behavior": {
+        "value": "1 - (1 - [Minimum Human Labor Share]) * (1 - (1 - [B Power Resource Extraction Automation Level]) ^ [Automation Labor Exponent])"
+      },
+      "description": "Generated labor element for B Power Resource Extraction Automation Factor."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "B Power Resource Extraction Labor Requirement",
+      "behavior": {
+        "value": "[B Power Resource Extraction] * [B Power Resource Extraction Labor per Unit] * [B Power Resource Extraction Automation Factor]"
+      },
+      "description": "Generated labor element for B Power Resource Extraction Labor Requirement."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "A Generation Labor per Unit",
+      "behavior": {
+        "value": 0.001
+      },
+      "description": "Generated labor element for A Generation Labor per Unit."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "A Generation Automation Level",
+      "behavior": {
+        "value": 0
+      },
+      "description": "Generated labor element for A Generation Automation Level."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "A Generation Automation Factor",
+      "behavior": {
+        "value": "1 - (1 - [Minimum Human Labor Share]) * (1 - (1 - [A Generation Automation Level]) ^ [Automation Labor Exponent])"
+      },
+      "description": "Generated labor element for A Generation Automation Factor."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "A Generation Labor Requirement",
+      "behavior": {
+        "value": "[A Available Generation] * [A Generation Labor per Unit] * [A Generation Automation Factor]"
+      },
+      "description": "Generated labor element for A Generation Labor Requirement."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "B Generation Labor per Unit",
+      "behavior": {
+        "value": 0.001
+      },
+      "description": "Generated labor element for B Generation Labor per Unit."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "B Generation Automation Level",
+      "behavior": {
+        "value": 0
+      },
+      "description": "Generated labor element for B Generation Automation Level."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "B Generation Automation Factor",
+      "behavior": {
+        "value": "1 - (1 - [Minimum Human Labor Share]) * (1 - (1 - [B Generation Automation Level]) ^ [Automation Labor Exponent])"
+      },
+      "description": "Generated labor element for B Generation Automation Factor."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "B Generation Labor Requirement",
+      "behavior": {
+        "value": "[B Available Generation] * [B Generation Labor per Unit] * [B Generation Automation Factor]"
+      },
+      "description": "Generated labor element for B Generation Labor Requirement."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "Transport Labor per Unit",
+      "behavior": {
+        "value": 0.1
+      },
+      "description": "Generated labor element for Transport Labor per Unit."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "Transport Automation Level",
+      "behavior": {
+        "value": 0
+      },
+      "description": "Generated labor element for Transport Automation Level."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "Transport Automation Factor",
+      "behavior": {
+        "value": "1 - (1 - [Minimum Human Labor Share]) * (1 - (1 - [Transport Automation Level]) ^ [Automation Labor Exponent])"
+      },
+      "description": "Generated labor element for Transport Automation Factor."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "Transport Labor Requirement",
+      "behavior": {
+        "value": "[Capacity Limited Total Transport Load] * [Transport Labor per Unit] * [Transport Automation Factor]"
+      },
+      "description": "Generated labor element for Transport Labor Requirement."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "A Total Labor Requirement",
+      "behavior": {
+        "value": "[A Mining Labor Requirement] + [A Smelting Labor Requirement] + [A Electronics Labor Requirement] + [A Capital Goods Labor Requirement] + [A Regolith Extraction Labor Requirement] + [A Construction Materials Labor Requirement] + [A Power Resource Extraction Labor Requirement] + [A Generation Labor Requirement]"
+      },
+      "description": "Generated labor element for A Total Labor Requirement."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "B Total Labor Requirement",
+      "behavior": {
+        "value": "[B Mining Labor Requirement] + [B Smelting Labor Requirement] + [B Electronics Labor Requirement] + [B Capital Goods Labor Requirement] + [B Regolith Extraction Labor Requirement] + [B Construction Materials Labor Requirement] + [B Power Resource Extraction Labor Requirement] + [B Generation Labor Requirement]"
+      },
+      "description": "Generated labor element for B Total Labor Requirement."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "Shared Labor Requirement",
+      "behavior": {
+        "value": "[Transport Labor Requirement]"
+      },
+      "description": "Generated labor element for Shared Labor Requirement."
+    },
+    {
+      "type": "LINK",
+      "from": "Minimum Human Labor Share",
+      "to": "A Mining Automation Factor"
+    },
+    {
+      "type": "LINK",
+      "from": "A Mining Automation Level",
+      "to": "A Mining Automation Factor"
+    },
+    {
+      "type": "LINK",
+      "from": "Automation Labor Exponent",
+      "to": "A Mining Automation Factor"
+    },
+    {
+      "type": "LINK",
+      "from": "A Mining",
+      "to": "A Mining Labor Requirement"
+    },
+    {
+      "type": "LINK",
+      "from": "A Mining Labor per Unit",
+      "to": "A Mining Labor Requirement"
+    },
+    {
+      "type": "LINK",
+      "from": "A Mining Automation Factor",
+      "to": "A Mining Labor Requirement"
+    },
+    {
+      "type": "LINK",
+      "from": "Minimum Human Labor Share",
+      "to": "B Mining Automation Factor"
+    },
+    {
+      "type": "LINK",
+      "from": "B Mining Automation Level",
+      "to": "B Mining Automation Factor"
+    },
+    {
+      "type": "LINK",
+      "from": "Automation Labor Exponent",
+      "to": "B Mining Automation Factor"
+    },
+    {
+      "type": "LINK",
+      "from": "B Mining",
+      "to": "B Mining Labor Requirement"
+    },
+    {
+      "type": "LINK",
+      "from": "B Mining Labor per Unit",
+      "to": "B Mining Labor Requirement"
+    },
+    {
+      "type": "LINK",
+      "from": "B Mining Automation Factor",
+      "to": "B Mining Labor Requirement"
+    },
+    {
+      "type": "LINK",
+      "from": "Minimum Human Labor Share",
+      "to": "A Smelting Automation Factor"
+    },
+    {
+      "type": "LINK",
+      "from": "A Smelting Automation Level",
+      "to": "A Smelting Automation Factor"
+    },
+    {
+      "type": "LINK",
+      "from": "Automation Labor Exponent",
+      "to": "A Smelting Automation Factor"
+    },
+    {
+      "type": "LINK",
+      "from": "A Metal Production",
+      "to": "A Smelting Labor Requirement"
+    },
+    {
+      "type": "LINK",
+      "from": "A Labor per Metal",
+      "to": "A Smelting Labor Requirement"
+    },
+    {
+      "type": "LINK",
+      "from": "A Smelting Automation Factor",
+      "to": "A Smelting Labor Requirement"
+    },
+    {
+      "type": "LINK",
+      "from": "Minimum Human Labor Share",
+      "to": "B Smelting Automation Factor"
+    },
+    {
+      "type": "LINK",
+      "from": "B Smelting Automation Level",
+      "to": "B Smelting Automation Factor"
+    },
+    {
+      "type": "LINK",
+      "from": "Automation Labor Exponent",
+      "to": "B Smelting Automation Factor"
+    },
+    {
+      "type": "LINK",
+      "from": "B Metal Production",
+      "to": "B Smelting Labor Requirement"
+    },
+    {
+      "type": "LINK",
+      "from": "B Labor per Metal",
+      "to": "B Smelting Labor Requirement"
+    },
+    {
+      "type": "LINK",
+      "from": "B Smelting Automation Factor",
+      "to": "B Smelting Labor Requirement"
+    },
+    {
+      "type": "LINK",
+      "from": "Minimum Human Labor Share",
+      "to": "A Electronics Automation Factor"
+    },
+    {
+      "type": "LINK",
+      "from": "A Electronics Automation Level",
+      "to": "A Electronics Automation Factor"
+    },
+    {
+      "type": "LINK",
+      "from": "Automation Labor Exponent",
+      "to": "A Electronics Automation Factor"
+    },
+    {
+      "type": "LINK",
+      "from": "A Electronics Production",
+      "to": "A Electronics Labor Requirement"
+    },
+    {
+      "type": "LINK",
+      "from": "A Electronics Labor per Unit",
+      "to": "A Electronics Labor Requirement"
+    },
+    {
+      "type": "LINK",
+      "from": "A Electronics Automation Factor",
+      "to": "A Electronics Labor Requirement"
+    },
+    {
+      "type": "LINK",
+      "from": "Minimum Human Labor Share",
+      "to": "B Electronics Automation Factor"
+    },
+    {
+      "type": "LINK",
+      "from": "B Electronics Automation Level",
+      "to": "B Electronics Automation Factor"
+    },
+    {
+      "type": "LINK",
+      "from": "Automation Labor Exponent",
+      "to": "B Electronics Automation Factor"
+    },
+    {
+      "type": "LINK",
+      "from": "B Electronics Production",
+      "to": "B Electronics Labor Requirement"
+    },
+    {
+      "type": "LINK",
+      "from": "B Electronics Labor per Unit",
+      "to": "B Electronics Labor Requirement"
+    },
+    {
+      "type": "LINK",
+      "from": "B Electronics Automation Factor",
+      "to": "B Electronics Labor Requirement"
+    },
+    {
+      "type": "LINK",
+      "from": "Minimum Human Labor Share",
+      "to": "A Capital Goods Automation Factor"
+    },
+    {
+      "type": "LINK",
+      "from": "A Capital Goods Automation Level",
+      "to": "A Capital Goods Automation Factor"
+    },
+    {
+      "type": "LINK",
+      "from": "Automation Labor Exponent",
+      "to": "A Capital Goods Automation Factor"
+    },
+    {
+      "type": "LINK",
+      "from": "A Capital Goods Production",
+      "to": "A Capital Goods Labor Requirement"
+    },
+    {
+      "type": "LINK",
+      "from": "A Capital Goods Labor per Unit",
+      "to": "A Capital Goods Labor Requirement"
+    },
+    {
+      "type": "LINK",
+      "from": "A Capital Goods Automation Factor",
+      "to": "A Capital Goods Labor Requirement"
+    },
+    {
+      "type": "LINK",
+      "from": "Minimum Human Labor Share",
+      "to": "B Capital Goods Automation Factor"
+    },
+    {
+      "type": "LINK",
+      "from": "B Capital Goods Automation Level",
+      "to": "B Capital Goods Automation Factor"
+    },
+    {
+      "type": "LINK",
+      "from": "Automation Labor Exponent",
+      "to": "B Capital Goods Automation Factor"
+    },
+    {
+      "type": "LINK",
+      "from": "B Capital Goods Production",
+      "to": "B Capital Goods Labor Requirement"
+    },
+    {
+      "type": "LINK",
+      "from": "B Capital Goods Labor per Unit",
+      "to": "B Capital Goods Labor Requirement"
+    },
+    {
+      "type": "LINK",
+      "from": "B Capital Goods Automation Factor",
+      "to": "B Capital Goods Labor Requirement"
+    },
+    {
+      "type": "LINK",
+      "from": "Minimum Human Labor Share",
+      "to": "A Regolith Extraction Automation Factor"
+    },
+    {
+      "type": "LINK",
+      "from": "A Regolith Extraction Automation Level",
+      "to": "A Regolith Extraction Automation Factor"
+    },
+    {
+      "type": "LINK",
+      "from": "Automation Labor Exponent",
+      "to": "A Regolith Extraction Automation Factor"
+    },
+    {
+      "type": "LINK",
+      "from": "A Regolith Extraction",
+      "to": "A Regolith Extraction Labor Requirement"
+    },
+    {
+      "type": "LINK",
+      "from": "A Regolith Extraction Labor per Unit",
+      "to": "A Regolith Extraction Labor Requirement"
+    },
+    {
+      "type": "LINK",
+      "from": "A Regolith Extraction Automation Factor",
+      "to": "A Regolith Extraction Labor Requirement"
+    },
+    {
+      "type": "LINK",
+      "from": "Minimum Human Labor Share",
+      "to": "B Regolith Extraction Automation Factor"
+    },
+    {
+      "type": "LINK",
+      "from": "B Regolith Extraction Automation Level",
+      "to": "B Regolith Extraction Automation Factor"
+    },
+    {
+      "type": "LINK",
+      "from": "Automation Labor Exponent",
+      "to": "B Regolith Extraction Automation Factor"
+    },
+    {
+      "type": "LINK",
+      "from": "B Regolith Extraction",
+      "to": "B Regolith Extraction Labor Requirement"
+    },
+    {
+      "type": "LINK",
+      "from": "B Regolith Extraction Labor per Unit",
+      "to": "B Regolith Extraction Labor Requirement"
+    },
+    {
+      "type": "LINK",
+      "from": "B Regolith Extraction Automation Factor",
+      "to": "B Regolith Extraction Labor Requirement"
+    },
+    {
+      "type": "LINK",
+      "from": "Minimum Human Labor Share",
+      "to": "A Construction Materials Automation Factor"
+    },
+    {
+      "type": "LINK",
+      "from": "A Construction Materials Automation Level",
+      "to": "A Construction Materials Automation Factor"
+    },
+    {
+      "type": "LINK",
+      "from": "Automation Labor Exponent",
+      "to": "A Construction Materials Automation Factor"
+    },
+    {
+      "type": "LINK",
+      "from": "A Construction Materials Production",
+      "to": "A Construction Materials Labor Requirement"
+    },
+    {
+      "type": "LINK",
+      "from": "A Construction Materials Labor per Unit",
+      "to": "A Construction Materials Labor Requirement"
+    },
+    {
+      "type": "LINK",
+      "from": "A Construction Materials Automation Factor",
+      "to": "A Construction Materials Labor Requirement"
+    },
+    {
+      "type": "LINK",
+      "from": "Minimum Human Labor Share",
+      "to": "B Construction Materials Automation Factor"
+    },
+    {
+      "type": "LINK",
+      "from": "B Construction Materials Automation Level",
+      "to": "B Construction Materials Automation Factor"
+    },
+    {
+      "type": "LINK",
+      "from": "Automation Labor Exponent",
+      "to": "B Construction Materials Automation Factor"
+    },
+    {
+      "type": "LINK",
+      "from": "B Construction Materials Production",
+      "to": "B Construction Materials Labor Requirement"
+    },
+    {
+      "type": "LINK",
+      "from": "B Construction Materials Labor per Unit",
+      "to": "B Construction Materials Labor Requirement"
+    },
+    {
+      "type": "LINK",
+      "from": "B Construction Materials Automation Factor",
+      "to": "B Construction Materials Labor Requirement"
+    },
+    {
+      "type": "LINK",
+      "from": "Minimum Human Labor Share",
+      "to": "A Power Resource Extraction Automation Factor"
+    },
+    {
+      "type": "LINK",
+      "from": "A Power Resource Extraction Automation Level",
+      "to": "A Power Resource Extraction Automation Factor"
+    },
+    {
+      "type": "LINK",
+      "from": "Automation Labor Exponent",
+      "to": "A Power Resource Extraction Automation Factor"
+    },
+    {
+      "type": "LINK",
+      "from": "A Power Resource Extraction",
+      "to": "A Power Resource Extraction Labor Requirement"
+    },
+    {
+      "type": "LINK",
+      "from": "A Power Resource Extraction Labor per Unit",
+      "to": "A Power Resource Extraction Labor Requirement"
+    },
+    {
+      "type": "LINK",
+      "from": "A Power Resource Extraction Automation Factor",
+      "to": "A Power Resource Extraction Labor Requirement"
+    },
+    {
+      "type": "LINK",
+      "from": "Minimum Human Labor Share",
+      "to": "B Power Resource Extraction Automation Factor"
+    },
+    {
+      "type": "LINK",
+      "from": "B Power Resource Extraction Automation Level",
+      "to": "B Power Resource Extraction Automation Factor"
+    },
+    {
+      "type": "LINK",
+      "from": "Automation Labor Exponent",
+      "to": "B Power Resource Extraction Automation Factor"
+    },
+    {
+      "type": "LINK",
+      "from": "B Power Resource Extraction",
+      "to": "B Power Resource Extraction Labor Requirement"
+    },
+    {
+      "type": "LINK",
+      "from": "B Power Resource Extraction Labor per Unit",
+      "to": "B Power Resource Extraction Labor Requirement"
+    },
+    {
+      "type": "LINK",
+      "from": "B Power Resource Extraction Automation Factor",
+      "to": "B Power Resource Extraction Labor Requirement"
+    },
+    {
+      "type": "LINK",
+      "from": "Minimum Human Labor Share",
+      "to": "A Generation Automation Factor"
+    },
+    {
+      "type": "LINK",
+      "from": "A Generation Automation Level",
+      "to": "A Generation Automation Factor"
+    },
+    {
+      "type": "LINK",
+      "from": "Automation Labor Exponent",
+      "to": "A Generation Automation Factor"
+    },
+    {
+      "type": "LINK",
+      "from": "A Available Generation",
+      "to": "A Generation Labor Requirement"
+    },
+    {
+      "type": "LINK",
+      "from": "A Generation Labor per Unit",
+      "to": "A Generation Labor Requirement"
+    },
+    {
+      "type": "LINK",
+      "from": "A Generation Automation Factor",
+      "to": "A Generation Labor Requirement"
+    },
+    {
+      "type": "LINK",
+      "from": "Minimum Human Labor Share",
+      "to": "B Generation Automation Factor"
+    },
+    {
+      "type": "LINK",
+      "from": "B Generation Automation Level",
+      "to": "B Generation Automation Factor"
+    },
+    {
+      "type": "LINK",
+      "from": "Automation Labor Exponent",
+      "to": "B Generation Automation Factor"
+    },
+    {
+      "type": "LINK",
+      "from": "B Available Generation",
+      "to": "B Generation Labor Requirement"
+    },
+    {
+      "type": "LINK",
+      "from": "B Generation Labor per Unit",
+      "to": "B Generation Labor Requirement"
+    },
+    {
+      "type": "LINK",
+      "from": "B Generation Automation Factor",
+      "to": "B Generation Labor Requirement"
+    },
+    {
+      "type": "LINK",
+      "from": "Minimum Human Labor Share",
+      "to": "Transport Automation Factor"
+    },
+    {
+      "type": "LINK",
+      "from": "Transport Automation Level",
+      "to": "Transport Automation Factor"
+    },
+    {
+      "type": "LINK",
+      "from": "Automation Labor Exponent",
+      "to": "Transport Automation Factor"
+    },
+    {
+      "type": "LINK",
+      "from": "Capacity Limited Total Transport Load",
+      "to": "Transport Labor Requirement"
+    },
+    {
+      "type": "LINK",
+      "from": "Transport Labor per Unit",
+      "to": "Transport Labor Requirement"
+    },
+    {
+      "type": "LINK",
+      "from": "Transport Automation Factor",
+      "to": "Transport Labor Requirement"
+    },
+    {
+      "type": "LINK",
+      "from": "A Mining Labor Requirement",
+      "to": "A Total Labor Requirement"
+    },
+    {
+      "type": "LINK",
+      "from": "A Smelting Labor Requirement",
+      "to": "A Total Labor Requirement"
+    },
+    {
+      "type": "LINK",
+      "from": "A Electronics Labor Requirement",
+      "to": "A Total Labor Requirement"
+    },
+    {
+      "type": "LINK",
+      "from": "A Capital Goods Labor Requirement",
+      "to": "A Total Labor Requirement"
+    },
+    {
+      "type": "LINK",
+      "from": "A Regolith Extraction Labor Requirement",
+      "to": "A Total Labor Requirement"
+    },
+    {
+      "type": "LINK",
+      "from": "A Construction Materials Labor Requirement",
+      "to": "A Total Labor Requirement"
+    },
+    {
+      "type": "LINK",
+      "from": "A Power Resource Extraction Labor Requirement",
+      "to": "A Total Labor Requirement"
+    },
+    {
+      "type": "LINK",
+      "from": "A Generation Labor Requirement",
+      "to": "A Total Labor Requirement"
+    },
+    {
+      "type": "LINK",
+      "from": "B Mining Labor Requirement",
+      "to": "B Total Labor Requirement"
+    },
+    {
+      "type": "LINK",
+      "from": "B Smelting Labor Requirement",
+      "to": "B Total Labor Requirement"
+    },
+    {
+      "type": "LINK",
+      "from": "B Electronics Labor Requirement",
+      "to": "B Total Labor Requirement"
+    },
+    {
+      "type": "LINK",
+      "from": "B Capital Goods Labor Requirement",
+      "to": "B Total Labor Requirement"
+    },
+    {
+      "type": "LINK",
+      "from": "B Regolith Extraction Labor Requirement",
+      "to": "B Total Labor Requirement"
+    },
+    {
+      "type": "LINK",
+      "from": "B Construction Materials Labor Requirement",
+      "to": "B Total Labor Requirement"
+    },
+    {
+      "type": "LINK",
+      "from": "B Power Resource Extraction Labor Requirement",
+      "to": "B Total Labor Requirement"
+    },
+    {
+      "type": "LINK",
+      "from": "B Generation Labor Requirement",
+      "to": "B Total Labor Requirement"
+    },
+    {
+      "type": "LINK",
+      "from": "Transport Labor Requirement",
+      "to": "Shared Labor Requirement"
+    },
+    {
+      "type": "LINK",
+      "from": "A Smelting Automation Factor",
+      "to": "A Metal Unit Cost"
+    },
+    {
+      "type": "LINK",
+      "from": "B Smelting Automation Factor",
+      "to": "B Metal Unit Cost"
+    },
+    {
+      "type": "LINK",
+      "from": "A Electronics Automation Factor",
+      "to": "A Electronics Unit Cost"
+    },
+    {
+      "type": "LINK",
+      "from": "B Electronics Automation Factor",
+      "to": "B Electronics Unit Cost"
     }
   ],
   "visualizations": [
@@ -37612,6 +38779,36 @@
         "Power Resource Capital Enabled": 1,
         "Deposits Enabled": 1,
         "Process Energy Enabled": 1
+      }
+    },
+    {
+      "name": "v7.7.10 Automation Probe",
+      "description": "Clone of accepted Mode 46 with Timed Test Mode 48 and Automation Level = 0.5 for all eight colony-A processes; probe only, not a start-state change.",
+      "values": {
+        "Capital Lifecycle Enabled": 1,
+        "Intermediate Inputs Enabled": 1,
+        "Capital Goods Enabled": 1,
+        "Transport Capital Goods Enabled": 1,
+        "Power Resource Enabled": 1,
+        "Construction Materials Enabled": 1,
+        "Transport Construction Materials Enabled": 1,
+        "Construction Materials Energy Enabled": 1,
+        "Construction Materials Capital Enabled": 1,
+        "Capital Goods Capital Enabled": 1,
+        "Regolith Capital Enabled": 1,
+        "Ore Capital Enabled": 1,
+        "Timed Test Mode": 48,
+        "Power Resource Capital Enabled": 1,
+        "Deposits Enabled": 1,
+        "Process Energy Enabled": 1,
+        "A Mining Automation Level": 0.5,
+        "A Smelting Automation Level": 0.5,
+        "A Electronics Automation Level": 0.5,
+        "A Capital Goods Automation Level": 0.5,
+        "A Regolith Extraction Automation Level": 0.5,
+        "A Construction Materials Automation Level": 0.5,
+        "A Power Resource Extraction Automation Level": 0.5,
+        "A Generation Automation Level": 0.5
       }
     }
   ]

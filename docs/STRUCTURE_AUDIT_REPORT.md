@@ -1,10 +1,10 @@
 # Orbital Economy Lab — structure audit
 
-- generated: 2026-10-03T09:54:06.852Z
-- model: Orbital Economy v7.7.9 r1 — Process Energy
-- model SHA-256: `fb27f258e5fca6d236513399f7b29082b483b97b3f7a1d2c5eed00a5bc3754f8`
-- validation: Orbital Economy v7.7.9 validation r1
-- validation SHA-256: `d48f5fbfbaf10bd532f50cec567cc2a08f4c0c72232bf3281bf1406daa925da6`
+- generated: 2026-10-04T07:17:06.519Z
+- model: Orbital Economy v7.7.10 r1 — Labor
+- model SHA-256: `3cb40c883703936af3550a82a731d4af17f3818afe80b69c0c8f92e0878ab903`
+- validation: Orbital Economy v7.7.10 validation r1
+- validation SHA-256: `1cd6480d478f7e4a2c9b3fb5cfe4a55b2d2be2312b7be85c984c246be6095cec`
 - status: **PASS**
 
 ## Open boundaries (declared physical-boundary meter)
@@ -338,7 +338,7 @@ Declared unit-transformation pairs (source flow physically backed by sink flows;
 ## Colony symmetry
 
 - tokens: A ↔ B
-- mirrored pairs checked: 1222; mirrored links checked: 2930
+- mirrored pairs checked: 1284; mirrored links checked: 3046
 - structural mismatches: **0**; numeric parameter differences (allowed): 138; elements under exceptions: 0
 
 <details><summary>Numeric parameter differences between colonies (allowed)</summary>
@@ -419,12 +419,12 @@ Declared unit-transformation pairs (source flow physically backed by sink flows;
 
 ## Planet closure (per-process Planet v1 contract)
 
-- status: **PASS**; mode: `report`
+- status: **PASS**; mode: `planet_v1`
 - processes: 17; legacy: 2; expected source outputs: 10; undeclared outputs: 0
 - P2 capacity: kernel **11** / simple **6** / exceptions **0** / undeclared **0**
 - P3 energy: requests **14** / producer **2** / exceptions **1** / undeclared **0**
 - P4 deposits: with **6** / without **0**
-- P5 labor: declared **4** / undeclared **13**
+- P5 labor: declared **17** / undeclared **0**
 - P6 demand drivers: **4**
 - reversibility violations: **0**
 
@@ -441,6 +441,7 @@ Declared unit-transformation pairs (source flow physically backed by sink flows;
 - energy_shared_planned: shared A Positive Desired Mining Rate
   - request: A Mining Requested Energy → A Mining Energy Signal → A Mining Energy Signal Increase → A Mining Pre Energy Rate → A Positive Desired Mining Rate
   - output: A Mining → A Mining Rate → A Positive Desired Mining Rate
+- labor_requirement: A Mining → A Mining Labor per Unit → A Mining Labor Requirement
 
 **mining[B]**
 - capacity: B Mining → B Mining Rate → B Effective Mining Capacity → B Ore Mine Capacity
@@ -449,6 +450,7 @@ Declared unit-transformation pairs (source flow physically backed by sink flows;
 - energy_shared_planned: shared B Positive Desired Mining Rate
   - request: B Mining Requested Energy → B Mining Energy Signal → B Mining Energy Signal Increase → B Mining Pre Energy Rate → B Positive Desired Mining Rate
   - output: B Mining → B Mining Rate → B Positive Desired Mining Rate
+- labor_requirement: B Mining → B Mining Labor per Unit → B Mining Labor Requirement
 
 **smelting[A]**
 - capacity: A Metal Production → A Smelting Rate → A Pre Energy Smelting Rate → A Refinery Active Capacity
@@ -457,7 +459,7 @@ Declared unit-transformation pairs (source flow physically backed by sink flows;
 - energy_shared_planned: shared A Desired Smelting Rate
   - request: A Metal Requested Energy → A Pre Energy Smelting Rate → A Positive Desired Smelting Rate → A Desired Smelting Rate
   - output: A Metal Production → A Smelting Rate → A Pre Energy Smelting Rate → A Positive Desired Smelting Rate → A Desired Smelting Rate
-- labor_readers: A Metal Unit Cost
+- labor_requirement: A Metal Production → A Labor per Metal → A Smelting Labor Requirement
 
 **smelting[B]**
 - capacity: B Metal Production → B Smelting Rate → B Pre Energy Smelting Rate → B Refinery Active Capacity
@@ -466,7 +468,7 @@ Declared unit-transformation pairs (source flow physically backed by sink flows;
 - energy_shared_planned: shared B Desired Smelting Rate
   - request: B Metal Requested Energy → B Pre Energy Smelting Rate → B Positive Desired Smelting Rate → B Desired Smelting Rate
   - output: B Metal Production → B Smelting Rate → B Pre Energy Smelting Rate → B Positive Desired Smelting Rate → B Desired Smelting Rate
-- labor_readers: B Metal Unit Cost
+- labor_requirement: B Metal Production → B Labor per Metal → B Smelting Labor Requirement
 
 **electronics[A]**
 - capacity: A Electronics Production → A Electronics Production Rate → A Pre Energy Electronics Production Rate → A Electronics Factory Capacity → A Electronics Active Factory Capacity
@@ -475,7 +477,7 @@ Declared unit-transformation pairs (source flow physically backed by sink flows;
 - energy_shared_planned: shared A Electronics Feedstock Buffer
   - request: A Electronics Requested Energy → A Pre Energy Electronics Production Rate → A Electronics Feedstock Buffer
   - output: A Electronics Production → A Electronics Production Rate → A Pre Energy Electronics Production Rate → A Electronics Feedstock Buffer
-- labor_readers: A Electronics Unit Cost → A Electronics Unit Cost
+- labor_requirement: A Electronics Production → A Electronics Labor per Unit → A Electronics Labor Requirement
 
 **electronics[B]**
 - capacity: B Electronics Production → B Electronics Production Rate → B Pre Energy Electronics Production Rate → B Electronics Factory Capacity → B Electronics Active Factory Capacity
@@ -484,7 +486,7 @@ Declared unit-transformation pairs (source flow physically backed by sink flows;
 - energy_shared_planned: shared B Electronics Feedstock Buffer
   - request: B Electronics Requested Energy → B Pre Energy Electronics Production Rate → B Electronics Feedstock Buffer
   - output: B Electronics Production → B Electronics Production Rate → B Pre Energy Electronics Production Rate → B Electronics Feedstock Buffer
-- labor_readers: B Electronics Unit Cost → B Electronics Unit Cost
+- labor_requirement: B Electronics Production → B Electronics Labor per Unit → B Electronics Labor Requirement
 
 **capital_goods[A]**
 - capacity: A Capital Goods Production → A Capital Goods Production Rate → A Capital Goods Production Capacity → A Capital Goods Plant Active Capacity
@@ -493,6 +495,7 @@ Declared unit-transformation pairs (source flow physically backed by sink flows;
 - energy_shared_planned: shared A Capital Goods Production Capacity
   - request: A Capital Goods Requested Energy → A Capital Goods Energy Signal → A Capital Goods Energy Signal Increase → A Capital Goods Pre Energy Rate → A Capital Goods Production Capacity
   - output: A Capital Goods Production → A Capital Goods Production Rate → A Capital Goods Production Capacity
+- labor_requirement: A Capital Goods Production → A Capital Goods Labor per Unit → A Capital Goods Labor Requirement
 
 **capital_goods[B]**
 - capacity: B Capital Goods Production → B Capital Goods Production Rate → B Capital Goods Production Capacity → B Capital Goods Plant Active Capacity
@@ -501,6 +504,7 @@ Declared unit-transformation pairs (source flow physically backed by sink flows;
 - energy_shared_planned: shared B Capital Goods Production Capacity
   - request: B Capital Goods Requested Energy → B Capital Goods Energy Signal → B Capital Goods Energy Signal Increase → B Capital Goods Pre Energy Rate → B Capital Goods Production Capacity
   - output: B Capital Goods Production → B Capital Goods Production Rate → B Capital Goods Production Capacity
+- labor_requirement: B Capital Goods Production → B Capital Goods Labor per Unit → B Capital Goods Labor Requirement
 
 **regolith[A]**
 - capacity: A Regolith Extraction → A Regolith Extraction Rate → A Regolith Extraction Capacity → A Regolith Mine Capacity
@@ -509,6 +513,7 @@ Declared unit-transformation pairs (source flow physically backed by sink flows;
 - energy_shared_planned: shared A Regolith Extraction Capacity
   - request: A Regolith Extraction Requested Energy → A Regolith Extraction Energy Signal → A Regolith Extraction Energy Signal Increase → A Regolith Extraction Pre Energy Rate → A Regolith Extraction Capacity
   - output: A Regolith Extraction → A Regolith Extraction Rate → A Regolith Extraction Capacity
+- labor_requirement: A Regolith Extraction → A Regolith Extraction Labor per Unit → A Regolith Extraction Labor Requirement
 
 **regolith[B]**
 - capacity: B Regolith Extraction → B Regolith Extraction Rate → B Regolith Extraction Capacity → B Regolith Mine Capacity
@@ -517,6 +522,7 @@ Declared unit-transformation pairs (source flow physically backed by sink flows;
 - energy_shared_planned: shared B Regolith Extraction Capacity
   - request: B Regolith Extraction Requested Energy → B Regolith Extraction Energy Signal → B Regolith Extraction Energy Signal Increase → B Regolith Extraction Pre Energy Rate → B Regolith Extraction Capacity
   - output: B Regolith Extraction → B Regolith Extraction Rate → B Regolith Extraction Capacity
+- labor_requirement: B Regolith Extraction → B Regolith Extraction Labor per Unit → B Regolith Extraction Labor Requirement
 
 **construction_materials[A]**
 - capacity: A Construction Materials Production → A Construction Materials Production Rate → A Construction Materials Production Capacity → A Construction Materials Plant Active Capacity
@@ -525,6 +531,7 @@ Declared unit-transformation pairs (source flow physically backed by sink flows;
 - energy_shared_planned: shared Temporary Test Window
   - request: A Construction Materials Requested Energy → A Pre Energy Construction Materials Production Rate → A Construction Materials Production Capacity → Test 28 Construction Materials Shock Active → Temporary Test Window
   - output: A Construction Materials Production → A Construction Materials Production Rate → A Construction Materials Production Capacity → Test 28 Construction Materials Shock Active → Temporary Test Window
+- labor_requirement: A Construction Materials Production → A Construction Materials Labor per Unit → A Construction Materials Labor Requirement
 
 **construction_materials[B]**
 - capacity: B Construction Materials Production → B Construction Materials Production Rate → B Construction Materials Production Capacity → B Construction Materials Plant Active Capacity
@@ -533,6 +540,7 @@ Declared unit-transformation pairs (source flow physically backed by sink flows;
 - energy_shared_planned: shared Temporary Test Window
   - request: B Construction Materials Requested Energy → B Pre Energy Construction Materials Production Rate → B Construction Materials Production Capacity → Test 28 Construction Materials Shock Active → Temporary Test Window
   - output: B Construction Materials Production → B Construction Materials Production Rate → B Construction Materials Production Capacity → Test 28 Construction Materials Shock Active → Temporary Test Window
+- labor_requirement: B Construction Materials Production → B Construction Materials Labor per Unit → B Construction Materials Labor Requirement
 
 **power_resource[A]**
 - capacity: A Power Resource Extraction → A Power Resource Extraction Rate → A Power Resource Mine Capacity
@@ -541,6 +549,7 @@ Declared unit-transformation pairs (source flow physically backed by sink flows;
 - energy_shared_planned: shared A Power Resource Demand
   - request: A Power Resource Extraction Requested Energy → A Power Resource Extraction Energy Signal → A Power Resource Extraction Energy Signal Increase → A Power Resource Extraction Pre Energy Rate → A Power Resource Demand
   - output: A Power Resource Extraction → A Power Resource Extraction Rate → A Power Resource Demand
+- labor_requirement: A Power Resource Extraction → A Power Resource Extraction Labor per Unit → A Power Resource Extraction Labor Requirement
 
 **power_resource[B]**
 - capacity: B Power Resource Extraction → B Power Resource Extraction Rate → B Power Resource Mine Capacity
@@ -549,15 +558,19 @@ Declared unit-transformation pairs (source flow physically backed by sink flows;
 - energy_shared_planned: shared B Power Resource Demand
   - request: B Power Resource Extraction Requested Energy → B Power Resource Extraction Energy Signal → B Power Resource Extraction Energy Signal Increase → B Power Resource Extraction Pre Energy Rate → B Power Resource Demand
   - output: B Power Resource Extraction → B Power Resource Extraction Rate → B Power Resource Demand
+- labor_requirement: B Power Resource Extraction → B Power Resource Extraction Labor per Unit → B Power Resource Extraction Labor Requirement
 
 **generation[A]**
 - capacity: A Available Generation → A Power Active Generation Capacity → A Power Active Generation Capital
+- labor_requirement: A Available Generation → A Generation Labor per Unit → A Generation Labor Requirement
 
 **generation[B]**
 - capacity: B Available Generation → B Power Active Generation Capacity → B Power Active Generation Capital
+- labor_requirement: B Available Generation → B Generation Labor per Unit → B Generation Labor Requirement
 
 **transport**
 - capacity: Capacity Limited Total Transport Load → Transport Active Throughput Capacity
+- labor_requirement: Capacity Limited Total Transport Load → Transport Labor per Unit → Transport Labor Requirement
 
 </details>
 

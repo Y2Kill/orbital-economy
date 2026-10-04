@@ -1,7 +1,7 @@
 {
   "engine": "SIMULATION_PACKAGE",
-  "name": "Orbital Economy v7.7.8 r1 — Deposits",
-  "description": "Task 023: finite deposits with proven reserves and capital-goods-backed exploration for ore, regolith and the power resource. The deposit declaration is taken unchanged from draft/deposits.json; the only explicit formula replacement is Test 2 Transport Surge Active for Mode 45.",
+  "name": "Orbital Economy v7.7.10 r1 — Labor",
+  "description": "Task 028: declarative labor node for all Planet v1 processes; automation starts at 0 with no switch. Modes 0-47 are untouched; Mode 48 probes A-side automation at 0.5.",
   "simulation": {
     "algorithm": "RK1",
     "time_start": 0,
@@ -524,7 +524,7 @@
       "type": "VARIABLE",
       "name": "A Metal Unit Cost",
       "behavior": {
-        "value": "[A Ore per Metal] * [A Ore Price] + [A Energy per Metal] * [A Effective Energy Price] + [A Labor per Metal] * [A Effective Wage]"
+        "value": "[A Ore per Metal] * [A Ore Price] + [A Energy per Metal] * [A Effective Energy Price] + ([A Labor per Metal] * [A Smelting Automation Factor]) * [A Effective Wage]"
       },
       "display": {
         "coordinates": [
@@ -715,7 +715,7 @@
       "type": "VARIABLE",
       "name": "A Mining Rate",
       "behavior": {
-        "value": "IfThenElse([Deposits Enabled] = 1, [A Ore Deposit Unlimited Rate] / (1 + ([A Ore Deposit Unlimited Rate] / ([A Ore Proven Reserves] / [Ore Deposit Depletion Buffer Days] + 0.001)) ^ 8) ^ 0.125, [A Positive Desired Mining Rate] / (1 + ([A Positive Desired Mining Rate] / ([A Effective Mining Capacity] + 0.001)) ^ 8) ^ 0.125)"
+        "value": "IfThenElse([Process Energy Enabled] = 1, [A Mining Pre Energy Rate] * [A Mining Energy Fulfillment Ratio], IfThenElse([Deposits Enabled] = 1, [A Ore Deposit Unlimited Rate] / (1 + ([A Ore Deposit Unlimited Rate] / ([A Ore Proven Reserves] / [Ore Deposit Depletion Buffer Days] + 0.001)) ^ 8) ^ 0.125, [A Positive Desired Mining Rate] / (1 + ([A Positive Desired Mining Rate] / ([A Effective Mining Capacity] + 0.001)) ^ 8) ^ 0.125))"
       },
       "display": {
         "coordinates": [
@@ -4614,7 +4614,7 @@
       "type": "VARIABLE",
       "name": "B Metal Unit Cost",
       "behavior": {
-        "value": "[B Ore per Metal] * [B Ore Price] + [B Energy per Metal] * [B Effective Energy Price] + [B Labor per Metal] * [B Effective Wage]"
+        "value": "[B Ore per Metal] * [B Ore Price] + [B Energy per Metal] * [B Effective Energy Price] + ([B Labor per Metal] * [B Smelting Automation Factor]) * [B Effective Wage]"
       },
       "display": {
         "coordinates": [
@@ -4805,7 +4805,7 @@
       "type": "VARIABLE",
       "name": "B Mining Rate",
       "behavior": {
-        "value": "IfThenElse([Deposits Enabled] = 1, [B Ore Deposit Unlimited Rate] / (1 + ([B Ore Deposit Unlimited Rate] / ([B Ore Proven Reserves] / [Ore Deposit Depletion Buffer Days] + 0.001)) ^ 8) ^ 0.125, [B Positive Desired Mining Rate] / (1 + ([B Positive Desired Mining Rate] / ([B Effective Mining Capacity] + 0.001)) ^ 8) ^ 0.125)"
+        "value": "IfThenElse([Process Energy Enabled] = 1, [B Mining Pre Energy Rate] * [B Mining Energy Fulfillment Ratio], IfThenElse([Deposits Enabled] = 1, [B Ore Deposit Unlimited Rate] / (1 + ([B Ore Deposit Unlimited Rate] / ([B Ore Proven Reserves] / [Ore Deposit Depletion Buffer Days] + 0.001)) ^ 8) ^ 0.125, [B Positive Desired Mining Rate] / (1 + ([B Positive Desired Mining Rate] / ([B Effective Mining Capacity] + 0.001)) ^ 8) ^ 0.125))"
       },
       "display": {
         "coordinates": [
@@ -9731,7 +9731,7 @@
       "type": "VARIABLE",
       "name": "Test 2 Transport Surge Active",
       "behavior": {
-        "value": "IfThenElse([Timed Test Mode] = 2, [Temporary Test Window], IfThenElse([Timed Test Mode] = 24, [Temporary Test Window], IfThenElse([Timed Test Mode] = 31, [Temporary Test Window], IfThenElse([Timed Test Mode] = 35, [Temporary Test Window], IfThenElse([Timed Test Mode] = 37, [Temporary Test Window], IfThenElse([Timed Test Mode] = 39, [Temporary Test Window], IfThenElse([Timed Test Mode] = 41, [Temporary Test Window], IfThenElse([Timed Test Mode] = 43, [Temporary Test Window], IfThenElse([Timed Test Mode] = 45, [Temporary Test Window], 0)))))))))"
+        "value": "IfThenElse([Timed Test Mode] = 2, [Temporary Test Window], IfThenElse([Timed Test Mode] = 24, [Temporary Test Window], IfThenElse([Timed Test Mode] = 31, [Temporary Test Window], IfThenElse([Timed Test Mode] = 35, [Temporary Test Window], IfThenElse([Timed Test Mode] = 37, [Temporary Test Window], IfThenElse([Timed Test Mode] = 39, [Temporary Test Window], IfThenElse([Timed Test Mode] = 41, [Temporary Test Window], IfThenElse([Timed Test Mode] = 43, [Temporary Test Window], IfThenElse([Timed Test Mode] = 45, [Temporary Test Window], IfThenElse([Timed Test Mode] = 47, [Temporary Test Window], 0))))))))))"
       },
       "display": {
         "coordinates": [
@@ -11764,7 +11764,7 @@
       "type": "VARIABLE",
       "name": "A Electronics Unit Cost",
       "behavior": {
-        "value": "IfThenElse([Intermediate Inputs Enabled] = 1, [Metal per Electronics] * [A Electronics Feedstock Price] + [A Electronics Energy per Unit] * [A Energy Price] + [A Electronics Labor per Unit] * [A Wage], [A Feedstock per Electronics] * [A Electronics Feedstock Price] + [A Electronics Energy per Unit] * [A Energy Price] + [A Electronics Labor per Unit] * [A Wage])"
+        "value": "IfThenElse([Intermediate Inputs Enabled] = 1, [Metal per Electronics] * [A Electronics Feedstock Price] + [A Electronics Energy per Unit] * [A Energy Price] + ([A Electronics Labor per Unit] * [A Electronics Automation Factor]) * [A Wage], [A Feedstock per Electronics] * [A Electronics Feedstock Price] + [A Electronics Energy per Unit] * [A Energy Price] + ([A Electronics Labor per Unit] * [A Electronics Automation Factor]) * [A Wage])"
       },
       "display": {
         "coordinates": [
@@ -12280,7 +12280,7 @@
       "type": "VARIABLE",
       "name": "B Electronics Unit Cost",
       "behavior": {
-        "value": "IfThenElse([Intermediate Inputs Enabled] = 1, [Metal per Electronics] * [B Electronics Feedstock Price] + [B Electronics Energy per Unit] * [B Energy Price] + [B Electronics Labor per Unit] * [B Wage], [B Feedstock per Electronics] * [B Electronics Feedstock Price] + [B Electronics Energy per Unit] * [B Energy Price] + [B Electronics Labor per Unit] * [B Wage])"
+        "value": "IfThenElse([Intermediate Inputs Enabled] = 1, [Metal per Electronics] * [B Electronics Feedstock Price] + [B Electronics Energy per Unit] * [B Energy Price] + ([B Electronics Labor per Unit] * [B Electronics Automation Factor]) * [B Wage], [B Feedstock per Electronics] * [B Electronics Feedstock Price] + [B Electronics Energy per Unit] * [B Energy Price] + ([B Electronics Labor per Unit] * [B Electronics Automation Factor]) * [B Wage])"
       },
       "display": {
         "coordinates": [
@@ -18945,7 +18945,7 @@
       "type": "VARIABLE",
       "name": "A Total Requested Energy",
       "behavior": {
-        "value": "IfThenElse([Construction Materials Energy Enabled] = 1, [A Metal Requested Energy] + [A Electronics Requested Energy] + [A Construction Materials Requested Energy], [A Metal Requested Energy] + [A Electronics Requested Energy])"
+        "value": "IfThenElse([Process Energy Enabled] = 1, IfThenElse([Construction Materials Energy Enabled] = 1, [A Metal Requested Energy] + [A Electronics Requested Energy] + [A Construction Materials Requested Energy], [A Metal Requested Energy] + [A Electronics Requested Energy]) + [A Mining Requested Energy] + [A Regolith Extraction Requested Energy] + [A Power Resource Extraction Requested Energy] + [A Capital Goods Requested Energy], IfThenElse([Construction Materials Energy Enabled] = 1, [A Metal Requested Energy] + [A Electronics Requested Energy] + [A Construction Materials Requested Energy], [A Metal Requested Energy] + [A Electronics Requested Energy]))"
       },
       "display": {
         "coordinates": [
@@ -18963,7 +18963,7 @@
       "type": "VARIABLE",
       "name": "A Energy Fulfillment Ratio",
       "behavior": {
-        "value": "IfThenElse([A Total Requested Energy] > [A Available Generation], [A Available Generation] / ([A Total Requested Energy] + 0.001), 1)"
+        "value": "IfThenElse([Process Energy Enabled] = 1, IfThenElse([A Total Requested Energy] > [A Available Generation], Max(0, [A Available Generation] - [A Priority Allocated Energy]) / ([A Total Requested Energy] - [A Priority Requested Energy] + 0.001), 1), IfThenElse([A Total Requested Energy] > [A Available Generation], [A Available Generation] / ([A Total Requested Energy] + 0.001), 1))"
       },
       "display": {
         "coordinates": [
@@ -19049,7 +19049,7 @@
       "type": "VARIABLE",
       "name": "A Energy Supply",
       "behavior": {
-        "value": "IfThenElse([Construction Materials Energy Enabled] = 1, [A Metal Allocated Energy] + [A Electronics Allocated Energy] + [A Construction Materials Allocated Energy], [A Metal Allocated Energy] + [A Electronics Allocated Energy])"
+        "value": "IfThenElse([Process Energy Enabled] = 1, IfThenElse([Construction Materials Energy Enabled] = 1, [A Metal Allocated Energy] + [A Electronics Allocated Energy] + [A Construction Materials Allocated Energy], [A Metal Allocated Energy] + [A Electronics Allocated Energy]) + [A Mining Allocated Energy] + [A Regolith Extraction Allocated Energy] + [A Power Resource Extraction Allocated Energy] + [A Capital Goods Allocated Energy], IfThenElse([Construction Materials Energy Enabled] = 1, [A Metal Allocated Energy] + [A Electronics Allocated Energy] + [A Construction Materials Allocated Energy], [A Metal Allocated Energy] + [A Electronics Allocated Energy]))"
       },
       "display": {
         "coordinates": [
@@ -19323,7 +19323,7 @@
       "type": "VARIABLE",
       "name": "B Total Requested Energy",
       "behavior": {
-        "value": "IfThenElse([Construction Materials Energy Enabled] = 1, [B Metal Requested Energy] + [B Electronics Requested Energy] + [B Construction Materials Requested Energy], [B Metal Requested Energy] + [B Electronics Requested Energy])"
+        "value": "IfThenElse([Process Energy Enabled] = 1, IfThenElse([Construction Materials Energy Enabled] = 1, [B Metal Requested Energy] + [B Electronics Requested Energy] + [B Construction Materials Requested Energy], [B Metal Requested Energy] + [B Electronics Requested Energy]) + [B Mining Requested Energy] + [B Regolith Extraction Requested Energy] + [B Power Resource Extraction Requested Energy] + [B Capital Goods Requested Energy], IfThenElse([Construction Materials Energy Enabled] = 1, [B Metal Requested Energy] + [B Electronics Requested Energy] + [B Construction Materials Requested Energy], [B Metal Requested Energy] + [B Electronics Requested Energy]))"
       },
       "display": {
         "coordinates": [
@@ -19341,7 +19341,7 @@
       "type": "VARIABLE",
       "name": "B Energy Fulfillment Ratio",
       "behavior": {
-        "value": "IfThenElse([B Total Requested Energy] > [B Available Generation], [B Available Generation] / ([B Total Requested Energy] + 0.001), 1)"
+        "value": "IfThenElse([Process Energy Enabled] = 1, IfThenElse([B Total Requested Energy] > [B Available Generation], Max(0, [B Available Generation] - [B Priority Allocated Energy]) / ([B Total Requested Energy] - [B Priority Requested Energy] + 0.001), 1), IfThenElse([B Total Requested Energy] > [B Available Generation], [B Available Generation] / ([B Total Requested Energy] + 0.001), 1))"
       },
       "display": {
         "coordinates": [
@@ -19427,7 +19427,7 @@
       "type": "VARIABLE",
       "name": "B Energy Supply",
       "behavior": {
-        "value": "IfThenElse([Construction Materials Energy Enabled] = 1, [B Metal Allocated Energy] + [B Electronics Allocated Energy] + [B Construction Materials Allocated Energy], [B Metal Allocated Energy] + [B Electronics Allocated Energy])"
+        "value": "IfThenElse([Process Energy Enabled] = 1, IfThenElse([Construction Materials Energy Enabled] = 1, [B Metal Allocated Energy] + [B Electronics Allocated Energy] + [B Construction Materials Allocated Energy], [B Metal Allocated Energy] + [B Electronics Allocated Energy]) + [B Mining Allocated Energy] + [B Regolith Extraction Allocated Energy] + [B Power Resource Extraction Allocated Energy] + [B Capital Goods Allocated Energy], IfThenElse([Construction Materials Energy Enabled] = 1, [B Metal Allocated Energy] + [B Electronics Allocated Energy] + [B Construction Materials Allocated Energy], [B Metal Allocated Energy] + [B Electronics Allocated Energy]))"
       },
       "display": {
         "coordinates": [
@@ -23278,7 +23278,7 @@
       "type": "VARIABLE",
       "name": "A Capital Goods Production Rate",
       "behavior": {
-        "value": "IfThenElse([Capital Goods Enabled] = 1, [A Desired Capital Goods Production] / (1 + ([A Desired Capital Goods Production] / ([A Capital Goods Production Capacity] + 0.001)) ^ 8) ^ 0.125 * [A Metal Inventory] / ([A Metal Inventory] + [A Metal Buffer]) * [A Electronics Inventory] / ([A Electronics Inventory] + [A Electronics Buffer]), 0)"
+        "value": "IfThenElse([Process Energy Enabled] = 1, [A Capital Goods Pre Energy Rate] * [A Capital Goods Energy Fulfillment Ratio], IfThenElse([Capital Goods Enabled] = 1, [A Desired Capital Goods Production] / (1 + ([A Desired Capital Goods Production] / ([A Capital Goods Production Capacity] + 0.001)) ^ 8) ^ 0.125 * [A Metal Inventory] / ([A Metal Inventory] + [A Metal Buffer]) * [A Electronics Inventory] / ([A Electronics Inventory] + [A Electronics Buffer]), 0))"
       },
       "description": "Actual A capital-goods production rate after capacity and input-inventory soft constraints."
     },
@@ -23481,7 +23481,7 @@
       "type": "VARIABLE",
       "name": "B Capital Goods Production Rate",
       "behavior": {
-        "value": "IfThenElse([Capital Goods Enabled] = 1, [B Desired Capital Goods Production] / (1 + ([B Desired Capital Goods Production] / ([B Capital Goods Production Capacity] + 0.001)) ^ 8) ^ 0.125 * [B Metal Inventory] / ([B Metal Inventory] + [B Metal Buffer]) * [B Electronics Inventory] / ([B Electronics Inventory] + [B Electronics Buffer]), 0)"
+        "value": "IfThenElse([Process Energy Enabled] = 1, [B Capital Goods Pre Energy Rate] * [B Capital Goods Energy Fulfillment Ratio], IfThenElse([Capital Goods Enabled] = 1, [B Desired Capital Goods Production] / (1 + ([B Desired Capital Goods Production] / ([B Capital Goods Production Capacity] + 0.001)) ^ 8) ^ 0.125 * [B Metal Inventory] / ([B Metal Inventory] + [B Metal Buffer]) * [B Electronics Inventory] / ([B Electronics Inventory] + [B Electronics Buffer]), 0))"
       },
       "description": "Actual B capital-goods production rate after capacity and input-inventory soft constraints."
     },
@@ -24680,7 +24680,7 @@
       "type": "VARIABLE",
       "name": "A Power Resource Extraction Rate",
       "behavior": {
-        "value": "IfThenElse([Deposits Enabled] = 1, [A Power Resource Deposit Unlimited Rate] / (1 + ([A Power Resource Deposit Unlimited Rate] / ([A Power Resource Proven Reserves] / [Power Resource Deposit Depletion Buffer Days] + 0.001)) ^ 8) ^ 0.125, IfThenElse([Power Resource Capital Enabled] = 1, [A Power Resource Mine Uncapped Output] / (1 + ([A Power Resource Mine Uncapped Output] / ([A Power Resource Mine Capacity] + 0.001)) ^ 8) ^ 0.125, IfThenElse([Power Resource Enabled] = 1, Max(0, ([A Power Resource Demand] + ([A Power Resource Target Inventory] - [A Power Resource Inventory]) / [Power Resource Extraction Adjustment Time]) * [Power Resource Extraction Headroom] * [A Power Resource Extraction Multiplier]), 0)))"
+        "value": "IfThenElse([Process Energy Enabled] = 1, [A Power Resource Extraction Pre Energy Rate] * [A Power Resource Extraction Energy Fulfillment Ratio], IfThenElse([Deposits Enabled] = 1, [A Power Resource Deposit Unlimited Rate] / (1 + ([A Power Resource Deposit Unlimited Rate] / ([A Power Resource Proven Reserves] / [Power Resource Deposit Depletion Buffer Days] + 0.001)) ^ 8) ^ 0.125, IfThenElse([Power Resource Capital Enabled] = 1, [A Power Resource Mine Uncapped Output] / (1 + ([A Power Resource Mine Uncapped Output] / ([A Power Resource Mine Capacity] + 0.001)) ^ 8) ^ 0.125, IfThenElse([Power Resource Enabled] = 1, Max(0, ([A Power Resource Demand] + ([A Power Resource Target Inventory] - [A Power Resource Inventory]) / [Power Resource Extraction Adjustment Time]) * [Power Resource Extraction Headroom] * [A Power Resource Extraction Multiplier]), 0))))"
       },
       "description": "Primary power-resource extraction plan for colony A."
     },
@@ -24807,7 +24807,7 @@
       "type": "VARIABLE",
       "name": "B Power Resource Extraction Rate",
       "behavior": {
-        "value": "IfThenElse([Deposits Enabled] = 1, [B Power Resource Deposit Unlimited Rate] / (1 + ([B Power Resource Deposit Unlimited Rate] / ([B Power Resource Proven Reserves] / [Power Resource Deposit Depletion Buffer Days] + 0.001)) ^ 8) ^ 0.125, IfThenElse([Power Resource Capital Enabled] = 1, [B Power Resource Mine Uncapped Output] / (1 + ([B Power Resource Mine Uncapped Output] / ([B Power Resource Mine Capacity] + 0.001)) ^ 8) ^ 0.125, IfThenElse([Power Resource Enabled] = 1, Max(0, ([B Power Resource Demand] + ([B Power Resource Target Inventory] - [B Power Resource Inventory]) / [Power Resource Extraction Adjustment Time]) * [Power Resource Extraction Headroom] * [B Power Resource Extraction Multiplier]), 0)))"
+        "value": "IfThenElse([Process Energy Enabled] = 1, [B Power Resource Extraction Pre Energy Rate] * [B Power Resource Extraction Energy Fulfillment Ratio], IfThenElse([Deposits Enabled] = 1, [B Power Resource Deposit Unlimited Rate] / (1 + ([B Power Resource Deposit Unlimited Rate] / ([B Power Resource Proven Reserves] / [Power Resource Deposit Depletion Buffer Days] + 0.001)) ^ 8) ^ 0.125, IfThenElse([Power Resource Capital Enabled] = 1, [B Power Resource Mine Uncapped Output] / (1 + ([B Power Resource Mine Uncapped Output] / ([B Power Resource Mine Capacity] + 0.001)) ^ 8) ^ 0.125, IfThenElse([Power Resource Enabled] = 1, Max(0, ([B Power Resource Demand] + ([B Power Resource Target Inventory] - [B Power Resource Inventory]) / [Power Resource Extraction Adjustment Time]) * [Power Resource Extraction Headroom] * [B Power Resource Extraction Multiplier]), 0))))"
       },
       "description": "Primary power-resource extraction plan for colony B."
     },
@@ -25554,7 +25554,7 @@
       "type": "VARIABLE",
       "name": "A Regolith Extraction Rate",
       "behavior": {
-        "value": "IfThenElse([Deposits Enabled] = 1, [A Regolith Deposit Unlimited Rate] / (1 + ([A Regolith Deposit Unlimited Rate] / ([A Regolith Proven Reserves] / [Regolith Deposit Depletion Buffer Days] + 0.001)) ^ 8) ^ 0.125, IfThenElse([Construction Materials Enabled] = 1, [A Desired Regolith Extraction] / (1 + ([A Desired Regolith Extraction] / ([A Regolith Extraction Capacity] + 0.001)) ^ 8) ^ 0.125, 0))"
+        "value": "IfThenElse([Process Energy Enabled] = 1, [A Regolith Extraction Pre Energy Rate] * [A Regolith Extraction Energy Fulfillment Ratio], IfThenElse([Deposits Enabled] = 1, [A Regolith Deposit Unlimited Rate] / (1 + ([A Regolith Deposit Unlimited Rate] / ([A Regolith Proven Reserves] / [Regolith Deposit Depletion Buffer Days] + 0.001)) ^ 8) ^ 0.125, IfThenElse([Construction Materials Enabled] = 1, [A Desired Regolith Extraction] / (1 + ([A Desired Regolith Extraction] / ([A Regolith Extraction Capacity] + 0.001)) ^ 8) ^ 0.125, 0)))"
       },
       "description": "Actual Regolith extraction rate after the soft capacity constraint in colony A."
     },
@@ -25790,7 +25790,7 @@
       "type": "VARIABLE",
       "name": "B Regolith Extraction Rate",
       "behavior": {
-        "value": "IfThenElse([Deposits Enabled] = 1, [B Regolith Deposit Unlimited Rate] / (1 + ([B Regolith Deposit Unlimited Rate] / ([B Regolith Proven Reserves] / [Regolith Deposit Depletion Buffer Days] + 0.001)) ^ 8) ^ 0.125, IfThenElse([Construction Materials Enabled] = 1, [B Desired Regolith Extraction] / (1 + ([B Desired Regolith Extraction] / ([B Regolith Extraction Capacity] + 0.001)) ^ 8) ^ 0.125, 0))"
+        "value": "IfThenElse([Process Energy Enabled] = 1, [B Regolith Extraction Pre Energy Rate] * [B Regolith Extraction Energy Fulfillment Ratio], IfThenElse([Deposits Enabled] = 1, [B Regolith Deposit Unlimited Rate] / (1 + ([B Regolith Deposit Unlimited Rate] / ([B Regolith Proven Reserves] / [Regolith Deposit Depletion Buffer Days] + 0.001)) ^ 8) ^ 0.125, IfThenElse([Construction Materials Enabled] = 1, [B Desired Regolith Extraction] / (1 + ([B Desired Regolith Extraction] / ([B Regolith Extraction Capacity] + 0.001)) ^ 8) ^ 0.125, 0)))"
       },
       "description": "Actual Regolith extraction rate after the soft capacity constraint in colony B."
     },
@@ -34111,6 +34111,2957 @@
       "type": "LINK",
       "from": "Power Resource Deposit Depletion Buffer Days",
       "to": "B Power Resource Extraction Rate"
+    },
+    {
+      "type": "VARIABLE",
+      "name": "Process Energy Enabled",
+      "behavior": {
+        "value": 1
+      },
+      "description": "Generated energy_consumer element for Process Energy Enabled."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "Mining Energy per Unit",
+      "behavior": {
+        "value": 1
+      },
+      "description": "Generated energy_consumer element for Mining Energy per Unit."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "Mining Energy Signal Adjustment Time",
+      "behavior": {
+        "value": 3
+      },
+      "description": "Generated energy_consumer element for Mining Energy Signal Adjustment Time."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "Regolith Extraction Energy per Unit",
+      "behavior": {
+        "value": 10
+      },
+      "description": "Generated energy_consumer element for Regolith Extraction Energy per Unit."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "Regolith Extraction Energy Signal Adjustment Time",
+      "behavior": {
+        "value": 3
+      },
+      "description": "Generated energy_consumer element for Regolith Extraction Energy Signal Adjustment Time."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "Power Resource Extraction Energy per Unit",
+      "behavior": {
+        "value": 0.05
+      },
+      "description": "Generated energy_consumer element for Power Resource Extraction Energy per Unit."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "Power Resource Extraction Energy Signal Adjustment Time",
+      "behavior": {
+        "value": 3
+      },
+      "description": "Generated energy_consumer element for Power Resource Extraction Energy Signal Adjustment Time."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "Capital Goods Energy per Unit",
+      "behavior": {
+        "value": 50
+      },
+      "description": "Generated energy_consumer element for Capital Goods Energy per Unit."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "Capital Goods Energy Signal Adjustment Time",
+      "behavior": {
+        "value": 3
+      },
+      "description": "Generated energy_consumer element for Capital Goods Energy Signal Adjustment Time."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "A Mining Pre Energy Rate",
+      "behavior": {
+        "value": "IfThenElse([Deposits Enabled] = 1, [A Ore Deposit Unlimited Rate] / (1 + ([A Ore Deposit Unlimited Rate] / ([A Ore Proven Reserves] / [Ore Deposit Depletion Buffer Days] + 0.001)) ^ 8) ^ 0.125, [A Positive Desired Mining Rate] / (1 + ([A Positive Desired Mining Rate] / ([A Effective Mining Capacity] + 0.001)) ^ 8) ^ 0.125)"
+      },
+      "description": "Generated energy_consumer element for A Mining Pre Energy Rate."
+    },
+    {
+      "type": "STOCK",
+      "name": "A Mining Energy Signal",
+      "behavior": {
+        "initial_value": 42.227,
+        "non_negative": true
+      },
+      "description": "Generated energy_consumer element for A Mining Energy Signal."
+    },
+    {
+      "type": "FLOW",
+      "name": "A Mining Energy Signal Increase",
+      "from": null,
+      "to": "A Mining Energy Signal",
+      "behavior": {
+        "value": "IfThenElse([A Mining Pre Energy Rate] > [A Mining Energy Signal], ([A Mining Pre Energy Rate] - [A Mining Energy Signal]) / [Mining Energy Signal Adjustment Time], 0)",
+        "non_negative": true
+      },
+      "description": "Generated energy_consumer element for A Mining Energy Signal Increase."
+    },
+    {
+      "type": "FLOW",
+      "name": "A Mining Energy Signal Decrease",
+      "from": "A Mining Energy Signal",
+      "to": null,
+      "behavior": {
+        "value": "IfThenElse([A Mining Energy Signal] > [A Mining Pre Energy Rate], ([A Mining Energy Signal] - [A Mining Pre Energy Rate]) / [Mining Energy Signal Adjustment Time], 0)",
+        "non_negative": true
+      },
+      "description": "Generated energy_consumer element for A Mining Energy Signal Decrease."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "A Mining Requested Energy",
+      "behavior": {
+        "value": "IfThenElse([Process Energy Enabled] = 1, [A Mining Energy Signal] * [Mining Energy per Unit], 0)"
+      },
+      "description": "Generated energy_consumer element for A Mining Requested Energy."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "A Mining Allocated Energy",
+      "behavior": {
+        "value": "[A Mining Requested Energy] * [A Energy Fulfillment Ratio]"
+      },
+      "description": "Generated energy_consumer element for A Mining Allocated Energy."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "A Mining Energy Fulfillment Ratio",
+      "behavior": {
+        "value": "IfThenElse([A Mining Requested Energy] > 0.001, [A Mining Allocated Energy] / [A Mining Requested Energy], 1)"
+      },
+      "description": "Generated energy_consumer element for A Mining Energy Fulfillment Ratio."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "A Regolith Extraction Pre Energy Rate",
+      "behavior": {
+        "value": "IfThenElse([Deposits Enabled] = 1, [A Regolith Deposit Unlimited Rate] / (1 + ([A Regolith Deposit Unlimited Rate] / ([A Regolith Proven Reserves] / [Regolith Deposit Depletion Buffer Days] + 0.001)) ^ 8) ^ 0.125, IfThenElse([Construction Materials Enabled] = 1, [A Desired Regolith Extraction] / (1 + ([A Desired Regolith Extraction] / ([A Regolith Extraction Capacity] + 0.001)) ^ 8) ^ 0.125, 0))"
+      },
+      "description": "Generated energy_consumer element for A Regolith Extraction Pre Energy Rate."
+    },
+    {
+      "type": "STOCK",
+      "name": "A Regolith Extraction Energy Signal",
+      "behavior": {
+        "initial_value": 0,
+        "non_negative": true
+      },
+      "description": "Generated energy_consumer element for A Regolith Extraction Energy Signal."
+    },
+    {
+      "type": "FLOW",
+      "name": "A Regolith Extraction Energy Signal Increase",
+      "from": null,
+      "to": "A Regolith Extraction Energy Signal",
+      "behavior": {
+        "value": "IfThenElse([A Regolith Extraction Pre Energy Rate] > [A Regolith Extraction Energy Signal], ([A Regolith Extraction Pre Energy Rate] - [A Regolith Extraction Energy Signal]) / [Regolith Extraction Energy Signal Adjustment Time], 0)",
+        "non_negative": true
+      },
+      "description": "Generated energy_consumer element for A Regolith Extraction Energy Signal Increase."
+    },
+    {
+      "type": "FLOW",
+      "name": "A Regolith Extraction Energy Signal Decrease",
+      "from": "A Regolith Extraction Energy Signal",
+      "to": null,
+      "behavior": {
+        "value": "IfThenElse([A Regolith Extraction Energy Signal] > [A Regolith Extraction Pre Energy Rate], ([A Regolith Extraction Energy Signal] - [A Regolith Extraction Pre Energy Rate]) / [Regolith Extraction Energy Signal Adjustment Time], 0)",
+        "non_negative": true
+      },
+      "description": "Generated energy_consumer element for A Regolith Extraction Energy Signal Decrease."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "A Regolith Extraction Requested Energy",
+      "behavior": {
+        "value": "IfThenElse([Process Energy Enabled] = 1, [A Regolith Extraction Energy Signal] * [Regolith Extraction Energy per Unit], 0)"
+      },
+      "description": "Generated energy_consumer element for A Regolith Extraction Requested Energy."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "A Regolith Extraction Allocated Energy",
+      "behavior": {
+        "value": "[A Regolith Extraction Requested Energy] * [A Energy Fulfillment Ratio]"
+      },
+      "description": "Generated energy_consumer element for A Regolith Extraction Allocated Energy."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "A Regolith Extraction Energy Fulfillment Ratio",
+      "behavior": {
+        "value": "IfThenElse([A Regolith Extraction Requested Energy] > 0.001, [A Regolith Extraction Allocated Energy] / [A Regolith Extraction Requested Energy], 1)"
+      },
+      "description": "Generated energy_consumer element for A Regolith Extraction Energy Fulfillment Ratio."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "A Power Resource Extraction Pre Energy Rate",
+      "behavior": {
+        "value": "IfThenElse([Deposits Enabled] = 1, [A Power Resource Deposit Unlimited Rate] / (1 + ([A Power Resource Deposit Unlimited Rate] / ([A Power Resource Proven Reserves] / [Power Resource Deposit Depletion Buffer Days] + 0.001)) ^ 8) ^ 0.125, IfThenElse([Power Resource Capital Enabled] = 1, [A Power Resource Mine Uncapped Output] / (1 + ([A Power Resource Mine Uncapped Output] / ([A Power Resource Mine Capacity] + 0.001)) ^ 8) ^ 0.125, IfThenElse([Power Resource Enabled] = 1, Max(0, ([A Power Resource Demand] + ([A Power Resource Target Inventory] - [A Power Resource Inventory]) / [Power Resource Extraction Adjustment Time]) * [Power Resource Extraction Headroom] * [A Power Resource Extraction Multiplier]), 0)))"
+      },
+      "description": "Generated energy_consumer element for A Power Resource Extraction Pre Energy Rate."
+    },
+    {
+      "type": "STOCK",
+      "name": "A Power Resource Extraction Energy Signal",
+      "behavior": {
+        "initial_value": 1373.679,
+        "non_negative": true
+      },
+      "description": "Generated energy_consumer element for A Power Resource Extraction Energy Signal."
+    },
+    {
+      "type": "FLOW",
+      "name": "A Power Resource Extraction Energy Signal Increase",
+      "from": null,
+      "to": "A Power Resource Extraction Energy Signal",
+      "behavior": {
+        "value": "IfThenElse([A Power Resource Extraction Pre Energy Rate] > [A Power Resource Extraction Energy Signal], ([A Power Resource Extraction Pre Energy Rate] - [A Power Resource Extraction Energy Signal]) / [Power Resource Extraction Energy Signal Adjustment Time], 0)",
+        "non_negative": true
+      },
+      "description": "Generated energy_consumer element for A Power Resource Extraction Energy Signal Increase."
+    },
+    {
+      "type": "FLOW",
+      "name": "A Power Resource Extraction Energy Signal Decrease",
+      "from": "A Power Resource Extraction Energy Signal",
+      "to": null,
+      "behavior": {
+        "value": "IfThenElse([A Power Resource Extraction Energy Signal] > [A Power Resource Extraction Pre Energy Rate], ([A Power Resource Extraction Energy Signal] - [A Power Resource Extraction Pre Energy Rate]) / [Power Resource Extraction Energy Signal Adjustment Time], 0)",
+        "non_negative": true
+      },
+      "description": "Generated energy_consumer element for A Power Resource Extraction Energy Signal Decrease."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "A Power Resource Extraction Requested Energy",
+      "behavior": {
+        "value": "IfThenElse([Process Energy Enabled] = 1, [A Power Resource Extraction Energy Signal] * [Power Resource Extraction Energy per Unit], 0)"
+      },
+      "description": "Generated energy_consumer element for A Power Resource Extraction Requested Energy."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "A Power Resource Extraction Allocated Energy",
+      "behavior": {
+        "value": "[A Power Resource Extraction Requested Energy] * [A Priority Energy Fulfillment Ratio]"
+      },
+      "description": "Generated energy_consumer element for A Power Resource Extraction Allocated Energy."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "A Power Resource Extraction Energy Fulfillment Ratio",
+      "behavior": {
+        "value": "IfThenElse([A Power Resource Extraction Requested Energy] > 0.001, [A Power Resource Extraction Allocated Energy] / [A Power Resource Extraction Requested Energy], 1)"
+      },
+      "description": "Generated energy_consumer element for A Power Resource Extraction Energy Fulfillment Ratio."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "A Capital Goods Pre Energy Rate",
+      "behavior": {
+        "value": "IfThenElse([Capital Goods Enabled] = 1, [A Desired Capital Goods Production] / (1 + ([A Desired Capital Goods Production] / ([A Capital Goods Production Capacity] + 0.001)) ^ 8) ^ 0.125 * [A Metal Inventory] / ([A Metal Inventory] + [A Metal Buffer]) * [A Electronics Inventory] / ([A Electronics Inventory] + [A Electronics Buffer]), 0)"
+      },
+      "description": "Generated energy_consumer element for A Capital Goods Pre Energy Rate."
+    },
+    {
+      "type": "STOCK",
+      "name": "A Capital Goods Energy Signal",
+      "behavior": {
+        "initial_value": 0,
+        "non_negative": true
+      },
+      "description": "Generated energy_consumer element for A Capital Goods Energy Signal."
+    },
+    {
+      "type": "FLOW",
+      "name": "A Capital Goods Energy Signal Increase",
+      "from": null,
+      "to": "A Capital Goods Energy Signal",
+      "behavior": {
+        "value": "IfThenElse([A Capital Goods Pre Energy Rate] > [A Capital Goods Energy Signal], ([A Capital Goods Pre Energy Rate] - [A Capital Goods Energy Signal]) / [Capital Goods Energy Signal Adjustment Time], 0)",
+        "non_negative": true
+      },
+      "description": "Generated energy_consumer element for A Capital Goods Energy Signal Increase."
+    },
+    {
+      "type": "FLOW",
+      "name": "A Capital Goods Energy Signal Decrease",
+      "from": "A Capital Goods Energy Signal",
+      "to": null,
+      "behavior": {
+        "value": "IfThenElse([A Capital Goods Energy Signal] > [A Capital Goods Pre Energy Rate], ([A Capital Goods Energy Signal] - [A Capital Goods Pre Energy Rate]) / [Capital Goods Energy Signal Adjustment Time], 0)",
+        "non_negative": true
+      },
+      "description": "Generated energy_consumer element for A Capital Goods Energy Signal Decrease."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "A Capital Goods Requested Energy",
+      "behavior": {
+        "value": "IfThenElse([Process Energy Enabled] = 1, [A Capital Goods Energy Signal] * [Capital Goods Energy per Unit], 0)"
+      },
+      "description": "Generated energy_consumer element for A Capital Goods Requested Energy."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "A Capital Goods Allocated Energy",
+      "behavior": {
+        "value": "[A Capital Goods Requested Energy] * [A Energy Fulfillment Ratio]"
+      },
+      "description": "Generated energy_consumer element for A Capital Goods Allocated Energy."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "A Capital Goods Energy Fulfillment Ratio",
+      "behavior": {
+        "value": "IfThenElse([A Capital Goods Requested Energy] > 0.001, [A Capital Goods Allocated Energy] / [A Capital Goods Requested Energy], 1)"
+      },
+      "description": "Generated energy_consumer element for A Capital Goods Energy Fulfillment Ratio."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "A Priority Requested Energy",
+      "behavior": {
+        "value": "[A Power Resource Extraction Requested Energy]"
+      },
+      "description": "Generated energy_consumer element for A Priority Requested Energy."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "A Priority Energy Fulfillment Ratio",
+      "behavior": {
+        "value": "IfThenElse([A Priority Requested Energy] > [A Available Generation], [A Available Generation] / ([A Priority Requested Energy] + 0.001), 1)"
+      },
+      "description": "Generated energy_consumer element for A Priority Energy Fulfillment Ratio."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "A Priority Allocated Energy",
+      "behavior": {
+        "value": "[A Priority Requested Energy] * [A Priority Energy Fulfillment Ratio]"
+      },
+      "description": "Generated energy_consumer element for A Priority Allocated Energy."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "B Mining Pre Energy Rate",
+      "behavior": {
+        "value": "IfThenElse([Deposits Enabled] = 1, [B Ore Deposit Unlimited Rate] / (1 + ([B Ore Deposit Unlimited Rate] / ([B Ore Proven Reserves] / [Ore Deposit Depletion Buffer Days] + 0.001)) ^ 8) ^ 0.125, [B Positive Desired Mining Rate] / (1 + ([B Positive Desired Mining Rate] / ([B Effective Mining Capacity] + 0.001)) ^ 8) ^ 0.125)"
+      },
+      "description": "Generated energy_consumer element for B Mining Pre Energy Rate."
+    },
+    {
+      "type": "STOCK",
+      "name": "B Mining Energy Signal",
+      "behavior": {
+        "initial_value": 8.373,
+        "non_negative": true
+      },
+      "description": "Generated energy_consumer element for B Mining Energy Signal."
+    },
+    {
+      "type": "FLOW",
+      "name": "B Mining Energy Signal Increase",
+      "from": null,
+      "to": "B Mining Energy Signal",
+      "behavior": {
+        "value": "IfThenElse([B Mining Pre Energy Rate] > [B Mining Energy Signal], ([B Mining Pre Energy Rate] - [B Mining Energy Signal]) / [Mining Energy Signal Adjustment Time], 0)",
+        "non_negative": true
+      },
+      "description": "Generated energy_consumer element for B Mining Energy Signal Increase."
+    },
+    {
+      "type": "FLOW",
+      "name": "B Mining Energy Signal Decrease",
+      "from": "B Mining Energy Signal",
+      "to": null,
+      "behavior": {
+        "value": "IfThenElse([B Mining Energy Signal] > [B Mining Pre Energy Rate], ([B Mining Energy Signal] - [B Mining Pre Energy Rate]) / [Mining Energy Signal Adjustment Time], 0)",
+        "non_negative": true
+      },
+      "description": "Generated energy_consumer element for B Mining Energy Signal Decrease."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "B Mining Requested Energy",
+      "behavior": {
+        "value": "IfThenElse([Process Energy Enabled] = 1, [B Mining Energy Signal] * [Mining Energy per Unit], 0)"
+      },
+      "description": "Generated energy_consumer element for B Mining Requested Energy."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "B Mining Allocated Energy",
+      "behavior": {
+        "value": "[B Mining Requested Energy] * [B Energy Fulfillment Ratio]"
+      },
+      "description": "Generated energy_consumer element for B Mining Allocated Energy."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "B Mining Energy Fulfillment Ratio",
+      "behavior": {
+        "value": "IfThenElse([B Mining Requested Energy] > 0.001, [B Mining Allocated Energy] / [B Mining Requested Energy], 1)"
+      },
+      "description": "Generated energy_consumer element for B Mining Energy Fulfillment Ratio."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "B Regolith Extraction Pre Energy Rate",
+      "behavior": {
+        "value": "IfThenElse([Deposits Enabled] = 1, [B Regolith Deposit Unlimited Rate] / (1 + ([B Regolith Deposit Unlimited Rate] / ([B Regolith Proven Reserves] / [Regolith Deposit Depletion Buffer Days] + 0.001)) ^ 8) ^ 0.125, IfThenElse([Construction Materials Enabled] = 1, [B Desired Regolith Extraction] / (1 + ([B Desired Regolith Extraction] / ([B Regolith Extraction Capacity] + 0.001)) ^ 8) ^ 0.125, 0))"
+      },
+      "description": "Generated energy_consumer element for B Regolith Extraction Pre Energy Rate."
+    },
+    {
+      "type": "STOCK",
+      "name": "B Regolith Extraction Energy Signal",
+      "behavior": {
+        "initial_value": 0,
+        "non_negative": true
+      },
+      "description": "Generated energy_consumer element for B Regolith Extraction Energy Signal."
+    },
+    {
+      "type": "FLOW",
+      "name": "B Regolith Extraction Energy Signal Increase",
+      "from": null,
+      "to": "B Regolith Extraction Energy Signal",
+      "behavior": {
+        "value": "IfThenElse([B Regolith Extraction Pre Energy Rate] > [B Regolith Extraction Energy Signal], ([B Regolith Extraction Pre Energy Rate] - [B Regolith Extraction Energy Signal]) / [Regolith Extraction Energy Signal Adjustment Time], 0)",
+        "non_negative": true
+      },
+      "description": "Generated energy_consumer element for B Regolith Extraction Energy Signal Increase."
+    },
+    {
+      "type": "FLOW",
+      "name": "B Regolith Extraction Energy Signal Decrease",
+      "from": "B Regolith Extraction Energy Signal",
+      "to": null,
+      "behavior": {
+        "value": "IfThenElse([B Regolith Extraction Energy Signal] > [B Regolith Extraction Pre Energy Rate], ([B Regolith Extraction Energy Signal] - [B Regolith Extraction Pre Energy Rate]) / [Regolith Extraction Energy Signal Adjustment Time], 0)",
+        "non_negative": true
+      },
+      "description": "Generated energy_consumer element for B Regolith Extraction Energy Signal Decrease."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "B Regolith Extraction Requested Energy",
+      "behavior": {
+        "value": "IfThenElse([Process Energy Enabled] = 1, [B Regolith Extraction Energy Signal] * [Regolith Extraction Energy per Unit], 0)"
+      },
+      "description": "Generated energy_consumer element for B Regolith Extraction Requested Energy."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "B Regolith Extraction Allocated Energy",
+      "behavior": {
+        "value": "[B Regolith Extraction Requested Energy] * [B Energy Fulfillment Ratio]"
+      },
+      "description": "Generated energy_consumer element for B Regolith Extraction Allocated Energy."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "B Regolith Extraction Energy Fulfillment Ratio",
+      "behavior": {
+        "value": "IfThenElse([B Regolith Extraction Requested Energy] > 0.001, [B Regolith Extraction Allocated Energy] / [B Regolith Extraction Requested Energy], 1)"
+      },
+      "description": "Generated energy_consumer element for B Regolith Extraction Energy Fulfillment Ratio."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "B Power Resource Extraction Pre Energy Rate",
+      "behavior": {
+        "value": "IfThenElse([Deposits Enabled] = 1, [B Power Resource Deposit Unlimited Rate] / (1 + ([B Power Resource Deposit Unlimited Rate] / ([B Power Resource Proven Reserves] / [Power Resource Deposit Depletion Buffer Days] + 0.001)) ^ 8) ^ 0.125, IfThenElse([Power Resource Capital Enabled] = 1, [B Power Resource Mine Uncapped Output] / (1 + ([B Power Resource Mine Uncapped Output] / ([B Power Resource Mine Capacity] + 0.001)) ^ 8) ^ 0.125, IfThenElse([Power Resource Enabled] = 1, Max(0, ([B Power Resource Demand] + ([B Power Resource Target Inventory] - [B Power Resource Inventory]) / [Power Resource Extraction Adjustment Time]) * [Power Resource Extraction Headroom] * [B Power Resource Extraction Multiplier]), 0)))"
+      },
+      "description": "Generated energy_consumer element for B Power Resource Extraction Pre Energy Rate."
+    },
+    {
+      "type": "STOCK",
+      "name": "B Power Resource Extraction Energy Signal",
+      "behavior": {
+        "initial_value": 30.983,
+        "non_negative": true
+      },
+      "description": "Generated energy_consumer element for B Power Resource Extraction Energy Signal."
+    },
+    {
+      "type": "FLOW",
+      "name": "B Power Resource Extraction Energy Signal Increase",
+      "from": null,
+      "to": "B Power Resource Extraction Energy Signal",
+      "behavior": {
+        "value": "IfThenElse([B Power Resource Extraction Pre Energy Rate] > [B Power Resource Extraction Energy Signal], ([B Power Resource Extraction Pre Energy Rate] - [B Power Resource Extraction Energy Signal]) / [Power Resource Extraction Energy Signal Adjustment Time], 0)",
+        "non_negative": true
+      },
+      "description": "Generated energy_consumer element for B Power Resource Extraction Energy Signal Increase."
+    },
+    {
+      "type": "FLOW",
+      "name": "B Power Resource Extraction Energy Signal Decrease",
+      "from": "B Power Resource Extraction Energy Signal",
+      "to": null,
+      "behavior": {
+        "value": "IfThenElse([B Power Resource Extraction Energy Signal] > [B Power Resource Extraction Pre Energy Rate], ([B Power Resource Extraction Energy Signal] - [B Power Resource Extraction Pre Energy Rate]) / [Power Resource Extraction Energy Signal Adjustment Time], 0)",
+        "non_negative": true
+      },
+      "description": "Generated energy_consumer element for B Power Resource Extraction Energy Signal Decrease."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "B Power Resource Extraction Requested Energy",
+      "behavior": {
+        "value": "IfThenElse([Process Energy Enabled] = 1, [B Power Resource Extraction Energy Signal] * [Power Resource Extraction Energy per Unit], 0)"
+      },
+      "description": "Generated energy_consumer element for B Power Resource Extraction Requested Energy."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "B Power Resource Extraction Allocated Energy",
+      "behavior": {
+        "value": "[B Power Resource Extraction Requested Energy] * [B Priority Energy Fulfillment Ratio]"
+      },
+      "description": "Generated energy_consumer element for B Power Resource Extraction Allocated Energy."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "B Power Resource Extraction Energy Fulfillment Ratio",
+      "behavior": {
+        "value": "IfThenElse([B Power Resource Extraction Requested Energy] > 0.001, [B Power Resource Extraction Allocated Energy] / [B Power Resource Extraction Requested Energy], 1)"
+      },
+      "description": "Generated energy_consumer element for B Power Resource Extraction Energy Fulfillment Ratio."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "B Capital Goods Pre Energy Rate",
+      "behavior": {
+        "value": "IfThenElse([Capital Goods Enabled] = 1, [B Desired Capital Goods Production] / (1 + ([B Desired Capital Goods Production] / ([B Capital Goods Production Capacity] + 0.001)) ^ 8) ^ 0.125 * [B Metal Inventory] / ([B Metal Inventory] + [B Metal Buffer]) * [B Electronics Inventory] / ([B Electronics Inventory] + [B Electronics Buffer]), 0)"
+      },
+      "description": "Generated energy_consumer element for B Capital Goods Pre Energy Rate."
+    },
+    {
+      "type": "STOCK",
+      "name": "B Capital Goods Energy Signal",
+      "behavior": {
+        "initial_value": 0,
+        "non_negative": true
+      },
+      "description": "Generated energy_consumer element for B Capital Goods Energy Signal."
+    },
+    {
+      "type": "FLOW",
+      "name": "B Capital Goods Energy Signal Increase",
+      "from": null,
+      "to": "B Capital Goods Energy Signal",
+      "behavior": {
+        "value": "IfThenElse([B Capital Goods Pre Energy Rate] > [B Capital Goods Energy Signal], ([B Capital Goods Pre Energy Rate] - [B Capital Goods Energy Signal]) / [Capital Goods Energy Signal Adjustment Time], 0)",
+        "non_negative": true
+      },
+      "description": "Generated energy_consumer element for B Capital Goods Energy Signal Increase."
+    },
+    {
+      "type": "FLOW",
+      "name": "B Capital Goods Energy Signal Decrease",
+      "from": "B Capital Goods Energy Signal",
+      "to": null,
+      "behavior": {
+        "value": "IfThenElse([B Capital Goods Energy Signal] > [B Capital Goods Pre Energy Rate], ([B Capital Goods Energy Signal] - [B Capital Goods Pre Energy Rate]) / [Capital Goods Energy Signal Adjustment Time], 0)",
+        "non_negative": true
+      },
+      "description": "Generated energy_consumer element for B Capital Goods Energy Signal Decrease."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "B Capital Goods Requested Energy",
+      "behavior": {
+        "value": "IfThenElse([Process Energy Enabled] = 1, [B Capital Goods Energy Signal] * [Capital Goods Energy per Unit], 0)"
+      },
+      "description": "Generated energy_consumer element for B Capital Goods Requested Energy."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "B Capital Goods Allocated Energy",
+      "behavior": {
+        "value": "[B Capital Goods Requested Energy] * [B Energy Fulfillment Ratio]"
+      },
+      "description": "Generated energy_consumer element for B Capital Goods Allocated Energy."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "B Capital Goods Energy Fulfillment Ratio",
+      "behavior": {
+        "value": "IfThenElse([B Capital Goods Requested Energy] > 0.001, [B Capital Goods Allocated Energy] / [B Capital Goods Requested Energy], 1)"
+      },
+      "description": "Generated energy_consumer element for B Capital Goods Energy Fulfillment Ratio."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "B Priority Requested Energy",
+      "behavior": {
+        "value": "[B Power Resource Extraction Requested Energy]"
+      },
+      "description": "Generated energy_consumer element for B Priority Requested Energy."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "B Priority Energy Fulfillment Ratio",
+      "behavior": {
+        "value": "IfThenElse([B Priority Requested Energy] > [B Available Generation], [B Available Generation] / ([B Priority Requested Energy] + 0.001), 1)"
+      },
+      "description": "Generated energy_consumer element for B Priority Energy Fulfillment Ratio."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "B Priority Allocated Energy",
+      "behavior": {
+        "value": "[B Priority Requested Energy] * [B Priority Energy Fulfillment Ratio]"
+      },
+      "description": "Generated energy_consumer element for B Priority Allocated Energy."
+    },
+    {
+      "type": "LINK",
+      "from": "Deposits Enabled",
+      "to": "A Mining Pre Energy Rate"
+    },
+    {
+      "type": "LINK",
+      "from": "A Ore Deposit Unlimited Rate",
+      "to": "A Mining Pre Energy Rate"
+    },
+    {
+      "type": "LINK",
+      "from": "A Ore Proven Reserves",
+      "to": "A Mining Pre Energy Rate"
+    },
+    {
+      "type": "LINK",
+      "from": "Ore Deposit Depletion Buffer Days",
+      "to": "A Mining Pre Energy Rate"
+    },
+    {
+      "type": "LINK",
+      "from": "A Positive Desired Mining Rate",
+      "to": "A Mining Pre Energy Rate"
+    },
+    {
+      "type": "LINK",
+      "from": "A Effective Mining Capacity",
+      "to": "A Mining Pre Energy Rate"
+    },
+    {
+      "type": "LINK",
+      "from": "A Mining Pre Energy Rate",
+      "to": "A Mining Energy Signal Increase"
+    },
+    {
+      "type": "LINK",
+      "from": "A Mining Energy Signal",
+      "to": "A Mining Energy Signal Increase"
+    },
+    {
+      "type": "LINK",
+      "from": "Mining Energy Signal Adjustment Time",
+      "to": "A Mining Energy Signal Increase"
+    },
+    {
+      "type": "LINK",
+      "from": "A Mining Energy Signal",
+      "to": "A Mining Energy Signal Decrease"
+    },
+    {
+      "type": "LINK",
+      "from": "A Mining Pre Energy Rate",
+      "to": "A Mining Energy Signal Decrease"
+    },
+    {
+      "type": "LINK",
+      "from": "Mining Energy Signal Adjustment Time",
+      "to": "A Mining Energy Signal Decrease"
+    },
+    {
+      "type": "LINK",
+      "from": "Process Energy Enabled",
+      "to": "A Mining Requested Energy"
+    },
+    {
+      "type": "LINK",
+      "from": "A Mining Energy Signal",
+      "to": "A Mining Requested Energy"
+    },
+    {
+      "type": "LINK",
+      "from": "Mining Energy per Unit",
+      "to": "A Mining Requested Energy"
+    },
+    {
+      "type": "LINK",
+      "from": "A Mining Requested Energy",
+      "to": "A Mining Allocated Energy"
+    },
+    {
+      "type": "LINK",
+      "from": "A Energy Fulfillment Ratio",
+      "to": "A Mining Allocated Energy"
+    },
+    {
+      "type": "LINK",
+      "from": "A Mining Requested Energy",
+      "to": "A Mining Energy Fulfillment Ratio"
+    },
+    {
+      "type": "LINK",
+      "from": "A Mining Allocated Energy",
+      "to": "A Mining Energy Fulfillment Ratio"
+    },
+    {
+      "type": "LINK",
+      "from": "Deposits Enabled",
+      "to": "A Regolith Extraction Pre Energy Rate"
+    },
+    {
+      "type": "LINK",
+      "from": "A Regolith Deposit Unlimited Rate",
+      "to": "A Regolith Extraction Pre Energy Rate"
+    },
+    {
+      "type": "LINK",
+      "from": "A Regolith Proven Reserves",
+      "to": "A Regolith Extraction Pre Energy Rate"
+    },
+    {
+      "type": "LINK",
+      "from": "Regolith Deposit Depletion Buffer Days",
+      "to": "A Regolith Extraction Pre Energy Rate"
+    },
+    {
+      "type": "LINK",
+      "from": "Construction Materials Enabled",
+      "to": "A Regolith Extraction Pre Energy Rate"
+    },
+    {
+      "type": "LINK",
+      "from": "A Desired Regolith Extraction",
+      "to": "A Regolith Extraction Pre Energy Rate"
+    },
+    {
+      "type": "LINK",
+      "from": "A Regolith Extraction Capacity",
+      "to": "A Regolith Extraction Pre Energy Rate"
+    },
+    {
+      "type": "LINK",
+      "from": "A Regolith Extraction Pre Energy Rate",
+      "to": "A Regolith Extraction Energy Signal Increase"
+    },
+    {
+      "type": "LINK",
+      "from": "A Regolith Extraction Energy Signal",
+      "to": "A Regolith Extraction Energy Signal Increase"
+    },
+    {
+      "type": "LINK",
+      "from": "Regolith Extraction Energy Signal Adjustment Time",
+      "to": "A Regolith Extraction Energy Signal Increase"
+    },
+    {
+      "type": "LINK",
+      "from": "A Regolith Extraction Energy Signal",
+      "to": "A Regolith Extraction Energy Signal Decrease"
+    },
+    {
+      "type": "LINK",
+      "from": "A Regolith Extraction Pre Energy Rate",
+      "to": "A Regolith Extraction Energy Signal Decrease"
+    },
+    {
+      "type": "LINK",
+      "from": "Regolith Extraction Energy Signal Adjustment Time",
+      "to": "A Regolith Extraction Energy Signal Decrease"
+    },
+    {
+      "type": "LINK",
+      "from": "Process Energy Enabled",
+      "to": "A Regolith Extraction Requested Energy"
+    },
+    {
+      "type": "LINK",
+      "from": "A Regolith Extraction Energy Signal",
+      "to": "A Regolith Extraction Requested Energy"
+    },
+    {
+      "type": "LINK",
+      "from": "Regolith Extraction Energy per Unit",
+      "to": "A Regolith Extraction Requested Energy"
+    },
+    {
+      "type": "LINK",
+      "from": "A Regolith Extraction Requested Energy",
+      "to": "A Regolith Extraction Allocated Energy"
+    },
+    {
+      "type": "LINK",
+      "from": "A Energy Fulfillment Ratio",
+      "to": "A Regolith Extraction Allocated Energy"
+    },
+    {
+      "type": "LINK",
+      "from": "A Regolith Extraction Requested Energy",
+      "to": "A Regolith Extraction Energy Fulfillment Ratio"
+    },
+    {
+      "type": "LINK",
+      "from": "A Regolith Extraction Allocated Energy",
+      "to": "A Regolith Extraction Energy Fulfillment Ratio"
+    },
+    {
+      "type": "LINK",
+      "from": "Deposits Enabled",
+      "to": "A Power Resource Extraction Pre Energy Rate"
+    },
+    {
+      "type": "LINK",
+      "from": "A Power Resource Deposit Unlimited Rate",
+      "to": "A Power Resource Extraction Pre Energy Rate"
+    },
+    {
+      "type": "LINK",
+      "from": "A Power Resource Proven Reserves",
+      "to": "A Power Resource Extraction Pre Energy Rate"
+    },
+    {
+      "type": "LINK",
+      "from": "Power Resource Deposit Depletion Buffer Days",
+      "to": "A Power Resource Extraction Pre Energy Rate"
+    },
+    {
+      "type": "LINK",
+      "from": "Power Resource Capital Enabled",
+      "to": "A Power Resource Extraction Pre Energy Rate"
+    },
+    {
+      "type": "LINK",
+      "from": "A Power Resource Mine Uncapped Output",
+      "to": "A Power Resource Extraction Pre Energy Rate"
+    },
+    {
+      "type": "LINK",
+      "from": "A Power Resource Mine Capacity",
+      "to": "A Power Resource Extraction Pre Energy Rate"
+    },
+    {
+      "type": "LINK",
+      "from": "Power Resource Enabled",
+      "to": "A Power Resource Extraction Pre Energy Rate"
+    },
+    {
+      "type": "LINK",
+      "from": "A Power Resource Demand",
+      "to": "A Power Resource Extraction Pre Energy Rate"
+    },
+    {
+      "type": "LINK",
+      "from": "A Power Resource Target Inventory",
+      "to": "A Power Resource Extraction Pre Energy Rate"
+    },
+    {
+      "type": "LINK",
+      "from": "A Power Resource Inventory",
+      "to": "A Power Resource Extraction Pre Energy Rate"
+    },
+    {
+      "type": "LINK",
+      "from": "Power Resource Extraction Adjustment Time",
+      "to": "A Power Resource Extraction Pre Energy Rate"
+    },
+    {
+      "type": "LINK",
+      "from": "Power Resource Extraction Headroom",
+      "to": "A Power Resource Extraction Pre Energy Rate"
+    },
+    {
+      "type": "LINK",
+      "from": "A Power Resource Extraction Multiplier",
+      "to": "A Power Resource Extraction Pre Energy Rate"
+    },
+    {
+      "type": "LINK",
+      "from": "A Power Resource Extraction Pre Energy Rate",
+      "to": "A Power Resource Extraction Energy Signal Increase"
+    },
+    {
+      "type": "LINK",
+      "from": "A Power Resource Extraction Energy Signal",
+      "to": "A Power Resource Extraction Energy Signal Increase"
+    },
+    {
+      "type": "LINK",
+      "from": "Power Resource Extraction Energy Signal Adjustment Time",
+      "to": "A Power Resource Extraction Energy Signal Increase"
+    },
+    {
+      "type": "LINK",
+      "from": "A Power Resource Extraction Energy Signal",
+      "to": "A Power Resource Extraction Energy Signal Decrease"
+    },
+    {
+      "type": "LINK",
+      "from": "A Power Resource Extraction Pre Energy Rate",
+      "to": "A Power Resource Extraction Energy Signal Decrease"
+    },
+    {
+      "type": "LINK",
+      "from": "Power Resource Extraction Energy Signal Adjustment Time",
+      "to": "A Power Resource Extraction Energy Signal Decrease"
+    },
+    {
+      "type": "LINK",
+      "from": "Process Energy Enabled",
+      "to": "A Power Resource Extraction Requested Energy"
+    },
+    {
+      "type": "LINK",
+      "from": "A Power Resource Extraction Energy Signal",
+      "to": "A Power Resource Extraction Requested Energy"
+    },
+    {
+      "type": "LINK",
+      "from": "Power Resource Extraction Energy per Unit",
+      "to": "A Power Resource Extraction Requested Energy"
+    },
+    {
+      "type": "LINK",
+      "from": "A Power Resource Extraction Requested Energy",
+      "to": "A Power Resource Extraction Allocated Energy"
+    },
+    {
+      "type": "LINK",
+      "from": "A Priority Energy Fulfillment Ratio",
+      "to": "A Power Resource Extraction Allocated Energy"
+    },
+    {
+      "type": "LINK",
+      "from": "A Power Resource Extraction Requested Energy",
+      "to": "A Power Resource Extraction Energy Fulfillment Ratio"
+    },
+    {
+      "type": "LINK",
+      "from": "A Power Resource Extraction Allocated Energy",
+      "to": "A Power Resource Extraction Energy Fulfillment Ratio"
+    },
+    {
+      "type": "LINK",
+      "from": "Capital Goods Enabled",
+      "to": "A Capital Goods Pre Energy Rate"
+    },
+    {
+      "type": "LINK",
+      "from": "A Desired Capital Goods Production",
+      "to": "A Capital Goods Pre Energy Rate"
+    },
+    {
+      "type": "LINK",
+      "from": "A Capital Goods Production Capacity",
+      "to": "A Capital Goods Pre Energy Rate"
+    },
+    {
+      "type": "LINK",
+      "from": "A Metal Inventory",
+      "to": "A Capital Goods Pre Energy Rate"
+    },
+    {
+      "type": "LINK",
+      "from": "A Metal Buffer",
+      "to": "A Capital Goods Pre Energy Rate"
+    },
+    {
+      "type": "LINK",
+      "from": "A Electronics Inventory",
+      "to": "A Capital Goods Pre Energy Rate"
+    },
+    {
+      "type": "LINK",
+      "from": "A Electronics Buffer",
+      "to": "A Capital Goods Pre Energy Rate"
+    },
+    {
+      "type": "LINK",
+      "from": "A Capital Goods Pre Energy Rate",
+      "to": "A Capital Goods Energy Signal Increase"
+    },
+    {
+      "type": "LINK",
+      "from": "A Capital Goods Energy Signal",
+      "to": "A Capital Goods Energy Signal Increase"
+    },
+    {
+      "type": "LINK",
+      "from": "Capital Goods Energy Signal Adjustment Time",
+      "to": "A Capital Goods Energy Signal Increase"
+    },
+    {
+      "type": "LINK",
+      "from": "A Capital Goods Energy Signal",
+      "to": "A Capital Goods Energy Signal Decrease"
+    },
+    {
+      "type": "LINK",
+      "from": "A Capital Goods Pre Energy Rate",
+      "to": "A Capital Goods Energy Signal Decrease"
+    },
+    {
+      "type": "LINK",
+      "from": "Capital Goods Energy Signal Adjustment Time",
+      "to": "A Capital Goods Energy Signal Decrease"
+    },
+    {
+      "type": "LINK",
+      "from": "Process Energy Enabled",
+      "to": "A Capital Goods Requested Energy"
+    },
+    {
+      "type": "LINK",
+      "from": "A Capital Goods Energy Signal",
+      "to": "A Capital Goods Requested Energy"
+    },
+    {
+      "type": "LINK",
+      "from": "Capital Goods Energy per Unit",
+      "to": "A Capital Goods Requested Energy"
+    },
+    {
+      "type": "LINK",
+      "from": "A Capital Goods Requested Energy",
+      "to": "A Capital Goods Allocated Energy"
+    },
+    {
+      "type": "LINK",
+      "from": "A Energy Fulfillment Ratio",
+      "to": "A Capital Goods Allocated Energy"
+    },
+    {
+      "type": "LINK",
+      "from": "A Capital Goods Requested Energy",
+      "to": "A Capital Goods Energy Fulfillment Ratio"
+    },
+    {
+      "type": "LINK",
+      "from": "A Capital Goods Allocated Energy",
+      "to": "A Capital Goods Energy Fulfillment Ratio"
+    },
+    {
+      "type": "LINK",
+      "from": "A Power Resource Extraction Requested Energy",
+      "to": "A Priority Requested Energy"
+    },
+    {
+      "type": "LINK",
+      "from": "A Priority Requested Energy",
+      "to": "A Priority Energy Fulfillment Ratio"
+    },
+    {
+      "type": "LINK",
+      "from": "A Available Generation",
+      "to": "A Priority Energy Fulfillment Ratio"
+    },
+    {
+      "type": "LINK",
+      "from": "A Priority Requested Energy",
+      "to": "A Priority Allocated Energy"
+    },
+    {
+      "type": "LINK",
+      "from": "A Priority Energy Fulfillment Ratio",
+      "to": "A Priority Allocated Energy"
+    },
+    {
+      "type": "LINK",
+      "from": "Deposits Enabled",
+      "to": "B Mining Pre Energy Rate"
+    },
+    {
+      "type": "LINK",
+      "from": "B Ore Deposit Unlimited Rate",
+      "to": "B Mining Pre Energy Rate"
+    },
+    {
+      "type": "LINK",
+      "from": "B Ore Proven Reserves",
+      "to": "B Mining Pre Energy Rate"
+    },
+    {
+      "type": "LINK",
+      "from": "Ore Deposit Depletion Buffer Days",
+      "to": "B Mining Pre Energy Rate"
+    },
+    {
+      "type": "LINK",
+      "from": "B Positive Desired Mining Rate",
+      "to": "B Mining Pre Energy Rate"
+    },
+    {
+      "type": "LINK",
+      "from": "B Effective Mining Capacity",
+      "to": "B Mining Pre Energy Rate"
+    },
+    {
+      "type": "LINK",
+      "from": "B Mining Pre Energy Rate",
+      "to": "B Mining Energy Signal Increase"
+    },
+    {
+      "type": "LINK",
+      "from": "B Mining Energy Signal",
+      "to": "B Mining Energy Signal Increase"
+    },
+    {
+      "type": "LINK",
+      "from": "Mining Energy Signal Adjustment Time",
+      "to": "B Mining Energy Signal Increase"
+    },
+    {
+      "type": "LINK",
+      "from": "B Mining Energy Signal",
+      "to": "B Mining Energy Signal Decrease"
+    },
+    {
+      "type": "LINK",
+      "from": "B Mining Pre Energy Rate",
+      "to": "B Mining Energy Signal Decrease"
+    },
+    {
+      "type": "LINK",
+      "from": "Mining Energy Signal Adjustment Time",
+      "to": "B Mining Energy Signal Decrease"
+    },
+    {
+      "type": "LINK",
+      "from": "Process Energy Enabled",
+      "to": "B Mining Requested Energy"
+    },
+    {
+      "type": "LINK",
+      "from": "B Mining Energy Signal",
+      "to": "B Mining Requested Energy"
+    },
+    {
+      "type": "LINK",
+      "from": "Mining Energy per Unit",
+      "to": "B Mining Requested Energy"
+    },
+    {
+      "type": "LINK",
+      "from": "B Mining Requested Energy",
+      "to": "B Mining Allocated Energy"
+    },
+    {
+      "type": "LINK",
+      "from": "B Energy Fulfillment Ratio",
+      "to": "B Mining Allocated Energy"
+    },
+    {
+      "type": "LINK",
+      "from": "B Mining Requested Energy",
+      "to": "B Mining Energy Fulfillment Ratio"
+    },
+    {
+      "type": "LINK",
+      "from": "B Mining Allocated Energy",
+      "to": "B Mining Energy Fulfillment Ratio"
+    },
+    {
+      "type": "LINK",
+      "from": "Deposits Enabled",
+      "to": "B Regolith Extraction Pre Energy Rate"
+    },
+    {
+      "type": "LINK",
+      "from": "B Regolith Deposit Unlimited Rate",
+      "to": "B Regolith Extraction Pre Energy Rate"
+    },
+    {
+      "type": "LINK",
+      "from": "B Regolith Proven Reserves",
+      "to": "B Regolith Extraction Pre Energy Rate"
+    },
+    {
+      "type": "LINK",
+      "from": "Regolith Deposit Depletion Buffer Days",
+      "to": "B Regolith Extraction Pre Energy Rate"
+    },
+    {
+      "type": "LINK",
+      "from": "Construction Materials Enabled",
+      "to": "B Regolith Extraction Pre Energy Rate"
+    },
+    {
+      "type": "LINK",
+      "from": "B Desired Regolith Extraction",
+      "to": "B Regolith Extraction Pre Energy Rate"
+    },
+    {
+      "type": "LINK",
+      "from": "B Regolith Extraction Capacity",
+      "to": "B Regolith Extraction Pre Energy Rate"
+    },
+    {
+      "type": "LINK",
+      "from": "B Regolith Extraction Pre Energy Rate",
+      "to": "B Regolith Extraction Energy Signal Increase"
+    },
+    {
+      "type": "LINK",
+      "from": "B Regolith Extraction Energy Signal",
+      "to": "B Regolith Extraction Energy Signal Increase"
+    },
+    {
+      "type": "LINK",
+      "from": "Regolith Extraction Energy Signal Adjustment Time",
+      "to": "B Regolith Extraction Energy Signal Increase"
+    },
+    {
+      "type": "LINK",
+      "from": "B Regolith Extraction Energy Signal",
+      "to": "B Regolith Extraction Energy Signal Decrease"
+    },
+    {
+      "type": "LINK",
+      "from": "B Regolith Extraction Pre Energy Rate",
+      "to": "B Regolith Extraction Energy Signal Decrease"
+    },
+    {
+      "type": "LINK",
+      "from": "Regolith Extraction Energy Signal Adjustment Time",
+      "to": "B Regolith Extraction Energy Signal Decrease"
+    },
+    {
+      "type": "LINK",
+      "from": "Process Energy Enabled",
+      "to": "B Regolith Extraction Requested Energy"
+    },
+    {
+      "type": "LINK",
+      "from": "B Regolith Extraction Energy Signal",
+      "to": "B Regolith Extraction Requested Energy"
+    },
+    {
+      "type": "LINK",
+      "from": "Regolith Extraction Energy per Unit",
+      "to": "B Regolith Extraction Requested Energy"
+    },
+    {
+      "type": "LINK",
+      "from": "B Regolith Extraction Requested Energy",
+      "to": "B Regolith Extraction Allocated Energy"
+    },
+    {
+      "type": "LINK",
+      "from": "B Energy Fulfillment Ratio",
+      "to": "B Regolith Extraction Allocated Energy"
+    },
+    {
+      "type": "LINK",
+      "from": "B Regolith Extraction Requested Energy",
+      "to": "B Regolith Extraction Energy Fulfillment Ratio"
+    },
+    {
+      "type": "LINK",
+      "from": "B Regolith Extraction Allocated Energy",
+      "to": "B Regolith Extraction Energy Fulfillment Ratio"
+    },
+    {
+      "type": "LINK",
+      "from": "Deposits Enabled",
+      "to": "B Power Resource Extraction Pre Energy Rate"
+    },
+    {
+      "type": "LINK",
+      "from": "B Power Resource Deposit Unlimited Rate",
+      "to": "B Power Resource Extraction Pre Energy Rate"
+    },
+    {
+      "type": "LINK",
+      "from": "B Power Resource Proven Reserves",
+      "to": "B Power Resource Extraction Pre Energy Rate"
+    },
+    {
+      "type": "LINK",
+      "from": "Power Resource Deposit Depletion Buffer Days",
+      "to": "B Power Resource Extraction Pre Energy Rate"
+    },
+    {
+      "type": "LINK",
+      "from": "Power Resource Capital Enabled",
+      "to": "B Power Resource Extraction Pre Energy Rate"
+    },
+    {
+      "type": "LINK",
+      "from": "B Power Resource Mine Uncapped Output",
+      "to": "B Power Resource Extraction Pre Energy Rate"
+    },
+    {
+      "type": "LINK",
+      "from": "B Power Resource Mine Capacity",
+      "to": "B Power Resource Extraction Pre Energy Rate"
+    },
+    {
+      "type": "LINK",
+      "from": "Power Resource Enabled",
+      "to": "B Power Resource Extraction Pre Energy Rate"
+    },
+    {
+      "type": "LINK",
+      "from": "B Power Resource Demand",
+      "to": "B Power Resource Extraction Pre Energy Rate"
+    },
+    {
+      "type": "LINK",
+      "from": "B Power Resource Target Inventory",
+      "to": "B Power Resource Extraction Pre Energy Rate"
+    },
+    {
+      "type": "LINK",
+      "from": "B Power Resource Inventory",
+      "to": "B Power Resource Extraction Pre Energy Rate"
+    },
+    {
+      "type": "LINK",
+      "from": "Power Resource Extraction Adjustment Time",
+      "to": "B Power Resource Extraction Pre Energy Rate"
+    },
+    {
+      "type": "LINK",
+      "from": "Power Resource Extraction Headroom",
+      "to": "B Power Resource Extraction Pre Energy Rate"
+    },
+    {
+      "type": "LINK",
+      "from": "B Power Resource Extraction Multiplier",
+      "to": "B Power Resource Extraction Pre Energy Rate"
+    },
+    {
+      "type": "LINK",
+      "from": "B Power Resource Extraction Pre Energy Rate",
+      "to": "B Power Resource Extraction Energy Signal Increase"
+    },
+    {
+      "type": "LINK",
+      "from": "B Power Resource Extraction Energy Signal",
+      "to": "B Power Resource Extraction Energy Signal Increase"
+    },
+    {
+      "type": "LINK",
+      "from": "Power Resource Extraction Energy Signal Adjustment Time",
+      "to": "B Power Resource Extraction Energy Signal Increase"
+    },
+    {
+      "type": "LINK",
+      "from": "B Power Resource Extraction Energy Signal",
+      "to": "B Power Resource Extraction Energy Signal Decrease"
+    },
+    {
+      "type": "LINK",
+      "from": "B Power Resource Extraction Pre Energy Rate",
+      "to": "B Power Resource Extraction Energy Signal Decrease"
+    },
+    {
+      "type": "LINK",
+      "from": "Power Resource Extraction Energy Signal Adjustment Time",
+      "to": "B Power Resource Extraction Energy Signal Decrease"
+    },
+    {
+      "type": "LINK",
+      "from": "Process Energy Enabled",
+      "to": "B Power Resource Extraction Requested Energy"
+    },
+    {
+      "type": "LINK",
+      "from": "B Power Resource Extraction Energy Signal",
+      "to": "B Power Resource Extraction Requested Energy"
+    },
+    {
+      "type": "LINK",
+      "from": "Power Resource Extraction Energy per Unit",
+      "to": "B Power Resource Extraction Requested Energy"
+    },
+    {
+      "type": "LINK",
+      "from": "B Power Resource Extraction Requested Energy",
+      "to": "B Power Resource Extraction Allocated Energy"
+    },
+    {
+      "type": "LINK",
+      "from": "B Priority Energy Fulfillment Ratio",
+      "to": "B Power Resource Extraction Allocated Energy"
+    },
+    {
+      "type": "LINK",
+      "from": "B Power Resource Extraction Requested Energy",
+      "to": "B Power Resource Extraction Energy Fulfillment Ratio"
+    },
+    {
+      "type": "LINK",
+      "from": "B Power Resource Extraction Allocated Energy",
+      "to": "B Power Resource Extraction Energy Fulfillment Ratio"
+    },
+    {
+      "type": "LINK",
+      "from": "Capital Goods Enabled",
+      "to": "B Capital Goods Pre Energy Rate"
+    },
+    {
+      "type": "LINK",
+      "from": "B Desired Capital Goods Production",
+      "to": "B Capital Goods Pre Energy Rate"
+    },
+    {
+      "type": "LINK",
+      "from": "B Capital Goods Production Capacity",
+      "to": "B Capital Goods Pre Energy Rate"
+    },
+    {
+      "type": "LINK",
+      "from": "B Metal Inventory",
+      "to": "B Capital Goods Pre Energy Rate"
+    },
+    {
+      "type": "LINK",
+      "from": "B Metal Buffer",
+      "to": "B Capital Goods Pre Energy Rate"
+    },
+    {
+      "type": "LINK",
+      "from": "B Electronics Inventory",
+      "to": "B Capital Goods Pre Energy Rate"
+    },
+    {
+      "type": "LINK",
+      "from": "B Electronics Buffer",
+      "to": "B Capital Goods Pre Energy Rate"
+    },
+    {
+      "type": "LINK",
+      "from": "B Capital Goods Pre Energy Rate",
+      "to": "B Capital Goods Energy Signal Increase"
+    },
+    {
+      "type": "LINK",
+      "from": "B Capital Goods Energy Signal",
+      "to": "B Capital Goods Energy Signal Increase"
+    },
+    {
+      "type": "LINK",
+      "from": "Capital Goods Energy Signal Adjustment Time",
+      "to": "B Capital Goods Energy Signal Increase"
+    },
+    {
+      "type": "LINK",
+      "from": "B Capital Goods Energy Signal",
+      "to": "B Capital Goods Energy Signal Decrease"
+    },
+    {
+      "type": "LINK",
+      "from": "B Capital Goods Pre Energy Rate",
+      "to": "B Capital Goods Energy Signal Decrease"
+    },
+    {
+      "type": "LINK",
+      "from": "Capital Goods Energy Signal Adjustment Time",
+      "to": "B Capital Goods Energy Signal Decrease"
+    },
+    {
+      "type": "LINK",
+      "from": "Process Energy Enabled",
+      "to": "B Capital Goods Requested Energy"
+    },
+    {
+      "type": "LINK",
+      "from": "B Capital Goods Energy Signal",
+      "to": "B Capital Goods Requested Energy"
+    },
+    {
+      "type": "LINK",
+      "from": "Capital Goods Energy per Unit",
+      "to": "B Capital Goods Requested Energy"
+    },
+    {
+      "type": "LINK",
+      "from": "B Capital Goods Requested Energy",
+      "to": "B Capital Goods Allocated Energy"
+    },
+    {
+      "type": "LINK",
+      "from": "B Energy Fulfillment Ratio",
+      "to": "B Capital Goods Allocated Energy"
+    },
+    {
+      "type": "LINK",
+      "from": "B Capital Goods Requested Energy",
+      "to": "B Capital Goods Energy Fulfillment Ratio"
+    },
+    {
+      "type": "LINK",
+      "from": "B Capital Goods Allocated Energy",
+      "to": "B Capital Goods Energy Fulfillment Ratio"
+    },
+    {
+      "type": "LINK",
+      "from": "B Power Resource Extraction Requested Energy",
+      "to": "B Priority Requested Energy"
+    },
+    {
+      "type": "LINK",
+      "from": "B Priority Requested Energy",
+      "to": "B Priority Energy Fulfillment Ratio"
+    },
+    {
+      "type": "LINK",
+      "from": "B Available Generation",
+      "to": "B Priority Energy Fulfillment Ratio"
+    },
+    {
+      "type": "LINK",
+      "from": "B Priority Requested Energy",
+      "to": "B Priority Allocated Energy"
+    },
+    {
+      "type": "LINK",
+      "from": "B Priority Energy Fulfillment Ratio",
+      "to": "B Priority Allocated Energy"
+    },
+    {
+      "type": "LINK",
+      "from": "Process Energy Enabled",
+      "to": "A Mining Rate"
+    },
+    {
+      "type": "LINK",
+      "from": "A Mining Pre Energy Rate",
+      "to": "A Mining Rate"
+    },
+    {
+      "type": "LINK",
+      "from": "A Mining Energy Fulfillment Ratio",
+      "to": "A Mining Rate"
+    },
+    {
+      "type": "LINK",
+      "from": "Process Energy Enabled",
+      "to": "A Regolith Extraction Rate"
+    },
+    {
+      "type": "LINK",
+      "from": "A Regolith Extraction Pre Energy Rate",
+      "to": "A Regolith Extraction Rate"
+    },
+    {
+      "type": "LINK",
+      "from": "A Regolith Extraction Energy Fulfillment Ratio",
+      "to": "A Regolith Extraction Rate"
+    },
+    {
+      "type": "LINK",
+      "from": "Process Energy Enabled",
+      "to": "A Power Resource Extraction Rate"
+    },
+    {
+      "type": "LINK",
+      "from": "A Power Resource Extraction Pre Energy Rate",
+      "to": "A Power Resource Extraction Rate"
+    },
+    {
+      "type": "LINK",
+      "from": "A Power Resource Extraction Energy Fulfillment Ratio",
+      "to": "A Power Resource Extraction Rate"
+    },
+    {
+      "type": "LINK",
+      "from": "Process Energy Enabled",
+      "to": "A Capital Goods Production Rate"
+    },
+    {
+      "type": "LINK",
+      "from": "A Capital Goods Pre Energy Rate",
+      "to": "A Capital Goods Production Rate"
+    },
+    {
+      "type": "LINK",
+      "from": "A Capital Goods Energy Fulfillment Ratio",
+      "to": "A Capital Goods Production Rate"
+    },
+    {
+      "type": "LINK",
+      "from": "Process Energy Enabled",
+      "to": "A Energy Fulfillment Ratio"
+    },
+    {
+      "type": "LINK",
+      "from": "A Priority Allocated Energy",
+      "to": "A Energy Fulfillment Ratio"
+    },
+    {
+      "type": "LINK",
+      "from": "A Priority Requested Energy",
+      "to": "A Energy Fulfillment Ratio"
+    },
+    {
+      "type": "LINK",
+      "from": "Process Energy Enabled",
+      "to": "A Total Requested Energy"
+    },
+    {
+      "type": "LINK",
+      "from": "A Mining Requested Energy",
+      "to": "A Total Requested Energy"
+    },
+    {
+      "type": "LINK",
+      "from": "A Regolith Extraction Requested Energy",
+      "to": "A Total Requested Energy"
+    },
+    {
+      "type": "LINK",
+      "from": "A Power Resource Extraction Requested Energy",
+      "to": "A Total Requested Energy"
+    },
+    {
+      "type": "LINK",
+      "from": "A Capital Goods Requested Energy",
+      "to": "A Total Requested Energy"
+    },
+    {
+      "type": "LINK",
+      "from": "Process Energy Enabled",
+      "to": "A Energy Supply"
+    },
+    {
+      "type": "LINK",
+      "from": "A Mining Allocated Energy",
+      "to": "A Energy Supply"
+    },
+    {
+      "type": "LINK",
+      "from": "A Regolith Extraction Allocated Energy",
+      "to": "A Energy Supply"
+    },
+    {
+      "type": "LINK",
+      "from": "A Power Resource Extraction Allocated Energy",
+      "to": "A Energy Supply"
+    },
+    {
+      "type": "LINK",
+      "from": "A Capital Goods Allocated Energy",
+      "to": "A Energy Supply"
+    },
+    {
+      "type": "LINK",
+      "from": "Process Energy Enabled",
+      "to": "B Mining Rate"
+    },
+    {
+      "type": "LINK",
+      "from": "B Mining Pre Energy Rate",
+      "to": "B Mining Rate"
+    },
+    {
+      "type": "LINK",
+      "from": "B Mining Energy Fulfillment Ratio",
+      "to": "B Mining Rate"
+    },
+    {
+      "type": "LINK",
+      "from": "Process Energy Enabled",
+      "to": "B Regolith Extraction Rate"
+    },
+    {
+      "type": "LINK",
+      "from": "B Regolith Extraction Pre Energy Rate",
+      "to": "B Regolith Extraction Rate"
+    },
+    {
+      "type": "LINK",
+      "from": "B Regolith Extraction Energy Fulfillment Ratio",
+      "to": "B Regolith Extraction Rate"
+    },
+    {
+      "type": "LINK",
+      "from": "Process Energy Enabled",
+      "to": "B Power Resource Extraction Rate"
+    },
+    {
+      "type": "LINK",
+      "from": "B Power Resource Extraction Pre Energy Rate",
+      "to": "B Power Resource Extraction Rate"
+    },
+    {
+      "type": "LINK",
+      "from": "B Power Resource Extraction Energy Fulfillment Ratio",
+      "to": "B Power Resource Extraction Rate"
+    },
+    {
+      "type": "LINK",
+      "from": "Process Energy Enabled",
+      "to": "B Capital Goods Production Rate"
+    },
+    {
+      "type": "LINK",
+      "from": "B Capital Goods Pre Energy Rate",
+      "to": "B Capital Goods Production Rate"
+    },
+    {
+      "type": "LINK",
+      "from": "B Capital Goods Energy Fulfillment Ratio",
+      "to": "B Capital Goods Production Rate"
+    },
+    {
+      "type": "LINK",
+      "from": "Process Energy Enabled",
+      "to": "B Energy Fulfillment Ratio"
+    },
+    {
+      "type": "LINK",
+      "from": "B Priority Allocated Energy",
+      "to": "B Energy Fulfillment Ratio"
+    },
+    {
+      "type": "LINK",
+      "from": "B Priority Requested Energy",
+      "to": "B Energy Fulfillment Ratio"
+    },
+    {
+      "type": "LINK",
+      "from": "Process Energy Enabled",
+      "to": "B Total Requested Energy"
+    },
+    {
+      "type": "LINK",
+      "from": "B Mining Requested Energy",
+      "to": "B Total Requested Energy"
+    },
+    {
+      "type": "LINK",
+      "from": "B Regolith Extraction Requested Energy",
+      "to": "B Total Requested Energy"
+    },
+    {
+      "type": "LINK",
+      "from": "B Power Resource Extraction Requested Energy",
+      "to": "B Total Requested Energy"
+    },
+    {
+      "type": "LINK",
+      "from": "B Capital Goods Requested Energy",
+      "to": "B Total Requested Energy"
+    },
+    {
+      "type": "LINK",
+      "from": "Process Energy Enabled",
+      "to": "B Energy Supply"
+    },
+    {
+      "type": "LINK",
+      "from": "B Mining Allocated Energy",
+      "to": "B Energy Supply"
+    },
+    {
+      "type": "LINK",
+      "from": "B Regolith Extraction Allocated Energy",
+      "to": "B Energy Supply"
+    },
+    {
+      "type": "LINK",
+      "from": "B Power Resource Extraction Allocated Energy",
+      "to": "B Energy Supply"
+    },
+    {
+      "type": "LINK",
+      "from": "B Capital Goods Allocated Energy",
+      "to": "B Energy Supply"
+    },
+    {
+      "type": "VARIABLE",
+      "name": "Minimum Human Labor Share",
+      "behavior": {
+        "value": 0.05
+      },
+      "description": "Generated labor element for Minimum Human Labor Share."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "Automation Labor Exponent",
+      "behavior": {
+        "value": 1
+      },
+      "description": "Generated labor element for Automation Labor Exponent."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "A Mining Labor per Unit",
+      "behavior": {
+        "value": 0.05
+      },
+      "description": "Generated labor element for A Mining Labor per Unit."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "A Mining Automation Level",
+      "behavior": {
+        "value": 0
+      },
+      "description": "Generated labor element for A Mining Automation Level."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "A Mining Automation Factor",
+      "behavior": {
+        "value": "1 - (1 - [Minimum Human Labor Share]) * (1 - (1 - [A Mining Automation Level]) ^ [Automation Labor Exponent])"
+      },
+      "description": "Generated labor element for A Mining Automation Factor."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "A Mining Labor Requirement",
+      "behavior": {
+        "value": "[A Mining] * [A Mining Labor per Unit] * [A Mining Automation Factor]"
+      },
+      "description": "Generated labor element for A Mining Labor Requirement."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "B Mining Labor per Unit",
+      "behavior": {
+        "value": 0.05
+      },
+      "description": "Generated labor element for B Mining Labor per Unit."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "B Mining Automation Level",
+      "behavior": {
+        "value": 0
+      },
+      "description": "Generated labor element for B Mining Automation Level."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "B Mining Automation Factor",
+      "behavior": {
+        "value": "1 - (1 - [Minimum Human Labor Share]) * (1 - (1 - [B Mining Automation Level]) ^ [Automation Labor Exponent])"
+      },
+      "description": "Generated labor element for B Mining Automation Factor."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "B Mining Labor Requirement",
+      "behavior": {
+        "value": "[B Mining] * [B Mining Labor per Unit] * [B Mining Automation Factor]"
+      },
+      "description": "Generated labor element for B Mining Labor Requirement."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "A Smelting Automation Level",
+      "behavior": {
+        "value": 0
+      },
+      "description": "Generated labor element for A Smelting Automation Level."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "A Smelting Automation Factor",
+      "behavior": {
+        "value": "1 - (1 - [Minimum Human Labor Share]) * (1 - (1 - [A Smelting Automation Level]) ^ [Automation Labor Exponent])"
+      },
+      "description": "Generated labor element for A Smelting Automation Factor."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "A Smelting Labor Requirement",
+      "behavior": {
+        "value": "[A Metal Production] * [A Labor per Metal] * [A Smelting Automation Factor]"
+      },
+      "description": "Generated labor element for A Smelting Labor Requirement."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "B Smelting Automation Level",
+      "behavior": {
+        "value": 0
+      },
+      "description": "Generated labor element for B Smelting Automation Level."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "B Smelting Automation Factor",
+      "behavior": {
+        "value": "1 - (1 - [Minimum Human Labor Share]) * (1 - (1 - [B Smelting Automation Level]) ^ [Automation Labor Exponent])"
+      },
+      "description": "Generated labor element for B Smelting Automation Factor."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "B Smelting Labor Requirement",
+      "behavior": {
+        "value": "[B Metal Production] * [B Labor per Metal] * [B Smelting Automation Factor]"
+      },
+      "description": "Generated labor element for B Smelting Labor Requirement."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "A Electronics Automation Level",
+      "behavior": {
+        "value": 0
+      },
+      "description": "Generated labor element for A Electronics Automation Level."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "A Electronics Automation Factor",
+      "behavior": {
+        "value": "1 - (1 - [Minimum Human Labor Share]) * (1 - (1 - [A Electronics Automation Level]) ^ [Automation Labor Exponent])"
+      },
+      "description": "Generated labor element for A Electronics Automation Factor."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "A Electronics Labor Requirement",
+      "behavior": {
+        "value": "[A Electronics Production] * [A Electronics Labor per Unit] * [A Electronics Automation Factor]"
+      },
+      "description": "Generated labor element for A Electronics Labor Requirement."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "B Electronics Automation Level",
+      "behavior": {
+        "value": 0
+      },
+      "description": "Generated labor element for B Electronics Automation Level."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "B Electronics Automation Factor",
+      "behavior": {
+        "value": "1 - (1 - [Minimum Human Labor Share]) * (1 - (1 - [B Electronics Automation Level]) ^ [Automation Labor Exponent])"
+      },
+      "description": "Generated labor element for B Electronics Automation Factor."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "B Electronics Labor Requirement",
+      "behavior": {
+        "value": "[B Electronics Production] * [B Electronics Labor per Unit] * [B Electronics Automation Factor]"
+      },
+      "description": "Generated labor element for B Electronics Labor Requirement."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "A Capital Goods Labor per Unit",
+      "behavior": {
+        "value": 2
+      },
+      "description": "Generated labor element for A Capital Goods Labor per Unit."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "A Capital Goods Automation Level",
+      "behavior": {
+        "value": 0
+      },
+      "description": "Generated labor element for A Capital Goods Automation Level."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "A Capital Goods Automation Factor",
+      "behavior": {
+        "value": "1 - (1 - [Minimum Human Labor Share]) * (1 - (1 - [A Capital Goods Automation Level]) ^ [Automation Labor Exponent])"
+      },
+      "description": "Generated labor element for A Capital Goods Automation Factor."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "A Capital Goods Labor Requirement",
+      "behavior": {
+        "value": "[A Capital Goods Production] * [A Capital Goods Labor per Unit] * [A Capital Goods Automation Factor]"
+      },
+      "description": "Generated labor element for A Capital Goods Labor Requirement."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "B Capital Goods Labor per Unit",
+      "behavior": {
+        "value": 2
+      },
+      "description": "Generated labor element for B Capital Goods Labor per Unit."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "B Capital Goods Automation Level",
+      "behavior": {
+        "value": 0
+      },
+      "description": "Generated labor element for B Capital Goods Automation Level."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "B Capital Goods Automation Factor",
+      "behavior": {
+        "value": "1 - (1 - [Minimum Human Labor Share]) * (1 - (1 - [B Capital Goods Automation Level]) ^ [Automation Labor Exponent])"
+      },
+      "description": "Generated labor element for B Capital Goods Automation Factor."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "B Capital Goods Labor Requirement",
+      "behavior": {
+        "value": "[B Capital Goods Production] * [B Capital Goods Labor per Unit] * [B Capital Goods Automation Factor]"
+      },
+      "description": "Generated labor element for B Capital Goods Labor Requirement."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "A Regolith Extraction Labor per Unit",
+      "behavior": {
+        "value": 0.2
+      },
+      "description": "Generated labor element for A Regolith Extraction Labor per Unit."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "A Regolith Extraction Automation Level",
+      "behavior": {
+        "value": 0
+      },
+      "description": "Generated labor element for A Regolith Extraction Automation Level."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "A Regolith Extraction Automation Factor",
+      "behavior": {
+        "value": "1 - (1 - [Minimum Human Labor Share]) * (1 - (1 - [A Regolith Extraction Automation Level]) ^ [Automation Labor Exponent])"
+      },
+      "description": "Generated labor element for A Regolith Extraction Automation Factor."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "A Regolith Extraction Labor Requirement",
+      "behavior": {
+        "value": "[A Regolith Extraction] * [A Regolith Extraction Labor per Unit] * [A Regolith Extraction Automation Factor]"
+      },
+      "description": "Generated labor element for A Regolith Extraction Labor Requirement."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "B Regolith Extraction Labor per Unit",
+      "behavior": {
+        "value": 0.2
+      },
+      "description": "Generated labor element for B Regolith Extraction Labor per Unit."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "B Regolith Extraction Automation Level",
+      "behavior": {
+        "value": 0
+      },
+      "description": "Generated labor element for B Regolith Extraction Automation Level."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "B Regolith Extraction Automation Factor",
+      "behavior": {
+        "value": "1 - (1 - [Minimum Human Labor Share]) * (1 - (1 - [B Regolith Extraction Automation Level]) ^ [Automation Labor Exponent])"
+      },
+      "description": "Generated labor element for B Regolith Extraction Automation Factor."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "B Regolith Extraction Labor Requirement",
+      "behavior": {
+        "value": "[B Regolith Extraction] * [B Regolith Extraction Labor per Unit] * [B Regolith Extraction Automation Factor]"
+      },
+      "description": "Generated labor element for B Regolith Extraction Labor Requirement."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "A Construction Materials Labor per Unit",
+      "behavior": {
+        "value": 0.3
+      },
+      "description": "Generated labor element for A Construction Materials Labor per Unit."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "A Construction Materials Automation Level",
+      "behavior": {
+        "value": 0
+      },
+      "description": "Generated labor element for A Construction Materials Automation Level."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "A Construction Materials Automation Factor",
+      "behavior": {
+        "value": "1 - (1 - [Minimum Human Labor Share]) * (1 - (1 - [A Construction Materials Automation Level]) ^ [Automation Labor Exponent])"
+      },
+      "description": "Generated labor element for A Construction Materials Automation Factor."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "A Construction Materials Labor Requirement",
+      "behavior": {
+        "value": "[A Construction Materials Production] * [A Construction Materials Labor per Unit] * [A Construction Materials Automation Factor]"
+      },
+      "description": "Generated labor element for A Construction Materials Labor Requirement."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "B Construction Materials Labor per Unit",
+      "behavior": {
+        "value": 0.3
+      },
+      "description": "Generated labor element for B Construction Materials Labor per Unit."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "B Construction Materials Automation Level",
+      "behavior": {
+        "value": 0
+      },
+      "description": "Generated labor element for B Construction Materials Automation Level."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "B Construction Materials Automation Factor",
+      "behavior": {
+        "value": "1 - (1 - [Minimum Human Labor Share]) * (1 - (1 - [B Construction Materials Automation Level]) ^ [Automation Labor Exponent])"
+      },
+      "description": "Generated labor element for B Construction Materials Automation Factor."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "B Construction Materials Labor Requirement",
+      "behavior": {
+        "value": "[B Construction Materials Production] * [B Construction Materials Labor per Unit] * [B Construction Materials Automation Factor]"
+      },
+      "description": "Generated labor element for B Construction Materials Labor Requirement."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "A Power Resource Extraction Labor per Unit",
+      "behavior": {
+        "value": 0.002
+      },
+      "description": "Generated labor element for A Power Resource Extraction Labor per Unit."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "A Power Resource Extraction Automation Level",
+      "behavior": {
+        "value": 0
+      },
+      "description": "Generated labor element for A Power Resource Extraction Automation Level."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "A Power Resource Extraction Automation Factor",
+      "behavior": {
+        "value": "1 - (1 - [Minimum Human Labor Share]) * (1 - (1 - [A Power Resource Extraction Automation Level]) ^ [Automation Labor Exponent])"
+      },
+      "description": "Generated labor element for A Power Resource Extraction Automation Factor."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "A Power Resource Extraction Labor Requirement",
+      "behavior": {
+        "value": "[A Power Resource Extraction] * [A Power Resource Extraction Labor per Unit] * [A Power Resource Extraction Automation Factor]"
+      },
+      "description": "Generated labor element for A Power Resource Extraction Labor Requirement."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "B Power Resource Extraction Labor per Unit",
+      "behavior": {
+        "value": 0.002
+      },
+      "description": "Generated labor element for B Power Resource Extraction Labor per Unit."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "B Power Resource Extraction Automation Level",
+      "behavior": {
+        "value": 0
+      },
+      "description": "Generated labor element for B Power Resource Extraction Automation Level."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "B Power Resource Extraction Automation Factor",
+      "behavior": {
+        "value": "1 - (1 - [Minimum Human Labor Share]) * (1 - (1 - [B Power Resource Extraction Automation Level]) ^ [Automation Labor Exponent])"
+      },
+      "description": "Generated labor element for B Power Resource Extraction Automation Factor."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "B Power Resource Extraction Labor Requirement",
+      "behavior": {
+        "value": "[B Power Resource Extraction] * [B Power Resource Extraction Labor per Unit] * [B Power Resource Extraction Automation Factor]"
+      },
+      "description": "Generated labor element for B Power Resource Extraction Labor Requirement."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "A Generation Labor per Unit",
+      "behavior": {
+        "value": 0.001
+      },
+      "description": "Generated labor element for A Generation Labor per Unit."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "A Generation Automation Level",
+      "behavior": {
+        "value": 0
+      },
+      "description": "Generated labor element for A Generation Automation Level."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "A Generation Automation Factor",
+      "behavior": {
+        "value": "1 - (1 - [Minimum Human Labor Share]) * (1 - (1 - [A Generation Automation Level]) ^ [Automation Labor Exponent])"
+      },
+      "description": "Generated labor element for A Generation Automation Factor."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "A Generation Labor Requirement",
+      "behavior": {
+        "value": "[A Available Generation] * [A Generation Labor per Unit] * [A Generation Automation Factor]"
+      },
+      "description": "Generated labor element for A Generation Labor Requirement."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "B Generation Labor per Unit",
+      "behavior": {
+        "value": 0.001
+      },
+      "description": "Generated labor element for B Generation Labor per Unit."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "B Generation Automation Level",
+      "behavior": {
+        "value": 0
+      },
+      "description": "Generated labor element for B Generation Automation Level."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "B Generation Automation Factor",
+      "behavior": {
+        "value": "1 - (1 - [Minimum Human Labor Share]) * (1 - (1 - [B Generation Automation Level]) ^ [Automation Labor Exponent])"
+      },
+      "description": "Generated labor element for B Generation Automation Factor."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "B Generation Labor Requirement",
+      "behavior": {
+        "value": "[B Available Generation] * [B Generation Labor per Unit] * [B Generation Automation Factor]"
+      },
+      "description": "Generated labor element for B Generation Labor Requirement."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "Transport Labor per Unit",
+      "behavior": {
+        "value": 0.1
+      },
+      "description": "Generated labor element for Transport Labor per Unit."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "Transport Automation Level",
+      "behavior": {
+        "value": 0
+      },
+      "description": "Generated labor element for Transport Automation Level."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "Transport Automation Factor",
+      "behavior": {
+        "value": "1 - (1 - [Minimum Human Labor Share]) * (1 - (1 - [Transport Automation Level]) ^ [Automation Labor Exponent])"
+      },
+      "description": "Generated labor element for Transport Automation Factor."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "Transport Labor Requirement",
+      "behavior": {
+        "value": "[Capacity Limited Total Transport Load] * [Transport Labor per Unit] * [Transport Automation Factor]"
+      },
+      "description": "Generated labor element for Transport Labor Requirement."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "A Total Labor Requirement",
+      "behavior": {
+        "value": "[A Mining Labor Requirement] + [A Smelting Labor Requirement] + [A Electronics Labor Requirement] + [A Capital Goods Labor Requirement] + [A Regolith Extraction Labor Requirement] + [A Construction Materials Labor Requirement] + [A Power Resource Extraction Labor Requirement] + [A Generation Labor Requirement]"
+      },
+      "description": "Generated labor element for A Total Labor Requirement."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "B Total Labor Requirement",
+      "behavior": {
+        "value": "[B Mining Labor Requirement] + [B Smelting Labor Requirement] + [B Electronics Labor Requirement] + [B Capital Goods Labor Requirement] + [B Regolith Extraction Labor Requirement] + [B Construction Materials Labor Requirement] + [B Power Resource Extraction Labor Requirement] + [B Generation Labor Requirement]"
+      },
+      "description": "Generated labor element for B Total Labor Requirement."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "Shared Labor Requirement",
+      "behavior": {
+        "value": "[Transport Labor Requirement]"
+      },
+      "description": "Generated labor element for Shared Labor Requirement."
+    },
+    {
+      "type": "LINK",
+      "from": "Minimum Human Labor Share",
+      "to": "A Mining Automation Factor"
+    },
+    {
+      "type": "LINK",
+      "from": "A Mining Automation Level",
+      "to": "A Mining Automation Factor"
+    },
+    {
+      "type": "LINK",
+      "from": "Automation Labor Exponent",
+      "to": "A Mining Automation Factor"
+    },
+    {
+      "type": "LINK",
+      "from": "A Mining",
+      "to": "A Mining Labor Requirement"
+    },
+    {
+      "type": "LINK",
+      "from": "A Mining Labor per Unit",
+      "to": "A Mining Labor Requirement"
+    },
+    {
+      "type": "LINK",
+      "from": "A Mining Automation Factor",
+      "to": "A Mining Labor Requirement"
+    },
+    {
+      "type": "LINK",
+      "from": "Minimum Human Labor Share",
+      "to": "B Mining Automation Factor"
+    },
+    {
+      "type": "LINK",
+      "from": "B Mining Automation Level",
+      "to": "B Mining Automation Factor"
+    },
+    {
+      "type": "LINK",
+      "from": "Automation Labor Exponent",
+      "to": "B Mining Automation Factor"
+    },
+    {
+      "type": "LINK",
+      "from": "B Mining",
+      "to": "B Mining Labor Requirement"
+    },
+    {
+      "type": "LINK",
+      "from": "B Mining Labor per Unit",
+      "to": "B Mining Labor Requirement"
+    },
+    {
+      "type": "LINK",
+      "from": "B Mining Automation Factor",
+      "to": "B Mining Labor Requirement"
+    },
+    {
+      "type": "LINK",
+      "from": "Minimum Human Labor Share",
+      "to": "A Smelting Automation Factor"
+    },
+    {
+      "type": "LINK",
+      "from": "A Smelting Automation Level",
+      "to": "A Smelting Automation Factor"
+    },
+    {
+      "type": "LINK",
+      "from": "Automation Labor Exponent",
+      "to": "A Smelting Automation Factor"
+    },
+    {
+      "type": "LINK",
+      "from": "A Metal Production",
+      "to": "A Smelting Labor Requirement"
+    },
+    {
+      "type": "LINK",
+      "from": "A Labor per Metal",
+      "to": "A Smelting Labor Requirement"
+    },
+    {
+      "type": "LINK",
+      "from": "A Smelting Automation Factor",
+      "to": "A Smelting Labor Requirement"
+    },
+    {
+      "type": "LINK",
+      "from": "Minimum Human Labor Share",
+      "to": "B Smelting Automation Factor"
+    },
+    {
+      "type": "LINK",
+      "from": "B Smelting Automation Level",
+      "to": "B Smelting Automation Factor"
+    },
+    {
+      "type": "LINK",
+      "from": "Automation Labor Exponent",
+      "to": "B Smelting Automation Factor"
+    },
+    {
+      "type": "LINK",
+      "from": "B Metal Production",
+      "to": "B Smelting Labor Requirement"
+    },
+    {
+      "type": "LINK",
+      "from": "B Labor per Metal",
+      "to": "B Smelting Labor Requirement"
+    },
+    {
+      "type": "LINK",
+      "from": "B Smelting Automation Factor",
+      "to": "B Smelting Labor Requirement"
+    },
+    {
+      "type": "LINK",
+      "from": "Minimum Human Labor Share",
+      "to": "A Electronics Automation Factor"
+    },
+    {
+      "type": "LINK",
+      "from": "A Electronics Automation Level",
+      "to": "A Electronics Automation Factor"
+    },
+    {
+      "type": "LINK",
+      "from": "Automation Labor Exponent",
+      "to": "A Electronics Automation Factor"
+    },
+    {
+      "type": "LINK",
+      "from": "A Electronics Production",
+      "to": "A Electronics Labor Requirement"
+    },
+    {
+      "type": "LINK",
+      "from": "A Electronics Labor per Unit",
+      "to": "A Electronics Labor Requirement"
+    },
+    {
+      "type": "LINK",
+      "from": "A Electronics Automation Factor",
+      "to": "A Electronics Labor Requirement"
+    },
+    {
+      "type": "LINK",
+      "from": "Minimum Human Labor Share",
+      "to": "B Electronics Automation Factor"
+    },
+    {
+      "type": "LINK",
+      "from": "B Electronics Automation Level",
+      "to": "B Electronics Automation Factor"
+    },
+    {
+      "type": "LINK",
+      "from": "Automation Labor Exponent",
+      "to": "B Electronics Automation Factor"
+    },
+    {
+      "type": "LINK",
+      "from": "B Electronics Production",
+      "to": "B Electronics Labor Requirement"
+    },
+    {
+      "type": "LINK",
+      "from": "B Electronics Labor per Unit",
+      "to": "B Electronics Labor Requirement"
+    },
+    {
+      "type": "LINK",
+      "from": "B Electronics Automation Factor",
+      "to": "B Electronics Labor Requirement"
+    },
+    {
+      "type": "LINK",
+      "from": "Minimum Human Labor Share",
+      "to": "A Capital Goods Automation Factor"
+    },
+    {
+      "type": "LINK",
+      "from": "A Capital Goods Automation Level",
+      "to": "A Capital Goods Automation Factor"
+    },
+    {
+      "type": "LINK",
+      "from": "Automation Labor Exponent",
+      "to": "A Capital Goods Automation Factor"
+    },
+    {
+      "type": "LINK",
+      "from": "A Capital Goods Production",
+      "to": "A Capital Goods Labor Requirement"
+    },
+    {
+      "type": "LINK",
+      "from": "A Capital Goods Labor per Unit",
+      "to": "A Capital Goods Labor Requirement"
+    },
+    {
+      "type": "LINK",
+      "from": "A Capital Goods Automation Factor",
+      "to": "A Capital Goods Labor Requirement"
+    },
+    {
+      "type": "LINK",
+      "from": "Minimum Human Labor Share",
+      "to": "B Capital Goods Automation Factor"
+    },
+    {
+      "type": "LINK",
+      "from": "B Capital Goods Automation Level",
+      "to": "B Capital Goods Automation Factor"
+    },
+    {
+      "type": "LINK",
+      "from": "Automation Labor Exponent",
+      "to": "B Capital Goods Automation Factor"
+    },
+    {
+      "type": "LINK",
+      "from": "B Capital Goods Production",
+      "to": "B Capital Goods Labor Requirement"
+    },
+    {
+      "type": "LINK",
+      "from": "B Capital Goods Labor per Unit",
+      "to": "B Capital Goods Labor Requirement"
+    },
+    {
+      "type": "LINK",
+      "from": "B Capital Goods Automation Factor",
+      "to": "B Capital Goods Labor Requirement"
+    },
+    {
+      "type": "LINK",
+      "from": "Minimum Human Labor Share",
+      "to": "A Regolith Extraction Automation Factor"
+    },
+    {
+      "type": "LINK",
+      "from": "A Regolith Extraction Automation Level",
+      "to": "A Regolith Extraction Automation Factor"
+    },
+    {
+      "type": "LINK",
+      "from": "Automation Labor Exponent",
+      "to": "A Regolith Extraction Automation Factor"
+    },
+    {
+      "type": "LINK",
+      "from": "A Regolith Extraction",
+      "to": "A Regolith Extraction Labor Requirement"
+    },
+    {
+      "type": "LINK",
+      "from": "A Regolith Extraction Labor per Unit",
+      "to": "A Regolith Extraction Labor Requirement"
+    },
+    {
+      "type": "LINK",
+      "from": "A Regolith Extraction Automation Factor",
+      "to": "A Regolith Extraction Labor Requirement"
+    },
+    {
+      "type": "LINK",
+      "from": "Minimum Human Labor Share",
+      "to": "B Regolith Extraction Automation Factor"
+    },
+    {
+      "type": "LINK",
+      "from": "B Regolith Extraction Automation Level",
+      "to": "B Regolith Extraction Automation Factor"
+    },
+    {
+      "type": "LINK",
+      "from": "Automation Labor Exponent",
+      "to": "B Regolith Extraction Automation Factor"
+    },
+    {
+      "type": "LINK",
+      "from": "B Regolith Extraction",
+      "to": "B Regolith Extraction Labor Requirement"
+    },
+    {
+      "type": "LINK",
+      "from": "B Regolith Extraction Labor per Unit",
+      "to": "B Regolith Extraction Labor Requirement"
+    },
+    {
+      "type": "LINK",
+      "from": "B Regolith Extraction Automation Factor",
+      "to": "B Regolith Extraction Labor Requirement"
+    },
+    {
+      "type": "LINK",
+      "from": "Minimum Human Labor Share",
+      "to": "A Construction Materials Automation Factor"
+    },
+    {
+      "type": "LINK",
+      "from": "A Construction Materials Automation Level",
+      "to": "A Construction Materials Automation Factor"
+    },
+    {
+      "type": "LINK",
+      "from": "Automation Labor Exponent",
+      "to": "A Construction Materials Automation Factor"
+    },
+    {
+      "type": "LINK",
+      "from": "A Construction Materials Production",
+      "to": "A Construction Materials Labor Requirement"
+    },
+    {
+      "type": "LINK",
+      "from": "A Construction Materials Labor per Unit",
+      "to": "A Construction Materials Labor Requirement"
+    },
+    {
+      "type": "LINK",
+      "from": "A Construction Materials Automation Factor",
+      "to": "A Construction Materials Labor Requirement"
+    },
+    {
+      "type": "LINK",
+      "from": "Minimum Human Labor Share",
+      "to": "B Construction Materials Automation Factor"
+    },
+    {
+      "type": "LINK",
+      "from": "B Construction Materials Automation Level",
+      "to": "B Construction Materials Automation Factor"
+    },
+    {
+      "type": "LINK",
+      "from": "Automation Labor Exponent",
+      "to": "B Construction Materials Automation Factor"
+    },
+    {
+      "type": "LINK",
+      "from": "B Construction Materials Production",
+      "to": "B Construction Materials Labor Requirement"
+    },
+    {
+      "type": "LINK",
+      "from": "B Construction Materials Labor per Unit",
+      "to": "B Construction Materials Labor Requirement"
+    },
+    {
+      "type": "LINK",
+      "from": "B Construction Materials Automation Factor",
+      "to": "B Construction Materials Labor Requirement"
+    },
+    {
+      "type": "LINK",
+      "from": "Minimum Human Labor Share",
+      "to": "A Power Resource Extraction Automation Factor"
+    },
+    {
+      "type": "LINK",
+      "from": "A Power Resource Extraction Automation Level",
+      "to": "A Power Resource Extraction Automation Factor"
+    },
+    {
+      "type": "LINK",
+      "from": "Automation Labor Exponent",
+      "to": "A Power Resource Extraction Automation Factor"
+    },
+    {
+      "type": "LINK",
+      "from": "A Power Resource Extraction",
+      "to": "A Power Resource Extraction Labor Requirement"
+    },
+    {
+      "type": "LINK",
+      "from": "A Power Resource Extraction Labor per Unit",
+      "to": "A Power Resource Extraction Labor Requirement"
+    },
+    {
+      "type": "LINK",
+      "from": "A Power Resource Extraction Automation Factor",
+      "to": "A Power Resource Extraction Labor Requirement"
+    },
+    {
+      "type": "LINK",
+      "from": "Minimum Human Labor Share",
+      "to": "B Power Resource Extraction Automation Factor"
+    },
+    {
+      "type": "LINK",
+      "from": "B Power Resource Extraction Automation Level",
+      "to": "B Power Resource Extraction Automation Factor"
+    },
+    {
+      "type": "LINK",
+      "from": "Automation Labor Exponent",
+      "to": "B Power Resource Extraction Automation Factor"
+    },
+    {
+      "type": "LINK",
+      "from": "B Power Resource Extraction",
+      "to": "B Power Resource Extraction Labor Requirement"
+    },
+    {
+      "type": "LINK",
+      "from": "B Power Resource Extraction Labor per Unit",
+      "to": "B Power Resource Extraction Labor Requirement"
+    },
+    {
+      "type": "LINK",
+      "from": "B Power Resource Extraction Automation Factor",
+      "to": "B Power Resource Extraction Labor Requirement"
+    },
+    {
+      "type": "LINK",
+      "from": "Minimum Human Labor Share",
+      "to": "A Generation Automation Factor"
+    },
+    {
+      "type": "LINK",
+      "from": "A Generation Automation Level",
+      "to": "A Generation Automation Factor"
+    },
+    {
+      "type": "LINK",
+      "from": "Automation Labor Exponent",
+      "to": "A Generation Automation Factor"
+    },
+    {
+      "type": "LINK",
+      "from": "A Available Generation",
+      "to": "A Generation Labor Requirement"
+    },
+    {
+      "type": "LINK",
+      "from": "A Generation Labor per Unit",
+      "to": "A Generation Labor Requirement"
+    },
+    {
+      "type": "LINK",
+      "from": "A Generation Automation Factor",
+      "to": "A Generation Labor Requirement"
+    },
+    {
+      "type": "LINK",
+      "from": "Minimum Human Labor Share",
+      "to": "B Generation Automation Factor"
+    },
+    {
+      "type": "LINK",
+      "from": "B Generation Automation Level",
+      "to": "B Generation Automation Factor"
+    },
+    {
+      "type": "LINK",
+      "from": "Automation Labor Exponent",
+      "to": "B Generation Automation Factor"
+    },
+    {
+      "type": "LINK",
+      "from": "B Available Generation",
+      "to": "B Generation Labor Requirement"
+    },
+    {
+      "type": "LINK",
+      "from": "B Generation Labor per Unit",
+      "to": "B Generation Labor Requirement"
+    },
+    {
+      "type": "LINK",
+      "from": "B Generation Automation Factor",
+      "to": "B Generation Labor Requirement"
+    },
+    {
+      "type": "LINK",
+      "from": "Minimum Human Labor Share",
+      "to": "Transport Automation Factor"
+    },
+    {
+      "type": "LINK",
+      "from": "Transport Automation Level",
+      "to": "Transport Automation Factor"
+    },
+    {
+      "type": "LINK",
+      "from": "Automation Labor Exponent",
+      "to": "Transport Automation Factor"
+    },
+    {
+      "type": "LINK",
+      "from": "Capacity Limited Total Transport Load",
+      "to": "Transport Labor Requirement"
+    },
+    {
+      "type": "LINK",
+      "from": "Transport Labor per Unit",
+      "to": "Transport Labor Requirement"
+    },
+    {
+      "type": "LINK",
+      "from": "Transport Automation Factor",
+      "to": "Transport Labor Requirement"
+    },
+    {
+      "type": "LINK",
+      "from": "A Mining Labor Requirement",
+      "to": "A Total Labor Requirement"
+    },
+    {
+      "type": "LINK",
+      "from": "A Smelting Labor Requirement",
+      "to": "A Total Labor Requirement"
+    },
+    {
+      "type": "LINK",
+      "from": "A Electronics Labor Requirement",
+      "to": "A Total Labor Requirement"
+    },
+    {
+      "type": "LINK",
+      "from": "A Capital Goods Labor Requirement",
+      "to": "A Total Labor Requirement"
+    },
+    {
+      "type": "LINK",
+      "from": "A Regolith Extraction Labor Requirement",
+      "to": "A Total Labor Requirement"
+    },
+    {
+      "type": "LINK",
+      "from": "A Construction Materials Labor Requirement",
+      "to": "A Total Labor Requirement"
+    },
+    {
+      "type": "LINK",
+      "from": "A Power Resource Extraction Labor Requirement",
+      "to": "A Total Labor Requirement"
+    },
+    {
+      "type": "LINK",
+      "from": "A Generation Labor Requirement",
+      "to": "A Total Labor Requirement"
+    },
+    {
+      "type": "LINK",
+      "from": "B Mining Labor Requirement",
+      "to": "B Total Labor Requirement"
+    },
+    {
+      "type": "LINK",
+      "from": "B Smelting Labor Requirement",
+      "to": "B Total Labor Requirement"
+    },
+    {
+      "type": "LINK",
+      "from": "B Electronics Labor Requirement",
+      "to": "B Total Labor Requirement"
+    },
+    {
+      "type": "LINK",
+      "from": "B Capital Goods Labor Requirement",
+      "to": "B Total Labor Requirement"
+    },
+    {
+      "type": "LINK",
+      "from": "B Regolith Extraction Labor Requirement",
+      "to": "B Total Labor Requirement"
+    },
+    {
+      "type": "LINK",
+      "from": "B Construction Materials Labor Requirement",
+      "to": "B Total Labor Requirement"
+    },
+    {
+      "type": "LINK",
+      "from": "B Power Resource Extraction Labor Requirement",
+      "to": "B Total Labor Requirement"
+    },
+    {
+      "type": "LINK",
+      "from": "B Generation Labor Requirement",
+      "to": "B Total Labor Requirement"
+    },
+    {
+      "type": "LINK",
+      "from": "Transport Labor Requirement",
+      "to": "Shared Labor Requirement"
+    },
+    {
+      "type": "LINK",
+      "from": "A Smelting Automation Factor",
+      "to": "A Metal Unit Cost"
+    },
+    {
+      "type": "LINK",
+      "from": "B Smelting Automation Factor",
+      "to": "B Metal Unit Cost"
+    },
+    {
+      "type": "LINK",
+      "from": "A Electronics Automation Factor",
+      "to": "A Electronics Unit Cost"
+    },
+    {
+      "type": "LINK",
+      "from": "B Electronics Automation Factor",
+      "to": "B Electronics Unit Cost"
     }
   ],
   "visualizations": [
@@ -34792,7 +37743,8 @@
         "Regolith Capital Enabled": 0,
         "Ore Capital Enabled": 0,
         "Power Resource Capital Enabled": 0,
-        "Deposits Enabled": 0
+        "Deposits Enabled": 0,
+        "Process Energy Enabled": 0
       }
     },
     {
@@ -34813,7 +37765,8 @@
         "Regolith Capital Enabled": 0,
         "Ore Capital Enabled": 0,
         "Power Resource Capital Enabled": 0,
-        "Deposits Enabled": 0
+        "Deposits Enabled": 0,
+        "Process Energy Enabled": 0
       }
     },
     {
@@ -34834,7 +37787,8 @@
         "Regolith Capital Enabled": 0,
         "Ore Capital Enabled": 0,
         "Power Resource Capital Enabled": 0,
-        "Deposits Enabled": 0
+        "Deposits Enabled": 0,
+        "Process Energy Enabled": 0
       }
     },
     {
@@ -34855,7 +37809,8 @@
         "Regolith Capital Enabled": 0,
         "Ore Capital Enabled": 0,
         "Power Resource Capital Enabled": 0,
-        "Deposits Enabled": 0
+        "Deposits Enabled": 0,
+        "Process Energy Enabled": 0
       }
     },
     {
@@ -34876,7 +37831,8 @@
         "Regolith Capital Enabled": 0,
         "Ore Capital Enabled": 0,
         "Power Resource Capital Enabled": 0,
-        "Deposits Enabled": 0
+        "Deposits Enabled": 0,
+        "Process Energy Enabled": 0
       }
     },
     {
@@ -34897,7 +37853,8 @@
         "Regolith Capital Enabled": 0,
         "Ore Capital Enabled": 0,
         "Power Resource Capital Enabled": 0,
-        "Deposits Enabled": 0
+        "Deposits Enabled": 0,
+        "Process Energy Enabled": 0
       }
     },
     {
@@ -34918,7 +37875,8 @@
         "Regolith Capital Enabled": 0,
         "Ore Capital Enabled": 0,
         "Power Resource Capital Enabled": 0,
-        "Deposits Enabled": 0
+        "Deposits Enabled": 0,
+        "Process Energy Enabled": 0
       }
     },
     {
@@ -34939,7 +37897,8 @@
         "Regolith Capital Enabled": 0,
         "Ore Capital Enabled": 0,
         "Power Resource Capital Enabled": 0,
-        "Deposits Enabled": 0
+        "Deposits Enabled": 0,
+        "Process Energy Enabled": 0
       }
     },
     {
@@ -34960,7 +37919,8 @@
         "Regolith Capital Enabled": 0,
         "Ore Capital Enabled": 0,
         "Power Resource Capital Enabled": 0,
-        "Deposits Enabled": 0
+        "Deposits Enabled": 0,
+        "Process Energy Enabled": 0
       }
     },
     {
@@ -34981,7 +37941,8 @@
         "Regolith Capital Enabled": 0,
         "Ore Capital Enabled": 0,
         "Power Resource Capital Enabled": 0,
-        "Deposits Enabled": 0
+        "Deposits Enabled": 0,
+        "Process Energy Enabled": 0
       }
     },
     {
@@ -35002,7 +37963,8 @@
         "Regolith Capital Enabled": 0,
         "Ore Capital Enabled": 0,
         "Power Resource Capital Enabled": 0,
-        "Deposits Enabled": 0
+        "Deposits Enabled": 0,
+        "Process Energy Enabled": 0
       }
     },
     {
@@ -35023,7 +37985,8 @@
         "Regolith Capital Enabled": 0,
         "Ore Capital Enabled": 0,
         "Power Resource Capital Enabled": 0,
-        "Deposits Enabled": 0
+        "Deposits Enabled": 0,
+        "Process Energy Enabled": 0
       }
     },
     {
@@ -35044,7 +38007,8 @@
         "Regolith Capital Enabled": 0,
         "Ore Capital Enabled": 0,
         "Power Resource Capital Enabled": 0,
-        "Deposits Enabled": 0
+        "Deposits Enabled": 0,
+        "Process Energy Enabled": 0
       }
     },
     {
@@ -35065,7 +38029,8 @@
         "Regolith Capital Enabled": 0,
         "Ore Capital Enabled": 0,
         "Power Resource Capital Enabled": 0,
-        "Deposits Enabled": 0
+        "Deposits Enabled": 0,
+        "Process Energy Enabled": 0
       }
     },
     {
@@ -35086,7 +38051,8 @@
         "Regolith Capital Enabled": 0,
         "Ore Capital Enabled": 0,
         "Power Resource Capital Enabled": 0,
-        "Deposits Enabled": 0
+        "Deposits Enabled": 0,
+        "Process Energy Enabled": 0
       }
     },
     {
@@ -35107,7 +38073,8 @@
         "Regolith Capital Enabled": 0,
         "Ore Capital Enabled": 0,
         "Power Resource Capital Enabled": 0,
-        "Deposits Enabled": 0
+        "Deposits Enabled": 0,
+        "Process Energy Enabled": 0
       }
     },
     {
@@ -35128,7 +38095,8 @@
         "Regolith Capital Enabled": 0,
         "Ore Capital Enabled": 0,
         "Power Resource Capital Enabled": 0,
-        "Deposits Enabled": 0
+        "Deposits Enabled": 0,
+        "Process Energy Enabled": 0
       }
     },
     {
@@ -35149,7 +38117,8 @@
         "Regolith Capital Enabled": 0,
         "Ore Capital Enabled": 0,
         "Power Resource Capital Enabled": 0,
-        "Deposits Enabled": 0
+        "Deposits Enabled": 0,
+        "Process Energy Enabled": 0
       }
     },
     {
@@ -35170,7 +38139,8 @@
         "Regolith Capital Enabled": 0,
         "Ore Capital Enabled": 0,
         "Power Resource Capital Enabled": 0,
-        "Deposits Enabled": 0
+        "Deposits Enabled": 0,
+        "Process Energy Enabled": 0
       }
     },
     {
@@ -35191,7 +38161,8 @@
         "Regolith Capital Enabled": 0,
         "Ore Capital Enabled": 0,
         "Power Resource Capital Enabled": 0,
-        "Deposits Enabled": 0
+        "Deposits Enabled": 0,
+        "Process Energy Enabled": 0
       }
     },
     {
@@ -35212,7 +38183,8 @@
         "Regolith Capital Enabled": 0,
         "Ore Capital Enabled": 0,
         "Power Resource Capital Enabled": 0,
-        "Deposits Enabled": 0
+        "Deposits Enabled": 0,
+        "Process Energy Enabled": 0
       }
     },
     {
@@ -35233,7 +38205,8 @@
         "Regolith Capital Enabled": 0,
         "Ore Capital Enabled": 0,
         "Power Resource Capital Enabled": 0,
-        "Deposits Enabled": 0
+        "Deposits Enabled": 0,
+        "Process Energy Enabled": 0
       }
     },
     {
@@ -35254,7 +38227,8 @@
         "Regolith Capital Enabled": 0,
         "Ore Capital Enabled": 0,
         "Power Resource Capital Enabled": 0,
-        "Deposits Enabled": 0
+        "Deposits Enabled": 0,
+        "Process Energy Enabled": 0
       }
     },
     {
@@ -35275,7 +38249,8 @@
         "Regolith Capital Enabled": 0,
         "Ore Capital Enabled": 0,
         "Power Resource Capital Enabled": 0,
-        "Deposits Enabled": 0
+        "Deposits Enabled": 0,
+        "Process Energy Enabled": 0
       }
     },
     {
@@ -35296,7 +38271,8 @@
         "Regolith Capital Enabled": 0,
         "Ore Capital Enabled": 0,
         "Power Resource Capital Enabled": 0,
-        "Deposits Enabled": 0
+        "Deposits Enabled": 0,
+        "Process Energy Enabled": 0
       }
     },
     {
@@ -35317,7 +38293,8 @@
         "Regolith Capital Enabled": 0,
         "Ore Capital Enabled": 0,
         "Power Resource Capital Enabled": 0,
-        "Deposits Enabled": 0
+        "Deposits Enabled": 0,
+        "Process Energy Enabled": 0
       }
     },
     {
@@ -35338,7 +38315,8 @@
         "Regolith Capital Enabled": 0,
         "Ore Capital Enabled": 0,
         "Power Resource Capital Enabled": 0,
-        "Deposits Enabled": 0
+        "Deposits Enabled": 0,
+        "Process Energy Enabled": 0
       }
     },
     {
@@ -35359,7 +38337,8 @@
         "Regolith Capital Enabled": 0,
         "Ore Capital Enabled": 0,
         "Power Resource Capital Enabled": 0,
-        "Deposits Enabled": 0
+        "Deposits Enabled": 0,
+        "Process Energy Enabled": 0
       }
     },
     {
@@ -35380,7 +38359,8 @@
         "Regolith Capital Enabled": 0,
         "Ore Capital Enabled": 0,
         "Power Resource Capital Enabled": 0,
-        "Deposits Enabled": 0
+        "Deposits Enabled": 0,
+        "Process Energy Enabled": 0
       }
     },
     {
@@ -35401,7 +38381,8 @@
         "Regolith Capital Enabled": 0,
         "Ore Capital Enabled": 0,
         "Power Resource Capital Enabled": 0,
-        "Deposits Enabled": 0
+        "Deposits Enabled": 0,
+        "Process Energy Enabled": 0
       }
     },
     {
@@ -35422,7 +38403,8 @@
         "Regolith Capital Enabled": 0,
         "Ore Capital Enabled": 0,
         "Power Resource Capital Enabled": 0,
-        "Deposits Enabled": 0
+        "Deposits Enabled": 0,
+        "Process Energy Enabled": 0
       }
     },
     {
@@ -35443,7 +38425,8 @@
         "Regolith Capital Enabled": 0,
         "Ore Capital Enabled": 0,
         "Power Resource Capital Enabled": 0,
-        "Deposits Enabled": 0
+        "Deposits Enabled": 0,
+        "Process Energy Enabled": 0
       }
     },
     {
@@ -35464,7 +38447,8 @@
         "Regolith Capital Enabled": 0,
         "Ore Capital Enabled": 0,
         "Power Resource Capital Enabled": 0,
-        "Deposits Enabled": 0
+        "Deposits Enabled": 0,
+        "Process Energy Enabled": 0
       }
     },
     {
@@ -35485,7 +38469,8 @@
         "Regolith Capital Enabled": 0,
         "Ore Capital Enabled": 0,
         "Power Resource Capital Enabled": 0,
-        "Deposits Enabled": 0
+        "Deposits Enabled": 0,
+        "Process Energy Enabled": 0
       }
     },
     {
@@ -35506,7 +38491,8 @@
         "Regolith Capital Enabled": 0,
         "Ore Capital Enabled": 0,
         "Power Resource Capital Enabled": 0,
-        "Deposits Enabled": 0
+        "Deposits Enabled": 0,
+        "Process Energy Enabled": 0
       }
     },
     {
@@ -35527,7 +38513,8 @@
         "Regolith Capital Enabled": 0,
         "Ore Capital Enabled": 0,
         "Power Resource Capital Enabled": 0,
-        "Deposits Enabled": 0
+        "Deposits Enabled": 0,
+        "Process Energy Enabled": 0
       }
     },
     {
@@ -35548,7 +38535,8 @@
         "Regolith Capital Enabled": 0,
         "Ore Capital Enabled": 0,
         "Power Resource Capital Enabled": 0,
-        "Deposits Enabled": 0
+        "Deposits Enabled": 0,
+        "Process Energy Enabled": 0
       }
     },
     {
@@ -35569,7 +38557,8 @@
         "Regolith Capital Enabled": 0,
         "Ore Capital Enabled": 0,
         "Power Resource Capital Enabled": 0,
-        "Deposits Enabled": 0
+        "Deposits Enabled": 0,
+        "Process Energy Enabled": 0
       }
     },
     {
@@ -35590,7 +38579,8 @@
         "Regolith Capital Enabled": 1,
         "Ore Capital Enabled": 0,
         "Power Resource Capital Enabled": 0,
-        "Deposits Enabled": 0
+        "Deposits Enabled": 0,
+        "Process Energy Enabled": 0
       }
     },
     {
@@ -35611,7 +38601,8 @@
         "Regolith Capital Enabled": 1,
         "Ore Capital Enabled": 0,
         "Power Resource Capital Enabled": 0,
-        "Deposits Enabled": 0
+        "Deposits Enabled": 0,
+        "Process Energy Enabled": 0
       }
     },
     {
@@ -35632,7 +38623,8 @@
         "Timed Test Mode": 40,
         "Ore Capital Enabled": 1,
         "Power Resource Capital Enabled": 0,
-        "Deposits Enabled": 0
+        "Deposits Enabled": 0,
+        "Process Energy Enabled": 0
       }
     },
     {
@@ -35653,7 +38645,8 @@
         "Timed Test Mode": 41,
         "Ore Capital Enabled": 1,
         "Power Resource Capital Enabled": 0,
-        "Deposits Enabled": 0
+        "Deposits Enabled": 0,
+        "Process Energy Enabled": 0
       }
     },
     {
@@ -35674,7 +38667,8 @@
         "Ore Capital Enabled": 1,
         "Timed Test Mode": 42,
         "Power Resource Capital Enabled": 1,
-        "Deposits Enabled": 0
+        "Deposits Enabled": 0,
+        "Process Energy Enabled": 0
       }
     },
     {
@@ -35695,7 +38689,8 @@
         "Ore Capital Enabled": 1,
         "Timed Test Mode": 43,
         "Power Resource Capital Enabled": 1,
-        "Deposits Enabled": 0
+        "Deposits Enabled": 0,
+        "Process Energy Enabled": 0
       }
     },
     {
@@ -35716,7 +38711,8 @@
         "Ore Capital Enabled": 1,
         "Timed Test Mode": 44,
         "Power Resource Capital Enabled": 1,
-        "Deposits Enabled": 1
+        "Deposits Enabled": 1,
+        "Process Energy Enabled": 0
       }
     },
     {
@@ -35737,7 +38733,82 @@
         "Ore Capital Enabled": 1,
         "Timed Test Mode": 45,
         "Power Resource Capital Enabled": 1,
-        "Deposits Enabled": 1
+        "Deposits Enabled": 1,
+        "Process Energy Enabled": 0
+      }
+    },
+    {
+      "name": "v7.7.9 Process Energy Baseline",
+      "description": "Accepted v7.7.8 Mode 44 with Process Energy enabled; no new transport surge.",
+      "values": {
+        "Capital Lifecycle Enabled": 1,
+        "Intermediate Inputs Enabled": 1,
+        "Capital Goods Enabled": 1,
+        "Transport Capital Goods Enabled": 1,
+        "Power Resource Enabled": 1,
+        "Construction Materials Enabled": 1,
+        "Transport Construction Materials Enabled": 1,
+        "Construction Materials Energy Enabled": 1,
+        "Construction Materials Capital Enabled": 1,
+        "Capital Goods Capital Enabled": 1,
+        "Regolith Capital Enabled": 1,
+        "Ore Capital Enabled": 1,
+        "Timed Test Mode": 46,
+        "Power Resource Capital Enabled": 1,
+        "Deposits Enabled": 1,
+        "Process Energy Enabled": 1
+      }
+    },
+    {
+      "name": "v7.7.9 Transport Surge on Process Energy",
+      "description": "Accepted v7.7.8 Mode 45 with Process Energy enabled under the standard transport-demand surge window.",
+      "values": {
+        "Capital Lifecycle Enabled": 1,
+        "Intermediate Inputs Enabled": 1,
+        "Capital Goods Enabled": 1,
+        "Transport Capital Goods Enabled": 1,
+        "Power Resource Enabled": 1,
+        "Construction Materials Enabled": 1,
+        "Transport Construction Materials Enabled": 1,
+        "Construction Materials Energy Enabled": 1,
+        "Construction Materials Capital Enabled": 1,
+        "Capital Goods Capital Enabled": 1,
+        "Regolith Capital Enabled": 1,
+        "Ore Capital Enabled": 1,
+        "Timed Test Mode": 47,
+        "Power Resource Capital Enabled": 1,
+        "Deposits Enabled": 1,
+        "Process Energy Enabled": 1
+      }
+    },
+    {
+      "name": "v7.7.10 Automation Probe",
+      "description": "Clone of accepted Mode 46 with Timed Test Mode 48 and Automation Level = 0.5 for all eight colony-A processes; probe only, not a start-state change.",
+      "values": {
+        "Capital Lifecycle Enabled": 1,
+        "Intermediate Inputs Enabled": 1,
+        "Capital Goods Enabled": 1,
+        "Transport Capital Goods Enabled": 1,
+        "Power Resource Enabled": 1,
+        "Construction Materials Enabled": 1,
+        "Transport Construction Materials Enabled": 1,
+        "Construction Materials Energy Enabled": 1,
+        "Construction Materials Capital Enabled": 1,
+        "Capital Goods Capital Enabled": 1,
+        "Regolith Capital Enabled": 1,
+        "Ore Capital Enabled": 1,
+        "Timed Test Mode": 48,
+        "Power Resource Capital Enabled": 1,
+        "Deposits Enabled": 1,
+        "Process Energy Enabled": 1,
+        "A Mining Automation Level": 0.5,
+        "A Smelting Automation Level": 0.5,
+        "A Electronics Automation Level": 0.5,
+        "A Capital Goods Automation Level": 0.5,
+        "A Regolith Extraction Automation Level": 0.5,
+        "A Construction Materials Automation Level": 0.5,
+        "A Power Resource Extraction Automation Level": 0.5,
+        "A Generation Automation Level": 0.5
       }
     }
   ]

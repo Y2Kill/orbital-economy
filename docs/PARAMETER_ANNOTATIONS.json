@@ -1,7 +1,7 @@
 {
   "format": "orbital-economy-parameter-annotations-v1",
-  "model": "Orbital Economy v7.7.9 r1 — Process Energy",
-  "updated": "2026-10-03",
+  "model": "Orbital Economy v7.7.10 r1 — Labor",
+  "updated": "2026-10-04",
   "policy": "Каждый внешний параметр, влияющий на структуру поведения (сравнительные преимущества, нормирование, планирование), должен иметь аннотацию: роль, что меняет, доказательство (ссылка на прогон/документ). Несимметричные пары A/B аннотируются в первую очередь. Изменение значения = изменение модели → через change-policy, с обновлением аннотации.",
   "embedded_literals": [
     {
@@ -3237,6 +3237,433 @@
         "initial"
       ],
       "applies_to_mirror": true
+    },
+    "Minimum Human Labor Share": {
+      "role": "Automation floor parameter, value 0.05.",
+      "effect": "Sets the irreducible human share in every generated Automation Factor.",
+      "evidence": "V7_7_10_ARCHITECTURE_SPEC §1–§2 and draft/process-labor.json.",
+      "since": "v7.7.10 r1",
+      "tags": [
+        "labor",
+        "automation",
+        "coefficient"
+      ]
+    },
+    "Automation Labor Exponent": {
+      "role": "Automation response exponent, value 1.",
+      "effect": "Shapes the relation between Automation Level and Automation Factor; value 1 gives a linear response above the human-share floor.",
+      "evidence": "V7_7_10_ARCHITECTURE_SPEC §1–§2 and draft/process-labor.json.",
+      "since": "v7.7.10 r1",
+      "tags": [
+        "labor",
+        "automation",
+        "coefficient"
+      ]
+    },
+    "A Mining Labor per Unit": {
+      "role": "Mining labor intensity for colony A, value 0.05.",
+      "effect": "Multiplies A Mining output and its Automation Factor to form the process Labor Requirement. The A/B pair is intentionally symmetric at 0.05/0.05.",
+      "evidence": "V7_7_10_ARCHITECTURE_SPEC §1–§2 and draft/process-labor.json.",
+      "since": "v7.7.10 r1",
+      "tags": [
+        "labor",
+        "intensity",
+        "mining",
+        "symmetric"
+      ],
+      "applies_to_mirror": true
+    },
+    "B Mining Labor per Unit": {
+      "role": "Mining labor intensity for colony B, value 0.05.",
+      "effect": "Multiplies B Mining output and its Automation Factor to form the process Labor Requirement. The A/B pair is intentionally symmetric at 0.05/0.05.",
+      "evidence": "V7_7_10_ARCHITECTURE_SPEC §1–§2 and draft/process-labor.json.",
+      "since": "v7.7.10 r1",
+      "tags": [
+        "labor",
+        "intensity",
+        "mining",
+        "symmetric"
+      ],
+      "applies_to_mirror": true
+    },
+    "A Capital Goods Labor per Unit": {
+      "role": "Capital Goods labor intensity for colony A, value 2.",
+      "effect": "Multiplies A Capital Goods output and its Automation Factor to form the process Labor Requirement. The A/B pair is intentionally symmetric at 2/2.",
+      "evidence": "V7_7_10_ARCHITECTURE_SPEC §1–§2 and draft/process-labor.json.",
+      "since": "v7.7.10 r1",
+      "tags": [
+        "labor",
+        "intensity",
+        "capital-goods",
+        "symmetric"
+      ],
+      "applies_to_mirror": true
+    },
+    "B Capital Goods Labor per Unit": {
+      "role": "Capital Goods labor intensity for colony B, value 2.",
+      "effect": "Multiplies B Capital Goods output and its Automation Factor to form the process Labor Requirement. The A/B pair is intentionally symmetric at 2/2.",
+      "evidence": "V7_7_10_ARCHITECTURE_SPEC §1–§2 and draft/process-labor.json.",
+      "since": "v7.7.10 r1",
+      "tags": [
+        "labor",
+        "intensity",
+        "capital-goods",
+        "symmetric"
+      ],
+      "applies_to_mirror": true
+    },
+    "A Regolith Extraction Labor per Unit": {
+      "role": "Regolith Extraction labor intensity for colony A, value 0.2.",
+      "effect": "Multiplies A Regolith Extraction output and its Automation Factor to form the process Labor Requirement. The A/B pair is intentionally symmetric at 0.2/0.2.",
+      "evidence": "V7_7_10_ARCHITECTURE_SPEC §1–§2 and draft/process-labor.json.",
+      "since": "v7.7.10 r1",
+      "tags": [
+        "labor",
+        "intensity",
+        "regolith-extraction",
+        "symmetric"
+      ],
+      "applies_to_mirror": true
+    },
+    "B Regolith Extraction Labor per Unit": {
+      "role": "Regolith Extraction labor intensity for colony B, value 0.2.",
+      "effect": "Multiplies B Regolith Extraction output and its Automation Factor to form the process Labor Requirement. The A/B pair is intentionally symmetric at 0.2/0.2.",
+      "evidence": "V7_7_10_ARCHITECTURE_SPEC §1–§2 and draft/process-labor.json.",
+      "since": "v7.7.10 r1",
+      "tags": [
+        "labor",
+        "intensity",
+        "regolith-extraction",
+        "symmetric"
+      ],
+      "applies_to_mirror": true
+    },
+    "A Construction Materials Labor per Unit": {
+      "role": "Construction Materials labor intensity for colony A, value 0.3.",
+      "effect": "Multiplies A Construction Materials output and its Automation Factor to form the process Labor Requirement. The A/B pair is intentionally symmetric at 0.3/0.3.",
+      "evidence": "V7_7_10_ARCHITECTURE_SPEC §1–§2 and draft/process-labor.json.",
+      "since": "v7.7.10 r1",
+      "tags": [
+        "labor",
+        "intensity",
+        "construction-materials",
+        "symmetric"
+      ],
+      "applies_to_mirror": true
+    },
+    "B Construction Materials Labor per Unit": {
+      "role": "Construction Materials labor intensity for colony B, value 0.3.",
+      "effect": "Multiplies B Construction Materials output and its Automation Factor to form the process Labor Requirement. The A/B pair is intentionally symmetric at 0.3/0.3.",
+      "evidence": "V7_7_10_ARCHITECTURE_SPEC §1–§2 and draft/process-labor.json.",
+      "since": "v7.7.10 r1",
+      "tags": [
+        "labor",
+        "intensity",
+        "construction-materials",
+        "symmetric"
+      ],
+      "applies_to_mirror": true
+    },
+    "A Power Resource Extraction Labor per Unit": {
+      "role": "Power Resource Extraction labor intensity for colony A, value 0.002.",
+      "effect": "Multiplies A Power Resource Extraction output and its Automation Factor to form the process Labor Requirement. The A/B pair is intentionally symmetric at 0.002/0.002.",
+      "evidence": "V7_7_10_ARCHITECTURE_SPEC §1–§2 and draft/process-labor.json.",
+      "since": "v7.7.10 r1",
+      "tags": [
+        "labor",
+        "intensity",
+        "power-resource-extraction",
+        "symmetric"
+      ],
+      "applies_to_mirror": true
+    },
+    "B Power Resource Extraction Labor per Unit": {
+      "role": "Power Resource Extraction labor intensity for colony B, value 0.002.",
+      "effect": "Multiplies B Power Resource Extraction output and its Automation Factor to form the process Labor Requirement. The A/B pair is intentionally symmetric at 0.002/0.002.",
+      "evidence": "V7_7_10_ARCHITECTURE_SPEC §1–§2 and draft/process-labor.json.",
+      "since": "v7.7.10 r1",
+      "tags": [
+        "labor",
+        "intensity",
+        "power-resource-extraction",
+        "symmetric"
+      ],
+      "applies_to_mirror": true
+    },
+    "A Generation Labor per Unit": {
+      "role": "Generation labor intensity for colony A, value 0.001.",
+      "effect": "Multiplies A Generation output and its Automation Factor to form the process Labor Requirement. The A/B pair is intentionally symmetric at 0.001/0.001.",
+      "evidence": "V7_7_10_ARCHITECTURE_SPEC §1–§2 and draft/process-labor.json.",
+      "since": "v7.7.10 r1",
+      "tags": [
+        "labor",
+        "intensity",
+        "generation",
+        "symmetric"
+      ],
+      "applies_to_mirror": true
+    },
+    "B Generation Labor per Unit": {
+      "role": "Generation labor intensity for colony B, value 0.001.",
+      "effect": "Multiplies B Generation output and its Automation Factor to form the process Labor Requirement. The A/B pair is intentionally symmetric at 0.001/0.001.",
+      "evidence": "V7_7_10_ARCHITECTURE_SPEC §1–§2 and draft/process-labor.json.",
+      "since": "v7.7.10 r1",
+      "tags": [
+        "labor",
+        "intensity",
+        "generation",
+        "symmetric"
+      ],
+      "applies_to_mirror": true
+    },
+    "Transport Labor per Unit": {
+      "role": "Shared transport labor intensity, value 0.1.",
+      "effect": "Multiplies Capacity Limited Total Transport Load and Transport Automation Factor to form Shared Labor Requirement.",
+      "evidence": "V7_7_10_ARCHITECTURE_SPEC §1–§2 and draft/process-labor.json.",
+      "since": "v7.7.10 r1",
+      "tags": [
+        "labor",
+        "intensity",
+        "transport",
+        "shared"
+      ]
+    },
+    "A Mining Automation Level": {
+      "role": "Mining automation level for colony A, initial value 0.",
+      "effect": "Controls A Mining Automation Factor. The A/B pair is intentionally symmetric at 0/0 in the base model; Mode 48 overrides only the A value to 0.5 as a probe.",
+      "evidence": "V7_7_10_ARCHITECTURE_SPEC §1–§2 and draft/process-labor.json.",
+      "since": "v7.7.10 r1",
+      "tags": [
+        "labor",
+        "automation",
+        "level",
+        "mining",
+        "symmetric"
+      ],
+      "applies_to_mirror": true
+    },
+    "B Mining Automation Level": {
+      "role": "Mining automation level for colony B, initial value 0.",
+      "effect": "Controls B Mining Automation Factor. The A/B pair is intentionally symmetric at 0/0 in the base model; Mode 48 overrides only the A value to 0.5 as a probe.",
+      "evidence": "V7_7_10_ARCHITECTURE_SPEC §1–§2 and draft/process-labor.json.",
+      "since": "v7.7.10 r1",
+      "tags": [
+        "labor",
+        "automation",
+        "level",
+        "mining",
+        "symmetric"
+      ],
+      "applies_to_mirror": true
+    },
+    "A Smelting Automation Level": {
+      "role": "Smelting automation level for colony A, initial value 0.",
+      "effect": "Controls A Smelting Automation Factor. The A/B pair is intentionally symmetric at 0/0 in the base model; Mode 48 overrides only the A value to 0.5 as a probe.",
+      "evidence": "V7_7_10_ARCHITECTURE_SPEC §1–§2 and draft/process-labor.json.",
+      "since": "v7.7.10 r1",
+      "tags": [
+        "labor",
+        "automation",
+        "level",
+        "smelting",
+        "symmetric"
+      ],
+      "applies_to_mirror": true
+    },
+    "B Smelting Automation Level": {
+      "role": "Smelting automation level for colony B, initial value 0.",
+      "effect": "Controls B Smelting Automation Factor. The A/B pair is intentionally symmetric at 0/0 in the base model; Mode 48 overrides only the A value to 0.5 as a probe.",
+      "evidence": "V7_7_10_ARCHITECTURE_SPEC §1–§2 and draft/process-labor.json.",
+      "since": "v7.7.10 r1",
+      "tags": [
+        "labor",
+        "automation",
+        "level",
+        "smelting",
+        "symmetric"
+      ],
+      "applies_to_mirror": true
+    },
+    "A Electronics Automation Level": {
+      "role": "Electronics automation level for colony A, initial value 0.",
+      "effect": "Controls A Electronics Automation Factor. The A/B pair is intentionally symmetric at 0/0 in the base model; Mode 48 overrides only the A value to 0.5 as a probe.",
+      "evidence": "V7_7_10_ARCHITECTURE_SPEC §1–§2 and draft/process-labor.json.",
+      "since": "v7.7.10 r1",
+      "tags": [
+        "labor",
+        "automation",
+        "level",
+        "electronics",
+        "symmetric"
+      ],
+      "applies_to_mirror": true
+    },
+    "B Electronics Automation Level": {
+      "role": "Electronics automation level for colony B, initial value 0.",
+      "effect": "Controls B Electronics Automation Factor. The A/B pair is intentionally symmetric at 0/0 in the base model; Mode 48 overrides only the A value to 0.5 as a probe.",
+      "evidence": "V7_7_10_ARCHITECTURE_SPEC §1–§2 and draft/process-labor.json.",
+      "since": "v7.7.10 r1",
+      "tags": [
+        "labor",
+        "automation",
+        "level",
+        "electronics",
+        "symmetric"
+      ],
+      "applies_to_mirror": true
+    },
+    "A Capital Goods Automation Level": {
+      "role": "Capital Goods automation level for colony A, initial value 0.",
+      "effect": "Controls A Capital Goods Automation Factor. The A/B pair is intentionally symmetric at 0/0 in the base model; Mode 48 overrides only the A value to 0.5 as a probe.",
+      "evidence": "V7_7_10_ARCHITECTURE_SPEC §1–§2 and draft/process-labor.json.",
+      "since": "v7.7.10 r1",
+      "tags": [
+        "labor",
+        "automation",
+        "level",
+        "capital-goods",
+        "symmetric"
+      ],
+      "applies_to_mirror": true
+    },
+    "B Capital Goods Automation Level": {
+      "role": "Capital Goods automation level for colony B, initial value 0.",
+      "effect": "Controls B Capital Goods Automation Factor. The A/B pair is intentionally symmetric at 0/0 in the base model; Mode 48 overrides only the A value to 0.5 as a probe.",
+      "evidence": "V7_7_10_ARCHITECTURE_SPEC §1–§2 and draft/process-labor.json.",
+      "since": "v7.7.10 r1",
+      "tags": [
+        "labor",
+        "automation",
+        "level",
+        "capital-goods",
+        "symmetric"
+      ],
+      "applies_to_mirror": true
+    },
+    "A Regolith Extraction Automation Level": {
+      "role": "Regolith Extraction automation level for colony A, initial value 0.",
+      "effect": "Controls A Regolith Extraction Automation Factor. The A/B pair is intentionally symmetric at 0/0 in the base model; Mode 48 overrides only the A value to 0.5 as a probe.",
+      "evidence": "V7_7_10_ARCHITECTURE_SPEC §1–§2 and draft/process-labor.json.",
+      "since": "v7.7.10 r1",
+      "tags": [
+        "labor",
+        "automation",
+        "level",
+        "regolith-extraction",
+        "symmetric"
+      ],
+      "applies_to_mirror": true
+    },
+    "B Regolith Extraction Automation Level": {
+      "role": "Regolith Extraction automation level for colony B, initial value 0.",
+      "effect": "Controls B Regolith Extraction Automation Factor. The A/B pair is intentionally symmetric at 0/0 in the base model; Mode 48 overrides only the A value to 0.5 as a probe.",
+      "evidence": "V7_7_10_ARCHITECTURE_SPEC §1–§2 and draft/process-labor.json.",
+      "since": "v7.7.10 r1",
+      "tags": [
+        "labor",
+        "automation",
+        "level",
+        "regolith-extraction",
+        "symmetric"
+      ],
+      "applies_to_mirror": true
+    },
+    "A Construction Materials Automation Level": {
+      "role": "Construction Materials automation level for colony A, initial value 0.",
+      "effect": "Controls A Construction Materials Automation Factor. The A/B pair is intentionally symmetric at 0/0 in the base model; Mode 48 overrides only the A value to 0.5 as a probe.",
+      "evidence": "V7_7_10_ARCHITECTURE_SPEC §1–§2 and draft/process-labor.json.",
+      "since": "v7.7.10 r1",
+      "tags": [
+        "labor",
+        "automation",
+        "level",
+        "construction-materials",
+        "symmetric"
+      ],
+      "applies_to_mirror": true
+    },
+    "B Construction Materials Automation Level": {
+      "role": "Construction Materials automation level for colony B, initial value 0.",
+      "effect": "Controls B Construction Materials Automation Factor. The A/B pair is intentionally symmetric at 0/0 in the base model; Mode 48 overrides only the A value to 0.5 as a probe.",
+      "evidence": "V7_7_10_ARCHITECTURE_SPEC §1–§2 and draft/process-labor.json.",
+      "since": "v7.7.10 r1",
+      "tags": [
+        "labor",
+        "automation",
+        "level",
+        "construction-materials",
+        "symmetric"
+      ],
+      "applies_to_mirror": true
+    },
+    "A Power Resource Extraction Automation Level": {
+      "role": "Power Resource Extraction automation level for colony A, initial value 0.",
+      "effect": "Controls A Power Resource Extraction Automation Factor. The A/B pair is intentionally symmetric at 0/0 in the base model; Mode 48 overrides only the A value to 0.5 as a probe.",
+      "evidence": "V7_7_10_ARCHITECTURE_SPEC §1–§2 and draft/process-labor.json.",
+      "since": "v7.7.10 r1",
+      "tags": [
+        "labor",
+        "automation",
+        "level",
+        "power-resource-extraction",
+        "symmetric"
+      ],
+      "applies_to_mirror": true
+    },
+    "B Power Resource Extraction Automation Level": {
+      "role": "Power Resource Extraction automation level for colony B, initial value 0.",
+      "effect": "Controls B Power Resource Extraction Automation Factor. The A/B pair is intentionally symmetric at 0/0 in the base model; Mode 48 overrides only the A value to 0.5 as a probe.",
+      "evidence": "V7_7_10_ARCHITECTURE_SPEC §1–§2 and draft/process-labor.json.",
+      "since": "v7.7.10 r1",
+      "tags": [
+        "labor",
+        "automation",
+        "level",
+        "power-resource-extraction",
+        "symmetric"
+      ],
+      "applies_to_mirror": true
+    },
+    "A Generation Automation Level": {
+      "role": "Generation automation level for colony A, initial value 0.",
+      "effect": "Controls A Generation Automation Factor. The A/B pair is intentionally symmetric at 0/0 in the base model; Mode 48 overrides only the A value to 0.5 as a probe.",
+      "evidence": "V7_7_10_ARCHITECTURE_SPEC §1–§2 and draft/process-labor.json.",
+      "since": "v7.7.10 r1",
+      "tags": [
+        "labor",
+        "automation",
+        "level",
+        "generation",
+        "symmetric"
+      ],
+      "applies_to_mirror": true
+    },
+    "B Generation Automation Level": {
+      "role": "Generation automation level for colony B, initial value 0.",
+      "effect": "Controls B Generation Automation Factor. The A/B pair is intentionally symmetric at 0/0 in the base model; Mode 48 overrides only the A value to 0.5 as a probe.",
+      "evidence": "V7_7_10_ARCHITECTURE_SPEC §1–§2 and draft/process-labor.json.",
+      "since": "v7.7.10 r1",
+      "tags": [
+        "labor",
+        "automation",
+        "level",
+        "generation",
+        "symmetric"
+      ],
+      "applies_to_mirror": true
+    },
+    "Transport Automation Level": {
+      "role": "Shared transport automation level, initial value 0.",
+      "effect": "Controls Transport Automation Factor; Mode 48 does not override transport automation.",
+      "evidence": "V7_7_10_ARCHITECTURE_SPEC §1–§2 and draft/process-labor.json.",
+      "since": "v7.7.10 r1",
+      "tags": [
+        "labor",
+        "automation",
+        "level",
+        "transport",
+        "shared"
+      ]
     }
   }
 }

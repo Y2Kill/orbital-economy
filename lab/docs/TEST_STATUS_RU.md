@@ -1,29 +1,29 @@
-# Статус проверок Orbital Economy Lab v0.9.14 — baseline v7.7.9 r1
+# Статус проверок Orbital Economy Lab v0.9.15 — baseline v7.7.10 r1
 
 ## Принятая основа
 
-- Модель: **Orbital Economy v7.7.9 r1 — Process Energy** — ACCEPTED 2026-10-03.
-- SHA-256: `fb27f258e5fca6d236513399f7b29082b483b97b3f7a1d2c5eed00a5bc3754f8`.
-- Validation: `validation/validation-v7.7.9.json`.
-- Policy: `policy/change-policy-v7.7.9-strict.json` (default deny, rules: []).
+- Модель: **Orbital Economy v7.7.10 r1 — Labor** — ACCEPTED 2026-10-04.
+- SHA-256: `3cb40c883703936af3550a82a731d4af17f3818afe80b69c0c8f92e0878ab903`.
+- Validation: `validation/validation-v7.7.10.json`.
+- Policy: `policy/change-policy-v7.7.10-strict.json` (default deny, rules: []).
 - Engine: `simulation@9.0.0` pinned; каноническая платформа Windows x64 · Node 24.11.1 (`../../docs/VERSIONING_AND_AUTHORITY.md` §8), эталон `reference/accepted/series-digest.windows.json`.
-- Scenarios: Modes 0–47.
-- Предшественник: v7.7.8 r1 (`17794e6c6acec9a965473bc170f1c71e31a82fe7a095ec1391c86eb681c1b50e`), лежит в `reference/v7.7.8/`.
+- Scenarios: Modes 0–48.
+- Предшественник: v7.7.9 r1 (`fb27f258e5fca6d236513399f7b29082b483b97b3f7a1d2c5eed00a5bc3754f8`), лежит в `reference/v7.7.9/`.
 
-## Проверки promotion v7.7.9 (прогон 2026-10-03, каноническая платформа)
+## Проверки promotion v7.7.10 (прогон 2026-10-04, каноническая платформа)
 
 | Проверка | Результат |
 |---|---|
-| Validation Modes 0–47 | **PASS** — 48/48, 15414 проверок |
-| Capital Lifecycle conformance | **PASS** — 11 instances ядра, 0 NON_CONFORMING; `simple_capital` 6 и `deposit` 6 instances CONFORMING |
+| Validation Modes 0–48 | **PASS** — 49/49, 19007 проверок |
+| Capital Lifecycle conformance | **PASS** — 11 instances ядра, 0 NON_CONFORMING; `simple_capital` 6, `deposit` 6 и `labor` 17 instances CONFORMING |
 | Structure audit | **PASS** — 279 FLOW, 224 boundary, unclassified 0, closed-world 0, пары 25 |
 | A/B symmetry | **PASS** — mismatches 0, exceptions 0 |
 | Algebraic loop audit | **PASS** — 15 switches, 32768 combinations, loops 0 |
-| Planet closure (`report`) | **PASS** — P2 11/6/0/0, P3 14/2/1/0, P4 6/0, P5 4/13, P6 4, reversibility 0 |
+| Planet closure (`planet_v1`) | **PASS** — P2 11/6/0/0, P3 14/2/1/0, P4 6/0, P5 17/0, P6 4, reversibility 0 |
 | Energy balance | **PASS** — 7 потребителей; `priority` = Power Resource Extraction, приоритетная доля не ниже общей |
-| Parameter registry | 488 параметр(ов); 314 аннотировано; 63 несимметричных пар; 0 без аннотации |
-| Regression Modes 0–45 vs v7.7.8 r1 | **IDENTICAL** — 46 × `common=1448, changed=0, added=71, maxAbs=0` |
-| Policy задачи 026 | **PASS** — 3632 события, неожиданных 0 |
+| Parameter registry | 520 параметр(ов); 346 аннотировано; 63 несимметричных пар; 0 без аннотации |
+| Regression Modes 0–47 vs v7.7.9 r1 | **IDENTICAL** — 48 × `common=1519, changed=0, added=69, maxAbs=0` (без переключателя) |
+| Policy задачи 028 | **PASS** — 3509 событий, неожиданных 0 |
 
 Прежние приёмки — `../../docs/ACCEPTANCE_STATUS.md`, раздел «Previous acceptances».
 
@@ -34,14 +34,14 @@
 | Скрипт | Результат |
 |---|---|
 | `SELF_TEST.cmd` (Modes 0, 12) | **PASS** |
-| `QA_SELF_TEST.cmd` | **PASS** 43/43 (Windows, promotion v7.7.9) |
-| `POLICY_SELF_TEST.cmd` | **PASS** 10/10 (Windows, promotion v7.7.9) |
-| `CONFORMANCE_SELF_TEST.cmd` | **PASS** 18/18 (Windows, promotion v7.7.9) |
-| `STRUCTURE_SELF_TEST.cmd` | **PASS** 21/21 (Windows, promotion v7.7.9) |
-| `LOOP_SELF_TEST.cmd` | **PASS** 19/19 (Windows, promotion v7.7.9, 2:37); accepted 15 switches / 32768; fast path byte-identical to `--exhaustive` (case 16 pinned to <= 10 switches) |
-| `PLANET_SELF_TEST.cmd` | **PASS** 18/18 (Windows, promotion v7.7.9); accepted P2=11/6/0/0, P3=14/2/1/0, P4=6/0 |
-| `NODE_SELF_TEST.cmd` | **PASS** 33/33 (Windows, promotion v7.7.9); слои снимаются по модели (энергия процессов поверх месторождений и шахт); cases 28–31 на принятой модели снимают и собирают заново слой `energy_consumer` |
-| `COMPARE_SELF_TEST.cmd` | **PASS** (Windows, promotion v7.7.9) |
+| `QA_SELF_TEST.cmd` | **PASS** 44/44 (Windows, promotion v7.7.10) |
+| `POLICY_SELF_TEST.cmd` | **PASS** 10/10 (Windows, promotion v7.7.10) |
+| `CONFORMANCE_SELF_TEST.cmd` | **PASS** 18/18 (Windows, promotion v7.7.10) |
+| `STRUCTURE_SELF_TEST.cmd` | **PASS** 21/21 (Windows, promotion v7.7.10) |
+| `LOOP_SELF_TEST.cmd` | **PASS** 19/19 (Windows, promotion v7.7.10); accepted 15 switches / 32768; fast path byte-identical to `--exhaustive` (case 16 pinned to <= 10 switches) |
+| `PLANET_SELF_TEST.cmd` | **PASS** 20/20 (Windows, promotion v7.7.10); accepted in planet_v1 mode: P2=11/6/0/0, P3=14/2/1/0, P4=6/0, P5=17/0 |
+| `NODE_SELF_TEST.cmd` | **PASS** 39/39 (Windows, promotion v7.7.10); слои снимаются по модели, узел `labor` без переключателя — когда его формулы не трогает другой узел; cases 34–38 на принятой модели снимают и собирают заново слой `labor` |
+| `COMPARE_SELF_TEST.cmd` | **PASS** (Windows, promotion v7.7.10) |
 
 ## Lab v0.9.14 — exact loop-audit speed-up (задача 025)
 
@@ -83,7 +83,7 @@ Accepted model, validation и policy задачей 018 не изменяютс�
 
 ## Рабочая область
 
-`input/model`, `input/validation`, `input/policy` и `reference/accepted/model` содержат принятые артефакты v7.7.9 r1, поэтому `RUN_LAB.cmd` и `CHECK_CANDIDATE.cmd` запускаются без аргументов; `CHECK_CANDIDATE` на нетронутой области даёт `BYTE_IDENTICAL`. Отчёты предыдущих прогонов в `output/` не входят в поставку: актуальные копии лежат в `docs/CAPITAL_LIFECYCLE_CONFORMANCE_REPORT.md`, `docs/STRUCTURE_AUDIT_REPORT.md`, `docs/PARAMETER_REGISTRY.md` пакета.
+`input/model`, `input/validation`, `input/policy` и `reference/accepted/model` содержат принятые артефакты v7.7.10 r1, поэтому `RUN_LAB.cmd` и `CHECK_CANDIDATE.cmd` запускаются без аргументов; `CHECK_CANDIDATE` на нетронутой области даёт `BYTE_IDENTICAL`. Отчёты предыдущих прогонов в `output/` не входят в поставку: актуальные копии лежат в `docs/CAPITAL_LIFECYCLE_CONFORMANCE_REPORT.md`, `docs/STRUCTURE_AUDIT_REPORT.md`, `docs/PARAMETER_REGISTRY.md` пакета.
 
 Канонический разбор дефектов r1 и того, что именно изменено в r2, — `docs/V7_6_R1_TO_R2_FIX_REPORT.md`; порядок команд воспроизведения — `docs/ACCEPTANCE_STATUS.md`.
 

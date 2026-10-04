@@ -1,6 +1,6 @@
-# Capital Lifecycle Kernel — отображение ролей на примитивы v7.7.9 r1
+# Capital Lifecycle Kernel — отображение ролей на примитивы v7.7.10 r1
 
-Основано на current `validation/validation-v7.7.9.json` (plugin `capital_lifecycle_kernel`) и current ModelJSON v7.7.9 r1 (шахты реголита, руды и энергоресурса — простой капитал, их роли — в plugin `simple_capital`). Экземпляры A/B Construction Materials Plant (v7.7.3) и A/B Capital Goods Plant (v7.7.4) используют имена `X Construction Materials Plant <роль>` и `X Capital Goods Plant <роль>`; полный mapping — в validation. Это человекочитаемая копия machine mapping; при расхождении источником истины является current validation JSON вместе с accepted code.
+Основано на current `validation/validation-v7.7.10.json` (plugin `capital_lifecycle_kernel`) и current ModelJSON v7.7.10 r1 (шахты реголита, руды и энергоресурса — простой капитал, их роли — в plugin `simple_capital`). Экземпляры A/B Construction Materials Plant (v7.7.3) и A/B Capital Goods Plant (v7.7.4) используют имена `X Construction Materials Plant <роль>` и `X Capital Goods Plant <роль>`; полный mapping — в validation. Это человекочитаемая копия machine mapping; при расхождении источником истины является current validation JSON вместе с accepted code.
 
 Экземпляров: 7. Legacy-switch: `Capital Lifecycle Enabled`.
 
