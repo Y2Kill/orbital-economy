@@ -54,6 +54,13 @@
 Дальше: окончательно оформить раздел «Отличия», затем дождаться зелёного CI на голове отчёта и записать КТ4.
 
 
+### КТ4 — 2026-10-04 — поставка готова
+Сделано: поставка полная. `candidate.yml` прошёл все пять гейтов: apply-patch PASS, conformance PASS, audit PASS, validation PASS, policy PASS. На голове отчёта `98db65547352761ca177426a20dfd9b2e92f5734` общий CI зелёный: guard PASS, tools-selftest PASS, bench-selftests PASS (QA, structure, loop, planet, conformance, policy, compare, node и bench Modes 0/12).
+Доказательство: [Candidate acceptance #30](https://github.com/Y2Kill/orbital-economy/actions/runs/37140800482) — 5/5 PASS; [CI #316](https://github.com/Y2Kill/orbital-economy/actions/runs/37182888694) — success на `98db65547352761ca177426a20dfd9b2e92f5734`.
+Не подтвердилось: незакрытых гейтов, ошибок guard или self-tests нет.
+Дальше: приёмка владельцем на канонической платформе; `SHA256SUMS` пересобирает reviewer согласно `sums_by: reviewer`.
+
+
 ## Отличия
 
 От спецификации модели, test plan и owner drafts по существу отличий нет:
