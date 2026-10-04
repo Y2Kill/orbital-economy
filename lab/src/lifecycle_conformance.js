@@ -367,6 +367,50 @@ export function runSimpleCapitalConformance(raw, validation, index = indexModel(
 }
 
 
+export function findPopulationPlugin(validation) { return (validation?.plugins || []).find(p => p?.type === 'population') || null; }
+export function validatePopulationSpec(plugin) {
+  const errors=[];
+  if(!plugin||typeof plugin!=='object') return ['population plugin must be an object'];
+  if(!(typeof plugin.abs_tol==='number'&&Number.isFinite(plugin.abs_tol)&&plugin.abs_tol>0)) errors.push('population.abs_tol must be a finite number > 0');
+  if(!Array.isArray(plugin.instances)||plugin.instances.length<2) errors.push('population plugin needs at least two instances');
+  const names=new Set(),colonies=new Set();
+  const fields=['name','colony','population','births','deaths','labor_force','employment','labor_requirement','participation'];
+  for(const [i,inst] of (plugin.instances||[]).entries()){
+    const p=`instances[${i}]`;
+    for(const f of fields) if(typeof inst?.[f]!=='string'||!inst[f]) errors.push(`${p}.${f} is required`);
+    if(inst?.name){if(names.has(inst.name))errors.push(`duplicate population instance name: ${inst.name}`);names.add(inst.name);}
+    if(inst?.colony){if(colonies.has(inst.colony))errors.push(`duplicate population colony: ${inst.colony}`);colonies.add(inst.colony);}
+    for(const f of ['immigration','emigration']) if(!Array.isArray(inst?.[f])) errors.push(`${p}.${f} must be an array`);
+  }
+  return errors;
+}
+export function checkPopulationInstance(index,inst,plugin,popByName) {
+  const checks=[], resolved={};
+  const roles={population:['STOCK'],births:['FLOW'],deaths:['FLOW'],labor_force:['VARIABLE'],employment:['VARIABLE'],labor_requirement:['VARIABLE'],participation:['VARIABLE']};
+  for(const [role,kinds] of Object.entries(roles)){const el=index.get(inst[role]);if(!el){checks.push(fail(`role ${role}`,`primitive not found: ${inst[role]}`));continue;}if(!kinds.includes(el.type)){checks.push(fail(`role ${role}`,`${el.name}: expected ${kinds.join(' or ')}, found ${el.type}`));continue;}resolved[role]=el;checks.push(pass(`role ${role}`,{primitive:el.name,type:el.type}));}
+  const eq=(a,b)=>(a==null&&b==null)||(a!=null&&b!=null&&String(a).toLowerCase()===String(b).toLowerCase());
+  if(resolved.births){if(resolved.births.from==null&&eq(resolved.births.to,inst.population))checks.push(pass('birth topology'));else checks.push(fail('birth topology',`${resolved.births.name} must be ∅ -> ${inst.population}`));}
+  if(resolved.deaths){if(eq(resolved.deaths.from,inst.population)&&resolved.deaths.to==null)checks.push(pass('death topology'));else checks.push(fail('death topology',`${resolved.deaths.name} must be ${inst.population} -> ∅`));}
+  const dep=(target,source,label)=>{const t=resolved[target];if(!t)return;if(!formulaRefs(t).has(String(source).toLowerCase()))checks.push(fail(label,`${t.name} does not reference [${source}]`));else if(!index.hasLink(source,t.name))checks.push(fail(label,`missing LINK ${source} -> ${t.name}`));else checks.push(pass(label));};
+  dep('labor_force',inst.population,'labor_force <- population');dep('labor_force',inst.participation,'labor_force <- participation');dep('employment',inst.labor_force,'employment <- labor_force');dep('employment',inst.labor_requirement,'employment <- labor_requirement');
+  for(const [kind,flows] of [['emigration',inst.emigration||[]],['immigration',inst.immigration||[]]]) for(const name of flows){
+    const f=index.get(name),label=`${kind} ${name}`; if(!f){checks.push(fail(label,'primitive not found'));continue;} if(f.type!=='FLOW'){checks.push(fail(label,`expected FLOW, found ${f.type}`));continue;}
+    const own=inst.population, otherName=kind==='emigration'?f.to:f.from, ownEnd=kind==='emigration'?f.from:f.to;
+    if(!eq(ownEnd,own)){checks.push(fail(label,`wrong own-population endpoint: ${f.from??'∅'} -> ${f.to??'∅'}`));continue;}
+    const other=popByName.get(String(otherName||'').toLowerCase()); if(!other||other===inst){checks.push(fail(label,`other endpoint is not another declared population: ${otherName??'∅'}`));continue;}
+    const mirrorList=kind==='emigration'?other.immigration:other.emigration; if(!(mirrorList||[]).includes(name)){checks.push(fail(label,`missing mirrored ${kind==='emigration'?'immigration':'emigration'} record in ${other.name}`));continue;}
+    checks.push(pass(label));
+  }
+  const failed=checks.filter(x=>x.status==='FAIL');return{name:inst.name,sector:inst.colony||null,classification:failed.length?'NON_CONFORMING':'CONFORMING',checks,variations:[],failures:failed.map(x=>`${x.name}: ${x.message}`)};
+}
+export function runPopulationConformance(raw,validation,index=indexModel(raw)){
+  const plugin=findPopulationPlugin(validation);if(!plugin)return{status:'SKIPPED',instances:[],summary:{instances:0,conforming:0,nonConforming:0}};
+  const specErrors=validatePopulationSpec(plugin);if(specErrors.length)return{status:'FAIL',specErrors,instances:[],summary:{instances:0,conforming:0,nonConforming:0}};
+  const popByName=new Map(plugin.instances.map(i=>[String(i.population).toLowerCase(),i]));
+  const instances=plugin.instances.map(i=>checkPopulationInstance(index,i,plugin,popByName)),n=instances.filter(i=>i.classification==='NON_CONFORMING').length;
+  return{status:n?'FAIL':'PASS',instances,summary:{instances:instances.length,conforming:instances.length-n,nonConforming:n}};
+}
+
 export function findLaborPlugin(validation) { return (validation?.plugins || []).find(p => p?.type === 'labor') || null; }
 export function validateLaborSpec(plugin) {
   const errors=[]; if(!plugin||typeof plugin!=='object') return ['labor plugin must be an object'];
@@ -400,10 +444,11 @@ export function runLifecycleConformance(raw, validation) {
   const simpleCapital = runSimpleCapitalConformance(raw, validation, index);
   const deposit = runDepositConformance(raw, validation, index);
   const labor = runLaborConformance(raw, validation, index);
+  const population = runPopulationConformance(raw, validation, index);
   const anyNonConforming = instances.some(i => i.classification === 'NON_CONFORMING');
   const modelWideFail = modelWide.some(c => c.status === 'FAIL');
   return {
-    status: anyNonConforming || modelWideFail || simpleCapital.status === 'FAIL' || deposit.status === 'FAIL' || labor.status === 'FAIL' ? 'FAIL' : 'PASS',
+    status: anyNonConforming || modelWideFail || simpleCapital.status === 'FAIL' || deposit.status === 'FAIL' || labor.status === 'FAIL' || population.status === 'FAIL' ? 'FAIL' : 'PASS',
     format: KERNEL_FORMAT,
     kernel: { roles: Object.keys(KERNEL_ROLES).length, requiredRoles: REQUIRED_ROLES.length, flows: KERNEL_FLOWS.length, stocks: KERNEL_STOCKS.length },
     legacySwitch: plugin.legacy_switch || 'Capital Lifecycle Enabled',
@@ -417,7 +462,8 @@ export function runLifecycleConformance(raw, validation) {
     instances,
     simpleCapital,
     deposit,
-    labor
+    labor,
+    population
   };
 }
 
@@ -448,6 +494,10 @@ export function printConformance(report, log = console.log) {
   if (report.labor?.status !== 'SKIPPED') {
     log(`Labor conformance: ${report.labor.status}`);
     for(const inst of report.labor.instances||[]){const checked=inst.checks.length,failed=inst.failures.length;log(`    ${inst.name.padEnd(32)} ${inst.classification}  (${checked-failed}/${checked} checks)`);for(const f of inst.failures)log(`        - ${f}`);}for(const e of report.labor.specErrors||[])log(`    - ${e}`);
+  }
+  if (report.population?.status !== 'SKIPPED') {
+    log(`Population conformance: ${report.population.status}`);
+    for(const inst of report.population.instances||[]){const checked=inst.checks.length,failed=inst.failures.length;log(`    ${inst.name.padEnd(32)} ${inst.classification}  (${checked-failed}/${checked} checks)`);for(const f of inst.failures)log(`        - ${f}`);}for(const e of report.population.specErrors||[])log(`    - ${e}`);
   }
   if (report.deposit?.status !== 'SKIPPED') {
     log(`Deposit conformance: ${report.deposit.status}`);

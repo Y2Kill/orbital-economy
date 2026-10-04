@@ -212,8 +212,11 @@ export function mergeNodeValidation(validation, fragments) {
   let simple = out.plugins?.find(p => p.type === 'simple_capital') || null;
   let deposit = out.plugins?.find(p => p.type === 'deposit') || null;
   let labor = out.plugins?.find(p => p.type === 'labor') || null;
+  let population = out.plugins?.find(p => p.type === 'population') || null;
   let retirement = boundaries.categories.find(x => x.id === 'capital_retirement') || null;
   let exploration = boundaries.categories.find(x => x.id === 'exploration_expenditure') || null;
+  let demographyBirths = boundaries.categories.find(x => x.id === 'demography_births') || null;
+  let demographyDeaths = boundaries.categories.find(x => x.id === 'demography_deaths') || null;
   const information = boundaries.categories.find(x => x.id === 'information_signal') || null;
 
   for (const [fi, fragment] of fragments.entries()) {
@@ -296,6 +299,34 @@ export function mergeNodeValidation(validation, fragments) {
         else if (!jsonEqual(existing, generated)) throw new Error(`validation fragment[${fi}]: labor instance "${generated.name}" already exists with a different definition`);
       }
     }
+    if ((fragment.population_instances || []).length) {
+      const absTol = fragment.population_abs_tol ?? 1e-9;
+      if (!population) { population = { type: 'population', abs_tol: absTol, instances: [] }; out.plugins.push(population); }
+      if (!Array.isArray(population.instances)) throw new Error('validation: population.instances must be an array');
+      if ((population.abs_tol ?? 1e-9) !== absTol) throw new Error(`validation fragment[${fi}]: population abs_tol differs`);
+      for (const generated of fragment.population_instances) {
+        const existing = population.instances.find(x => x.name === generated.name);
+        if (!existing) population.instances.push(structuredClone(generated));
+        else if (!jsonEqual(existing, generated)) throw new Error(`validation fragment[${fi}]: population instance "${generated.name}" already exists with a different definition`);
+      }
+    }
+    const ensureBoundaryCategory = (id, direction, names, reason, current) => {
+      if (!(names || []).length) return current;
+      if (!current) {
+        current = { id, closed_world: true, direction, name: [], reason };
+        boundaries.categories.push(current);
+      }
+      if (current.closed_world !== true || current.direction !== direction || !Array.isArray(current.name)) {
+        throw new Error(`validation: open_boundaries ${id} category has incompatible definition`);
+      }
+      for (const name of names) if (!current.name.includes(name)) current.name.push(name);
+      return current;
+    };
+    demographyBirths = ensureBoundaryCategory('demography_births', 'source', fragment.demography_births_names,
+      'people enter the model by birth (Planet v2 population)', demographyBirths);
+    demographyDeaths = ensureBoundaryCategory('demography_deaths', 'sink', fragment.demography_deaths_names,
+      'people leave the model by death (Planet v2 population)', demographyDeaths);
+
     for (const generated of fragment.planet_labors || []) {
       const process = planet.processes.find(x => x.id === generated.process);
       if (!process) throw new Error(`validation fragment[${fi}]: planet process "${generated.process}" does not exist`);

@@ -1306,6 +1306,57 @@ await expect('40. population fixture expands and APPLY_PATCH matches prototype c
   return '49 elements / 0 replacements / 90 links; migration flows=2; fingerprint=' + fp;
 });
 
+await expect('41. population fragments merge idempotently; static/audit/loops/planet_v1 PASS', () => {
+  if(!populationState) throw new Error('case 40 did not produce population state');
+  const baseline=validation;
+  const baseAudit=runStructureAudits(populationState.base,baseline);
+  const merged=mergeNodeValidation(baseline,[populationState.expanded.validation]);
+  const twice=mergeNodeValidation(merged,[populationState.expanded.validation]);
+  if(JSON.stringify(merged)!==JSON.stringify(twice)) throw new Error('population validation merge is not idempotent');
+  const conf=runLifecycleConformance(populationState.model,merged);
+  if(conf.population?.status!=='PASS'||conf.population.summary.instances!==2||conf.population.summary.nonConforming!==0) throw new Error('population conformance mismatch: '+JSON.stringify(conf.population));
+  const audits=runStructureAudits(populationState.model,merged);
+  if(audits.status!=='PASS') throw new Error('audit status='+audits.status);
+  if(audits.openBoundaries?.summary?.openFlows!==232||audits.openBoundaries?.summary?.unclassified!==0) throw new Error('boundaries='+JSON.stringify(audits.openBoundaries?.summary));
+  if(audits.algebraicLoops?.combinationsWithLoops!==0||audits.algebraicLoops?.combinations!==baseAudit.algebraicLoops?.combinations) throw new Error('loops mismatch');
+  const pv=structuredClone(merged);pv.plugins.find(p=>p.type==='planet_closure').enforce='planet_v1';
+  const strict=runStructureAudits(populationState.model,pv);if(strict.status!=='PASS')throw new Error('planet_v1 audit status='+strict.status);
+  populationState.validation=merged;
+  return 'population=2 CONFORMING; boundaries=232/unclassified=0; loops=0/'+audits.algebraicLoops.combinations+'; planet_v1 PASS; merge idempotent';
+});
+
+await expect('42. population trial on last Mode passes runtime; populations positive and migration occurs', () => {
+  if(!populationState?.validation) throw new Error('case 41 did not produce merged validation');
+  const source=(populationState.model.scenarios||[]).at(-1);if(!source)throw new Error('model has no scenarios');
+  const sim=loadModelJSON(modelJsonForScenario(populationState.model,source)),errs=sim.check();if(errs.length)throw new Error('model.check: '+errs.map(e=>e.message||e).join('; '));
+  const results=sim.simulate(),ctx=seriesContext(sim,results);
+  const runtime=[checkTimeAxis(results,populationState.validation.expected_time_step??populationState.model.simulation?.time_step??null,populationState.validation.time_step_tolerance??1e-12),checkFiniteAll(sim,results)];
+  if(populationState.validation.non_negative_regex)runtime.push(checkNonNegativeRegex(sim,results,populationState.validation.non_negative_regex.pattern,populationState.validation.non_negative_regex.tolerance??1e-10));
+  for(const p of populationState.validation.plugins||[])runtime.push(...checkPlugin(p,ctx));for(const c of populationState.validation.global_checks||[])runtime.push(runGenericCheck(c,ctx));
+  const fail=runtime.filter(x=>x.status==='FAIL');if(fail.length)throw new Error('runtime: '+fail.map(x=>x.name+': '+(x.message||'FAIL')).join('; '));
+  for(const X of populationFixture.colonies){const p=Array.from(ctx.get(X+' Population'),Number);if(p.some(v=>!(v>0)))throw new Error(X+' population not positive');}
+  const mig=['Migration A to B','Migration B to A'].flatMap(n=>Array.from(ctx.get(n),Number));if(!mig.some(v=>v>0))throw new Error('migration never positive');
+  return 'runtime population PASS; A/B population positive; migration observed';
+});
+
+await expect('43. three-region population creates six migrations and preserves people in migration', () => {
+  if(!populationState) throw new Error('case 40 did not produce base');
+  const base=structuredClone(populationState.base),decl3=structuredClone(populationFixture);
+  decl3.colonies=['A','B','C'];decl3.initial={A:28,B:8.5,C:4};
+  const copyForC=name=>{const src=base.elements.find(e=>e.type!=='LINK'&&e.name===name.replace(/^C /,'A '));if(!src)throw new Error('synthetic C source missing for '+name);const x=structuredClone(src);x.name=name;base.elements.push(x);};
+  const needed=[decl3.inputs.wage,decl3.inputs.labor_requirement,...decl3.inputs.prices.flatMap(p=>[p.price,p.reference]),...decl3.inputs.living.map(l=>l.column)].map(n=>n.replaceAll('{C}','C'));
+  for(const n of needed)copyForC(n);
+  const ex=expandNode(decl3,base),migrations=ex.patch.add_elements.filter(e=>e.type==='FLOW'&&e.name.startsWith('Migration '));
+  if(migrations.length!==6)throw new Error('migration flows='+migrations.length+', expected 6');
+  const plugin={type:'population',abs_tol:1e-9,instances:ex.validation.population_instances};
+  const times=[0,1],values={};
+  for(const i of plugin.instances){values[i.population]=[10,10];values[i.births]=[0,0];values[i.deaths]=[0,0];values[i.labor_force]=[5,5];values[i.employment]=[4,4];values[i.labor_requirement]=[4,4];values[i.participation]=[.5,.5];}
+  migrations.forEach((m,j)=>values[m.name]=[j+1,j+2]);
+  const ctx={times,has:n=>n in values,get(n){if(!(n in values))throw new Error('unknown series '+n);return values[n];}};
+  const r=checkPlugin(plugin,ctx),c=r.find(x=>x.name==='population: migration conservation');if(c?.status!=='PASS')throw new Error('migration conservation '+JSON.stringify(c));
+  return '6 migration flows; migration conservation PASS';
+});
+
 await expect('44. strip and rebuild population model with zero definition/replacement/link differences', () => {
   if (!populationState?.target) throw new Error('case 40 did not produce population target');
   const stripped = stripPopulationNode(populationState.target, populationFixture);

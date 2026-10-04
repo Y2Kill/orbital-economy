@@ -243,6 +243,42 @@ const STATIC_ONLY_PLUGINS = new Set(['open_boundaries', 'colony_symmetry', 'plan
 export function checkPlugin(plugin, ctx) {
   const results = [];
   if (STATIC_ONLY_PLUGINS.has(plugin.type)) return results;
+  if (plugin.type === 'population') {
+    const tol = plugin.abs_tol ?? 1e-9;
+    const safe = (name, fn) => { try { return fn(); } catch (e) { return fail(name, e.message || String(e)); } };
+    for (const inst of plugin.instances || []) {
+      const label = inst.name || inst.colony || 'population';
+      results.push(safe(`${label}: population and demographic flows >= 0`, () => checkNonNegativeColumns(ctx, {
+        name: `${label}: population and demographic flows >= 0`, abs_tol: tol,
+        columns: [inst.population, inst.births, inst.deaths, ...(inst.immigration || []), ...(inst.emigration || [])]
+      })));
+      results.push(safe(`${label}: employment <= labor force`, () => checkRelation(ctx, {
+        name: `${label}: employment <= labor force`, left: inst.employment, right: inst.labor_force, op: '<=', abs_tol: tol
+      })));
+      results.push(safe(`${label}: employment <= labor requirement`, () => checkRelation(ctx, {
+        name: `${label}: employment <= labor requirement`, left: inst.employment, right: inst.labor_requirement, op: '<=', abs_tol: tol
+      })));
+      results.push(safe(`${label}: labor force identity`, () => {
+        const pop=ctx.get(inst.population), share=ctx.get(inst.participation), lf=ctx.get(inst.labor_force);
+        let worst=0,absWorst=0,when=null;
+        for(let i=0;i<ctx.times.length;i++){const expected=pop[i]*share[i],a=Math.abs(lf[i]-expected),rel=a/Math.max(Math.abs(expected),1e-12);if(rel>worst){worst=rel;absWorst=a;when=ctx.times[i];}}
+        const name=`${label}: labor force identity`;
+        return worst<=tol?pass(name,{worstRelativeError:worst,worstAbsError:absWorst,worstTime:when}):fail(name,`relative error ${worst} > ${tol} at day ${when}`,{worstRelativeError:worst,worstAbsError:absWorst,worstTime:when});
+      }));
+    }
+    results.push((() => {
+      const name='population: migration conservation';
+      try {
+        const em=(plugin.instances||[]).flatMap(x=>x.emigration||[]).map(n=>ctx.get(n));
+        const im=(plugin.instances||[]).flatMap(x=>x.immigration||[]).map(n=>ctx.get(n));
+        let worst=0,when=null,outValue=0,inValue=0;
+        for(let i=0;i<ctx.times.length;i++){const a=em.reduce((s,x)=>s+x[i],0),b=im.reduce((s,x)=>s+x[i],0),d=Math.abs(a-b);if(d>worst){worst=d;when=ctx.times[i];outValue=a;inValue=b;}}
+        return worst<=tol?pass(name,{maxAbsError:worst,maxTime:when}):fail(name,`migration out ${outValue} != in ${inValue}; abs error ${worst} > ${tol} at day ${when}`,{maxAbsError:worst,maxTime:when});
+      } catch(e) { return fail(name,e.message||String(e)); }
+    })());
+    return results;
+  }
+
   if (plugin.type === 'labor') {
     const tol = plugin.abs_tol ?? 1e-9;
     const safe = (name, fn) => { try { return fn(); } catch (e) { return fail(name, e.message || String(e)); } };

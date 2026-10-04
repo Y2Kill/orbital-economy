@@ -537,6 +537,20 @@ try {
     return 'product PASS; +1% FAIL; factor below min FAIL';
   });
 
+  await expect('45 population plugin: good passes; over-employment and migration imbalance fail', async () => {
+    const times=[0,1,2];
+    const base={pa:[10,11,12],pb:[5,5,5],share:[.5,.5,.5],lfa:[5,5.5,6],lfb:[2.5,2.5,2.5],ra:[8,8,8],rb:[4,4,4],ea:[5,5.5,6],eb:[2.5,2.5,2.5],ba:[.1,.1,.1],bb:[.05,.05,.05],da:[.08,.08,.08],db:[.04,.04,.04],ab:[.2,.3,.4],ba_m:[.1,.15,.2]};
+    const cx=v=>({times,has:n=>n in v,get(n){if(!(n in v))throw new Error(`unknown series ${n}`);return v[n];}});
+    const plugin={type:'population',abs_tol:1e-9,instances:[
+      {name:'A population',colony:'A',population:'pa',births:'ba',deaths:'da',immigration:['ba_m'],emigration:['ab'],labor_force:'lfa',employment:'ea',labor_requirement:'ra',participation:'share'},
+      {name:'B population',colony:'B',population:'pb',births:'bb',deaths:'db',immigration:['ab'],emigration:['ba_m'],labor_force:'lfb',employment:'eb',labor_requirement:'rb',participation:'share'}]};
+    const good=checkPlugin(plugin,cx(base));if(good.some(r=>r.status!=='PASS'))throw new Error(`good: ${JSON.stringify(good)}`);
+    const over=structuredClone(base);over.ea=[5,6,6];const ro=checkPlugin(plugin,cx(over));if(!ro.some(r=>r.name.includes('employment <= labor force')&&r.status==='FAIL'))throw new Error('over-employment did not fail');
+    const unbalancedPlugin=structuredClone(plugin);unbalancedPlugin.instances[1].immigration=['ab_bad'];
+    const unbalanced={...base,ab_bad:[.1,.1,.1]};const rb=checkPlugin(unbalancedPlugin,cx(unbalanced));if(!rb.some(r=>r.name==='population: migration conservation'&&r.status==='FAIL'))throw new Error('migration imbalance did not fail');
+    return 'good PASS; over-employment FAIL; migration imbalance FAIL';
+  });
+
 } finally {
   fs.rmSync(tmp, { recursive: true, force: true });
 }
