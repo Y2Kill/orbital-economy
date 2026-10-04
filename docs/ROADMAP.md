@@ -166,5 +166,6 @@ Only after Planet v1 is sufficiently rich:
 - replace hard-coded A/B demonstration topology with reusable templates;
 - support a graph/network of settlements/planets and transport links;
 - enable resource/energy/industry/logistics-driven specialization;
+- regions, not colonies (owner, 2026-10-04): A and B (and future regions) are self-contained regional economies with the full starting set of processes; they specialize through trade (agrarian, extractive, manufacturing) driven by regional differences — endowments, productivity, future nature-bound sectors — and whether they share a planet is a matter of transport lags and costs; further regions via a region generator (template + parameters);
 - levels of economy (owner, 2026-10-02): a planetary economy (possibly one shared transport), metropolis/colony (its own mechanism), interstate trade (its own rules); shared transport's energy and similar cross-economy interactions are decided at that level, not in Planet v1;
 - preserve deterministic reproducibility and accepted checkpoints.
