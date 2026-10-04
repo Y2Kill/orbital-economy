@@ -29,6 +29,13 @@
 Дальше: зафиксировать регрессию Modes 0–47 и итог policy как КТ2.
 
 
+### КТ2 — 2026-10-04 — регрессия Modes 0–47 и policy PASS
+Сделано: подтверждена нулевая регрессия принятых сценариев и контракт изменений. Во всех Modes 0–47 сравнение с v7.7.9 r1 даёт `common=1519, changed=0, added=69, removed=0, maxAbs=0`; исходные ряды не изменены, добавлены только 69 рядов labor-слоя. Policy — PASS: наблюдаемых событий 3509, ожидаемых/разрешённых 3509, неожиданных 0, запрещённых 0, превышений порога 0, отсутствующих обязательных событий 0.
+Доказательство: [Candidate acceptance #30](https://github.com/Y2Kill/orbital-economy/actions/runs/37140800482), job `111255558601`: Modes 0–47 — `Output comparison: IDENTICAL` и `changed=0 ... maxAbs=0`; итог `POLICY RESULT: PASS`, `Observed changes: 3509`, `Expected/allowed: 3509`, `Unexpected: 0`.
+Не подтвердилось: ни одного `series_changed` в Modes 0–47 и ни одного неожиданного policy-события.
+Дальше: зафиксировать validation 49/49 и поведение Automation Probe Mode 48 как КТ3.
+
+
 ## Отличия
 
 На старте отличий от `V7_7_10_ARCHITECTURE_SPEC.md`, `V7_7_10_TEST_PLAN.md` и owner drafts нет. Пороговые значения validation не изменялись; validation скопирована байт-в-байт. Если `candidate.yml` потребует изменение, оно будет зафиксировано здесь с обоснованием до следующей контрольной точки.
