@@ -1,4 +1,4 @@
-# Validation format — Lab v0.9.13
+# Validation format — Lab v0.9.16
 
 `validation.json` — изменяемый контракт проверки конкретной версии модели. Ядро runner должно меняться реже, чем этот файл.
 
@@ -339,3 +339,37 @@ Generated merge также объявляет `planet_closure.processes[].deposi
 Статический conformance требует корректные типы ролей и прямые зависимости: `requirement` читает `output`, `intensity`, `automation_factor`; `automation_factor` читает `automation_level` и `min_human_share`. Runtime проверяет уровень автоматизации в [0,1], коэффициент в [`min_human_share`,1], неотрицательность `requirement` и тождество `requirement = output × intensity × automation_factor` с относительным допуском `abs_tol`.
 
 В `planet_closure.processes[].labor` для `kind: "declared"` поддерживается поле `requirement`. Оно должно разрешаться в VARIABLE, которая непосредственно читает выход процесса и параметр `intensity`. В режиме `report` прежняя декларация без `requirement` остаётся допустимой; `planet_v1` и `planet_strict` дают mode failure `P5: labor declared without a requirement variable`.
+
+
+## Plugin `population` (v0.9.16)
+
+```json
+{
+  "type": "population",
+  "abs_tol": 1e-9,
+  "instances": [
+    {
+      "name": "A population",
+      "colony": "A",
+      "population": "A Population",
+      "births": "A Births",
+      "deaths": "A Deaths",
+      "immigration": ["Migration B to A"],
+      "emigration": ["Migration A to B"],
+      "labor_force": "A Labor Force",
+      "employment": "A Employment",
+      "labor_requirement": "A Total Labor Requirement",
+      "participation": "Labor Participation Share"
+    }
+  ]
+}
+```
+
+Static HARD conformance проверяет роли и топологию: population — STOCK; births/deaths/migration — FLOW с правильными endpoints; каждый migration FLOW зеркально записан как emigration источника и immigration приёмника; `labor_force` непосредственно читает population и participation, а `employment` — labor_force и labor_requirement.
+
+Runtime проверяет неотрицательность населения и демографических потоков, `employment <= labor_force`, `employment <= labor_requirement`, относительное тождество `labor_force = population × participation` и глобальное сохранение людей при миграции: сумма всех emigration равна сумме всех immigration в каждой временной точке.
+
+Generated merge также добавляет в `open_boundaries`:
+- к `information_signal`: `? Perceived Attractiveness Increase`, `? Perceived Attractiveness Decrease`;
+- `demography_births`: closed-world source, `? Births`;
+- `demography_deaths`: closed-world sink, `? Deaths`.

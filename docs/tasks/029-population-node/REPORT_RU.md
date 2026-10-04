@@ -21,11 +21,26 @@
 
 Самотесты: NODE cases 41–43 доводят целевой набор до 45 случаев; QA case 45 проверяет PASS, превышение занятости и нарушение миграционного баланса. Case 41 также требует 232 граничных FLOW, unclassified 0, loops 0 с тем же числом комбинаций и `planet_v1 PASS`.
 
-GitHub Actions, который ожидается после этого push: полный `bench-selftests` с NODE **45/45**, QA **45/45** и остальными существующими self-tests без регрессий. Ссылка и итог будут дописаны в КТ3 отдельной проверкой.
+GitHub Actions: https://github.com/Y2Kill/orbital-economy/actions/runs/37219274232 — **SUCCESS**. `QA RESULT: PASS (45 passed, 0 failed)`; `NODE SELF-TEST: 45 passed, 0 failed`; case 40 = **49 / 0 / 90**, migration flows 2, fingerprint **35d24655fc422942**; case 41 = population 2 CONFORMING, boundaries **232 / unclassified 0**, loops **0/32768**, `planet_v1 PASS`; Modes 0/12 `OVERALL: PASS`.
 
-Не подтвердилось: на момент записи КТ2 новых отрицательных результатов нет; КТ1 run 328 ещё не завершил тяжёлый compare-шаг.
+Не подтвердилось: функциональных/регрессионных отказов нет. КТ1 run 328 был автоматически `cancelled` concurrency-механизмом после push КТ2; до отмены его guard/tools и выполненные self-tests были зелёными. Полное доказательство функциональной головы даёт успешный run КТ2 выше.
 
-Дальше: проверить CI КТ2 отдельным шагом, исправить любые фактические отказы, затем оформить Lab v0.9.16 и документацию.
+Дальше: оформить Lab v0.9.16 и документацию, затем проверить CI финальной головы отдельным шагом.
+
+
+### КТ3 — 2026-10-04 — Lab v0.9.16, документация, финальная голова
+
+Сделано: версия стенда поднята до **0.9.16** в `package.json`, `package-lock.json` и CLI; `package.json` сохранён CRLF без завершающего перевода строки. Обновлены `NODES_RU.md`, `VALIDATION_FORMAT_RU.md`, `LIFECYCLE_CONFORMANCE_RU.md`, `HARNESS_QA_RU.md`, `TEST_STATUS_RU.md`, `README_RU.md`, `CHANGELOG.md`.
+
+КТ2 доказательство: https://github.com/Y2Kill/orbital-economy/actions/runs/37219274232 — SUCCESS, NODE **45/45**, QA **45/45**, `OVERALL: PASS`.
+
+Финальная CI-голова после этого push проверяется отдельным шагом. Стабильная страница workflow ветки: https://github.com/Y2Kill/orbital-economy/actions/workflows/ci.yml?query=branch%3Atask%2F029-population-node .
+
+Модель, accepted validation, policy, `model/nodes/*`, tools, vendor, workflow и engine задачей не менялись. `SHA256SUMS` не пересобирался: `sums_by: reviewer`.
+
+Не подтвердилось: отклонений от эталонного результата задачи 029 не обнаружено.
+
+Дальше: отдельной проверкой подтвердить финальный CI run этой головы; Windows acceptance остаётся reviewer.
 
 ## Устройство `population`
 
@@ -35,11 +50,11 @@ GitHub Actions, который ожидается после этого push: п
 
 ## Отличия
 
-На КТ1 отличий от требований задания и формул эталонного прототипа не заявлено. Исходный код генератора написан самостоятельно; критерием эквивалентности служат определения после `APPLY_PATCH`, числа 49/0/90 и fingerprint.
+Отличий результата от требований задания и формул эталонного прототипа **нет**: раскрытие совпало по 49/0/90 и fingerprint `35d24655fc422942`; validation/static/runtime criteria выполнены. Исходный код генератора и проверок написан самостоятельно по спецификации; reference prototype использован как oracle результата, а не как копируемая реализация.
 
 ## Ограничения
 
-До КТ2 generated validation fragment ещё не сливается в plugin `population`; статическая и runtime-проверка населения будут добавлены следующей контрольной точкой.
+Шаг 1 намеренно остаётся accounting-only: нет ограничения выпуска трудом, связи population → demand и гибкой зарплаты. Канонический Windows acceptance не выполнялся исполнителем и остаётся за reviewer.
 
 ## Замечания к заданию
 

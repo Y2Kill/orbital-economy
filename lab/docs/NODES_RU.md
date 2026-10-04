@@ -1,4 +1,4 @@
-# Declarative Nodes — Orbital Economy Lab v0.9.13
+# Declarative Nodes — Orbital Economy Lab v0.9.16
 
 ## 1. Назначение
 
@@ -13,7 +13,7 @@ Node declaration — короткое строгое описание повто
 
 ## 2. Поддерживаемый тип
 
-Registry содержит пять типов: `capital_lifecycle`, `simple_capital`, `deposit`, `energy_consumer` и `labor`, все `version: 1`.
+Registry содержит шесть типов: `capital_lifecycle`, `simple_capital`, `deposit`, `energy_consumer`, `labor` и `population`, все `version: 1`.
 
 Минимальная форма:
 
@@ -306,5 +306,56 @@ Generated validation добавляет такого consumer в `energy_balance
       "planet_process": "smelting"
     }
   ]
+}
+```
+
+
+## Population node — v0.9.16
+
+`population` — additive-only узел Planet v2 step 1 для учёта населения регионов. Переключателя и замен существующих формул нет: экономика задаёт зарплату, потребность в труде, цены и уровень жизни, а население на этом шаге не ограничивает выпуск и не создаёт спрос.
+
+Декларация содержит:
+- `colonies` — минимум два региона;
+- `initial` — положительное начальное население каждого региона;
+- ровно 11 демографических/миграционных параметров;
+- `inputs.wage`, `inputs.labor_requirement`, непустые `prices[]` и `living[]`.
+
+Для каждого региона создаются STOCK населения и воспринимаемой привлекательности, FLOW рождений/смертей и сглаживания, показатели рабочей силы/занятости/цен/реальной зарплаты/уровня жизни/привлекательности. Для каждой упорядоченной пары регионов создаются `Attractiveness Gap X to Y` и FLOW `Migration X to Y` из населения X в население Y. `Planet Population` суммирует региональные STOCK.
+
+Фикстура `fixtures/nodes/population.json` против принятой v7.7.10 раскрывается в **49 add / 0 replace / 90 LINK**, два migration FLOW; definition fingerprint — `35d24655fc422942`.
+
+Generated validation добавляет plugin `population`, расширяет `information_signal` и создаёт closed-world категории `demography_births` / `demography_deaths`. Merge идемпотентен.
+
+Пример:
+
+```json
+{
+  "type": "population",
+  "version": 1,
+  "colonies": ["A", "B"],
+  "initial": { "A": 28, "B": 8.5 },
+  "parameters": {
+    "Population Birth Rate": 0.0000333333333333,
+    "Population Base Death Rate": 0.0000277777777778,
+    "Death Living Standard Sensitivity": 1,
+    "Labor Participation Share": 0.5,
+    "Migration Max Rate": 0.0000555555555556,
+    "Migration Gap Sensitivity": 4,
+    "Attractiveness Perception Time": 360,
+    "Attractiveness Wage Weight": 1,
+    "Attractiveness Jobs Weight": 1,
+    "Attractiveness Living Weight": 1,
+    "Reference Real Wage": 100
+  },
+  "inputs": {
+    "wage": "{C} Effective Wage",
+    "labor_requirement": "{C} Total Labor Requirement",
+    "prices": [
+      { "price": "{C} Market Price", "reference": "{C} Reference Metal Price" }
+    ],
+    "living": [
+      { "name": "Energy", "column": "{C} Energy Fulfillment Ratio", "weight": 1 }
+    ]
+  }
 }
 ```

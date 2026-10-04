@@ -1,3 +1,12 @@
+## v0.9.16 — population node
+
+- новый declarative type `population`: региональное население, рождения, смерти, учёт труда, воспринимаемая привлекательность и направленная миграция; без switch и без обратной связи населения на экономику;
+- fixture задачи 029: 49 add / 0 replace / 90 LINK, 2 migration FLOW, fingerprint `35d24655fc422942`;
+- generated validation: plugin `population`, `demography_births` / `demography_deaths` и расширение `information_signal`; semantic merge идемпотентен;
+- static HARD conformance миграционной топологии и dependencies; runtime: неотрицательность, employment bounds, labor-force identity и conservation migration out=in;
+- self-tests расширены до NODE 45 и QA 45;
+- package/Lab version → v0.9.16; accepted model, validation, policy, engine, `model/nodes/*`, tools и vendor не изменены.
+
 ## v0.9.15 — labor node
 
 - новый declarative type `labor`: labor requirement = output × intensity × automation factor, без switch; automation factor при уровне 0 равен ровно 1;

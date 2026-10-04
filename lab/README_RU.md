@@ -1,6 +1,6 @@
-# Orbital Economy Lab v0.9.14
+# Orbital Economy Lab v0.9.16
 
-Локальный стенд для запуска, проверки, regression-анализа, policy-gating, Capital Lifecycle Kernel и статических аудитов структуры для ModelJSON Orbital Economy. v0.9.14 ускоряет switch-aware algebraic-loop audit точными сокращениями без изменения результата и сохраняет полный `--exhaustive` путь как эталон. v0.9.13 добавляет declarative `energy_consumer`, явный STOCK-сигнал энергетического запроса в Planet closure и runtime-проверку приоритетных потребителей. v0.9.12 добавляет node `deposit`, безопасный `retarget_flows` для endpoints существующих FLOW и deposit conformance/runtime checks. v0.9.11 расширяет `simple_capital`: smooth cap для скорости без capacity-параметра и раздельный initial sizing signal по колониям. v0.9.10 добавляет строгую статическую схему validation: ошибки формы блокируют запуск до simulation. v0.9.6 добавляет `planet_closure`: декларативную per-process карту критериев Planet v1 P2–P6 с dependency paths, exceptions/debt counters и режимами `report/classify/planet_v1/planet_strict`.
+Локальный стенд для запуска, проверки, regression-анализа, policy-gating, Capital Lifecycle Kernel и статических аудитов структуры для ModelJSON Orbital Economy. v0.9.16 добавляет declarative `population`: региональное население, рождения/смерти, миграцию по привлекательности, учёт труда и проверку сохранения людей без обратной связи на экономику. v0.9.15 добавляет declarative `labor`. v0.9.14 ускоряет switch-aware algebraic-loop audit точными сокращениями без изменения результата и сохраняет полный `--exhaustive` путь как эталон. v0.9.13 добавляет declarative `energy_consumer`, явный STOCK-сигнал энергетического запроса в Planet closure и runtime-проверку приоритетных потребителей. v0.9.12 добавляет node `deposit`, безопасный `retarget_flows` для endpoints существующих FLOW и deposit conformance/runtime checks. v0.9.11 расширяет `simple_capital`: smooth cap для скорости без capacity-параметра и раздельный initial sizing signal по колониям. v0.9.10 добавляет строгую статическую схему validation: ошибки формы блокируют запуск до simulation. v0.9.6 добавляет `planet_closure`: декларативную per-process карту критериев Planet v1 P2–P6 с dependency paths, exceptions/debt counters и режимами `report/classify/planet_v1/planet_strict`.
 
 ## Подтверждённая база
 
@@ -908,3 +908,10 @@ Required missing: 0
 Lab поддерживает declarative node `labor`: процесс получает трудоёмкость, параметр автоматизации, вычисляемый коэффициент человеческого труда и `Labor Requirement` без switch. При нулевой автоматизации коэффициент строго 1, поэтому существующие ряды остаются базовой точкой сравнения. Узел также может включать коэффициент автоматизации в существующие формулы себестоимости.
 
 Generated validation добавляет plugin `labor` и закрывает Planet P5 через `labor.requirement`. `report` сохраняет совместимость со старыми declared labor без requirement; `planet_v1` требует requirement для каждой declared labor role.
+
+
+## Population node — v0.9.16
+
+Declarative `population` моделирует население регионов как учётный слой Planet v2 step 1: рождения, смерти, рабочую силу, занятость и миграцию по воспринимаемой привлекательности. Узел additive-only и не имеет switch; существующие экономические ряды не меняются.
+
+Validation plugin `population` выполняет HARD static topology checks и runtime invariants, включая сохранение людей при миграции. Эталонная A/B fixture: 49 add / 0 replace / 90 LINK, fingerprint `35d24655fc422942`.

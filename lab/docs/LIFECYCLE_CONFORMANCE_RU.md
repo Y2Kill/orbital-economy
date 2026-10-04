@@ -156,3 +156,8 @@ Runtime (реальный Mode 0):
 Контракт: восемь ролей и topology из `NODES_RU.md`; shortage/excess читают desired_capacity+capacity, desired_expansion — shortage, expansion — desired_expansion, depreciation — capacity, retirement — excess, каждый consumption — expansion. Отдельно требуется `sizing_signal` типа STOCK и прямая ссылка `desired_capacity` на него. Runtime plugin проверяет неотрицательность capacity и капитальных/consumption потоков.
 
 Case 12 `NODE_SELF_TEST` подставляет `{C} Regolith Requirement` (VARIABLE) как sizing signal и требует явный `NON_CONFORMING: expected STOCK, found VARIABLE`.
+
+
+## Population conformance — v0.9.16
+
+Plugin `population` проходит отдельный HARD static conformance до simulation. Проверяются типы ролей, endpoints рождений/смертей, направленная миграция только между объявленными population STOCK, симметрия записей emigration/immigration и прямые dependency/LINK для рабочей силы и занятости. Любая ошибка даёт `population.status = FAIL` и переводит общий conformance в FAIL.

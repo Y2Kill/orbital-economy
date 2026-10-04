@@ -263,3 +263,13 @@ Linux CI КТ2: https://github.com/Y2Kill/orbital-economy/actions/runs/370065015
 - QA 44: runtime plugin `labor` — произведение, +1% ошибка requirement и factor ниже `min_human_share`.
 
 Ожидаемые итоги v0.9.15: **NODE 39/39**, **PLANET 20/20**, **QA 44/44**.
+
+
+## v0.9.16 — population node QA
+
+Задание 029 расширяет self-tests без изменения accepted model/validation/policy:
+
+- NODE cases 40–45: эталонное раскрытие **49/0/90**, fingerprint `35d24655fc422942`; semantic validation merge и static audit (232 boundary, unclassified 0, loops 0/32768, planet_v1 PASS); runtime на последнем Mode; 3-region migration conservation; strip/rebuild; пять schema/base negatives.
+- QA 45: runtime plugin `population` — корректный контекст PASS; employment выше labor force FAIL; нарушение суммы migration out/in FAIL.
+
+Целевые итоги v0.9.16: **NODE 45/45**, **QA 45/45**; прежние Planet/Structure/Loop/Conformance/Policy/Compare ожидания не меняются.

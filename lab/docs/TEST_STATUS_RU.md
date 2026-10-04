@@ -1,4 +1,4 @@
-# Статус проверок Orbital Economy Lab v0.9.15 — baseline v7.7.10 r1
+# Статус проверок Orbital Economy Lab v0.9.16 — baseline v7.7.10 r1
 
 ## Принятая основа
 
@@ -145,3 +145,12 @@ Accepted ModelJSON, validation и policy задачей 020 не меняютс�
 Новый declarative node `labor` проверяется на четырёх уровнях: generator oracle, semantic validation merge, static conformance/Planet P5 и runtime identity. Эталон фикстуры: 69 добавлений, 4 замены, 123 LINK, 17 labor instances, fingerprint `8da2d7d17c679eda`.
 
 Целевые self-test totals: QA **44/44**, Planet **20/20**, Node **39/39**. Канонические model/validation/policy этой задачей не изменяются; их продвижение выполняется отдельной задачей.
+
+
+## Task 029 / Lab v0.9.16
+
+Harness-only изменение: declarative node `population` и validation plugin `population`. Accepted ModelJSON, accepted validation, policy и `model/nodes/*` задачей 029 не меняются.
+
+Контракт фикстуры: **49 add / 0 replace / 90 LINK**, два migration FLOW, fingerprint `35d24655fc422942`. После generated validation ожидаются 2 population instances CONFORMING, open boundaries **232**, unclassified 0, loops 0/32768 и `planet_v1 PASS`. Runtime дополнительно проверяет сохранение людей при миграции.
+
+Целевые self-test totals: NODE **45/45**, QA **45/45**; остальные self-tests должны остаться PASS. Точный Linux CI и финальная голова фиксируются в `docs/tasks/029-population-node/REPORT_RU.md`; Windows acceptance остаётся за reviewer.
