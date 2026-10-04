@@ -339,16 +339,26 @@ const layeredNodes = [
   ...laborDeclarations.map(({ decl }) => ({ decl, strip: stripLaborNode, targets: laborReplacementNames })),
   ...populationDeclarations.map(({ decl }) => ({ decl, strip: stripPopulationNode, targets: populationReplacementNames }))
 ];
+// A switchless node is peelable only when nothing outside it reads what it generated, except the formulas it
+// replaces itself (population reads labor's Total Labor Requirement, so population is peeled before labor).
+function unreadOutside(current, n) {
+  let base;
+  try { base = n.strip(current, n.decl); } catch { return false; }
+  const kept = new Set(base.elements.filter(e => e.type !== 'LINK').map(e => e.name));
+  const removed = new Set(current.elements.filter(e => e.type !== 'LINK' && !kept.has(e.name)).map(e => e.name));
+  const targets = new Set(n.targets(n.decl).map(t => t.toLowerCase()));
+  return !current.elements.some(e => e.type === 'LINK' && removed.has(e.from) && !removed.has(e.to) && !targets.has(String(e.to).toLowerCase()));
+}
 const layers = new Map();
 {
   let current = structuredClone(accepted);
   const remaining = [...layeredNodes];
   while (remaining.length) {
     // A node without a switch (labor/population) does not wrap formulas in IfThenElse; it is peelable when no other
-    // remaining node replaces any of the formulas it edits.
+    // remaining node replaces any of the formulas it edits and nothing outside it reads what it generated.
     const peelable = n => n.decl.switch
       ? n.targets(n.decl).every(t => outerSwitchIs(current, t, n.decl.switch))
-      : n.targets(n.decl).every(t => !remaining.some(o => o !== n && o.targets(o.decl).includes(t)));
+      : n.targets(n.decl).every(t => !remaining.some(o => o !== n && o.targets(o.decl).includes(t))) && unreadOutside(current, n);
     const i = remaining.findIndex(peelable);
     if (i < 0) throw new Error(`cannot determine node layering: none of ${remaining.map(n => n.decl.sector || n.decl.switch || n.decl.type).join(', ')} is outermost on all its replacement targets`);
     const [n] = remaining.splice(i, 1);
@@ -358,6 +368,22 @@ const layers = new Map();
   }
 }
 const states = declarations.map(decl => layers.get(decl));
+// The switchless nodes (labor, population) are the newest layers and wrap nothing, so the switched-node order above
+// cannot place them: there a switchless base may also lack switched layers peeled earlier. Their own cases need the
+// accepted model minus only the switchless nodes above them, so peel those alone from the accepted model.
+const switchlessLayers = new Map();
+{
+  let current = structuredClone(accepted);
+  const remaining = layeredNodes.filter(n => !n.decl.switch);
+  while (remaining.length) {
+    const i = remaining.findIndex(n => unreadOutside(current, n));
+    if (i < 0) throw new Error(`cannot determine switchless node layering: ${remaining.map(n => n.decl.type).join(', ')} all read by others`);
+    const [n] = remaining.splice(i, 1);
+    const base = n.strip(current, n.decl);
+    switchlessLayers.set(n.decl, { base, target: current });
+    current = base;
+  }
+}
 
 console.log('Orbital Economy Lab node-generator QA');
 console.log('Case 1: strip generated nodes from the current accepted model and rebuild them.\n');
@@ -1171,7 +1197,9 @@ await expect('34. labor fixture expands and APPLY_PATCH matches prototype counts
   const probe = laborFixture.automation.min_human_share.name;
   const alreadyPresent = accepted.elements.some(e => e.type !== 'LINK' && e.name === probe);
   const acceptedDecl = laborDeclarations.find(x => x.decl?.automation?.min_human_share?.name === probe)?.decl || laborFixture;
-  const baseModel = alreadyPresent ? stripLaborNode(accepted, acceptedDecl) : accepted;
+  // Peel labor at its own layer: later switchless nodes (population, v7.7.11 on) read its outputs.
+  const acceptedLayer = alreadyPresent ? switchlessLayers.get(acceptedDecl) : null;
+  const baseModel = alreadyPresent ? (acceptedLayer ? acceptedLayer.base : stripLaborNode(accepted, acceptedDecl)) : accepted;
   const expanded = expandNode(laborFixture, baseModel);
   const model = applyPatch(baseModel, { format: PATCH_FORMAT, ...expanded.patch }).model;
   const counts = [expanded.patch.add_elements.length, expanded.patch.replace_formulas.length, expanded.patch.add_links.length];
@@ -1192,9 +1220,23 @@ function validationWithoutLaborFragment(raw, fragment) {
   return out;
 }
 
+// Accepted population layers sit above labor; the labor layer model does not hold them, so neither may its validation.
+function validationWithoutPopulationFragment(raw, fragment) {
+  const out=structuredClone(raw), pp=out.plugins?.find(p=>p.type==='population'), names=new Set((fragment.population_instances||[]).map(x=>x.name));
+  if(pp?.instances) pp.instances=pp.instances.filter(x=>!names.has(x.name));
+  if(pp&&!pp.instances?.length) out.plugins=out.plugins.filter(p=>p!==pp);
+  const b=out.plugins?.find(p=>p.type==='open_boundaries');
+  const drop=(id,list)=>{const c=b?.categories?.find(x=>x.id===id);if(!c||!Array.isArray(c.name))return;c.name=c.name.filter(n=>!(list||[]).includes(n));if(!c.name.length&&id!=='information_signal')b.categories=b.categories.filter(x=>x!==c);};
+  drop('information_signal',fragment.information_signal_names);drop('demography_births',fragment.demography_births_names);drop('demography_deaths',fragment.demography_deaths_names);
+  return out;
+}
+function validationWithoutPopulationFragments(raw) {
+  return populationDeclarations.reduce((v,{decl})=>validationWithoutPopulationFragment(v,expandNode(decl,switchlessLayers.get(decl).base).validation),raw);
+}
+
 await expect('35. labor fragments merge idempotently; static/P5/loops/planet_v1 PASS', () => {
   if(!laborState) throw new Error('case 34 did not produce labor state');
-  const baseline=laborState.alreadyPresent?validationWithoutLaborFragment(validation,laborState.expanded.validation):validation;
+  const baseline=laborState.alreadyPresent?validationWithoutLaborFragment(validationWithoutPopulationFragments(validation),laborState.expanded.validation):validation;
   const baseAudit=runStructureAudits(laborState.base,baseline);
   const merged=mergeNodeValidation(baseline,[laborState.expanded.validation]), twice=mergeNodeValidation(merged,[laborState.expanded.validation]);
   if(JSON.stringify(merged)!==JSON.stringify(twice)) throw new Error('labor validation merge is not idempotent');
@@ -1291,7 +1333,7 @@ await expect('40. population fixture expands and APPLY_PATCH matches prototype c
   const alreadyPresent = accepted.elements.some(e => e.type !== 'LINK' && e.name === probe);
   const acceptedDecl = populationDeclarations.find(x =>
     JSON.stringify(x.decl?.colonies) === JSON.stringify(populationFixture.colonies))?.decl || null;
-  const acceptedLayer = alreadyPresent && acceptedDecl ? layers.get(acceptedDecl) : null;
+  const acceptedLayer = alreadyPresent && acceptedDecl ? switchlessLayers.get(acceptedDecl) : null;
   if (alreadyPresent && !acceptedLayer) throw new Error('population layer is present in accepted model but its declaration/layer cannot be identified');
   const baseModel = alreadyPresent ? acceptedLayer.base : accepted;
   const expanded = expandNode(populationFixture, baseModel);
@@ -1308,7 +1350,7 @@ await expect('40. population fixture expands and APPLY_PATCH matches prototype c
 
 await expect('41. population fragments merge idempotently; static/audit/loops/planet_v1 PASS', () => {
   if(!populationState) throw new Error('case 40 did not produce population state');
-  const baseline=validation;
+  const baseline=populationState.alreadyPresent?validationWithoutPopulationFragment(validation,populationState.expanded.validation):validation;
   const baseAudit=runStructureAudits(populationState.base,baseline);
   const merged=mergeNodeValidation(baseline,[populationState.expanded.validation]);
   const twice=mergeNodeValidation(merged,[populationState.expanded.validation]);

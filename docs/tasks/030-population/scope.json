@@ -1,0 +1,17 @@
+{
+  "task": "030",
+  "title": "v7.7.11 Population: regional population (births, deaths, migration by attractiveness) and labor accounting via the population node; accounting only, no switch, no new Mode (Planet v2 step 1)",
+  "branch": "task/030-population",
+  "allow": [],
+  "allow_binary": [],
+  "allow_protected": [
+    "docs/tasks/030-population/candidate/**"
+  ],
+  "required_changes": [
+    "docs/tasks/030-population/candidate/model-patch.json",
+    "docs/tasks/030-population/candidate/validation.json",
+    "docs/tasks/030-population/candidate/change-policy.json",
+    "docs/tasks/030-population/candidate/PARAMETER_ANNOTATIONS_fragment.json"
+  ],
+  "sums_by": "reviewer"
+}
