@@ -334,6 +334,11 @@ e0d7a9a945270edc02e108bf70b836b1af71f421ada76c45a215ca4e3ca47575  ./docs/tasks/0
 e1f776991d6143ac2a02c85553b32c5e8b6ac7096f10c69c13cb667069c8a0a8  ./docs/tasks/028-labor/draft/process-labor.json
 43736f0e201fa1437f16d580c89bd3d3a13d6c7cc85206714e720d1ed7cf8f1c  ./docs/tasks/028-labor/draft/validation-v7.7.10-draft.json
 d4b5bb2b1c5a0aff42905ed0eac14b3b21aba5b8ea410fd64a883637b1e11e33  ./docs/tasks/028-labor/scope.json
+4ec256fd67eecb390529db2eaae3201ac7afdc7f350ae4612e686d13a5d5ca08  ./docs/tasks/029-population-node/TASK_RU.md
+fdcb6af874113f5f7ed1f4c02f8f77029f68907d63d8262abe9208192fca105a  ./docs/tasks/029-population-node/fixtures/population.json
+acbec86cbb28343cf6c71820df4c3a8fa43c24c16c6ac1ff16baad2d8778c89b  ./docs/tasks/029-population-node/reference/definition_fingerprint.mjs
+b712169b7d55aaee19a1defbcb827c7d48b39b48c71cc64682042b8a5083025a  ./docs/tasks/029-population-node/reference/population_prototype.mjs
+a5f77b51473b52bc0e6610b2fb8f3b9531aa18e8001c6be3026c5ae4cdc286c9  ./docs/tasks/029-population-node/scope.json
 44d2e557f1cb2322739bc95ee2b6dcbf6d6fcb708da14e90d53250936e50da5c  ./docs/tasks/README_RU.md
 bbf818e93b88d606b3137b1bb69d60db8c41c9df4089025a921b1ca00f473244  ./lab/APPLY_PATCH.cmd
 22c364b2d41df6b53ebdf6c33edc898b8943dfea554b4eee9628e011cc22768e  ./lab/CHANGELOG.md
