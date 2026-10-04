@@ -32,7 +32,7 @@ a687e4e5177ce583dadf7717138fed405ec6ab662664e92032db3d7d1fb150c8  ./docs/model_v
 2fec3259985bd1e9b0d8b3b0d4474c524ca37e6ca20d26d5cb2a0a6aaa531035  ./docs/model_v7_6_r1/RUN_TESTS_r1_FAIL_report.md
 aa087cbd9b9074aa9fab7a3ab082aeb011cf096cbcabf0476b0b275a2b557095  ./docs/model_v7_6_r1/orbital_economy_v7_6_r1_modeljson.json
 e4280d5801de163b2c2ef4fa6b572432578ce5c86338f1c45a1168052ab904c8  ./docs/research/LONG_RUN_2026-10-04_RU.md
-a0c7c1d9ba6dd2627b511eb4218af3011670ed831308d2b72427845dafacca2b  ./docs/research/POPULATION_PROTOTYPE_2026-10-04_RU.md
+c1b6d56fa750298f0362cfa18e6ae19c3f65920c5487b64a63bb10e600692f18  ./docs/research/POPULATION_PROTOTYPE_2026-10-04_RU.md
 b635e5358b9a89d424c7a005a9de7f1459f8d31811d1026c45dcdb57999ceec9  ./docs/tasks/001-v7.4-intermediate-inputs/INDEX_RU.md
 f63ac3ad68259baf9b6d754afdd3e39a3d7bd7ed8e639ba2387e65a332af81d8  ./docs/tasks/001-v7.4-intermediate-inputs/issue/README_RU.md
 ba044121d8a82b2c109e079bb7555b02edbbeb1bcb61bcf71e2b89bd0fee964b  ./docs/tasks/001-v7.4-intermediate-inputs/issue/TASK_V7_4_RU.md
