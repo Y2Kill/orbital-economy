@@ -36,6 +36,24 @@
 Дальше: зафиксировать validation 49/49 и поведение Automation Probe Mode 48 как КТ3.
 
 
+### КТ3 — 2026-10-04 — validation 49/49 и Automation Probe
+Сделано: validation прошла во всех 49 Modes (49 заголовков Mode и 49 × `Candidate validation: PASS`; итог `OVERALL: PASS`). Mode 48 подтверждает заданный рычаг автоматизации: A-side automation = 0.5 снижает потребность в труде и обе трудовые составляющие себестоимости, снижает цену металла и немного повышает выпуск металла; B остаётся без автоматизации.
+
+| Проверка | Значение Mode 48 | Порог | Запас |
+|---|---:|---:|---:|
+| `A Smelting Automation Factor` | 0.525 | 0.5249 ≤ x ≤ 0.5251 | 0.0001 до каждой границы |
+| mean `A Total Labor Requirement` | 7.69 | < 10.00 | 2.31 |
+| mean `A Metal Unit Cost` | 16.85 | < 18.70 | 1.85 |
+| mean `A Electronics Unit Cost` | 13.63 | < 14.90 | 1.27 |
+| mean `A Market Price` | 34.96 | < 36.00 | 1.04 |
+| mean `A Metal Production` | 37.61 | > 37.10 | 0.51 |
+
+Пороговые значения оставлены из owner draft/skeleton без ослабления. Значения в таблице — эталонные наблюдения, на которых эти пороги были откалиброваны (§5 архитектурной спецификации / §3 test plan); исполняемый кандидат подтвердил все шесть проверок Mode 48.
+Доказательство: [Candidate acceptance #30](https://github.com/Y2Kill/orbital-economy/actions/runs/37140800482), job `111255558601`: выбранные Modes 0–48; 49 × `Candidate validation: PASS`; `OVERALL: PASS`; Mode 48 — PASS для factor 0.525, A labor, metal/electronics unit cost, market price и metal production. Validation SHA-256: `43736f0e201fa1437f16d580c89bd3d3a13d6c7cc85206714e720d1ed7cf8f1c`.
+Не подтвердилось: ни одного FAIL в validation; контрольные проверки Automation Probe не потребовали изменения порогов.
+Дальше: окончательно оформить раздел «Отличия», затем дождаться зелёного CI на голове отчёта и записать КТ4.
+
+
 ## Отличия
 
 На старте отличий от `V7_7_10_ARCHITECTURE_SPEC.md`, `V7_7_10_TEST_PLAN.md` и owner drafts нет. Пороговые значения validation не изменялись; validation скопирована байт-в-байт. Если `candidate.yml` потребует изменение, оно будет зафиксировано здесь с обоснованием до следующей контрольной точки.
