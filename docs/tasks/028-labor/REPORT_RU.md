@@ -22,6 +22,13 @@
 Не запускалось локально: `check_branch`, APPLY_PATCH, conformance, audit, validation, CHECK_CANDIDATE, стенд.
 Дальше: отдельно проверить запуски Actions; после подтверждения каждого результата сразу дописывать КТ1–КТ4.
 
+### КТ1 — 2026-10-04 — patch / conformance / audit PASS
+Сделано: подтверждён первый модельный гейт кандидата r1. Патч с единственной декларацией `labor` применяется; conformance — PASS, все 17 экземпляров labor — `CONFORMING` (11/11 каждый). STRUCTURE_AUDIT — PASS: открытых границ 224, неклассифицированных 0; algebraic loops — 0 из 32768 комбинаций при 15 переключателях; `planet_closure` в режиме `planet_v1` — PASS, P5 = 17/0.
+Доказательство: [Candidate acceptance #30](https://github.com/Y2Kill/orbital-economy/actions/runs/37140800482), job `111255558601`: `Labor conformance: PASS`; `open boundaries: 224 ... unclassified=0`; `planet closure (planet_v1): status=PASS`; сводка `P5=17/0`; `algebraic loops: ... combinations=32768; with loops=0`.
+Не подтвердилось: отклонений от skeleton по структуре, замыканию Planet v1 и петлям не обнаружено.
+Дальше: зафиксировать регрессию Modes 0–47 и итог policy как КТ2.
+
+
 ## Отличия
 
 На старте отличий от `V7_7_10_ARCHITECTURE_SPEC.md`, `V7_7_10_TEST_PLAN.md` и owner drafts нет. Пороговые значения validation не изменялись; validation скопирована байт-в-байт. Если `candidate.yml` потребует изменение, оно будет зафиксировано здесь с обоснованием до следующей контрольной точки.
