@@ -19,7 +19,7 @@ e2666f7f53d01b5e1a45ee564c49946eaea79eff880e200ea9e61f55c74ddb9a  ./docs/CURRENT
 4aea6ce8107756e4f4b9d923411880104762b4a85c3041667784fd742da1ea7a  ./docs/PARAMETER_ANNOTATIONS.json
 2ffbe3638c2941e2087b68dd4d278535cf54b738d905a943bd2dc97f15f6f38e  ./docs/PARAMETER_REGISTRY.md
 d07dc1ed24932af43a384f825e166deb503e0c643ccba5de81bf70c843257538  ./docs/PLANET_V1_CONTRACT_RU.md
-680090d104da85697b6743ddfad060577c181fb425a2249fa7b935070ada8ca5  ./docs/ROADMAP.md
+9885e95a407709c23bc0e3f84b12490d953282c24adcd928ef936df12d7f851e  ./docs/ROADMAP.md
 059abdf46fd0c7322efce6a8e79f0094785e5902e7765fd62703c5c1407c1047  ./docs/STRUCTURE_AUDIT_REPORT.md
 3ae639958b7a331cfddf5d730a720990ff0cfb988046709d75391c34967b6baf  ./docs/V7_5_1_TO_V7_6_CHANGE_REPORT.md
 4cadd7f34b7c345f2bb5a18e46a584179eb5ed6b527e4fb4f623059dc001dd35  ./docs/V7_6_1_CALIBRATION_REPORT.md
@@ -31,6 +31,7 @@ d3ba5f5ade4729eec3af36e2161c44129b8a447c8761c78800b6a337de62e391  ./docs/externa
 a687e4e5177ce583dadf7717138fed405ec6ab662664e92032db3d7d1fb150c8  ./docs/model_v7_6_1/change-policy-v7.6.1-mode25-calibration.json
 2fec3259985bd1e9b0d8b3b0d4474c524ca37e6ca20d26d5cb2a0a6aaa531035  ./docs/model_v7_6_r1/RUN_TESTS_r1_FAIL_report.md
 aa087cbd9b9074aa9fab7a3ab082aeb011cf096cbcabf0476b0b275a2b557095  ./docs/model_v7_6_r1/orbital_economy_v7_6_r1_modeljson.json
+cb0873f42c3baec572355306e5751d82e1ba30594c686cd29680c6d7c09199be  ./docs/research/FOOD_PROTOTYPE_2026-10-05_RU.md
 e4280d5801de163b2c2ef4fa6b572432578ce5c86338f1c45a1168052ab904c8  ./docs/research/LONG_RUN_2026-10-04_RU.md
 c1b6d56fa750298f0362cfa18e6ae19c3f65920c5487b64a63bb10e600692f18  ./docs/research/POPULATION_PROTOTYPE_2026-10-04_RU.md
 b635e5358b9a89d424c7a005a9de7f1459f8d31811d1026c45dcdb57999ceec9  ./docs/tasks/001-v7.4-intermediate-inputs/INDEX_RU.md
@@ -354,6 +355,12 @@ b72ad84e8974f06d4d098ce3647ac7df52c612e562cac8bd4f221ac7fe488de3  ./docs/tasks/0
 fdcb6af874113f5f7ed1f4c02f8f77029f68907d63d8262abe9208192fca105a  ./docs/tasks/030-population/draft/population.json
 49f806b2ccd0b776c5c1e65e8687fad09f9ccad375e2edb2a36da9d22a814841  ./docs/tasks/030-population/draft/validation-v7.7.11-draft.json
 181073945d338158714c446a4ab6cc478b0414d3a0c32eae62a8ff6cd56d2468  ./docs/tasks/030-population/scope.json
+4c6d18a733ee4263687da957dbae5209753c762417745b3cdf5084f0a7371449  ./docs/tasks/031-food-node/TASK_RU.md
+81121bf5083324f649fd6ce21681f76c107309bdb470188cbd48204abb0c599d  ./docs/tasks/031-food-node/fixtures/food.json
+17f6cae4e63e23a378f4f3713ceb010a571ed270f99a4c9ca2755f887a2412d2  ./docs/tasks/031-food-node/reference/add_food_modes.mjs
+acbec86cbb28343cf6c71820df4c3a8fa43c24c16c6ac1ff16baad2d8778c89b  ./docs/tasks/031-food-node/reference/definition_fingerprint.mjs
+14ec3fdafb0340c8041932f031f4cb20d1ec428733d34ab71db2517f1f5f93a2  ./docs/tasks/031-food-node/reference/food_node_prototype.mjs
+086b7ea91d6b61a18306b4c35556d9f6eeab38fe0f11e201a7f437e00a63c1e7  ./docs/tasks/031-food-node/scope.json
 44d2e557f1cb2322739bc95ee2b6dcbf6d6fcb708da14e90d53250936e50da5c  ./docs/tasks/README_RU.md
 bbf818e93b88d606b3137b1bb69d60db8c41c9df4089025a921b1ca00f473244  ./lab/APPLY_PATCH.cmd
 571145e13b3a578c1c701f3c866d6e168954bc37a5bc34f883bb08865b6079d1  ./lab/CHANGELOG.md
