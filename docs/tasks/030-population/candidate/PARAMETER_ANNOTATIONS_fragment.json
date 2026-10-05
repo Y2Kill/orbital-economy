@@ -1,0 +1,140 @@
+{
+  "format": "orbital-economy-parameter-annotations-fragment-v1",
+  "model": "Orbital Economy v7.7.11 Population candidate r1",
+  "updated": "2026-10-05",
+  "note": "Task 030 fragment. The 11 parameters declared by the population node are shared model parameters, not A/B copies. Model time is days; rates are fractions per model day. Values follow the population prototype and its calibration report; where the report defines a baseline rather than a fitted optimum, that is stated explicitly.",
+  "parameters": {
+    "Population Birth Rate": {
+      "role": "Natural birth rate, 0.0000333333333333 per model day (1.2% per 360-day model year).",
+      "effect": "Multiplies each region's Population stock to form its Births inflow.",
+      "evidence": "docs/research/POPULATION_PROTOTYPE_2026-10-04_RU.md: births 1.2%/year; V7_7_11_ARCHITECTURE_SPEC §1.",
+      "since": "v7.7.11 candidate r1",
+      "tags": [
+        "population",
+        "demography",
+        "births",
+        "rate"
+      ]
+    },
+    "Population Base Death Rate": {
+      "role": "Baseline death rate, 0.0000277777777778 per model day (1.0% per 360-day model year).",
+      "effect": "Multiplies Population and the living-standard mortality factor to form each region's Deaths outflow.",
+      "evidence": "docs/research/POPULATION_PROTOTYPE_2026-10-04_RU.md: deaths 1.0%/year; V7_7_11_ARCHITECTURE_SPEC §1.",
+      "since": "v7.7.11 candidate r1",
+      "tags": [
+        "population",
+        "demography",
+        "deaths",
+        "rate"
+      ]
+    },
+    "Death Living Standard Sensitivity": {
+      "role": "Dimensionless mortality elasticity to living standard, value 1.",
+      "effect": "At value 1, mortality varies inversely with living standard, subject to the node's floor.",
+      "evidence": "docs/research/POPULATION_PROTOTYPE_2026-10-04_RU.md: mortality × living-standard^-1; retained baseline, not separately fitted.",
+      "since": "v7.7.11 candidate r1",
+      "tags": [
+        "population",
+        "demography",
+        "living-standard",
+        "sensitivity"
+      ]
+    },
+    "Labor Participation Share": {
+      "role": "Dimensionless share of population counted as labor force, value 0.50.",
+      "effect": "Labor Force = Population × Labor Participation Share for each region.",
+      "evidence": "docs/research/POPULATION_PROTOTYPE_2026-10-04_RU.md: third-series grid selected 0.50; V7_7_11_ARCHITECTURE_SPEC §1.",
+      "since": "v7.7.11 candidate r1",
+      "tags": [
+        "population",
+        "labor",
+        "participation",
+        "calibrated"
+      ]
+    },
+    "Migration Max Rate": {
+      "role": "Maximum migration outflow fraction, 0.0000555555555556 per model day (2.0% per 360-day model year).",
+      "effect": "Caps each directed migration flow before attractiveness-gap sensitivity is applied.",
+      "evidence": "docs/research/POPULATION_PROTOTYPE_2026-10-04_RU.md: no more than 2% of population per year; V7_7_11_ARCHITECTURE_SPEC §1.",
+      "since": "v7.7.11 candidate r1",
+      "tags": [
+        "population",
+        "migration",
+        "rate",
+        "cap"
+      ]
+    },
+    "Migration Gap Sensitivity": {
+      "role": "Dimensionless gain from normalized perceived-attractiveness gap to migration pressure, value 4.",
+      "effect": "Scales the positive attractiveness gap before the migration factor is capped at 1.",
+      "evidence": "docs/research/POPULATION_PROTOTYPE_2026-10-04_RU.md prototype migration setup; retained baseline coefficient, not separately fitted.",
+      "since": "v7.7.11 candidate r1",
+      "tags": [
+        "population",
+        "migration",
+        "attractiveness",
+        "sensitivity"
+      ]
+    },
+    "Attractiveness Perception Time": {
+      "role": "Perception smoothing time constant, 360 model days (one model year).",
+      "effect": "Sets the adjustment time of Perceived Attractiveness toward current Attractiveness.",
+      "evidence": "docs/research/POPULATION_PROTOTYPE_2026-10-04_RU.md: attractiveness perception smoothed over 1 year; V7_7_11_ARCHITECTURE_SPEC §1.",
+      "since": "v7.7.11 candidate r1",
+      "tags": [
+        "population",
+        "migration",
+        "attractiveness",
+        "time-constant"
+      ]
+    },
+    "Attractiveness Wage Weight": {
+      "role": "Dimensionless exponent on normalized real wage in attractiveness, value 1.",
+      "effect": "Controls the contribution of Real Wage / Reference Real Wage to regional Attractiveness.",
+      "evidence": "docs/research/POPULATION_PROTOTYPE_2026-10-04_RU.md prototype attractiveness formula; unit baseline weight retained.",
+      "since": "v7.7.11 candidate r1",
+      "tags": [
+        "population",
+        "attractiveness",
+        "wage",
+        "weight"
+      ]
+    },
+    "Attractiveness Jobs Weight": {
+      "role": "Dimensionless exponent on employment rate in attractiveness, value 1.",
+      "effect": "Controls the contribution of Employment Rate to regional Attractiveness.",
+      "evidence": "docs/research/POPULATION_PROTOTYPE_2026-10-04_RU.md prototype attractiveness formula; unit baseline weight retained.",
+      "since": "v7.7.11 candidate r1",
+      "tags": [
+        "population",
+        "attractiveness",
+        "employment",
+        "weight"
+      ]
+    },
+    "Attractiveness Living Weight": {
+      "role": "Dimensionless exponent on living standard in attractiveness, value 1.",
+      "effect": "Controls the contribution of Living Standard to regional Attractiveness.",
+      "evidence": "docs/research/POPULATION_PROTOTYPE_2026-10-04_RU.md prototype attractiveness formula; unit baseline weight retained.",
+      "since": "v7.7.11 candidate r1",
+      "tags": [
+        "population",
+        "attractiveness",
+        "living-standard",
+        "weight"
+      ]
+    },
+    "Reference Real Wage": {
+      "role": "Reference real-wage level, value 100 in model wage units after price-index normalization.",
+      "effect": "Normalizes Real Wage in the attractiveness formula so the wage term is dimensionless.",
+      "evidence": "docs/research/POPULATION_PROTOTYPE_2026-10-04_RU.md: reference real wage 100 was set manually; retained normalization baseline.",
+      "since": "v7.7.11 candidate r1",
+      "tags": [
+        "population",
+        "attractiveness",
+        "wage",
+        "reference"
+      ]
+    }
+  }
+}

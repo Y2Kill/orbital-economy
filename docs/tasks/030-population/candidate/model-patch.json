@@ -1,0 +1,59 @@
+{
+  "format": "orbital-economy-model-patch-v1",
+  "base_sha256": "3cb40c883703936af3550a82a731d4af17f3818afe80b69c0c8f92e0878ab903",
+  "name": "Orbital Economy v7.7.11 Population candidate r1",
+  "description": "Task 030 / Planet v2 step 1: add the declarative population node for A and B. Population, demography, migration and labor are accounting-only; no existing formula or scenario is changed and no new Mode is added.",
+  "nodes": [
+    {
+      "type": "population",
+      "version": 1,
+      "colonies": [
+        "A",
+        "B"
+      ],
+      "initial": {
+        "A": 28,
+        "B": 8.5
+      },
+      "parameters": {
+        "Population Birth Rate": 0.0000333333333333,
+        "Population Base Death Rate": 0.0000277777777778,
+        "Death Living Standard Sensitivity": 1,
+        "Labor Participation Share": 0.5,
+        "Migration Max Rate": 0.0000555555555556,
+        "Migration Gap Sensitivity": 4,
+        "Attractiveness Perception Time": 360,
+        "Attractiveness Wage Weight": 1,
+        "Attractiveness Jobs Weight": 1,
+        "Attractiveness Living Weight": 1,
+        "Reference Real Wage": 100
+      },
+      "inputs": {
+        "wage": "{C} Effective Wage",
+        "labor_requirement": "{C} Total Labor Requirement",
+        "prices": [
+          {
+            "price": "{C} Market Price",
+            "reference": "{C} Reference Metal Price"
+          },
+          {
+            "price": "{C} Electronics Market Price",
+            "reference": "{C} Electronics Reference Price"
+          }
+        ],
+        "living": [
+          {
+            "name": "Energy",
+            "column": "{C} Energy Fulfillment Ratio",
+            "weight": 1
+          }
+        ]
+      }
+    }
+  ],
+  "add_elements": [],
+  "replace_formulas": [],
+  "add_links": [],
+  "modify_scenarios": [],
+  "add_scenarios": []
+}
