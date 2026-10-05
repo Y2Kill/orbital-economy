@@ -373,3 +373,38 @@ Generated merge также добавляет в `open_boundaries`:
 - к `information_signal`: `? Perceived Attractiveness Increase`, `? Perceived Attractiveness Decrease`;
 - `demography_births`: closed-world source, `? Births`;
 - `demography_deaths`: closed-world sink, `? Deaths`.
+
+
+## Plugin `food` (v0.9.17)
+
+Generated validation узла `food` создаёт один instance на регион и общий транспортный раздел:
+
+```json
+{
+  "type": "food",
+  "abs_tol": 1e-8,
+  "instances": [{
+    "name": "A food",
+    "colony": "A",
+    "inventory": "A Food Inventory",
+    "production": "A Food Production",
+    "consumption": "A Food Consumption",
+    "demand": "A Food Demand",
+    "fulfillment": "A Food Fulfillment",
+    "farm_capacity": "A Farm Capacity",
+    "farm_effective_capacity": "A Farm Effective Capacity",
+    "land": "A Farm Land Capacity",
+    "dispatch": ["Food Dispatch A to B"],
+    "arrival": ["Food Arrival B to A"]
+  }],
+  "transport": {
+    "load": "Food Transport Load",
+    "capacity": "Transport Active Throughput Capacity",
+    "max_share": "Food Transport Max Share"
+  }
+}
+```
+
+Static HARD conformance проверяет типы, направления production/consumption/dispatch/arrival, парность dispatch→cargo→arrival в другой регион и dependencies производства/эффективной мощности. Runtime проверяет неотрицательность, fulfillment в [0,1], consumption ≤ demand, effective capacity ≤ land, production ≤ effective capacity и food transport load ≤ max_share × capacity.
+
+Generated merge создаёт closed-world `agriculture` (source), добавляет Food Consumption в `final_consumption`, Farm Expansion/Capital Goods Consumption в `capital_transformation`, Farm Depreciation в `capital_retirement`, пары преобразования фермы и процесс `farming` в `planet_closure`.

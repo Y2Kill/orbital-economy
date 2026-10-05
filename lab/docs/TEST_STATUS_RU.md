@@ -154,3 +154,12 @@ Harness-only изменение: declarative node `population` и validation plu
 Контракт фикстуры: **49 add / 0 replace / 90 LINK**, два migration FLOW, fingerprint `35d24655fc422942`. После generated validation ожидаются 2 population instances CONFORMING, open boundaries **232**, unclassified 0, loops 0/32768 и `planet_v1 PASS`. Runtime дополнительно проверяет сохранение людей при миграции.
 
 Целевые self-test totals: NODE **45/45**, QA **45/45**; остальные self-tests должны остаться PASS. Точный Linux CI и финальная голова фиксируются в `docs/tasks/029-population-node/REPORT_RU.md`; Windows acceptance остаётся за reviewer.
+
+
+## Task 031 / Lab v0.9.17
+
+Harness-only изменение: declarative node `food`, validation plugin `food` и исправление node layering. Accepted ModelJSON, accepted validation, policy и `model/nodes/*` не меняются.
+
+Контракт fixture: **96 add / 25 replace / 241 LINK**, 25 switch-wrapped replacements, fingerprint `d7657194d897c8c8`. Generated validation ожидает 2 food instances CONFORMING, open boundaries 254 / unclassified 0, `planet_v1 PASS` с P2 simple +2, P3 requests +2, P5 declared +2, loops 0.
+
+Целевые self-test totals: NODE **52/52**, QA **46/46**; финальный Linux CI фиксируется в `docs/tasks/031-food-node/REPORT_RU.md`.

@@ -916,3 +916,10 @@ Generated validation добавляет plugin `labor` и закрывает Pla
 Declarative `population` моделирует население регионов как учётный слой Planet v2 step 1: рождения, смерти, рабочую силу, занятость и миграцию по воспринимаемой привлекательности. Узел additive-only и не имеет switch; существующие экономические ряды не меняются.
 
 Validation plugin `population` выполняет HARD static topology checks и runtime invariants, включая сохранение людей при миграции. Эталонная A/B fixture: 49 add / 0 replace / 90 LINK, fingerprint `35d24655fc422942`.
+
+
+## Food node — v0.9.17
+
+Declarative `food` реализует Planet v2 step 2: региональную еду, фермы с земельным ограничением, капиталом, приоритетной энергией и трудом, а также торговлю между каждой упорядоченной парой регионов. Все изменения прежних формул gated переключателем `Food Enabled`; OFF сохраняет старую формулу буквально.
+
+Generated validation включает plugin `food`, новые boundary-классификации и процесс `farming` в Planet closure. Эталонная A/B fixture раскрывается в 96 add / 25 replace / 241 LINK с fingerprint `d7657194d897c8c8`.

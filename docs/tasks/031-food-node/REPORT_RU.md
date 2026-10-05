@@ -7,9 +7,11 @@
 ### Старт — 2026-10-05
 Прочитаны `TASK_RU.md`, `fixtures/food.json` и `reference/food_node_prototype.mjs`. Локальный checkout недоступен из-за отсутствия DNS в рабочем контейнере; ветка создана строго от `733c8bc`, строгий guard будет подтверждаться `ci.yml` на содержательных коммитах. Модель, validation и policy не изменяются.
 
-### КТ1 — ожидается CI
-Сделано: добавлен тип узла `food`, строгая схема декларации, fixture и самотесты 46/50/51. Эталон раскрытия — 96 элементов / 25 замен / 241 связь, fingerprint `d7657194d897c8c8`.
-Дальше: проверить `ci.yml`; после зелёного прогона записать ссылку и строки доказательства.
+### КТ1 — 2026-10-05 — генератор и схема подтверждены
+Сделано: добавлен тип узла `food`, строгая схема декларации, fixture и самотесты 46/50/51. Эталон раскрытия подтверждён на каноническом Linux CI: 96 элементов / 25 замен / 241 связь, fingerprint `d7657194d897c8c8`; strip/rebuild даёт 0 отличий; пять обязательных schema/base negatives отклоняются.
+Доказательство: [ci.yml run 37330021694](https://github.com/Y2Kill/orbital-economy/actions/runs/37330021694), job `111830826952`: строка 523 — case 46 PASS, `96 elements / 25 replacements / 241 links; fingerprint=d7657194d897c8c8`; строка 524 — case 50 PASS, `0 definition/replacement/link differences`; строка 525 — case 51 PASS; строка 527 — `NODE SELF-TEST: 48 passed, 0 failed`. В этом же run `guard`, `tools-selftest` и `bench-selftests` завершены success.
+Не подтвердилось: расхождений с reference-прототипом или ошибок схемы/strip-rebuild нет.
+Дальше: КТ2 — generated validation, plugin `food`, cases 47–49 и QA 46.
 
 ## Устройство
 
