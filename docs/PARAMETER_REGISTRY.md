@@ -1,17 +1,17 @@
 # Orbital Economy — реестр внешних параметров
 
-- generated: 2026-10-04T07:17:04.216Z
-- model: Orbital Economy v7.7.10 r1 — Labor — SHA-256 `3cb40c883703936af3550a82a731d4af17f3818afe80b69c0c8f92e0878ab903`
-- annotations: docs/PARAMETER_ANNOTATIONS.json (SHA-256 `581bf95a23e059ad9a5f07d4b34fc42c9836806c866b4ead9dc117de121287a1`)
+- generated: 2026-10-05T09:19:51.127Z
+- model: Orbital Economy v7.7.11 r1 — Population — SHA-256 `dbe824b34ad41b5b7d50a6df096b59268198dd4c02c2b36aba5645b24809f0d2`
+- annotations: docs/PARAMETER_ANNOTATIONS.json (SHA-256 `4aea6ce8107756e4f4b9d923411880104762b4a85c3041667784fd742da1ea7a`)
 
 Всё, что модель не выводит сама: числовые константы, начальные запасы, переключатели, тестовые множители. Инвентарь сгенерирован из ModelJSON; аннотации («роль / что меняет / доказательство») ведутся вручную и версионируются вместе с baseline.
 
 ## Сводка
 
-- внешних величин: **520** (константы 346, начальные запасы 115, переключатели 24, тестовая обвязка 35)
-- по колониям: A 145, B 145, глобальные 230
-- аннотировано: **346 / 520** (67 %)
-- несимметричных пар A/B: **63**, из них без аннотации: **0**
+- внешних величин: **536** (константы 360, начальные запасы 117, переключатели 24, тестовая обвязка 35)
+- по колониям: A 147, B 147, глобальные 242
+- аннотировано: **359 / 536** (67 %)
+- несимметричных пар A/B: **64**, из них без аннотации: **0**
 
 ## Несимметричные пары A/B — что задаёт различия колоний
 
@@ -57,6 +57,7 @@
 | Construction Materials Plant Installed Capacity | Other | 3 | 2 | Seeds lifecycle capital at the previously accepted base production capacity; A/B are intentionally asymmetric (3 vs 2). |
 | Domestic Supply Signal | Other | 16 | 22 | То же для металла. |
 | Local Base Demand | Other | 16 | 22 | Масштаб конечного рынка металла; B — больший потребитель при меньшей добыче → структурный импорт металла B из A (~21–23/день). |
+| Population Initial | Other | 28 | 8.5 | Sets the scale of each region's Population stock and, through participation 0.5, its labor force (A 14 / B 4.25), compared with the region's total labor requirement. A is the larger economy, so it starts with the larger population; in the first year both regions employ about 94 % of their labor force (Mode 46). |
 | Regolith Base Extraction Capacity | Other | 7 | 5 | Caps Regolith extraction through the standard soft-cap function. |
 | Regolith Mine Capacity | Other | 7 | 5 | Seeds mine capacity at the accepted A Regolith Base Extraction Capacity; A/B are intentionally asymmetric (7 vs 5). |
 | Regolith Proven Reserves Initial | Other | 5400 | 3600 | Seeds the stock that supplies extraction; A/B pair is 5400/3600. |
@@ -152,12 +153,15 @@
 | A Construction Materials Labor per Unit | constant | 0.3 | Construction Materials labor intensity for colony A, value 0.3. | Multiplies A Construction Materials output and its Automation Factor to form the process Labor Requirement. The A/B pair is intentionally symmetric at 0.3/0.3. | V7_7_10_ARCHITECTURE_SPEC §1–§2 and draft/process-labor.json. |
 | A Regolith Extraction Labor per Unit | constant | 0.2 | Regolith Extraction labor intensity for colony A, value 0.2. | Multiplies A Regolith Extraction output and its Automation Factor to form the process Labor Requirement. The A/B pair is intentionally symmetric at 0.2/0.2. | V7_7_10_ARCHITECTURE_SPEC §1–§2 and draft/process-labor.json. |
 | A Wage | constant | 100 / 140 | Ставка труда (A 100 / B 140). | Входит в Metal Unit Cost (0.1×) и Electronics Unit Cost (0.05×): B дороже на 4/ед. металла и 2/ед. электроники. В v7.4 после исчезновения дешёвого feedstock B — второй фактор, из-за которого B теряет преимущество в электронике. | Electronics Unit Cost Mode 17 @1080: A 13.75, B 16.71. |
+| Attractiveness Wage Weight | constant | 1 | Dimensionless exponent on normalized real wage in attractiveness, value 1. | Controls the contribution of Real Wage / Reference Real Wage to regional Attractiveness. | docs/research/POPULATION_PROTOTYPE_2026-10-04_RU.md prototype attractiveness formula; unit baseline weight retained. |
 | Automation Labor Exponent | constant | 1 | Automation response exponent, value 1. | Shapes the relation between Automation Level and Automation Factor; value 1 gives a linear response above the human-share floor. | V7_7_10_ARCHITECTURE_SPEC §1–§2 and draft/process-labor.json. |
 | B Capital Goods Labor per Unit | constant | 2 | Capital Goods labor intensity for colony B, value 2. | Multiplies B Capital Goods output and its Automation Factor to form the process Labor Requirement. The A/B pair is intentionally symmetric at 2/2. | V7_7_10_ARCHITECTURE_SPEC §1–§2 and draft/process-labor.json. |
 | B Construction Materials Labor per Unit | constant | 0.3 | Construction Materials labor intensity for colony B, value 0.3. | Multiplies B Construction Materials output and its Automation Factor to form the process Labor Requirement. The A/B pair is intentionally symmetric at 0.3/0.3. | V7_7_10_ARCHITECTURE_SPEC §1–§2 and draft/process-labor.json. |
 | B Regolith Extraction Labor per Unit | constant | 0.2 | Regolith Extraction labor intensity for colony B, value 0.2. | Multiplies B Regolith Extraction output and its Automation Factor to form the process Labor Requirement. The A/B pair is intentionally symmetric at 0.2/0.2. | V7_7_10_ARCHITECTURE_SPEC §1–§2 and draft/process-labor.json. |
 | B Wage | constant | 140 / 100 | Ставка труда (A 100 / B 140). | Входит в Metal Unit Cost (0.1×) и Electronics Unit Cost (0.05×): B дороже на 4/ед. металла и 2/ед. электроники. В v7.4 после исчезновения дешёвого feedstock B — второй фактор, из-за которого B теряет преимущество в электронике. | Electronics Unit Cost Mode 17 @1080: A 13.75, B 16.71. |
+| Labor Participation Share | constant | 0.5 | Dimensionless share of population counted as labor force, value 0.50. | Labor Force = Population × Labor Participation Share for each region. | docs/research/POPULATION_PROTOTYPE_2026-10-04_RU.md: third-series grid selected 0.50; V7_7_11_ARCHITECTURE_SPEC §1. |
 | Minimum Human Labor Share | constant | 0.05 | Automation floor parameter, value 0.05. | Sets the irreducible human share in every generated Automation Factor. | V7_7_10_ARCHITECTURE_SPEC §1–§2 and draft/process-labor.json. |
+| Reference Real Wage | constant | 100 | Reference real-wage level, value 100 in model wage units after price-index normalization. | Normalizes Real Wage in the attractiveness formula so the wage term is dimensionless. | docs/research/POPULATION_PROTOTYPE_2026-10-04_RU.md: reference real wage 100 was set manually; retained normalization baseline. |
 | A Labor per Metal | constant | 0.1 | Трудоёмкость металла (0.1; симметрично). | Wage × 0.1 в Metal Unit Cost. |  |
 | A Metal Buffer | constant | 10 | Мягкость нормирования металла (10 единиц; симметрично). | Фактор доступности Inventory/(Inventory+10) для Local Sales и (v7.4) для поставок Electronics. При запасе ~300–500 даёт 0.97–0.98: физическое нормирование почти не проявляется, пока запас не опустошён; дефицит идёт через цену. Уменьшить буфер нельзя без переоценки всех сценариев — это меняет форму реакции всех рынков металла. | ACCEPTANCE_R2 §6; Mode 18: fulfillment A min 0.927 при запасе 127. |
 | A Metal Target Inventory | constant | 500 | Целевой запас металла (500; симметрично). | Через Metal Shortage задаёт дефицитную надбавку к Domestic Offer Price и слагаемое в Desired Smelting Rate. |  |
@@ -244,6 +248,7 @@
 | A Construction Materials Plant Installed Capacity | initial_stock | 3 / 2 | Initial installed construction-materials plant capacity for colony A, value 3. | Seeds lifecycle capital at the previously accepted base production capacity; A/B are intentionally asymmetric (3 vs 2). | V7_7_3_ARCHITECTURE_SPEC §2 explicitly requires A=3, B=2 and mandatory annotation of the asymmetric pair. |
 | A Domestic Supply Signal | initial_stock | 16 / 22 | Начальный сигнал локального предложения металла (16 / 22). | То же для металла. |  |
 | A Local Base Demand | constant | 16 / 22 | Базовый конечный спрос на металл (A 16 / B 22 /день). | Масштаб конечного рынка металла; B — больший потребитель при меньшей добыче → структурный импорт металла B из A (~21–23/день). | Shipment Rate A→B: 23.1 (Mode 12), 20.8 (Mode 17). |
+| A Population Initial | constant | 28 / 8.5 | Starting population of the region (A 28 / B 8.5, model units of people). | Sets the scale of each region's Population stock and, through participation 0.5, its labor force (A 14 / B 4.25), compared with the region's total labor requirement. A is the larger economy, so it starts with the larger population; in the first year both regions employ about 94 % of their labor force (Mode 46). | docs/research/POPULATION_PROTOTYPE_2026-10-04_RU.md (calibration, participation 0.50); docs/tasks/030-population/V7_7_11_ARCHITECTURE_SPEC.md §1. Added by the owner at acceptance: the task listed only the 11 shared parameters. |
 | A Regolith Base Extraction Capacity | constant | 7 / 5 | [calib] fixed extraction capacity (7). | Caps Regolith extraction through the standard soft-cap function. | Owner skeleton feasibility value; candidate run to confirm baseline and shock behaviour. |
 | A Regolith Demand Signal | initial_stock | 0.35 | Initial smoothed Regolith demand signal for colony A, value 0.35. | Seeds the STOCK sizing signal without reading instantaneous demand directly. | draft/regolith-mine.json; V7_7_5_ARCHITECTURE_SPEC §1. |
 | A Regolith Extraction Automation Level | switch | 0 | Regolith Extraction automation level for colony A, initial value 0. | Controls A Regolith Extraction Automation Factor. The A/B pair is intentionally symmetric at 0/0 in the base model; Mode 48 overrides only the A value to 0.5 as a probe. | V7_7_10_ARCHITECTURE_SPEC §1–§2 and draft/process-labor.json. |
@@ -257,6 +262,9 @@
 | A Test 29 Regolith Shock Applies | constant | 1 / 0 | Test-only applicability flag (1). | Keeps Mode 29 shock wiring structurally symmetric while selecting A only. | V7_7_ARCHITECTURE_SPEC §4. |
 | A Test 4 Headroom Applies | constant | 0 / 1 | Флаг применимости legacy power headroom Mode 4 к колонии A; значение 0. | Оборачивает существующий общий power multiplier через IfThenElse(flag=1, multiplier, 1), сохраняя старую одностороннюю тестовую обвязку при зеркальной формуле. |  |
 | A Test 6 Headroom Applies | constant | 1 / 0 | Флаг применимости legacy power headroom Mode 6 к колонии A; значение 1. | Оборачивает существующий общий power multiplier через IfThenElse(flag=1, multiplier, 1), сохраняя старую одностороннюю тестовую обвязку при зеркальной формуле. |  |
+| Attractiveness Jobs Weight | constant | 1 | Dimensionless exponent on employment rate in attractiveness, value 1. | Controls the contribution of Employment Rate to regional Attractiveness. | docs/research/POPULATION_PROTOTYPE_2026-10-04_RU.md prototype attractiveness formula; unit baseline weight retained. |
+| Attractiveness Living Weight | constant | 1 | Dimensionless exponent on living standard in attractiveness, value 1. | Controls the contribution of Living Standard to regional Attractiveness. | docs/research/POPULATION_PROTOTYPE_2026-10-04_RU.md prototype attractiveness formula; unit baseline weight retained. |
+| Attractiveness Perception Time | constant | 360 | Perception smoothing time constant, 360 model days (one model year). | Sets the adjustment time of Perceived Attractiveness toward current Attractiveness. | docs/research/POPULATION_PROTOTYPE_2026-10-04_RU.md: attractiveness perception smoothed over 1 year; V7_7_11_ARCHITECTURE_SPEC §1. |
 | B Capital Goods Automation Level | constant | 0 | Capital Goods automation level for colony B, initial value 0. | Controls B Capital Goods Automation Factor. The A/B pair is intentionally symmetric at 0/0 in the base model; Mode 48 overrides only the A value to 0.5 as a probe. | V7_7_10_ARCHITECTURE_SPEC §1–§2 and draft/process-labor.json. |
 | B Capital Goods Base Production Capacity | constant | 1 / 2 | Baseline maximum production scale of the B capital-goods sector. | Enters the soft production-capacity cap and is the quantity reduced by Mode 22 test wiring. | Start value 1 from V7_5_ARCHITECTURE_SPEC §2; calibration parameter without physical justification at this stage. |
 | B Capital Goods Demand Signal | initial_stock | 0.13 | Initial smoothed Capital Goods demand signal for colony B, value 0.13. | Seeds the lagged plant-sizing signal at day-0 demand instead of feeding instantaneous demand into Required Active Capacity. | V7_7_4_ARCHITECTURE_SPEC §1–§2. |
@@ -271,6 +279,7 @@
 | B Construction Materials Plant Installed Capacity | initial_stock | 2 / 3 | Initial installed construction-materials plant capacity for colony B, value 2. | Seeds lifecycle capital at the previously accepted base production capacity; A/B are intentionally asymmetric (3 vs 2). | V7_7_3_ARCHITECTURE_SPEC §2 explicitly requires A=3, B=2 and mandatory annotation of the asymmetric pair. |
 | B Domestic Supply Signal | initial_stock | 22 / 16 | Начальный сигнал локального предложения металла (16 / 22). | То же для металла. |  |
 | B Local Base Demand | constant | 22 / 16 | Базовый конечный спрос на металл (A 16 / B 22 /день). | Масштаб конечного рынка металла; B — больший потребитель при меньшей добыче → структурный импорт металла B из A (~21–23/день). | Shipment Rate A→B: 23.1 (Mode 12), 20.8 (Mode 17). |
+| B Population Initial | constant | 8.5 / 28 | Starting population of the region (A 28 / B 8.5, model units of people). | Sets the scale of each region's Population stock and, through participation 0.5, its labor force (A 14 / B 4.25), compared with the region's total labor requirement. A is the larger economy, so it starts with the larger population; in the first year both regions employ about 94 % of their labor force (Mode 46). | docs/research/POPULATION_PROTOTYPE_2026-10-04_RU.md (calibration, participation 0.50); docs/tasks/030-population/V7_7_11_ARCHITECTURE_SPEC.md §1. Added by the owner at acceptance: the task listed only the 11 shared parameters. |
 | B Regolith Base Extraction Capacity | constant | 5 / 7 | [calib] fixed extraction capacity (5). | Caps Regolith extraction through the standard soft-cap function. | Owner skeleton feasibility value; candidate run to confirm baseline and shock behaviour. |
 | B Regolith Demand Signal | initial_stock | 0.35 | Initial smoothed Regolith demand signal for colony B, value 0.35. | Seeds the STOCK sizing signal without reading instantaneous demand directly. | draft/regolith-mine.json; V7_7_5_ARCHITECTURE_SPEC §1. |
 | B Regolith Extraction Automation Level | constant | 0 | Regolith Extraction automation level for colony B, initial value 0. | Controls B Regolith Extraction Automation Factor. The A/B pair is intentionally symmetric at 0/0 in the base model; Mode 48 overrides only the A value to 0.5 as a probe. | V7_7_10_ARCHITECTURE_SPEC §1–§2 and draft/process-labor.json. |
@@ -312,6 +321,11 @@
 | Construction Materials Plant Operating Reserve Factor | constant | 1.1 | Construction Materials plant lifecycle parameter, value 1.1. | Scales smoothed demand signal into required active plant capacity. | V7_7_3_ARCHITECTURE_SPEC §2; owner-defined value verified on the pre-issue skeleton. |
 | Construction Materials Plant Surplus Disposal Decision Time | constant | 240 | Construction Materials plant lifecycle parameter, value 240. | Controls delay before true surplus is committed to decommissioning. | V7_7_3_ARCHITECTURE_SPEC §2; owner-defined value verified on the pre-issue skeleton. |
 | Construction Materials Target Days | constant | 30 | Construction Materials inventory target, days of desired demand. | Higher value raises desired stock coverage. | V7_7_ARCHITECTURE_SPEC §2; owner-defined non-[calib] value. |
+| Death Living Standard Sensitivity | constant | 1 | Dimensionless mortality elasticity to living standard, value 1. | At value 1, mortality varies inversely with living standard, subject to the node's floor. | docs/research/POPULATION_PROTOTYPE_2026-10-04_RU.md: mortality × living-standard^-1; retained baseline, not separately fitted. |
+| Migration Gap Sensitivity | constant | 4 | Dimensionless gain from normalized perceived-attractiveness gap to migration pressure, value 4. | Scales the positive attractiveness gap before the migration factor is capped at 1. | docs/research/POPULATION_PROTOTYPE_2026-10-04_RU.md prototype migration setup; retained baseline coefficient, not separately fitted. |
+| Migration Max Rate | constant | 0.0000555555555556 | Maximum migration outflow fraction, 0.0000555555555556 per model day (2.0% per 360-day model year). | Caps each directed migration flow before attractiveness-gap sensitivity is applied. | docs/research/POPULATION_PROTOTYPE_2026-10-04_RU.md: no more than 2% of population per year; V7_7_11_ARCHITECTURE_SPEC §1. |
+| Population Base Death Rate | constant | 0.0000277777777778 | Baseline death rate, 0.0000277777777778 per model day (1.0% per 360-day model year). | Multiplies Population and the living-standard mortality factor to form each region's Deaths outflow. | docs/research/POPULATION_PROTOTYPE_2026-10-04_RU.md: deaths 1.0%/year; V7_7_11_ARCHITECTURE_SPEC §1. |
+| Population Birth Rate | constant | 0.0000333333333333 | Natural birth rate, 0.0000333333333333 per model day (1.2% per 360-day model year). | Multiplies each region's Population stock to form its Births inflow. | docs/research/POPULATION_PROTOTYPE_2026-10-04_RU.md: births 1.2%/year; V7_7_11_ARCHITECTURE_SPEC §1. |
 | Regolith Adjustment Time | constant | 10 | Regolith inventory correction time. | Higher value slows extraction response. | V7_7_ARCHITECTURE_SPEC §2; owner-defined non-[calib] value. |
 | Regolith Buffer Days | constant | 1 | Scale-free Regolith availability buffer, days of requirement. | Higher value makes raw-resource limitation bind sooner. | V7_7_ARCHITECTURE_SPEC §2; owner-defined non-[calib] value. |
 | Regolith Demand Signal Adjustment Time | constant | 3 | Regolith demand-signal adjustment time, value 3 days. | Controls lag from instantaneous Regolith Requirement to the STOCK signal used for mine sizing and prevents same-step demand feedback. | V7_7_5_ARCHITECTURE_SPEC §1–§2; simple_capital STOCK sizing rule in lab/docs/NODES_RU.md. |
@@ -561,12 +575,15 @@
 | A Construction Materials Labor per Unit | constant | A | 0.3 | = | Generated labor element for A Construction Materials Labor per Unit. | ✓ |
 | A Regolith Extraction Labor per Unit | constant | A | 0.2 | = | Generated labor element for A Regolith Extraction Labor per Unit. | ✓ |
 | A Wage | constant | A | 100 | **140** |  | ✓ |
+| Attractiveness Wage Weight | constant | global | 1 |  | Generated population element for Attractiveness Wage Weight. | ✓ |
 | Automation Labor Exponent | constant | global | 1 |  | Generated labor element for Automation Labor Exponent. | ✓ |
 | B Capital Goods Labor per Unit | constant | B | 2 | = | Generated labor element for B Capital Goods Labor per Unit. | ✓ |
 | B Construction Materials Labor per Unit | constant | B | 0.3 | = | Generated labor element for B Construction Materials Labor per Unit. | ✓ |
 | B Regolith Extraction Labor per Unit | constant | B | 0.2 | = | Generated labor element for B Regolith Extraction Labor per Unit. | ✓ |
 | B Wage | constant | B | 140 | **100** |  | ✓ |
+| Labor Participation Share | constant | global | 0.5 |  | Generated population element for Labor Participation Share. | ✓ |
 | Minimum Human Labor Share | constant | global | 0.05 |  | Generated labor element for Minimum Human Labor Share. | ✓ |
+| Reference Real Wage | constant | global | 100 |  | Generated population element for Reference Real Wage. | ✓ |
 
 ### Metal
 
@@ -704,6 +721,8 @@
 | A Demand Elasticity | constant | A | 0.6 | = |  |  |
 | A Domestic Supply Signal | initial_stock | A | 16 | **22** | Smoothed recent domestic metal production available to A's buyers. | ✓ |
 | A Local Base Demand | constant | A | 16 | **22** | Local industrial metal demand at the reference price. | ✓ |
+| A Perceived Attractiveness | initial_stock | A | 1 | = | Generated population element for A Perceived Attractiveness. |  |
+| A Population Initial | constant | A | 28 | **8.5** | Generated population element for A Population Initial. | ✓ |
 | A Regolith Base Extraction Capacity | constant | A | 7 | **5** | [calib] Baseline Regolith extraction capacity in colony A. | ✓ |
 | A Regolith Demand Signal | initial_stock | A | 0.35 | = | Generated simple_capital demand signal for A Regolith Demand Signal. | ✓ |
 | A Regolith Extraction Automation Level | switch | A | 0 (сценарии: {"48":0.5}…) | = | Generated labor element for A Regolith Extraction Automation Level. | ✓ |
@@ -717,6 +736,9 @@
 | A Test 29 Regolith Shock Applies | constant | A | 1 | **0** | Applicability flag for symmetric Mode 29 Regolith shock wiring in colony A. | ✓ |
 | A Test 4 Headroom Applies | constant | A | 0 | **1** | Applicability flag for symmetric power test wiring. | ✓ |
 | A Test 6 Headroom Applies | constant | A | 1 | **0** | Applicability flag for symmetric power test wiring. | ✓ |
+| Attractiveness Jobs Weight | constant | global | 1 |  | Generated population element for Attractiveness Jobs Weight. | ✓ |
+| Attractiveness Living Weight | constant | global | 1 |  | Generated population element for Attractiveness Living Weight. | ✓ |
+| Attractiveness Perception Time | constant | global | 360 |  | Generated population element for Attractiveness Perception Time. | ✓ |
 | B Base Markup | constant | B | 0.15 | = |  |  |
 | B Capital Goods Automation Level | constant | B | 0 | = | Generated labor element for B Capital Goods Automation Level. | ✓ |
 | B Capital Goods Base Production Capacity | constant | B | 1 | **2** | Baseline production capacity of the B capital-goods sector. | ✓ |
@@ -737,6 +759,8 @@
 | B Demand Elasticity | constant | B | 0.6 | = |  |  |
 | B Domestic Supply Signal | initial_stock | B | 22 | **16** | Smoothed recent domestic metal production available to B's buyers. | ✓ |
 | B Local Base Demand | constant | B | 22 | **16** | Local industrial metal demand at the reference price. | ✓ |
+| B Perceived Attractiveness | initial_stock | B | 1 | = | Generated population element for B Perceived Attractiveness. |  |
+| B Population Initial | constant | B | 8.5 | **28** | Generated population element for B Population Initial. | ✓ |
 | B Regolith Base Extraction Capacity | constant | B | 5 | **7** | [calib] Baseline Regolith extraction capacity in colony B. | ✓ |
 | B Regolith Demand Signal | initial_stock | B | 0.35 | = | Generated simple_capital demand signal for B Regolith Demand Signal. | ✓ |
 | B Regolith Extraction Automation Level | constant | B | 0 | = | Generated labor element for B Regolith Extraction Automation Level. | ✓ |
@@ -779,6 +803,11 @@
 | Construction Materials Plant Operating Reserve Factor | constant | global | 1.1 |  | Required active plant capacity multiplier over the smoothed construction-materials demand signal. | ✓ |
 | Construction Materials Plant Surplus Disposal Decision Time | constant | global | 240 |  | Decision timescale before true surplus plant capacity enters decommissioning. | ✓ |
 | Construction Materials Target Days | constant | global | 30 |  | Target Construction Materials inventory coverage in days of desired construction demand. | ✓ |
+| Death Living Standard Sensitivity | constant | global | 1 |  | Generated population element for Death Living Standard Sensitivity. | ✓ |
+| Migration Gap Sensitivity | constant | global | 4 |  | Generated population element for Migration Gap Sensitivity. | ✓ |
+| Migration Max Rate | constant | global | 0.0000555555555556 |  | Generated population element for Migration Max Rate. | ✓ |
+| Population Base Death Rate | constant | global | 0.0000277777777778 |  | Generated population element for Population Base Death Rate. | ✓ |
+| Population Birth Rate | constant | global | 0.0000333333333333 |  | Generated population element for Population Birth Rate. | ✓ |
 | Regolith Adjustment Time | constant | global | 10 |  | First-order inventory correction time for desired Regolith extraction. | ✓ |
 | Regolith Buffer Days | constant | global | 1 |  | Scale-free Regolith availability half-saturation buffer in days of current Regolith requirement. | ✓ |
 | Regolith Demand Signal Adjustment Time | constant | global | 3 |  | Generated simple_capital signal adjustment time for Regolith Demand Signal Adjustment Time. | ✓ |
@@ -867,6 +896,7 @@
 | Energy Demand Signal Adjustment Time | constant | global | 3 |  | Time constant for the perceived/contracting energy-load signal used by endogenous price formation. |  |
 | Energy Kernel Capacity Shock Factor | constant | global | 0.6 |  | Mode 26 temporary multiplier on A active generation capacity. | ✓ |
 | Energy Scarcity Price Strength | constant | global | 4 |  | Linear scarcity premium strength. Price remains equal to generation cost while perceived demand is at or below active capacity. | ✓ |
+| Living Energy Weight | constant | global | 1 |  | Generated population element for Living Energy Weight. |  |
 | Mining Energy per Unit | constant | global | 1 |  | Generated energy_consumer element for Mining Energy per Unit. | ✓ |
 | Mining Energy Signal Adjustment Time | constant | global | 3 |  | Generated energy_consumer element for Mining Energy Signal Adjustment Time. | ✓ |
 | Power Activation Time | constant | global | 21 |  | Time scale for returning mothballed generation capacity to active service. |  |

@@ -1,20 +1,20 @@
 # Current State
 
 **Document status:** CURRENT  
-**Describes code:** Orbital Economy v7.7.10 r1 — Labor  
-**Base:** accepted v7.7.9 r1 (Process Energy)  
-**Model SHA-256:** `3cb40c883703936af3550a82a731d4af17f3818afe80b69c0c8f92e0878ab903`
+**Describes code:** Orbital Economy v7.7.11 r1 — Population  
+**Base:** accepted v7.7.10 r1 (Labor)  
+**Model SHA-256:** `dbe824b34ad41b5b7d50a6df096b59268198dd4c02c2b36aba5645b24809f0d2`
 
 ## 1. Checkpoint
 
 | Property | Value |
 |---|---:|
-| ModelJSON elements | 4832 |
-| VARIABLE | 1180 |
-| STOCK | 129 |
-| FLOW | 279 |
-| LINK | 3244 |
-| Named primitives | 1588 |
+| ModelJSON elements | 4971 |
+| VARIABLE | 1215 |
+| STOCK | 133 |
+| FLOW | 289 |
+| LINK | 3334 |
+| Named primitives | 1637 |
 | Scenarios | 49 |
 | Simulation | 0..1080 days |
 | Time step | 0.25 day |
@@ -94,6 +94,10 @@ Ore mining, regolith extraction, energy-resource extraction and capital-goods pr
 
 Every process declares its labor requirement: `X P Labor Requirement` = output × labor intensity × `X P Automation Factor`, for 8 colony processes × A/B and shared transport (17 instances). Intensities (per unit): ore mining 0.05, smelting 0.1, electronics 0.05, capital goods 2, regolith 0.2, construction materials 0.3, energy-resource extraction 0.002, generation 0.001 per unit of energy, transport 0.1 per unit of load. The factor is 1 − (1 − h)(1 − (1 − level)^k) with h = 0.05 (minimum human share), k = 1, and `X P Automation Level` a named parameter that starts at 0 — so the factor is exactly 1, nothing else changes and the node needs no switch. Metal and electronics unit costs read intensity × factor, so automation lowers them once it is raised. There is no labor pool in Planet v1: the requirement does not limit output. One `labor` node (`model/nodes/process-labor.json`). Planet v1 counter P5: **17 / 0**; `planet_closure` now runs in `planet_v1` mode — Planet v1 is closed (owner decisions, 2026-10-03).
 
+### 2k. Population and labor accounting (v7.7.11, Planet v2 step 1)
+
+Each region X has a population `X Population` (start A 28, B 8.5) with births 1.2 % a year, deaths 1.0 % a year divided by `X Living Standard`, and pairwise migration toward the region with the higher perceived attractiveness, at most 2 % of the population a year. Attractiveness = (`X Real Wage` / 100) × `X Employment Rate` × `X Living Standard`, perceived with a one-year smoothing; real wage = `X Effective Wage` over the metal and electronics price index; the living standard is `X Energy Fulfillment Ratio` for now. Labor force = population × 0.5 (participation); employment, unemployment and `X Labor Shortage` compare it with `X Total Labor Requirement`. **Accounting only:** nothing in the economy reads the population, so the node needs no switch and every earlier series is unchanged. One `population` node (`model/nodes/population.json`); births and deaths cross the boundary as closed-world categories `demography_births` / `demography_deaths`. Over the 3-year horizon B gains people (Mode 46: 8.5 → 9.53) because its real wage is higher; over decades the flow reverses — B has too few jobs and wages are fixed at this step (`docs/research/POPULATION_PROTOTYPE_2026-10-04_RU.md`). Next steps: food and farms, then demand ∝ population and a flexible wage (owner decisions, 2026-10-04).
+
 ## 3. Energy Kernel v2
 
 The old abstraction was effectively:
@@ -158,7 +162,7 @@ Extraction adjusts toward current resource demand plus a target-inventory correc
 - `0`: all new resource flows are inert; `Available Generation` falls back to the accepted active-capacity path; generation cost falls back to the accepted v7.5.1 expression.
 - `1`: Energy Kernel v2 operates.
 
-In v7.6, Modes **0–24** were the exact-regression scope against v7.5.1 and Modes **25–26** were new. In v7.6.1, Modes **0–24** and **26** reproduced v7.6 r2 exactly (every series except the recalibrated constant's own series). In v7.7, Modes **0–26** set `Construction Materials Enabled = 0` and reproduce v7.6.1 r1 bit for bit on the canonical platform; Modes **27–29** are new. In v7.7.1, Modes **0–29** reproduce v7.7 r1 (switch `Transport Construction Materials Enabled`); in v7.7.2, Modes **0–31** set `Construction Materials Energy Enabled = 0` and reproduce v7.7.1 r1 bit for bit; Modes **32–33** are new. In v7.7.3, Modes **0–33** set `Construction Materials Capital Enabled = 0` and reproduce v7.7.2 r1 bit for bit; Modes **34–35** are new. In v7.7.4, Modes **0–35** set `Capital Goods Capital Enabled = 0` and reproduce v7.7.3 r1 bit for bit; Modes **36–37** are new. In v7.7.5, Modes **0–37** set `Regolith Capital Enabled = 0` and reproduce v7.7.4 r1 bit for bit; Modes **38–39** are new. In v7.7.6, Modes **0–39** set `Ore Capital Enabled = 0` and reproduce v7.7.5 r1 bit for bit; Modes **40–41** are new. In v7.7.7, Modes **0–41** set `Power Resource Capital Enabled = 0` and reproduce v7.7.6 r1 bit for bit; Modes **42–43** are new. In v7.7.8, Modes **0–43** set `Deposits Enabled = 0` and reproduce v7.7.7 r1 bit for bit; Modes **44–45** are new. In v7.7.9, Modes **0–45** set `Process Energy Enabled = 0` and reproduce v7.7.8 r1 bit for bit; Modes **46–47** are new. In v7.7.10, Modes **0–47** reproduce v7.7.9 r1 bit for bit without a switch (automation 0); Mode **48** is new.
+In v7.6, Modes **0–24** were the exact-regression scope against v7.5.1 and Modes **25–26** were new. In v7.6.1, Modes **0–24** and **26** reproduced v7.6 r2 exactly (every series except the recalibrated constant's own series). In v7.7, Modes **0–26** set `Construction Materials Enabled = 0` and reproduce v7.6.1 r1 bit for bit on the canonical platform; Modes **27–29** are new. In v7.7.1, Modes **0–29** reproduce v7.7 r1 (switch `Transport Construction Materials Enabled`); in v7.7.2, Modes **0–31** set `Construction Materials Energy Enabled = 0` and reproduce v7.7.1 r1 bit for bit; Modes **32–33** are new. In v7.7.3, Modes **0–33** set `Construction Materials Capital Enabled = 0` and reproduce v7.7.2 r1 bit for bit; Modes **34–35** are new. In v7.7.4, Modes **0–35** set `Capital Goods Capital Enabled = 0` and reproduce v7.7.3 r1 bit for bit; Modes **36–37** are new. In v7.7.5, Modes **0–37** set `Regolith Capital Enabled = 0` and reproduce v7.7.4 r1 bit for bit; Modes **38–39** are new. In v7.7.6, Modes **0–39** set `Ore Capital Enabled = 0` and reproduce v7.7.5 r1 bit for bit; Modes **40–41** are new. In v7.7.7, Modes **0–41** set `Power Resource Capital Enabled = 0` and reproduce v7.7.6 r1 bit for bit; Modes **42–43** are new. In v7.7.8, Modes **0–43** set `Deposits Enabled = 0` and reproduce v7.7.7 r1 bit for bit; Modes **44–45** are new. In v7.7.9, Modes **0–45** set `Process Energy Enabled = 0` and reproduce v7.7.8 r1 bit for bit; Modes **46–47** are new. In v7.7.10, Modes **0–47** reproduce v7.7.9 r1 bit for bit without a switch (automation 0); Mode **48** is new. In v7.7.11, Modes **0–48** reproduce v7.7.10 r1 bit for bit: the population layer only adds elements.
 
 ## 5. New scenarios
 
@@ -262,22 +266,23 @@ Mode 46 with every colony-A process at automation 0.5 — a probe of the lever, 
 
 ## 6. Static QA
 
-| Metric | v7.7.10 r1 |
+| Metric | v7.7.11 r1 |
 |---|---:|
-| FLOW | 279 |
-| Boundary flows | 224 |
+| FLOW | 289 |
+| Boundary flows | 232 |
 | Unclassified boundary flows | 0 |
 | Declared transformation pairs | 25 |
 | Unpaired transformation flows | 0 |
 | Declared external-capital violations | **0** |
 | A/B symmetry mismatches | **0** |
-| A/B parameter differences | 138 |
+| A/B parameter differences | 140 |
 | Capital lifecycle instances | 11 |
 | Capital lifecycle non-conforming | **0** |
 | Simple capital instances | 6 (non-conforming **0**) |
 | Deposit instances | 6 (non-conforming **0**) |
+| Population instances | 2 (non-conforming **0**) |
 
-Executable validation Modes 0–48 (`validation/validation-v7.7.10.json`) was run on the canonical platform on 2026-10-04: **49/49 PASS** (19007 checks); Modes 0–47 reproduce v7.7.9 r1 exactly (48 × `common=1519, changed=0, maxAbs=0`, 69 added series). v7.7.9 had reproduced v7.7.8 r1 exactly in Modes 0–45. v7.7.6 had reproduced v7.7.5 r1 exactly in Modes 0–39. v7.7.5 had reproduced v7.7.4 r1 exactly in Modes 0–37. v7.7.4 had reproduced v7.7.3 r1 exactly in Modes 0–35. v7.7.3 had reproduced v7.7.2 r1 exactly in Modes 0–33. v7.7.2 had reproduced v7.7.1 r1 exactly in Modes 0–31. v7.7.1 had reproduced v7.7 r1 exactly in Modes 0–29. Static: algebraic loops 0 of 32768 switch combinations; Planet v1 closure in `planet_v1` mode — P2 11/6/0/0, P3 14/2/1/0, P4 6/0, P5 17/0, P3 6/2/9/0, P4 0/6, P5 4/13, P6 4. v7.7 had reproduced v7.6.1 r1 exactly in Modes 0–26. v7.6.1 had reproduced v7.6 r2 in Modes 0–24 and 26 apart from the recalibrated constant's own series. v7.6 r2 in its turn reproduced v7.5.1 r1 exactly in Modes 0–24 (25 × `common=963, changed=0, maxAbs=0`, 41 added series). See `ACCEPTANCE_STATUS.md`.
+Executable validation Modes 0–48 (`validation/validation-v7.7.11.json`) was run on the canonical platform on 2026-10-05: **49/49 PASS** (19451 checks); Modes 0–48 reproduce v7.7.10 r1 exactly (49 × `common=1588, changed=0, maxAbs=0`, 49 added series). v7.7.10 had reproduced v7.7.9 r1 exactly in Modes 0–47. v7.7.9 had reproduced v7.7.8 r1 exactly in Modes 0–45. v7.7.6 had reproduced v7.7.5 r1 exactly in Modes 0–39. v7.7.5 had reproduced v7.7.4 r1 exactly in Modes 0–37. v7.7.4 had reproduced v7.7.3 r1 exactly in Modes 0–35. v7.7.3 had reproduced v7.7.2 r1 exactly in Modes 0–33. v7.7.2 had reproduced v7.7.1 r1 exactly in Modes 0–31. v7.7.1 had reproduced v7.7 r1 exactly in Modes 0–29. Static: algebraic loops 0 of 32768 switch combinations; Planet v1 closure in `planet_v1` mode — P2 11/6/0/0, P3 14/2/1/0, P4 6/0, P5 17/0, P6 4. v7.7 had reproduced v7.6.1 r1 exactly in Modes 0–26. v7.6.1 had reproduced v7.6 r2 in Modes 0–24 and 26 apart from the recalibrated constant's own series. v7.6 r2 in its turn reproduced v7.5.1 r1 exactly in Modes 0–24 (25 × `common=963, changed=0, maxAbs=0`, 41 added series). See `ACCEPTANCE_STATUS.md`.
 
 ## 7. What v7.6 deliberately does not implement
 

@@ -1,15 +1,15 @@
 # Orbital Economy Lab — structure audit
 
-- generated: 2026-10-04T07:17:06.519Z
-- model: Orbital Economy v7.7.10 r1 — Labor
-- model SHA-256: `3cb40c883703936af3550a82a731d4af17f3818afe80b69c0c8f92e0878ab903`
-- validation: Orbital Economy v7.7.10 validation r1
-- validation SHA-256: `1cd6480d478f7e4a2c9b3fb5cfe4a55b2d2be2312b7be85c984c246be6095cec`
+- generated: 2026-10-05T09:19:11.716Z
+- model: Orbital Economy v7.7.11 r1 — Population
+- model SHA-256: `dbe824b34ad41b5b7d50a6df096b59268198dd4c02c2b36aba5645b24809f0d2`
+- validation: Orbital Economy v7.7.11 validation r1
+- validation SHA-256: `2e4a356acadec1e3e877c115a8951c21faa4ec197f2eb4f808440e8386d31d87`
 - status: **PASS**
 
 ## Open boundaries (declared physical-boundary meter)
 
-- flows total: 279; crossing the model boundary: 224; classified: 224; unclassified: 0
+- flows total: 289; crossing the model boundary: 232; classified: 232; unclassified: 0
 - closed-world violations: **0** (mode: `classify`) — zero means the currently declared closed-world boundary contract is satisfied; it is not a Planet v1 completeness claim
 - declared transformation pairs: 25; transformation flows without a pair: 0
 
@@ -21,7 +21,7 @@
 | final_consumption | yes | 4 | final goods leave the economy as consumption |
 | power_resource_consumption | yes | 2 | v7.6 physical operating resource is consumed in exact proportion to actual delivered generation. |
 | unit_transformation | yes | 8 | input stock -> output stock conversion modelled as a sink/source pair (different units); every flow here must belong to a declared transformation pair whose numeric identity is checked at runtime |
-| information_signal | yes | 78 | smoothing / information stocks, not matter |
+| information_signal | yes | 82 | smoothing / information stocks, not matter |
 | financial_accounting | yes | 16 | money bookkeeping, not matter |
 | capital_state_accounting | yes | 33 | Active is an operational-state sub-account of Installed; these flows change state, not physical capital |
 | capital_transformation | yes | 53 | v7.5/v7.5.1: installed capital expansion is a unit transformation of Capital Goods; regional sectors use one local sink, shared Transport uses two A/B regional sinks whose total identity is checked at runtime. v7.7: colonial sector expansion is additionally backed by a local Construction Materials sink. v7.7.1: shared Transport expansion is additionally backed by construction materials from both A and B inventories (two legs). v7.7.3: construction-materials plant expansion is backed by local capital goods and construction materials. v7.7.4: capital-goods plant expansion is backed by local capital goods and construction materials. |
@@ -30,6 +30,8 @@
 | external_capital | **no** | 0 | capital created without physical goods; expected count is zero from v7.5.1 onward for the currently declared expansion-boundary audit |
 | capital_retirement | yes | 12 | износ и вывод простого капитала: капитал покидает экономику |
 | exploration_expenditure | yes | 6 | capital goods spent on resource exploration leave the economy |
+| demography_births | yes | 2 | people enter the model by birth (Planet v2 population) |
+| demography_deaths | yes | 2 | people leave the model by death (Planet v2 population) |
 
 
 Declared unit-transformation pairs (source flow physically backed by sink flows; numeric identity is a runtime check):
@@ -98,7 +100,7 @@ Declared unit-transformation pairs (source flow physically backed by sink flows;
 - B Electronics Feedstock Consumption
 - B Electronics Production
 
-**information_signal** (78)
+**information_signal** (82)
 
 - A Electronics Capacity Planning Signal Increase
 - A Electronics Capacity Planning Signal Decrease
@@ -178,6 +180,10 @@ Declared unit-transformation pairs (source flow physically backed by sink flows;
 - B Power Resource Extraction Energy Signal Decrease
 - B Capital Goods Energy Signal Increase
 - B Capital Goods Energy Signal Decrease
+- A Perceived Attractiveness Increase
+- A Perceived Attractiveness Decrease
+- B Perceived Attractiveness Increase
+- B Perceived Attractiveness Decrease
 
 **financial_accounting** (16)
 
@@ -333,13 +339,23 @@ Declared unit-transformation pairs (source flow physically backed by sink flows;
 - A Power Resource Exploration Capital Goods Consumption
 - B Power Resource Exploration Capital Goods Consumption
 
+**demography_births** (2)
+
+- A Births
+- B Births
+
+**demography_deaths** (2)
+
+- A Deaths
+- B Deaths
+
 </details>
 
 ## Colony symmetry
 
 - tokens: A ↔ B
-- mirrored pairs checked: 1284; mirrored links checked: 3046
-- structural mismatches: **0**; numeric parameter differences (allowed): 138; elements under exceptions: 0
+- mirrored pairs checked: 1320; mirrored links checked: 3136
+- structural mismatches: **0**; numeric parameter differences (allowed): 140; elements under exceptions: 0
 
 <details><summary>Numeric parameter differences between colonies (allowed)</summary>
 
@@ -414,6 +430,7 @@ Declared unit-transformation pairs (source flow physically backed by sink flows;
 | initial_value | A Power Resource Extraction Signal | 1373.679 | B Power Resource Extraction Signal | 30.983 |
 | initial_value | A Mining Energy Signal | 42.227 | B Mining Energy Signal | 8.373 |
 | initial_value | A Power Resource Extraction Energy Signal | 1373.679 | B Power Resource Extraction Energy Signal | 30.983 |
+| value | A Population Initial | 28 | B Population Initial | 8.5 |
 
 </details>
 

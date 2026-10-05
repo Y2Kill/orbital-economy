@@ -1,15 +1,15 @@
 {
   "status": "ACCEPTED",
-  "model_name": "Orbital Economy v7.7.10 r1 — Labor",
-  "model_file": "orbital_economy_v7_7_10_r1_modeljson.json",
-  "model_sha256": "3cb40c883703936af3550a82a731d4af17f3818afe80b69c0c8f92e0878ab903",
-  "validation_file": "validation-v7.7.10.json",
-  "validation_sha256": "1cd6480d478f7e4a2c9b3fb5cfe4a55b2d2be2312b7be85c984c246be6095cec",
-  "accepted_date": "2026-10-04",
+  "model_name": "Orbital Economy v7.7.11 r1 — Population",
+  "model_file": "orbital_economy_v7_7_11_r1_modeljson.json",
+  "model_sha256": "dbe824b34ad41b5b7d50a6df096b59268198dd4c02c2b36aba5645b24809f0d2",
+  "validation_file": "validation-v7.7.11.json",
+  "validation_sha256": "2e4a356acadec1e3e877c115a8951c21faa4ec197f2eb4f808440e8386d31d87",
+  "accepted_date": "2026-10-05",
   "engine": "simulation@9.0.0",
   "notes": [
-    "v7.7.10: every process declares its labor requirement = output x labor intensity x automation factor (one labor node, model/nodes/process-labor.json; automation 0 at start, no switch; metal and electronics unit costs read intensity x factor). Planet v1 P5 is 17/0 and planet_closure runs in planet_v1 mode: Planet v1 is closed. See docs/tasks/028-labor/.",
-    "Modes 0-47 reproduce v7.7.9 r1 exactly (no switch: every automation factor is exactly 1); Mode 48 is the automation probe (Mode 46 with colony A automation 0.5: labor -43 %, metal unit cost -18 %).",
+    "v7.7.11: Planet v2 step 1 — each region has a population with births, deaths and migration by perceived attractiveness (real wage x employment x living standard), and labor is accounted (labor force, employment, unemployment, labor shortage); one population node, model/nodes/population.json; accounting only, it drives nothing in the economy. See docs/tasks/030-population/.",
+    "No switch and no new Mode: Modes 0-48 reproduce v7.7.10 r1 exactly; the population layer adds 49 series to every Mode.",
     "Exact numbers are defined on the canonical platform (docs/VERSIONING_AND_AUTHORITY.md section 8); series-digest.windows.json is the golden."
   ]
 }

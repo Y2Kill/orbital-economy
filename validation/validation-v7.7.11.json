@@ -1,5 +1,5 @@
 {
-  "name": "Orbital Economy v7.7.10 validation r1",
+  "name": "Orbital Economy v7.7.11 validation r1",
   "mode_variable": "Timed Test Mode",
   "expected_time_step": 0.25,
   "time_step_tolerance": 1e-12,
@@ -56,7 +56,8 @@
     44,
     45,
     46,
-    47
+    47,
+    48
   ],
   "regression_tolerance": 0,
   "plugins": [
@@ -581,7 +582,9 @@
             "? Power Resource Extraction Energy Signal Increase",
             "? Power Resource Extraction Energy Signal Decrease",
             "? Capital Goods Energy Signal Increase",
-            "? Capital Goods Energy Signal Decrease"
+            "? Capital Goods Energy Signal Decrease",
+            "? Perceived Attractiveness Increase",
+            "? Perceived Attractiveness Decrease"
           ],
           "reason": "smoothing / information stocks, not matter"
         },
@@ -696,6 +699,24 @@
             "? Power Resource Exploration Capital Goods Consumption"
           ],
           "reason": "capital goods spent on resource exploration leave the economy"
+        },
+        {
+          "id": "demography_births",
+          "closed_world": true,
+          "direction": "source",
+          "name": [
+            "? Births"
+          ],
+          "reason": "people enter the model by birth (Planet v2 population)"
+        },
+        {
+          "id": "demography_deaths",
+          "closed_world": true,
+          "direction": "sink",
+          "name": [
+            "? Deaths"
+          ],
+          "reason": "people leave the model by death (Planet v2 population)"
         }
       ],
       "transformation_pairs": [
@@ -1472,6 +1493,46 @@
           "automation_level": "Transport Automation Level",
           "automation_factor": "Transport Automation Factor",
           "requirement": "Transport Labor Requirement"
+        }
+      ]
+    },
+    {
+      "type": "population",
+      "abs_tol": 1e-09,
+      "instances": [
+        {
+          "name": "A population",
+          "colony": "A",
+          "population": "A Population",
+          "births": "A Births",
+          "deaths": "A Deaths",
+          "immigration": [
+            "Migration B to A"
+          ],
+          "emigration": [
+            "Migration A to B"
+          ],
+          "labor_force": "A Labor Force",
+          "employment": "A Employment",
+          "labor_requirement": "A Total Labor Requirement",
+          "participation": "Labor Participation Share"
+        },
+        {
+          "name": "B population",
+          "colony": "B",
+          "population": "B Population",
+          "births": "B Births",
+          "deaths": "B Deaths",
+          "immigration": [
+            "Migration A to B"
+          ],
+          "emigration": [
+            "Migration B to A"
+          ],
+          "labor_force": "B Labor Force",
+          "employment": "B Employment",
+          "labor_requirement": "B Total Labor Requirement",
+          "participation": "Labor Participation Share"
         }
       ]
     }
@@ -67145,6 +67206,50 @@
           "metric": "min",
           "op": ">",
           "value": 1000
+        },
+        {
+          "type": "metric",
+          "name": "Mode 46: B attracts people in the first years (higher real wage); skeleton max 9.53",
+          "column": "B Population",
+          "metric": "max",
+          "op": ">",
+          "value": 9.0
+        },
+        {
+          "type": "metric",
+          "name": "Mode 46: A loses no more than about 5 % of its people in three years; skeleton min 27.11",
+          "column": "A Population",
+          "metric": "min",
+          "op": ">",
+          "value": 26.5
+        },
+        {
+          "type": "metric",
+          "name": "Mode 46: planet population stays near its start: births balance deaths (lower bound); skeleton 36.50-36.64",
+          "column": "Planet Population",
+          "metric": "min",
+          "op": ">",
+          "value": 36.4
+        },
+        {
+          "type": "metric",
+          "name": "Mode 46: planet population stays near its start (upper bound)",
+          "column": "Planet Population",
+          "metric": "max",
+          "op": "<",
+          "value": 36.9
+        },
+        {
+          "type": "metric",
+          "name": "Mode 46: jobs in B are scarce in the third year; skeleton min 0.66",
+          "column": "B Employment Rate",
+          "metric": "min",
+          "op": "<",
+          "value": 0.8,
+          "window": [
+            720,
+            1080
+          ]
         }
       ]
     },
@@ -68076,6 +68181,38 @@
           "metric": "min",
           "op": ">",
           "value": 1000
+        },
+        {
+          "type": "metric",
+          "name": "Mode 47: B attracts people in the first years; skeleton max 9.08",
+          "column": "B Population",
+          "metric": "max",
+          "op": ">",
+          "value": 8.8
+        },
+        {
+          "type": "metric",
+          "name": "Mode 47: jobs in B are scarcer during and after the surge; skeleton min 0.58 in the third year",
+          "column": "B Employment Rate",
+          "metric": "min",
+          "op": "<",
+          "value": 0.75,
+          "window": [
+            720,
+            1080
+          ]
+        },
+        {
+          "type": "metric",
+          "name": "Mode 47: A runs short of hands after the transport surge; skeleton max 1.13 in the third year",
+          "column": "A Labor Shortage",
+          "metric": "max",
+          "op": ">",
+          "value": 0.3,
+          "window": [
+            720,
+            1080
+          ]
         }
       ]
     },

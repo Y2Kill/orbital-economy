@@ -1,7 +1,7 @@
 {
   "engine": "SIMULATION_PACKAGE",
-  "name": "Orbital Economy v7.7.10 r1 — Labor",
-  "description": "Task 028: declarative labor node for all Planet v1 processes; automation starts at 0 with no switch. Modes 0-47 are untouched; Mode 48 probes A-side automation at 0.5.",
+  "name": "Orbital Economy v7.7.11 r1 — Population",
+  "description": "Task 030 / Planet v2 step 1: add the declarative population node for A and B. Population, demography, migration and labor are accounting-only; no existing formula or scenario is changed and no new Mode is added.",
   "simulation": {
     "algorithm": "RK1",
     "time_start": 0,
@@ -37062,6 +37062,882 @@
       "type": "LINK",
       "from": "B Electronics Automation Factor",
       "to": "B Electronics Unit Cost"
+    },
+    {
+      "type": "VARIABLE",
+      "name": "Population Birth Rate",
+      "behavior": {
+        "value": 0.0000333333333333
+      },
+      "description": "Generated population element for Population Birth Rate."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "Population Base Death Rate",
+      "behavior": {
+        "value": 0.0000277777777778
+      },
+      "description": "Generated population element for Population Base Death Rate."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "Death Living Standard Sensitivity",
+      "behavior": {
+        "value": 1
+      },
+      "description": "Generated population element for Death Living Standard Sensitivity."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "Labor Participation Share",
+      "behavior": {
+        "value": 0.5
+      },
+      "description": "Generated population element for Labor Participation Share."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "Migration Max Rate",
+      "behavior": {
+        "value": 0.0000555555555556
+      },
+      "description": "Generated population element for Migration Max Rate."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "Migration Gap Sensitivity",
+      "behavior": {
+        "value": 4
+      },
+      "description": "Generated population element for Migration Gap Sensitivity."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "Attractiveness Perception Time",
+      "behavior": {
+        "value": 360
+      },
+      "description": "Generated population element for Attractiveness Perception Time."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "Attractiveness Wage Weight",
+      "behavior": {
+        "value": 1
+      },
+      "description": "Generated population element for Attractiveness Wage Weight."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "Attractiveness Jobs Weight",
+      "behavior": {
+        "value": 1
+      },
+      "description": "Generated population element for Attractiveness Jobs Weight."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "Attractiveness Living Weight",
+      "behavior": {
+        "value": 1
+      },
+      "description": "Generated population element for Attractiveness Living Weight."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "Reference Real Wage",
+      "behavior": {
+        "value": 100
+      },
+      "description": "Generated population element for Reference Real Wage."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "Living Energy Weight",
+      "behavior": {
+        "value": 1
+      },
+      "description": "Generated population element for Living Energy Weight."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "A Population Initial",
+      "behavior": {
+        "value": 28
+      },
+      "description": "Generated population element for A Population Initial."
+    },
+    {
+      "type": "STOCK",
+      "name": "A Population",
+      "behavior": {
+        "initial_value": "[A Population Initial]",
+        "non_negative": true
+      },
+      "description": "Generated population element for A Population."
+    },
+    {
+      "type": "FLOW",
+      "name": "A Births",
+      "from": null,
+      "to": "A Population",
+      "behavior": {
+        "value": "[A Population] * [Population Birth Rate]",
+        "non_negative": true
+      },
+      "description": "Generated population element for A Births."
+    },
+    {
+      "type": "FLOW",
+      "name": "A Deaths",
+      "from": "A Population",
+      "to": null,
+      "behavior": {
+        "value": "[A Population] * [Population Base Death Rate] * Max([A Living Standard], 0.05) ^ (-[Death Living Standard Sensitivity])",
+        "non_negative": true
+      },
+      "description": "Generated population element for A Deaths."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "A Labor Force",
+      "behavior": {
+        "value": "[A Population] * [Labor Participation Share]"
+      },
+      "description": "Generated population element for A Labor Force."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "A Employment",
+      "behavior": {
+        "value": "Min([A Total Labor Requirement], [A Labor Force])"
+      },
+      "description": "Generated population element for A Employment."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "A Employment Rate",
+      "behavior": {
+        "value": "[A Employment] / ([A Labor Force] + 0.000001)"
+      },
+      "description": "Generated population element for A Employment Rate."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "A Unemployment",
+      "behavior": {
+        "value": "Max([A Labor Force] - [A Total Labor Requirement], 0)"
+      },
+      "description": "Generated population element for A Unemployment."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "A Labor Shortage",
+      "behavior": {
+        "value": "Max([A Total Labor Requirement] - [A Labor Force], 0)"
+      },
+      "description": "Generated population element for A Labor Shortage."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "A Price Index",
+      "behavior": {
+        "value": "([A Market Price] / [A Reference Metal Price] + [A Electronics Market Price] / [A Electronics Reference Price]) / 2"
+      },
+      "description": "Generated population element for A Price Index."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "A Real Wage",
+      "behavior": {
+        "value": "[A Effective Wage] / [A Price Index]"
+      },
+      "description": "Generated population element for A Real Wage."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "A Living Standard",
+      "behavior": {
+        "value": "Max([A Energy Fulfillment Ratio], 0.000001) ^ [Living Energy Weight]"
+      },
+      "description": "Generated population element for A Living Standard."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "A Attractiveness",
+      "behavior": {
+        "value": "([A Real Wage] / [Reference Real Wage]) ^ [Attractiveness Wage Weight] * Max([A Employment Rate], 0.000001) ^ [Attractiveness Jobs Weight] * [A Living Standard] ^ [Attractiveness Living Weight]"
+      },
+      "description": "Generated population element for A Attractiveness."
+    },
+    {
+      "type": "STOCK",
+      "name": "A Perceived Attractiveness",
+      "behavior": {
+        "initial_value": 1,
+        "non_negative": true
+      },
+      "description": "Generated population element for A Perceived Attractiveness."
+    },
+    {
+      "type": "FLOW",
+      "name": "A Perceived Attractiveness Increase",
+      "from": null,
+      "to": "A Perceived Attractiveness",
+      "behavior": {
+        "value": "Max([A Attractiveness] - [A Perceived Attractiveness], 0) / [Attractiveness Perception Time]",
+        "non_negative": true
+      },
+      "description": "Generated population element for A Perceived Attractiveness Increase."
+    },
+    {
+      "type": "FLOW",
+      "name": "A Perceived Attractiveness Decrease",
+      "from": "A Perceived Attractiveness",
+      "to": null,
+      "behavior": {
+        "value": "Max([A Perceived Attractiveness] - [A Attractiveness], 0) / [Attractiveness Perception Time]",
+        "non_negative": true
+      },
+      "description": "Generated population element for A Perceived Attractiveness Decrease."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "B Population Initial",
+      "behavior": {
+        "value": 8.5
+      },
+      "description": "Generated population element for B Population Initial."
+    },
+    {
+      "type": "STOCK",
+      "name": "B Population",
+      "behavior": {
+        "initial_value": "[B Population Initial]",
+        "non_negative": true
+      },
+      "description": "Generated population element for B Population."
+    },
+    {
+      "type": "FLOW",
+      "name": "B Births",
+      "from": null,
+      "to": "B Population",
+      "behavior": {
+        "value": "[B Population] * [Population Birth Rate]",
+        "non_negative": true
+      },
+      "description": "Generated population element for B Births."
+    },
+    {
+      "type": "FLOW",
+      "name": "B Deaths",
+      "from": "B Population",
+      "to": null,
+      "behavior": {
+        "value": "[B Population] * [Population Base Death Rate] * Max([B Living Standard], 0.05) ^ (-[Death Living Standard Sensitivity])",
+        "non_negative": true
+      },
+      "description": "Generated population element for B Deaths."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "B Labor Force",
+      "behavior": {
+        "value": "[B Population] * [Labor Participation Share]"
+      },
+      "description": "Generated population element for B Labor Force."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "B Employment",
+      "behavior": {
+        "value": "Min([B Total Labor Requirement], [B Labor Force])"
+      },
+      "description": "Generated population element for B Employment."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "B Employment Rate",
+      "behavior": {
+        "value": "[B Employment] / ([B Labor Force] + 0.000001)"
+      },
+      "description": "Generated population element for B Employment Rate."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "B Unemployment",
+      "behavior": {
+        "value": "Max([B Labor Force] - [B Total Labor Requirement], 0)"
+      },
+      "description": "Generated population element for B Unemployment."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "B Labor Shortage",
+      "behavior": {
+        "value": "Max([B Total Labor Requirement] - [B Labor Force], 0)"
+      },
+      "description": "Generated population element for B Labor Shortage."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "B Price Index",
+      "behavior": {
+        "value": "([B Market Price] / [B Reference Metal Price] + [B Electronics Market Price] / [B Electronics Reference Price]) / 2"
+      },
+      "description": "Generated population element for B Price Index."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "B Real Wage",
+      "behavior": {
+        "value": "[B Effective Wage] / [B Price Index]"
+      },
+      "description": "Generated population element for B Real Wage."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "B Living Standard",
+      "behavior": {
+        "value": "Max([B Energy Fulfillment Ratio], 0.000001) ^ [Living Energy Weight]"
+      },
+      "description": "Generated population element for B Living Standard."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "B Attractiveness",
+      "behavior": {
+        "value": "([B Real Wage] / [Reference Real Wage]) ^ [Attractiveness Wage Weight] * Max([B Employment Rate], 0.000001) ^ [Attractiveness Jobs Weight] * [B Living Standard] ^ [Attractiveness Living Weight]"
+      },
+      "description": "Generated population element for B Attractiveness."
+    },
+    {
+      "type": "STOCK",
+      "name": "B Perceived Attractiveness",
+      "behavior": {
+        "initial_value": 1,
+        "non_negative": true
+      },
+      "description": "Generated population element for B Perceived Attractiveness."
+    },
+    {
+      "type": "FLOW",
+      "name": "B Perceived Attractiveness Increase",
+      "from": null,
+      "to": "B Perceived Attractiveness",
+      "behavior": {
+        "value": "Max([B Attractiveness] - [B Perceived Attractiveness], 0) / [Attractiveness Perception Time]",
+        "non_negative": true
+      },
+      "description": "Generated population element for B Perceived Attractiveness Increase."
+    },
+    {
+      "type": "FLOW",
+      "name": "B Perceived Attractiveness Decrease",
+      "from": "B Perceived Attractiveness",
+      "to": null,
+      "behavior": {
+        "value": "Max([B Perceived Attractiveness] - [B Attractiveness], 0) / [Attractiveness Perception Time]",
+        "non_negative": true
+      },
+      "description": "Generated population element for B Perceived Attractiveness Decrease."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "Attractiveness Gap A to B",
+      "behavior": {
+        "value": "([B Perceived Attractiveness] - [A Perceived Attractiveness]) / Max(Max([A Perceived Attractiveness], [B Perceived Attractiveness]), 0.000001)"
+      },
+      "description": "Generated population element for Attractiveness Gap A to B."
+    },
+    {
+      "type": "FLOW",
+      "name": "Migration A to B",
+      "from": "A Population",
+      "to": "B Population",
+      "behavior": {
+        "value": "[A Population] * [Migration Max Rate] * Min(Max([Attractiveness Gap A to B], 0) * [Migration Gap Sensitivity], 1)",
+        "non_negative": true
+      },
+      "description": "Generated population element for Migration A to B."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "Attractiveness Gap B to A",
+      "behavior": {
+        "value": "([A Perceived Attractiveness] - [B Perceived Attractiveness]) / Max(Max([B Perceived Attractiveness], [A Perceived Attractiveness]), 0.000001)"
+      },
+      "description": "Generated population element for Attractiveness Gap B to A."
+    },
+    {
+      "type": "FLOW",
+      "name": "Migration B to A",
+      "from": "B Population",
+      "to": "A Population",
+      "behavior": {
+        "value": "[B Population] * [Migration Max Rate] * Min(Max([Attractiveness Gap B to A], 0) * [Migration Gap Sensitivity], 1)",
+        "non_negative": true
+      },
+      "description": "Generated population element for Migration B to A."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "Planet Population",
+      "behavior": {
+        "value": "[A Population] + [B Population]"
+      },
+      "description": "Generated population element for Planet Population."
+    },
+    {
+      "type": "LINK",
+      "from": "A Population Initial",
+      "to": "A Population"
+    },
+    {
+      "type": "LINK",
+      "from": "A Population",
+      "to": "A Births"
+    },
+    {
+      "type": "LINK",
+      "from": "Population Birth Rate",
+      "to": "A Births"
+    },
+    {
+      "type": "LINK",
+      "from": "A Population",
+      "to": "A Deaths"
+    },
+    {
+      "type": "LINK",
+      "from": "Population Base Death Rate",
+      "to": "A Deaths"
+    },
+    {
+      "type": "LINK",
+      "from": "A Living Standard",
+      "to": "A Deaths"
+    },
+    {
+      "type": "LINK",
+      "from": "Death Living Standard Sensitivity",
+      "to": "A Deaths"
+    },
+    {
+      "type": "LINK",
+      "from": "A Population",
+      "to": "A Labor Force"
+    },
+    {
+      "type": "LINK",
+      "from": "Labor Participation Share",
+      "to": "A Labor Force"
+    },
+    {
+      "type": "LINK",
+      "from": "A Total Labor Requirement",
+      "to": "A Employment"
+    },
+    {
+      "type": "LINK",
+      "from": "A Labor Force",
+      "to": "A Employment"
+    },
+    {
+      "type": "LINK",
+      "from": "A Employment",
+      "to": "A Employment Rate"
+    },
+    {
+      "type": "LINK",
+      "from": "A Labor Force",
+      "to": "A Employment Rate"
+    },
+    {
+      "type": "LINK",
+      "from": "A Labor Force",
+      "to": "A Unemployment"
+    },
+    {
+      "type": "LINK",
+      "from": "A Total Labor Requirement",
+      "to": "A Unemployment"
+    },
+    {
+      "type": "LINK",
+      "from": "A Total Labor Requirement",
+      "to": "A Labor Shortage"
+    },
+    {
+      "type": "LINK",
+      "from": "A Labor Force",
+      "to": "A Labor Shortage"
+    },
+    {
+      "type": "LINK",
+      "from": "A Market Price",
+      "to": "A Price Index"
+    },
+    {
+      "type": "LINK",
+      "from": "A Reference Metal Price",
+      "to": "A Price Index"
+    },
+    {
+      "type": "LINK",
+      "from": "A Electronics Market Price",
+      "to": "A Price Index"
+    },
+    {
+      "type": "LINK",
+      "from": "A Electronics Reference Price",
+      "to": "A Price Index"
+    },
+    {
+      "type": "LINK",
+      "from": "A Effective Wage",
+      "to": "A Real Wage"
+    },
+    {
+      "type": "LINK",
+      "from": "A Price Index",
+      "to": "A Real Wage"
+    },
+    {
+      "type": "LINK",
+      "from": "A Energy Fulfillment Ratio",
+      "to": "A Living Standard"
+    },
+    {
+      "type": "LINK",
+      "from": "Living Energy Weight",
+      "to": "A Living Standard"
+    },
+    {
+      "type": "LINK",
+      "from": "A Real Wage",
+      "to": "A Attractiveness"
+    },
+    {
+      "type": "LINK",
+      "from": "Reference Real Wage",
+      "to": "A Attractiveness"
+    },
+    {
+      "type": "LINK",
+      "from": "Attractiveness Wage Weight",
+      "to": "A Attractiveness"
+    },
+    {
+      "type": "LINK",
+      "from": "A Employment Rate",
+      "to": "A Attractiveness"
+    },
+    {
+      "type": "LINK",
+      "from": "Attractiveness Jobs Weight",
+      "to": "A Attractiveness"
+    },
+    {
+      "type": "LINK",
+      "from": "A Living Standard",
+      "to": "A Attractiveness"
+    },
+    {
+      "type": "LINK",
+      "from": "Attractiveness Living Weight",
+      "to": "A Attractiveness"
+    },
+    {
+      "type": "LINK",
+      "from": "A Attractiveness",
+      "to": "A Perceived Attractiveness Increase"
+    },
+    {
+      "type": "LINK",
+      "from": "A Perceived Attractiveness",
+      "to": "A Perceived Attractiveness Increase"
+    },
+    {
+      "type": "LINK",
+      "from": "Attractiveness Perception Time",
+      "to": "A Perceived Attractiveness Increase"
+    },
+    {
+      "type": "LINK",
+      "from": "A Perceived Attractiveness",
+      "to": "A Perceived Attractiveness Decrease"
+    },
+    {
+      "type": "LINK",
+      "from": "A Attractiveness",
+      "to": "A Perceived Attractiveness Decrease"
+    },
+    {
+      "type": "LINK",
+      "from": "Attractiveness Perception Time",
+      "to": "A Perceived Attractiveness Decrease"
+    },
+    {
+      "type": "LINK",
+      "from": "B Population Initial",
+      "to": "B Population"
+    },
+    {
+      "type": "LINK",
+      "from": "B Population",
+      "to": "B Births"
+    },
+    {
+      "type": "LINK",
+      "from": "Population Birth Rate",
+      "to": "B Births"
+    },
+    {
+      "type": "LINK",
+      "from": "B Population",
+      "to": "B Deaths"
+    },
+    {
+      "type": "LINK",
+      "from": "Population Base Death Rate",
+      "to": "B Deaths"
+    },
+    {
+      "type": "LINK",
+      "from": "B Living Standard",
+      "to": "B Deaths"
+    },
+    {
+      "type": "LINK",
+      "from": "Death Living Standard Sensitivity",
+      "to": "B Deaths"
+    },
+    {
+      "type": "LINK",
+      "from": "B Population",
+      "to": "B Labor Force"
+    },
+    {
+      "type": "LINK",
+      "from": "Labor Participation Share",
+      "to": "B Labor Force"
+    },
+    {
+      "type": "LINK",
+      "from": "B Total Labor Requirement",
+      "to": "B Employment"
+    },
+    {
+      "type": "LINK",
+      "from": "B Labor Force",
+      "to": "B Employment"
+    },
+    {
+      "type": "LINK",
+      "from": "B Employment",
+      "to": "B Employment Rate"
+    },
+    {
+      "type": "LINK",
+      "from": "B Labor Force",
+      "to": "B Employment Rate"
+    },
+    {
+      "type": "LINK",
+      "from": "B Labor Force",
+      "to": "B Unemployment"
+    },
+    {
+      "type": "LINK",
+      "from": "B Total Labor Requirement",
+      "to": "B Unemployment"
+    },
+    {
+      "type": "LINK",
+      "from": "B Total Labor Requirement",
+      "to": "B Labor Shortage"
+    },
+    {
+      "type": "LINK",
+      "from": "B Labor Force",
+      "to": "B Labor Shortage"
+    },
+    {
+      "type": "LINK",
+      "from": "B Market Price",
+      "to": "B Price Index"
+    },
+    {
+      "type": "LINK",
+      "from": "B Reference Metal Price",
+      "to": "B Price Index"
+    },
+    {
+      "type": "LINK",
+      "from": "B Electronics Market Price",
+      "to": "B Price Index"
+    },
+    {
+      "type": "LINK",
+      "from": "B Electronics Reference Price",
+      "to": "B Price Index"
+    },
+    {
+      "type": "LINK",
+      "from": "B Effective Wage",
+      "to": "B Real Wage"
+    },
+    {
+      "type": "LINK",
+      "from": "B Price Index",
+      "to": "B Real Wage"
+    },
+    {
+      "type": "LINK",
+      "from": "B Energy Fulfillment Ratio",
+      "to": "B Living Standard"
+    },
+    {
+      "type": "LINK",
+      "from": "Living Energy Weight",
+      "to": "B Living Standard"
+    },
+    {
+      "type": "LINK",
+      "from": "B Real Wage",
+      "to": "B Attractiveness"
+    },
+    {
+      "type": "LINK",
+      "from": "Reference Real Wage",
+      "to": "B Attractiveness"
+    },
+    {
+      "type": "LINK",
+      "from": "Attractiveness Wage Weight",
+      "to": "B Attractiveness"
+    },
+    {
+      "type": "LINK",
+      "from": "B Employment Rate",
+      "to": "B Attractiveness"
+    },
+    {
+      "type": "LINK",
+      "from": "Attractiveness Jobs Weight",
+      "to": "B Attractiveness"
+    },
+    {
+      "type": "LINK",
+      "from": "B Living Standard",
+      "to": "B Attractiveness"
+    },
+    {
+      "type": "LINK",
+      "from": "Attractiveness Living Weight",
+      "to": "B Attractiveness"
+    },
+    {
+      "type": "LINK",
+      "from": "B Attractiveness",
+      "to": "B Perceived Attractiveness Increase"
+    },
+    {
+      "type": "LINK",
+      "from": "B Perceived Attractiveness",
+      "to": "B Perceived Attractiveness Increase"
+    },
+    {
+      "type": "LINK",
+      "from": "Attractiveness Perception Time",
+      "to": "B Perceived Attractiveness Increase"
+    },
+    {
+      "type": "LINK",
+      "from": "B Perceived Attractiveness",
+      "to": "B Perceived Attractiveness Decrease"
+    },
+    {
+      "type": "LINK",
+      "from": "B Attractiveness",
+      "to": "B Perceived Attractiveness Decrease"
+    },
+    {
+      "type": "LINK",
+      "from": "Attractiveness Perception Time",
+      "to": "B Perceived Attractiveness Decrease"
+    },
+    {
+      "type": "LINK",
+      "from": "B Perceived Attractiveness",
+      "to": "Attractiveness Gap A to B"
+    },
+    {
+      "type": "LINK",
+      "from": "A Perceived Attractiveness",
+      "to": "Attractiveness Gap A to B"
+    },
+    {
+      "type": "LINK",
+      "from": "A Population",
+      "to": "Migration A to B"
+    },
+    {
+      "type": "LINK",
+      "from": "Migration Max Rate",
+      "to": "Migration A to B"
+    },
+    {
+      "type": "LINK",
+      "from": "Attractiveness Gap A to B",
+      "to": "Migration A to B"
+    },
+    {
+      "type": "LINK",
+      "from": "Migration Gap Sensitivity",
+      "to": "Migration A to B"
+    },
+    {
+      "type": "LINK",
+      "from": "A Perceived Attractiveness",
+      "to": "Attractiveness Gap B to A"
+    },
+    {
+      "type": "LINK",
+      "from": "B Perceived Attractiveness",
+      "to": "Attractiveness Gap B to A"
+    },
+    {
+      "type": "LINK",
+      "from": "B Population",
+      "to": "Migration B to A"
+    },
+    {
+      "type": "LINK",
+      "from": "Migration Max Rate",
+      "to": "Migration B to A"
+    },
+    {
+      "type": "LINK",
+      "from": "Attractiveness Gap B to A",
+      "to": "Migration B to A"
+    },
+    {
+      "type": "LINK",
+      "from": "Migration Gap Sensitivity",
+      "to": "Migration B to A"
+    },
+    {
+      "type": "LINK",
+      "from": "A Population",
+      "to": "Planet Population"
+    },
+    {
+      "type": "LINK",
+      "from": "B Population",
+      "to": "Planet Population"
     }
   ],
   "visualizations": [

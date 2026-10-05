@@ -1,10 +1,14 @@
 # Roadmap
 
 **Document status:** CURRENT  
-**Base:** Orbital Economy v7.7.10 r1 — Labor (accepted 2026-10-04)  
+**Base:** Orbital Economy v7.7.11 r1 — Population (accepted 2026-10-05)  
 **Rule:** roadmap describes intent; executable accepted code remains authoritative for accepted behavior.
 
-## Current implementation — v7.7.10 Labor — Planet v1 closed
+## Current implementation — v7.7.11 Population — Planet v2 step 1
+
+Each region has a population: births, deaths and migration by perceived attractiveness (real wage × employment × living standard), with labor accounted against the processes' labor requirement (owner decisions 2026-10-04: both growth and migration; drivers are the wage and an abstract living standard; labor accounting first). The order was settled by prototype experiments (`docs/research/POPULATION_PROTOTYPE_2026-10-04_RU.md`): (1) population accounting — this step, living standard = energy only, fixed wage; (2) food and farms, traded between regions by need; (3) demand = per-capita demand × population and a wage that responds to unemployment. The bench first learned a `population` node type (task 029, Lab v0.9.16); the model step followed (task 030), with no switch and no new Mode — Modes 0–48 reproduce v7.7.10 r1 exactly. The executor delivered the owner's declaration and validation byte-identical; the model equals the skeleton.
+
+## v7.7.10 Labor — Planet v1 closed
 
 Every process declares its labor requirement = output × labor intensity × automation factor (owner decisions 2026-10-03: the automation factor from the start, automation 0 at start, intensities per process). The bench first learned a `labor` node type and a strict `labor.requirement` check (task 027, Lab v0.9.15); the model step followed (task 028), with no switch — automation 0 leaves every series unchanged — and an automation probe Mode 48. **Planet v1 is closed: `planet_closure` runs in `planet_v1` mode** — P2 and P4 closed, P3 with one exception with a reason (shared transport energy, decided at the level-of-economy step), P5 17/0, P6 declared. The executor delivered the owner's declaration and validation byte-identical; the model equals the skeleton.
 

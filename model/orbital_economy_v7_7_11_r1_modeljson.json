@@ -1,7 +1,7 @@
 {
   "engine": "SIMULATION_PACKAGE",
-  "name": "Orbital Economy v7.7.9 r1 — Process Energy",
-  "description": "Task 026: mining, regolith extraction, power-resource extraction and capital-goods production receive energy through the colony allocator. The energy_consumer declaration is taken unchanged from draft/process-energy.json; the only explicit formula replacement is Test 2 Transport Surge Active for Mode 47.",
+  "name": "Orbital Economy v7.7.11 r1 — Population",
+  "description": "Task 030 / Planet v2 step 1: add the declarative population node for A and B. Population, demography, migration and labor are accounting-only; no existing formula or scenario is changed and no new Mode is added.",
   "simulation": {
     "algorithm": "RK1",
     "time_start": 0,
@@ -524,7 +524,7 @@
       "type": "VARIABLE",
       "name": "A Metal Unit Cost",
       "behavior": {
-        "value": "[A Ore per Metal] * [A Ore Price] + [A Energy per Metal] * [A Effective Energy Price] + [A Labor per Metal] * [A Effective Wage]"
+        "value": "[A Ore per Metal] * [A Ore Price] + [A Energy per Metal] * [A Effective Energy Price] + ([A Labor per Metal] * [A Smelting Automation Factor]) * [A Effective Wage]"
       },
       "display": {
         "coordinates": [
@@ -4614,7 +4614,7 @@
       "type": "VARIABLE",
       "name": "B Metal Unit Cost",
       "behavior": {
-        "value": "[B Ore per Metal] * [B Ore Price] + [B Energy per Metal] * [B Effective Energy Price] + [B Labor per Metal] * [B Effective Wage]"
+        "value": "[B Ore per Metal] * [B Ore Price] + [B Energy per Metal] * [B Effective Energy Price] + ([B Labor per Metal] * [B Smelting Automation Factor]) * [B Effective Wage]"
       },
       "display": {
         "coordinates": [
@@ -11764,7 +11764,7 @@
       "type": "VARIABLE",
       "name": "A Electronics Unit Cost",
       "behavior": {
-        "value": "IfThenElse([Intermediate Inputs Enabled] = 1, [Metal per Electronics] * [A Electronics Feedstock Price] + [A Electronics Energy per Unit] * [A Energy Price] + [A Electronics Labor per Unit] * [A Wage], [A Feedstock per Electronics] * [A Electronics Feedstock Price] + [A Electronics Energy per Unit] * [A Energy Price] + [A Electronics Labor per Unit] * [A Wage])"
+        "value": "IfThenElse([Intermediate Inputs Enabled] = 1, [Metal per Electronics] * [A Electronics Feedstock Price] + [A Electronics Energy per Unit] * [A Energy Price] + ([A Electronics Labor per Unit] * [A Electronics Automation Factor]) * [A Wage], [A Feedstock per Electronics] * [A Electronics Feedstock Price] + [A Electronics Energy per Unit] * [A Energy Price] + ([A Electronics Labor per Unit] * [A Electronics Automation Factor]) * [A Wage])"
       },
       "display": {
         "coordinates": [
@@ -12280,7 +12280,7 @@
       "type": "VARIABLE",
       "name": "B Electronics Unit Cost",
       "behavior": {
-        "value": "IfThenElse([Intermediate Inputs Enabled] = 1, [Metal per Electronics] * [B Electronics Feedstock Price] + [B Electronics Energy per Unit] * [B Energy Price] + [B Electronics Labor per Unit] * [B Wage], [B Feedstock per Electronics] * [B Electronics Feedstock Price] + [B Electronics Energy per Unit] * [B Energy Price] + [B Electronics Labor per Unit] * [B Wage])"
+        "value": "IfThenElse([Intermediate Inputs Enabled] = 1, [Metal per Electronics] * [B Electronics Feedstock Price] + [B Electronics Energy per Unit] * [B Energy Price] + ([B Electronics Labor per Unit] * [B Electronics Automation Factor]) * [B Wage], [B Feedstock per Electronics] * [B Electronics Feedstock Price] + [B Electronics Energy per Unit] * [B Energy Price] + ([B Electronics Labor per Unit] * [B Electronics Automation Factor]) * [B Wage])"
       },
       "display": {
         "coordinates": [
@@ -35895,6 +35895,2049 @@
       "type": "LINK",
       "from": "B Capital Goods Allocated Energy",
       "to": "B Energy Supply"
+    },
+    {
+      "type": "VARIABLE",
+      "name": "Minimum Human Labor Share",
+      "behavior": {
+        "value": 0.05
+      },
+      "description": "Generated labor element for Minimum Human Labor Share."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "Automation Labor Exponent",
+      "behavior": {
+        "value": 1
+      },
+      "description": "Generated labor element for Automation Labor Exponent."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "A Mining Labor per Unit",
+      "behavior": {
+        "value": 0.05
+      },
+      "description": "Generated labor element for A Mining Labor per Unit."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "A Mining Automation Level",
+      "behavior": {
+        "value": 0
+      },
+      "description": "Generated labor element for A Mining Automation Level."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "A Mining Automation Factor",
+      "behavior": {
+        "value": "1 - (1 - [Minimum Human Labor Share]) * (1 - (1 - [A Mining Automation Level]) ^ [Automation Labor Exponent])"
+      },
+      "description": "Generated labor element for A Mining Automation Factor."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "A Mining Labor Requirement",
+      "behavior": {
+        "value": "[A Mining] * [A Mining Labor per Unit] * [A Mining Automation Factor]"
+      },
+      "description": "Generated labor element for A Mining Labor Requirement."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "B Mining Labor per Unit",
+      "behavior": {
+        "value": 0.05
+      },
+      "description": "Generated labor element for B Mining Labor per Unit."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "B Mining Automation Level",
+      "behavior": {
+        "value": 0
+      },
+      "description": "Generated labor element for B Mining Automation Level."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "B Mining Automation Factor",
+      "behavior": {
+        "value": "1 - (1 - [Minimum Human Labor Share]) * (1 - (1 - [B Mining Automation Level]) ^ [Automation Labor Exponent])"
+      },
+      "description": "Generated labor element for B Mining Automation Factor."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "B Mining Labor Requirement",
+      "behavior": {
+        "value": "[B Mining] * [B Mining Labor per Unit] * [B Mining Automation Factor]"
+      },
+      "description": "Generated labor element for B Mining Labor Requirement."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "A Smelting Automation Level",
+      "behavior": {
+        "value": 0
+      },
+      "description": "Generated labor element for A Smelting Automation Level."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "A Smelting Automation Factor",
+      "behavior": {
+        "value": "1 - (1 - [Minimum Human Labor Share]) * (1 - (1 - [A Smelting Automation Level]) ^ [Automation Labor Exponent])"
+      },
+      "description": "Generated labor element for A Smelting Automation Factor."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "A Smelting Labor Requirement",
+      "behavior": {
+        "value": "[A Metal Production] * [A Labor per Metal] * [A Smelting Automation Factor]"
+      },
+      "description": "Generated labor element for A Smelting Labor Requirement."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "B Smelting Automation Level",
+      "behavior": {
+        "value": 0
+      },
+      "description": "Generated labor element for B Smelting Automation Level."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "B Smelting Automation Factor",
+      "behavior": {
+        "value": "1 - (1 - [Minimum Human Labor Share]) * (1 - (1 - [B Smelting Automation Level]) ^ [Automation Labor Exponent])"
+      },
+      "description": "Generated labor element for B Smelting Automation Factor."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "B Smelting Labor Requirement",
+      "behavior": {
+        "value": "[B Metal Production] * [B Labor per Metal] * [B Smelting Automation Factor]"
+      },
+      "description": "Generated labor element for B Smelting Labor Requirement."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "A Electronics Automation Level",
+      "behavior": {
+        "value": 0
+      },
+      "description": "Generated labor element for A Electronics Automation Level."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "A Electronics Automation Factor",
+      "behavior": {
+        "value": "1 - (1 - [Minimum Human Labor Share]) * (1 - (1 - [A Electronics Automation Level]) ^ [Automation Labor Exponent])"
+      },
+      "description": "Generated labor element for A Electronics Automation Factor."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "A Electronics Labor Requirement",
+      "behavior": {
+        "value": "[A Electronics Production] * [A Electronics Labor per Unit] * [A Electronics Automation Factor]"
+      },
+      "description": "Generated labor element for A Electronics Labor Requirement."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "B Electronics Automation Level",
+      "behavior": {
+        "value": 0
+      },
+      "description": "Generated labor element for B Electronics Automation Level."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "B Electronics Automation Factor",
+      "behavior": {
+        "value": "1 - (1 - [Minimum Human Labor Share]) * (1 - (1 - [B Electronics Automation Level]) ^ [Automation Labor Exponent])"
+      },
+      "description": "Generated labor element for B Electronics Automation Factor."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "B Electronics Labor Requirement",
+      "behavior": {
+        "value": "[B Electronics Production] * [B Electronics Labor per Unit] * [B Electronics Automation Factor]"
+      },
+      "description": "Generated labor element for B Electronics Labor Requirement."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "A Capital Goods Labor per Unit",
+      "behavior": {
+        "value": 2
+      },
+      "description": "Generated labor element for A Capital Goods Labor per Unit."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "A Capital Goods Automation Level",
+      "behavior": {
+        "value": 0
+      },
+      "description": "Generated labor element for A Capital Goods Automation Level."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "A Capital Goods Automation Factor",
+      "behavior": {
+        "value": "1 - (1 - [Minimum Human Labor Share]) * (1 - (1 - [A Capital Goods Automation Level]) ^ [Automation Labor Exponent])"
+      },
+      "description": "Generated labor element for A Capital Goods Automation Factor."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "A Capital Goods Labor Requirement",
+      "behavior": {
+        "value": "[A Capital Goods Production] * [A Capital Goods Labor per Unit] * [A Capital Goods Automation Factor]"
+      },
+      "description": "Generated labor element for A Capital Goods Labor Requirement."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "B Capital Goods Labor per Unit",
+      "behavior": {
+        "value": 2
+      },
+      "description": "Generated labor element for B Capital Goods Labor per Unit."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "B Capital Goods Automation Level",
+      "behavior": {
+        "value": 0
+      },
+      "description": "Generated labor element for B Capital Goods Automation Level."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "B Capital Goods Automation Factor",
+      "behavior": {
+        "value": "1 - (1 - [Minimum Human Labor Share]) * (1 - (1 - [B Capital Goods Automation Level]) ^ [Automation Labor Exponent])"
+      },
+      "description": "Generated labor element for B Capital Goods Automation Factor."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "B Capital Goods Labor Requirement",
+      "behavior": {
+        "value": "[B Capital Goods Production] * [B Capital Goods Labor per Unit] * [B Capital Goods Automation Factor]"
+      },
+      "description": "Generated labor element for B Capital Goods Labor Requirement."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "A Regolith Extraction Labor per Unit",
+      "behavior": {
+        "value": 0.2
+      },
+      "description": "Generated labor element for A Regolith Extraction Labor per Unit."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "A Regolith Extraction Automation Level",
+      "behavior": {
+        "value": 0
+      },
+      "description": "Generated labor element for A Regolith Extraction Automation Level."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "A Regolith Extraction Automation Factor",
+      "behavior": {
+        "value": "1 - (1 - [Minimum Human Labor Share]) * (1 - (1 - [A Regolith Extraction Automation Level]) ^ [Automation Labor Exponent])"
+      },
+      "description": "Generated labor element for A Regolith Extraction Automation Factor."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "A Regolith Extraction Labor Requirement",
+      "behavior": {
+        "value": "[A Regolith Extraction] * [A Regolith Extraction Labor per Unit] * [A Regolith Extraction Automation Factor]"
+      },
+      "description": "Generated labor element for A Regolith Extraction Labor Requirement."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "B Regolith Extraction Labor per Unit",
+      "behavior": {
+        "value": 0.2
+      },
+      "description": "Generated labor element for B Regolith Extraction Labor per Unit."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "B Regolith Extraction Automation Level",
+      "behavior": {
+        "value": 0
+      },
+      "description": "Generated labor element for B Regolith Extraction Automation Level."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "B Regolith Extraction Automation Factor",
+      "behavior": {
+        "value": "1 - (1 - [Minimum Human Labor Share]) * (1 - (1 - [B Regolith Extraction Automation Level]) ^ [Automation Labor Exponent])"
+      },
+      "description": "Generated labor element for B Regolith Extraction Automation Factor."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "B Regolith Extraction Labor Requirement",
+      "behavior": {
+        "value": "[B Regolith Extraction] * [B Regolith Extraction Labor per Unit] * [B Regolith Extraction Automation Factor]"
+      },
+      "description": "Generated labor element for B Regolith Extraction Labor Requirement."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "A Construction Materials Labor per Unit",
+      "behavior": {
+        "value": 0.3
+      },
+      "description": "Generated labor element for A Construction Materials Labor per Unit."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "A Construction Materials Automation Level",
+      "behavior": {
+        "value": 0
+      },
+      "description": "Generated labor element for A Construction Materials Automation Level."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "A Construction Materials Automation Factor",
+      "behavior": {
+        "value": "1 - (1 - [Minimum Human Labor Share]) * (1 - (1 - [A Construction Materials Automation Level]) ^ [Automation Labor Exponent])"
+      },
+      "description": "Generated labor element for A Construction Materials Automation Factor."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "A Construction Materials Labor Requirement",
+      "behavior": {
+        "value": "[A Construction Materials Production] * [A Construction Materials Labor per Unit] * [A Construction Materials Automation Factor]"
+      },
+      "description": "Generated labor element for A Construction Materials Labor Requirement."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "B Construction Materials Labor per Unit",
+      "behavior": {
+        "value": 0.3
+      },
+      "description": "Generated labor element for B Construction Materials Labor per Unit."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "B Construction Materials Automation Level",
+      "behavior": {
+        "value": 0
+      },
+      "description": "Generated labor element for B Construction Materials Automation Level."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "B Construction Materials Automation Factor",
+      "behavior": {
+        "value": "1 - (1 - [Minimum Human Labor Share]) * (1 - (1 - [B Construction Materials Automation Level]) ^ [Automation Labor Exponent])"
+      },
+      "description": "Generated labor element for B Construction Materials Automation Factor."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "B Construction Materials Labor Requirement",
+      "behavior": {
+        "value": "[B Construction Materials Production] * [B Construction Materials Labor per Unit] * [B Construction Materials Automation Factor]"
+      },
+      "description": "Generated labor element for B Construction Materials Labor Requirement."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "A Power Resource Extraction Labor per Unit",
+      "behavior": {
+        "value": 0.002
+      },
+      "description": "Generated labor element for A Power Resource Extraction Labor per Unit."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "A Power Resource Extraction Automation Level",
+      "behavior": {
+        "value": 0
+      },
+      "description": "Generated labor element for A Power Resource Extraction Automation Level."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "A Power Resource Extraction Automation Factor",
+      "behavior": {
+        "value": "1 - (1 - [Minimum Human Labor Share]) * (1 - (1 - [A Power Resource Extraction Automation Level]) ^ [Automation Labor Exponent])"
+      },
+      "description": "Generated labor element for A Power Resource Extraction Automation Factor."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "A Power Resource Extraction Labor Requirement",
+      "behavior": {
+        "value": "[A Power Resource Extraction] * [A Power Resource Extraction Labor per Unit] * [A Power Resource Extraction Automation Factor]"
+      },
+      "description": "Generated labor element for A Power Resource Extraction Labor Requirement."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "B Power Resource Extraction Labor per Unit",
+      "behavior": {
+        "value": 0.002
+      },
+      "description": "Generated labor element for B Power Resource Extraction Labor per Unit."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "B Power Resource Extraction Automation Level",
+      "behavior": {
+        "value": 0
+      },
+      "description": "Generated labor element for B Power Resource Extraction Automation Level."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "B Power Resource Extraction Automation Factor",
+      "behavior": {
+        "value": "1 - (1 - [Minimum Human Labor Share]) * (1 - (1 - [B Power Resource Extraction Automation Level]) ^ [Automation Labor Exponent])"
+      },
+      "description": "Generated labor element for B Power Resource Extraction Automation Factor."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "B Power Resource Extraction Labor Requirement",
+      "behavior": {
+        "value": "[B Power Resource Extraction] * [B Power Resource Extraction Labor per Unit] * [B Power Resource Extraction Automation Factor]"
+      },
+      "description": "Generated labor element for B Power Resource Extraction Labor Requirement."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "A Generation Labor per Unit",
+      "behavior": {
+        "value": 0.001
+      },
+      "description": "Generated labor element for A Generation Labor per Unit."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "A Generation Automation Level",
+      "behavior": {
+        "value": 0
+      },
+      "description": "Generated labor element for A Generation Automation Level."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "A Generation Automation Factor",
+      "behavior": {
+        "value": "1 - (1 - [Minimum Human Labor Share]) * (1 - (1 - [A Generation Automation Level]) ^ [Automation Labor Exponent])"
+      },
+      "description": "Generated labor element for A Generation Automation Factor."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "A Generation Labor Requirement",
+      "behavior": {
+        "value": "[A Available Generation] * [A Generation Labor per Unit] * [A Generation Automation Factor]"
+      },
+      "description": "Generated labor element for A Generation Labor Requirement."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "B Generation Labor per Unit",
+      "behavior": {
+        "value": 0.001
+      },
+      "description": "Generated labor element for B Generation Labor per Unit."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "B Generation Automation Level",
+      "behavior": {
+        "value": 0
+      },
+      "description": "Generated labor element for B Generation Automation Level."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "B Generation Automation Factor",
+      "behavior": {
+        "value": "1 - (1 - [Minimum Human Labor Share]) * (1 - (1 - [B Generation Automation Level]) ^ [Automation Labor Exponent])"
+      },
+      "description": "Generated labor element for B Generation Automation Factor."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "B Generation Labor Requirement",
+      "behavior": {
+        "value": "[B Available Generation] * [B Generation Labor per Unit] * [B Generation Automation Factor]"
+      },
+      "description": "Generated labor element for B Generation Labor Requirement."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "Transport Labor per Unit",
+      "behavior": {
+        "value": 0.1
+      },
+      "description": "Generated labor element for Transport Labor per Unit."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "Transport Automation Level",
+      "behavior": {
+        "value": 0
+      },
+      "description": "Generated labor element for Transport Automation Level."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "Transport Automation Factor",
+      "behavior": {
+        "value": "1 - (1 - [Minimum Human Labor Share]) * (1 - (1 - [Transport Automation Level]) ^ [Automation Labor Exponent])"
+      },
+      "description": "Generated labor element for Transport Automation Factor."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "Transport Labor Requirement",
+      "behavior": {
+        "value": "[Capacity Limited Total Transport Load] * [Transport Labor per Unit] * [Transport Automation Factor]"
+      },
+      "description": "Generated labor element for Transport Labor Requirement."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "A Total Labor Requirement",
+      "behavior": {
+        "value": "[A Mining Labor Requirement] + [A Smelting Labor Requirement] + [A Electronics Labor Requirement] + [A Capital Goods Labor Requirement] + [A Regolith Extraction Labor Requirement] + [A Construction Materials Labor Requirement] + [A Power Resource Extraction Labor Requirement] + [A Generation Labor Requirement]"
+      },
+      "description": "Generated labor element for A Total Labor Requirement."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "B Total Labor Requirement",
+      "behavior": {
+        "value": "[B Mining Labor Requirement] + [B Smelting Labor Requirement] + [B Electronics Labor Requirement] + [B Capital Goods Labor Requirement] + [B Regolith Extraction Labor Requirement] + [B Construction Materials Labor Requirement] + [B Power Resource Extraction Labor Requirement] + [B Generation Labor Requirement]"
+      },
+      "description": "Generated labor element for B Total Labor Requirement."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "Shared Labor Requirement",
+      "behavior": {
+        "value": "[Transport Labor Requirement]"
+      },
+      "description": "Generated labor element for Shared Labor Requirement."
+    },
+    {
+      "type": "LINK",
+      "from": "Minimum Human Labor Share",
+      "to": "A Mining Automation Factor"
+    },
+    {
+      "type": "LINK",
+      "from": "A Mining Automation Level",
+      "to": "A Mining Automation Factor"
+    },
+    {
+      "type": "LINK",
+      "from": "Automation Labor Exponent",
+      "to": "A Mining Automation Factor"
+    },
+    {
+      "type": "LINK",
+      "from": "A Mining",
+      "to": "A Mining Labor Requirement"
+    },
+    {
+      "type": "LINK",
+      "from": "A Mining Labor per Unit",
+      "to": "A Mining Labor Requirement"
+    },
+    {
+      "type": "LINK",
+      "from": "A Mining Automation Factor",
+      "to": "A Mining Labor Requirement"
+    },
+    {
+      "type": "LINK",
+      "from": "Minimum Human Labor Share",
+      "to": "B Mining Automation Factor"
+    },
+    {
+      "type": "LINK",
+      "from": "B Mining Automation Level",
+      "to": "B Mining Automation Factor"
+    },
+    {
+      "type": "LINK",
+      "from": "Automation Labor Exponent",
+      "to": "B Mining Automation Factor"
+    },
+    {
+      "type": "LINK",
+      "from": "B Mining",
+      "to": "B Mining Labor Requirement"
+    },
+    {
+      "type": "LINK",
+      "from": "B Mining Labor per Unit",
+      "to": "B Mining Labor Requirement"
+    },
+    {
+      "type": "LINK",
+      "from": "B Mining Automation Factor",
+      "to": "B Mining Labor Requirement"
+    },
+    {
+      "type": "LINK",
+      "from": "Minimum Human Labor Share",
+      "to": "A Smelting Automation Factor"
+    },
+    {
+      "type": "LINK",
+      "from": "A Smelting Automation Level",
+      "to": "A Smelting Automation Factor"
+    },
+    {
+      "type": "LINK",
+      "from": "Automation Labor Exponent",
+      "to": "A Smelting Automation Factor"
+    },
+    {
+      "type": "LINK",
+      "from": "A Metal Production",
+      "to": "A Smelting Labor Requirement"
+    },
+    {
+      "type": "LINK",
+      "from": "A Labor per Metal",
+      "to": "A Smelting Labor Requirement"
+    },
+    {
+      "type": "LINK",
+      "from": "A Smelting Automation Factor",
+      "to": "A Smelting Labor Requirement"
+    },
+    {
+      "type": "LINK",
+      "from": "Minimum Human Labor Share",
+      "to": "B Smelting Automation Factor"
+    },
+    {
+      "type": "LINK",
+      "from": "B Smelting Automation Level",
+      "to": "B Smelting Automation Factor"
+    },
+    {
+      "type": "LINK",
+      "from": "Automation Labor Exponent",
+      "to": "B Smelting Automation Factor"
+    },
+    {
+      "type": "LINK",
+      "from": "B Metal Production",
+      "to": "B Smelting Labor Requirement"
+    },
+    {
+      "type": "LINK",
+      "from": "B Labor per Metal",
+      "to": "B Smelting Labor Requirement"
+    },
+    {
+      "type": "LINK",
+      "from": "B Smelting Automation Factor",
+      "to": "B Smelting Labor Requirement"
+    },
+    {
+      "type": "LINK",
+      "from": "Minimum Human Labor Share",
+      "to": "A Electronics Automation Factor"
+    },
+    {
+      "type": "LINK",
+      "from": "A Electronics Automation Level",
+      "to": "A Electronics Automation Factor"
+    },
+    {
+      "type": "LINK",
+      "from": "Automation Labor Exponent",
+      "to": "A Electronics Automation Factor"
+    },
+    {
+      "type": "LINK",
+      "from": "A Electronics Production",
+      "to": "A Electronics Labor Requirement"
+    },
+    {
+      "type": "LINK",
+      "from": "A Electronics Labor per Unit",
+      "to": "A Electronics Labor Requirement"
+    },
+    {
+      "type": "LINK",
+      "from": "A Electronics Automation Factor",
+      "to": "A Electronics Labor Requirement"
+    },
+    {
+      "type": "LINK",
+      "from": "Minimum Human Labor Share",
+      "to": "B Electronics Automation Factor"
+    },
+    {
+      "type": "LINK",
+      "from": "B Electronics Automation Level",
+      "to": "B Electronics Automation Factor"
+    },
+    {
+      "type": "LINK",
+      "from": "Automation Labor Exponent",
+      "to": "B Electronics Automation Factor"
+    },
+    {
+      "type": "LINK",
+      "from": "B Electronics Production",
+      "to": "B Electronics Labor Requirement"
+    },
+    {
+      "type": "LINK",
+      "from": "B Electronics Labor per Unit",
+      "to": "B Electronics Labor Requirement"
+    },
+    {
+      "type": "LINK",
+      "from": "B Electronics Automation Factor",
+      "to": "B Electronics Labor Requirement"
+    },
+    {
+      "type": "LINK",
+      "from": "Minimum Human Labor Share",
+      "to": "A Capital Goods Automation Factor"
+    },
+    {
+      "type": "LINK",
+      "from": "A Capital Goods Automation Level",
+      "to": "A Capital Goods Automation Factor"
+    },
+    {
+      "type": "LINK",
+      "from": "Automation Labor Exponent",
+      "to": "A Capital Goods Automation Factor"
+    },
+    {
+      "type": "LINK",
+      "from": "A Capital Goods Production",
+      "to": "A Capital Goods Labor Requirement"
+    },
+    {
+      "type": "LINK",
+      "from": "A Capital Goods Labor per Unit",
+      "to": "A Capital Goods Labor Requirement"
+    },
+    {
+      "type": "LINK",
+      "from": "A Capital Goods Automation Factor",
+      "to": "A Capital Goods Labor Requirement"
+    },
+    {
+      "type": "LINK",
+      "from": "Minimum Human Labor Share",
+      "to": "B Capital Goods Automation Factor"
+    },
+    {
+      "type": "LINK",
+      "from": "B Capital Goods Automation Level",
+      "to": "B Capital Goods Automation Factor"
+    },
+    {
+      "type": "LINK",
+      "from": "Automation Labor Exponent",
+      "to": "B Capital Goods Automation Factor"
+    },
+    {
+      "type": "LINK",
+      "from": "B Capital Goods Production",
+      "to": "B Capital Goods Labor Requirement"
+    },
+    {
+      "type": "LINK",
+      "from": "B Capital Goods Labor per Unit",
+      "to": "B Capital Goods Labor Requirement"
+    },
+    {
+      "type": "LINK",
+      "from": "B Capital Goods Automation Factor",
+      "to": "B Capital Goods Labor Requirement"
+    },
+    {
+      "type": "LINK",
+      "from": "Minimum Human Labor Share",
+      "to": "A Regolith Extraction Automation Factor"
+    },
+    {
+      "type": "LINK",
+      "from": "A Regolith Extraction Automation Level",
+      "to": "A Regolith Extraction Automation Factor"
+    },
+    {
+      "type": "LINK",
+      "from": "Automation Labor Exponent",
+      "to": "A Regolith Extraction Automation Factor"
+    },
+    {
+      "type": "LINK",
+      "from": "A Regolith Extraction",
+      "to": "A Regolith Extraction Labor Requirement"
+    },
+    {
+      "type": "LINK",
+      "from": "A Regolith Extraction Labor per Unit",
+      "to": "A Regolith Extraction Labor Requirement"
+    },
+    {
+      "type": "LINK",
+      "from": "A Regolith Extraction Automation Factor",
+      "to": "A Regolith Extraction Labor Requirement"
+    },
+    {
+      "type": "LINK",
+      "from": "Minimum Human Labor Share",
+      "to": "B Regolith Extraction Automation Factor"
+    },
+    {
+      "type": "LINK",
+      "from": "B Regolith Extraction Automation Level",
+      "to": "B Regolith Extraction Automation Factor"
+    },
+    {
+      "type": "LINK",
+      "from": "Automation Labor Exponent",
+      "to": "B Regolith Extraction Automation Factor"
+    },
+    {
+      "type": "LINK",
+      "from": "B Regolith Extraction",
+      "to": "B Regolith Extraction Labor Requirement"
+    },
+    {
+      "type": "LINK",
+      "from": "B Regolith Extraction Labor per Unit",
+      "to": "B Regolith Extraction Labor Requirement"
+    },
+    {
+      "type": "LINK",
+      "from": "B Regolith Extraction Automation Factor",
+      "to": "B Regolith Extraction Labor Requirement"
+    },
+    {
+      "type": "LINK",
+      "from": "Minimum Human Labor Share",
+      "to": "A Construction Materials Automation Factor"
+    },
+    {
+      "type": "LINK",
+      "from": "A Construction Materials Automation Level",
+      "to": "A Construction Materials Automation Factor"
+    },
+    {
+      "type": "LINK",
+      "from": "Automation Labor Exponent",
+      "to": "A Construction Materials Automation Factor"
+    },
+    {
+      "type": "LINK",
+      "from": "A Construction Materials Production",
+      "to": "A Construction Materials Labor Requirement"
+    },
+    {
+      "type": "LINK",
+      "from": "A Construction Materials Labor per Unit",
+      "to": "A Construction Materials Labor Requirement"
+    },
+    {
+      "type": "LINK",
+      "from": "A Construction Materials Automation Factor",
+      "to": "A Construction Materials Labor Requirement"
+    },
+    {
+      "type": "LINK",
+      "from": "Minimum Human Labor Share",
+      "to": "B Construction Materials Automation Factor"
+    },
+    {
+      "type": "LINK",
+      "from": "B Construction Materials Automation Level",
+      "to": "B Construction Materials Automation Factor"
+    },
+    {
+      "type": "LINK",
+      "from": "Automation Labor Exponent",
+      "to": "B Construction Materials Automation Factor"
+    },
+    {
+      "type": "LINK",
+      "from": "B Construction Materials Production",
+      "to": "B Construction Materials Labor Requirement"
+    },
+    {
+      "type": "LINK",
+      "from": "B Construction Materials Labor per Unit",
+      "to": "B Construction Materials Labor Requirement"
+    },
+    {
+      "type": "LINK",
+      "from": "B Construction Materials Automation Factor",
+      "to": "B Construction Materials Labor Requirement"
+    },
+    {
+      "type": "LINK",
+      "from": "Minimum Human Labor Share",
+      "to": "A Power Resource Extraction Automation Factor"
+    },
+    {
+      "type": "LINK",
+      "from": "A Power Resource Extraction Automation Level",
+      "to": "A Power Resource Extraction Automation Factor"
+    },
+    {
+      "type": "LINK",
+      "from": "Automation Labor Exponent",
+      "to": "A Power Resource Extraction Automation Factor"
+    },
+    {
+      "type": "LINK",
+      "from": "A Power Resource Extraction",
+      "to": "A Power Resource Extraction Labor Requirement"
+    },
+    {
+      "type": "LINK",
+      "from": "A Power Resource Extraction Labor per Unit",
+      "to": "A Power Resource Extraction Labor Requirement"
+    },
+    {
+      "type": "LINK",
+      "from": "A Power Resource Extraction Automation Factor",
+      "to": "A Power Resource Extraction Labor Requirement"
+    },
+    {
+      "type": "LINK",
+      "from": "Minimum Human Labor Share",
+      "to": "B Power Resource Extraction Automation Factor"
+    },
+    {
+      "type": "LINK",
+      "from": "B Power Resource Extraction Automation Level",
+      "to": "B Power Resource Extraction Automation Factor"
+    },
+    {
+      "type": "LINK",
+      "from": "Automation Labor Exponent",
+      "to": "B Power Resource Extraction Automation Factor"
+    },
+    {
+      "type": "LINK",
+      "from": "B Power Resource Extraction",
+      "to": "B Power Resource Extraction Labor Requirement"
+    },
+    {
+      "type": "LINK",
+      "from": "B Power Resource Extraction Labor per Unit",
+      "to": "B Power Resource Extraction Labor Requirement"
+    },
+    {
+      "type": "LINK",
+      "from": "B Power Resource Extraction Automation Factor",
+      "to": "B Power Resource Extraction Labor Requirement"
+    },
+    {
+      "type": "LINK",
+      "from": "Minimum Human Labor Share",
+      "to": "A Generation Automation Factor"
+    },
+    {
+      "type": "LINK",
+      "from": "A Generation Automation Level",
+      "to": "A Generation Automation Factor"
+    },
+    {
+      "type": "LINK",
+      "from": "Automation Labor Exponent",
+      "to": "A Generation Automation Factor"
+    },
+    {
+      "type": "LINK",
+      "from": "A Available Generation",
+      "to": "A Generation Labor Requirement"
+    },
+    {
+      "type": "LINK",
+      "from": "A Generation Labor per Unit",
+      "to": "A Generation Labor Requirement"
+    },
+    {
+      "type": "LINK",
+      "from": "A Generation Automation Factor",
+      "to": "A Generation Labor Requirement"
+    },
+    {
+      "type": "LINK",
+      "from": "Minimum Human Labor Share",
+      "to": "B Generation Automation Factor"
+    },
+    {
+      "type": "LINK",
+      "from": "B Generation Automation Level",
+      "to": "B Generation Automation Factor"
+    },
+    {
+      "type": "LINK",
+      "from": "Automation Labor Exponent",
+      "to": "B Generation Automation Factor"
+    },
+    {
+      "type": "LINK",
+      "from": "B Available Generation",
+      "to": "B Generation Labor Requirement"
+    },
+    {
+      "type": "LINK",
+      "from": "B Generation Labor per Unit",
+      "to": "B Generation Labor Requirement"
+    },
+    {
+      "type": "LINK",
+      "from": "B Generation Automation Factor",
+      "to": "B Generation Labor Requirement"
+    },
+    {
+      "type": "LINK",
+      "from": "Minimum Human Labor Share",
+      "to": "Transport Automation Factor"
+    },
+    {
+      "type": "LINK",
+      "from": "Transport Automation Level",
+      "to": "Transport Automation Factor"
+    },
+    {
+      "type": "LINK",
+      "from": "Automation Labor Exponent",
+      "to": "Transport Automation Factor"
+    },
+    {
+      "type": "LINK",
+      "from": "Capacity Limited Total Transport Load",
+      "to": "Transport Labor Requirement"
+    },
+    {
+      "type": "LINK",
+      "from": "Transport Labor per Unit",
+      "to": "Transport Labor Requirement"
+    },
+    {
+      "type": "LINK",
+      "from": "Transport Automation Factor",
+      "to": "Transport Labor Requirement"
+    },
+    {
+      "type": "LINK",
+      "from": "A Mining Labor Requirement",
+      "to": "A Total Labor Requirement"
+    },
+    {
+      "type": "LINK",
+      "from": "A Smelting Labor Requirement",
+      "to": "A Total Labor Requirement"
+    },
+    {
+      "type": "LINK",
+      "from": "A Electronics Labor Requirement",
+      "to": "A Total Labor Requirement"
+    },
+    {
+      "type": "LINK",
+      "from": "A Capital Goods Labor Requirement",
+      "to": "A Total Labor Requirement"
+    },
+    {
+      "type": "LINK",
+      "from": "A Regolith Extraction Labor Requirement",
+      "to": "A Total Labor Requirement"
+    },
+    {
+      "type": "LINK",
+      "from": "A Construction Materials Labor Requirement",
+      "to": "A Total Labor Requirement"
+    },
+    {
+      "type": "LINK",
+      "from": "A Power Resource Extraction Labor Requirement",
+      "to": "A Total Labor Requirement"
+    },
+    {
+      "type": "LINK",
+      "from": "A Generation Labor Requirement",
+      "to": "A Total Labor Requirement"
+    },
+    {
+      "type": "LINK",
+      "from": "B Mining Labor Requirement",
+      "to": "B Total Labor Requirement"
+    },
+    {
+      "type": "LINK",
+      "from": "B Smelting Labor Requirement",
+      "to": "B Total Labor Requirement"
+    },
+    {
+      "type": "LINK",
+      "from": "B Electronics Labor Requirement",
+      "to": "B Total Labor Requirement"
+    },
+    {
+      "type": "LINK",
+      "from": "B Capital Goods Labor Requirement",
+      "to": "B Total Labor Requirement"
+    },
+    {
+      "type": "LINK",
+      "from": "B Regolith Extraction Labor Requirement",
+      "to": "B Total Labor Requirement"
+    },
+    {
+      "type": "LINK",
+      "from": "B Construction Materials Labor Requirement",
+      "to": "B Total Labor Requirement"
+    },
+    {
+      "type": "LINK",
+      "from": "B Power Resource Extraction Labor Requirement",
+      "to": "B Total Labor Requirement"
+    },
+    {
+      "type": "LINK",
+      "from": "B Generation Labor Requirement",
+      "to": "B Total Labor Requirement"
+    },
+    {
+      "type": "LINK",
+      "from": "Transport Labor Requirement",
+      "to": "Shared Labor Requirement"
+    },
+    {
+      "type": "LINK",
+      "from": "A Smelting Automation Factor",
+      "to": "A Metal Unit Cost"
+    },
+    {
+      "type": "LINK",
+      "from": "B Smelting Automation Factor",
+      "to": "B Metal Unit Cost"
+    },
+    {
+      "type": "LINK",
+      "from": "A Electronics Automation Factor",
+      "to": "A Electronics Unit Cost"
+    },
+    {
+      "type": "LINK",
+      "from": "B Electronics Automation Factor",
+      "to": "B Electronics Unit Cost"
+    },
+    {
+      "type": "VARIABLE",
+      "name": "Population Birth Rate",
+      "behavior": {
+        "value": 0.0000333333333333
+      },
+      "description": "Generated population element for Population Birth Rate."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "Population Base Death Rate",
+      "behavior": {
+        "value": 0.0000277777777778
+      },
+      "description": "Generated population element for Population Base Death Rate."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "Death Living Standard Sensitivity",
+      "behavior": {
+        "value": 1
+      },
+      "description": "Generated population element for Death Living Standard Sensitivity."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "Labor Participation Share",
+      "behavior": {
+        "value": 0.5
+      },
+      "description": "Generated population element for Labor Participation Share."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "Migration Max Rate",
+      "behavior": {
+        "value": 0.0000555555555556
+      },
+      "description": "Generated population element for Migration Max Rate."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "Migration Gap Sensitivity",
+      "behavior": {
+        "value": 4
+      },
+      "description": "Generated population element for Migration Gap Sensitivity."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "Attractiveness Perception Time",
+      "behavior": {
+        "value": 360
+      },
+      "description": "Generated population element for Attractiveness Perception Time."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "Attractiveness Wage Weight",
+      "behavior": {
+        "value": 1
+      },
+      "description": "Generated population element for Attractiveness Wage Weight."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "Attractiveness Jobs Weight",
+      "behavior": {
+        "value": 1
+      },
+      "description": "Generated population element for Attractiveness Jobs Weight."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "Attractiveness Living Weight",
+      "behavior": {
+        "value": 1
+      },
+      "description": "Generated population element for Attractiveness Living Weight."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "Reference Real Wage",
+      "behavior": {
+        "value": 100
+      },
+      "description": "Generated population element for Reference Real Wage."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "Living Energy Weight",
+      "behavior": {
+        "value": 1
+      },
+      "description": "Generated population element for Living Energy Weight."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "A Population Initial",
+      "behavior": {
+        "value": 28
+      },
+      "description": "Generated population element for A Population Initial."
+    },
+    {
+      "type": "STOCK",
+      "name": "A Population",
+      "behavior": {
+        "initial_value": "[A Population Initial]",
+        "non_negative": true
+      },
+      "description": "Generated population element for A Population."
+    },
+    {
+      "type": "FLOW",
+      "name": "A Births",
+      "from": null,
+      "to": "A Population",
+      "behavior": {
+        "value": "[A Population] * [Population Birth Rate]",
+        "non_negative": true
+      },
+      "description": "Generated population element for A Births."
+    },
+    {
+      "type": "FLOW",
+      "name": "A Deaths",
+      "from": "A Population",
+      "to": null,
+      "behavior": {
+        "value": "[A Population] * [Population Base Death Rate] * Max([A Living Standard], 0.05) ^ (-[Death Living Standard Sensitivity])",
+        "non_negative": true
+      },
+      "description": "Generated population element for A Deaths."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "A Labor Force",
+      "behavior": {
+        "value": "[A Population] * [Labor Participation Share]"
+      },
+      "description": "Generated population element for A Labor Force."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "A Employment",
+      "behavior": {
+        "value": "Min([A Total Labor Requirement], [A Labor Force])"
+      },
+      "description": "Generated population element for A Employment."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "A Employment Rate",
+      "behavior": {
+        "value": "[A Employment] / ([A Labor Force] + 0.000001)"
+      },
+      "description": "Generated population element for A Employment Rate."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "A Unemployment",
+      "behavior": {
+        "value": "Max([A Labor Force] - [A Total Labor Requirement], 0)"
+      },
+      "description": "Generated population element for A Unemployment."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "A Labor Shortage",
+      "behavior": {
+        "value": "Max([A Total Labor Requirement] - [A Labor Force], 0)"
+      },
+      "description": "Generated population element for A Labor Shortage."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "A Price Index",
+      "behavior": {
+        "value": "([A Market Price] / [A Reference Metal Price] + [A Electronics Market Price] / [A Electronics Reference Price]) / 2"
+      },
+      "description": "Generated population element for A Price Index."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "A Real Wage",
+      "behavior": {
+        "value": "[A Effective Wage] / [A Price Index]"
+      },
+      "description": "Generated population element for A Real Wage."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "A Living Standard",
+      "behavior": {
+        "value": "Max([A Energy Fulfillment Ratio], 0.000001) ^ [Living Energy Weight]"
+      },
+      "description": "Generated population element for A Living Standard."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "A Attractiveness",
+      "behavior": {
+        "value": "([A Real Wage] / [Reference Real Wage]) ^ [Attractiveness Wage Weight] * Max([A Employment Rate], 0.000001) ^ [Attractiveness Jobs Weight] * [A Living Standard] ^ [Attractiveness Living Weight]"
+      },
+      "description": "Generated population element for A Attractiveness."
+    },
+    {
+      "type": "STOCK",
+      "name": "A Perceived Attractiveness",
+      "behavior": {
+        "initial_value": 1,
+        "non_negative": true
+      },
+      "description": "Generated population element for A Perceived Attractiveness."
+    },
+    {
+      "type": "FLOW",
+      "name": "A Perceived Attractiveness Increase",
+      "from": null,
+      "to": "A Perceived Attractiveness",
+      "behavior": {
+        "value": "Max([A Attractiveness] - [A Perceived Attractiveness], 0) / [Attractiveness Perception Time]",
+        "non_negative": true
+      },
+      "description": "Generated population element for A Perceived Attractiveness Increase."
+    },
+    {
+      "type": "FLOW",
+      "name": "A Perceived Attractiveness Decrease",
+      "from": "A Perceived Attractiveness",
+      "to": null,
+      "behavior": {
+        "value": "Max([A Perceived Attractiveness] - [A Attractiveness], 0) / [Attractiveness Perception Time]",
+        "non_negative": true
+      },
+      "description": "Generated population element for A Perceived Attractiveness Decrease."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "B Population Initial",
+      "behavior": {
+        "value": 8.5
+      },
+      "description": "Generated population element for B Population Initial."
+    },
+    {
+      "type": "STOCK",
+      "name": "B Population",
+      "behavior": {
+        "initial_value": "[B Population Initial]",
+        "non_negative": true
+      },
+      "description": "Generated population element for B Population."
+    },
+    {
+      "type": "FLOW",
+      "name": "B Births",
+      "from": null,
+      "to": "B Population",
+      "behavior": {
+        "value": "[B Population] * [Population Birth Rate]",
+        "non_negative": true
+      },
+      "description": "Generated population element for B Births."
+    },
+    {
+      "type": "FLOW",
+      "name": "B Deaths",
+      "from": "B Population",
+      "to": null,
+      "behavior": {
+        "value": "[B Population] * [Population Base Death Rate] * Max([B Living Standard], 0.05) ^ (-[Death Living Standard Sensitivity])",
+        "non_negative": true
+      },
+      "description": "Generated population element for B Deaths."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "B Labor Force",
+      "behavior": {
+        "value": "[B Population] * [Labor Participation Share]"
+      },
+      "description": "Generated population element for B Labor Force."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "B Employment",
+      "behavior": {
+        "value": "Min([B Total Labor Requirement], [B Labor Force])"
+      },
+      "description": "Generated population element for B Employment."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "B Employment Rate",
+      "behavior": {
+        "value": "[B Employment] / ([B Labor Force] + 0.000001)"
+      },
+      "description": "Generated population element for B Employment Rate."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "B Unemployment",
+      "behavior": {
+        "value": "Max([B Labor Force] - [B Total Labor Requirement], 0)"
+      },
+      "description": "Generated population element for B Unemployment."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "B Labor Shortage",
+      "behavior": {
+        "value": "Max([B Total Labor Requirement] - [B Labor Force], 0)"
+      },
+      "description": "Generated population element for B Labor Shortage."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "B Price Index",
+      "behavior": {
+        "value": "([B Market Price] / [B Reference Metal Price] + [B Electronics Market Price] / [B Electronics Reference Price]) / 2"
+      },
+      "description": "Generated population element for B Price Index."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "B Real Wage",
+      "behavior": {
+        "value": "[B Effective Wage] / [B Price Index]"
+      },
+      "description": "Generated population element for B Real Wage."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "B Living Standard",
+      "behavior": {
+        "value": "Max([B Energy Fulfillment Ratio], 0.000001) ^ [Living Energy Weight]"
+      },
+      "description": "Generated population element for B Living Standard."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "B Attractiveness",
+      "behavior": {
+        "value": "([B Real Wage] / [Reference Real Wage]) ^ [Attractiveness Wage Weight] * Max([B Employment Rate], 0.000001) ^ [Attractiveness Jobs Weight] * [B Living Standard] ^ [Attractiveness Living Weight]"
+      },
+      "description": "Generated population element for B Attractiveness."
+    },
+    {
+      "type": "STOCK",
+      "name": "B Perceived Attractiveness",
+      "behavior": {
+        "initial_value": 1,
+        "non_negative": true
+      },
+      "description": "Generated population element for B Perceived Attractiveness."
+    },
+    {
+      "type": "FLOW",
+      "name": "B Perceived Attractiveness Increase",
+      "from": null,
+      "to": "B Perceived Attractiveness",
+      "behavior": {
+        "value": "Max([B Attractiveness] - [B Perceived Attractiveness], 0) / [Attractiveness Perception Time]",
+        "non_negative": true
+      },
+      "description": "Generated population element for B Perceived Attractiveness Increase."
+    },
+    {
+      "type": "FLOW",
+      "name": "B Perceived Attractiveness Decrease",
+      "from": "B Perceived Attractiveness",
+      "to": null,
+      "behavior": {
+        "value": "Max([B Perceived Attractiveness] - [B Attractiveness], 0) / [Attractiveness Perception Time]",
+        "non_negative": true
+      },
+      "description": "Generated population element for B Perceived Attractiveness Decrease."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "Attractiveness Gap A to B",
+      "behavior": {
+        "value": "([B Perceived Attractiveness] - [A Perceived Attractiveness]) / Max(Max([A Perceived Attractiveness], [B Perceived Attractiveness]), 0.000001)"
+      },
+      "description": "Generated population element for Attractiveness Gap A to B."
+    },
+    {
+      "type": "FLOW",
+      "name": "Migration A to B",
+      "from": "A Population",
+      "to": "B Population",
+      "behavior": {
+        "value": "[A Population] * [Migration Max Rate] * Min(Max([Attractiveness Gap A to B], 0) * [Migration Gap Sensitivity], 1)",
+        "non_negative": true
+      },
+      "description": "Generated population element for Migration A to B."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "Attractiveness Gap B to A",
+      "behavior": {
+        "value": "([A Perceived Attractiveness] - [B Perceived Attractiveness]) / Max(Max([B Perceived Attractiveness], [A Perceived Attractiveness]), 0.000001)"
+      },
+      "description": "Generated population element for Attractiveness Gap B to A."
+    },
+    {
+      "type": "FLOW",
+      "name": "Migration B to A",
+      "from": "B Population",
+      "to": "A Population",
+      "behavior": {
+        "value": "[B Population] * [Migration Max Rate] * Min(Max([Attractiveness Gap B to A], 0) * [Migration Gap Sensitivity], 1)",
+        "non_negative": true
+      },
+      "description": "Generated population element for Migration B to A."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "Planet Population",
+      "behavior": {
+        "value": "[A Population] + [B Population]"
+      },
+      "description": "Generated population element for Planet Population."
+    },
+    {
+      "type": "LINK",
+      "from": "A Population Initial",
+      "to": "A Population"
+    },
+    {
+      "type": "LINK",
+      "from": "A Population",
+      "to": "A Births"
+    },
+    {
+      "type": "LINK",
+      "from": "Population Birth Rate",
+      "to": "A Births"
+    },
+    {
+      "type": "LINK",
+      "from": "A Population",
+      "to": "A Deaths"
+    },
+    {
+      "type": "LINK",
+      "from": "Population Base Death Rate",
+      "to": "A Deaths"
+    },
+    {
+      "type": "LINK",
+      "from": "A Living Standard",
+      "to": "A Deaths"
+    },
+    {
+      "type": "LINK",
+      "from": "Death Living Standard Sensitivity",
+      "to": "A Deaths"
+    },
+    {
+      "type": "LINK",
+      "from": "A Population",
+      "to": "A Labor Force"
+    },
+    {
+      "type": "LINK",
+      "from": "Labor Participation Share",
+      "to": "A Labor Force"
+    },
+    {
+      "type": "LINK",
+      "from": "A Total Labor Requirement",
+      "to": "A Employment"
+    },
+    {
+      "type": "LINK",
+      "from": "A Labor Force",
+      "to": "A Employment"
+    },
+    {
+      "type": "LINK",
+      "from": "A Employment",
+      "to": "A Employment Rate"
+    },
+    {
+      "type": "LINK",
+      "from": "A Labor Force",
+      "to": "A Employment Rate"
+    },
+    {
+      "type": "LINK",
+      "from": "A Labor Force",
+      "to": "A Unemployment"
+    },
+    {
+      "type": "LINK",
+      "from": "A Total Labor Requirement",
+      "to": "A Unemployment"
+    },
+    {
+      "type": "LINK",
+      "from": "A Total Labor Requirement",
+      "to": "A Labor Shortage"
+    },
+    {
+      "type": "LINK",
+      "from": "A Labor Force",
+      "to": "A Labor Shortage"
+    },
+    {
+      "type": "LINK",
+      "from": "A Market Price",
+      "to": "A Price Index"
+    },
+    {
+      "type": "LINK",
+      "from": "A Reference Metal Price",
+      "to": "A Price Index"
+    },
+    {
+      "type": "LINK",
+      "from": "A Electronics Market Price",
+      "to": "A Price Index"
+    },
+    {
+      "type": "LINK",
+      "from": "A Electronics Reference Price",
+      "to": "A Price Index"
+    },
+    {
+      "type": "LINK",
+      "from": "A Effective Wage",
+      "to": "A Real Wage"
+    },
+    {
+      "type": "LINK",
+      "from": "A Price Index",
+      "to": "A Real Wage"
+    },
+    {
+      "type": "LINK",
+      "from": "A Energy Fulfillment Ratio",
+      "to": "A Living Standard"
+    },
+    {
+      "type": "LINK",
+      "from": "Living Energy Weight",
+      "to": "A Living Standard"
+    },
+    {
+      "type": "LINK",
+      "from": "A Real Wage",
+      "to": "A Attractiveness"
+    },
+    {
+      "type": "LINK",
+      "from": "Reference Real Wage",
+      "to": "A Attractiveness"
+    },
+    {
+      "type": "LINK",
+      "from": "Attractiveness Wage Weight",
+      "to": "A Attractiveness"
+    },
+    {
+      "type": "LINK",
+      "from": "A Employment Rate",
+      "to": "A Attractiveness"
+    },
+    {
+      "type": "LINK",
+      "from": "Attractiveness Jobs Weight",
+      "to": "A Attractiveness"
+    },
+    {
+      "type": "LINK",
+      "from": "A Living Standard",
+      "to": "A Attractiveness"
+    },
+    {
+      "type": "LINK",
+      "from": "Attractiveness Living Weight",
+      "to": "A Attractiveness"
+    },
+    {
+      "type": "LINK",
+      "from": "A Attractiveness",
+      "to": "A Perceived Attractiveness Increase"
+    },
+    {
+      "type": "LINK",
+      "from": "A Perceived Attractiveness",
+      "to": "A Perceived Attractiveness Increase"
+    },
+    {
+      "type": "LINK",
+      "from": "Attractiveness Perception Time",
+      "to": "A Perceived Attractiveness Increase"
+    },
+    {
+      "type": "LINK",
+      "from": "A Perceived Attractiveness",
+      "to": "A Perceived Attractiveness Decrease"
+    },
+    {
+      "type": "LINK",
+      "from": "A Attractiveness",
+      "to": "A Perceived Attractiveness Decrease"
+    },
+    {
+      "type": "LINK",
+      "from": "Attractiveness Perception Time",
+      "to": "A Perceived Attractiveness Decrease"
+    },
+    {
+      "type": "LINK",
+      "from": "B Population Initial",
+      "to": "B Population"
+    },
+    {
+      "type": "LINK",
+      "from": "B Population",
+      "to": "B Births"
+    },
+    {
+      "type": "LINK",
+      "from": "Population Birth Rate",
+      "to": "B Births"
+    },
+    {
+      "type": "LINK",
+      "from": "B Population",
+      "to": "B Deaths"
+    },
+    {
+      "type": "LINK",
+      "from": "Population Base Death Rate",
+      "to": "B Deaths"
+    },
+    {
+      "type": "LINK",
+      "from": "B Living Standard",
+      "to": "B Deaths"
+    },
+    {
+      "type": "LINK",
+      "from": "Death Living Standard Sensitivity",
+      "to": "B Deaths"
+    },
+    {
+      "type": "LINK",
+      "from": "B Population",
+      "to": "B Labor Force"
+    },
+    {
+      "type": "LINK",
+      "from": "Labor Participation Share",
+      "to": "B Labor Force"
+    },
+    {
+      "type": "LINK",
+      "from": "B Total Labor Requirement",
+      "to": "B Employment"
+    },
+    {
+      "type": "LINK",
+      "from": "B Labor Force",
+      "to": "B Employment"
+    },
+    {
+      "type": "LINK",
+      "from": "B Employment",
+      "to": "B Employment Rate"
+    },
+    {
+      "type": "LINK",
+      "from": "B Labor Force",
+      "to": "B Employment Rate"
+    },
+    {
+      "type": "LINK",
+      "from": "B Labor Force",
+      "to": "B Unemployment"
+    },
+    {
+      "type": "LINK",
+      "from": "B Total Labor Requirement",
+      "to": "B Unemployment"
+    },
+    {
+      "type": "LINK",
+      "from": "B Total Labor Requirement",
+      "to": "B Labor Shortage"
+    },
+    {
+      "type": "LINK",
+      "from": "B Labor Force",
+      "to": "B Labor Shortage"
+    },
+    {
+      "type": "LINK",
+      "from": "B Market Price",
+      "to": "B Price Index"
+    },
+    {
+      "type": "LINK",
+      "from": "B Reference Metal Price",
+      "to": "B Price Index"
+    },
+    {
+      "type": "LINK",
+      "from": "B Electronics Market Price",
+      "to": "B Price Index"
+    },
+    {
+      "type": "LINK",
+      "from": "B Electronics Reference Price",
+      "to": "B Price Index"
+    },
+    {
+      "type": "LINK",
+      "from": "B Effective Wage",
+      "to": "B Real Wage"
+    },
+    {
+      "type": "LINK",
+      "from": "B Price Index",
+      "to": "B Real Wage"
+    },
+    {
+      "type": "LINK",
+      "from": "B Energy Fulfillment Ratio",
+      "to": "B Living Standard"
+    },
+    {
+      "type": "LINK",
+      "from": "Living Energy Weight",
+      "to": "B Living Standard"
+    },
+    {
+      "type": "LINK",
+      "from": "B Real Wage",
+      "to": "B Attractiveness"
+    },
+    {
+      "type": "LINK",
+      "from": "Reference Real Wage",
+      "to": "B Attractiveness"
+    },
+    {
+      "type": "LINK",
+      "from": "Attractiveness Wage Weight",
+      "to": "B Attractiveness"
+    },
+    {
+      "type": "LINK",
+      "from": "B Employment Rate",
+      "to": "B Attractiveness"
+    },
+    {
+      "type": "LINK",
+      "from": "Attractiveness Jobs Weight",
+      "to": "B Attractiveness"
+    },
+    {
+      "type": "LINK",
+      "from": "B Living Standard",
+      "to": "B Attractiveness"
+    },
+    {
+      "type": "LINK",
+      "from": "Attractiveness Living Weight",
+      "to": "B Attractiveness"
+    },
+    {
+      "type": "LINK",
+      "from": "B Attractiveness",
+      "to": "B Perceived Attractiveness Increase"
+    },
+    {
+      "type": "LINK",
+      "from": "B Perceived Attractiveness",
+      "to": "B Perceived Attractiveness Increase"
+    },
+    {
+      "type": "LINK",
+      "from": "Attractiveness Perception Time",
+      "to": "B Perceived Attractiveness Increase"
+    },
+    {
+      "type": "LINK",
+      "from": "B Perceived Attractiveness",
+      "to": "B Perceived Attractiveness Decrease"
+    },
+    {
+      "type": "LINK",
+      "from": "B Attractiveness",
+      "to": "B Perceived Attractiveness Decrease"
+    },
+    {
+      "type": "LINK",
+      "from": "Attractiveness Perception Time",
+      "to": "B Perceived Attractiveness Decrease"
+    },
+    {
+      "type": "LINK",
+      "from": "B Perceived Attractiveness",
+      "to": "Attractiveness Gap A to B"
+    },
+    {
+      "type": "LINK",
+      "from": "A Perceived Attractiveness",
+      "to": "Attractiveness Gap A to B"
+    },
+    {
+      "type": "LINK",
+      "from": "A Population",
+      "to": "Migration A to B"
+    },
+    {
+      "type": "LINK",
+      "from": "Migration Max Rate",
+      "to": "Migration A to B"
+    },
+    {
+      "type": "LINK",
+      "from": "Attractiveness Gap A to B",
+      "to": "Migration A to B"
+    },
+    {
+      "type": "LINK",
+      "from": "Migration Gap Sensitivity",
+      "to": "Migration A to B"
+    },
+    {
+      "type": "LINK",
+      "from": "A Perceived Attractiveness",
+      "to": "Attractiveness Gap B to A"
+    },
+    {
+      "type": "LINK",
+      "from": "B Perceived Attractiveness",
+      "to": "Attractiveness Gap B to A"
+    },
+    {
+      "type": "LINK",
+      "from": "B Population",
+      "to": "Migration B to A"
+    },
+    {
+      "type": "LINK",
+      "from": "Migration Max Rate",
+      "to": "Migration B to A"
+    },
+    {
+      "type": "LINK",
+      "from": "Attractiveness Gap B to A",
+      "to": "Migration B to A"
+    },
+    {
+      "type": "LINK",
+      "from": "Migration Gap Sensitivity",
+      "to": "Migration B to A"
+    },
+    {
+      "type": "LINK",
+      "from": "A Population",
+      "to": "Planet Population"
+    },
+    {
+      "type": "LINK",
+      "from": "B Population",
+      "to": "Planet Population"
     }
   ],
   "visualizations": [
@@ -37612,6 +39655,36 @@
         "Power Resource Capital Enabled": 1,
         "Deposits Enabled": 1,
         "Process Energy Enabled": 1
+      }
+    },
+    {
+      "name": "v7.7.10 Automation Probe",
+      "description": "Clone of accepted Mode 46 with Timed Test Mode 48 and Automation Level = 0.5 for all eight colony-A processes; probe only, not a start-state change.",
+      "values": {
+        "Capital Lifecycle Enabled": 1,
+        "Intermediate Inputs Enabled": 1,
+        "Capital Goods Enabled": 1,
+        "Transport Capital Goods Enabled": 1,
+        "Power Resource Enabled": 1,
+        "Construction Materials Enabled": 1,
+        "Transport Construction Materials Enabled": 1,
+        "Construction Materials Energy Enabled": 1,
+        "Construction Materials Capital Enabled": 1,
+        "Capital Goods Capital Enabled": 1,
+        "Regolith Capital Enabled": 1,
+        "Ore Capital Enabled": 1,
+        "Timed Test Mode": 48,
+        "Power Resource Capital Enabled": 1,
+        "Deposits Enabled": 1,
+        "Process Energy Enabled": 1,
+        "A Mining Automation Level": 0.5,
+        "A Smelting Automation Level": 0.5,
+        "A Electronics Automation Level": 0.5,
+        "A Capital Goods Automation Level": 0.5,
+        "A Regolith Extraction Automation Level": 0.5,
+        "A Construction Materials Automation Level": 0.5,
+        "A Power Resource Extraction Automation Level": 0.5,
+        "A Generation Automation Level": 0.5
       }
     }
   ]
