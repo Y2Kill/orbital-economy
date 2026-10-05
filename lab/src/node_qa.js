@@ -40,6 +40,10 @@ import {
   populationGeneratedNames,
   populationReplacementNames
 } from './nodes/population.js';
+import {
+  foodGeneratedNames,
+  foodReplacementNames
+} from './nodes/food.js';
 import { runLifecycleConformance } from './lifecycle_conformance.js';
 import { runStructureAudits } from './structure_audit.js';
 
@@ -57,7 +61,8 @@ const depositFixtureFile = path.join(root, 'fixtures', 'nodes', 'deposits.json')
 const energyFixtureFile = path.join(root, 'fixtures', 'nodes', 'process-energy.json');
 const laborFixtureFile = path.join(root, 'fixtures', 'nodes', 'process-labor.json');
 const populationFixtureFile = path.join(root, 'fixtures', 'nodes', 'population.json');
-for (const f of [modelFile, validationFile, simpleFixtureFile, powerFixtureFile, depositFixtureFile, energyFixtureFile, laborFixtureFile, populationFixtureFile, ...declarationFiles]) {
+const foodFixtureFile = path.join(root, 'fixtures', 'nodes', 'food.json');
+for (const f of [modelFile, validationFile, simpleFixtureFile, powerFixtureFile, depositFixtureFile, energyFixtureFile, laborFixtureFile, populationFixtureFile, foodFixtureFile, ...declarationFiles]) {
   if (!fs.existsSync(f)) {
     console.error(`[FAIL] Required node QA input is missing: ${f}`);
     process.exit(2);
@@ -73,6 +78,7 @@ const depositFixture = readJson(depositFixtureFile);
 const energyFixture = readJson(energyFixtureFile);
 const laborFixture = readJson(laborFixtureFile);
 const populationFixture = readJson(populationFixtureFile);
+const foodFixture = readJson(foodFixtureFile);
 const allNodeDeclarations = fs.readdirSync(nodeDir)
   .filter(name => name.endsWith('.json'))
   .map(name => path.join(nodeDir, name))
@@ -254,6 +260,21 @@ function stripLaborNode(raw, decl) {
 function stripPopulationNode(raw, decl) {
   const out = structuredClone(raw);
   const generated = new Set(populationGeneratedNames(decl));
+  out.elements = out.elements.filter(e => {
+    if (e.type === 'LINK') return !generated.has(e.from) && !generated.has(e.to);
+    return !generated.has(e.name);
+  });
+  return out;
+}
+
+function stripFoodNode(raw, decl) {
+  const out = structuredClone(raw);
+  const generated = new Set(foodGeneratedNames(decl));
+  for (const name of foodReplacementNames(decl)) {
+    const e = out.elements.find(x => x.type !== 'LINK' && x.name === name);
+    if (!e) throw new Error('food: replacement target missing while stripping: ' + name);
+    e.behavior.value = oldBranch(e.behavior.value, decl.switch, name);
+  }
   out.elements = out.elements.filter(e => {
     if (e.type === 'LINK') return !generated.has(e.from) && !generated.has(e.to);
     return !generated.has(e.name);
@@ -1437,6 +1458,62 @@ await expect('45. population schema/base checks reject five required invalid cas
   await requireThrow(() => expandNode(oneRegion, baseModel), /node\.colonies: must contain at least 2 regions/, 'one region');
 
   return 'extra parameter, missing initial colony, empty living, missing input, and one region rejected';
+});
+
+
+let foodState = null;
+
+await expect('46. food fixture expands and APPLY_PATCH matches prototype counts/fingerprint', () => {
+  const alreadyPresent = accepted.elements.some(e => e.type !== 'LINK' && e.name === foodFixture.switch);
+  if (alreadyPresent) throw new Error('food layer unexpectedly already present in v7.7.11 accepted model');
+  const expanded = expandNode(foodFixture, accepted);
+  const model = applyPatch(accepted, { format: PATCH_FORMAT, ...expanded.patch }).model;
+  const counts = [expanded.patch.add_elements.length, expanded.patch.replace_formulas.length, expanded.patch.add_links.length];
+  if (counts.join('/') !== '96/25/241') throw new Error('prototype count mismatch: got ' + counts.join('/') + ', expected 96/25/241');
+  const fp = definitionFingerprint(model);
+  if (fp !== 'd7657194d897c8c8') throw new Error('definition fingerprint ' + fp + ', expected d7657194d897c8c8');
+  foodState = { base: accepted, model, expanded };
+  return '96 elements / 25 replacements / 241 links; fingerprint=' + fp;
+});
+
+await expect('50. strip and rebuild food model with zero definition/replacement/link differences', () => {
+  if (!foodState?.model) throw new Error('case 46 did not produce food model');
+  const stripped = stripFoodNode(foodState.model, foodFixture);
+  const expanded = expandNode(foodFixture, stripped);
+  const rebuilt = applyPatch(stripped, { format: PATCH_FORMAT, ...expanded.patch }).model;
+  const a = new Map(foodState.model.elements.filter(e => e.type !== 'LINK').map(e => [e.name, def(e)]));
+  const b = new Map(rebuilt.elements.filter(e => e.type !== 'LINK').map(e => [e.name, def(e)]));
+  if (a.size !== b.size) throw new Error('element count differs: ' + a.size + ' vs ' + b.size);
+  for (const [name, definition] of a) if (b.get(name) !== definition) throw new Error('definition differs after food rebuild: ' + name);
+  if (!sameSet(linkSet(foodState.model), linkSet(rebuilt))) throw new Error('link set differs after food rebuild');
+  return '0 definition/replacement/link differences';
+});
+
+await expect('51. food schema/base checks reject five required invalid cases with paths/names', async () => {
+  const extra = structuredClone(foodFixture);
+  extra.parameters['Unexpected Food Parameter'] = 1;
+  await requireThrow(() => expandNode(extra, accepted), /node\.parameters\.Unexpected Food Parameter: unknown field/, 'extra parameter');
+
+  const missingLand = structuredClone(foodFixture);
+  delete missingLand.land.B;
+  await requireThrow(() => expandNode(missingLand, accepted), /node\.land\.B: required field is missing/, 'land without colony');
+
+  const oneRegion = structuredClone(foodFixture);
+  oneRegion.colonies = ['A'];
+  oneRegion.land = { A: foodFixture.land.A };
+  await requireThrow(() => expandNode(oneRegion, accepted), /node\.colonies: must contain at least 2 regions/, 'one region');
+
+  const badReaderBase = structuredClone(accepted);
+  const reader = badReaderBase.elements.find(e => e.type !== 'LINK' && e.name === foodFixture.transport.capacity_readers[0]);
+  if (!reader) throw new Error('capacity reader fixture target missing');
+  reader.behavior.value = '0';
+  await requireThrow(() => expandNode(foodFixture, badReaderBase), /does not read Transport Active Throughput Capacity/, 'capacity reader without capacity');
+
+  const missingInput = structuredClone(foodFixture);
+  missingInput.inputs.population = '{C} Missing Population';
+  await requireThrow(() => expandNode(missingInput, accepted), /inputs\.population\[A\] references missing base element "A Missing Population"/, 'missing input');
+
+  return 'extra parameter, missing land colony, one region, bad capacity reader, and missing input rejected';
 });
 
 console.log(`\nNODE SELF-TEST: ${passed} passed, ${failed} failed`);

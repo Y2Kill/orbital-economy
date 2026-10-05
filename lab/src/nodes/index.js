@@ -4,6 +4,7 @@ import { expandDeposit, validateDepositDeclaration } from './deposit.js';
 import { expandEnergyConsumer, validateEnergyConsumerDeclaration } from './energy_consumer.js';
 import { expandLabor, validateLaborDeclaration } from './labor.js';
 import { expandPopulation, validatePopulationDeclaration } from './population.js';
+import { expandFood, validateFoodDeclaration } from './food.js';
 
 const isObj = x => !!x && typeof x === 'object' && !Array.isArray(x);
 const isString = x => typeof x === 'string' && x.length > 0;
@@ -124,7 +125,8 @@ const REGISTRY = new Map([
   ['deposit', { validate: validateDepositDeclaration, expand: expandDeposit }],
   ['energy_consumer', { validate: validateEnergyConsumerDeclaration, expand: expandEnergyConsumer }],
   ['labor', { validate: validateLaborDeclaration, expand: expandLabor }],
-  ['population', { validate: validatePopulationDeclaration, expand: expandPopulation }]
+  ['population', { validate: validatePopulationDeclaration, expand: expandPopulation }],
+  ['food', { validate: validateFoodDeclaration, expand: expandFood }]
 ]);
 
 export function validateNodeDeclaration(decl, path = 'node') {
