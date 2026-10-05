@@ -41,6 +41,7 @@ const PLUGIN_FIELDS = {
   deposit: ['abs_tol', 'instances'],
   labor: ['abs_tol', 'min_human_share', 'instances'],
   population: ['abs_tol', 'instances'],
+  food: ['abs_tol', 'instances', 'transport'],
   transport_allocator: ['abs_tol'],
   open_boundaries: ['enforce', 'categories', 'transformation_pairs'],
   colony_symmetry: ['tokens', 'enforce', 'exceptions'],

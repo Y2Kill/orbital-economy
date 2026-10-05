@@ -367,6 +367,70 @@ export function runSimpleCapitalConformance(raw, validation, index = indexModel(
 }
 
 
+export function findFoodPlugin(validation) { return (validation?.plugins || []).find(p => p?.type === 'food') || null; }
+export function validateFoodSpec(plugin) {
+  const errors = [];
+  if (!plugin || typeof plugin !== 'object') return ['food plugin must be an object'];
+  if (!(typeof plugin.abs_tol === 'number' && Number.isFinite(plugin.abs_tol) && plugin.abs_tol > 0)) errors.push('food.abs_tol must be a finite number > 0');
+  if (!Array.isArray(plugin.instances) || !plugin.instances.length) errors.push('food plugin needs a non-empty instances array');
+  const names = new Set(), colonies = new Set();
+  const fields = ['name','colony','inventory','production','consumption','demand','fulfillment','farm_capacity','farm_effective_capacity','land'];
+  for (const [i, inst] of (plugin.instances || []).entries()) {
+    const p = `instances[${i}]`;
+    for (const x of fields) if (typeof inst?.[x] !== 'string' || !inst[x]) errors.push(`${p}.${x} is required`);
+    if (!Array.isArray(inst?.dispatch)) errors.push(`${p}.dispatch must be an array`);
+    if (!Array.isArray(inst?.arrival)) errors.push(`${p}.arrival must be an array`);
+    if (inst?.name) { if (names.has(inst.name)) errors.push(`duplicate food instance name: ${inst.name}`); names.add(inst.name); }
+    if (inst?.colony) { if (colonies.has(inst.colony)) errors.push(`duplicate food colony: ${inst.colony}`); colonies.add(inst.colony); }
+  }
+  for (const x of ['load','capacity','max_share']) if (typeof plugin.transport?.[x] !== 'string' || !plugin.transport[x]) errors.push(`food.transport.${x} is required`);
+  return errors;
+}
+export function checkFoodInstance(index, inst, plugin, allInstances) {
+  const checks = [], resolved = {};
+  const roles = { inventory:'STOCK', production:'FLOW', consumption:'FLOW', farm_capacity:'STOCK', farm_effective_capacity:'VARIABLE', land:'VARIABLE' };
+  for (const [role, kind] of Object.entries(roles)) {
+    const e = index.get(inst[role]);
+    if (!e) { checks.push(fail(`role ${role}`, `primitive not found: ${inst[role]}`)); continue; }
+    if (e.type !== kind) { checks.push(fail(`role ${role}`, `${e.name}: expected ${kind}, found ${e.type}`)); continue; }
+    resolved[role] = e; checks.push(pass(`role ${role}`, { primitive:e.name, type:e.type }));
+  }
+  const eq=(a,b)=>(a==null&&b==null)||(a!=null&&b!=null&&String(a).toLowerCase()===String(b).toLowerCase());
+  if (resolved.production) checks.push(resolved.production.from == null && eq(resolved.production.to, inst.inventory) ? pass('production topology') : fail('production topology', `${resolved.production.name} must be ∅ -> ${inst.inventory}`));
+  if (resolved.consumption) checks.push(eq(resolved.consumption.from, inst.inventory) && resolved.consumption.to == null ? pass('consumption topology') : fail('consumption topology', `${resolved.consumption.name} must be ${inst.inventory} -> ∅`));
+  const dep=(target,source,label)=>{const t=resolved[target];if(!t)return;if(!formulaRefs(t).has(String(source).toLowerCase()))checks.push(fail(label,`${t.name} does not reference [${source}]`));else if(!index.hasLink(source,t.name))checks.push(fail(label,`missing LINK ${source} -> ${t.name}`));else checks.push(pass(label));};
+  dep('production',inst.farm_effective_capacity,'production <- farm_effective_capacity');
+  dep('farm_effective_capacity',inst.farm_capacity,'farm_effective_capacity <- farm_capacity');
+  dep('farm_effective_capacity',inst.land,'farm_effective_capacity <- land');
+  for (const name of inst.dispatch || []) {
+    const d=index.get(name), label=`dispatch ${name}`;
+    if(!d){checks.push(fail(label,'primitive not found'));continue;}
+    if(d.type!=='FLOW'){checks.push(fail(label,`expected FLOW, found ${d.type}`));continue;}
+    if(!eq(d.from,inst.inventory)||!d.to){checks.push(fail(label,`must leave ${inst.inventory} into a cargo stock`));continue;}
+    const cargo=index.get(d.to);
+    if(!cargo||cargo.type!=='STOCK'){checks.push(fail(label,`destination ${d.to} is not a STOCK`));continue;}
+    const paired=allInstances.some(other=>other!==inst&&(other.arrival||[]).some(aName=>{const a=index.get(aName);return a?.type==='FLOW'&&eq(a.from,d.to)&&eq(a.to,other.inventory);}));
+    checks.push(paired?pass(label):fail(label,`no arrival carries ${d.to} into another declared food inventory`));
+  }
+  for(const name of inst.arrival||[]){
+    const a=index.get(name),label=`arrival ${name}`;
+    if(!a){checks.push(fail(label,'primitive not found'));continue;}
+    if(a.type!=='FLOW'){checks.push(fail(label,`expected FLOW, found ${a.type}`));continue;}
+    if(!a.from||!eq(a.to,inst.inventory)){checks.push(fail(label,`must arrive from cargo into ${inst.inventory}`));continue;}
+    const cargo=index.get(a.from);checks.push(cargo?.type==='STOCK'?pass(label):fail(label,`source ${a.from} is not a STOCK`));
+  }
+  const failed=checks.filter(x=>x.status==='FAIL');
+  return {name:inst.name,sector:inst.colony||null,classification:failed.length?'NON_CONFORMING':'CONFORMING',checks,variations:[],failures:failed.map(x=>`${x.name}: ${x.message}`)};
+}
+export function runFoodConformance(raw, validation, index=indexModel(raw)) {
+  const plugin=findFoodPlugin(validation);
+  if(!plugin)return{status:'SKIPPED',instances:[],summary:{instances:0,conforming:0,nonConforming:0}};
+  const specErrors=validateFoodSpec(plugin);
+  if(specErrors.length)return{status:'FAIL',specErrors,instances:[],summary:{instances:0,conforming:0,nonConforming:0}};
+  const instances=plugin.instances.map(i=>checkFoodInstance(index,i,plugin,plugin.instances)), n=instances.filter(i=>i.classification==='NON_CONFORMING').length;
+  return {status:n?'FAIL':'PASS',instances,summary:{instances:instances.length,conforming:instances.length-n,nonConforming:n}};
+}
+
 export function findPopulationPlugin(validation) { return (validation?.plugins || []).find(p => p?.type === 'population') || null; }
 export function validatePopulationSpec(plugin) {
   const errors=[];
@@ -445,10 +509,11 @@ export function runLifecycleConformance(raw, validation) {
   const deposit = runDepositConformance(raw, validation, index);
   const labor = runLaborConformance(raw, validation, index);
   const population = runPopulationConformance(raw, validation, index);
+  const food = runFoodConformance(raw, validation, index);
   const anyNonConforming = instances.some(i => i.classification === 'NON_CONFORMING');
   const modelWideFail = modelWide.some(c => c.status === 'FAIL');
   return {
-    status: anyNonConforming || modelWideFail || simpleCapital.status === 'FAIL' || deposit.status === 'FAIL' || labor.status === 'FAIL' || population.status === 'FAIL' ? 'FAIL' : 'PASS',
+    status: anyNonConforming || modelWideFail || simpleCapital.status === 'FAIL' || deposit.status === 'FAIL' || labor.status === 'FAIL' || population.status === 'FAIL' || food.status === 'FAIL' ? 'FAIL' : 'PASS',
     format: KERNEL_FORMAT,
     kernel: { roles: Object.keys(KERNEL_ROLES).length, requiredRoles: REQUIRED_ROLES.length, flows: KERNEL_FLOWS.length, stocks: KERNEL_STOCKS.length },
     legacySwitch: plugin.legacy_switch || 'Capital Lifecycle Enabled',
@@ -463,7 +528,8 @@ export function runLifecycleConformance(raw, validation) {
     simpleCapital,
     deposit,
     labor,
-    population
+    population,
+    food
   };
 }
 
@@ -498,6 +564,10 @@ export function printConformance(report, log = console.log) {
   if (report.population?.status !== 'SKIPPED') {
     log(`Population conformance: ${report.population.status}`);
     for(const inst of report.population.instances||[]){const checked=inst.checks.length,failed=inst.failures.length;log(`    ${inst.name.padEnd(32)} ${inst.classification}  (${checked-failed}/${checked} checks)`);for(const f of inst.failures)log(`        - ${f}`);}for(const e of report.population.specErrors||[])log(`    - ${e}`);
+  }
+  if (report.food?.status !== 'SKIPPED') {
+    log(`Food conformance: ${report.food.status}`);
+    for(const inst of report.food.instances||[]){const checked=inst.checks.length,failed=inst.failures.length;log(`    ${inst.name.padEnd(32)} ${inst.classification}  (${checked-failed}/${checked} checks)`);for(const f of inst.failures)log(`        - ${f}`);}for(const e of report.food.specErrors||[])log(`    - ${e}`);
   }
   if (report.deposit?.status !== 'SKIPPED') {
     log(`Deposit conformance: ${report.deposit.status}`);

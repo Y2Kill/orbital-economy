@@ -243,6 +243,45 @@ const STATIC_ONLY_PLUGINS = new Set(['open_boundaries', 'colony_symmetry', 'plan
 export function checkPlugin(plugin, ctx) {
   const results = [];
   if (STATIC_ONLY_PLUGINS.has(plugin.type)) return results;
+  if (plugin.type === 'food') {
+    const tol = plugin.abs_tol ?? 1e-8;
+    const safe = (name, fn) => { try { return fn(); } catch (e) { return fail(name, e.message || String(e)); } };
+    for (const inst of plugin.instances || []) {
+      const label = inst.name || inst.colony || 'food';
+      results.push(safe(`${label}: inventory and flows >= 0`, () => checkNonNegativeColumns(ctx, {
+        name: `${label}: inventory and flows >= 0`, abs_tol: tol,
+        columns: [inst.inventory, inst.production, inst.consumption, ...(inst.dispatch || []), ...(inst.arrival || [])]
+      })));
+      results.push(safe(`${label}: fulfillment in [0,1]`, () => {
+        const a = ctx.get(inst.fulfillment); let bad = null;
+        for (let i = 0; i < ctx.times.length; i++) if (a[i] < -tol || a[i] > 1 + tol) { bad = { time: ctx.times[i], value: a[i] }; break; }
+        return bad ? fail(`${label}: fulfillment in [0,1]`, `${inst.fulfillment} = ${bad.value} at day ${bad.time}`, bad)
+          : pass(`${label}: fulfillment in [0,1]`, { points: ctx.times.length });
+      }));
+      results.push(safe(`${label}: consumption <= demand`, () => checkRelation(ctx, {
+        name: `${label}: consumption <= demand`, left: inst.consumption, right: inst.demand, op: '<=', abs_tol: tol
+      })));
+      results.push(safe(`${label}: farm effective capacity <= land`, () => checkRelation(ctx, {
+        name: `${label}: farm effective capacity <= land`, left: inst.farm_effective_capacity, right: inst.land, op: '<=', abs_tol: tol
+      })));
+      results.push(safe(`${label}: production <= farm effective capacity`, () => checkRelation(ctx, {
+        name: `${label}: production <= farm effective capacity`, left: inst.production, right: inst.farm_effective_capacity, op: '<=', abs_tol: tol
+      })));
+    }
+    if (plugin.transport) results.push(safe('food: transport load <= max share * capacity', () => {
+      const load = ctx.get(plugin.transport.load), capacity = ctx.get(plugin.transport.capacity), share = ctx.get(plugin.transport.max_share);
+      let maxError = 0, maxTime = null, bad = null;
+      for (let i = 0; i < ctx.times.length; i++) {
+        const limit = share[i] * capacity[i], err = load[i] - limit;
+        if (err > maxError) { maxError = err; maxTime = ctx.times[i]; }
+        if (err > tol && !bad) bad = { time: ctx.times[i], load: load[i], limit };
+      }
+      return bad ? fail('food: transport load <= max share * capacity', `load ${bad.load} > limit ${bad.limit} at day ${bad.time}`, { maxError, maxTime })
+        : pass('food: transport load <= max share * capacity', { maxError, maxTime });
+    }));
+    return results;
+  }
+
   if (plugin.type === 'population') {
     const tol = plugin.abs_tol ?? 1e-9;
     const safe = (name, fn) => { try { return fn(); } catch (e) { return fail(name, e.message || String(e)); } };

@@ -551,6 +551,17 @@ try {
     return 'good PASS; over-employment FAIL; migration imbalance FAIL';
   });
 
+  await expect('46 food plugin: good passes; over-consumption and over-production fail', async () => {
+    const times=[0,1,2];
+    const base={inv:[20,20,20],prod:[3,3,3],cons:[2,2,2],demand:[2,2,2],fulfill:[1,.9,.8],cap:[10,10,10],eff:[8,8,8],land:[9,9,9],dispatch:[1,1,1],arrival:[1,1,1],load:[2,2,2],tcap:[10,10,10],share:[.8,.8,.8]};
+    const cx=v=>({times,has:n=>n in v,get(n){if(!(n in v))throw new Error(`unknown series ${n}`);return v[n];}});
+    const plugin={type:'food',abs_tol:1e-9,instances:[{name:'A food',colony:'A',inventory:'inv',production:'prod',consumption:'cons',demand:'demand',fulfillment:'fulfill',farm_capacity:'cap',farm_effective_capacity:'eff',land:'land',dispatch:['dispatch'],arrival:['arrival']}],transport:{load:'load',capacity:'tcap',max_share:'share'}};
+    const good=checkPlugin(plugin,cx(base));if(good.some(r=>r.status!=='PASS'))throw new Error('good: '+JSON.stringify(good));
+    const overC=structuredClone(base);overC.cons=[2,2.1,2];const rc=checkPlugin(plugin,cx(overC));if(!rc.some(r=>r.name.includes('consumption <= demand')&&r.status==='FAIL'))throw new Error('over-consumption did not fail');
+    const overP=structuredClone(base);overP.prod=[3,8.1,3];const rp=checkPlugin(plugin,cx(overP));if(!rp.some(r=>r.name.includes('production <= farm effective capacity')&&r.status==='FAIL'))throw new Error('over-production did not fail');
+    return 'good PASS; consumption>demand FAIL; production>effective capacity FAIL';
+  });
+
 } finally {
   fs.rmSync(tmp, { recursive: true, force: true });
 }

@@ -44,7 +44,7 @@ import {
   foodGeneratedNames,
   foodReplacementNames
 } from './nodes/food.js';
-import { runLifecycleConformance } from './lifecycle_conformance.js';
+import { runLifecycleConformance, runFoodConformance } from './lifecycle_conformance.js';
 import { runStructureAudits } from './structure_audit.js';
 
 const root = path.resolve(process.cwd());
@@ -88,6 +88,7 @@ const depositDeclarations = allNodeDeclarations.filter(x => x.decl?.type === 'de
 const energyDeclarations = allNodeDeclarations.filter(x => x.decl?.type === 'energy_consumer');
 const laborDeclarations = allNodeDeclarations.filter(x => x.decl?.type === 'labor');
 const populationDeclarations = allNodeDeclarations.filter(x => x.decl?.type === 'population');
+const foodDeclarations = allNodeDeclarations.filter(x => x.decl?.type === 'food');
 
 let passed = 0, failed = 0;
 function mark(ok, name, detail = '') {
@@ -353,12 +354,13 @@ function outerSwitchIs(model, name, switchName) {
   try { oldBranch(e.behavior.value, switchName, name); return true; } catch { return false; }
 }
 const layeredNodes = [
-  ...declarations.map(decl => ({ decl, strip: stripNode, targets: capitalLifecycleReplacementNames })),
-  ...simpleDeclarations.map(({ decl }) => ({ decl, strip: stripSimpleNode, targets: simpleCapitalReplacementNames })),
-  ...depositDeclarations.map(({ decl }) => ({ decl, strip: stripDepositNode, targets: depositReplacementNames })),
-  ...energyDeclarations.map(({ decl }) => ({ decl, strip: stripEnergyConsumerNode, targets: energyConsumerReplacementNames })),
-  ...laborDeclarations.map(({ decl }) => ({ decl, strip: stripLaborNode, targets: laborReplacementNames })),
-  ...populationDeclarations.map(({ decl }) => ({ decl, strip: stripPopulationNode, targets: populationReplacementNames }))
+  ...declarations.map(decl => ({ decl, strip: stripNode, targets: capitalLifecycleReplacementNames, generated: capitalLifecycleGeneratedNames })),
+  ...simpleDeclarations.map(({ decl }) => ({ decl, strip: stripSimpleNode, targets: simpleCapitalReplacementNames, generated: simpleCapitalGeneratedNames })),
+  ...depositDeclarations.map(({ decl }) => ({ decl, strip: stripDepositNode, targets: depositReplacementNames, generated: depositGeneratedNames })),
+  ...energyDeclarations.map(({ decl }) => ({ decl, strip: stripEnergyConsumerNode, targets: energyConsumerReplacementNames, generated: energyConsumerGeneratedNames })),
+  ...laborDeclarations.map(({ decl }) => ({ decl, strip: stripLaborNode, targets: laborReplacementNames, generated: laborGeneratedNames })),
+  ...populationDeclarations.map(({ decl }) => ({ decl, strip: stripPopulationNode, targets: populationReplacementNames, generated: populationGeneratedNames })),
+  ...foodDeclarations.map(({ decl }) => ({ decl, strip: stripFoodNode, targets: foodReplacementNames, generated: foodGeneratedNames }))
 ];
 // A switchless node is peelable only when nothing outside it reads what it generated, except the formulas it
 // replaces itself (population reads labor's Total Labor Requirement, so population is peeled before labor).
@@ -392,19 +394,40 @@ const states = declarations.map(decl => layers.get(decl));
 // The switchless nodes (labor, population) are the newest layers and wrap nothing, so the switched-node order above
 // cannot place them: there a switchless base may also lack switched layers peeled earlier. Their own cases need the
 // accepted model minus only the switchless nodes above them, so peel those alone from the accepted model.
-const switchlessLayers = new Map();
-{
-  let current = structuredClone(accepted);
-  const remaining = layeredNodes.filter(n => !n.decl.switch);
+function buildSwitchlessLayers(start, nodes = layeredNodes) {
+  let current = structuredClone(start);
+  const switchless = nodes.filter(n => !n.decl.switch);
+  const lowerNames = new Set(switchless.flatMap(n => (n.generated?.(n.decl) || [])).map(x => String(x).toLowerCase()));
+  const switched = nodes.filter(n => n.decl.switch);
+  const prepeeled = [];
+  const touchesSwitchless = n => {
+    const targets = new Set(n.targets(n.decl).map(x => String(x).toLowerCase()));
+    if ([...targets].some(x => lowerNames.has(x))) return true;
+    const own = new Set((n.generated?.(n.decl) || []).map(x => String(x).toLowerCase()));
+    return current.elements.some(e => e.type === 'LINK' && lowerNames.has(String(e.from).toLowerCase()) &&
+      (own.has(String(e.to).toLowerCase()) || targets.has(String(e.to).toLowerCase())));
+  };
+  while (true) {
+    const i = switched.findIndex(n => touchesSwitchless(n) &&
+      n.targets(n.decl).every(t => outerSwitchIs(current, t, n.decl.switch)));
+    if (i < 0) break;
+    const [n] = switched.splice(i, 1);
+    current = n.strip(current, n.decl);
+    prepeeled.push(n);
+  }
+  const result = new Map();
+  const remaining = [...switchless];
   while (remaining.length) {
     const i = remaining.findIndex(n => unreadOutside(current, n));
     if (i < 0) throw new Error(`cannot determine switchless node layering: ${remaining.map(n => n.decl.type).join(', ')} all read by others`);
     const [n] = remaining.splice(i, 1);
     const base = n.strip(current, n.decl);
-    switchlessLayers.set(n.decl, { base, target: current });
+    result.set(n.decl, { base, target: current });
     current = base;
   }
+  return { layers: result, prepeeled };
 }
+const { layers: switchlessLayers } = buildSwitchlessLayers(accepted);
 
 console.log('Orbital Economy Lab node-generator QA');
 console.log('Case 1: strip generated nodes from the current accepted model and rebuild them.\n');
@@ -1476,6 +1499,56 @@ await expect('46. food fixture expands and APPLY_PATCH matches prototype counts/
   return '96 elements / 25 replacements / 241 links; fingerprint=' + fp;
 });
 
+await expect('47. food fragments merge: static PASS, boundaries +22, planet P2/P3/P5 +2, loops 0', () => {
+  if (!foodState?.expanded) throw new Error('case 46 did not produce food state');
+  const before = runStructureAudits(foodState.base, validation);
+  const merged = mergeNodeValidation(validation, [foodState.expanded.validation]);
+  const twice = mergeNodeValidation(merged, [foodState.expanded.validation]);
+  if (JSON.stringify(merged) !== JSON.stringify(twice)) throw new Error('food validation merge is not idempotent');
+  const conf = runLifecycleConformance(foodState.model, merged);
+  const audits = runStructureAudits(foodState.model, merged);
+  if (conf.food?.status !== 'PASS' || conf.food.summary.instances !== 2 || conf.food.summary.nonConforming !== 0) throw new Error('food conformance mismatch: ' + JSON.stringify(conf.food));
+  const ob0=before.openBoundaries?.summary?.openFlows??0, ob1=audits.openBoundaries?.summary?.openFlows??0;
+  if (ob1-ob0 !== 22 || audits.openBoundaries?.summary?.unclassified !== 0) throw new Error('boundary delta/unclassified mismatch: '+ob0+'->'+ob1+', unclassified='+audits.openBoundaries?.summary?.unclassified);
+  const p0=before.planetClosure?.counters, p1=audits.planetClosure?.counters;
+  if (!p0 || !p1 || p1.P2.simple !== p0.P2.simple+2 || p1.P3.requests !== p0.P3.requests+2 || p1.P5.declared !== p0.P5.declared+2) throw new Error('planet counter delta mismatch: '+JSON.stringify({before:p0,after:p1}));
+  if (audits.planetClosure?.status !== 'PASS') throw new Error('planet_v1 failed');
+  if (audits.algebraicLoops?.status !== 'PASS' || audits.algebraicLoops.combinationsWithLoops !== 0) throw new Error('algebraic loops detected');
+  foodState.validation = merged;
+  return `food=2 CONFORMING; boundaries ${ob0}->${ob1}; P2.simple ${p0.P2.simple}->${p1.P2.simple}; P3.requests ${p0.P3.requests}->${p1.P3.requests}; P5 ${p0.P5.declared}->${p1.P5.declared}; loops=0`;
+});
+
+await expect('48. food trial Mode passes runtime plugin; both regions fed and trade occurs', () => {
+  if (!foodState?.validation) throw new Error('case 47 did not produce merged validation');
+  const source=(foodState.model.scenarios||[]).at(-1); if(!source) throw new Error('model has no scenarios');
+  const trial=structuredClone(source); trial.name=(source.name||'last mode')+' — Node QA food'; trial.values={...trial.values,[foodFixture.switch]:1};
+  const simModel=loadModelJSON(modelJsonForScenario(foodState.model,trial));
+  const errs=simModel.check(); if(errs.length)throw new Error('trial model.check: '+errs.map(e=>e.message||e).join('; '));
+  const results=simModel.simulate(), ctx=seriesContext(simModel,results);
+  const plugin=foodState.validation.plugins.find(p=>p.type==='food');
+  const checks=checkPlugin(plugin,ctx), bad=checks.filter(x=>x.status==='FAIL');
+  if(bad.length)throw new Error('food runtime: '+bad.map(x=>x.name+': '+(x.message||'FAIL')).join('; '));
+  for(const X of foodFixture.colonies){const a=Array.from(ctx.get(X+' Food Fulfillment'),Number);if(a.some(v=>!(v>0.9)))throw new Error(X+' fulfillment <= 0.9');}
+  const dispatch=foodFixture.colonies.flatMap(X=>foodFixture.colonies.filter(Y=>Y!==X).map(Y=>'Food Dispatch '+X+' to '+Y)).flatMap(n=>Array.from(ctx.get(n),Number));
+  if(!dispatch.some(v=>v>0))throw new Error('food dispatch never positive');
+  return 'runtime food PASS; A/B fulfillment >0.9; dispatch observed';
+});
+
+await expect('49. three-region food creates six dispatches/arrivals and static food conformance passes', () => {
+  const base=structuredClone(accepted), decl3=structuredClone(foodFixture); decl3.colonies=['A','B','C']; decl3.land={A:22,B:60,C:40};
+  const copy=name=>{if(base.elements.some(e=>e.type!=='LINK'&&e.name===name))return;const srcName=name.replace(/^C /,'A ');const src=base.elements.find(e=>e.type!=='LINK'&&e.name===srcName);if(!src)throw new Error('synthetic C source missing: '+name);const x=structuredClone(src);x.name=name;base.elements.push(x);};
+  const names=[decl3.inputs.population,decl3.inputs.population_initial,decl3.inputs.capital_goods.inventory,decl3.inputs.capital_goods.demand,decl3.inputs.capital_goods.fulfillment,decl3.inputs.energy.total_request,decl3.inputs.energy.supply,decl3.inputs.energy.priority_request,decl3.inputs.energy.priority_fulfillment,decl3.inputs.energy.fulfillment,decl3.inputs.labor_total,decl3.people.living,decl3.people.deaths,decl3.people.births,decl3.people.price_index.name,...decl3.people.living_columns.map(x=>x.column)].map(n=>n.replaceAll('{C}','C'));
+  for(const n of names)copy(n);
+  const ex=expandNode(decl3,base), model=applyPatch(base,{format:PATCH_FORMAT,...ex.patch}).model;
+  const dispatch=ex.patch.add_elements.filter(e=>e.type==='FLOW'&&e.name.startsWith('Food Dispatch '));
+  const arrival=ex.patch.add_elements.filter(e=>e.type==='FLOW'&&e.name.startsWith('Food Arrival '));
+  if(dispatch.length!==6||arrival.length!==6)throw new Error(`dispatch/arrival=${dispatch.length}/${arrival.length}, expected 6/6`);
+  const v={plugins:[{type:'food',abs_tol:1e-8,instances:ex.validation.food_instances,transport:ex.validation.food_transport}]};
+  const conf=runFoodConformance(model,v);
+  if(conf.status!=='PASS'||conf.summary.instances!==3)throw new Error('food conformance: '+JSON.stringify(conf));
+  return '6 dispatches + 6 arrivals; 3 food instances CONFORMING';
+});
+
 await expect('50. strip and rebuild food model with zero definition/replacement/link differences', () => {
   if (!foodState?.model) throw new Error('case 46 did not produce food model');
   const stripped = stripFoodNode(foodState.model, foodFixture);
@@ -1514,6 +1587,16 @@ await expect('51. food schema/base checks reject five required invalid cases wit
   await requireThrow(() => expandNode(missingInput, accepted), /inputs\.population\[A\] references missing base element "A Missing Population"/, 'missing input');
 
   return 'extra parameter, missing land colony, one region, bad capacity reader, and missing input rejected';
+});
+
+await expect('52. switched food is peeled before switchless population/labor layering', () => {
+  if (!foodState?.model) throw new Error('case 46 did not produce food model');
+  const foodNode={decl:foodFixture,strip:stripFoodNode,targets:foodReplacementNames,generated:foodGeneratedNames};
+  const chain=buildSwitchlessLayers(foodState.model,[...layeredNodes,foodNode]);
+  if(chain.prepeeled[0]?.decl!==foodFixture)throw new Error('food was not the first switched layer peeled above switchless nodes');
+  for(const {decl} of populationDeclarations){const layer=chain.layers.get(decl);if(!layer)throw new Error('population missing from switchless chain');expandNode(decl,layer.base);}
+  for(const {decl} of laborDeclarations){const layer=chain.layers.get(decl);if(!layer)throw new Error('labor missing from switchless chain');expandNode(decl,layer.base);}
+  return 'food peeled first; population/labor switchless layers remain rebuildable';
 });
 
 console.log(`\nNODE SELF-TEST: ${passed} passed, ${failed} failed`);

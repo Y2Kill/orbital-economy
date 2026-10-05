@@ -215,10 +215,13 @@ export function mergeNodeValidation(validation, fragments) {
   let deposit = out.plugins?.find(p => p.type === 'deposit') || null;
   let labor = out.plugins?.find(p => p.type === 'labor') || null;
   let population = out.plugins?.find(p => p.type === 'population') || null;
+  let food = out.plugins?.find(p => p.type === 'food') || null;
   let retirement = boundaries.categories.find(x => x.id === 'capital_retirement') || null;
   let exploration = boundaries.categories.find(x => x.id === 'exploration_expenditure') || null;
   let demographyBirths = boundaries.categories.find(x => x.id === 'demography_births') || null;
   let demographyDeaths = boundaries.categories.find(x => x.id === 'demography_deaths') || null;
+  let agriculture = boundaries.categories.find(x => x.id === 'agriculture') || null;
+  let finalConsumption = boundaries.categories.find(x => x.id === 'final_consumption') || null;
   const information = boundaries.categories.find(x => x.id === 'information_signal') || null;
 
   for (const [fi, fragment] of fragments.entries()) {
@@ -312,6 +315,22 @@ export function mergeNodeValidation(validation, fragments) {
         else if (!jsonEqual(existing, generated)) throw new Error(`validation fragment[${fi}]: population instance "${generated.name}" already exists with a different definition`);
       }
     }
+    if ((fragment.food_instances || []).length) {
+      const absTol = fragment.food_abs_tol ?? 1e-8;
+      const transport = fragment.food_transport;
+      if (!food) {
+        food = { type: 'food', abs_tol: absTol, instances: [], transport: structuredClone(transport) };
+        out.plugins.push(food);
+      }
+      if (!Array.isArray(food.instances)) throw new Error('validation: food.instances must be an array');
+      if ((food.abs_tol ?? 1e-8) !== absTol) throw new Error(`validation fragment[${fi}]: food abs_tol differs`);
+      if (!jsonEqual(food.transport, transport)) throw new Error(`validation fragment[${fi}]: food transport differs`);
+      for (const generated of fragment.food_instances) {
+        const existing = food.instances.find(x => x.name === generated.name);
+        if (!existing) food.instances.push(structuredClone(generated));
+        else if (!jsonEqual(existing, generated)) throw new Error(`validation fragment[${fi}]: food instance "${generated.name}" already exists with a different definition`);
+      }
+    }
     const ensureBoundaryCategory = (id, direction, names, reason, current) => {
       if (!(names || []).length) return current;
       if (!current) {
@@ -328,6 +347,10 @@ export function mergeNodeValidation(validation, fragments) {
       'people enter the model by birth (Planet v2 population)', demographyBirths);
     demographyDeaths = ensureBoundaryCategory('demography_deaths', 'sink', fragment.demography_deaths_names,
       'people leave the model by death (Planet v2 population)', demographyDeaths);
+    agriculture = ensureBoundaryCategory('agriculture', 'source', fragment.agriculture_names,
+      'food grows on regional land with energy, labor and farm capital (Planet v2)', agriculture);
+    finalConsumption = ensureBoundaryCategory('final_consumption', 'sink', fragment.final_consumption_names,
+      'final household/colony consumption leaves the modeled production network', finalConsumption);
 
     for (const generated of fragment.planet_labors || []) {
       const process = planet.processes.find(x => x.id === generated.process);
@@ -392,6 +415,18 @@ export function mergeNodeValidation(validation, fragments) {
         process.capacity = structuredClone(generated.capacity);
       } else if (!jsonEqual(process.capacity, generated.capacity)) {
         throw new Error(`validation fragment[${fi}]: planet process "${generated.process}" capacity differs`);
+      }
+    }
+    if (fragment.planet_process_category) {
+      if (!Array.isArray(planet.process_categories)) throw new Error('validation: planet_closure.process_categories is required');
+      if (!planet.process_categories.includes(fragment.planet_process_category)) planet.process_categories.push(fragment.planet_process_category);
+    }
+    if (fragment.planet_process) {
+      const generated = fragment.planet_process;
+      const existing = planet.processes.find(x => x.id === generated.id);
+      if (!existing) planet.processes.push(structuredClone(generated));
+      else if (!jsonEqual(existing, generated)) {
+        throw new Error(`validation fragment[${fi}]: planet process "${generated.id}" already exists with a different definition`);
       }
     }
   }

@@ -359,3 +359,20 @@ Generated validation добавляет plugin `population`, расширяет 
   }
 }
 ```
+
+
+## Food node — v0.9.17
+
+`food` — переключаемый узел Planet v2 step 2. Декларация задаёт регионы, `Food Enabled`, земельную ёмкость, 20 параметров, входы экономики/населения и точки интеграции общего транспорта. Для двухрегиональной fixture узел раскрывается детерминированно в **96 add / 25 replace / 241 LINK**; definition fingerprint относительно v7.7.11 — `d7657194d897c8c8`.
+
+Все замены существующих формул имеют форму `IfThenElse([Food Enabled] = 1, <новая ветвь>, <старая формула>)`. При `Food Enabled = 0` прежняя формула остаётся внешней old-ветвью без алгебраического переопределения.
+
+На регион создаются запас пищи и потребление, сглаженные сигналы спроса/производства/экспорта, фермерская мощность с мягким ограничением землёй, приоритетный запрос энергии, труд, цена и показатели потребности. Для каждой упорядоченной пары регионов создаются грузовой STOCK, dispatch и arrival с задержкой `Travel Time`. Еда занимает транспорт первой: `Food Transport Scale` ограничивает общий food-load долей `Food Transport Max Share` от `Transport Active Throughput Capacity`, остаток передаётся прежней грузовой системе.
+
+Generated validation:
+- plugin `food`: статическая HARD-проверка типов/топологии/dependencies и runtime-инварианты запасов, потоков, fulfillment, спроса, земли/производства и транспорта;
+- `open_boundaries`: `agriculture`, `final_consumption`, `capital_transformation`, `capital_retirement`;
+- `planet_closure`: процесс `farming` с simple capacity, energy requests и declared labor;
+- semantic merge идемпотентен.
+
+Fixture: `fixtures/nodes/food.json`.
