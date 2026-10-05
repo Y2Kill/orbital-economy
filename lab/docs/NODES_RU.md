@@ -369,6 +369,29 @@ Generated validation добавляет plugin `population`, расширяет 
 
 На регион создаются запас пищи и потребление, сглаженные сигналы спроса/производства/экспорта, фермерская мощность с мягким ограничением землёй, приоритетный запрос энергии, труд, цена и показатели потребности. Для каждой упорядоченной пары регионов создаются грузовой STOCK, dispatch и arrival с задержкой `Travel Time`. Еда занимает транспорт первой: `Food Transport Scale` ограничивает общий food-load долей `Food Transport Max Share` от `Transport Active Throughput Capacity`, остаток передаётся прежней грузовой системе.
 
+Фермерский энергозапрос включён в приоритетную группу, потому что при дефиците энергии питание — жизнеобеспечивающий контур: его провал непосредственно повышает смертность и снижает рождаемость. По той же причине еда резервирует транспорт первой (до `Food Transport Max Share`): сначала обслуживается физическая потребность населения, а оставшаяся пропускная способность достаётся прежним товарным грузам. Это соответствует экспериментам `docs/research/FOOD_PROTOTYPE_2026-10-05_RU.md`.
+
+Пример минимальной формы декларации:
+
+```json
+{
+  "type": "food",
+  "version": 1,
+  "colonies": ["A", "B"],
+  "switch": "Food Enabled",
+  "land": { "A": 22, "B": 60 },
+  "parameters": {
+    "Food Need per Capita": 1,
+    "Food Energy per Unit": 0.5
+  },
+  "inputs": { "...": "полная форма — fixtures/nodes/food.json" },
+  "transport": { "...": "полная форма — fixtures/nodes/food.json" },
+  "people": { "...": "полная форма — fixtures/nodes/food.json" }
+}
+```
+
+Полная схема требует ровно все 20 параметров; сокращённый пример выше показывает только форму, а исполняемый пример — fixture.
+
 Generated validation:
 - plugin `food`: статическая HARD-проверка типов/топологии/dependencies и runtime-инварианты запасов, потоков, fulfillment, спроса, земли/производства и транспорта;
 - `open_boundaries`: `agriculture`, `final_consumption`, `capital_transformation`, `capital_retirement`;

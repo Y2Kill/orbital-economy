@@ -1488,15 +1488,25 @@ let foodState = null;
 
 await expect('46. food fixture expands and APPLY_PATCH matches prototype counts/fingerprint', () => {
   const alreadyPresent = accepted.elements.some(e => e.type !== 'LINK' && e.name === foodFixture.switch);
-  if (alreadyPresent) throw new Error('food layer unexpectedly already present in v7.7.11 accepted model');
-  const expanded = expandNode(foodFixture, accepted);
-  const model = applyPatch(accepted, { format: PATCH_FORMAT, ...expanded.patch }).model;
+  const acceptedDecl = foodDeclarations.find(x => x.decl.switch === foodFixture.switch)?.decl || null;
+  const acceptedLayer = alreadyPresent && acceptedDecl ? layers.get(acceptedDecl) : null;
+  if (alreadyPresent && !acceptedLayer) throw new Error('food layer is present in accepted model but its declaration/layer cannot be identified');
+  const baseModel = alreadyPresent ? acceptedLayer.base : accepted;
+  const expanded = expandNode(foodFixture, baseModel);
+  const model = applyPatch(baseModel, { format: PATCH_FORMAT, ...expanded.patch }).model;
   const counts = [expanded.patch.add_elements.length, expanded.patch.replace_formulas.length, expanded.patch.add_links.length];
   if (counts.join('/') !== '96/25/241') throw new Error('prototype count mismatch: got ' + counts.join('/') + ', expected 96/25/241');
   const fp = definitionFingerprint(model);
-  if (fp !== 'd7657194d897c8c8') throw new Error('definition fingerprint ' + fp + ', expected d7657194d897c8c8');
-  foodState = { base: accepted, model, expanded };
-  return '96 elements / 25 replacements / 241 links; fingerprint=' + fp;
+  if (!alreadyPresent && fp !== 'd7657194d897c8c8') throw new Error('definition fingerprint ' + fp + ', expected d7657194d897c8c8');
+  if (alreadyPresent) {
+    const a=new Map(acceptedLayer.target.elements.filter(e=>e.type!=='LINK').map(e=>[e.name,def(e)]));
+    const b=new Map(model.elements.filter(e=>e.type!=='LINK').map(e=>[e.name,def(e)]));
+    if(a.size!==b.size)throw new Error('accepted food layer element count differs');
+    for(const [name,definition] of a)if(b.get(name)!==definition)throw new Error('accepted food layer definition differs: '+name);
+    if(!sameSet(linkSet(acceptedLayer.target),linkSet(model)))throw new Error('accepted food layer link set differs');
+  }
+  foodState = { base: baseModel, model, expanded, alreadyPresent, acceptedLayer, target: acceptedLayer?.target || model };
+  return `96 elements / 25 replacements / 241 links; fingerprint=${fp}${alreadyPresent ? '; accepted layer rebuilt exactly' : ''}`;
 });
 
 await expect('47. food fragments merge: static PASS, boundaries +22, planet P2/P3/P5 +2, loops 0', () => {
