@@ -1495,9 +1495,9 @@ await expect('46. food fixture expands and APPLY_PATCH matches prototype counts/
   const expanded = expandNode(foodFixture, baseModel);
   const model = applyPatch(baseModel, { format: PATCH_FORMAT, ...expanded.patch }).model;
   const counts = [expanded.patch.add_elements.length, expanded.patch.replace_formulas.length, expanded.patch.add_links.length];
-  if (counts.join('/') !== '96/25/241') throw new Error('prototype count mismatch: got ' + counts.join('/') + ', expected 96/25/241');
+  if (counts.join('/') !== '96/24/239') throw new Error('prototype count mismatch: got ' + counts.join('/') + ', expected 96/24/239');
   const fp = definitionFingerprint(model);
-  if (!alreadyPresent && fp !== 'd7657194d897c8c8') throw new Error('definition fingerprint ' + fp + ', expected d7657194d897c8c8');
+  if (!alreadyPresent && fp !== 'c18a59dd39488c12') throw new Error('definition fingerprint ' + fp + ', expected c18a59dd39488c12');
   if (alreadyPresent) {
     const a=new Map(acceptedLayer.target.elements.filter(e=>e.type!=='LINK').map(e=>[e.name,def(e)]));
     const b=new Map(model.elements.filter(e=>e.type!=='LINK').map(e=>[e.name,def(e)]));
@@ -1506,7 +1506,7 @@ await expect('46. food fixture expands and APPLY_PATCH matches prototype counts/
     if(!sameSet(linkSet(acceptedLayer.target),linkSet(model)))throw new Error('accepted food layer link set differs');
   }
   foodState = { base: baseModel, model, expanded, alreadyPresent, acceptedLayer, target: acceptedLayer?.target || model };
-  return `96 elements / 25 replacements / 241 links; fingerprint=${fp}${alreadyPresent ? '; accepted layer rebuilt exactly' : ''}`;
+  return `96 elements / 24 replacements / 239 links; fingerprint=${fp}${alreadyPresent ? '; accepted layer rebuilt exactly' : ''}`;
 });
 
 await expect('47. food fragments merge: static PASS, boundaries +22, planet P2/P3/P5 +2, loops 0', () => {
@@ -1528,20 +1528,21 @@ await expect('47. food fragments merge: static PASS, boundaries +22, planet P2/P
   return `food=2 CONFORMING; boundaries ${ob0}->${ob1}; P2.simple ${p0.P2.simple}->${p1.P2.simple}; P3.requests ${p0.P3.requests}->${p1.P3.requests}; P5 ${p0.P5.declared}->${p1.P5.declared}; loops=0`;
 });
 
-await expect('48. food trial Mode passes runtime plugin; both regions fed and trade occurs', () => {
+await expect('48. food trial Mode passes all merged runtime plugins; both regions fed and trade occurs', () => {
   if (!foodState?.validation) throw new Error('case 47 did not produce merged validation');
   const source=(foodState.model.scenarios||[]).at(-1); if(!source) throw new Error('model has no scenarios');
   const trial=structuredClone(source); trial.name=(source.name||'last mode')+' — Node QA food'; trial.values={...trial.values,[foodFixture.switch]:1};
   const simModel=loadModelJSON(modelJsonForScenario(foodState.model,trial));
   const errs=simModel.check(); if(errs.length)throw new Error('trial model.check: '+errs.map(e=>e.message||e).join('; '));
   const results=simModel.simulate(), ctx=seriesContext(simModel,results);
-  const plugin=foodState.validation.plugins.find(p=>p.type==='food');
-  const checks=checkPlugin(plugin,ctx), bad=checks.filter(x=>x.status==='FAIL');
-  if(bad.length)throw new Error('food runtime: '+bad.map(x=>x.name+': '+(x.message||'FAIL')).join('; '));
+  const checks=[];
+  for(const plugin of foodState.validation.plugins||[])checks.push(...checkPlugin(plugin,ctx));
+  const bad=checks.filter(x=>x.status==='FAIL');
+  if(bad.length)throw new Error('merged runtime plugins: '+bad.map(x=>x.name+': '+(x.message||'FAIL')).join('; '));
   for(const X of foodFixture.colonies){const a=Array.from(ctx.get(X+' Food Fulfillment'),Number);if(a.some(v=>!(v>0.9)))throw new Error(X+' fulfillment <= 0.9');}
   const dispatch=foodFixture.colonies.flatMap(X=>foodFixture.colonies.filter(Y=>Y!==X).map(Y=>'Food Dispatch '+X+' to '+Y)).flatMap(n=>Array.from(ctx.get(n),Number));
   if(!dispatch.some(v=>v>0))throw new Error('food dispatch never positive');
-  return 'runtime food PASS; A/B fulfillment >0.9; dispatch observed';
+  return 'all merged runtime plugins PASS; A/B fulfillment >0.9; dispatch observed';
 });
 
 await expect('49. three-region food creates six dispatches/arrivals and static food conformance passes', () => {

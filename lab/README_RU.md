@@ -922,4 +922,4 @@ Validation plugin `population` выполняет HARD static topology checks и
 
 Declarative `food` реализует Planet v2 step 2: региональную еду, фермы с земельным ограничением, капиталом, приоритетной энергией и трудом, а также торговлю между каждой упорядоченной парой регионов. Все изменения прежних формул gated переключателем `Food Enabled`; OFF сохраняет старую формулу буквально.
 
-Generated validation включает plugin `food`, новые boundary-классификации и процесс `farming` в Planet closure. Эталонная A/B fixture раскрывается в 96 add / 25 replace / 241 LINK с fingerprint `d7657194d897c8c8`.
+Generated validation включает plugin `food`, новые boundary-классификации и процесс `farming` в Planet closure. Эталонная A/B fixture раскрывается в 96 add / 24 replace / 239 LINK с fingerprint `c18a59dd39488c12`.

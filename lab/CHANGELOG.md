@@ -1,7 +1,7 @@
 ## v0.9.17 — food node
 
 - новый declarative type `food` (Planet v2 step 2): региональные запасы/потребление еды, фермы с землёй/капиталом/энергией/трудом и попарная торговля через общий транспорт;
-- fixture: **96 add / 25 replace / 241 LINK**, fingerprint `d7657194d897c8c8`; все 25 замен switch-wrapped через `Food Enabled`;
+- fixture: **96 add / 24 replace / 239 LINK**, fingerprint `c18a59dd39488c12`; все 24 замены switch-wrapped через `Food Enabled`;
 - generated validation: plugin `food`, категории `agriculture` / `final_consumption`, capital transformation/retirement и процесс `farming` в `planet_closure`;
 - static HARD food conformance и runtime invariants; node_qa cases 46–52, QA case 46;
 - switchless layering предварительно снимает переключаемые узлы, которые читают или оборачивают элементы labor/population;

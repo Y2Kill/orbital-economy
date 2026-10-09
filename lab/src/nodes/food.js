@@ -182,7 +182,7 @@ export function foodGeneratedNames(decl) {
     X + ' Farm Depreciation',
     X + ' Farming Requested Energy',
     X + ' Farming Allocated Energy',
-    X + ' Farming Energy Fulfillment',
+    X + ' Farming Energy Fulfillment Ratio',
     X + ' Food Production',
     X + ' Farming Labor Requirement',
     X + ' Food Price',
@@ -306,8 +306,8 @@ export function expandFood(decl, base) {
     F(`${X} Farm Depreciation`, `${X} Farm Capacity`, null, `IfThenElse(${ON}, [${X} Farm Capacity] * [Farm Depreciation Rate], 0)`);
     V(`${X} Farming Requested Energy`, `IfThenElse(${ON}, [${X} Food Production Signal] * [Food Energy per Unit], 0)`, 'energy request of farms, served in the priority group');
     V(`${X} Farming Allocated Energy`, `[${X} Farming Requested Energy] * [${sub(I.energy.priority_fulfillment, X)}]`);
-    V(`${X} Farming Energy Fulfillment`, `IfThenElse([${X} Farming Requested Energy] > 0.001, [${X} Farming Allocated Energy] / [${X} Farming Requested Energy], 1)`);
-    F(`${X} Food Production`, null, `${X} Food Inventory`, `IfThenElse(${ON}, Min([${X} Desired Food Production], [${X} Farm Effective Capacity]) * [${X} Farming Energy Fulfillment], 0)`, 'food grown');
+    V(`${X} Farming Energy Fulfillment Ratio`, `IfThenElse([${X} Farming Requested Energy] > 0.001, [${X} Farming Allocated Energy] / [${X} Farming Requested Energy], 1)`);
+    F(`${X} Food Production`, null, `${X} Food Inventory`, `IfThenElse(${ON}, Min([${X} Desired Food Production], [${X} Farm Effective Capacity]) * [${X} Farming Energy Fulfillment Ratio], 0)`, 'food grown');
     V(`${X} Farming Labor Requirement`, `[${X} Food Production] * [Food Labor per Unit]`);
     V(`${X} Food Price`, `[Food Price Reference] * ([Food Target Coverage Days] / Max([${X} Food Coverage Days], 1)) ^ [Food Price Elasticity]`, 'scarcity price of food');
   }
@@ -373,6 +373,8 @@ export function expandFood(decl, base) {
       land: `${X} Farm Land Capacity`, dispatch: C.filter(Y => Y !== X).map(Y => `Food Dispatch ${X} to ${Y}`), arrival: C.filter(Y => Y !== X).map(Y => `Food Arrival ${Y} to ${X}`)
     })),
     food_transport: { load: 'Food Transport Load', capacity: T.capacity, max_share: 'Food Transport Max Share' },
+    energy_balance_consumers: ['Farming'],
+    energy_balance_priority: ['Farming'],
     agriculture_names: ['? Food Production'],
     final_consumption_names: ['? Food Consumption'],
     capital_transformation_names: ['? Farm Expansion', '? Farm Capital Goods Consumption'],

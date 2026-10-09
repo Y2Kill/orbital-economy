@@ -1,9 +1,15 @@
 {
   "type": "food",
   "version": 1,
-  "colonies": ["A", "B"],
+  "colonies": [
+    "A",
+    "B"
+  ],
   "switch": "Food Enabled",
-  "land": { "A": 22, "B": 60 },
+  "land": {
+    "A": 22,
+    "B": 60
+  },
   "parameters": {
     "Food Need per Capita": 1,
     "Food Energy per Unit": 0.5,
@@ -46,20 +52,42 @@
   },
   "transport": {
     "capacity": "Transport Active Throughput Capacity",
-    "capacity_readers": ["Capacity Limited Total Transport Load", "Transport Scarcity Active"],
+    "capacity_readers": [
+      "Capacity Limited Total Transport Load",
+      "Transport Scarcity Active"
+    ],
     "load_readers": [
-      { "name": "Transport Utilization", "term": "[Capacity Limited Total Transport Load]" },
-      { "name": "Transport Revenue", "term": "[Capacity Limited Total Transport Load]" },
-      { "name": "Transport Variable Cost", "term": "[Capacity Limited Total Transport Load]" },
-      { "name": "Transport Labor Requirement", "term": "[Capacity Limited Total Transport Load]" },
-      { "name": "Transport Required Active Throughput Capacity", "term": "[Total Requested Transport Load]" }
+      {
+        "name": "Transport Utilization",
+        "term": "[Capacity Limited Total Transport Load]"
+      },
+      {
+        "name": "Transport Revenue",
+        "term": "[Capacity Limited Total Transport Load]"
+      },
+      {
+        "name": "Transport Variable Cost",
+        "term": "[Capacity Limited Total Transport Load]"
+      },
+      {
+        "name": "Transport Required Active Throughput Capacity",
+        "term": "[Total Requested Transport Load]"
+      }
     ]
   },
   "people": {
     "living": "{C} Living Standard",
-    "living_columns": [{ "column": "{C} Energy Fulfillment Ratio", "weight": "Living Energy Weight With Food" }],
+    "living_columns": [
+      {
+        "column": "{C} Energy Fulfillment Ratio",
+        "weight": "Living Energy Weight With Food"
+      }
+    ],
     "deaths": "{C} Deaths",
     "births": "{C} Births",
-    "price_index": { "name": "{C} Price Index", "terms": 2 }
+    "price_index": {
+      "name": "{C} Price Index",
+      "terms": 2
+    }
   }
 }

@@ -277,6 +277,6 @@ Linux CI КТ2: https://github.com/Y2Kill/orbital-economy/actions/runs/370065015
 
 ## v0.9.17 — food node QA
 
-Задание 031 добавляет NODE cases 46–52 и QA 46. Oracle раскрытия: **96/25/241**, fingerprint `d7657194d897c8c8`. Cases 47–49 проверяют semantic merge, food static/runtime и 3-region topology; case 50 — strip/rebuild; case 51 — пять schema/base negatives; case 52 — switched `food` снимается перед построением switchless chain `population/labor`.
+Задание 031 добавляет NODE cases 46–52 и QA 46. Oracle раскрытия: **96/24/239**, fingerprint `c18a59dd39488c12`. Cases 47–49 проверяют semantic merge, food static/runtime и 3-region topology; case 50 — strip/rebuild; case 51 — пять schema/base negatives; case 52 — switched `food` снимается перед построением switchless chain `population/labor`.
 
 Целевые итоги: **NODE 52/52**, **QA 46/46**; все прежние self-tests остаются PASS.
