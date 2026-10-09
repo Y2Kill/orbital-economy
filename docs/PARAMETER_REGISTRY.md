@@ -1,17 +1,17 @@
 # Orbital Economy — реестр внешних параметров
 
-- generated: 2026-10-05T09:19:51.127Z
-- model: Orbital Economy v7.7.11 r1 — Population — SHA-256 `dbe824b34ad41b5b7d50a6df096b59268198dd4c02c2b36aba5645b24809f0d2`
-- annotations: docs/PARAMETER_ANNOTATIONS.json (SHA-256 `4aea6ce8107756e4f4b9d923411880104762b4a85c3041667784fd742da1ea7a`)
+- generated: 2026-10-09T14:51:25.377Z
+- model: Orbital Economy v7.7.12 r1 — Food — SHA-256 `e8829fa550172dfab9629a0d66b0c628c1d802c5c1a3826ab7a9a86365c9f234`
+- annotations: docs/PARAMETER_ANNOTATIONS.json (SHA-256 `ee05ad1e6ed55dbdc23791ba40a6a10aa9a1ce8a7ed939149f8857a7817bdc31`)
 
 Всё, что модель не выводит сама: числовые константы, начальные запасы, переключатели, тестовые множители. Инвентарь сгенерирован из ModelJSON; аннотации («роль / что меняет / доказательство») ведутся вручную и версионируются вместе с baseline.
 
 ## Сводка
 
-- внешних величин: **536** (константы 360, начальные запасы 117, переключатели 24, тестовая обвязка 35)
-- по колониям: A 147, B 147, глобальные 242
-- аннотировано: **359 / 536** (67 %)
-- несимметричных пар A/B: **64**, из них без аннотации: **0**
+- внешних величин: **571** (константы 380, начальные запасы 129, переключатели 27, тестовая обвязка 35)
+- по колониям: A 153, B 153, глобальные 265
+- аннотировано: **392 / 571** (69 %)
+- несимметричных пар A/B: **69**, из них без аннотации: **0**
 
 ## Несимметричные пары A/B — что задаёт различия колоний
 
@@ -56,6 +56,11 @@
 | Construction Materials Plant Active Capacity | Other | 3 | 2 | Starts active equal to installed capacity, preserving the prior base-capacity level before lifecycle adjustment; A/B are intentionally asymmetric (3 vs 2). |
 | Construction Materials Plant Installed Capacity | Other | 3 | 2 | Seeds lifecycle capital at the previously accepted base production capacity; A/B are intentionally asymmetric (3 vs 2). |
 | Domestic Supply Signal | Other | 16 | 22 | То же для металла. |
+| Farm Capacity | Other | 22 | 17.142206601972095 | Sets the starting productive capital of farms before expansion/depreciation dynamics. |
+| Farm Land Capacity | Other | 22 | 60 | Sets the maximum effective/desired farm scale by region and is the primary initial comparative advantage of B. |
+| Food Demand Signal | Other | 28 | 8.5 | Seeds demand planning at the pre-food demographic state, avoiding a startup smoothing transient. |
+| Food Inventory | Other | 840 | 255 | Sets starting coverage and prevents an artificial startup famine while farms/trade begin from the balanced start state. |
+| Food Production Signal | Other | 20.174088950502767 | 16.325911049497233 | Seeds farm energy requests and desired farm capacity at the physically balanced startup production plan. |
 | Local Base Demand | Other | 16 | 22 | Масштаб конечного рынка металла; B — больший потребитель при меньшей добыче → структурный импорт металла B из A (~21–23/день). |
 | Population Initial | Other | 28 | 8.5 | Sets the scale of each region's Population stock and, through participation 0.5, its labor force (A 14 / B 4.25), compared with the region's total labor requirement. A is the larger economy, so it starts with the larger population; in the first year both regions employ about 94 % of their labor force (Mode 46). |
 | Regolith Base Extraction Capacity | Other | 7 | 5 | Caps Regolith extraction through the standard soft-cap function. |
@@ -159,6 +164,7 @@
 | B Construction Materials Labor per Unit | constant | 0.3 | Construction Materials labor intensity for colony B, value 0.3. | Multiplies B Construction Materials output and its Automation Factor to form the process Labor Requirement. The A/B pair is intentionally symmetric at 0.3/0.3. | V7_7_10_ARCHITECTURE_SPEC §1–§2 and draft/process-labor.json. |
 | B Regolith Extraction Labor per Unit | constant | 0.2 | Regolith Extraction labor intensity for colony B, value 0.2. | Multiplies B Regolith Extraction output and its Automation Factor to form the process Labor Requirement. The A/B pair is intentionally symmetric at 0.2/0.2. | V7_7_10_ARCHITECTURE_SPEC §1–§2 and draft/process-labor.json. |
 | B Wage | constant | 140 / 100 | Ставка труда (A 100 / B 140). | Входит в Metal Unit Cost (0.1×) и Electronics Unit Cost (0.05×): B дороже на 4/ед. металла и 2/ед. электроники. В v7.4 после исчезновения дешёвого feedstock B — второй фактор, из-за которого B теряет преимущество в электронике. | Electronics Unit Cost Mode 17 @1080: A 13.75, B 16.71. |
+| Food Labor per Unit | constant | 0.15 | Farm labor intensity, value 0.15 labor units per unit of food production. | Scales Farming Labor Requirement; labor remains accounting-only at Planet v2 step 2. | docs/tasks/032-food/V7_7_12_ARCHITECTURE_SPEC.md §§1–5 and docs/research/FOOD_PROTOTYPE_2026-10-05_RU.md. |
 | Labor Participation Share | constant | 0.5 | Dimensionless share of population counted as labor force, value 0.50. | Labor Force = Population × Labor Participation Share for each region. | docs/research/POPULATION_PROTOTYPE_2026-10-04_RU.md: third-series grid selected 0.50; V7_7_11_ARCHITECTURE_SPEC §1. |
 | Minimum Human Labor Share | constant | 0.05 | Automation floor parameter, value 0.05. | Sets the irreducible human share in every generated Automation Factor. | V7_7_10_ARCHITECTURE_SPEC §1–§2 and draft/process-labor.json. |
 | Reference Real Wage | constant | 100 | Reference real-wage level, value 100 in model wage units after price-index normalization. | Normalizes Real Wage in the attractiveness formula so the wage term is dimensionless. | docs/research/POPULATION_PROTOTYPE_2026-10-04_RU.md: reference real wage 100 was set manually; retained normalization baseline. |
@@ -247,6 +253,11 @@
 | A Construction Materials Plant Active Capacity | initial_stock | 3 / 2 | Initial active construction-materials plant capacity for colony A, value 3. | Starts active equal to installed capacity, preserving the prior base-capacity level before lifecycle adjustment; A/B are intentionally asymmetric (3 vs 2). | V7_7_3_ARCHITECTURE_SPEC §2; same specified initial A/B capacities as Installed. |
 | A Construction Materials Plant Installed Capacity | initial_stock | 3 / 2 | Initial installed construction-materials plant capacity for colony A, value 3. | Seeds lifecycle capital at the previously accepted base production capacity; A/B are intentionally asymmetric (3 vs 2). | V7_7_3_ARCHITECTURE_SPEC §2 explicitly requires A=3, B=2 and mandatory annotation of the asymmetric pair. |
 | A Domestic Supply Signal | initial_stock | 16 / 22 | Начальный сигнал локального предложения металла (16 / 22). | То же для металла. |  |
+| A Farm Capacity | initial_stock | 22 / 17.142206601972095 | Initial physical farm capacity. Generated start values A=22, B=17.142206601972095 from initial population, land and the start-state export allocation. | Sets the starting productive capital of farms before expansion/depreciation dynamics. | lab/src/nodes/food.js start-state algorithm; V7_7_12_ARCHITECTURE_SPEC §5 notes B start ≈17.14. |
+| A Farm Land Capacity | switch | 22 / 60 | Regional farm-land soft cap. Initial values A=22, B=60; fertile B is an explicit owner decision. | Sets the maximum effective/desired farm scale by region and is the primary initial comparative advantage of B. | V7_7_12_ARCHITECTURE_SPEC §§1,3,5: A 22 / B 60; Mode 51 probes 40/40. |
+| A Food Demand Signal | initial_stock | 28 / 8.5 | Initial smoothed food-demand signal. A=28, B=8.5, equal to each region's initial population. | Seeds demand planning at the pre-food demographic state, avoiding a startup smoothing transient. | lab/src/nodes/food.js start-state algorithm: Food Demand Signal initial = population_initial. |
+| A Food Inventory | initial_stock | 840 / 255 | Initial food stock. A=840, B=255 = initial population (28 / 8.5) × 30 target coverage days. | Sets starting coverage and prevents an artificial startup famine while farms/trade begin from the balanced start state. | lab/src/nodes/food.js: Food Inventory initial = population_initial × Food Target Coverage Days. |
+| A Food Production Signal | initial_stock | 20.174088950502767 / 16.325911049497233 | Initial smoothed production plan. A=20.174088950502767, B=16.325911049497233 after land-limited A and B's assigned startup exports. | Seeds farm energy requests and desired farm capacity at the physically balanced startup production plan. | lab/src/nodes/food.js start-state algorithm (soft land efficiency plus startup export allocation); V7_7_12_ARCHITECTURE_SPEC §5. |
 | A Local Base Demand | constant | 16 / 22 | Базовый конечный спрос на металл (A 16 / B 22 /день). | Масштаб конечного рынка металла; B — больший потребитель при меньшей добыче → структурный импорт металла B из A (~21–23/день). | Shipment Rate A→B: 23.1 (Mode 12), 20.8 (Mode 17). |
 | A Population Initial | constant | 28 / 8.5 | Starting population of the region (A 28 / B 8.5, model units of people). | Sets the scale of each region's Population stock and, through participation 0.5, its labor force (A 14 / B 4.25), compared with the region's total labor requirement. A is the larger economy, so it starts with the larger population; in the first year both regions employ about 94 % of their labor force (Mode 46). | docs/research/POPULATION_PROTOTYPE_2026-10-04_RU.md (calibration, participation 0.50); docs/tasks/030-population/V7_7_11_ARCHITECTURE_SPEC.md §1. Added by the owner at acceptance: the task listed only the 11 shared parameters. |
 | A Regolith Base Extraction Capacity | constant | 7 / 5 | [calib] fixed extraction capacity (7). | Caps Regolith extraction through the standard soft-cap function. | Owner skeleton feasibility value; candidate run to confirm baseline and shock behaviour. |
@@ -278,6 +289,11 @@
 | B Construction Materials Plant Active Capacity | initial_stock | 2 / 3 | Initial active construction-materials plant capacity for colony B, value 2. | Starts active equal to installed capacity, preserving the prior base-capacity level before lifecycle adjustment; A/B are intentionally asymmetric (3 vs 2). | V7_7_3_ARCHITECTURE_SPEC §2; same specified initial A/B capacities as Installed. |
 | B Construction Materials Plant Installed Capacity | initial_stock | 2 / 3 | Initial installed construction-materials plant capacity for colony B, value 2. | Seeds lifecycle capital at the previously accepted base production capacity; A/B are intentionally asymmetric (3 vs 2). | V7_7_3_ARCHITECTURE_SPEC §2 explicitly requires A=3, B=2 and mandatory annotation of the asymmetric pair. |
 | B Domestic Supply Signal | initial_stock | 22 / 16 | Начальный сигнал локального предложения металла (16 / 22). | То же для металла. |  |
+| B Farm Capacity | initial_stock | 17.142206601972095 / 22 | Initial physical farm capacity. Generated start values A=22, B=17.142206601972095 from initial population, land and the start-state export allocation. | Sets the starting productive capital of farms before expansion/depreciation dynamics. | lab/src/nodes/food.js start-state algorithm; V7_7_12_ARCHITECTURE_SPEC §5 notes B start ≈17.14. |
+| B Farm Land Capacity | switch | 60 / 22 | Regional farm-land soft cap. Initial values A=22, B=60; fertile B is an explicit owner decision. | Sets the maximum effective/desired farm scale by region and is the primary initial comparative advantage of B. | V7_7_12_ARCHITECTURE_SPEC §§1,3,5: A 22 / B 60; Mode 51 probes 40/40. |
+| B Food Demand Signal | initial_stock | 8.5 / 28 | Initial smoothed food-demand signal. A=28, B=8.5, equal to each region's initial population. | Seeds demand planning at the pre-food demographic state, avoiding a startup smoothing transient. | lab/src/nodes/food.js start-state algorithm: Food Demand Signal initial = population_initial. |
+| B Food Inventory | initial_stock | 255 / 840 | Initial food stock. A=840, B=255 = initial population (28 / 8.5) × 30 target coverage days. | Sets starting coverage and prevents an artificial startup famine while farms/trade begin from the balanced start state. | lab/src/nodes/food.js: Food Inventory initial = population_initial × Food Target Coverage Days. |
+| B Food Production Signal | initial_stock | 16.325911049497233 / 20.174088950502767 | Initial smoothed production plan. A=20.174088950502767, B=16.325911049497233 after land-limited A and B's assigned startup exports. | Seeds farm energy requests and desired farm capacity at the physically balanced startup production plan. | lab/src/nodes/food.js start-state algorithm (soft land efficiency plus startup export allocation); V7_7_12_ARCHITECTURE_SPEC §5. |
 | B Local Base Demand | constant | 22 / 16 | Базовый конечный спрос на металл (A 16 / B 22 /день). | Масштаб конечного рынка металла; B — больший потребитель при меньшей добыче → структурный импорт металла B из A (~21–23/день). | Shipment Rate A→B: 23.1 (Mode 12), 20.8 (Mode 17). |
 | B Population Initial | constant | 8.5 / 28 | Starting population of the region (A 28 / B 8.5, model units of people). | Sets the scale of each region's Population stock and, through participation 0.5, its labor force (A 14 / B 4.25), compared with the region's total labor requirement. A is the larger economy, so it starts with the larger population; in the first year both regions employ about 94 % of their labor force (Mode 46). | docs/research/POPULATION_PROTOTYPE_2026-10-04_RU.md (calibration, participation 0.50); docs/tasks/030-population/V7_7_11_ARCHITECTURE_SPEC.md §1. Added by the owner at acceptance: the task listed only the 11 shared parameters. |
 | B Regolith Base Extraction Capacity | constant | 5 / 7 | [calib] fixed extraction capacity (5). | Caps Regolith extraction through the standard soft-cap function. | Owner skeleton feasibility value; candidate run to confirm baseline and shock behaviour. |
@@ -322,6 +338,20 @@
 | Construction Materials Plant Surplus Disposal Decision Time | constant | 240 | Construction Materials plant lifecycle parameter, value 240. | Controls delay before true surplus is committed to decommissioning. | V7_7_3_ARCHITECTURE_SPEC §2; owner-defined value verified on the pre-issue skeleton. |
 | Construction Materials Target Days | constant | 30 | Construction Materials inventory target, days of desired demand. | Higher value raises desired stock coverage. | V7_7_ARCHITECTURE_SPEC §2; owner-defined non-[calib] value. |
 | Death Living Standard Sensitivity | constant | 1 | Dimensionless mortality elasticity to living standard, value 1. | At value 1, mortality varies inversely with living standard, subject to the node's floor. | docs/research/POPULATION_PROTOTYPE_2026-10-04_RU.md: mortality × living-standard^-1; retained baseline, not separately fitted. |
+| Famine Death Sensitivity | constant | 2 | Mortality sensitivity to food fulfillment, exponent 2. | Multiplies the previous death flow by fulfillment^-2 (with the node floor), increasing mortality under food shortage. | docs/tasks/032-food/V7_7_12_ARCHITECTURE_SPEC.md §§1–5 and docs/research/FOOD_PROTOTYPE_2026-10-05_RU.md. |
+| Farm Capacity Adjustment Time | constant | 360 | Farm capacity adjustment time, 360 model days. | Sets the rate at which desired additional farm capacity is converted into Farm Desired Expansion. | docs/tasks/032-food/V7_7_12_ARCHITECTURE_SPEC.md §§1–5 and docs/research/FOOD_PROTOTYPE_2026-10-05_RU.md. |
+| Farm Capital Goods per Capacity | constant | 0.3 | Capital-goods requirement for farm expansion, value 0.3 goods per unit of farm capacity. | Converts Farm Expansion into capital-goods consumption and added Capital Goods Demand. | docs/tasks/032-food/V7_7_12_ARCHITECTURE_SPEC.md §§1–5 and docs/research/FOOD_PROTOTYPE_2026-10-05_RU.md. |
+| Farm Depreciation Rate | constant | 0.0000555555555556 | Farm depreciation rate, 0.0000555555555556 per model day (2% per 360-day model year). | Removes Farm Capacity through Farm Depreciation while food is enabled. | docs/tasks/032-food/V7_7_12_ARCHITECTURE_SPEC.md §§1–5 and docs/research/FOOD_PROTOTYPE_2026-10-05_RU.md. |
+| Farm Desired Capacity Margin | constant | 1.15 | Desired farm capacity margin, value 1.15. | Targets farm capacity at 115% of the production signal, subject to the land cap. | docs/tasks/032-food/V7_7_12_ARCHITECTURE_SPEC.md §§1–5 and docs/research/FOOD_PROTOTYPE_2026-10-05_RU.md. |
+| Food Buffer Days | constant | 5 | Coverage needed for full immediate fulfillment, 5 model days. | Maps Food Coverage Days to Food Fulfillment; five buffer days or more gives fulfillment 1. | docs/tasks/032-food/V7_7_12_ARCHITECTURE_SPEC.md §§1–5 and docs/research/FOOD_PROTOTYPE_2026-10-05_RU.md. |
+| Food Demand Signal Time | constant | 30 | Demand smoothing time, 30 model days. | Controls adjustment of Food Demand Signal toward current population-driven Food Demand. | docs/tasks/032-food/V7_7_12_ARCHITECTURE_SPEC.md §§1–5 and docs/research/FOOD_PROTOTYPE_2026-10-05_RU.md. |
+| Food Inventory Adjustment Time | constant | 30 | Inventory correction time, 30 model days. | Controls how quickly shortages/excess relative to target stock alter desired production and import need. | docs/tasks/032-food/V7_7_12_ARCHITECTURE_SPEC.md §§1–5 and docs/research/FOOD_PROTOTYPE_2026-10-05_RU.md. |
+| Food Need per Capita | constant | 1 | Daily food need per person, value 1 food unit/person/day. | Scales regional Food Demand directly with Population. | docs/tasks/032-food/V7_7_12_ARCHITECTURE_SPEC.md §§1–5 and docs/research/FOOD_PROTOTYPE_2026-10-05_RU.md. |
+| Food Price Elasticity | constant | 0.5 | Food scarcity-price elasticity, value 0.5. | Controls how strongly Food Price rises as coverage falls below the target. | docs/tasks/032-food/V7_7_12_ARCHITECTURE_SPEC.md §§1–5 and docs/research/FOOD_PROTOTYPE_2026-10-05_RU.md. |
+| Food Price Reference | constant | 10 | Reference food price, value 10 model price units. | Anchors Food Price when coverage is at the target level and normalizes food's contribution to Price Index. | docs/tasks/032-food/V7_7_12_ARCHITECTURE_SPEC.md §§1–5 and docs/research/FOOD_PROTOTYPE_2026-10-05_RU.md. |
+| Food Production Signal Time | constant | 90 | Production/export-order smoothing time, 90 model days. | Controls Food Production Signal and pairwise Food Export Signal adjustment. | docs/tasks/032-food/V7_7_12_ARCHITECTURE_SPEC.md §§1–5 and docs/research/FOOD_PROTOTYPE_2026-10-05_RU.md. |
+| Food Target Coverage Days | constant | 30 | Target inventory coverage, 30 model days. | Sets initial Food Inventory and the inventory target used by production/import planning and Food Price. | docs/tasks/032-food/V7_7_12_ARCHITECTURE_SPEC.md §§1–5 and docs/research/FOOD_PROTOTYPE_2026-10-05_RU.md. |
+| Living Food Weight | constant | 0.5 | Food exponent in Living Standard, value 0.5. | Weights food fulfillment as the square-root factor in the food-enabled living-standard product. | docs/tasks/032-food/V7_7_12_ARCHITECTURE_SPEC.md §§1–5 and docs/research/FOOD_PROTOTYPE_2026-10-05_RU.md. |
 | Migration Gap Sensitivity | constant | 4 | Dimensionless gain from normalized perceived-attractiveness gap to migration pressure, value 4. | Scales the positive attractiveness gap before the migration factor is capped at 1. | docs/research/POPULATION_PROTOTYPE_2026-10-04_RU.md prototype migration setup; retained baseline coefficient, not separately fitted. |
 | Migration Max Rate | constant | 0.0000555555555556 | Maximum migration outflow fraction, 0.0000555555555556 per model day (2.0% per 360-day model year). | Caps each directed migration flow before attractiveness-gap sensitivity is applied. | docs/research/POPULATION_PROTOTYPE_2026-10-04_RU.md: no more than 2% of population per year; V7_7_11_ARCHITECTURE_SPEC §1. |
 | Population Base Death Rate | constant | 0.0000277777777778 | Baseline death rate, 0.0000277777777778 per model day (1.0% per 360-day model year). | Multiplies Population and the living-standard mortality factor to form each region's Deaths outflow. | docs/research/POPULATION_PROTOTYPE_2026-10-04_RU.md: deaths 1.0%/year; V7_7_11_ARCHITECTURE_SPEC §1. |
@@ -398,6 +428,8 @@
 | Construction Materials Energy per Unit | constant | 10 | Physical energy intensity of Construction Materials processing, value 10. | Scales Construction Materials requested energy from the pre-energy production rate. | V7_7_2_ARCHITECTURE_SPEC §2; owner-defined skeleton value, compared with Metal=30 and Electronics=12. |
 | Energy Kernel Capacity Shock Factor | constant | 0.6 | Mode-26 capacity test multiplier. | Creates a temporary A-only active-generation-capacity shock; test wiring only. | v7.6 Energy Kernel v2 specification and Modes 25/26 validation contract. |
 | Energy Scarcity Price Strength | constant | 4 | Сила дефицитной надбавки к цене энергии (4). | Energy Price = Generation Cost × (1 + 4 × perceived scarcity). |  |
+| Food Energy per Unit | constant | 0.5 | Farm energy intensity, value 0.5 energy units per unit of planned food production. | Scales Farming Requested Energy and therefore priority-energy demand from farms. | docs/tasks/032-food/V7_7_12_ARCHITECTURE_SPEC.md §§1–5 and docs/research/FOOD_PROTOTYPE_2026-10-05_RU.md. |
+| Living Energy Weight With Food | constant | 0.5 | Energy exponent in food-enabled Living Standard, value 0.5. | Weights Energy Fulfillment Ratio as the second square-root factor in Living Standard when food is enabled. | docs/tasks/032-food/V7_7_12_ARCHITECTURE_SPEC.md §§1–5 and docs/research/FOOD_PROTOTYPE_2026-10-05_RU.md. |
 | Mining Energy per Unit | constant | 1 | Mining process energy coefficient, value 1. | Multiplies the smoothed Mining Energy Signal to form Requested Energy. | V7_7_9_ARCHITECTURE_SPEC §1–§2 and draft/process-energy.json. |
 | Mining Energy Signal Adjustment Time | constant | 3 | Mining energy-signal adjustment time, value 3 days. | Controls the lag from Pre Energy Rate to the smoothed Energy Signal used for the allocator request. | V7_7_9_ARCHITECTURE_SPEC §1–§2 and draft/process-energy.json. |
 | Power Capacity Planning Adjustment Time | constant | 60 | Память планирования генерации (60 д). | Причина транзитных энергодефицитов (v7.3 ограничение №2): при быстром росте нагрузки мощность отстаёт. В связанном baseline A это даёт остаточные 72/день @1080 (снижаются). | Mode 12: дефицит A 126–375 д; Mode 17: 142 → 72. |
@@ -433,6 +465,7 @@
 | Construction Materials Enabled | switch | 1 | v7.7 master switch. | 0 preserves Modes 0-26 exactly; 1 makes colonial expansion require both Capital Goods and Construction Materials. | V7_7_ARCHITECTURE_SPEC §0–§3. |
 | Construction Materials Energy Enabled | switch | 1 | v7.7.2 Construction Materials energy-coupling master switch. | 0 preserves Modes 0-31 exactly; 1 makes Construction Materials processing request and receive energy through the common colony allocator. | V7_7_2_ARCHITECTURE_SPEC §0–§3. |
 | Deposits Enabled | switch | 1 | Deposit-layer master switch, raw value 1. | 0 preserves legacy extraction-rate formulas in Modes 0-43; 1 enables reserve targeting, exploration demand/consumption, and the smooth depletion cap. Extraction FLOW endpoints remain retargeted to Proven Reserves in all modes. | V7_7_8_ARCHITECTURE_SPEC §1–§2 and draft/deposits.json. |
+| Food Enabled | switch | 0 | Food-layer switch; default 0, enabled only by new Modes 49–51. | At 0 every food replacement selects the previous formula; at 1 food/farms/trade and their feedbacks are active. | docs/tasks/032-food/V7_7_12_ARCHITECTURE_SPEC.md §§1–5 and docs/research/FOOD_PROTOTYPE_2026-10-05_RU.md. |
 | Intermediate Inputs Enabled | switch | 1 | Переключатель v7.4 (1 в сыром файле; 0 в Modes 0–16; 1 в 17–20). | При 0 — точное воспроизведение v7.3 r2 (Feedstock из ∅ по legacy-цене). При 1 — металл как физический вход, Feedstock Extraction = 0, Feedstock Price = Market Price, Desired Smelting Rate += поставки. Только форма IfThenElse(switch, new, old). | CHECK_CANDIDATE r2: Modes 0–16 changed=0, maxAbs=0. |
 | Ore Capital Enabled | switch | 1 | Ore-mining simple-capital master switch, raw value 1. | 0 preserves accepted Modes 0-39 exactly; 1 makes effective mining capacity read ore-mine capital and enables mine expansion, depreciation, retirement, and backing-resource sinks. | V7_7_6_ARCHITECTURE_SPEC §0–§3; owner node declaration. |
 | Power Resource Capital Enabled | switch | 1 | Power-resource-extraction simple-capital master switch, raw value 1. | 0 preserves accepted Modes 0-41 exactly; 1 applies the smooth mine-capacity cap and enables mine expansion, depreciation, retirement, and backing-resource sinks. | V7_7_7_ARCHITECTURE_SPEC §0–§3; owner node declaration. |
@@ -451,8 +484,13 @@
 | v7.5 Investment Boom Multiplier | test_wiring | 4 | Mode 23 test-only multiplier for electronics local demand. | Creates sustained A electronics demand growth and therefore simultaneous demand for equipment from expanding sectors. | Test parameter fixed to 4 by V7_5_ARCHITECTURE_SPEC §4, matching the intended sustained-growth stress scale. |
 | v7.7 Construction Materials Shock Multiplier | test_wiring | 0.1 | [calib] Mode 28 processing-capacity shock, value 0.1. | Controls severity of temporary A Construction Materials capacity shock. | Owner skeleton feasibility value; candidate run calibrates behavioural thresholds. |
 | v7.7 Regolith Shock Multiplier | test_wiring | 0.1 | [calib] Mode 29 extraction-capacity shock, value 0.1. | Controls severity of temporary A Regolith extraction shock. | Owner skeleton feasibility value; candidate run calibrates behavioural thresholds. |
+| B to A Food Export Signal | initial_stock | 7.825911049497232 | Initial B→A export-order signal, 7.825911049497232 food units/day; it equals A's land-limited startup shortfall assigned to fertile B. | Starts B production planning with A's existing deficit already visible instead of waiting 90 days for the export-order signal to build. | lab/src/nodes/food.js start-state algorithm: A shortfall is allocated to regions with spare land; B is the exporter. |
 | Export Reserve | constant | 100 | Запас металла, ниже которого экспортёр не продаёт (100). | Ограничивает экспорт при низком запасе — в Mode 18 A сокращает экспорт 17 → 5 при запасе 127. | Mode 18 series. |
+| Food Export Release Time | constant | 5 | Release time for exportable inventory, 5 model days. | Controls how fast inventory above half the target can be offered to importing regions. | docs/tasks/032-food/V7_7_12_ARCHITECTURE_SPEC.md §§1–5 and docs/research/FOOD_PROTOTYPE_2026-10-05_RU.md. |
 | Import Share Sensitivity | constant | 100 | Чувствительность доли импорта к ценовому преимуществу (100). | Скорость, с которой покупатели переключаются на импорт при более дешёвом landed price; вместе с Import Inventory Adjustment Time (20 д) определяет, почему переворот электронной торговли в Mode 17 к дню 1080 ещё не завершён (A→B только 1.25). | Mode 17: Electronics A→B 0 → 0.12 → 1.25. |
+| Food Cargo B to A | initial_stock | 78.25911049497232 | Initial food already in transit B→A, 78.25911049497232 food units = 7.825911049497232/day × 10-day Travel Time. | Represents the startup export flow already inside the transport delay, preventing a synthetic ten-day delivery gap at model start. | lab/src/nodes/food.js start-state algorithm and V7_7_12_ARCHITECTURE_SPEC §1 (10-day cargo transit). |
+| Food Freight Weight per Unit | constant | 0.5 | Shared-transport weight of food, value 0.5 transport-load units per food unit. | Converts food dispatch into Food Transport Load and therefore reduces capacity left for ordinary goods. | docs/tasks/032-food/V7_7_12_ARCHITECTURE_SPEC.md §§1–5 and docs/research/FOOD_PROTOTYPE_2026-10-05_RU.md. |
+| Food Transport Max Share | constant | 0.8 | Maximum share of shared transport reserved for food, value 0.8. | Caps food transport capacity at 80% of Transport Active Throughput Capacity before ordinary goods use the remainder. | docs/tasks/032-food/V7_7_12_ARCHITECTURE_SPEC.md §§1–5 and docs/research/FOOD_PROTOTYPE_2026-10-05_RU.md. |
 | Transport Automation Level | constant | 0 | Shared transport automation level, initial value 0. | Controls Transport Automation Factor; Mode 48 does not override transport automation. | V7_7_10_ARCHITECTURE_SPEC §1–§2 and draft/process-labor.json. |
 | Transport Construction Materials per Capacity | constant | 3 | [calib] physical-material intensity for shared Transport, skeleton value 3. | Scales shared Transport Construction Materials demand and the exact A/B consumption-pair identity. | Owner skeleton feasibility value; chosen near accepted Transport Capital Goods intensity 2.8333333333333335 and checked in candidate runs. |
 | Transport Construction Time | constant | 120 | Отраслевая policy kernel капитала (120 д). | Не часть kernel-контракта — отраслевая параметризация (KERNEL_SPEC §4.3). Сравнение секторов: CAPITAL_LIFECYCLE_SECTOR_MAPPING, последняя таблица. |  |
@@ -581,6 +619,7 @@
 | B Construction Materials Labor per Unit | constant | B | 0.3 | = | Generated labor element for B Construction Materials Labor per Unit. | ✓ |
 | B Regolith Extraction Labor per Unit | constant | B | 0.2 | = | Generated labor element for B Regolith Extraction Labor per Unit. | ✓ |
 | B Wage | constant | B | 140 | **100** |  | ✓ |
+| Food Labor per Unit | constant | global | 0.15 |  | Food node: parameter Food Labor per Unit. | ✓ |
 | Labor Participation Share | constant | global | 0.5 |  | Generated population element for Labor Participation Share. | ✓ |
 | Minimum Human Labor Share | constant | global | 0.05 |  | Generated labor element for Minimum Human Labor Share. | ✓ |
 | Reference Real Wage | constant | global | 100 |  | Generated population element for Reference Real Wage. | ✓ |
@@ -720,6 +759,11 @@
 | A Construction Materials Plant Retired Capacity | initial_stock | A | 0 | = | Cumulative retired construction-materials plant capacity in colony A. |  |
 | A Demand Elasticity | constant | A | 0.6 | = |  |  |
 | A Domestic Supply Signal | initial_stock | A | 16 | **22** | Smoothed recent domestic metal production available to A's buyers. | ✓ |
+| A Farm Capacity | initial_stock | A | 22 | **17.142206601972095** | Food node: farm capacity (capital). | ✓ |
+| A Farm Land Capacity | switch | A | 22 (сценарии: {"51":40}…) | **60** | Food node: farm land of region A (soft cap of its farms). | ✓ |
+| A Food Demand Signal | initial_stock | A | 28 | **8.5** | Food node: A Food Demand Signal. | ✓ |
+| A Food Inventory | initial_stock | A | 840 | **255** | Food node: A Food Inventory. | ✓ |
+| A Food Production Signal | initial_stock | A | 20.174088950502767 | **16.325911049497233** | Food node: smoothed production plan (energy request signal). | ✓ |
 | A Local Base Demand | constant | A | 16 | **22** | Local industrial metal demand at the reference price. | ✓ |
 | A Perceived Attractiveness | initial_stock | A | 1 | = | Generated population element for A Perceived Attractiveness. |  |
 | A Population Initial | constant | A | 28 | **8.5** | Generated population element for A Population Initial. | ✓ |
@@ -758,6 +802,11 @@
 | B Construction Materials Plant Retired Capacity | initial_stock | B | 0 | = | Cumulative retired construction-materials plant capacity in colony B. |  |
 | B Demand Elasticity | constant | B | 0.6 | = |  |  |
 | B Domestic Supply Signal | initial_stock | B | 22 | **16** | Smoothed recent domestic metal production available to B's buyers. | ✓ |
+| B Farm Capacity | initial_stock | B | 17.142206601972095 | **22** | Food node: farm capacity (capital). | ✓ |
+| B Farm Land Capacity | switch | B | 60 (сценарии: {"51":40}…) | **22** | Food node: farm land of region B (soft cap of its farms). | ✓ |
+| B Food Demand Signal | initial_stock | B | 8.5 | **28** | Food node: B Food Demand Signal. | ✓ |
+| B Food Inventory | initial_stock | B | 255 | **840** | Food node: B Food Inventory. | ✓ |
+| B Food Production Signal | initial_stock | B | 16.325911049497233 | **20.174088950502767** | Food node: smoothed production plan (energy request signal). | ✓ |
 | B Local Base Demand | constant | B | 22 | **16** | Local industrial metal demand at the reference price. | ✓ |
 | B Perceived Attractiveness | initial_stock | B | 1 | = | Generated population element for B Perceived Attractiveness. |  |
 | B Population Initial | constant | B | 8.5 | **28** | Generated population element for B Population Initial. | ✓ |
@@ -804,6 +853,20 @@
 | Construction Materials Plant Surplus Disposal Decision Time | constant | global | 240 |  | Decision timescale before true surplus plant capacity enters decommissioning. | ✓ |
 | Construction Materials Target Days | constant | global | 30 |  | Target Construction Materials inventory coverage in days of desired construction demand. | ✓ |
 | Death Living Standard Sensitivity | constant | global | 1 |  | Generated population element for Death Living Standard Sensitivity. | ✓ |
+| Famine Death Sensitivity | constant | global | 2 |  | Food node: parameter Famine Death Sensitivity. | ✓ |
+| Farm Capacity Adjustment Time | constant | global | 360 |  | Food node: parameter Farm Capacity Adjustment Time. | ✓ |
+| Farm Capital Goods per Capacity | constant | global | 0.3 |  | Food node: parameter Farm Capital Goods per Capacity. | ✓ |
+| Farm Depreciation Rate | constant | global | 0.0000555555555556 |  | Food node: parameter Farm Depreciation Rate. | ✓ |
+| Farm Desired Capacity Margin | constant | global | 1.15 |  | Food node: parameter Farm Desired Capacity Margin. | ✓ |
+| Food Buffer Days | constant | global | 5 |  | Food node: parameter Food Buffer Days. | ✓ |
+| Food Demand Signal Time | constant | global | 30 |  | Food node: parameter Food Demand Signal Time. | ✓ |
+| Food Inventory Adjustment Time | constant | global | 30 |  | Food node: parameter Food Inventory Adjustment Time. | ✓ |
+| Food Need per Capita | constant | global | 1 |  | Food node: parameter Food Need per Capita. | ✓ |
+| Food Price Elasticity | constant | global | 0.5 |  | Food node: parameter Food Price Elasticity. | ✓ |
+| Food Price Reference | constant | global | 10 |  | Food node: parameter Food Price Reference. | ✓ |
+| Food Production Signal Time | constant | global | 90 |  | Food node: parameter Food Production Signal Time. | ✓ |
+| Food Target Coverage Days | constant | global | 30 |  | Food node: parameter Food Target Coverage Days. | ✓ |
+| Living Food Weight | constant | global | 0.5 |  | Food node: parameter Living Food Weight. | ✓ |
 | Migration Gap Sensitivity | constant | global | 4 |  | Generated population element for Migration Gap Sensitivity. | ✓ |
 | Migration Max Rate | constant | global | 0.0000555555555556 |  | Generated population element for Migration Max Rate. | ✓ |
 | Population Base Death Rate | constant | global | 0.0000277777777778 |  | Generated population element for Population Base Death Rate. | ✓ |
@@ -896,7 +959,9 @@
 | Energy Demand Signal Adjustment Time | constant | global | 3 |  | Time constant for the perceived/contracting energy-load signal used by endogenous price formation. |  |
 | Energy Kernel Capacity Shock Factor | constant | global | 0.6 |  | Mode 26 temporary multiplier on A active generation capacity. | ✓ |
 | Energy Scarcity Price Strength | constant | global | 4 |  | Linear scarcity premium strength. Price remains equal to generation cost while perceived demand is at or below active capacity. | ✓ |
+| Food Energy per Unit | constant | global | 0.5 |  | Food node: parameter Food Energy per Unit. | ✓ |
 | Living Energy Weight | constant | global | 1 |  | Generated population element for Living Energy Weight. |  |
+| Living Energy Weight With Food | constant | global | 0.5 |  | Food node: parameter Living Energy Weight With Food. | ✓ |
 | Mining Energy per Unit | constant | global | 1 |  | Generated energy_consumer element for Mining Energy per Unit. | ✓ |
 | Mining Energy Signal Adjustment Time | constant | global | 3 |  | Generated energy_consumer element for Mining Energy Signal Adjustment Time. | ✓ |
 | Power Activation Time | constant | global | 21 |  | Time scale for returning mothballed generation capacity to active service. |  |
@@ -943,6 +1008,7 @@
 | Construction Materials Enabled | switch | global | 1 (сценарии: {"0":0,"1":0,"2":0,"3":0,"4":0,"5":0,"6":0,"7":0,"8":0,"9":0…) |  | v7.7 master switch: construction materials physically constrain colonial capacity expansion. | ✓ |
 | Construction Materials Energy Enabled | switch | global | 1 (сценарии: {"0":0,"1":0,"2":0,"3":0,"4":0,"5":0,"6":0,"7":0,"8":0,"9":0…) |  | v7.7.2 switch: makes Construction Materials processing participate in the colony energy allocator. | ✓ |
 | Deposits Enabled | switch | global | 1 (сценарии: {"0":0,"1":0,"2":0,"3":0,"4":0,"5":0,"6":0,"7":0,"8":0,"9":0…) |  | Generated deposit element for Deposits Enabled. | ✓ |
+| Food Enabled | switch | global | 0 (сценарии: {"49":1,"50":1,"51":1}…) |  | Food node: switch of the food layer (0 = every earlier series unchanged). | ✓ |
 | Intermediate Inputs Enabled | switch | global | 1 (сценарии: {"0":0,"1":0,"2":0,"3":0,"4":0,"5":0,"6":0,"7":0,"8":0,"9":0…) |  | Master switch for v7.4 Metal-to-Electronics intermediate-input coupling. Modes 0-16 override to 0; Modes 17+ enable it. | ✓ |
 | Ore Capital Enabled | switch | global | 1 (сценарии: {"0":0,"1":0,"2":0,"3":0,"4":0,"5":0,"6":0,"7":0,"8":0,"9":0…) |  | Generated simple_capital switch for Ore Capital Enabled. | ✓ |
 | Power Resource Capital Enabled | switch | global | 1 (сценарии: {"0":0,"1":0,"2":0,"3":0,"4":0,"5":0,"6":0,"7":0,"8":0,"9":0…) |  | Generated simple_capital switch for Power Resource Capital Enabled. | ✓ |
@@ -998,9 +1064,12 @@
 | Параметр | Вид | Колония | Значение | Зеркало | Описание в модели | Аннотация |
 |---|---|---|---:|---:|---|:---:|
 | A Import Supply Signal | initial_stock | A | 0 | = | Smoothed recent delivered imports from B available to A's buyers. |  |
+| A to B Food Export Signal | initial_stock | A | 0 | **нет пары** | Food node: orders of B seen by A. |  |
 | B Import Supply Signal | initial_stock | B | 0 | = | Smoothed recent delivered imports from A available to B's buyers. |  |
+| B to A Food Export Signal | initial_stock | B | 7.825911049497232 | **нет пары** | Food node: orders of A seen by B. | ✓ |
 | Export Inventory Release Time | constant | global | 5 |  | Days required to make inventory above the export reserve available to foreign buyers. This replaces the old permanent fractional export-availability haircut. |  |
 | Export Reserve | constant | global | 100 |  | Inventory exporters try not to sell below. | ✓ |
+| Food Export Release Time | constant | global | 5 |  | Food node: parameter Food Export Release Time. | ✓ |
 | Import Inventory Adjustment Time | constant | global | 20 |  | Days over which importers try to replenish an inventory shortage. |  |
 | Import Share Sensitivity | constant | global | 100 |  | How strongly buyers switch toward imports when landed foreign metal is cheaper than the local metal price. Higher values make small price advantages capture a larger market share. | ✓ |
 
@@ -1011,6 +1080,10 @@
 | Base Freight Markup | constant | global | 0.15 |  |  |  |
 | Cargo A to B | initial_stock | global | 0 |  | Metal currently in transit from A to B. |  |
 | Cargo B to A | initial_stock | global | 0 |  | Metal currently in transit from B to A. |  |
+| Food Cargo A to B | initial_stock | global | 0 |  | Food node: food in transit A -> B. |  |
+| Food Cargo B to A | initial_stock | global | 78.25911049497232 |  | Food node: food in transit B -> A. | ✓ |
+| Food Freight Weight per Unit | constant | global | 0.5 |  | Food node: parameter Food Freight Weight per Unit. | ✓ |
+| Food Transport Max Share | constant | global | 0.8 |  | Food node: parameter Food Transport Max Share. | ✓ |
 | Freight Price | initial_stock | global | 5 |  | Quoted freight price in credits per tonne. Adjusts gradually toward the transport-sector target price. |  |
 | Freight Price Adjustment Time | constant | global | 10 |  | Days over which quoted freight rates adjust to current operating conditions. |  |
 | Metal Cargo Freight Contract Value A to B | initial_stock | global | 0 |  | Total locked freight value associated with metal cargo currently in transit. It is accumulated using the freight price prevailing when each cohort was dispatched. |  |

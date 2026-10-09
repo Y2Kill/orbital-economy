@@ -1,32 +1,39 @@
-# v7.7.11 Acceptance Status
+# v7.7.12 Acceptance Status
 
-**Status:** ACCEPTED — 2026-10-05, `orbital_economy_v7_7_11_r1_modeljson.json` (SHA `dbe824b3…`).
+**Status:** ACCEPTED — 2026-10-09, `orbital_economy_v7_7_12_r1_modeljson.json` (SHA `e8829fa5…`).
 
-v7.7.11 is **Planet v2, step 1: each region has a population** — births, deaths (the base rate divided by the living standard) and pairwise migration toward the region with the higher perceived attractiveness = real wage × employment × living standard — and **labor is accounted**: labor force = population × participation, employment, unemployment and labor shortage against the processes' total labor requirement (owner decisions 2026-10-04; order and calibration from prototype experiments, `research/POPULATION_PROTOTYPE_2026-10-04_RU.md`). The living standard is energy fulfillment for now and the wage is fixed. It is **accounting only** — nothing in the economy reads the population — so the step needs **no switch and no new Mode**: Modes 0–48 reproduce v7.7.10 r1 bit for bit. Over the 3-year horizon B gains people (Mode 46: 8.5 → 9.53) on its higher real wage while planet population stays near 36.5. The bench first learned a `population` node type (task 029, Lab v0.9.16). Delivered by the repository agent through `candidate.yml` (task 030), accepted in round 1: declaration and validation byte-identical to the owner drafts, model identical to our skeleton. Record: `tasks/030-population/`.
+v7.7.12 is **Planet v2, step 2: food and farms**. Each region has a food stock and a need of one unit a person a day. Farms are capital on regional land: built from capital goods, energy served in the priority group with the energy sector, labor 0.15 a unit. Land is A 22, B 60 — fertile B is the start state, equal land a probe. Food is traded by need and goes first on the shared transport. A food shortage lowers the living standard (food^0.5 × energy^0.5), raises deaths and lowers births (owner decisions 2026-10-04/05; prototype `research/FOOD_PROTOTYPE_2026-10-05_RU.md`).
 
-## Candidate gates (accepted v7.7.10 r1 → candidate v7.7.11, canonical platform)
+Every replacement is wrapped by the switch `Food Enabled`, so Modes 0–48 reproduce v7.7.11 r1 bit for bit. The new Modes:
+- **Mode 49** — fertile B feeds A 5–8 a day; its farm jobs keep B fully employed.
+- **Mode 50** — the transport surge with food: farms keep their energy and A stays fed.
+- **Mode 51** — equal land: A builds its own farms and trade dies out.
+
+The bench first learned a `food` node type (task 031, Lab v0.9.17, round 2: our reference missed two runtime contracts). Delivered by the repository agent through `candidate.yml` (task 032), accepted in round 1: declaration and validation byte-identical to the owner drafts, model identical to our skeleton, all 28 new parameters annotated. Record: `tasks/032-food/`.
+
+## Candidate gates (accepted v7.7.11 r1 → candidate v7.7.12, canonical platform)
 
 ```text
-APPLY_PATCH             candidate SHA 994d140e…  (population node expanded by the bench; no switch; fingerprint 35d24655fc422942)
-LIFECYCLE_CONFORMANCE   PASS  (11 kernel; 6 simple_capital; 6 deposit; 17 labor; 2 population instances CONFORMING)
-STRUCTURE_AUDIT         PASS  (289 flows / 232 boundary, unclassified 0, closed-world 0, pairs 25, symmetry mismatches 0;
-                              algebraic loops 0 of 32768 combinations; planet closure in planet_v1 mode PASS:
-                              P2 = 11/6/0/0, P3 = 14/2/1/0, P4 = 6/0, P5 = 17/0, P6 = 4)
-RUN_TESTS               OVERALL: PASS  (Modes 0-48, 49/49; 19451 checks)
+APPLY_PATCH             candidate SHA bc2dfa93…  (food node expanded by the bench; switch Food Enabled; fingerprint c2ce1d6b11f56df8)
+LIFECYCLE_CONFORMANCE   PASS  (11 kernel; 6 simple_capital; 6 deposit; 17 labor; 2 population; 2 food instances CONFORMING)
+STRUCTURE_AUDIT         PASS  (315 flows / 254 boundary, unclassified 0, closed-world 0, pairs 27, symmetry mismatches 0;
+                              algebraic loops 0 of 65536 combinations; planet closure in planet_v1 mode PASS:
+                              P2 = 11/8/0/0, P3 = 16/2/1/0, P4 = 6/0, P5 = 19/0, P6 = 4)
+RUN_TESTS               OVERALL: PASS  (Modes 0-51, 52/52; 21241 checks)
 CHECK_CANDIDATE (executor's change policy)
-  COMPARISON RESULT: OUTPUTS_IDENTICAL_WITH_NEW_SERIES
-  Modes 0-48: 49 × common=1588, changed=0, added=49, maxAbs=0
-  POLICY RESULT: PASS  (observed 2540; unexpected 0, required missing 0, hard blockers 0)
+  COMPARISON RESULT: COMMON_OUTPUTS_IDENTICAL_WITH_NEW_MODES
+  Modes 0-48: 49 × common=1637, changed=0, added=96, maxAbs=0
+  POLICY RESULT: PASS  (observed 5067; unexpected 0, required missing 0, hard blockers 0)
 ```
 
 ## Accepted package (canonical platform, promoted files)
 
 ```text
-RUN_LAB                 OVERALL: PASS  (Modes 0-48, 49/49)
-CHECK_CANDIDATE         COMPARISON RESULT: BYTE_IDENTICAL, POLICY RESULT: PASS   (accepted model as its own candidate, 49 Modes)
-Series golden           lab/reference/accepted/series-digest.windows.json — 49 Modes
-Parameter registry      536 external values, 359 annotated, 64 asymmetric A/B pairs, 0 unannotated
-Bench self-tests        QA 45/45, node 45/45, planet 20/20, loop 19/19, structure 21/21, conformance 18/18, compare PASS, policy 10/10 — no changes needed at promotion
+RUN_LAB                 OVERALL: PASS  (Modes 0-51, 52/52)
+CHECK_CANDIDATE         COMPARISON RESULT: BYTE_IDENTICAL, POLICY RESULT: PASS   (accepted model as its own candidate, 52 Modes)
+Series golden           lab/reference/accepted/series-digest.windows.json — 52 Modes
+Parameter registry      571 external values, 392 annotated, 69 asymmetric A/B pairs, 0 unannotated
+Bench self-tests        QA 46/46, node 52/52, planet 20/20, loop 19/19, structure 21/21, conformance 18/18, compare PASS, policy 10/10 — no changes needed at promotion
 ```
 
 ## Reproduce
@@ -37,13 +44,14 @@ On the canonical platform (Windows x64 · Node 24.11.1 — `VERSIONING_AND_AUTHO
 INSTALL.cmd
 RUN_LAB.cmd
 CHECK_CANDIDATE.cmd
-RUN_TESTS.cmd ..\model\orbital_economy_v7_7_11_r1_modeljson.json ..\validation\validation-v7.7.11.json all
-CHECK_CANDIDATE.cmd ..\reference\v7.7.10\model\orbital_economy_v7_7_10_r1_modeljson.json ..\model\orbital_economy_v7_7_11_r1_modeljson.json ..\docs\tasks\030-population\candidate\validation.json ..\docs\tasks\030-population\candidate\change-policy.json all
+RUN_TESTS.cmd ..\model\orbital_economy_v7_7_12_r1_modeljson.json ..\validation\validation-v7.7.12.json all
+CHECK_CANDIDATE.cmd ..\reference\v7.7.11\model\orbital_economy_v7_7_11_r1_modeljson.json ..\model\orbital_economy_v7_7_12_r1_modeljson.json ..\docs\tasks\032-food\candidate\validation.json ..\docs\tasks\032-food\candidate\change-policy.json all
 ```
 
 ## Previous acceptances
 
-- **v7.7.10 r1** (2026-10-04) — Labor, task 028; Planet v1 closed; artefacts in `reference/v7.7.10/`, tag `v7.7.10-r1`.
+- **v7.7.11 r1** (2026-10-05) — Population, task 030; artefacts in `reference/v7.7.11/`, tag `v7.7.11-r1`.
+- **v7.7.10 r1** (2026-10-04) — Labor, task 028; Planet v1 closed; tag `v7.7.10-r1`.
 - **v7.7.9 r1** (2026-10-03) — Process Energy, task 026; tag `v7.7.9-r1`.
 - **v7.7.8 r1** (2026-10-02) — Deposits, task 023; tag `v7.7.8-r1`.
 - **v7.7.7 r1** (2026-09-30) — Power Resource Capital, task 021; tag `v7.7.7-r1`.

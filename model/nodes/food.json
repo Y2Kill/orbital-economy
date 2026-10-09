@@ -1,0 +1,64 @@
+{
+  "type": "food",
+  "version": 1,
+  "colonies": ["A", "B"],
+  "switch": "Food Enabled",
+  "land": { "A": 22, "B": 60 },
+  "parameters": {
+    "Food Need per Capita": 1,
+    "Food Energy per Unit": 0.5,
+    "Food Labor per Unit": 0.15,
+    "Food Freight Weight per Unit": 0.5,
+    "Food Transport Max Share": 0.8,
+    "Farm Capital Goods per Capacity": 0.3,
+    "Farm Depreciation Rate": 0.0000555555555556,
+    "Farm Capacity Adjustment Time": 360,
+    "Farm Desired Capacity Margin": 1.15,
+    "Food Target Coverage Days": 30,
+    "Food Inventory Adjustment Time": 30,
+    "Food Buffer Days": 5,
+    "Food Demand Signal Time": 30,
+    "Food Production Signal Time": 90,
+    "Food Export Release Time": 5,
+    "Food Price Reference": 10,
+    "Food Price Elasticity": 0.5,
+    "Famine Death Sensitivity": 2,
+    "Living Food Weight": 0.5,
+    "Living Energy Weight With Food": 0.5
+  },
+  "inputs": {
+    "population": "{C} Population",
+    "population_initial": "{C} Population Initial",
+    "capital_goods": {
+      "inventory": "{C} Capital Goods Inventory",
+      "demand": "{C} Capital Goods Demand",
+      "fulfillment": "{C} Capital Goods Fulfillment"
+    },
+    "energy": {
+      "total_request": "{C} Total Requested Energy",
+      "supply": "{C} Energy Supply",
+      "priority_request": "{C} Priority Requested Energy",
+      "priority_fulfillment": "{C} Priority Energy Fulfillment Ratio",
+      "fulfillment": "{C} Energy Fulfillment Ratio"
+    },
+    "labor_total": "{C} Total Labor Requirement",
+    "travel_time": "Travel Time"
+  },
+  "transport": {
+    "capacity": "Transport Active Throughput Capacity",
+    "capacity_readers": ["Capacity Limited Total Transport Load", "Transport Scarcity Active"],
+    "load_readers": [
+      { "name": "Transport Utilization", "term": "[Capacity Limited Total Transport Load]" },
+      { "name": "Transport Revenue", "term": "[Capacity Limited Total Transport Load]" },
+      { "name": "Transport Variable Cost", "term": "[Capacity Limited Total Transport Load]" },
+      { "name": "Transport Required Active Throughput Capacity", "term": "[Total Requested Transport Load]" }
+    ]
+  },
+  "people": {
+    "living": "{C} Living Standard",
+    "living_columns": [{ "column": "{C} Energy Fulfillment Ratio", "weight": "Living Energy Weight With Food" }],
+    "deaths": "{C} Deaths",
+    "births": "{C} Births",
+    "price_index": { "name": "{C} Price Index", "terms": 2 }
+  }
+}

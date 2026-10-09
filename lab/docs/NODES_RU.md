@@ -13,7 +13,7 @@ Node declaration — короткое строгое описание повто
 
 ## 2. Поддерживаемый тип
 
-Registry содержит шесть типов: `capital_lifecycle`, `simple_capital`, `deposit`, `energy_consumer`, `labor` и `population`, все `version: 1`.
+Registry содержит семь типов: `capital_lifecycle`, `simple_capital`, `deposit`, `energy_consumer`, `labor`, `population` и `food`, все `version: 1`.
 
 Минимальная форма:
 
@@ -140,7 +140,7 @@ node src\cli.js expand-nodes <node-or-patch.json> <base-model.json> --out=output
 С merge:
 
 ```cmd
-node src\cli.js expand-nodes <node-or-patch.json> <base-model.json> --out=output\expanded --validation=input\validation\validation-v7.7.11.json
+node src\cli.js expand-nodes <node-or-patch.json> <base-model.json> --out=output\expanded --validation=input\validation\validation-v7.7.12.json
 ```
 
 Дополнительно появляется `validation.merged.json`. Merge идемпотентен:

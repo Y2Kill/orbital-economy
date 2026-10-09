@@ -1,37 +1,38 @@
 # Orbital Economy Lab — structure audit
 
-- generated: 2026-10-05T09:19:11.716Z
-- model: Orbital Economy v7.7.11 r1 — Population
-- model SHA-256: `dbe824b34ad41b5b7d50a6df096b59268198dd4c02c2b36aba5645b24809f0d2`
-- validation: Orbital Economy v7.7.11 validation r1
-- validation SHA-256: `2e4a356acadec1e3e877c115a8951c21faa4ec197f2eb4f808440e8386d31d87`
+- generated: 2026-10-09T14:51:24.764Z
+- model: Orbital Economy v7.7.12 r1 — Food
+- model SHA-256: `e8829fa550172dfab9629a0d66b0c628c1d802c5c1a3826ab7a9a86365c9f234`
+- validation: Orbital Economy v7.7.12 validation r1
+- validation SHA-256: `4c3abf411b8587defa782283845a576d8d8e7e21989c8956fb1ba5007822d336`
 - status: **PASS**
 
 ## Open boundaries (declared physical-boundary meter)
 
-- flows total: 289; crossing the model boundary: 232; classified: 232; unclassified: 0
+- flows total: 315; crossing the model boundary: 254; classified: 254; unclassified: 0
 - closed-world violations: **0** (mode: `classify`) — zero means the currently declared closed-world boundary contract is satisfied; it is not a Planet v1 completeness claim
-- declared transformation pairs: 25; transformation flows without a pair: 0
+- declared transformation pairs: 27; transformation flows without a pair: 0
 
 | Category | closed-world | Flows | Reason |
 |---|:---:|---:|---|
 | primary_extraction | yes | 2 | primary resources enter from the planet itself |
 | power_resource_extraction | yes | 0 | v7.6 primary planetary energy resource enters regional physical inventory through explicit extraction. |
 | regolith_extraction | yes | 0 | v7.7 primary bulk resource (regolith) enters regional physical inventory through explicit extraction. |
-| final_consumption | yes | 4 | final goods leave the economy as consumption |
+| final_consumption | yes | 6 | final goods leave the economy as consumption |
 | power_resource_consumption | yes | 2 | v7.6 physical operating resource is consumed in exact proportion to actual delivered generation. |
 | unit_transformation | yes | 8 | input stock -> output stock conversion modelled as a sink/source pair (different units); every flow here must belong to a declared transformation pair whose numeric identity is checked at runtime |
-| information_signal | yes | 82 | smoothing / information stocks, not matter |
+| information_signal | yes | 94 | smoothing / information stocks, not matter |
 | financial_accounting | yes | 16 | money bookkeeping, not matter |
 | capital_state_accounting | yes | 33 | Active is an operational-state sub-account of Installed; these flows change state, not physical capital |
-| capital_transformation | yes | 53 | v7.5/v7.5.1: installed capital expansion is a unit transformation of Capital Goods; regional sectors use one local sink, shared Transport uses two A/B regional sinks whose total identity is checked at runtime. v7.7: colonial sector expansion is additionally backed by a local Construction Materials sink. v7.7.1: shared Transport expansion is additionally backed by construction materials from both A and B inventories (two legs). v7.7.3: construction-materials plant expansion is backed by local capital goods and construction materials. v7.7.4: capital-goods plant expansion is backed by local capital goods and construction materials. |
+| capital_transformation | yes | 57 | v7.5/v7.5.1: installed capital expansion is a unit transformation of Capital Goods; regional sectors use one local sink, shared Transport uses two A/B regional sinks whose total identity is checked at runtime. v7.7: colonial sector expansion is additionally backed by a local Construction Materials sink. v7.7.1: shared Transport expansion is additionally backed by construction materials from both A and B inventories (two legs). v7.7.3: construction-materials plant expansion is backed by local capital goods and construction materials. v7.7.4: capital-goods plant expansion is backed by local capital goods and construction materials. |
 | capital_goods_transformation | yes | 6 | metal + electronics -> capital goods (declared pair; identity checked at runtime) |
 | construction_materials_transformation | yes | 4 | v7.7: regolith -> construction materials (declared pair; identity checked at runtime) |
 | external_capital | **no** | 0 | capital created without physical goods; expected count is zero from v7.5.1 onward for the currently declared expansion-boundary audit |
-| capital_retirement | yes | 12 | износ и вывод простого капитала: капитал покидает экономику |
+| capital_retirement | yes | 14 | износ и вывод простого капитала: капитал покидает экономику |
 | exploration_expenditure | yes | 6 | capital goods spent on resource exploration leave the economy |
 | demography_births | yes | 2 | people enter the model by birth (Planet v2 population) |
 | demography_deaths | yes | 2 | people leave the model by death (Planet v2 population) |
+| agriculture | yes | 2 | food grows on regional land with energy, labor and farm capital (Planet v2) |
 
 
 Declared unit-transformation pairs (source flow physically backed by sink flows; numeric identity is a runtime check):
@@ -63,6 +64,8 @@ Declared unit-transformation pairs (source flow physically backed by sink flows;
 | B Ore Mine Expansion | B Ore Mine Capital Goods Consumption, B Ore Mine Construction Materials Consumption | B Ore Mine capital goods pair identity | ok |
 | A Power Resource Mine Expansion | A Power Resource Mine Capital Goods Consumption, A Power Resource Mine Construction Materials Consumption | A Power Resource Mine capital goods pair identity | ok |
 | B Power Resource Mine Expansion | B Power Resource Mine Capital Goods Consumption, B Power Resource Mine Construction Materials Consumption | B Power Resource Mine capital goods pair identity | ok |
+| A Farm Expansion | A Farm Capital Goods Consumption | A Farm capital goods pair identity | ok |
+| B Farm Expansion | B Farm Capital Goods Consumption | B Farm capital goods pair identity | ok |
 
 <details><summary>All boundary flows by category</summary>
 
@@ -77,12 +80,14 @@ Declared unit-transformation pairs (source flow physically backed by sink flows;
 **regolith_extraction** (0)
 
 
-**final_consumption** (4)
+**final_consumption** (6)
 
 - A Local Consumption
 - B Local Consumption
 - A Electronics Local Consumption
 - B Electronics Local Consumption
+- A Food Consumption
+- B Food Consumption
 
 **power_resource_consumption** (2)
 
@@ -100,7 +105,7 @@ Declared unit-transformation pairs (source flow physically backed by sink flows;
 - B Electronics Feedstock Consumption
 - B Electronics Production
 
-**information_signal** (82)
+**information_signal** (94)
 
 - A Electronics Capacity Planning Signal Increase
 - A Electronics Capacity Planning Signal Decrease
@@ -184,6 +189,18 @@ Declared unit-transformation pairs (source flow physically backed by sink flows;
 - A Perceived Attractiveness Decrease
 - B Perceived Attractiveness Increase
 - B Perceived Attractiveness Decrease
+- A Food Demand Signal Increase
+- A Food Demand Signal Decrease
+- A Food Production Signal Increase
+- A Food Production Signal Decrease
+- B Food Demand Signal Increase
+- B Food Demand Signal Decrease
+- B Food Production Signal Increase
+- B Food Production Signal Decrease
+- A to B Food Export Signal Increase
+- A to B Food Export Signal Decrease
+- B to A Food Export Signal Increase
+- B to A Food Export Signal Decrease
 
 **financial_accounting** (16)
 
@@ -240,7 +257,7 @@ Declared unit-transformation pairs (source flow physically backed by sink flows;
 - B Capital Goods Plant Mothballing
 - B Capital Goods Plant Active Depreciation
 
-**capital_transformation** (53)
+**capital_transformation** (57)
 
 - A Refinery Expansion
 - A Electronics Factory Expansion
@@ -295,6 +312,10 @@ Declared unit-transformation pairs (source flow physically backed by sink flows;
 - B Power Resource Mine Expansion
 - B Power Resource Mine Capital Goods Consumption
 - B Power Resource Mine Construction Materials Consumption
+- A Farm Expansion
+- A Farm Capital Goods Consumption
+- B Farm Expansion
+- B Farm Capital Goods Consumption
 
 **capital_goods_transformation** (6)
 
@@ -315,7 +336,7 @@ Declared unit-transformation pairs (source flow physically backed by sink flows;
 **external_capital** (0)
 
 
-**capital_retirement** (12)
+**capital_retirement** (14)
 
 - A Regolith Mine Capacity Depreciation
 - A Regolith Mine Capacity Retirement
@@ -329,6 +350,8 @@ Declared unit-transformation pairs (source flow physically backed by sink flows;
 - A Power Resource Mine Capacity Retirement
 - B Power Resource Mine Capacity Depreciation
 - B Power Resource Mine Capacity Retirement
+- A Farm Depreciation
+- B Farm Depreciation
 
 **exploration_expenditure** (6)
 
@@ -349,13 +372,18 @@ Declared unit-transformation pairs (source flow physically backed by sink flows;
 - A Deaths
 - B Deaths
 
+**agriculture** (2)
+
+- A Food Production
+- B Food Production
+
 </details>
 
 ## Colony symmetry
 
 - tokens: A ↔ B
-- mirrored pairs checked: 1320; mirrored links checked: 3136
-- structural mismatches: **0**; numeric parameter differences (allowed): 140; elements under exceptions: 0
+- mirrored pairs checked: 1390; mirrored links checked: 3356
+- structural mismatches: **0**; numeric parameter differences (allowed): 154; elements under exceptions: 0
 
 <details><summary>Numeric parameter differences between colonies (allowed)</summary>
 
@@ -431,17 +459,24 @@ Declared unit-transformation pairs (source flow physically backed by sink flows;
 | initial_value | A Mining Energy Signal | 42.227 | B Mining Energy Signal | 8.373 |
 | initial_value | A Power Resource Extraction Energy Signal | 1373.679 | B Power Resource Extraction Energy Signal | 30.983 |
 | value | A Population Initial | 28 | B Population Initial | 8.5 |
+| value | A Farm Land Capacity | 22 | B Farm Land Capacity | 60 |
+| initial_value | A Food Inventory | 840 | B Food Inventory | 255 |
+| initial_value | A Food Demand Signal | 28 | B Food Demand Signal | 8.5 |
+| initial_value | A Food Production Signal | 20.174088950502767 | B Food Production Signal | 16.325911049497233 |
+| initial_value | A Farm Capacity | 22 | B Farm Capacity | 17.142206601972095 |
+| initial_value | A to B Food Export Signal | 0 | B to A Food Export Signal | 7.825911049497232 |
+| initial_value | Food Cargo A to B | 0 | Food Cargo B to A | 78.25911049497232 |
 
 </details>
 
 ## Planet closure (per-process Planet v1 contract)
 
 - status: **PASS**; mode: `planet_v1`
-- processes: 17; legacy: 2; expected source outputs: 10; undeclared outputs: 0
-- P2 capacity: kernel **11** / simple **6** / exceptions **0** / undeclared **0**
-- P3 energy: requests **14** / producer **2** / exceptions **1** / undeclared **0**
+- processes: 19; legacy: 2; expected source outputs: 12; undeclared outputs: 0
+- P2 capacity: kernel **11** / simple **8** / exceptions **0** / undeclared **0**
+- P3 energy: requests **16** / producer **2** / exceptions **1** / undeclared **0**
 - P4 deposits: with **6** / without **0**
-- P5 labor: declared **17** / undeclared **0**
+- P5 labor: declared **19** / undeclared **0**
 - P6 demand drivers: **4**
 - reversibility violations: **0**
 
@@ -589,11 +624,29 @@ Declared unit-transformation pairs (source flow physically backed by sink flows;
 - capacity: Capacity Limited Total Transport Load → Transport Active Throughput Capacity
 - labor_requirement: Capacity Limited Total Transport Load → Transport Labor per Unit → Transport Labor Requirement
 
+**farming[A]**
+- capacity: A Food Production → A Farm Effective Capacity → A Farm Capacity
+- energy_total_to_request: A Total Requested Energy → A Farming Requested Energy
+- energy_output_to_fulfillment: A Food Production → A Farming Energy Fulfillment Ratio → A Farming Allocated Energy → A Priority Energy Fulfillment Ratio
+- energy_shared_planned: shared A Desired Food Production
+  - request: A Farming Requested Energy → A Food Production Signal → A Food Production Signal Increase → A Desired Food Production
+  - output: A Food Production → A Desired Food Production
+- labor_requirement: A Food Production → Food Labor per Unit → A Farming Labor Requirement
+
+**farming[B]**
+- capacity: B Food Production → B Farm Effective Capacity → B Farm Capacity
+- energy_total_to_request: B Total Requested Energy → B Farming Requested Energy
+- energy_output_to_fulfillment: B Food Production → B Farming Energy Fulfillment Ratio → B Farming Allocated Energy → B Priority Energy Fulfillment Ratio
+- energy_shared_planned: shared B Desired Food Production
+  - request: B Farming Requested Energy → B Food Production Signal → B Food Production Signal Increase → B Desired Food Production
+  - output: B Food Production → B Desired Food Production
+- labor_requirement: B Food Production → Food Labor per Unit → B Farming Labor Requirement
+
 </details>
 
 ## Algebraic loops (switch-aware, unconditional static audit)
 
 - status: **PASS**
-- switches: 15 — Capital Lifecycle Enabled, Intermediate Inputs Enabled, Capital Goods Enabled, Transport Capital Goods Enabled, Power Resource Enabled, Construction Materials Enabled, Transport Construction Materials Enabled, Construction Materials Energy Enabled, Construction Materials Capital Enabled, Capital Goods Capital Enabled, Regolith Capital Enabled, Ore Capital Enabled, Power Resource Capital Enabled, Deposits Enabled, Process Energy Enabled
-- combinations: 32768; with loops: **0**
+- switches: 16 — Capital Lifecycle Enabled, Intermediate Inputs Enabled, Capital Goods Enabled, Transport Capital Goods Enabled, Power Resource Enabled, Construction Materials Enabled, Transport Construction Materials Enabled, Construction Materials Energy Enabled, Construction Materials Capital Enabled, Capital Goods Capital Enabled, Regolith Capital Enabled, Ore Capital Enabled, Power Resource Capital Enabled, Deposits Enabled, Process Energy Enabled, Food Enabled
+- combinations: 65536; with loops: **0**
 - Modes with loops: none

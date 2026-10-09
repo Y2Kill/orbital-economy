@@ -216,7 +216,7 @@ Legacy-процессы учитываются отдельно и не вход
 - `planet_v1` — требует полноту процессов, P2/P3 roles, deposit closure, labor declaration, demand drivers и нулевые reversibility violations; задокументированные P2/P3 exceptions пока разрешены.
 - `planet_strict` — всё из `planet_v1` плюс **ноль P2/P3 exceptions**.
 
-Accepted v7.7.11 r1 (как и v7.7.10 r1) в режиме `planet_v1` — PASS (v7.7.9 r1: P5 4/13, режим `report`; v7.7.8 r1: P3 6/2/9/0; v7.7.7 r1: P4 0/6; v7.7.1 r1: P3 4/2/11/0; v7.7.2 r1: P2 7/10/0; v7.7.3 r1: P2 9/8/0; v7.7.4 r1: P2 11/0/6/0; v7.7.5 r1: P2 11/2/4/0; v7.7.6 r1: P2 11/4/2/0):
+Accepted v7.7.12 r1 (как и v7.7.10–v7.7.11 r1) в режиме `planet_v1` — PASS; с v7.7.12 — 19 процессов: фермы A/B — простой капитал, приоритетная энергия, объявленный труд (v7.7.9 r1: P5 4/13, режим `report`; v7.7.8 r1: P3 6/2/9/0; v7.7.7 r1: P4 0/6; v7.7.1 r1: P3 4/2/11/0; v7.7.2 r1: P2 7/10/0; v7.7.3 r1: P2 9/8/0; v7.7.4 r1: P2 11/0/6/0; v7.7.5 r1: P2 11/2/4/0; v7.7.6 r1: P2 11/4/2/0):
 
 ```text
 processes=17; legacy=2; expected source outputs=16
