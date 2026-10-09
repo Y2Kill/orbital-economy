@@ -51,7 +51,6 @@
       { "name": "Transport Utilization", "term": "[Capacity Limited Total Transport Load]" },
       { "name": "Transport Revenue", "term": "[Capacity Limited Total Transport Load]" },
       { "name": "Transport Variable Cost", "term": "[Capacity Limited Total Transport Load]" },
-      { "name": "Transport Labor Requirement", "term": "[Capacity Limited Total Transport Load]" },
       { "name": "Transport Required Active Throughput Capacity", "term": "[Total Requested Transport Load]" }
     ]
   },

@@ -59,8 +59,8 @@ export function expandFood(decl, base) {
     F(`${X} Farm Depreciation`, `${X} Farm Capacity`, null, `IfThenElse(${ON}, [${X} Farm Capacity] * [Farm Depreciation Rate], 0)`);
     V(`${X} Farming Requested Energy`, `IfThenElse(${ON}, [${X} Food Production Signal] * [Food Energy per Unit], 0)`, 'energy request of farms, served in the priority group');
     V(`${X} Farming Allocated Energy`, `[${X} Farming Requested Energy] * [${sub(I.energy.priority_fulfillment, X)}]`);
-    V(`${X} Farming Energy Fulfillment`, `IfThenElse([${X} Farming Requested Energy] > 0.001, [${X} Farming Allocated Energy] / [${X} Farming Requested Energy], 1)`);
-    F(`${X} Food Production`, null, `${X} Food Inventory`, `IfThenElse(${ON}, Min([${X} Desired Food Production], [${X} Farm Effective Capacity]) * [${X} Farming Energy Fulfillment], 0)`, 'food grown');
+    V(`${X} Farming Energy Fulfillment Ratio`, `IfThenElse([${X} Farming Requested Energy] > 0.001, [${X} Farming Allocated Energy] / [${X} Farming Requested Energy], 1)`);
+    F(`${X} Food Production`, null, `${X} Food Inventory`, `IfThenElse(${ON}, Min([${X} Desired Food Production], [${X} Farm Effective Capacity]) * [${X} Farming Energy Fulfillment Ratio], 0)`, 'food grown');
     V(`${X} Farming Labor Requirement`, `[${X} Food Production] * [Food Labor per Unit]`);
     V(`${X} Food Price`, `[Food Price Reference] * ([Food Target Coverage Days] / Max([${X} Food Coverage Days], 1)) ^ [Food Price Elasticity]`, 'scarcity price of food');
   }
@@ -137,7 +137,9 @@ export function expandFood(decl, base) {
       energy: { kind: 'requests', request: '{C} Farming Requested Energy', signal: '{C} Food Production Signal', fulfillment: I.energy.priority_fulfillment },
       labor: { kind: 'declared', intensity: 'Food Labor per Unit', requirement: '{C} Farming Labor Requirement' }
     },
-    planet_process_category: 'agriculture'
+    planet_process_category: 'agriculture',
+    energy_balance_consumers: ['Farming'],
+    energy_balance_priority: ['Farming']
   };
   return { patch: { add_elements: add, replace_formulas: rep, add_links: links }, validation };
 }
@@ -155,6 +157,9 @@ export function mergeFoodStructure(v0, frag) {
   for (const p of frag.transformation_pairs) if (!ob.transformation_pairs.some(x => x.source === p.source)) ob.transformation_pairs.push(p);
   if (!pc.process_categories.includes(frag.planet_process_category)) pc.process_categories.push(frag.planet_process_category);
   if (!pc.processes.some(p => p.id === frag.planet_process.id)) pc.processes.push(frag.planet_process);
+  const eb = v.plugins.find(p => p.type === 'energy_balance');
+  for (const n of frag.energy_balance_consumers) if (!eb.consumers.includes(n)) eb.consumers.push(n);
+  for (const n of frag.energy_balance_priority) if (!eb.priority.includes(n)) eb.priority.push(n);
   return v;
 }
 
