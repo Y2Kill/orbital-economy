@@ -1,0 +1,325 @@
+{
+  "format": "orbital-economy-parameter-annotations-fragment-v1",
+  "model": "Orbital Economy v7.7.12 Food candidate r1",
+  "updated": "2026-10-09",
+  "note": "Task 032 fragment. Covers every new exogenous food parameter required by TASK_RU §2: Food Enabled, the 20 declaration parameters, five asymmetric A/B pairs (annotation on A with applies_to_mirror), and the two non-zero B→A startup trade stocks. Food transport labor is intentionally not modeled at Planet v2 step 2.",
+  "parameters": {
+    "Food Enabled": {
+      "role": "Food-layer switch; default 0, enabled only by new Modes 49–51.",
+      "effect": "At 0 every food replacement selects the previous formula; at 1 food/farms/trade and their feedbacks are active.",
+      "evidence": "docs/tasks/032-food/V7_7_12_ARCHITECTURE_SPEC.md §§1–5 and docs/research/FOOD_PROTOTYPE_2026-10-05_RU.md.",
+      "since": "v7.7.12 candidate r1",
+      "tags": [
+        "food",
+        "switch",
+        "regression-guard"
+      ]
+    },
+    "Food Need per Capita": {
+      "role": "Daily food need per person, value 1 food unit/person/day.",
+      "effect": "Scales regional Food Demand directly with Population.",
+      "evidence": "docs/tasks/032-food/V7_7_12_ARCHITECTURE_SPEC.md §§1–5 and docs/research/FOOD_PROTOTYPE_2026-10-05_RU.md.",
+      "since": "v7.7.12 candidate r1",
+      "tags": [
+        "food",
+        "demand",
+        "population"
+      ]
+    },
+    "Food Energy per Unit": {
+      "role": "Farm energy intensity, value 0.5 energy units per unit of planned food production.",
+      "effect": "Scales Farming Requested Energy and therefore priority-energy demand from farms.",
+      "evidence": "docs/tasks/032-food/V7_7_12_ARCHITECTURE_SPEC.md §§1–5 and docs/research/FOOD_PROTOTYPE_2026-10-05_RU.md.",
+      "since": "v7.7.12 candidate r1",
+      "tags": [
+        "food",
+        "energy",
+        "farming"
+      ]
+    },
+    "Food Labor per Unit": {
+      "role": "Farm labor intensity, value 0.15 labor units per unit of food production.",
+      "effect": "Scales Farming Labor Requirement; labor remains accounting-only at Planet v2 step 2.",
+      "evidence": "docs/tasks/032-food/V7_7_12_ARCHITECTURE_SPEC.md §§1–5 and docs/research/FOOD_PROTOTYPE_2026-10-05_RU.md.",
+      "since": "v7.7.12 candidate r1",
+      "tags": [
+        "food",
+        "labor",
+        "farming"
+      ]
+    },
+    "Food Freight Weight per Unit": {
+      "role": "Shared-transport weight of food, value 0.5 transport-load units per food unit.",
+      "effect": "Converts food dispatch into Food Transport Load and therefore reduces capacity left for ordinary goods.",
+      "evidence": "docs/tasks/032-food/V7_7_12_ARCHITECTURE_SPEC.md §§1–5 and docs/research/FOOD_PROTOTYPE_2026-10-05_RU.md.",
+      "since": "v7.7.12 candidate r1",
+      "tags": [
+        "food",
+        "transport",
+        "freight"
+      ]
+    },
+    "Food Transport Max Share": {
+      "role": "Maximum share of shared transport reserved for food, value 0.8.",
+      "effect": "Caps food transport capacity at 80% of Transport Active Throughput Capacity before ordinary goods use the remainder.",
+      "evidence": "docs/tasks/032-food/V7_7_12_ARCHITECTURE_SPEC.md §§1–5 and docs/research/FOOD_PROTOTYPE_2026-10-05_RU.md.",
+      "since": "v7.7.12 candidate r1",
+      "tags": [
+        "food",
+        "transport",
+        "priority"
+      ]
+    },
+    "Farm Capital Goods per Capacity": {
+      "role": "Capital-goods requirement for farm expansion, value 0.3 goods per unit of farm capacity.",
+      "effect": "Converts Farm Expansion into capital-goods consumption and added Capital Goods Demand.",
+      "evidence": "docs/tasks/032-food/V7_7_12_ARCHITECTURE_SPEC.md §§1–5 and docs/research/FOOD_PROTOTYPE_2026-10-05_RU.md.",
+      "since": "v7.7.12 candidate r1",
+      "tags": [
+        "food",
+        "capital",
+        "farming"
+      ]
+    },
+    "Farm Depreciation Rate": {
+      "role": "Farm depreciation rate, 0.0000555555555556 per model day (2% per 360-day model year).",
+      "effect": "Removes Farm Capacity through Farm Depreciation while food is enabled.",
+      "evidence": "docs/tasks/032-food/V7_7_12_ARCHITECTURE_SPEC.md §§1–5 and docs/research/FOOD_PROTOTYPE_2026-10-05_RU.md.",
+      "since": "v7.7.12 candidate r1",
+      "tags": [
+        "food",
+        "capital",
+        "depreciation"
+      ]
+    },
+    "Farm Capacity Adjustment Time": {
+      "role": "Farm capacity adjustment time, 360 model days.",
+      "effect": "Sets the rate at which desired additional farm capacity is converted into Farm Desired Expansion.",
+      "evidence": "docs/tasks/032-food/V7_7_12_ARCHITECTURE_SPEC.md §§1–5 and docs/research/FOOD_PROTOTYPE_2026-10-05_RU.md.",
+      "since": "v7.7.12 candidate r1",
+      "tags": [
+        "food",
+        "capital",
+        "time-constant"
+      ]
+    },
+    "Farm Desired Capacity Margin": {
+      "role": "Desired farm capacity margin, value 1.15.",
+      "effect": "Targets farm capacity at 115% of the production signal, subject to the land cap.",
+      "evidence": "docs/tasks/032-food/V7_7_12_ARCHITECTURE_SPEC.md §§1–5 and docs/research/FOOD_PROTOTYPE_2026-10-05_RU.md.",
+      "since": "v7.7.12 candidate r1",
+      "tags": [
+        "food",
+        "farming",
+        "capacity"
+      ]
+    },
+    "Food Target Coverage Days": {
+      "role": "Target inventory coverage, 30 model days.",
+      "effect": "Sets initial Food Inventory and the inventory target used by production/import planning and Food Price.",
+      "evidence": "docs/tasks/032-food/V7_7_12_ARCHITECTURE_SPEC.md §§1–5 and docs/research/FOOD_PROTOTYPE_2026-10-05_RU.md.",
+      "since": "v7.7.12 candidate r1",
+      "tags": [
+        "food",
+        "inventory",
+        "target"
+      ]
+    },
+    "Food Inventory Adjustment Time": {
+      "role": "Inventory correction time, 30 model days.",
+      "effect": "Controls how quickly shortages/excess relative to target stock alter desired production and import need.",
+      "evidence": "docs/tasks/032-food/V7_7_12_ARCHITECTURE_SPEC.md §§1–5 and docs/research/FOOD_PROTOTYPE_2026-10-05_RU.md.",
+      "since": "v7.7.12 candidate r1",
+      "tags": [
+        "food",
+        "inventory",
+        "time-constant"
+      ]
+    },
+    "Food Buffer Days": {
+      "role": "Coverage needed for full immediate fulfillment, 5 model days.",
+      "effect": "Maps Food Coverage Days to Food Fulfillment; five buffer days or more gives fulfillment 1.",
+      "evidence": "docs/tasks/032-food/V7_7_12_ARCHITECTURE_SPEC.md §§1–5 and docs/research/FOOD_PROTOTYPE_2026-10-05_RU.md.",
+      "since": "v7.7.12 candidate r1",
+      "tags": [
+        "food",
+        "inventory",
+        "fulfillment"
+      ]
+    },
+    "Food Demand Signal Time": {
+      "role": "Demand smoothing time, 30 model days.",
+      "effect": "Controls adjustment of Food Demand Signal toward current population-driven Food Demand.",
+      "evidence": "docs/tasks/032-food/V7_7_12_ARCHITECTURE_SPEC.md §§1–5 and docs/research/FOOD_PROTOTYPE_2026-10-05_RU.md.",
+      "since": "v7.7.12 candidate r1",
+      "tags": [
+        "food",
+        "demand",
+        "time-constant"
+      ]
+    },
+    "Food Production Signal Time": {
+      "role": "Production/export-order smoothing time, 90 model days.",
+      "effect": "Controls Food Production Signal and pairwise Food Export Signal adjustment.",
+      "evidence": "docs/tasks/032-food/V7_7_12_ARCHITECTURE_SPEC.md §§1–5 and docs/research/FOOD_PROTOTYPE_2026-10-05_RU.md.",
+      "since": "v7.7.12 candidate r1",
+      "tags": [
+        "food",
+        "production",
+        "trade",
+        "time-constant"
+      ]
+    },
+    "Food Export Release Time": {
+      "role": "Release time for exportable inventory, 5 model days.",
+      "effect": "Controls how fast inventory above half the target can be offered to importing regions.",
+      "evidence": "docs/tasks/032-food/V7_7_12_ARCHITECTURE_SPEC.md §§1–5 and docs/research/FOOD_PROTOTYPE_2026-10-05_RU.md.",
+      "since": "v7.7.12 candidate r1",
+      "tags": [
+        "food",
+        "trade",
+        "inventory"
+      ]
+    },
+    "Food Price Reference": {
+      "role": "Reference food price, value 10 model price units.",
+      "effect": "Anchors Food Price when coverage is at the target level and normalizes food's contribution to Price Index.",
+      "evidence": "docs/tasks/032-food/V7_7_12_ARCHITECTURE_SPEC.md §§1–5 and docs/research/FOOD_PROTOTYPE_2026-10-05_RU.md.",
+      "since": "v7.7.12 candidate r1",
+      "tags": [
+        "food",
+        "price",
+        "reference"
+      ]
+    },
+    "Food Price Elasticity": {
+      "role": "Food scarcity-price elasticity, value 0.5.",
+      "effect": "Controls how strongly Food Price rises as coverage falls below the target.",
+      "evidence": "docs/tasks/032-food/V7_7_12_ARCHITECTURE_SPEC.md §§1–5 and docs/research/FOOD_PROTOTYPE_2026-10-05_RU.md.",
+      "since": "v7.7.12 candidate r1",
+      "tags": [
+        "food",
+        "price",
+        "elasticity"
+      ]
+    },
+    "Famine Death Sensitivity": {
+      "role": "Mortality sensitivity to food fulfillment, exponent 2.",
+      "effect": "Multiplies the previous death flow by fulfillment^-2 (with the node floor), increasing mortality under food shortage.",
+      "evidence": "docs/tasks/032-food/V7_7_12_ARCHITECTURE_SPEC.md §§1–5 and docs/research/FOOD_PROTOTYPE_2026-10-05_RU.md.",
+      "since": "v7.7.12 candidate r1",
+      "tags": [
+        "food",
+        "population",
+        "mortality"
+      ]
+    },
+    "Living Food Weight": {
+      "role": "Food exponent in Living Standard, value 0.5.",
+      "effect": "Weights food fulfillment as the square-root factor in the food-enabled living-standard product.",
+      "evidence": "docs/tasks/032-food/V7_7_12_ARCHITECTURE_SPEC.md §§1–5 and docs/research/FOOD_PROTOTYPE_2026-10-05_RU.md.",
+      "since": "v7.7.12 candidate r1",
+      "tags": [
+        "food",
+        "population",
+        "living-standard"
+      ]
+    },
+    "Living Energy Weight With Food": {
+      "role": "Energy exponent in food-enabled Living Standard, value 0.5.",
+      "effect": "Weights Energy Fulfillment Ratio as the second square-root factor in Living Standard when food is enabled.",
+      "evidence": "docs/tasks/032-food/V7_7_12_ARCHITECTURE_SPEC.md §§1–5 and docs/research/FOOD_PROTOTYPE_2026-10-05_RU.md.",
+      "since": "v7.7.12 candidate r1",
+      "tags": [
+        "food",
+        "energy",
+        "living-standard"
+      ]
+    },
+    "A Farm Land Capacity": {
+      "role": "Regional farm-land soft cap. Initial values A=22, B=60; fertile B is an explicit owner decision.",
+      "effect": "Sets the maximum effective/desired farm scale by region and is the primary initial comparative advantage of B.",
+      "evidence": "V7_7_12_ARCHITECTURE_SPEC §§1,3,5: A 22 / B 60; Mode 51 probes 40/40.",
+      "since": "v7.7.12 candidate r1",
+      "applies_to_mirror": true,
+      "tags": [
+        "food",
+        "land",
+        "comparative-advantage"
+      ]
+    },
+    "A Farm Capacity": {
+      "role": "Initial physical farm capacity. Generated start values A=22, B=17.142206601972095 from initial population, land and the start-state export allocation.",
+      "effect": "Sets the starting productive capital of farms before expansion/depreciation dynamics.",
+      "evidence": "lab/src/nodes/food.js start-state algorithm; V7_7_12_ARCHITECTURE_SPEC §5 notes B start ≈17.14.",
+      "since": "v7.7.12 candidate r1",
+      "applies_to_mirror": true,
+      "tags": [
+        "food",
+        "capital",
+        "initial-stock",
+        "comparative-advantage"
+      ]
+    },
+    "A Food Inventory": {
+      "role": "Initial food stock. A=840, B=255 = initial population (28 / 8.5) × 30 target coverage days.",
+      "effect": "Sets starting coverage and prevents an artificial startup famine while farms/trade begin from the balanced start state.",
+      "evidence": "lab/src/nodes/food.js: Food Inventory initial = population_initial × Food Target Coverage Days.",
+      "since": "v7.7.12 candidate r1",
+      "applies_to_mirror": true,
+      "tags": [
+        "food",
+        "inventory",
+        "initial-stock"
+      ]
+    },
+    "A Food Demand Signal": {
+      "role": "Initial smoothed food-demand signal. A=28, B=8.5, equal to each region's initial population.",
+      "effect": "Seeds demand planning at the pre-food demographic state, avoiding a startup smoothing transient.",
+      "evidence": "lab/src/nodes/food.js start-state algorithm: Food Demand Signal initial = population_initial.",
+      "since": "v7.7.12 candidate r1",
+      "applies_to_mirror": true,
+      "tags": [
+        "food",
+        "demand",
+        "initial-stock"
+      ]
+    },
+    "A Food Production Signal": {
+      "role": "Initial smoothed production plan. A=20.174088950502767, B=16.325911049497233 after land-limited A and B's assigned startup exports.",
+      "effect": "Seeds farm energy requests and desired farm capacity at the physically balanced startup production plan.",
+      "evidence": "lab/src/nodes/food.js start-state algorithm (soft land efficiency plus startup export allocation); V7_7_12_ARCHITECTURE_SPEC §5.",
+      "since": "v7.7.12 candidate r1",
+      "applies_to_mirror": true,
+      "tags": [
+        "food",
+        "production",
+        "initial-stock",
+        "comparative-advantage"
+      ]
+    },
+    "B to A Food Export Signal": {
+      "role": "Initial B→A export-order signal, 7.825911049497232 food units/day; it equals A's land-limited startup shortfall assigned to fertile B.",
+      "effect": "Starts B production planning with A's existing deficit already visible instead of waiting 90 days for the export-order signal to build.",
+      "evidence": "lab/src/nodes/food.js start-state algorithm: A shortfall is allocated to regions with spare land; B is the exporter.",
+      "since": "v7.7.12 candidate r1",
+      "tags": [
+        "food",
+        "trade",
+        "initial-stock"
+      ]
+    },
+    "Food Cargo B to A": {
+      "role": "Initial food already in transit B→A, 78.25911049497232 food units = 7.825911049497232/day × 10-day Travel Time.",
+      "effect": "Represents the startup export flow already inside the transport delay, preventing a synthetic ten-day delivery gap at model start.",
+      "evidence": "lab/src/nodes/food.js start-state algorithm and V7_7_12_ARCHITECTURE_SPEC §1 (10-day cargo transit).",
+      "since": "v7.7.12 candidate r1",
+      "tags": [
+        "food",
+        "trade",
+        "transport",
+        "initial-stock"
+      ]
+    }
+  }
+}
