@@ -363,6 +363,14 @@ d354dc2fce61762d7b7ae843822475f338ce3fd0d437c06e222e59698972085e  ./docs/tasks/0
 acbec86cbb28343cf6c71820df4c3a8fa43c24c16c6ac1ff16baad2d8778c89b  ./docs/tasks/031-food-node/reference/definition_fingerprint.mjs
 1ad9f61e677a1d3173f9d15fdf42bdf87dd0d912d097b99e2be2eb155e2086fa  ./docs/tasks/031-food-node/reference/food_node_prototype.mjs
 086b7ea91d6b61a18306b4c35556d9f6eeab38fe0f11e201a7f437e00a63c1e7  ./docs/tasks/031-food-node/scope.json
+69e661f9bde8c2b94918bd7073f37305fecc8e095ab00b3de51e9f68fec4a0fb  ./docs/tasks/032-food/TASK_RU.md
+cee40773607ebf52d1642cad7ab207d64712d8f44735de5dc27d5a21d54984a7  ./docs/tasks/032-food/V7_7_12_ARCHITECTURE_SPEC.md
+0e565a47a715a43e08d0df023e9d687882d4141f96dcd61a7c5e310991bfdcda  ./docs/tasks/032-food/V7_7_12_TEST_PLAN.md
+e69a194224b4ac55cf176ebe37ea10a968e06d29135c8c16ec9b2aae4d61915b  ./docs/tasks/032-food/draft/change-policy-v7.7.12-draft.json
+d354dc2fce61762d7b7ae843822475f338ce3fd0d437c06e222e59698972085e  ./docs/tasks/032-food/draft/food.json
+a4098934c9a78eab26c6159d2c829ca3deef090a29fbff740cca2c46fa79ce3b  ./docs/tasks/032-food/draft/skeleton-patch.json
+b0c49ceea10deb5e681a9125be2ab15643932852e065a27b6b9e84bdb23d6956  ./docs/tasks/032-food/draft/validation-v7.7.12-draft.json
+d317c26ff8a29fafdb2006b3b2b75e68c6dca3afe37f0e084312f1e9a6379ed5  ./docs/tasks/032-food/scope.json
 44d2e557f1cb2322739bc95ee2b6dcbf6d6fcb708da14e90d53250936e50da5c  ./docs/tasks/README_RU.md
 bbf818e93b88d606b3137b1bb69d60db8c41c9df4089025a921b1ca00f473244  ./lab/APPLY_PATCH.cmd
 0e438cda6ccf97a6c1072bc4cdf3a1031bfcdf8209dbec7afea328b24cf6f834  ./lab/CHANGELOG.md
@@ -390,7 +398,7 @@ bdb242eac7c559eab061aee427b695183126d6f98e7a5e2e4bf7717bb4b3ff97  ./lab/QUICK_ST
 52bcfc0749480fa5467e713f3a6948258dccb560357eef5822f8bcee070c652c  ./lab/RUN_LAB.cmd
 324ccedcd35621f7716bc905acc67d09076f040075e68d8e1c5e657a32f48499  ./lab/RUN_TESTS.cmd
 b08fd6ad35bba528bf455553dfd5d9f7c68b81658f2cbf6cf2a3989afb647629  ./lab/SELF_TEST.cmd
-a86d6fd8cc69189308579b4b02661570d23d344275bb24ea646fe8011d4719cf  ./lab/SHA256SUMS.txt
+6caa043edab274f8ca8b94e22d0aa023fec872cbef0df46c36ec47a665b5f087  ./lab/SHA256SUMS.txt
 75120cad55eab07655f699135bd7997c2a18db496be28dbd8741ddecedd4bdda  ./lab/STRUCTURE_AUDIT.cmd
 7396a4da60a41cc41a67c7bb8baa619b0ad5be9e745c0c08f17c1a26a56a18e5  ./lab/STRUCTURE_SELF_TEST.cmd
 58cb8e2bf5a04de53a4c568c22bd8f840585e27dec55b701520b28472e6652b8  ./lab/docs/ARCHITECTURE_RU.md
@@ -438,7 +446,7 @@ a7e66d9739834437fff7b081c6b2b09adb8f007d7d5bfec53f805e18625aabab  ./lab/src/life
 1ffae379e11c3962d782cb10ea3bdd637ac4f0541d80e484d1501798d6184a26  ./lab/src/loop_audit.js
 d50e351606b701badfeba199e4adef824e30b1c6e14e1d27593c1a5347399d8e  ./lab/src/loop_qa.js
 6c8dbd8fc2705b12c0130e2226276328c9f84d2d6aa6c22a845e7ad53c1fadf8  ./lab/src/model.js
-680c34e9ebe3524fa1ceb5dfc1a35280ba2ffd5b9be489d9b2f38e428a316ce6  ./lab/src/node_qa.js
+efc81204f62a3e9afe4d94a7b6dafb2dcfd1e9c913ee582d8df141c8dc3bb281  ./lab/src/node_qa.js
 334743997c6b2bd14177298d69dabd1472b17ed1f8ec29e352ac856373b30f05  ./lab/src/nodes/capital_lifecycle.js
 db5abb1bd96c438a0ca066cc300df8b8f691d083e6770814cd86a86cd1809b74  ./lab/src/nodes/deposit.js
 db55cf5aae42467bacd9fc0003e81fb75399bf9dd813009c2bb51701ba213fd4  ./lab/src/nodes/energy_consumer.js
@@ -450,7 +458,7 @@ ccc93f854919484ae44a03b548388f7db592af5555a4ae0e25f3caab60359127  ./lab/src/node
 1913c9aa55218ec302128b218dc448a8abaf4c5009641bf239791def84f65de9  ./lab/src/parameters.js
 9e3270f021505e686538e44e673e8ff010974c2335723dde8c3a87722da347e3  ./lab/src/patch.js
 accca1c80f92b585650cdfe1f0f9fbc2f58bde0ef6dcf8598537501fb68aff80  ./lab/src/planet_closure.js
-895e8a08561f54caaaa40fbdb6c16c0d4b4e5c25fa682b09ab6ea3a58f446381  ./lab/src/planet_qa.js
+f38da236a2b31ca0678b2ffa4eff7f3df1dcedc0790164e0fa8cdd32b675facd  ./lab/src/planet_qa.js
 c3c1412ddbd2745d01fa40023a70b713b8dc6ad2f0ba14fe0fd70fe668138036  ./lab/src/policy.js
 630aeb7fd6c7f09d6f42089a0225e39f0f7c966b27b5ec4a2e17b5321d118b58  ./lab/src/policy_qa.js
 b0162ce5bc02de93c6b5a36c1f93caf5455b9f0de7ae8fb5cfd19396ef3bc3fa  ./lab/src/policy_run.js

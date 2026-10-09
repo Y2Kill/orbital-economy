@@ -1,0 +1,17 @@
+{
+  "task": "032",
+  "title": "v7.7.12 Food: food and farms via the food node under switch Food Enabled (Modes 0-48 unchanged); surge wiring for Mode 50; Modes 49 (food), 50 (transport surge with food), 51 (equal land probe) (Planet v2 step 2)",
+  "branch": "task/032-food",
+  "allow": [],
+  "allow_binary": [],
+  "allow_protected": [
+    "docs/tasks/032-food/candidate/**"
+  ],
+  "required_changes": [
+    "docs/tasks/032-food/candidate/model-patch.json",
+    "docs/tasks/032-food/candidate/validation.json",
+    "docs/tasks/032-food/candidate/change-policy.json",
+    "docs/tasks/032-food/candidate/PARAMETER_ANNOTATIONS_fragment.json"
+  ],
+  "sums_by": "reviewer"
+}

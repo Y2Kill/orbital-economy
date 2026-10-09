@@ -1,0 +1,179 @@
+{
+  "format": "orbital-economy-model-patch-v1",
+  "base_sha256": "dbe824b34ad41b5b7d50a6df096b59268198dd4c02c2b36aba5645b24809f0d2",
+  "name": "Orbital Economy v7.7.12 skeleton",
+  "nodes": [
+    {
+      "type": "food",
+      "version": 1,
+      "colonies": [
+        "A",
+        "B"
+      ],
+      "switch": "Food Enabled",
+      "land": {
+        "A": 22,
+        "B": 60
+      },
+      "parameters": {
+        "Food Need per Capita": 1,
+        "Food Energy per Unit": 0.5,
+        "Food Labor per Unit": 0.15,
+        "Food Freight Weight per Unit": 0.5,
+        "Food Transport Max Share": 0.8,
+        "Farm Capital Goods per Capacity": 0.3,
+        "Farm Depreciation Rate": 5.55555555556e-05,
+        "Farm Capacity Adjustment Time": 360,
+        "Farm Desired Capacity Margin": 1.15,
+        "Food Target Coverage Days": 30,
+        "Food Inventory Adjustment Time": 30,
+        "Food Buffer Days": 5,
+        "Food Demand Signal Time": 30,
+        "Food Production Signal Time": 90,
+        "Food Export Release Time": 5,
+        "Food Price Reference": 10,
+        "Food Price Elasticity": 0.5,
+        "Famine Death Sensitivity": 2,
+        "Living Food Weight": 0.5,
+        "Living Energy Weight With Food": 0.5
+      },
+      "inputs": {
+        "population": "{C} Population",
+        "population_initial": "{C} Population Initial",
+        "capital_goods": {
+          "inventory": "{C} Capital Goods Inventory",
+          "demand": "{C} Capital Goods Demand",
+          "fulfillment": "{C} Capital Goods Fulfillment"
+        },
+        "energy": {
+          "total_request": "{C} Total Requested Energy",
+          "supply": "{C} Energy Supply",
+          "priority_request": "{C} Priority Requested Energy",
+          "priority_fulfillment": "{C} Priority Energy Fulfillment Ratio",
+          "fulfillment": "{C} Energy Fulfillment Ratio"
+        },
+        "labor_total": "{C} Total Labor Requirement",
+        "travel_time": "Travel Time"
+      },
+      "transport": {
+        "capacity": "Transport Active Throughput Capacity",
+        "capacity_readers": [
+          "Capacity Limited Total Transport Load",
+          "Transport Scarcity Active"
+        ],
+        "load_readers": [
+          {
+            "name": "Transport Utilization",
+            "term": "[Capacity Limited Total Transport Load]"
+          },
+          {
+            "name": "Transport Revenue",
+            "term": "[Capacity Limited Total Transport Load]"
+          },
+          {
+            "name": "Transport Variable Cost",
+            "term": "[Capacity Limited Total Transport Load]"
+          },
+          {
+            "name": "Transport Required Active Throughput Capacity",
+            "term": "[Total Requested Transport Load]"
+          }
+        ]
+      },
+      "people": {
+        "living": "{C} Living Standard",
+        "living_columns": [
+          {
+            "column": "{C} Energy Fulfillment Ratio",
+            "weight": "Living Energy Weight With Food"
+          }
+        ],
+        "deaths": "{C} Deaths",
+        "births": "{C} Births",
+        "price_index": {
+          "name": "{C} Price Index",
+          "terms": 2
+        }
+      }
+    }
+  ],
+  "replace_formulas": [
+    {
+      "name": "Test 2 Transport Surge Active",
+      "value": "IfThenElse([Timed Test Mode] = 50, [Temporary Test Window], IfThenElse([Timed Test Mode] = 2, [Temporary Test Window], IfThenElse([Timed Test Mode] = 24, [Temporary Test Window], IfThenElse([Timed Test Mode] = 31, [Temporary Test Window], IfThenElse([Timed Test Mode] = 35, [Temporary Test Window], IfThenElse([Timed Test Mode] = 37, [Temporary Test Window], IfThenElse([Timed Test Mode] = 39, [Temporary Test Window], IfThenElse([Timed Test Mode] = 41, [Temporary Test Window], IfThenElse([Timed Test Mode] = 43, [Temporary Test Window], IfThenElse([Timed Test Mode] = 45, [Temporary Test Window], IfThenElse([Timed Test Mode] = 47, [Temporary Test Window], 0)))))))))))"
+    }
+  ],
+  "add_scenarios": [
+    {
+      "name": "v7.7.12 Food Baseline",
+      "description": "Mode 46 with food and farms: fertile B (land A 22, B 60), food traded by need on the shared transport.",
+      "values": {
+        "Capital Lifecycle Enabled": 1,
+        "Intermediate Inputs Enabled": 1,
+        "Capital Goods Enabled": 1,
+        "Transport Capital Goods Enabled": 1,
+        "Power Resource Enabled": 1,
+        "Construction Materials Enabled": 1,
+        "Transport Construction Materials Enabled": 1,
+        "Construction Materials Energy Enabled": 1,
+        "Construction Materials Capital Enabled": 1,
+        "Capital Goods Capital Enabled": 1,
+        "Regolith Capital Enabled": 1,
+        "Ore Capital Enabled": 1,
+        "Timed Test Mode": 49,
+        "Power Resource Capital Enabled": 1,
+        "Deposits Enabled": 1,
+        "Process Energy Enabled": 1,
+        "Food Enabled": 1
+      }
+    },
+    {
+      "name": "v7.7.12 Transport Surge with Food",
+      "description": "Mode 47 (standard transport-demand surge) with food and farms.",
+      "values": {
+        "Capital Lifecycle Enabled": 1,
+        "Intermediate Inputs Enabled": 1,
+        "Capital Goods Enabled": 1,
+        "Transport Capital Goods Enabled": 1,
+        "Power Resource Enabled": 1,
+        "Construction Materials Enabled": 1,
+        "Transport Construction Materials Enabled": 1,
+        "Construction Materials Energy Enabled": 1,
+        "Construction Materials Capital Enabled": 1,
+        "Capital Goods Capital Enabled": 1,
+        "Regolith Capital Enabled": 1,
+        "Ore Capital Enabled": 1,
+        "Timed Test Mode": 50,
+        "Power Resource Capital Enabled": 1,
+        "Deposits Enabled": 1,
+        "Process Energy Enabled": 1,
+        "Food Enabled": 1
+      }
+    },
+    {
+      "name": "v7.7.12 Food Equal Land Probe",
+      "description": "Mode 49 with equal land (A 40, B 40); probe, not a start-state change.",
+      "values": {
+        "Capital Lifecycle Enabled": 1,
+        "Intermediate Inputs Enabled": 1,
+        "Capital Goods Enabled": 1,
+        "Transport Capital Goods Enabled": 1,
+        "Power Resource Enabled": 1,
+        "Construction Materials Enabled": 1,
+        "Transport Construction Materials Enabled": 1,
+        "Construction Materials Energy Enabled": 1,
+        "Construction Materials Capital Enabled": 1,
+        "Capital Goods Capital Enabled": 1,
+        "Regolith Capital Enabled": 1,
+        "Ore Capital Enabled": 1,
+        "Timed Test Mode": 51,
+        "Power Resource Capital Enabled": 1,
+        "Deposits Enabled": 1,
+        "Process Energy Enabled": 1,
+        "Food Enabled": 1,
+        "A Farm Land Capacity": 40,
+        "B Farm Land Capacity": 40
+      }
+    }
+  ]
+}

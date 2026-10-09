@@ -132,14 +132,14 @@ try {
       && r.mode === (declaration.enforce || 'report')
       && r.errors.length === 0
       && JSON.stringify(got) === JSON.stringify(EXP)
-      && EXP.processes === 17 && EXP.legacy === 2
+      && EXP.processes >= 17 && EXP.legacy === 2
       && r.reversibility.length === 0
       && r.undeclared.length === 0
-      && r.processes.length === 19
+      && r.processes.length === EXP.processes + EXP.legacy
       && r.exceptions.filter(x => x.dimension === 'P2').length === EXP.P2.exceptions
       && r.exceptions.filter(x => x.dimension === 'P3').length === EXP.P3.exceptions;
     if (!ok) throw new Error(JSON.stringify({ expected: EXP, audit: r }));
-    return `PASS; processes=17 legacy=2 expected=${r.counters.expected_process_outputs}; ${sig(EXP)}; reversibility=0`;
+    return `PASS; processes=${EXP.processes} legacy=${EXP.legacy} expected=${r.counters.expected_process_outputs}; ${sig(EXP)}; reversibility=0`;
   });
 
   await expect('2 L1 mining cannot claim Refinery kernel capacity within max_hops', () => {
@@ -372,7 +372,7 @@ try {
     const st = runStructureAudits(accepted, v);
     if (!(st.status === 'PASS'
       && st.planetClosure?.status === 'PASS'
-      && st.planetClosure.counters.processes === 17
+      && st.planetClosure.counters.processes === EXP.processes
       && st.planetClosure.counters.P2.kernel === EXP.P2.kernel
       && st.planetClosure.counters.P3.exceptions === EXP.P3.exceptions)) {
       throw new Error('runStructureAudits integration mismatch: ' + JSON.stringify(st.planetClosure));

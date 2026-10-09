@@ -70,7 +70,9 @@ for (const f of [modelFile, validationFile, simpleFixtureFile, powerFixtureFile,
 }
 
 const accepted = readJson(modelFile);
-const validation = readJson(validationFile);
+const acceptedValidation = readJson(validationFile);
+// Every case below works on layers without the food node (v7.7.12 on); set after the layers are known.
+let validation = acceptedValidation;
 const declarations = declarationFiles.map(readJson);
 const simpleFixture = readJson(simpleFixtureFile);
 const powerFixture = readJson(powerFixtureFile);
@@ -280,6 +282,8 @@ function stripFoodNode(raw, decl) {
     if (e.type === 'LINK') return !generated.has(e.from) && !generated.has(e.to);
     return !generated.has(e.name);
   });
+  // Scenario inputs of the layer (its switch, land) leave with it, or layers below cannot run the food Modes.
+  for (const sc of out.scenarios || []) if (sc.values) for (const k of Object.keys(sc.values)) if (generated.has(k)) delete sc.values[k];
   return out;
 }
 
@@ -429,6 +433,29 @@ function buildSwitchlessLayers(start, nodes = layeredNodes) {
 }
 const { layers: switchlessLayers } = buildSwitchlessLayers(accepted);
 
+// Food is the top layer (v7.7.12 on): every earlier case works on a model without it, so its fragments leave the
+// validation those cases start from; case 47 merges them back and must reproduce the accepted validation.
+function validationWithoutFoodFragment(raw, fragment) {
+  const out = structuredClone(raw);
+  const fp = out.plugins?.find(p => p.type === 'food'), names = new Set((fragment.food_instances || []).map(x => x.name));
+  if (fp?.instances) fp.instances = fp.instances.filter(x => !names.has(x.name));
+  if (fp && !fp.instances?.length) out.plugins = out.plugins.filter(p => p !== fp);
+  const ob = out.plugins?.find(p => p.type === 'open_boundaries');
+  const drop = (id, list, removeEmpty) => { const c = ob?.categories?.find(x => x.id === id); if (!c || !Array.isArray(c.name)) return; c.name = c.name.filter(n => !(list || []).includes(n)); if (removeEmpty && !c.name.length) ob.categories = ob.categories.filter(x => x !== c); };
+  drop('agriculture', fragment.agriculture_names, true); drop('final_consumption', fragment.final_consumption_names);
+  drop('capital_transformation', fragment.capital_transformation_names); drop('capital_retirement', fragment.capital_retirement_names);
+  const sources = new Set((fragment.transformation_pairs || []).map(x => x.source));
+  if (ob?.transformation_pairs) ob.transformation_pairs = ob.transformation_pairs.filter(x => !sources.has(x.source));
+  const pc = out.plugins?.find(p => p.type === 'planet_closure');
+  if (pc && fragment.planet_process) { pc.processes = (pc.processes || []).filter(x => x.id !== fragment.planet_process.id); pc.process_categories = (pc.process_categories || []).filter(x => x !== fragment.planet_process_category); }
+  const eb = out.plugins?.find(p => p.type === 'energy_balance');
+  if (eb) { eb.consumers = (eb.consumers || []).filter(x => !(fragment.energy_balance_consumers || []).includes(x)); if (eb.priority) eb.priority = eb.priority.filter(x => !(fragment.energy_balance_priority || []).includes(x)); }
+  return out;
+}
+// The accepted model without the food layer: the "accepted" state of every earlier node's case.
+const acceptedBelowFood = foodDeclarations.length ? layers.get(foodDeclarations.at(-1).decl).base : accepted;
+validation = foodDeclarations.reduce((v, { decl }) => validationWithoutFoodFragment(v, expandNode(decl, layers.get(decl).base).validation), acceptedValidation);
+
 console.log('Orbital Economy Lab node-generator QA');
 console.log('Case 1: strip generated nodes from the current accepted model and rebuild them.\n');
 
@@ -568,7 +595,7 @@ await expect('10. simple_capital fixture integrates with validation and static a
   if (alreadyPresent && !acceptedLayer) throw new Error(`${simpleFixture.sector} is in the accepted model but not declared in model/nodes/`);
   const baseModel = alreadyPresent ? acceptedLayer.base : accepted;
   const expanded = expandNode(simpleFixture, baseModel);
-  const model = alreadyPresent ? accepted : applyPatch(baseModel, { format: PATCH_FORMAT, ...expanded.patch }).model;
+  const model = alreadyPresent ? acceptedBelowFood : applyPatch(baseModel, { format: PATCH_FORMAT, ...expanded.patch }).model;
   const merged = mergeNodeValidation(validation, [expanded.validation]);
   const conformance = runLifecycleConformance(model, merged);
   const audits = runStructureAudits(model, merged);
@@ -1297,7 +1324,8 @@ await expect('35. labor fragments merge idempotently; static/P5/loops/planet_v1 
 });
 
 function simulateLaborModel(raw, v) {
-  const source=(raw.scenarios||[]).at(-1);if(!source)throw new Error('model has no scenarios');
+  // The automation probe (v7.7.10 Mode 48) is the labor trial; later Modes (food, v7.7.12) are not about labor.
+  const source=[...(raw.scenarios||[])].reverse().find(sc=>Object.entries(sc.values||{}).some(([k,x])=>/automation level$/i.test(k)&&Number(x)>0))||(raw.scenarios||[]).at(-1);if(!source)throw new Error('model has no scenarios');
   const sim=loadModelJSON(modelJsonForScenario(raw,source)), errs=sim.check();if(errs.length)throw new Error(`model.check: ${errs.map(e=>e.message||e).join('; ')}`);
   const results=sim.simulate(),ctx=seriesContext(sim,results),runtime=[checkTimeAxis(results,v.expected_time_step??raw.simulation?.time_step??null,v.time_step_tolerance??1e-12),checkFiniteAll(sim,results)];
   if(v.non_negative_regex)runtime.push(checkNonNegativeRegex(sim,results,v.non_negative_regex.pattern,v.non_negative_regex.tolerance??1e-10));
@@ -1485,6 +1513,7 @@ await expect('45. population schema/base checks reject five required invalid cas
 
 
 let foodState = null;
+const acceptedModelForFoodCases = accepted;
 
 await expect('46. food fixture expands and APPLY_PATCH matches prototype counts/fingerprint', () => {
   const alreadyPresent = accepted.elements.some(e => e.type !== 'LINK' && e.name === foodFixture.switch);
@@ -1546,7 +1575,7 @@ await expect('48. food trial Mode passes all merged runtime plugins; both region
 });
 
 await expect('49. three-region food creates six dispatches/arrivals and static food conformance passes', () => {
-  const base=structuredClone(accepted), decl3=structuredClone(foodFixture); decl3.colonies=['A','B','C']; decl3.land={A:22,B:60,C:40};
+  const base=structuredClone(foodState?.base || accepted), decl3=structuredClone(foodFixture); decl3.colonies=['A','B','C']; decl3.land={A:22,B:60,C:40};
   const copy=name=>{if(base.elements.some(e=>e.type!=='LINK'&&e.name===name))return;const srcName=name.replace(/^C /,'A ');const src=base.elements.find(e=>e.type!=='LINK'&&e.name===srcName);if(!src)throw new Error('synthetic C source missing: '+name);const x=structuredClone(src);x.name=name;base.elements.push(x);};
   const names=[decl3.inputs.population,decl3.inputs.population_initial,decl3.inputs.capital_goods.inventory,decl3.inputs.capital_goods.demand,decl3.inputs.capital_goods.fulfillment,decl3.inputs.energy.total_request,decl3.inputs.energy.supply,decl3.inputs.energy.priority_request,decl3.inputs.energy.priority_fulfillment,decl3.inputs.energy.fulfillment,decl3.inputs.labor_total,decl3.people.living,decl3.people.deaths,decl3.people.births,decl3.people.price_index.name,...decl3.people.living_columns.map(x=>x.column)].map(n=>n.replaceAll('{C}','C'));
   for(const n of names)copy(n);
@@ -1574,6 +1603,7 @@ await expect('50. strip and rebuild food model with zero definition/replacement/
 });
 
 await expect('51. food schema/base checks reject five required invalid cases with paths/names', async () => {
+  const accepted = foodState?.base || acceptedModelForFoodCases;
   const extra = structuredClone(foodFixture);
   extra.parameters['Unexpected Food Parameter'] = 1;
   await requireThrow(() => expandNode(extra, accepted), /node\.parameters\.Unexpected Food Parameter: unknown field/, 'extra parameter');
@@ -1603,8 +1633,9 @@ await expect('51. food schema/base checks reject five required invalid cases wit
 await expect('52. switched food is peeled before switchless population/labor layering', () => {
   if (!foodState?.model) throw new Error('case 46 did not produce food model');
   const foodNode={decl:foodFixture,strip:stripFoodNode,targets:foodReplacementNames,generated:foodGeneratedNames};
-  const chain=buildSwitchlessLayers(foodState.model,[...layeredNodes,foodNode]);
-  if(chain.prepeeled[0]?.decl!==foodFixture)throw new Error('food was not the first switched layer peeled above switchless nodes');
+  // When food is already accepted (v7.7.12 on) its declaration is one of layeredNodes; do not add it twice.
+  const chain=buildSwitchlessLayers(foodState.model,foodDeclarations.length?layeredNodes:[...layeredNodes,foodNode]);
+  if(chain.prepeeled[0]?.decl?.type!=='food')throw new Error('food was not the first switched layer peeled above switchless nodes');
   for(const {decl} of populationDeclarations){const layer=chain.layers.get(decl);if(!layer)throw new Error('population missing from switchless chain');expandNode(decl,layer.base);}
   for(const {decl} of laborDeclarations){const layer=chain.layers.get(decl);if(!layer)throw new Error('labor missing from switchless chain');expandNode(decl,layer.base);}
   return 'food peeled first; population/labor switchless layers remain rebuildable';
