@@ -1,0 +1,41 @@
+{
+  "task": "033",
+  "title": "labor_market node type: demand per capita x population, flexible wage following labor tightness, output limited by labor availability (guard); all replacements switch-wrapped (Labor Market Enabled), numeric constants moved to parameters; Planet v2 P6 demand drivers redeclared as per-capita norms; validation plugin labor_market; node_qa layering with labor_market over every node (Lab v0.9.18)",
+  "branch": "task/033-labor-market-node",
+  "allow": [
+    "lab/src/nodes/**",
+    "lab/src/node_qa.js",
+    "lab/src/patch.js",
+    "lab/src/cli.js",
+    "lab/src/checks.js",
+    "lab/src/qa.js",
+    "lab/src/lifecycle_conformance.js",
+    "lab/src/conformance_run.js",
+    "lab/src/validation_schema.js",
+    "lab/src/structure_audit.js",
+    "lab/src/report.js",
+    "lab/src/runner.js",
+    "lab/fixtures/**",
+    "lab/package.json",
+    "lab/package-lock.json",
+    "lab/docs/NODES_RU.md",
+    "lab/docs/VALIDATION_FORMAT_RU.md",
+    "lab/docs/LIFECYCLE_CONFORMANCE_RU.md",
+    "lab/docs/HARNESS_QA_RU.md",
+    "lab/docs/TEST_STATUS_RU.md",
+    "lab/README_RU.md",
+    "lab/CHANGELOG.md"
+  ],
+  "allow_binary": [],
+  "allow_protected": [],
+  "required_changes": [
+    "lab/src/nodes/index.js",
+    "lab/src/checks.js",
+    "lab/src/node_qa.js",
+    "lab/src/qa.js",
+    "lab/fixtures/nodes/labor_market.json",
+    "lab/docs/NODES_RU.md",
+    "lab/CHANGELOG.md"
+  ],
+  "sums_by": "reviewer"
+}

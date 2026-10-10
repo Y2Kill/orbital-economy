@@ -19,7 +19,7 @@ ebf9a55b4935d64742b546126ed9adbd32bcddb18bb619494b9954247aa49a12  ./docs/CONTRAC
 ee05ad1e6ed55dbdc23791ba40a6a10aa9a1ce8a7ed939149f8857a7817bdc31  ./docs/PARAMETER_ANNOTATIONS.json
 4ac00704904a23acf421e16cc81c8c1bf996d872ce702894931c1d7bec2f2511  ./docs/PARAMETER_REGISTRY.md
 d07dc1ed24932af43a384f825e166deb503e0c643ccba5de81bf70c843257538  ./docs/PLANET_V1_CONTRACT_RU.md
-cb411fbf4a7b88c5a2443409c415c415dc025752dfd08cb2fc0056beea792166  ./docs/ROADMAP.md
+bcc198c560eb35c1c2709112e1adeba6d323287b42913f3658ffd162558a26b7  ./docs/ROADMAP.md
 6863d27a0b72ec2cd0be763cc36de11f7cf76534b5222e8c26427ee43c16a982  ./docs/STRUCTURE_AUDIT_REPORT.md
 3ae639958b7a331cfddf5d730a720990ff0cfb988046709d75391c34967b6baf  ./docs/V7_5_1_TO_V7_6_CHANGE_REPORT.md
 4cadd7f34b7c345f2bb5a18e46a584179eb5ed6b527e4fb4f623059dc001dd35  ./docs/V7_6_1_CALIBRATION_REPORT.md
@@ -31,6 +31,7 @@ d3ba5f5ade4729eec3af36e2161c44129b8a447c8761c78800b6a337de62e391  ./docs/externa
 a687e4e5177ce583dadf7717138fed405ec6ab662664e92032db3d7d1fb150c8  ./docs/model_v7_6_1/change-policy-v7.6.1-mode25-calibration.json
 2fec3259985bd1e9b0d8b3b0d4474c524ca37e6ca20d26d5cb2a0a6aaa531035  ./docs/model_v7_6_r1/RUN_TESTS_r1_FAIL_report.md
 aa087cbd9b9074aa9fab7a3ab082aeb011cf096cbcabf0476b0b275a2b557095  ./docs/model_v7_6_r1/orbital_economy_v7_6_r1_modeljson.json
+8151af273dbb4b4ecb419269d120bca28aaa7d1df8e0ab1d81298dfbf54a9f55  ./docs/research/CLOSURE_PROTOTYPE_2026-10-09_RU.md
 cb0873f42c3baec572355306e5751d82e1ba30594c686cd29680c6d7c09199be  ./docs/research/FOOD_PROTOTYPE_2026-10-05_RU.md
 e4280d5801de163b2c2ef4fa6b572432578ce5c86338f1c45a1168052ab904c8  ./docs/research/LONG_RUN_2026-10-04_RU.md
 c1b6d56fa750298f0362cfa18e6ae19c3f65920c5487b64a63bb10e600692f18  ./docs/research/POPULATION_PROTOTYPE_2026-10-04_RU.md
@@ -377,6 +378,12 @@ d354dc2fce61762d7b7ae843822475f338ce3fd0d437c06e222e59698972085e  ./docs/tasks/0
 a4098934c9a78eab26c6159d2c829ca3deef090a29fbff740cca2c46fa79ce3b  ./docs/tasks/032-food/draft/skeleton-patch.json
 b0c49ceea10deb5e681a9125be2ab15643932852e065a27b6b9e84bdb23d6956  ./docs/tasks/032-food/draft/validation-v7.7.12-draft.json
 d317c26ff8a29fafdb2006b3b2b75e68c6dca3afe37f0e084312f1e9a6379ed5  ./docs/tasks/032-food/scope.json
+29e0a4b1105ad3966456b08e7e43de48db0bd0ba9388bb6b72325ed52c0af9c8  ./docs/tasks/033-labor-market-node/TASK_RU.md
+debac6be58280c6c52b01b3a958f7f04ef619ea05fe2d15f533bdae5dcd075f3  ./docs/tasks/033-labor-market-node/fixtures/labor_market.json
+1b757fd634e8c8fe09429579c6f12c77bc981654e886a552375627e194ce3026  ./docs/tasks/033-labor-market-node/reference/add_lm_modes.mjs
+acbec86cbb28343cf6c71820df4c3a8fa43c24c16c6ac1ff16baad2d8778c89b  ./docs/tasks/033-labor-market-node/reference/definition_fingerprint.mjs
+ba760621c27609a08a6515953a91034fb579a0ea8fff0d3cfbed155b718ce76b  ./docs/tasks/033-labor-market-node/reference/labor_market_node_prototype.mjs
+84fbf48c0e6cea3ba279c658a180e1f848f13376d4c3fe4a5ed1e52ebaedfe29  ./docs/tasks/033-labor-market-node/scope.json
 44d2e557f1cb2322739bc95ee2b6dcbf6d6fcb708da14e90d53250936e50da5c  ./docs/tasks/README_RU.md
 bbf818e93b88d606b3137b1bb69d60db8c41c9df4089025a921b1ca00f473244  ./lab/APPLY_PATCH.cmd
 0e438cda6ccf97a6c1072bc4cdf3a1031bfcdf8209dbec7afea328b24cf6f834  ./lab/CHANGELOG.md
