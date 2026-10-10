@@ -1,4 +1,4 @@
-# Declarative Nodes — Orbital Economy Lab v0.9.16
+# Declarative Nodes — Orbital Economy Lab v0.9.18
 
 ## 1. Назначение
 
@@ -13,7 +13,7 @@ Node declaration — короткое строгое описание повто
 
 ## 2. Поддерживаемый тип
 
-Registry содержит семь типов: `capital_lifecycle`, `simple_capital`, `deposit`, `energy_consumer`, `labor`, `population` и `food`, все `version: 1`.
+Registry содержит восемь типов: `capital_lifecycle`, `simple_capital`, `deposit`, `energy_consumer`, `labor`, `population`, `food` и `labor_market`, все `version: 1`.
 
 Минимальная форма:
 
@@ -403,3 +403,61 @@ Generated validation:
 - semantic merge идемпотентен.
 
 Fixture: `fixtures/nodes/food.json`.
+
+
+## Labor market node — v0.9.18
+
+`labor_market` — переключаемый узел Planet v2 step 3. Он замыкает три связи под одним `Labor Market Enabled`: конечный спрос становится нормой на душу × Population, зарплата становится гибким STOCK по напряжённости рынка труда, а выпуск процессов получает guard через `Labor Availability`. Для A/B fixture раскрытие против принятой v7.7.12 даёт **31 add / 24 replace / 108 LINK**, definition fingerprint `8ac752ca9a1175e4`.
+
+Все 24 замены имеют форму `IfThenElse([Labor Market Enabled] = 1, новое, старое)`. Если старая ветвь была числовой константой, число не встраивается литералом в формулу: оно переносится в именованный параметр `X Initial Wage` или `X External …`, а old branch читает этот параметр. Это необходимо для строгой зеркальности A/B: формулы двух регионов остаются одинаковыми после нормализации имён. При снятии слоя stand восстанавливает исходные числовые значения.
+
+Спрос на труд считается для **неурезанного** выпуска. Наблюдаемый `Total Labor Requirement` уже отражает ограничение выпуска через availability, поэтому `X Labor Demand = requirement / availability`; затем он сглаживается STOCK `X Labor Demand Signal` с временем `Labor Demand Signal Time`. Иначе возникла бы положительная обратная связь: нехватка людей уменьшает выпуск, уменьшенный выпуск искусственно уменьшает измеренный спрос на труд и guard перестаёт видеть дефицит.
+
+Гибкая зарплата следует за `Labor Tightness = Labor Demand Signal / Labor Force` к `Target Labor Tightness` со скоростью `Wage Adjustment Rate` и не падает ниже `Wage Floor Share × Initial Wage`. Household-income demand сознательно **не включён**: прототип показал зарплатную спираль, а денежный спрос отложен до финансового слоя, где появится полноценный бюджет/доход домохозяйств.
+
+Generated validation:
+- создаёт plugin `labor_market` с одним instance на регион;
+- добавляет `? Wage Increase` / `? Wage Decrease` в `open_boundaries.information_signal`;
+- переобъявляет Planet P6: прежние `{C} Local Base Demand` / `{C} Electronics Local Base Demand` больше не являются внешними драйверами, потому что зависят от Population; внешними параметрами становятся `Metal Demand per Capita` и `Electronics Demand per Capita`.
+
+Пример:
+
+```json
+{
+  "type": "labor_market",
+  "version": 1,
+  "colonies": ["A", "B"],
+  "switch": "Labor Market Enabled",
+  "parameters": {
+    "Metal Demand per Capita": 0.5714285714285714,
+    "Electronics Demand per Capita": 0.7142857142857143,
+    "Wage Adjustment Rate": 0.000277777777778,
+    "Target Labor Tightness": 0.95,
+    "Wage Floor Share": 0.3,
+    "Labor Demand Signal Time": 10
+  },
+  "inputs": {
+    "population": "{C} Population",
+    "population_initial": "{C} Population Initial",
+    "participation": "Labor Participation Share",
+    "labor_force": "{C} Labor Force",
+    "labor_requirement": "{C} Total Labor Requirement",
+    "wage": "{C} Wage"
+  },
+  "demand": [
+    { "target": "{C} Local Base Demand", "per_capita": "Metal Demand per Capita" },
+    { "target": "{C} Electronics Local Base Demand", "per_capita": "Electronics Demand per Capita" }
+  ],
+  "rates": [
+    "{C} Mining Rate",
+    "{C} Smelting Rate",
+    "{C} Electronics Production Rate",
+    "{C} Capital Goods Production Rate",
+    "{C} Regolith Extraction Rate",
+    "{C} Construction Materials Production Rate",
+    "{C} Power Resource Extraction Rate",
+    "{C} Available Generation",
+    "{C} Food Production"
+  ]
+}
+```

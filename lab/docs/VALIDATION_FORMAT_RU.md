@@ -1,4 +1,4 @@
-# Validation format — Lab v0.9.16
+# Validation format — Lab v0.9.18
 
 `validation.json` — изменяемый контракт проверки конкретной версии модели. Ядро runner должно меняться реже, чем этот файл.
 
@@ -408,3 +408,48 @@ Generated validation узла `food` создаёт один instance на ре�
 Static HARD conformance проверяет типы, направления production/consumption/dispatch/arrival, парность dispatch→cargo→arrival в другой регион и dependencies производства/эффективной мощности. Runtime проверяет неотрицательность, fulfillment в [0,1], consumption ≤ demand, effective capacity ≤ land, production ≤ effective capacity и food transport load ≤ max_share × capacity.
 
 Generated merge создаёт closed-world `agriculture` (source), добавляет Food Consumption в `final_consumption`, Farm Expansion/Capital Goods Consumption в `capital_transformation`, Farm Depreciation в `capital_retirement`, пары преобразования фермы и процесс `farming` в `planet_closure`.
+
+
+## Plugin `labor_market` (v0.9.18)
+
+Generated fragment создаёт один instance на регион и общие ссылки на switch/пол зарплаты:
+
+```json
+{
+  "type": "labor_market",
+  "abs_tol": 1e-9,
+  "rel_tol": 1e-9,
+  "switch": "Labor Market Enabled",
+  "floor": "Wage Floor Share",
+  "instances": [{
+    "name": "A labor market",
+    "colony": "A",
+    "availability": "A Labor Availability",
+    "labor_force": "A Labor Force",
+    "labor_demand_signal": "A Labor Demand Signal",
+    "tightness": "A Labor Tightness",
+    "wage": "A Flexible Wage",
+    "initial_wage": "A Initial Wage",
+    "rates": ["A Mining Rate", "…"],
+    "demand": [{
+      "target": "A Local Base Demand",
+      "per_capita": "Metal Demand per Capita",
+      "population": "A Population"
+    }]
+  }]
+}
+```
+
+Static HARD conformance проверяет типы ролей, что `availability` непосредственно читает labor force и labor-demand signal, каждая switch-wrapped process rate читает свою `Labor Availability`, а каждая demand target читает норму на душу и Population с соответствующими LINK.
+
+Runtime проверяет:
+- `0 <= availability <= 1`;
+- `wage >= Wage Floor Share × Initial Wage`;
+- при switch=1: `demand target = per_capita × population` с относительным допуском;
+- при switch=0: availability = 1.
+
+### Переобъявление Planet P6
+
+Фрагмент `labor_market` меняет только `planet_closure.demand_drivers`: из списка `parameters` удаляются прежние population-dependent targets `{C} Local Base Demand` и `{C} Electronics Local Base Demand`, вместо них добавляются внешние нормы `Metal Demand per Capita` и `Electronics Demand per Capita`. Поле `consumption` не меняется. Повторное слияние идемпотентно.
+
+Причина: после включения рынка труда конечный спрос = норма на душу × Population. Прежний target теперь зависит от STOCK Population и больше не может считаться внешним P6-драйвером; per-capita norm остаётся экзогенным параметром. При снятии верхнего `labor_market` слоя node QA восстанавливает прежний P6-контракт для нижних узлов.

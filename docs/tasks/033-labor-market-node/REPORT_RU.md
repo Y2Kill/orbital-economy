@@ -11,18 +11,23 @@
 ### Старт — 2026-10-10
 Прочитаны `TASK_RU.md`, fixture `labor_market.json`, reference `labor_market_node_prototype.mjs` и `add_lm_modes.mjs`. Ветка создана строго от `6e10dcd60030ad6024e23e2fbec4af7d411afbcc`.
 
-### КТ1 — ожидается CI
-Сделано: добавлен генератор `labor_market` со строгой схемой, зарегистрирован тип, fixture скопирована в Lab; node_qa cases 53/57/58 проверяют oracle 31/24/108, fingerprint `8ac752ca9a1175e4`, strip/rebuild с восстановлением числовых старых ветвей и обязательные schema/base negatives.
-Дальше: проверить первый `ci.yml`; после зелёного прогона записать run/строки отдельным journal-коммитом.
+### КТ1 — 2026-10-10 — генератор, strip/rebuild и schema
+Сделано: генератор `labor_market`, строгая схема и fixture; cases 53/57/58.
+Доказательство: [ci.yml run 38040788876](https://github.com/Y2Kill/orbital-economy/actions/runs/38040788876), bench job `114180444028`: строка 536 — case 53 PASS, **31 elements / 24 replacements / 108 links**, fingerprint `8ac752ca9a1175e4`; строка 540 — case 57 PASS, прежние wage/demand числа восстановлены и rebuild имеет 0 differences; строка 541 — case 58 PASS по пяти обязательным negatives.
 
-### КТ2 — ожидается
-Фрагменты validation/P6, plugin `labor_market`, cases 54–56 и QA 47.
+### КТ2 — 2026-10-10 — fragments/P6, plugin и runtime
+Сделано: plugin `labor_market`, идемпотентный semantic merge, `information_signal`, переобъявление P6, cases 54–56 и QA 47.
+Доказательство: тот же [run 38040788876](https://github.com/Y2Kill/orbital-economy/actions/runs/38040788876): строка 250 — **QA 47/47**; строка 537 — case 54 PASS: 2 CONFORMING, boundary **254→262**, symmetry=0, P6=4, loops=0; строка 538 — case 55 PASS: **all merged runtime plugins PASS**, availability [0,1], wage movement observed; строка 539 — case 56 PASS: 3-region, 3 CONFORMING instances.
 
-### КТ3 — ожидается
-Case 59: `labor_market` как верхний слой над всеми прежними узлами; полный bench-selftests.
+Промежуточный [run 38040104129](https://github.com/Y2Kill/orbital-economy/actions/runs/38040104129) корректно поймал два дефекта тестовой обвязки: строка 539 — synthetic C не содержала транзитивный `C Mining Pre Energy Rate`; строка 542 — case 59 не мог определить layering. Первый дефект исправлен копированием требуемых транзитивных C-зависимостей для синтетического региона.
 
-### КТ4 — ожидается
-Документация Lab v0.9.18 и финальная зелёная голова.
+### КТ3 — 2026-10-10 — labor_market поверх всех узлов
+Сделано: case 59 строит модель «accepted + labor_market», снимает `labor_market` первым и затем проверяет все прежние node layers; P6 для нижних слоёв возвращается к прежним drivers.
+Промежуточный [run 38040527371](https://github.com/Y2Kill/orbital-economy/actions/runs/38040527371) показал оставшийся дефект порядка: строка 480 — общий layering не мог выбрать внешний слой среди прежних declarations. Исправление: при модели с `labor_market` внешний слой приоритизируется перед зависимыми нижними слоями, после чего обычный dependency-based peeling продолжает работу.
+Доказательство: [run 38040788876](https://github.com/Y2Kill/orbital-economy/actions/runs/38040788876), строка 542 — case 59 PASS: `labor_market peeled first; 11 node layers rebuildable; P6 old drivers restored`; строка 544 — **NODE 59/59**; строка 1646 — **OVERALL: PASS**. Guard и tools-selftest на этой голове также success.
+
+### КТ4 — ожидается финальный CI
+Документация и Lab v0.9.18 готовятся отдельным содержательным коммитом; после его зелёного CI КТ4 будет записана отдельным journal-only коммитом.
 
 ## Устройство
 
@@ -32,7 +37,15 @@ Case 59: `labor_market` как верхний слой над всеми пре�
 
 ## Отличия
 
-От reference-прототипа для fixture отличий в порядке, формулах, стартовых значениях и ожидаемом раскрытии нет. Генератор дополнительно реализует строгую декларативную схему и допускает формульный старый demand-target: в таком случае отдельный `External …` не создаётся, а old branch сохраняет исходную формулу. Fixture задачи использует числовые demand-target и должна совпасть с reference точно.
+От reference-прототипа для нормативной fixture отличий в порядке, формулах, стартовых значениях и раскрытии нет: **31/24/108**, fingerprint `8ac752ca9a1175e4`.
+
+Дополнения стенда, не меняющие эталон fixture:
+- строгая декларативная схема с ошибками по пути/имени;
+- для формульного старого demand-target допускается сохранение исходной формулы непосредственно в old branch вместо создания `External …`; fixture задачи использует числовые targets и поэтому совпадает с reference;
+- node QA обобщён для будущего accepted-состояния: верхний `labor_market` снимается раньше `food` и остальных зависимых слоёв, затем нижние declarations восстанавливаются обычным алгоритмом;
+- synthetic three-region test копирует транзитивные зависимости rates, необходимые созданным C-формулам.
+
+Модельные данные, accepted validation/policy и раскрытие существующих типов узлов не менялись.
 
 ## Ограничения
 

@@ -1,4 +1,4 @@
-# Статус проверок Orbital Economy Lab v0.9.17 — baseline v7.7.12 r1
+# Статус проверок Orbital Economy Lab v0.9.18 — baseline v7.7.12 r1
 
 ## Принятая основа
 
@@ -163,3 +163,12 @@ Harness-only изменение: declarative node `food`, validation plugin `foo
 Контракт fixture: **96 add / 24 replace / 239 LINK**, 24 switch-wrapped replacements, fingerprint `c18a59dd39488c12`. Generated validation ожидает 2 food instances CONFORMING, open boundaries 254 / unclassified 0, `planet_v1 PASS` с P2 simple +2, P3 requests +2, P5 declared +2, loops 0.
 
 Целевые self-test totals: NODE **52/52**, QA **46/46**; финальный Linux CI фиксируется в `docs/tasks/031-food-node/REPORT_RU.md`.
+
+
+## Task 033 / Lab v0.9.18
+
+Harness-only изменение: declarative node `labor_market`, validation plugin и обобщённая слоистость node QA. Accepted **Orbital Economy v7.7.12 r1 — Food**, accepted validation/policy и `model/nodes/*` не меняются.
+
+Эталон fixture: **31 add / 24 replace / 108 LINK**, fingerprint `8ac752ca9a1175e4`. Static integration: labor_market 2 CONFORMING, open boundaries **262**, unclassified 0, symmetry mismatches 0, Planet P6 **4**, algebraic loops 0. Runtime case 55 включает switch и прогоняет **все** merged plugins.
+
+Linux CI на кодовой голове `f7757fd`: [run 38040788876](https://github.com/Y2Kill/orbital-economy/actions/runs/38040788876) — guard/tools/bench success; **QA 47/47**, **NODE 59/59**, `OVERALL: PASS`. Финальная документированная голова фиксируется в отчёте задачи после отдельного CI.

@@ -1,4 +1,4 @@
-# QA самого Orbital Economy Lab v0.9.14
+# QA самого Orbital Economy Lab v0.9.18
 
 ## 1. Operational QA
 
@@ -280,3 +280,19 @@ Linux CI КТ2: https://github.com/Y2Kill/orbital-economy/actions/runs/370065015
 Задание 031 добавляет NODE cases 46–52 и QA 46. Oracle раскрытия: **96/24/239**, fingerprint `c18a59dd39488c12`. Cases 47–49 проверяют semantic merge, food static/runtime и 3-region topology; case 50 — strip/rebuild; case 51 — пять schema/base negatives; case 52 — switched `food` снимается перед построением switchless chain `population/labor`.
 
 Целевые итоги: **NODE 52/52**, **QA 46/46**; все прежние self-tests остаются PASS.
+
+
+## v0.9.18 — labor_market node QA
+
+Задание 033 добавляет NODE cases 53–59 и QA 47.
+
+- **53** — fixture раскрывается в **31/24/108**, fingerprint `8ac752ca9a1175e4`;
+- **54** — semantic merge идемпотентен; 2 instances CONFORMING; boundary 254→262, unclassified 0; symmetry mismatches 0; Planet P6=4; loops 0;
+- **55** — при `Labor Market Enabled=1` запускаются runtime-проверки **всех** merged plugins; availability остаётся в [0,1], хотя бы одна зарплата сдвигается;
+- **56** — синтетический третий регион раскрывается в 3 instances и проходит static conformance;
+- **57** — strip/rebuild даёт 0 отличий, причём `Initial Wage` / `External …` разворачиваются обратно в исходные числовые значения;
+- **58** — пять обязательных schema/base negatives дают ошибки с путём/именем;
+- **59** — `labor_market` лежит поверх всех прежних узлов, снимается первым, после чего все 11 нижних node layers остаются rebuildable и прежние P6 drivers восстановлены.
+- **QA 47** — синтетический runtime plugin: good PASS; availability>1, wage ниже floor и demand identity при switch=1 должны FAIL.
+
+Целевые итоги v0.9.18: **NODE 59/59**, **QA 47/47**; остальные self-tests без изменения ожиданий.

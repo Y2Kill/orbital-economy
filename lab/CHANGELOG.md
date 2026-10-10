@@ -1,3 +1,12 @@
+## v0.9.18 — labor_market node
+
+- новый declarative type `labor_market` (Planet v2 step 3): спрос = per-capita norm × Population, гибкая зарплата и labor-availability guard выпуска;
+- fixture: **31 add / 24 replace / 108 LINK**, fingerprint `8ac752ca9a1175e4`; все 24 замены switch-wrapped через `Labor Market Enabled`, числовые old branches вынесены в именованные параметры;
+- generated validation: plugin `labor_market`, wage information boundaries и переобъявление Planet P6 с population-dependent demand targets на per-capita norms;
+- static HARD conformance + runtime invariants; QA case 47; NODE cases 53–59, включая all-plugin runtime при switch=1, numeric strip/rebuild и верхнюю слоистость над food/population/labor;
+- node layering при синтетической «accepted + labor_market» модели приоритизирует внешний labor_market слой перед нижними node declarations;
+- package/Lab version → v0.9.18; accepted model, validation, policy, engine и `model/nodes/*` не изменены.
+
 ## v0.9.17 — food node
 
 - новый declarative type `food` (Planet v2 step 2): региональные запасы/потребление еды, фермы с землёй/капиталом/энергией/трудом и попарная торговля через общий транспорт;
