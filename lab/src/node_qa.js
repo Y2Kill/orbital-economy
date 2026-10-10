@@ -299,6 +299,8 @@ function stripLaborMarketNode(raw, decl) {
   const generated = new Set(laborMarketGeneratedNames(decl));
   const byName = new Map(out.elements.filter(e => e.type !== 'LINK' && e.name).map(e => [e.name, e]));
   const sub = (t, X) => String(t).replaceAll('{C}', X);
+  const refs = text => new Set([...String(text).matchAll(/\[([^\]]+)\]/g)].map(m => m[1]));
+  const extraLinks = new Set();
   const restore = (name, parameterName = null) => {
     const e = byName.get(name);
     if (!e) throw new Error('labor_market: replacement target missing while stripping: ' + name);
@@ -307,21 +309,24 @@ function stripLaborMarketNode(raw, decl) {
       const p = byName.get(parameterName);
       if (!p) throw new Error('labor_market: old-branch parameter missing while stripping: ' + parameterName);
       e.behavior.value = p.behavior.value;
-    } else {
-      e.behavior.value = old;
+      return String(p.behavior.value);
     }
+    e.behavior.value = old;
+    return old;
   };
   for (const X of decl.colonies || []) {
     restore(sub(decl.inputs.wage, X), X + ' Initial Wage');
     for (const d of decl.demand || []) {
       const target = sub(d.target, X);
       const ext = X + ' External ' + target.slice(X.length + 1);
-      restore(target, ext);
+      const old = restore(target, ext);
+      const population = sub(decl.inputs.population, X);
+      if (!refs(old).has(population)) extraLinks.add(population + '|' + target);
     }
     for (const r of decl.rates || []) restore(sub(r, X));
   }
   out.elements = out.elements.filter(e => {
-    if (e.type === 'LINK') return !generated.has(e.from) && !generated.has(e.to);
+    if (e.type === 'LINK') return !generated.has(e.from) && !generated.has(e.to) && !extraLinks.has(e.from + '|' + e.to);
     return !generated.has(e.name);
   });
   for (const sc of out.scenarios || []) if (sc.values) for (const k of Object.keys(sc.values)) if (generated.has(k)) delete sc.values[k];

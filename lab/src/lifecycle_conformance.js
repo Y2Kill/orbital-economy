@@ -407,18 +407,21 @@ export function checkLaborMarketInstance(index,inst,plugin){
       else checks.push(pass(`availability <- ${label}`));
     }
   }
+  const outerSwitch = e => String(e?.behavior?.value ?? '').trim().startsWith(`IfThenElse([${plugin.switch}] = 1,`);
   for(const rateName of inst.rates||[]){
-    const e=index.get(rateName),label=`rate ${rateName} reads availability`;
+    const e=index.get(rateName),label=`rate ${rateName} is switch-wrapped and reads availability`;
     if(!e){checks.push(fail(label,'primitive not found'));continue;}
-    if(!formulaRefs(e).has(String(inst.availability).toLowerCase()))checks.push(fail(label,`${rateName} does not reference [${inst.availability}]`));
+    if(!outerSwitch(e))checks.push(fail(label,`${rateName} is not outer-wrapped by [${plugin.switch}] = 1`));
+    else if(!formulaRefs(e).has(String(inst.availability).toLowerCase()))checks.push(fail(label,`${rateName} does not reference [${inst.availability}]`));
     else if(!index.hasLink(inst.availability,rateName))checks.push(fail(label,`missing LINK ${inst.availability} -> ${rateName}`));
     else checks.push(pass(label));
   }
   for(const d of inst.demand||[]){
-    const e=index.get(d.target),label=`demand ${d.target} reads per-capita and population`;
+    const e=index.get(d.target),label=`demand ${d.target} is switch-wrapped and reads per-capita and population`;
     if(!e){checks.push(fail(label,'primitive not found'));continue;}
     const refs=formulaRefs(e), missing=[d.per_capita,d.population].filter(x=>!refs.has(String(x).toLowerCase()));
-    if(missing.length)checks.push(fail(label,`${d.target} does not reference ${missing.map(x=>'['+x+']').join(' and ')}`));
+    if(!outerSwitch(e))checks.push(fail(label,`${d.target} is not outer-wrapped by [${plugin.switch}] = 1`));
+    else if(missing.length)checks.push(fail(label,`${d.target} does not reference ${missing.map(x=>'['+x+']').join(' and ')}`));
     else if(!index.hasLink(d.per_capita,d.target)||!index.hasLink(d.population,d.target))checks.push(fail(label,'required LINK is missing'));
     else checks.push(pass(label));
   }
