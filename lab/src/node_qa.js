@@ -423,6 +423,17 @@ function unreadOutside(current, n) {
   const targets = new Set(n.targets(n.decl).map(t => t.toLowerCase()));
   return !current.elements.some(e => e.type === 'LINK' && removed.has(e.from) && !removed.has(e.to) && !targets.has(String(e.to).toLowerCase()));
 }
+function layerDependsOn(upper, lower, current) {
+  const lowerGenerated = new Set((lower.generated?.(lower.decl) || []).map(x => String(x).toLowerCase()));
+  if (!lowerGenerated.size) return false;
+  const upperTargets = new Set((upper.targets?.(upper.decl) || []).map(x => String(x).toLowerCase()));
+  if ([...upperTargets].some(x => lowerGenerated.has(x))) return true;
+  const upperOwn = new Set((upper.generated?.(upper.decl) || []).map(x => String(x).toLowerCase()));
+  return current.elements.some(e => e.type === 'LINK' &&
+    lowerGenerated.has(String(e.from).toLowerCase()) &&
+    (upperOwn.has(String(e.to).toLowerCase()) || upperTargets.has(String(e.to).toLowerCase())));
+}
+
 function buildLayers(start, nodes = layeredNodes) {
   const result = new Map();
   let current = structuredClone(start);
@@ -431,9 +442,15 @@ function buildLayers(start, nodes = layeredNodes) {
   while (remaining.length) {
     // A node without a switch (labor/population) does not wrap formulas in IfThenElse; it is peelable when no other
     // remaining node replaces any of the formulas it edits and nothing outside it reads what it generated.
-    const peelable = n => n.decl.switch
-      ? n.targets(n.decl).every(t => outerSwitchIs(current, t, n.decl.switch))
-      : n.targets(n.decl).every(t => !remaining.some(o => o !== n && o.targets(o.decl).includes(t))) && unreadOutside(current, n);
+    const peelable = n => {
+      const structurallyPeelable = n.decl.switch
+        ? n.targets(n.decl).every(t => outerSwitchIs(current, t, n.decl.switch))
+        : n.targets(n.decl).every(t => !remaining.some(o => o !== n && o.targets(o.decl).includes(t))) && unreadOutside(current, n);
+      if (!structurallyPeelable) return false;
+      // When several switched layers are independently outer-wrapped, peel the one that no other
+      // remaining layer depends on. This makes the layering a dependency order rather than array order.
+      return !remaining.some(o => o !== n && layerDependsOn(o, n, current));
+    };
     const i = remaining.findIndex(peelable);
     if (i < 0) throw new Error(`cannot determine node layering: none of ${remaining.map(n => n.decl.sector || n.decl.switch || n.decl.type).join(', ')} is outermost on all its replacement targets`);
     const [n] = remaining.splice(i, 1);
@@ -464,7 +481,8 @@ function buildSwitchlessLayers(start, nodes = layeredNodes) {
   };
   while (true) {
     const i = switched.findIndex(n => touchesSwitchless(n) &&
-      n.targets(n.decl).every(t => outerSwitchIs(current, t, n.decl.switch)));
+      n.targets(n.decl).every(t => outerSwitchIs(current, t, n.decl.switch)) &&
+      !switched.some(o => o !== n && layerDependsOn(o, n, current)));
     if (i < 0) break;
     const [n] = switched.splice(i, 1);
     current = n.strip(current, n.decl);
@@ -1781,9 +1799,20 @@ await expect('55. labor_market trial runs every merged runtime plugin with switc
 
 await expect('56. three-region labor_market expands with 3 instances and static PASS', () => {
   const base=structuredClone(laborMarketState?.base||accepted), decl3=structuredClone(laborMarketFixture);decl3.colonies=['A','B','C'];
-  const copy=name=>{if(base.elements.some(e=>e.type!=='LINK'&&e.name===name))return;const srcName=name.replace(/^C /,'A ');const src=base.elements.find(e=>e.type!=='LINK'&&e.name===srcName);if(!src)throw new Error('synthetic C source missing: '+name);const x=structuredClone(src);x.name=name;if(x.behavior?.value&&typeof x.behavior.value==='string')x.behavior.value=x.behavior.value.replaceAll('[A ','[C ');base.elements.push(x);};
-  const names=[decl3.inputs.population,decl3.inputs.population_initial,decl3.inputs.labor_force,decl3.inputs.labor_requirement,decl3.inputs.wage,...decl3.demand.map(d=>d.target),...decl3.rates].map(n=>n.replaceAll('{C}','C'));
-  for(const n of names)copy(n);
+  // Clone the whole A primitive namespace into a synthetic C namespace. Old rate formulas have their
+  // own A-local dependency chains (e.g. Mining Rate -> Mining Pre Energy Rate); cloning only the direct
+  // declaration inputs would leave those old switch branches unresolved.
+  const originals=base.elements.filter(e=>e.type!=='LINK'&&/^A /.test(e.name));
+  for(const src of originals){
+    const name='C '+src.name.slice(2);
+    if(base.elements.some(e=>e.type!=='LINK'&&e.name===name))continue;
+    const x=structuredClone(src);x.name=name;
+    if(typeof x.behavior?.value==='string')x.behavior.value=x.behavior.value.replaceAll('[A ','[C ');
+    if(typeof x.behavior?.initial_value==='string')x.behavior.initial_value=x.behavior.initial_value.replaceAll('[A ','[C ');
+    if(/^A /.test(String(x.from||'')))x.from='C '+x.from.slice(2);
+    if(/^A /.test(String(x.to||'')))x.to='C '+x.to.slice(2);
+    base.elements.push(x);
+  }
   const ex=expandNode(decl3,base),model=applyPatch(base,{format:PATCH_FORMAT,...ex.patch}).model;
   const v={plugins:[{type:'labor_market',abs_tol:1e-9,rel_tol:1e-9,switch:ex.validation.labor_market_switch,floor:ex.validation.labor_market_floor,instances:ex.validation.labor_market_instances}]};
   const conf=runLaborMarketConformance(model,v);
