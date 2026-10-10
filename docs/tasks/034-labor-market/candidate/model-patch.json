@@ -1,0 +1,110 @@
+{
+  "format": "orbital-economy-model-patch-v1",
+  "base_sha256": "e8829fa550172dfab9629a0d66b0c628c1d802c5c1a3826ab7a9a86365c9f234",
+  "name": "Orbital Economy v7.7.13 Labor Market candidate r1",
+  "nodes": [
+    {
+      "type": "labor_market",
+      "version": 1,
+      "colonies": [
+        "A",
+        "B"
+      ],
+      "switch": "Labor Market Enabled",
+      "parameters": {
+        "Metal Demand per Capita": 0.5714285714285714,
+        "Electronics Demand per Capita": 0.7142857142857143,
+        "Wage Adjustment Rate": 0.000277777777778,
+        "Target Labor Tightness": 0.95,
+        "Wage Floor Share": 0.3,
+        "Labor Demand Signal Time": 10
+      },
+      "inputs": {
+        "population": "{C} Population",
+        "population_initial": "{C} Population Initial",
+        "participation": "Labor Participation Share",
+        "labor_force": "{C} Labor Force",
+        "labor_requirement": "{C} Total Labor Requirement",
+        "wage": "{C} Wage"
+      },
+      "demand": [
+        {
+          "target": "{C} Local Base Demand",
+          "per_capita": "Metal Demand per Capita"
+        },
+        {
+          "target": "{C} Electronics Local Base Demand",
+          "per_capita": "Electronics Demand per Capita"
+        }
+      ],
+      "rates": [
+        "{C} Mining Rate",
+        "{C} Smelting Rate",
+        "{C} Electronics Production Rate",
+        "{C} Capital Goods Production Rate",
+        "{C} Regolith Extraction Rate",
+        "{C} Construction Materials Production Rate",
+        "{C} Power Resource Extraction Rate",
+        "{C} Available Generation",
+        "{C} Food Production"
+      ]
+    }
+  ],
+  "replace_formulas": [
+    {
+      "name": "Test 2 Transport Surge Active",
+      "value": "IfThenElse([Timed Test Mode] = 53, [Temporary Test Window], IfThenElse([Timed Test Mode] = 50, [Temporary Test Window], IfThenElse([Timed Test Mode] = 2, [Temporary Test Window], IfThenElse([Timed Test Mode] = 24, [Temporary Test Window], IfThenElse([Timed Test Mode] = 31, [Temporary Test Window], IfThenElse([Timed Test Mode] = 35, [Temporary Test Window], IfThenElse([Timed Test Mode] = 37, [Temporary Test Window], IfThenElse([Timed Test Mode] = 39, [Temporary Test Window], IfThenElse([Timed Test Mode] = 41, [Temporary Test Window], IfThenElse([Timed Test Mode] = 43, [Temporary Test Window], IfThenElse([Timed Test Mode] = 45, [Temporary Test Window], IfThenElse([Timed Test Mode] = 47, [Temporary Test Window], 0))))))))))))"
+    }
+  ],
+  "add_scenarios": [
+    {
+      "name": "v7.7.13 Labor Market",
+      "description": "Mode 49 (food) with the labor market: demand per capita x population, flexible wage, output limited by labor.",
+      "values": {
+        "Capital Lifecycle Enabled": 1,
+        "Intermediate Inputs Enabled": 1,
+        "Capital Goods Enabled": 1,
+        "Transport Capital Goods Enabled": 1,
+        "Power Resource Enabled": 1,
+        "Construction Materials Enabled": 1,
+        "Transport Construction Materials Enabled": 1,
+        "Construction Materials Energy Enabled": 1,
+        "Construction Materials Capital Enabled": 1,
+        "Capital Goods Capital Enabled": 1,
+        "Regolith Capital Enabled": 1,
+        "Ore Capital Enabled": 1,
+        "Timed Test Mode": 52,
+        "Power Resource Capital Enabled": 1,
+        "Deposits Enabled": 1,
+        "Process Energy Enabled": 1,
+        "Food Enabled": 1,
+        "Labor Market Enabled": 1
+      }
+    },
+    {
+      "name": "v7.7.13 Transport Surge with Labor Market",
+      "description": "Mode 50 (standard transport-demand surge with food) with the labor market.",
+      "values": {
+        "Capital Lifecycle Enabled": 1,
+        "Intermediate Inputs Enabled": 1,
+        "Capital Goods Enabled": 1,
+        "Transport Capital Goods Enabled": 1,
+        "Power Resource Enabled": 1,
+        "Construction Materials Enabled": 1,
+        "Transport Construction Materials Enabled": 1,
+        "Construction Materials Energy Enabled": 1,
+        "Construction Materials Capital Enabled": 1,
+        "Capital Goods Capital Enabled": 1,
+        "Regolith Capital Enabled": 1,
+        "Ore Capital Enabled": 1,
+        "Timed Test Mode": 53,
+        "Power Resource Capital Enabled": 1,
+        "Deposits Enabled": 1,
+        "Process Energy Enabled": 1,
+        "Food Enabled": 1,
+        "Labor Market Enabled": 1
+      }
+    }
+  ],
+  "modify_scenarios": []
+}

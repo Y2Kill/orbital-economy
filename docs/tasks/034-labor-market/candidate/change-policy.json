@@ -1,0 +1,173 @@
+{
+  "format": "orbital-economy-change-policy-v1",
+  "name": "Orbital Economy v7.7.13 Labor Market candidate r1 - change contract",
+  "description": "Finalized from the owner draft for task 034. Accepted baseline is v7.7.12 r1. Labor Market Enabled remains at default 0 and Modes 0-51/scenario inputs are untouched; Modes 52-53 own the labor-market layer. Rules and validation_sha256 are unchanged from the owner draft.",
+  "accepted_model_sha256": "e8829fa550172dfab9629a0d66b0c628c1d802c5c1a3826ab7a9a86365c9f234",
+  "validation_sha256": "884c092d1630d416caf897282f81d9cdd205e7271836e252d248f71e84c62ad6",
+  "comparison": {
+    "abs_tolerance": 0,
+    "rel_tolerance": null,
+    "rel_floor": 1e-12
+  },
+  "engine": {
+    "package": "simulation",
+    "version": "9.0.0"
+  },
+  "default_action": "deny",
+  "require_full_mode_coverage": true,
+  "rules": [
+    {
+      "id": "regression-guard-modes-0-51",
+      "action": "deny",
+      "event": "series_changed",
+      "modes": "0-51",
+      "name": "*",
+      "note": "Modes 0-51 keep Labor Market Enabled = 0 (its default) and must reproduce v7.7.12 r1 exactly (first match wins)."
+    },
+    {
+      "id": "forbid-removals-and-structural-drift",
+      "action": "deny",
+      "event": [
+        "element_removed",
+        "series_removed",
+        "mode_removed",
+        "link_removed",
+        "type_changed",
+        "simulation_changed",
+        "time_axis_changed",
+        "scenario_renamed",
+        "scenario_input_changed"
+      ],
+      "name": "*"
+    },
+    {
+      "id": "add-labor-market",
+      "action": "allow",
+      "event": "element_added",
+      "name": [
+        "? External Electronics Local Base Demand",
+        "? External Local Base Demand",
+        "? Flexible Wage",
+        "? Initial Wage",
+        "? Labor Availability",
+        "? Labor Demand",
+        "? Labor Demand Signal",
+        "? Labor Demand Signal Decrease",
+        "? Labor Demand Signal Increase",
+        "? Labor Tightness",
+        "? Wage Decrease",
+        "? Wage Increase",
+        "Electronics Demand per Capita",
+        "Labor Demand Signal Time",
+        "Labor Market Enabled",
+        "Metal Demand per Capita",
+        "Target Labor Tightness",
+        "Wage Adjustment Rate",
+        "Wage Floor Share"
+      ],
+      "required": true,
+      "note": "the labor_market node generated from its declaration (V7_7_13_ARCHITECTURE_SPEC §2): switch, parameters, per region labor demand signal, availability, tightness, initial and flexible wage with its flows, external demand drivers kept for the switch-off branch"
+    },
+    {
+      "id": "change-definitions-per-spec",
+      "action": "allow",
+      "event": "definition_changed",
+      "name": [
+        "? Available Generation",
+        "? Capital Goods Production Rate",
+        "? Construction Materials Production Rate",
+        "? Electronics Local Base Demand",
+        "? Electronics Production Rate",
+        "? Food Production",
+        "? Local Base Demand",
+        "? Mining Rate",
+        "? Power Resource Extraction Rate",
+        "? Regolith Extraction Rate",
+        "? Smelting Rate",
+        "? Wage",
+        "Test 2 Transport Surge Active"
+      ],
+      "required": true,
+      "note": "every replacement wrapped by Labor Market Enabled (wage, demand targets, process rates); the transport-surge window also opens in Mode 53 (spec §1, §3)"
+    },
+    {
+      "id": "link-into-changed-definitions",
+      "action": "allow",
+      "event": "link_added",
+      "name": [
+        "* -> ? Available Generation",
+        "* -> ? Capital Goods Production Rate",
+        "* -> ? Construction Materials Production Rate",
+        "* -> ? Electronics Local Base Demand",
+        "* -> ? Electronics Production Rate",
+        "* -> ? Food Production",
+        "* -> ? Local Base Demand",
+        "* -> ? Mining Rate",
+        "* -> ? Power Resource Extraction Rate",
+        "* -> ? Regolith Extraction Rate",
+        "* -> ? Smelting Rate",
+        "* -> ? Wage",
+        "* -> Test 2 Transport Surge Active"
+      ]
+    },
+    {
+      "id": "link-into-new-elements",
+      "action": "allow",
+      "event": "link_added",
+      "name": [
+        "* -> ? External Electronics Local Base Demand",
+        "* -> ? External Local Base Demand",
+        "* -> ? Flexible Wage",
+        "* -> ? Initial Wage",
+        "* -> ? Labor Availability",
+        "* -> ? Labor Demand",
+        "* -> ? Labor Demand Signal",
+        "* -> ? Labor Demand Signal Decrease",
+        "* -> ? Labor Demand Signal Increase",
+        "* -> ? Labor Tightness",
+        "* -> ? Wage Decrease",
+        "* -> ? Wage Increase",
+        "* -> Electronics Demand per Capita",
+        "* -> Labor Demand Signal Time",
+        "* -> Labor Market Enabled",
+        "* -> Metal Demand per Capita",
+        "* -> Target Labor Tightness",
+        "* -> Wage Adjustment Rate",
+        "* -> Wage Floor Share"
+      ]
+    },
+    {
+      "id": "add-modes-52-53",
+      "action": "allow",
+      "event": "mode_added",
+      "modes": "52-53",
+      "required": true
+    },
+    {
+      "id": "new-series-everywhere",
+      "action": "allow",
+      "event": "series_added",
+      "name": [
+        "? External Electronics Local Base Demand",
+        "? External Local Base Demand",
+        "? Flexible Wage",
+        "? Initial Wage",
+        "? Labor Availability",
+        "? Labor Demand",
+        "? Labor Demand Signal",
+        "? Labor Demand Signal Decrease",
+        "? Labor Demand Signal Increase",
+        "? Labor Tightness",
+        "? Wage Decrease",
+        "? Wage Increase",
+        "Electronics Demand per Capita",
+        "Labor Demand Signal Time",
+        "Labor Market Enabled",
+        "Metal Demand per Capita",
+        "Target Labor Tightness",
+        "Wage Adjustment Rate",
+        "Wage Floor Share"
+      ]
+    }
+  ]
+}
