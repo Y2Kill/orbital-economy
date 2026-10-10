@@ -423,17 +423,6 @@ function unreadOutside(current, n) {
   const targets = new Set(n.targets(n.decl).map(t => t.toLowerCase()));
   return !current.elements.some(e => e.type === 'LINK' && removed.has(e.from) && !removed.has(e.to) && !targets.has(String(e.to).toLowerCase()));
 }
-function layerDependsOn(upper, lower, current) {
-  const lowerGenerated = new Set((lower.generated?.(lower.decl) || []).map(x => String(x).toLowerCase()));
-  if (!lowerGenerated.size) return false;
-  const upperTargets = new Set((upper.targets?.(upper.decl) || []).map(x => String(x).toLowerCase()));
-  if ([...upperTargets].some(x => lowerGenerated.has(x))) return true;
-  const upperOwn = new Set((upper.generated?.(upper.decl) || []).map(x => String(x).toLowerCase()));
-  return current.elements.some(e => e.type === 'LINK' &&
-    lowerGenerated.has(String(e.from).toLowerCase()) &&
-    (upperOwn.has(String(e.to).toLowerCase()) || upperTargets.has(String(e.to).toLowerCase())));
-}
-
 function buildLayers(start, nodes = layeredNodes) {
   const result = new Map();
   let current = structuredClone(start);
@@ -442,16 +431,13 @@ function buildLayers(start, nodes = layeredNodes) {
   while (remaining.length) {
     // A node without a switch (labor/population) does not wrap formulas in IfThenElse; it is peelable when no other
     // remaining node replaces any of the formulas it edits and nothing outside it reads what it generated.
-    const peelable = n => {
-      const structurallyPeelable = n.decl.switch
-        ? n.targets(n.decl).every(t => outerSwitchIs(current, t, n.decl.switch))
-        : n.targets(n.decl).every(t => !remaining.some(o => o !== n && o.targets(o.decl).includes(t))) && unreadOutside(current, n);
-      if (!structurallyPeelable) return false;
-      // When several switched layers are independently outer-wrapped, peel the one that no other
-      // remaining layer depends on. This makes the layering a dependency order rather than array order.
-      return !remaining.some(o => o !== n && layerDependsOn(o, n, current));
-    };
-    const i = remaining.findIndex(peelable);
+    const peelable = n => n.decl.switch
+      ? n.targets(n.decl).every(t => outerSwitchIs(current, t, n.decl.switch))
+      : n.targets(n.decl).every(t => !remaining.some(o => o !== n && o.targets(o.decl).includes(t))) && unreadOutside(current, n);
+    // labor_market is the Planet-v2 outer layer by contract. Prefer it when present and structurally
+    // peelable; after it is removed, preserve the established v0.9.17 ordering unchanged.
+    const lm = remaining.findIndex(n => n.decl.type === 'labor_market' && peelable(n));
+    const i = lm >= 0 ? lm : remaining.findIndex(peelable);
     if (i < 0) throw new Error(`cannot determine node layering: none of ${remaining.map(n => n.decl.sector || n.decl.switch || n.decl.type).join(', ')} is outermost on all its replacement targets`);
     const [n] = remaining.splice(i, 1);
     const base = n.strip(current, n.decl);
@@ -480,9 +466,10 @@ function buildSwitchlessLayers(start, nodes = layeredNodes) {
       (own.has(String(e.to).toLowerCase()) || targets.has(String(e.to).toLowerCase())));
   };
   while (true) {
-    const i = switched.findIndex(n => touchesSwitchless(n) &&
-      n.targets(n.decl).every(t => outerSwitchIs(current, t, n.decl.switch)) &&
-      !switched.some(o => o !== n && layerDependsOn(o, n, current)));
+    const peelable = n => touchesSwitchless(n) &&
+      n.targets(n.decl).every(t => outerSwitchIs(current, t, n.decl.switch));
+    const lm = switched.findIndex(n => n.decl.type === 'labor_market' && peelable(n));
+    const i = lm >= 0 ? lm : switched.findIndex(peelable);
     if (i < 0) break;
     const [n] = switched.splice(i, 1);
     current = n.strip(current, n.decl);
