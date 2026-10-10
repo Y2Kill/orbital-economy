@@ -1,0 +1,17 @@
+{
+  "task": "034",
+  "title": "v7.7.13 Labor Market: demand per capita x population, flexible wage, output limited by labor via the labor_market node under switch Labor Market Enabled (Modes 0-51 unchanged); surge wiring for Mode 53; Modes 52 (labor market), 53 (transport surge with labor market) (Planet v2 step 3)",
+  "branch": "task/034-labor-market",
+  "allow": [],
+  "allow_binary": [],
+  "allow_protected": [
+    "docs/tasks/034-labor-market/candidate/**"
+  ],
+  "required_changes": [
+    "docs/tasks/034-labor-market/candidate/model-patch.json",
+    "docs/tasks/034-labor-market/candidate/validation.json",
+    "docs/tasks/034-labor-market/candidate/change-policy.json",
+    "docs/tasks/034-labor-market/candidate/PARAMETER_ANNOTATIONS_fragment.json"
+  ],
+  "sums_by": "reviewer"
+}

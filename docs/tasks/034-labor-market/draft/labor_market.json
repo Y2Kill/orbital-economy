@@ -1,0 +1,37 @@
+{
+  "type": "labor_market",
+  "version": 1,
+  "colonies": ["A", "B"],
+  "switch": "Labor Market Enabled",
+  "parameters": {
+    "Metal Demand per Capita": 0.5714285714285714,
+    "Electronics Demand per Capita": 0.7142857142857143,
+    "Wage Adjustment Rate": 0.000277777777778,
+    "Target Labor Tightness": 0.95,
+    "Wage Floor Share": 0.3,
+    "Labor Demand Signal Time": 10
+  },
+  "inputs": {
+    "population": "{C} Population",
+    "population_initial": "{C} Population Initial",
+    "participation": "Labor Participation Share",
+    "labor_force": "{C} Labor Force",
+    "labor_requirement": "{C} Total Labor Requirement",
+    "wage": "{C} Wage"
+  },
+  "demand": [
+    { "target": "{C} Local Base Demand", "per_capita": "Metal Demand per Capita" },
+    { "target": "{C} Electronics Local Base Demand", "per_capita": "Electronics Demand per Capita" }
+  ],
+  "rates": [
+    "{C} Mining Rate",
+    "{C} Smelting Rate",
+    "{C} Electronics Production Rate",
+    "{C} Capital Goods Production Rate",
+    "{C} Regolith Extraction Rate",
+    "{C} Construction Materials Production Rate",
+    "{C} Power Resource Extraction Rate",
+    "{C} Available Generation",
+    "{C} Food Production"
+  ]
+}

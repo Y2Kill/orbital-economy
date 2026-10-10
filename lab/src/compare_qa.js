@@ -5,6 +5,10 @@ import os from 'node:os';
 import path from 'node:path';
 import { compareModels } from './compare_models.js';
 import { readJson, writeJson, ensureDir } from './util.js';
+// The controlled change needs a numeric constant: A Local Base Demand until v7.7.12; from v7.7.13 it is a formula
+// under Labor Market Enabled and its former value lives in A External Local Base Demand.
+const isNumber = v => typeof v === 'number' || (typeof v === 'string' && /^\s*-?\d+(\.\d+)?([eE][-+]?\d+)?\s*$/.test(v));
+const demandParameter = raw => ['A Local Base Demand', 'A External Local Base Demand'].find(n => isNumber(raw.elements.find(x => x?.name === n)?.behavior?.value));
 
 const root = path.resolve(process.cwd());
 const accepted = discoverSingleJson(path.join(root, 'reference', 'accepted', 'model'), 'accepted ModelJSON');
@@ -38,8 +42,9 @@ try {
 
   const changedFile = path.join(tmp, 'candidate-changed.json');
   const changed = readJson(accepted);
-  const el = changed.elements.find(x => x?.name === 'A Local Base Demand');
-  if (!el) throw new Error('QA fixture element A Local Base Demand not found');
+  const demandName = demandParameter(changed);
+  const el = changed.elements.find(x => x?.name === demandName);
+  if (!el) throw new Error('QA fixture: no numeric demand parameter (A Local Base Demand / A External Local Base Demand)');
   el.behavior.value = Number(el.behavior.value) + 1;
   changed.name = `${changed.name} [QA changed candidate]`;
   writeJson(changedFile, changed);
@@ -53,7 +58,7 @@ try {
   });
   mark(r2.overall === 'COMPLETE' && r2.result === 'DIFFERENT_OUTPUTS' && r2.scenarios[0]?.comparison?.changedSeriesCount > 0,
        'controlled parameter change produces DIFFERENT_OUTPUTS and changed time series');
-  mark(r2.structure.changedDefinitions.includes('A Local Base Demand'),
+  mark(r2.structure.changedDefinitions.includes(demandName),
        'controlled parameter change is reported in structural/behavioral definition diff');
 } catch (e) {
   console.error('[FAIL] compare integration self-test crashed:', e.message || e);

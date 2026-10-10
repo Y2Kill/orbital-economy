@@ -221,11 +221,13 @@ try {
   await expect('model diff: changed behavior is detected', async () => {
     const a = readJson(sourceModel);
     const b = structuredClone(a);
-    const el = b.elements.find(x => x?.name === 'A Wage');
+    // A Wage is a numeric constant until v7.7.12; from v7.7.13 its former value lives in A Initial Wage.
+    const name = ['A Wage', 'A Initial Wage'].find(n => /^\s*-?\d+(\.\d+)?\s*$/.test(String(b.elements.find(x => x?.name === n)?.behavior?.value)));
+    const el = b.elements.find(x => x?.name === name);
     if (!el) return false;
     el.behavior.value = Number(el.behavior.value) + 1;
     const d = compareModelStructure(a, b, 'Timed Test Mode');
-    return d.changedDefinitions.includes('A Wage');
+    return d.changedDefinitions.includes(name);
   });
 
   await expect('model diff: added scenario Mode is detected', async () => {
@@ -461,8 +463,8 @@ try {
     const isNum = v => typeof v === 'number' || (typeof v === 'string' && /^\s*-?\d+(\.\d+)?([eE][-+]?\d+)?\s*$/.test(v));
     const expected = els.filter(e => (e.type === 'VARIABLE' && isNum(e.behavior?.value)) || (e.type === 'STOCK' && isNum(e.behavior?.initial_value))).length;
     const sw = items.filter(i => i.kind === 'switch').map(i => i.name);
-    const wage = items.find(i => i.name === 'A Wage');
-    return items.length === expected && sw.includes('Capital Lifecycle Enabled') && wage && wage.mirror === 'B Wage' && wage.asymmetric === true ? `${items.length} items, switches: ${sw.join(', ')}` : false;
+    const wage = items.find(i => i.name === 'A Wage') || items.find(i => i.name === 'A Initial Wage');
+    return items.length === expected && sw.includes('Capital Lifecycle Enabled') && wage && wage.mirror === wage.name.replace(/^A /, 'B ') && wage.asymmetric === true ? `${items.length} items, switches: ${sw.join(', ')}` : false;
   });
   await expect('parameter registry: annotations merge, mirror propagation and unknown-name warning', async () => {
     const raw = readJson(sourceModel);

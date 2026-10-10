@@ -386,6 +386,14 @@ debac6be58280c6c52b01b3a958f7f04ef619ea05fe2d15f533bdae5dcd075f3  ./docs/tasks/0
 acbec86cbb28343cf6c71820df4c3a8fa43c24c16c6ac1ff16baad2d8778c89b  ./docs/tasks/033-labor-market-node/reference/definition_fingerprint.mjs
 ba760621c27609a08a6515953a91034fb579a0ea8fff0d3cfbed155b718ce76b  ./docs/tasks/033-labor-market-node/reference/labor_market_node_prototype.mjs
 84fbf48c0e6cea3ba279c658a180e1f848f13376d4c3fe4a5ed1e52ebaedfe29  ./docs/tasks/033-labor-market-node/scope.json
+cd22f25e6a68276a2584fb223ef90044785b8120c81f620b10979e5c7a984ef2  ./docs/tasks/034-labor-market/TASK_RU.md
+78caf6eb412c7c615e10da8796eebe0840d4d67b38db51bd7278f51f7d27ddb0  ./docs/tasks/034-labor-market/V7_7_13_ARCHITECTURE_SPEC.md
+d34b606a64320dc7672b3c306941fc7dde23fedef5ecc1be3d39b17b1c7df3ab  ./docs/tasks/034-labor-market/V7_7_13_TEST_PLAN.md
+12835f8e86527ad161d9f48d596314b3a2058712aebd131b57baa360a0bc5270  ./docs/tasks/034-labor-market/draft/change-policy-v7.7.13-draft.json
+debac6be58280c6c52b01b3a958f7f04ef619ea05fe2d15f533bdae5dcd075f3  ./docs/tasks/034-labor-market/draft/labor_market.json
+66d1ccd25a5011439af04d72b820602bdcbcd330b287d88a4a41a71fb9d97e3d  ./docs/tasks/034-labor-market/draft/skeleton-patch.json
+884c092d1630d416caf897282f81d9cdd205e7271836e252d248f71e84c62ad6  ./docs/tasks/034-labor-market/draft/validation-v7.7.13-draft.json
+979137db1b2685dff0fd9ded2869d3baf3863d742e57473fc82731444e1aafb3  ./docs/tasks/034-labor-market/scope.json
 44d2e557f1cb2322739bc95ee2b6dcbf6d6fcb708da14e90d53250936e50da5c  ./docs/tasks/README_RU.md
 bbf818e93b88d606b3137b1bb69d60db8c41c9df4089025a921b1ca00f473244  ./lab/APPLY_PATCH.cmd
 5f5761d65866245077b6ea1588d5c74a5ed837ef427fd79250a614c819b35b63  ./lab/CHANGELOG.md
@@ -413,7 +421,7 @@ e1148e014e2f09a5aadf2ab18ba467ccbe01ffc04e10c6fc3d5cacbfac7f0226  ./lab/README_R
 52bcfc0749480fa5467e713f3a6948258dccb560357eef5822f8bcee070c652c  ./lab/RUN_LAB.cmd
 324ccedcd35621f7716bc905acc67d09076f040075e68d8e1c5e657a32f48499  ./lab/RUN_TESTS.cmd
 b08fd6ad35bba528bf455553dfd5d9f7c68b81658f2cbf6cf2a3989afb647629  ./lab/SELF_TEST.cmd
-a1f157942a7490933a875f3c20cb6223454c46c9b9f3fc0de490bd6ae460353a  ./lab/SHA256SUMS.txt
+367a16e092ba5d20b8d7b62f845638f1d6372fa9412d88c5b6e36e33603fd57f  ./lab/SHA256SUMS.txt
 75120cad55eab07655f699135bd7997c2a18db496be28dbd8741ddecedd4bdda  ./lab/STRUCTURE_AUDIT.cmd
 7396a4da60a41cc41a67c7bb8baa619b0ad5be9e745c0c08f17c1a26a56a18e5  ./lab/STRUCTURE_SELF_TEST.cmd
 58cb8e2bf5a04de53a4c568c22bd8f840585e27dec55b701520b28472e6652b8  ./lab/docs/ARCHITECTURE_RU.md
@@ -452,7 +460,7 @@ e8829fa550172dfab9629a0d66b0c628c1d802c5c1a3826ab7a9a86365c9f234  ./lab/referenc
 0401d9447b005313b9a5fd63378ace45eb69281b0cddfdabe9db7aea332ed1fe  ./lab/src/checks.js
 e50d91f73d6cbad0b9441cb1a46f6fa7ec838b672912f1b0403b84bde03bdc76  ./lab/src/cli.js
 5769082c6fd9e264c55c83266548c210cedf60721df8e9cd0925edc4c6dd0706  ./lab/src/compare_models.js
-5510e4fd343436d37894aecbebae13eb20db26827dd5fa913729b9e1197101bd  ./lab/src/compare_qa.js
+bf2189048f6cd303ac9bf505fbdc580abfe240fac737f8c4913f2e8b0ea5c004  ./lab/src/compare_qa.js
 67e58394697642c60b8fd2d028db17354fc1378b4f465ec15eb4214859ef7f06  ./lab/src/compare_report.js
 2c6df668919806e8b764ead3a26c6520f6a8c63784624285b1127886db191341  ./lab/src/conformance_qa.js
 8a9cac91696f5288a4c05e5cd1506ca3cb44080a10b165b1b53d771fafc3e8cd  ./lab/src/conformance_run.js
@@ -475,11 +483,11 @@ ccc93f854919484ae44a03b548388f7db592af5555a4ae0e25f3caab60359127  ./lab/src/node
 1913c9aa55218ec302128b218dc448a8abaf4c5009641bf239791def84f65de9  ./lab/src/parameters.js
 9e3270f021505e686538e44e673e8ff010974c2335723dde8c3a87722da347e3  ./lab/src/patch.js
 accca1c80f92b585650cdfe1f0f9fbc2f58bde0ef6dcf8598537501fb68aff80  ./lab/src/planet_closure.js
-f38da236a2b31ca0678b2ffa4eff7f3df1dcedc0790164e0fa8cdd32b675facd  ./lab/src/planet_qa.js
+35676258ca6ed2227190e49d318add437bd700608412ee32feffeb97c20cd826  ./lab/src/planet_qa.js
 c3c1412ddbd2745d01fa40023a70b713b8dc6ad2f0ba14fe0fd70fe668138036  ./lab/src/policy.js
-630aeb7fd6c7f09d6f42089a0225e39f0f7c966b27b5ec4a2e17b5321d118b58  ./lab/src/policy_qa.js
+cbe0f68ed95391003f6e52421a7691f613fe36e95df8650e068c423dba072ce1  ./lab/src/policy_qa.js
 b0162ce5bc02de93c6b5a36c1f93caf5455b9f0de7ae8fb5cfd19396ef3bc3fa  ./lab/src/policy_run.js
-9bf8308e05beb9b6e7c591f3a64652c491517b23935a4fe3fed6c818b10898a5  ./lab/src/qa.js
+4d32d305a5e9ff65e783304710501b7e06210047e9beb823fcd6128ec2eea27d  ./lab/src/qa.js
 69b7968695e21c64db5cc3e470994bf61b6cc8b4e77c5e7e40f51e6be230d39a  ./lab/src/regression.js
 261792873b5073dcde17d9a27046e8d5564e8fdafd004a50fb5410db3df6fb17  ./lab/src/report.js
 d34f79bf4d0dcbd7220e31e23bb7b5951a31aafcb83751088270a9d1c319e328  ./lab/src/runner.js

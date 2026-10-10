@@ -114,7 +114,8 @@ function declaredCounters(d) {
     if (p.kind === 'extraction') { if (p.deposit?.kind === 'stock') c.P4.with_deposit += k; else c.P4.without_deposit += k; }
     if (p.labor?.kind === 'declared') c.P5.declared += k; else c.P5.undeclared += k;
   }
-  for (const s of d.demand_drivers?.parameters || []) c.P6.drivers += n(s);
+  // the audit checks every driver once per colony, also a shared (no {C}) per-capita norm (v7.7.13 on)
+  for (const s of d.demand_drivers?.parameters || []) c.P6.drivers += cols;
   return c;
 }
 const EXP = declaredCounters(declaration);

@@ -7,6 +7,10 @@ import path from 'node:path';
 import { compareModels } from './compare_models.js';
 import { evaluatePolicy, POLICY_FORMAT } from './policy.js';
 import { readJson, writeJson, ensureDir, sha256File } from './util.js';
+// The controlled change needs a numeric constant: A Local Base Demand until v7.7.12; from v7.7.13 it is a formula
+// under Labor Market Enabled and its former value lives in A External Local Base Demand.
+const isNumber = v => typeof v === 'number' || (typeof v === 'string' && /^\s*-?\d+(\.\d+)?([eE][-+]?\d+)?\s*$/.test(v));
+const demandParameter = raw => ['A Local Base Demand', 'A External Local Base Demand'].find(n => isNumber(raw.elements.find(x => x?.name === n)?.behavior?.value));
 
 const root = path.resolve(process.cwd());
 const accepted = discoverSingleJson(path.join(root, 'reference', 'accepted', 'model'), 'accepted ModelJSON');
@@ -113,8 +117,9 @@ try {
   try {
     const changedFile = path.join(tmp, 'candidate-changed.json');
     const changed = readJson(accepted);
-    const el = changed.elements.find(x => x?.name === 'A Local Base Demand');
-    if (!el) throw new Error('QA fixture element A Local Base Demand not found');
+    const demandName = demandParameter(changed);
+    const el = changed.elements.find(x => x?.name === demandName);
+    if (!el) throw new Error('QA fixture: no numeric demand parameter (A Local Base Demand / A External Local Base Demand)');
     el.behavior.value = Number(el.behavior.value) + 1;
     changed.name = `${changed.name} [POLICY QA changed candidate]`;
     writeJson(changedFile, changed);
@@ -133,7 +138,7 @@ try {
 
     p = structuredClone(integrationPolicy);
     p.rules = [
-      { id: 'allow-one-definition', action: 'allow', event: 'definition_changed', name: 'A Local Base Demand', required: true },
+      { id: 'allow-one-definition', action: 'allow', event: 'definition_changed', name: demandName, required: true },
       { id: 'allow-mode0-output-impact', action: 'allow', event: 'series_changed', modes: 0, name: '*', required: true }
     ];
     r = evaluatePolicy({ comparisonReport: cmp, policy: p });
