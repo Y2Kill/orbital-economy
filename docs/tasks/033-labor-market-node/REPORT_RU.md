@@ -26,8 +26,10 @@
 Промежуточный [run 38040527371](https://github.com/Y2Kill/orbital-economy/actions/runs/38040527371) показал оставшийся дефект порядка: строка 480 — общий layering не мог выбрать внешний слой среди прежних declarations. Исправление: при модели с `labor_market` внешний слой приоритизируется перед зависимыми нижними слоями, после чего обычный dependency-based peeling продолжает работу.
 Доказательство: [run 38040788876](https://github.com/Y2Kill/orbital-economy/actions/runs/38040788876), строка 542 — case 59 PASS: `labor_market peeled first; 11 node layers rebuildable; P6 old drivers restored`; строка 544 — **NODE 59/59**; строка 1646 — **OVERALL: PASS**. Guard и tools-selftest на этой голове также success.
 
-### КТ4 — ожидается финальный CI
-Документация и Lab v0.9.18 готовятся отдельным содержательным коммитом; после его зелёного CI КТ4 будет записана отдельным journal-only коммитом.
+### КТ4 — 2026-10-10 — документация и финальная кодовая голова зелёная
+Сделано: версия стенда поднята до **0.9.18** (`package.json` с сохранённым CRLF и без финального NL, `package-lock.json`, CLI); обновлены `NODES_RU.md`, `VALIDATION_FORMAT_RU.md`, `HARNESS_QA_RU.md`, `TEST_STATUS_RU.md`, `README_RU.md`, `CHANGELOG.md`. В NODES registry содержит восемь типов.
+Доказательство: [ci.yml run 38042294793](https://github.com/Y2Kill/orbital-economy/actions/runs/38042294793) на голове `6ec4c165`: guard — success, tools-selftest — success, bench-selftests — success. Bench job `114184778818`: строка 250 — QA **47/47**; строки 536–542 — cases 53–59 PASS; строка 544 — NODE **59/59**; строка 1646 — `OVERALL: PASS`.
+Поставка по TASK §4/§6 полная; accepted model, validation, policy и `model/nodes/*` не изменены.
 
 ## Устройство
 
