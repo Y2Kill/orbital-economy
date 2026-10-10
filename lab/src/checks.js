@@ -243,6 +243,41 @@ const STATIC_ONLY_PLUGINS = new Set(['open_boundaries', 'colony_symmetry', 'plan
 export function checkPlugin(plugin, ctx) {
   const results = [];
   if (STATIC_ONLY_PLUGINS.has(plugin.type)) return results;
+  if (plugin.type === 'labor_market') {
+    const absTol = plugin.abs_tol ?? 1e-9, relTol = plugin.rel_tol ?? 1e-9;
+    const safe = (name, fn) => { try { return fn(); } catch (e) { return fail(name, e.message || String(e)); } };
+    const sw = ctx.get(plugin.switch), floor = ctx.get(plugin.floor);
+    for (const inst of plugin.instances || []) {
+      const label = inst.name || inst.colony || 'labor_market';
+      results.push(safe(`${label}: availability in [0,1]`, () => {
+        const a=ctx.get(inst.availability); let bad=null;
+        for(let i=0;i<ctx.times.length;i++) if(a[i] < -absTol || a[i] > 1 + absTol){bad={time:ctx.times[i],value:a[i]};break;}
+        return bad ? fail(`${label}: availability in [0,1]`,`${inst.availability} = ${bad.value} at day ${bad.time}`,bad)
+          : pass(`${label}: availability in [0,1]`,{points:ctx.times.length});
+      }));
+      results.push(safe(`${label}: wage above floor`, () => {
+        const w=ctx.get(inst.wage),w0=ctx.get(inst.initial_wage); let bad=null;
+        for(let i=0;i<ctx.times.length;i++){const min=floor[i]*w0[i]; if(w[i] < min - absTol){bad={time:ctx.times[i],value:w[i],min};break;}}
+        return bad ? fail(`${label}: wage above floor`,`${inst.wage} = ${bad.value} < ${bad.min} at day ${bad.time}`,bad)
+          : pass(`${label}: wage above floor`,{points:ctx.times.length});
+      }));
+      results.push(safe(`${label}: switch-off availability = 1`, () => {
+        const a=ctx.get(inst.availability); let worst=0,when=null;
+        for(let i=0;i<ctx.times.length;i++) if(sw[i] <= 0.5){const e=Math.abs(a[i]-1);if(e>worst){worst=e;when=ctx.times[i];}}
+        return worst <= absTol ? pass(`${label}: switch-off availability = 1`,{maxAbsError:worst,maxTime:when})
+          : fail(`${label}: switch-off availability = 1`,`abs error ${worst} > ${absTol} at day ${when}`,{maxAbsError:worst,maxTime:when});
+      }));
+      for (const d of inst.demand || []) results.push(safe(`${label}: demand identity ${d.target}`, () => {
+        const target=ctx.get(d.target),per=ctx.get(d.per_capita),pop=ctx.get(d.population); let worst=0,absWorst=0,when=null;
+        for(let i=0;i<ctx.times.length;i++) if(sw[i] > 0.5){const expected=per[i]*pop[i],a=Math.abs(target[i]-expected),r=a/Math.max(Math.abs(expected),1e-12);if(r>worst){worst=r;absWorst=a;when=ctx.times[i];}}
+        const name=`${label}: demand identity ${d.target}`;
+        return worst <= relTol ? pass(name,{worstRelativeError:worst,worstAbsError:absWorst,worstTime:when})
+          : fail(name,`relative error ${worst} > ${relTol} at day ${when}`,{worstRelativeError:worst,worstAbsError:absWorst,worstTime:when});
+      }));
+    }
+    return results;
+  }
+
   if (plugin.type === 'food') {
     const tol = plugin.abs_tol ?? 1e-8;
     const safe = (name, fn) => { try { return fn(); } catch (e) { return fail(name, e.message || String(e)); } };

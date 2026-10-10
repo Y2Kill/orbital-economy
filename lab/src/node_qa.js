@@ -48,7 +48,7 @@ import {
   laborMarketGeneratedNames,
   laborMarketReplacementNames
 } from './nodes/labor_market.js';
-import { runLifecycleConformance, runFoodConformance } from './lifecycle_conformance.js';
+import { runLifecycleConformance, runFoodConformance, runLaborMarketConformance } from './lifecycle_conformance.js';
 import { runStructureAudits } from './structure_audit.js';
 
 const root = path.resolve(process.cwd());
@@ -418,10 +418,11 @@ function unreadOutside(current, n) {
   const targets = new Set(n.targets(n.decl).map(t => t.toLowerCase()));
   return !current.elements.some(e => e.type === 'LINK' && removed.has(e.from) && !removed.has(e.to) && !targets.has(String(e.to).toLowerCase()));
 }
-const layers = new Map();
-{
-  let current = structuredClone(accepted);
-  const remaining = [...layeredNodes];
+function buildLayers(start, nodes = layeredNodes) {
+  const result = new Map();
+  let current = structuredClone(start);
+  const remaining = [...nodes];
+  const order = [];
   while (remaining.length) {
     // A node without a switch (labor/population) does not wrap formulas in IfThenElse; it is peelable when no other
     // remaining node replaces any of the formulas it edits and nothing outside it reads what it generated.
@@ -432,10 +433,13 @@ const layers = new Map();
     if (i < 0) throw new Error(`cannot determine node layering: none of ${remaining.map(n => n.decl.sector || n.decl.switch || n.decl.type).join(', ')} is outermost on all its replacement targets`);
     const [n] = remaining.splice(i, 1);
     const base = n.strip(current, n.decl);
-    layers.set(n.decl, { base, target: current });
+    result.set(n.decl, { base, target: current });
+    order.push(n);
     current = base;
   }
+  return { layers: result, order, bottom: current };
 }
+const { layers } = buildLayers(accepted, layeredNodes);
 const states = declarations.map(decl => layers.get(decl));
 // The switchless nodes (labor, population) are the newest layers and wrap nothing, so the switched-node order above
 // cannot place them: there a switchless base may also lack switched layers peeled earlier. Their own cases need the
@@ -475,6 +479,23 @@ function buildSwitchlessLayers(start, nodes = layeredNodes) {
 }
 const { layers: switchlessLayers } = buildSwitchlessLayers(accepted);
 
+function validationWithoutLaborMarketFragment(raw, fragment) {
+  const out = structuredClone(raw);
+  const plugin = out.plugins?.find(p => p.type === 'labor_market');
+  const names = new Set((fragment.labor_market_instances || []).map(x => x.name));
+  if (plugin?.instances) plugin.instances = plugin.instances.filter(x => !names.has(x.name));
+  if (plugin && !plugin.instances?.length) out.plugins = out.plugins.filter(p => p !== plugin);
+  const ob = out.plugins?.find(p => p.type === 'open_boundaries');
+  const info = ob?.categories?.find(x => x.id === 'information_signal');
+  if (info?.name) info.name = info.name.filter(n => !(fragment.information_signal_names || []).includes(n));
+  const pc = out.plugins?.find(p => p.type === 'planet_closure');
+  if (pc?.demand_drivers && fragment.demand_drivers) {
+    pc.demand_drivers.parameters = (pc.demand_drivers.parameters || []).filter(x => !(fragment.demand_drivers.parameters || []).includes(x));
+    for (const x of fragment.demand_drivers.replaces || []) if (!pc.demand_drivers.parameters.includes(x)) pc.demand_drivers.parameters.push(x);
+  }
+  return out;
+}
+
 // Food is the top layer (v7.7.12 on): every earlier case works on a model without it, so its fragments leave the
 // validation those cases start from; case 47 merges them back and must reproduce the accepted validation.
 function validationWithoutFoodFragment(raw, fragment) {
@@ -494,9 +515,13 @@ function validationWithoutFoodFragment(raw, fragment) {
   if (eb) { eb.consumers = (eb.consumers || []).filter(x => !(fragment.energy_balance_consumers || []).includes(x)); if (eb.priority) eb.priority = eb.priority.filter(x => !(fragment.energy_balance_priority || []).includes(x)); }
   return out;
 }
-// The accepted model without the food layer: the "accepted" state of every earlier node's case.
-const acceptedBelowFood = foodDeclarations.length ? layers.get(foodDeclarations.at(-1).decl).base : accepted;
-validation = foodDeclarations.reduce((v, { decl }) => validationWithoutFoodFragment(v, expandNode(decl, layers.get(decl).base).validation), acceptedValidation);
+// Accepted states with outer Planet-v2 layers peeled. Earlier cases must not inherit validation fragments of layers above them.
+const acceptedBelowLaborMarket = laborMarketDeclarations.length ? layers.get(laborMarketDeclarations.at(-1).decl).base : accepted;
+const validationBelowLaborMarket = laborMarketDeclarations.reduce((v, { decl }) =>
+  validationWithoutLaborMarketFragment(v, expandNode(decl, layers.get(decl).base).validation), acceptedValidation);
+const acceptedBelowFood = foodDeclarations.length ? layers.get(foodDeclarations.at(-1).decl).base : acceptedBelowLaborMarket;
+validation = foodDeclarations.reduce((v, { decl }) =>
+  validationWithoutFoodFragment(v, expandNode(decl, layers.get(decl).base).validation), validationBelowLaborMarket);
 
 console.log('Orbital Economy Lab node-generator QA');
 console.log('Case 1: strip generated nodes from the current accepted model and rebuild them.\n');
@@ -1709,6 +1734,58 @@ await expect('53. labor_market fixture expands and APPLY_PATCH matches prototype
   return `31 elements / 24 replacements / 108 links; fingerprint=${fp}${alreadyPresent ? '; accepted layer rebuilt exactly' : ''}`;
 });
 
+await expect('54. labor_market fragments merge: plugin/static PASS, boundaries +8, symmetry 0, P6=4, loops 0', () => {
+  if (!laborMarketState?.expanded) throw new Error('case 53 did not produce labor_market state');
+  const before = runStructureAudits(laborMarketState.base, acceptedValidation);
+  const merged = mergeNodeValidation(acceptedValidation, [laborMarketState.expanded.validation]);
+  const twice = mergeNodeValidation(merged, [laborMarketState.expanded.validation]);
+  if (JSON.stringify(merged) !== JSON.stringify(twice)) throw new Error('labor_market validation merge is not idempotent');
+  const conf = runLifecycleConformance(laborMarketState.model, merged);
+  const lm = conf.laborMarket;
+  if (lm?.status !== 'PASS' || lm.summary.instances !== 2 || lm.summary.nonConforming !== 0) throw new Error('labor_market conformance mismatch: ' + JSON.stringify(lm));
+  const audits = runStructureAudits(laborMarketState.model, merged);
+  const ob0=before.openBoundaries?.summary?.openFlows??0, ob1=audits.openBoundaries?.summary?.openFlows??0;
+  if (ob1-ob0 !== 8 || audits.openBoundaries?.summary?.unclassified !== 0) throw new Error('boundary delta/unclassified mismatch: '+ob0+'->'+ob1);
+  if (audits.colonySymmetry?.summary?.mismatches !== 0) throw new Error('colony symmetry mismatches='+audits.colonySymmetry?.summary?.mismatches);
+  if (audits.planetClosure?.status !== 'PASS' || audits.planetClosure?.counters?.P6?.drivers !== 4) throw new Error('planet P6 mismatch: '+JSON.stringify(audits.planetClosure?.counters?.P6));
+  if (audits.algebraicLoops?.status !== 'PASS' || audits.algebraicLoops.combinationsWithLoops !== 0) throw new Error('algebraic loops detected');
+  laborMarketState.validation = merged;
+  return `labor_market=2 CONFORMING; boundaries ${ob0}->${ob1}; symmetry=0; P6=4; loops=0`;
+});
+
+await expect('55. labor_market trial runs every merged runtime plugin with switch on', () => {
+  if (!laborMarketState?.validation) throw new Error('case 54 did not produce merged validation');
+  const source=(laborMarketState.model.scenarios||[]).at(-1); if(!source) throw new Error('model has no scenarios');
+  const trial=structuredClone(source); trial.name=(source.name||'last mode')+' — Node QA labor_market'; trial.values={...trial.values,[laborMarketFixture.switch]:1};
+  const simModel=loadModelJSON(modelJsonForScenario(laborMarketState.model,trial));
+  const errs=simModel.check(); if(errs.length)throw new Error('trial model.check: '+errs.map(e=>e.message||e).join('; '));
+  const results=simModel.simulate(), ctx=seriesContext(simModel,results);
+  const checks=[checkTimeAxis(results,laborMarketState.validation.expected_time_step??laborMarketState.model.simulation?.time_step??null,laborMarketState.validation.time_step_tolerance??1e-12),checkFiniteAll(simModel,results)];
+  if(laborMarketState.validation.non_negative_regex)checks.push(checkNonNegativeRegex(simModel,results,laborMarketState.validation.non_negative_regex.pattern,laborMarketState.validation.non_negative_regex.tolerance??1e-10));
+  for(const plugin of laborMarketState.validation.plugins||[])checks.push(...checkPlugin(plugin,ctx));
+  for(const check of laborMarketState.validation.global_checks||[])checks.push(runGenericCheck(check,ctx));
+  const bad=checks.filter(x=>x.status==='FAIL');if(bad.length)throw new Error('merged runtime plugins: '+bad.map(x=>x.name+': '+(x.message||'FAIL')).join('; '));
+  let wageMoved=false;
+  for(const X of laborMarketFixture.colonies){
+    const a=Array.from(ctx.get(X+' Labor Availability'),Number);if(a.some(v=>v < -1e-9 || v > 1+1e-9))throw new Error(X+' availability outside [0,1]');
+    const w=Array.from(ctx.get(X+' Flexible Wage'),Number),w0=Array.from(ctx.get(X+' Initial Wage'),Number);if(w.some((v,i)=>Math.abs(v-w0[i])>1e-6))wageMoved=true;
+  }
+  if(!wageMoved)throw new Error('no regional flexible wage moved from initial wage');
+  return 'all merged runtime plugins PASS; availability in [0,1]; wage movement observed';
+});
+
+await expect('56. three-region labor_market expands with 3 instances and static PASS', () => {
+  const base=structuredClone(laborMarketState?.base||accepted), decl3=structuredClone(laborMarketFixture);decl3.colonies=['A','B','C'];
+  const copy=name=>{if(base.elements.some(e=>e.type!=='LINK'&&e.name===name))return;const srcName=name.replace(/^C /,'A ');const src=base.elements.find(e=>e.type!=='LINK'&&e.name===srcName);if(!src)throw new Error('synthetic C source missing: '+name);const x=structuredClone(src);x.name=name;if(x.behavior?.value&&typeof x.behavior.value==='string')x.behavior.value=x.behavior.value.replaceAll('[A ','[C ');base.elements.push(x);};
+  const names=[decl3.inputs.population,decl3.inputs.population_initial,decl3.inputs.labor_force,decl3.inputs.labor_requirement,decl3.inputs.wage,...decl3.demand.map(d=>d.target),...decl3.rates].map(n=>n.replaceAll('{C}','C'));
+  for(const n of names)copy(n);
+  const ex=expandNode(decl3,base),model=applyPatch(base,{format:PATCH_FORMAT,...ex.patch}).model;
+  const v={plugins:[{type:'labor_market',abs_tol:1e-9,rel_tol:1e-9,switch:ex.validation.labor_market_switch,floor:ex.validation.labor_market_floor,instances:ex.validation.labor_market_instances}]};
+  const conf=runLaborMarketConformance(model,v);
+  if(conf.status!=='PASS'||conf.summary.instances!==3)throw new Error('labor_market conformance: '+JSON.stringify(conf));
+  return '3 labor_market instances CONFORMING';
+});
+
 await expect('57. strip labor_market restores old numeric branches and rebuilds with zero differences', () => {
   if (!laborMarketState?.model) throw new Error('case 53 did not produce labor_market model');
   const stripped = stripLaborMarketNode(laborMarketState.model, laborMarketFixture);
@@ -1762,6 +1839,26 @@ await expect('58. labor_market schema/base checks reject five required invalid c
   await requireThrow(() => expandNode(laborMarketFixture, nonNumericWageBase), /inputs\.wage\[A\].*not a numeric constant/, 'non-numeric wage');
 
   return 'extra parameter, bad per_capita, missing rate, duplicate rate, and non-numeric wage rejected';
+});
+
+await expect('59. labor_market is peeled first above food and every earlier node layer remains rebuildable', () => {
+  if (!laborMarketState?.model) throw new Error('case 53 did not produce labor_market model');
+  const lmNode={decl:laborMarketFixture,strip:stripLaborMarketNode,targets:laborMarketReplacementNames,generated:laborMarketGeneratedNames};
+  const nodes=laborMarketDeclarations.length?layeredNodes:[...layeredNodes,lmNode];
+  const chain=buildLayers(laborMarketState.model,nodes);
+  if(chain.order[0]?.decl?.type!=='labor_market')throw new Error('labor_market was not the first layer peeled');
+  if(foodDeclarations.length && chain.order.findIndex(n=>n.decl.type==='food')<0)throw new Error('food layer missing below labor_market');
+  for(const n of nodes){
+    const layer=chain.layers.get(n.decl);if(!layer)throw new Error('layer missing: '+(n.decl.type||n.decl.sector));
+    expandNode(n.decl,layer.base);
+  }
+  const sw=buildSwitchlessLayers(laborMarketState.model,nodes);
+  if(sw.prepeeled[0]?.decl?.type!=='labor_market')throw new Error('switchless layering did not peel labor_market first');
+  const lmFreeValidation=validationWithoutLaborMarketFragment(laborMarketState.validation||acceptedValidation,laborMarketState.expanded.validation);
+  const pc=lmFreeValidation.plugins.find(p=>p.type==='planet_closure');
+  for(const old of laborMarketState.expanded.validation.demand_drivers.replaces||[])if(!pc?.demand_drivers?.parameters?.includes(old))throw new Error('P6 old driver not restored: '+old);
+  for(const fresh of laborMarketState.expanded.validation.demand_drivers.parameters||[])if(pc?.demand_drivers?.parameters?.includes(fresh))throw new Error('P6 per-capita driver remained after strip: '+fresh);
+  return `labor_market peeled first; ${nodes.length} node layers rebuildable; P6 old drivers restored`;
 });
 
 console.log(`\nNODE SELF-TEST: ${passed} passed, ${failed} failed`);

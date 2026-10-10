@@ -562,6 +562,18 @@ try {
     return 'good PASS; consumption>demand FAIL; production>effective capacity FAIL';
   });
 
+  await expect('47 labor_market plugin: good passes; availability, wage floor and demand identity failures are caught', async () => {
+    const times=[0,1,2];
+    const base={sw:[1,1,1],floor:[.3,.3,.3],avail:[1,.9,.8],lf:[10,10,10],sig:[9,10,11],tight:[.9,1,1.1],w:[100,95,90],w0:[100,100,100],pc:[2,2,2],pop:[10,11,12],target:[20,22,24],rate:[5,4,3]};
+    const cx=v=>({times,has:n=>n in v,get(n){if(!(n in v))throw new Error(`unknown series ${n}`);return v[n];}});
+    const plugin={type:'labor_market',abs_tol:1e-9,rel_tol:1e-9,switch:'sw',floor:'floor',instances:[{name:'A labor market',colony:'A',availability:'avail',labor_force:'lf',labor_demand_signal:'sig',tightness:'tight',wage:'w',initial_wage:'w0',rates:['rate'],demand:[{target:'target',per_capita:'pc',population:'pop'}]}]};
+    const good=checkPlugin(plugin,cx(base));if(good.some(r=>r.status!=='PASS'))throw new Error('good: '+JSON.stringify(good));
+    const over=structuredClone(base);over.avail=[1,1.01,.8];const ro=checkPlugin(plugin,cx(over));if(!ro.some(r=>r.name.includes('availability in [0,1]')&&r.status==='FAIL'))throw new Error('availability > 1 did not fail');
+    const low=structuredClone(base);low.w=[100,20,90];const rl=checkPlugin(plugin,cx(low));if(!rl.some(r=>r.name.includes('wage above floor')&&r.status==='FAIL'))throw new Error('wage below floor did not fail');
+    const badDemand=structuredClone(base);badDemand.target=[20,23,24];const rd=checkPlugin(plugin,cx(badDemand));if(!rd.some(r=>r.name.includes('demand identity')&&r.status==='FAIL'))throw new Error('demand mismatch did not fail');
+    return 'good PASS; availability>1 FAIL; wage below floor FAIL; demand identity FAIL';
+  });
+
 } finally {
   fs.rmSync(tmp, { recursive: true, force: true });
 }

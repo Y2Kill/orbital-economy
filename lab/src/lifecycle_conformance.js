@@ -367,6 +367,73 @@ export function runSimpleCapitalConformance(raw, validation, index = indexModel(
 }
 
 
+export function findLaborMarketPlugin(validation) { return (validation?.plugins || []).find(p => p?.type === 'labor_market') || null; }
+export function validateLaborMarketSpec(plugin) {
+  const errors=[];
+  if(!plugin||typeof plugin!=='object') return ['labor_market plugin must be an object'];
+  if(!(typeof plugin.abs_tol==='number'&&Number.isFinite(plugin.abs_tol)&&plugin.abs_tol>0)) errors.push('labor_market.abs_tol must be a finite number > 0');
+  if(!(typeof plugin.rel_tol==='number'&&Number.isFinite(plugin.rel_tol)&&plugin.rel_tol>0)) errors.push('labor_market.rel_tol must be a finite number > 0');
+  if(typeof plugin.switch!=='string'||!plugin.switch) errors.push('labor_market.switch is required');
+  if(typeof plugin.floor!=='string'||!plugin.floor) errors.push('labor_market.floor is required');
+  if(!Array.isArray(plugin.instances)||!plugin.instances.length) errors.push('labor_market plugin needs a non-empty instances array');
+  const names=new Set(),colonies=new Set();
+  const fields=['name','colony','availability','labor_force','labor_demand_signal','tightness','wage','initial_wage'];
+  for(const [i,inst] of (plugin.instances||[]).entries()){
+    const p=`instances[${i}]`;
+    for(const k of fields) if(typeof inst?.[k]!=='string'||!inst[k]) errors.push(`${p}.${k} is required`);
+    if(inst?.name){if(names.has(inst.name))errors.push(`duplicate labor_market instance name: ${inst.name}`);names.add(inst.name);}
+    if(inst?.colony){if(colonies.has(inst.colony))errors.push(`duplicate labor_market colony: ${inst.colony}`);colonies.add(inst.colony);}
+    if(!Array.isArray(inst?.rates)||!inst.rates.length) errors.push(`${p}.rates must be a non-empty array`);
+    if(!Array.isArray(inst?.demand)||!inst.demand.length) errors.push(`${p}.demand must be a non-empty array`);
+    for(const [j,d] of (inst?.demand||[]).entries()) for(const k of ['target','per_capita','population']) if(typeof d?.[k]!=='string'||!d[k]) errors.push(`${p}.demand[${j}].${k} is required`);
+  }
+  return errors;
+}
+export function checkLaborMarketInstance(index,inst,plugin){
+  const checks=[],resolved={};
+  const roles={availability:'VARIABLE',labor_demand_signal:'STOCK',tightness:'VARIABLE',wage:'STOCK',initial_wage:'VARIABLE'};
+  for(const [role,kind] of Object.entries(roles)){
+    const e=index.get(inst[role]);
+    if(!e){checks.push(fail(`role ${role}`,`primitive not found: ${inst[role]}`));continue;}
+    if(e.type!==kind){checks.push(fail(`role ${role}`,`${e.name}: expected ${kind}, found ${e.type}`));continue;}
+    resolved[role]=e;checks.push(pass(`role ${role}`,{primitive:e.name,type:e.type}));
+  }
+  const availability=resolved.availability;
+  if(availability){
+    const refs=formulaRefs(availability);
+    for(const [source,label] of [[inst.labor_force,'labor_force'],[inst.labor_demand_signal,'labor_demand_signal']]){
+      if(!refs.has(String(source).toLowerCase())) checks.push(fail(`availability <- ${label}`,`${availability.name} does not reference [${source}]`));
+      else if(!index.hasLink(source,availability.name)) checks.push(fail(`availability <- ${label}`,`missing LINK ${source} -> ${availability.name}`));
+      else checks.push(pass(`availability <- ${label}`));
+    }
+  }
+  for(const rateName of inst.rates||[]){
+    const e=index.get(rateName),label=`rate ${rateName} reads availability`;
+    if(!e){checks.push(fail(label,'primitive not found'));continue;}
+    if(!formulaRefs(e).has(String(inst.availability).toLowerCase()))checks.push(fail(label,`${rateName} does not reference [${inst.availability}]`));
+    else if(!index.hasLink(inst.availability,rateName))checks.push(fail(label,`missing LINK ${inst.availability} -> ${rateName}`));
+    else checks.push(pass(label));
+  }
+  for(const d of inst.demand||[]){
+    const e=index.get(d.target),label=`demand ${d.target} reads per-capita and population`;
+    if(!e){checks.push(fail(label,'primitive not found'));continue;}
+    const refs=formulaRefs(e), missing=[d.per_capita,d.population].filter(x=>!refs.has(String(x).toLowerCase()));
+    if(missing.length)checks.push(fail(label,`${d.target} does not reference ${missing.map(x=>'['+x+']').join(' and ')}`));
+    else if(!index.hasLink(d.per_capita,d.target)||!index.hasLink(d.population,d.target))checks.push(fail(label,'required LINK is missing'));
+    else checks.push(pass(label));
+  }
+  const failed=checks.filter(x=>x.status==='FAIL');
+  return{name:inst.name,sector:inst.colony||null,classification:failed.length?'NON_CONFORMING':'CONFORMING',checks,variations:[],failures:failed.map(x=>`${x.name}: ${x.message}`)};
+}
+export function runLaborMarketConformance(raw,validation,index=indexModel(raw)){
+  const plugin=findLaborMarketPlugin(validation);
+  if(!plugin)return{status:'SKIPPED',instances:[],summary:{instances:0,conforming:0,nonConforming:0}};
+  const specErrors=validateLaborMarketSpec(plugin);
+  if(specErrors.length)return{status:'FAIL',specErrors,instances:[],summary:{instances:0,conforming:0,nonConforming:0}};
+  const instances=plugin.instances.map(i=>checkLaborMarketInstance(index,i,plugin)),n=instances.filter(i=>i.classification==='NON_CONFORMING').length;
+  return{status:n?'FAIL':'PASS',instances,summary:{instances:instances.length,conforming:instances.length-n,nonConforming:n}};
+}
+
 export function findFoodPlugin(validation) { return (validation?.plugins || []).find(p => p?.type === 'food') || null; }
 export function validateFoodSpec(plugin) {
   const errors = [];
@@ -510,10 +577,11 @@ export function runLifecycleConformance(raw, validation) {
   const labor = runLaborConformance(raw, validation, index);
   const population = runPopulationConformance(raw, validation, index);
   const food = runFoodConformance(raw, validation, index);
+  const laborMarket = runLaborMarketConformance(raw, validation, index);
   const anyNonConforming = instances.some(i => i.classification === 'NON_CONFORMING');
   const modelWideFail = modelWide.some(c => c.status === 'FAIL');
   return {
-    status: anyNonConforming || modelWideFail || simpleCapital.status === 'FAIL' || deposit.status === 'FAIL' || labor.status === 'FAIL' || population.status === 'FAIL' || food.status === 'FAIL' ? 'FAIL' : 'PASS',
+    status: anyNonConforming || modelWideFail || simpleCapital.status === 'FAIL' || deposit.status === 'FAIL' || labor.status === 'FAIL' || population.status === 'FAIL' || food.status === 'FAIL' || laborMarket.status === 'FAIL' ? 'FAIL' : 'PASS',
     format: KERNEL_FORMAT,
     kernel: { roles: Object.keys(KERNEL_ROLES).length, requiredRoles: REQUIRED_ROLES.length, flows: KERNEL_FLOWS.length, stocks: KERNEL_STOCKS.length },
     legacySwitch: plugin.legacy_switch || 'Capital Lifecycle Enabled',
@@ -529,7 +597,8 @@ export function runLifecycleConformance(raw, validation) {
     deposit,
     labor,
     population,
-    food
+    food,
+    laborMarket
   };
 }
 
@@ -564,6 +633,10 @@ export function printConformance(report, log = console.log) {
   if (report.population?.status !== 'SKIPPED') {
     log(`Population conformance: ${report.population.status}`);
     for(const inst of report.population.instances||[]){const checked=inst.checks.length,failed=inst.failures.length;log(`    ${inst.name.padEnd(32)} ${inst.classification}  (${checked-failed}/${checked} checks)`);for(const f of inst.failures)log(`        - ${f}`);}for(const e of report.population.specErrors||[])log(`    - ${e}`);
+  }
+  if (report.laborMarket?.status !== 'SKIPPED') {
+    log(`Labor market conformance: ${report.laborMarket.status}`);
+    for(const inst of report.laborMarket.instances||[]){const checked=inst.checks.length,failed=inst.failures.length;log(`    ${inst.name.padEnd(32)} ${inst.classification}  (${checked-failed}/${checked} checks)`);for(const f of inst.failures)log(`        - ${f}`);}for(const e of report.laborMarket.specErrors||[])log(`    - ${e}`);
   }
   if (report.food?.status !== 'SKIPPED') {
     log(`Food conformance: ${report.food.status}`);

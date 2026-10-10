@@ -218,6 +218,7 @@ export function mergeNodeValidation(validation, fragments) {
   let labor = out.plugins?.find(p => p.type === 'labor') || null;
   let population = out.plugins?.find(p => p.type === 'population') || null;
   let food = out.plugins?.find(p => p.type === 'food') || null;
+  let laborMarket = out.plugins?.find(p => p.type === 'labor_market') || null;
   let retirement = boundaries.categories.find(x => x.id === 'capital_retirement') || null;
   let exploration = boundaries.categories.find(x => x.id === 'exploration_expenditure') || null;
   let demographyBirths = boundaries.categories.find(x => x.id === 'demography_births') || null;
@@ -333,6 +334,26 @@ export function mergeNodeValidation(validation, fragments) {
         else if (!jsonEqual(existing, generated)) throw new Error(`validation fragment[${fi}]: food instance "${generated.name}" already exists with a different definition`);
       }
     }
+    if ((fragment.labor_market_instances || []).length) {
+      const absTol = fragment.labor_market_abs_tol ?? 1e-9;
+      const relTol = fragment.labor_market_rel_tol ?? 1e-9;
+      const sw = fragment.labor_market_switch;
+      const floor = fragment.labor_market_floor;
+      if (!laborMarket) {
+        laborMarket = { type: 'labor_market', abs_tol: absTol, rel_tol: relTol, switch: sw, floor, instances: [] };
+        out.plugins.push(laborMarket);
+      }
+      if (!Array.isArray(laborMarket.instances)) throw new Error('validation: labor_market.instances must be an array');
+      if ((laborMarket.abs_tol ?? 1e-9) !== absTol) throw new Error(`validation fragment[${fi}]: labor_market abs_tol differs`);
+      if ((laborMarket.rel_tol ?? 1e-9) !== relTol) throw new Error(`validation fragment[${fi}]: labor_market rel_tol differs`);
+      if (laborMarket.switch !== sw) throw new Error(`validation fragment[${fi}]: labor_market switch differs`);
+      if (laborMarket.floor !== floor) throw new Error(`validation fragment[${fi}]: labor_market floor differs`);
+      for (const generated of fragment.labor_market_instances) {
+        const existing = laborMarket.instances.find(x => x.name === generated.name);
+        if (!existing) laborMarket.instances.push(structuredClone(generated));
+        else if (!jsonEqual(existing, generated)) throw new Error(`validation fragment[${fi}]: labor_market instance "${generated.name}" already exists with a different definition`);
+      }
+    }
     const ensureBoundaryCategory = (id, direction, names, reason, current) => {
       if (!(names || []).length) return current;
       if (!current) {
@@ -430,6 +451,16 @@ export function mergeNodeValidation(validation, fragments) {
       else if (!jsonEqual(existing, generated)) {
         throw new Error(`validation fragment[${fi}]: planet process "${generated.id}" already exists with a different definition`);
       }
+    }
+    if (fragment.demand_drivers) {
+      const generated = fragment.demand_drivers;
+      if (!planet.demand_drivers || !Array.isArray(planet.demand_drivers.parameters) || !Array.isArray(planet.demand_drivers.consumption)) {
+        throw new Error('validation: planet_closure.demand_drivers parameters/consumption are required');
+      }
+      const params = planet.demand_drivers.parameters.filter(x => !(generated.replaces || []).includes(x));
+      for (const name of generated.parameters || []) if (!params.includes(name)) params.push(name);
+      planet.demand_drivers.parameters = params;
+      planet.demand_drivers.reason = generated.reason;
     }
   }
   return out;
