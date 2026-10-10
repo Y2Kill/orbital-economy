@@ -1,0 +1,19 @@
+{
+  "format": "orbital-economy-change-policy-v1",
+  "name": "Orbital Economy v7.7.13 r1 strict accepted-baseline policy",
+  "description": "Default-deny change contract bound to accepted v7.7.13 r1 (Labor Market). Any candidate must be compared against this model with this validation file.",
+  "accepted_model_sha256": "cede8ecf699995bc818646a2e922f87f3d798c002231fa70e14d3e357196d4f1",
+  "validation_sha256": "e28b5800586577849a0631889291092d669f2f2911df8d47853a9dd148d36b85",
+  "comparison": {
+    "abs_tolerance": 0,
+    "rel_tolerance": null,
+    "rel_floor": 1e-12
+  },
+  "default_action": "deny",
+  "rules": [],
+  "require_full_mode_coverage": true,
+  "engine": {
+    "package": "simulation",
+    "version": "9.0.0"
+  }
+}

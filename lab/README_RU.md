@@ -4,7 +4,7 @@
 
 ## Подтверждённая база
 
-Текущий accepted baseline стенда — **Orbital Economy v7.7.12 r1 — Food**, SHA `e8829fa550172dfab9629a0d66b0c628c1d802c5c1a3826ab7a9a86365c9f234`, Modes 0–51. Engine `simulation@9.0.0` pinned.
+Текущий accepted baseline стенда — **Orbital Economy v7.7.13 r1 — Labor Market**, SHA `cede8ecf699995bc818646a2e922f87f3d798c002231fa70e14d3e357196d4f1`, Modes 0–53. Engine `simulation@9.0.0` pinned.
 
 На promotion v7.6 подтверждено:
 
@@ -25,6 +25,7 @@
 - v7.7.10: Modes 0–47 воспроизводят accepted v7.7.9 r1 бит-в-бит без переключателя; Mode 48 — проба автоматизации; `planet_closure` в режиме `planet_v1` (`../docs/tasks/028-labor/`);
 - v7.7.11: Modes 0–48 воспроизводят accepted v7.7.10 r1 бит-в-бит без переключателя и новых Modes; население регионов и учёт труда — Planet v2, шаг 1 (`../docs/tasks/030-population/`);
 - v7.7.12: Modes 0–48 воспроизводят accepted v7.7.11 r1 бит-в-бит (`Food Enabled` = 0); Modes 49–51 — еда и фермы, Planet v2, шаг 2 (`../docs/tasks/032-food/`);
+- v7.7.13: Modes 0–51 воспроизводят accepted v7.7.12 r1 бит-в-бит (`Labor Market Enabled` = 0); Modes 52–53 — рынок труда, Planet v2, шаг 3 (`../docs/tasks/034-labor-market/`);
 - v7.7: Modes 0–26 воспроизводят accepted v7.6.1 r1 бит-в-бит на канонической платформе; Modes 27–29 — стройматериалы (`../docs/tasks/008-construction-materials/`);
 - v7.6.1: Modes 0–24 и 26 воспроизводят accepted v7.6 r2 точно во всех рядах, кроме ряда самой изменённой константы `Power Resource Shock Factor`; Mode 25 откалиброван (`../docs/V7_6_1_CALIBRATION_REPORT.md`);
 - v7.6 r2: legacy Modes 0–24 — exact regression against accepted v7.5.1 r1 (`changed=0`, `maxAbs=0`, added 41);
@@ -128,7 +129,7 @@ PLANET_SELF_TEST.cmd
 node src\cli.js audit model.json validation.json --planet-closure=planet_closure.json
 ```
 
-На accepted v7.7.12 r1 он фиксирует (режим `planet_v1`, PASS): 19 активных process instances + 2 legacy; P2 = 11 kernel / 8 simple / 0 exceptions / 0 undeclared; P3 = 16 requests / 2 producers / 1 exception (общий транспорт) / 0 undeclared; P4 = 6/0 deposits; P5 = 19/0 labor; P6 = 4 demand drivers; reversibility = 0.
+На accepted v7.7.13 r1 он фиксирует (режим `planet_v1`, PASS; драйверы P6 — нормы на душу): 19 активных process instances + 2 legacy; P2 = 11 kernel / 8 simple / 0 exceptions / 0 undeclared; P3 = 16 requests / 2 producers / 1 exception (общий транспорт) / 0 undeclared; P4 = 6/0 deposits; P5 = 19/0 labor; P6 = 4 demand drivers; reversibility = 0.
 
 Ключевое правило: declaration не считается доказательством сама по себе. Для capacity/energy строится реальный reference path по ModelJSON, и он должен укладываться в `max_hops`; ложные L1–L5 декларации self-test отвергает. `planet_v1` и `planet_strict` превращают соответствующие долги в hard static gate.
 
@@ -178,7 +179,7 @@ STRUCTURE_AUDIT.cmd        открытые границы + A/B-симметр�
 STRUCTURE_SELF_TEST.cmd    QA аудитов (20 случаев)
 ```
 
-`open_boundaries`: каждый FLOW из ∅ / в ∅ классифицируется; категории с `closed_world: false` — то, что должно исчезнуть к «планете». В current v7.7.12 r1: 254 граничных потока, все классифицированы, **0 нарушений declared closed-world expansion contract**. Неклассифицированный поток = FAIL. Нулевой счётчик относится только к объявленным физическим boundary-contracts и не означает завершённую Planet v1.
+`open_boundaries`: каждый FLOW из ∅ / в ∅ классифицируется; категории с `closed_world: false` — то, что должно исчезнуть к «планете». В current v7.7.13 r1: 262 граничных потока, все классифицированы, **0 нарушений declared closed-world expansion contract**. Неклассифицированный поток = FAIL. Нулевой счётчик относится только к объявленным физическим boundary-contracts и не означает завершённую Planet v1.
 
 `colony_symmetry`: для каждого элемента с токеном колонии проверяется зеркальный элемент (тип, формула, endpoints, LINK). Числовые параметры могут отличаться (в v7.7.1 r1 — 102 различия, все в реестре). Исключений с v7.4.1 нет: тестовая обвязка выражена флагами применимости. Структурных расхождений: 0.
 
@@ -187,8 +188,8 @@ STRUCTURE_SELF_TEST.cmd    QA аудитов (20 случаев)
 Поставка:
 
 ```text
-input\validation\validation-v7.7.12.json         (kernel-v2 + simple_capital + deposit + energy_balance с приоритетом + labor + population + food + open_boundaries + пары + colony_symmetry + planet_closure planet_v1 + Modes 0-51)
-input\policy\change-policy-v7.7.12-strict.json  (привязана к SHA модели и validation-v7.7.12)
+input\validation\validation-v7.7.13.json         (kernel-v2 + simple_capital + deposit + energy_balance с приоритетом + labor + population + food + labor_market + open_boundaries + пары + colony_symmetry + planet_closure planet_v1 + Modes 0-53)
+input\policy\change-policy-v7.7.13-strict.json  (привязана к SHA модели и validation-v7.7.13)
 ```
 
 ---
@@ -329,8 +330,8 @@ output\
 В текущем accepted baseline:
 
 ```text
-Orbital Economy v7.7.12 r1 — Food
-SHA-256 e8829fa550172dfab9629a0d66b0c628c1d802c5c1a3826ab7a9a86365c9f234
+Orbital Economy v7.7.13 r1 — Labor Market
+SHA-256 cede8ecf699995bc818646a2e922f87f3d798c002231fa70e14d3e357196d4f1
 ```
 
 `reference\accepted\model\` нельзя автоматически заменять текущим candidate. Это проектная контрольная точка.
@@ -338,10 +339,10 @@ SHA-256 e8829fa550172dfab9629a0d66b0c628c1d802c5c1a3826ab7a9a86365c9f234
 Поставляемая baseline policy:
 
 ```text
-input\policy\change-policy-v7.7.12-strict.json
+input\policy\change-policy-v7.7.13-strict.json
 ```
 
-Она привязана к принятой v7.7.12 r1, использует `default_action: deny` и требует **полного покрытия всех Modes**. Для новой задачи исполнитель должен получить отдельную explicit change-policy, сформированную до реализации.
+Она привязана к принятой v7.7.13 r1, использует `default_action: deny` и требует **полного покрытия всех Modes**. Для новой задачи исполнитель должен получить отдельную explicit change-policy, сформированную до реализации.
 
 ---
 
@@ -764,11 +765,11 @@ CONFORMANCE_SELF_TEST.cmd
 STRUCTURE_AUDIT.cmd
 ```
 
-Ожидаемый итог на поставляемой модели (v7.7.12 r1):
+Ожидаемый итог на поставляемой модели (v7.7.13 r1):
 
 ```text
-Open boundaries: 254; unclassified=0; closed-world violations=0
-Colony symmetry: mismatches=0; parameter differences=154; exceptions=0
+Open boundaries: 262; unclassified=0; closed-world violations=0
+Colony symmetry: mismatches=0; parameter differences=158; exceptions=0
 STRUCTURE AUDIT RESULT: PASS
 ```
 
@@ -875,7 +876,7 @@ Policy должна описывать намерение **до** реализ�
 
 # 19. Что считать нормальным результатом
 
-Неизменённая accepted v7.7.12 r1 + strict policy:
+Неизменённая accepted v7.7.13 r1 + strict policy:
 
 ```text
 COMPARISON RESULT: BYTE_IDENTICAL

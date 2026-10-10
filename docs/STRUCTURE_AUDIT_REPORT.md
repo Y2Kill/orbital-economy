@@ -1,15 +1,15 @@
 # Orbital Economy Lab — structure audit
 
-- generated: 2026-10-09T14:51:24.764Z
-- model: Orbital Economy v7.7.12 r1 — Food
-- model SHA-256: `e8829fa550172dfab9629a0d66b0c628c1d802c5c1a3826ab7a9a86365c9f234`
-- validation: Orbital Economy v7.7.12 validation r1
-- validation SHA-256: `4c3abf411b8587defa782283845a576d8d8e7e21989c8956fb1ba5007822d336`
+- generated: 2026-10-10T16:51:23.763Z
+- model: Orbital Economy v7.7.13 r1 — Labor Market
+- model SHA-256: `cede8ecf699995bc818646a2e922f87f3d798c002231fa70e14d3e357196d4f1`
+- validation: Orbital Economy v7.7.13 validation r1
+- validation SHA-256: `e28b5800586577849a0631889291092d669f2f2911df8d47853a9dd148d36b85`
 - status: **PASS**
 
 ## Open boundaries (declared physical-boundary meter)
 
-- flows total: 315; crossing the model boundary: 254; classified: 254; unclassified: 0
+- flows total: 323; crossing the model boundary: 262; classified: 262; unclassified: 0
 - closed-world violations: **0** (mode: `classify`) — zero means the currently declared closed-world boundary contract is satisfied; it is not a Planet v1 completeness claim
 - declared transformation pairs: 27; transformation flows without a pair: 0
 
@@ -21,7 +21,7 @@
 | final_consumption | yes | 6 | final goods leave the economy as consumption |
 | power_resource_consumption | yes | 2 | v7.6 physical operating resource is consumed in exact proportion to actual delivered generation. |
 | unit_transformation | yes | 8 | input stock -> output stock conversion modelled as a sink/source pair (different units); every flow here must belong to a declared transformation pair whose numeric identity is checked at runtime |
-| information_signal | yes | 94 | smoothing / information stocks, not matter |
+| information_signal | yes | 102 | smoothing / information stocks, not matter |
 | financial_accounting | yes | 16 | money bookkeeping, not matter |
 | capital_state_accounting | yes | 33 | Active is an operational-state sub-account of Installed; these flows change state, not physical capital |
 | capital_transformation | yes | 57 | v7.5/v7.5.1: installed capital expansion is a unit transformation of Capital Goods; regional sectors use one local sink, shared Transport uses two A/B regional sinks whose total identity is checked at runtime. v7.7: colonial sector expansion is additionally backed by a local Construction Materials sink. v7.7.1: shared Transport expansion is additionally backed by construction materials from both A and B inventories (two legs). v7.7.3: construction-materials plant expansion is backed by local capital goods and construction materials. v7.7.4: capital-goods plant expansion is backed by local capital goods and construction materials. |
@@ -105,7 +105,7 @@ Declared unit-transformation pairs (source flow physically backed by sink flows;
 - B Electronics Feedstock Consumption
 - B Electronics Production
 
-**information_signal** (94)
+**information_signal** (102)
 
 - A Electronics Capacity Planning Signal Increase
 - A Electronics Capacity Planning Signal Decrease
@@ -201,6 +201,14 @@ Declared unit-transformation pairs (source flow physically backed by sink flows;
 - A to B Food Export Signal Decrease
 - B to A Food Export Signal Increase
 - B to A Food Export Signal Decrease
+- A Labor Demand Signal Increase
+- A Labor Demand Signal Decrease
+- A Wage Increase
+- A Wage Decrease
+- B Labor Demand Signal Increase
+- B Labor Demand Signal Decrease
+- B Wage Increase
+- B Wage Decrease
 
 **financial_accounting** (16)
 
@@ -382,8 +390,8 @@ Declared unit-transformation pairs (source flow physically backed by sink flows;
 ## Colony symmetry
 
 - tokens: A ↔ B
-- mirrored pairs checked: 1390; mirrored links checked: 3356
-- structural mismatches: **0**; numeric parameter differences (allowed): 154; elements under exceptions: 0
+- mirrored pairs checked: 1414; mirrored links checked: 3464
+- structural mismatches: **0**; numeric parameter differences (allowed): 158; elements under exceptions: 0
 
 <details><summary>Numeric parameter differences between colonies (allowed)</summary>
 
@@ -392,8 +400,6 @@ Declared unit-transformation pairs (source flow physically backed by sink flows;
 | initial_value | A Refinery Installed Capacity | 35 | B Refinery Installed Capacity | 28 |
 | value | A Mining Capacity | 70 | B Mining Capacity | 28 |
 | value | A Ore Base Cost | 4 | B Ore Base Cost | 14 |
-| value | A Wage | 100 | B Wage | 140 |
-| value | A Local Base Demand | 16 | B Local Base Demand | 22 |
 | value | A Legacy Power Installed Generation Capacity | 1350 | B Legacy Power Installed Generation Capacity | 550 |
 | initial_value | A Electronics Capacity Planning Signal | 1.25793 | B Electronics Capacity Planning Signal | 48.83148 |
 | initial_value | A Power Capacity Planning Signal | 1316.4467 | B Power Capacity Planning Signal | 537.2232 |
@@ -406,7 +412,6 @@ Declared unit-transformation pairs (source flow physically backed by sink flows;
 | value | Reverse B Wage | 90 | Reverse A Wage | 100 |
 | value | Reverse A Electronics Feedstock Base Cost | 3 | Reverse B Electronics Feedstock Base Cost | 18 |
 | value | A Electronics Feedstock Base Cost | 18 | B Electronics Feedstock Base Cost | 3 |
-| value | A Electronics Local Base Demand | 20 | B Electronics Local Base Demand | 16 |
 | initial_value | A Electronics Domestic Supply Signal | 20 | B Electronics Domestic Supply Signal | 16 |
 | value | Priority Stress B Ore Base Cost | 50 | Priority Stress A Ore Base Cost | 4 |
 | value | Cheap Energy A Generation Cost | 0.015 | Cheap Energy B Generation Cost | 1.5 |
@@ -466,6 +471,11 @@ Declared unit-transformation pairs (source flow physically backed by sink flows;
 | initial_value | A Farm Capacity | 22 | B Farm Capacity | 17.142206601972095 |
 | initial_value | A to B Food Export Signal | 0 | B to A Food Export Signal | 7.825911049497232 |
 | initial_value | Food Cargo A to B | 0 | Food Cargo B to A | 78.25911049497232 |
+| initial_value | A Labor Demand Signal | 14 | B Labor Demand Signal | 4.25 |
+| value | A Initial Wage | 100 | B Initial Wage | 140 |
+| initial_value | A Flexible Wage | 100 | B Flexible Wage | 140 |
+| value | A External Local Base Demand | 16 | B External Local Base Demand | 22 |
+| value | A External Electronics Local Base Demand | 20 | B External Electronics Local Base Demand | 16 |
 
 </details>
 
@@ -647,6 +657,6 @@ Declared unit-transformation pairs (source flow physically backed by sink flows;
 ## Algebraic loops (switch-aware, unconditional static audit)
 
 - status: **PASS**
-- switches: 16 — Capital Lifecycle Enabled, Intermediate Inputs Enabled, Capital Goods Enabled, Transport Capital Goods Enabled, Power Resource Enabled, Construction Materials Enabled, Transport Construction Materials Enabled, Construction Materials Energy Enabled, Construction Materials Capital Enabled, Capital Goods Capital Enabled, Regolith Capital Enabled, Ore Capital Enabled, Power Resource Capital Enabled, Deposits Enabled, Process Energy Enabled, Food Enabled
-- combinations: 65536; with loops: **0**
+- switches: 17 — Capital Lifecycle Enabled, Intermediate Inputs Enabled, Capital Goods Enabled, Transport Capital Goods Enabled, Power Resource Enabled, Construction Materials Enabled, Transport Construction Materials Enabled, Construction Materials Energy Enabled, Construction Materials Capital Enabled, Capital Goods Capital Enabled, Regolith Capital Enabled, Ore Capital Enabled, Power Resource Capital Enabled, Deposits Enabled, Process Energy Enabled, Food Enabled, Labor Market Enabled
+- combinations: 131072; with loops: **0**
 - Modes with loops: none

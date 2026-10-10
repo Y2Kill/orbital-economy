@@ -1,15 +1,15 @@
 {
   "status": "ACCEPTED",
-  "model_name": "Orbital Economy v7.7.12 r1 — Food",
-  "model_file": "orbital_economy_v7_7_12_r1_modeljson.json",
-  "model_sha256": "e8829fa550172dfab9629a0d66b0c628c1d802c5c1a3826ab7a9a86365c9f234",
-  "validation_file": "validation-v7.7.12.json",
-  "validation_sha256": "4c3abf411b8587defa782283845a576d8d8e7e21989c8956fb1ba5007822d336",
-  "accepted_date": "2026-10-09",
+  "model_name": "Orbital Economy v7.7.13 r1 — Labor Market",
+  "model_file": "orbital_economy_v7_7_13_r1_modeljson.json",
+  "model_sha256": "cede8ecf699995bc818646a2e922f87f3d798c002231fa70e14d3e357196d4f1",
+  "validation_file": "validation-v7.7.13.json",
+  "validation_sha256": "e28b5800586577849a0631889291092d669f2f2911df8d47853a9dd148d36b85",
+  "accepted_date": "2026-10-10",
   "engine": "simulation@9.0.0",
   "notes": [
-    "v7.7.12: Planet v2 step 2 — food and farms: per region food stock and need, farms as capital on regional land (capital goods, labor, energy in the priority group), trade by need with food first on the shared transport; food shortage lowers the living standard, raises deaths, lowers births; one food node, model/nodes/food.json, switch Food Enabled. See docs/tasks/032-food/.",
-    "Modes 0-48 keep Food Enabled = 0 and reproduce v7.7.11 r1 exactly; Mode 49 = Mode 46 with food (fertile B: land A 22, B 60), Mode 50 = Mode 47 transport surge with food, Mode 51 = equal-land probe.",
+    "v7.7.13: Planet v2 step 3 — the labor market closes the loop: demand per capita (A level) x population, a wage that follows labor tightness (10 %/year, floor 30 %, target 0.95), output limited by labor availability as a guard; one labor_market node, model/nodes/labor_market.json, switch Labor Market Enabled; P6 demand drivers are the per-capita norms. Household-income demand is deferred to the finance layer. See docs/tasks/034-labor-market/.",
+    "Modes 0-51 keep Labor Market Enabled = 0 and reproduce v7.7.12 r1 exactly; Mode 52 = Mode 49 with the labor market, Mode 53 = Mode 50 (transport surge with food) with the labor market.",
     "Exact numbers are defined on the canonical platform (docs/VERSIONING_AND_AUTHORITY.md section 8); series-digest.windows.json is the golden."
   ]
 }

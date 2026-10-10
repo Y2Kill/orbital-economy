@@ -1,6 +1,6 @@
 {
   "engine": "SIMULATION_PACKAGE",
-  "name": "Orbital Economy v7.7.12 r1 — Food",
+  "name": "Orbital Economy v7.7.13 r1 — Labor Market",
   "description": "Task 030 / Planet v2 step 1: add the declarative population node for A and B. Population, demography, migration and labor are accounting-only; no existing formula or scenario is changed and no new Mode is added.",
   "simulation": {
     "algorithm": "RK1",
@@ -169,7 +169,7 @@
       "type": "VARIABLE",
       "name": "A Wage",
       "behavior": {
-        "value": 100
+        "value": "IfThenElse([Labor Market Enabled] = 1, [A Flexible Wage], [A Initial Wage])"
       },
       "display": {
         "coordinates": [
@@ -189,7 +189,7 @@
       "type": "VARIABLE",
       "name": "A Local Base Demand",
       "behavior": {
-        "value": 16
+        "value": "IfThenElse([Labor Market Enabled] = 1, [Metal Demand per Capita] * [A Population], [A External Local Base Demand])"
       },
       "display": {
         "coordinates": [
@@ -646,7 +646,7 @@
       "type": "VARIABLE",
       "name": "A Smelting Rate",
       "behavior": {
-        "value": "[A Pre Energy Smelting Rate] * [A Metal Energy Fulfillment Ratio]"
+        "value": "IfThenElse([Labor Market Enabled] = 1, ([A Pre Energy Smelting Rate] * [A Metal Energy Fulfillment Ratio]) * [A Labor Availability], [A Pre Energy Smelting Rate] * [A Metal Energy Fulfillment Ratio])"
       },
       "display": {
         "coordinates": [
@@ -715,7 +715,7 @@
       "type": "VARIABLE",
       "name": "A Mining Rate",
       "behavior": {
-        "value": "IfThenElse([Process Energy Enabled] = 1, [A Mining Pre Energy Rate] * [A Mining Energy Fulfillment Ratio], IfThenElse([Deposits Enabled] = 1, [A Ore Deposit Unlimited Rate] / (1 + ([A Ore Deposit Unlimited Rate] / ([A Ore Proven Reserves] / [Ore Deposit Depletion Buffer Days] + 0.001)) ^ 8) ^ 0.125, [A Positive Desired Mining Rate] / (1 + ([A Positive Desired Mining Rate] / ([A Effective Mining Capacity] + 0.001)) ^ 8) ^ 0.125))"
+        "value": "IfThenElse([Labor Market Enabled] = 1, (IfThenElse([Process Energy Enabled] = 1, [A Mining Pre Energy Rate] * [A Mining Energy Fulfillment Ratio], IfThenElse([Deposits Enabled] = 1, [A Ore Deposit Unlimited Rate] / (1 + ([A Ore Deposit Unlimited Rate] / ([A Ore Proven Reserves] / [Ore Deposit Depletion Buffer Days] + 0.001)) ^ 8) ^ 0.125, [A Positive Desired Mining Rate] / (1 + ([A Positive Desired Mining Rate] / ([A Effective Mining Capacity] + 0.001)) ^ 8) ^ 0.125))) * [A Labor Availability], IfThenElse([Process Energy Enabled] = 1, [A Mining Pre Energy Rate] * [A Mining Energy Fulfillment Ratio], IfThenElse([Deposits Enabled] = 1, [A Ore Deposit Unlimited Rate] / (1 + ([A Ore Deposit Unlimited Rate] / ([A Ore Proven Reserves] / [Ore Deposit Depletion Buffer Days] + 0.001)) ^ 8) ^ 0.125, [A Positive Desired Mining Rate] / (1 + ([A Positive Desired Mining Rate] / ([A Effective Mining Capacity] + 0.001)) ^ 8) ^ 0.125)))"
       },
       "display": {
         "coordinates": [
@@ -4259,7 +4259,7 @@
       "type": "VARIABLE",
       "name": "B Wage",
       "behavior": {
-        "value": 140
+        "value": "IfThenElse([Labor Market Enabled] = 1, [B Flexible Wage], [B Initial Wage])"
       },
       "display": {
         "coordinates": [
@@ -4279,7 +4279,7 @@
       "type": "VARIABLE",
       "name": "B Local Base Demand",
       "behavior": {
-        "value": 22
+        "value": "IfThenElse([Labor Market Enabled] = 1, [Metal Demand per Capita] * [B Population], [B External Local Base Demand])"
       },
       "display": {
         "coordinates": [
@@ -4736,7 +4736,7 @@
       "type": "VARIABLE",
       "name": "B Smelting Rate",
       "behavior": {
-        "value": "[B Pre Energy Smelting Rate] * [B Metal Energy Fulfillment Ratio]"
+        "value": "IfThenElse([Labor Market Enabled] = 1, ([B Pre Energy Smelting Rate] * [B Metal Energy Fulfillment Ratio]) * [B Labor Availability], [B Pre Energy Smelting Rate] * [B Metal Energy Fulfillment Ratio])"
       },
       "display": {
         "coordinates": [
@@ -4805,7 +4805,7 @@
       "type": "VARIABLE",
       "name": "B Mining Rate",
       "behavior": {
-        "value": "IfThenElse([Process Energy Enabled] = 1, [B Mining Pre Energy Rate] * [B Mining Energy Fulfillment Ratio], IfThenElse([Deposits Enabled] = 1, [B Ore Deposit Unlimited Rate] / (1 + ([B Ore Deposit Unlimited Rate] / ([B Ore Proven Reserves] / [Ore Deposit Depletion Buffer Days] + 0.001)) ^ 8) ^ 0.125, [B Positive Desired Mining Rate] / (1 + ([B Positive Desired Mining Rate] / ([B Effective Mining Capacity] + 0.001)) ^ 8) ^ 0.125))"
+        "value": "IfThenElse([Labor Market Enabled] = 1, (IfThenElse([Process Energy Enabled] = 1, [B Mining Pre Energy Rate] * [B Mining Energy Fulfillment Ratio], IfThenElse([Deposits Enabled] = 1, [B Ore Deposit Unlimited Rate] / (1 + ([B Ore Deposit Unlimited Rate] / ([B Ore Proven Reserves] / [Ore Deposit Depletion Buffer Days] + 0.001)) ^ 8) ^ 0.125, [B Positive Desired Mining Rate] / (1 + ([B Positive Desired Mining Rate] / ([B Effective Mining Capacity] + 0.001)) ^ 8) ^ 0.125))) * [B Labor Availability], IfThenElse([Process Energy Enabled] = 1, [B Mining Pre Energy Rate] * [B Mining Energy Fulfillment Ratio], IfThenElse([Deposits Enabled] = 1, [B Ore Deposit Unlimited Rate] / (1 + ([B Ore Deposit Unlimited Rate] / ([B Ore Proven Reserves] / [Ore Deposit Depletion Buffer Days] + 0.001)) ^ 8) ^ 0.125, [B Positive Desired Mining Rate] / (1 + ([B Positive Desired Mining Rate] / ([B Effective Mining Capacity] + 0.001)) ^ 8) ^ 0.125)))"
       },
       "display": {
         "coordinates": [
@@ -9731,7 +9731,7 @@
       "type": "VARIABLE",
       "name": "Test 2 Transport Surge Active",
       "behavior": {
-        "value": "IfThenElse([Timed Test Mode] = 50, [Temporary Test Window], IfThenElse([Timed Test Mode] = 2, [Temporary Test Window], IfThenElse([Timed Test Mode] = 24, [Temporary Test Window], IfThenElse([Timed Test Mode] = 31, [Temporary Test Window], IfThenElse([Timed Test Mode] = 35, [Temporary Test Window], IfThenElse([Timed Test Mode] = 37, [Temporary Test Window], IfThenElse([Timed Test Mode] = 39, [Temporary Test Window], IfThenElse([Timed Test Mode] = 41, [Temporary Test Window], IfThenElse([Timed Test Mode] = 43, [Temporary Test Window], IfThenElse([Timed Test Mode] = 45, [Temporary Test Window], IfThenElse([Timed Test Mode] = 47, [Temporary Test Window], 0)))))))))))"
+        "value": "IfThenElse([Timed Test Mode] = 53, [Temporary Test Window], IfThenElse([Timed Test Mode] = 50, [Temporary Test Window], IfThenElse([Timed Test Mode] = 2, [Temporary Test Window], IfThenElse([Timed Test Mode] = 24, [Temporary Test Window], IfThenElse([Timed Test Mode] = 31, [Temporary Test Window], IfThenElse([Timed Test Mode] = 35, [Temporary Test Window], IfThenElse([Timed Test Mode] = 37, [Temporary Test Window], IfThenElse([Timed Test Mode] = 39, [Temporary Test Window], IfThenElse([Timed Test Mode] = 41, [Temporary Test Window], IfThenElse([Timed Test Mode] = 43, [Temporary Test Window], IfThenElse([Timed Test Mode] = 45, [Temporary Test Window], IfThenElse([Timed Test Mode] = 47, [Temporary Test Window], 0))))))))))))"
       },
       "display": {
         "coordinates": [
@@ -11375,7 +11375,7 @@
       "type": "VARIABLE",
       "name": "A Electronics Local Base Demand",
       "behavior": {
-        "value": 20
+        "value": "IfThenElse([Labor Market Enabled] = 1, [Electronics Demand per Capita] * [A Population], [A External Electronics Local Base Demand])"
       },
       "display": {
         "coordinates": [
@@ -11891,7 +11891,7 @@
       "type": "VARIABLE",
       "name": "B Electronics Local Base Demand",
       "behavior": {
-        "value": 16
+        "value": "IfThenElse([Labor Market Enabled] = 1, [Electronics Demand per Capita] * [B Population], [B External Electronics Local Base Demand])"
       },
       "display": {
         "coordinates": [
@@ -13095,7 +13095,7 @@
       "type": "VARIABLE",
       "name": "A Electronics Production Rate",
       "behavior": {
-        "value": "[A Pre Energy Electronics Production Rate] * [A Electronics Energy Fulfillment Ratio]"
+        "value": "IfThenElse([Labor Market Enabled] = 1, ([A Pre Energy Electronics Production Rate] * [A Electronics Energy Fulfillment Ratio]) * [A Labor Availability], [A Pre Energy Electronics Production Rate] * [A Electronics Energy Fulfillment Ratio])"
       },
       "display": {
         "coordinates": [
@@ -13272,7 +13272,7 @@
       "type": "VARIABLE",
       "name": "B Electronics Production Rate",
       "behavior": {
-        "value": "[B Pre Energy Electronics Production Rate] * [B Electronics Energy Fulfillment Ratio]"
+        "value": "IfThenElse([Labor Market Enabled] = 1, ([B Pre Energy Electronics Production Rate] * [B Electronics Energy Fulfillment Ratio]) * [B Labor Availability], [B Pre Energy Electronics Production Rate] * [B Electronics Energy Fulfillment Ratio])"
       },
       "display": {
         "coordinates": [
@@ -23278,7 +23278,7 @@
       "type": "VARIABLE",
       "name": "A Capital Goods Production Rate",
       "behavior": {
-        "value": "IfThenElse([Process Energy Enabled] = 1, [A Capital Goods Pre Energy Rate] * [A Capital Goods Energy Fulfillment Ratio], IfThenElse([Capital Goods Enabled] = 1, [A Desired Capital Goods Production] / (1 + ([A Desired Capital Goods Production] / ([A Capital Goods Production Capacity] + 0.001)) ^ 8) ^ 0.125 * [A Metal Inventory] / ([A Metal Inventory] + [A Metal Buffer]) * [A Electronics Inventory] / ([A Electronics Inventory] + [A Electronics Buffer]), 0))"
+        "value": "IfThenElse([Labor Market Enabled] = 1, (IfThenElse([Process Energy Enabled] = 1, [A Capital Goods Pre Energy Rate] * [A Capital Goods Energy Fulfillment Ratio], IfThenElse([Capital Goods Enabled] = 1, [A Desired Capital Goods Production] / (1 + ([A Desired Capital Goods Production] / ([A Capital Goods Production Capacity] + 0.001)) ^ 8) ^ 0.125 * [A Metal Inventory] / ([A Metal Inventory] + [A Metal Buffer]) * [A Electronics Inventory] / ([A Electronics Inventory] + [A Electronics Buffer]), 0))) * [A Labor Availability], IfThenElse([Process Energy Enabled] = 1, [A Capital Goods Pre Energy Rate] * [A Capital Goods Energy Fulfillment Ratio], IfThenElse([Capital Goods Enabled] = 1, [A Desired Capital Goods Production] / (1 + ([A Desired Capital Goods Production] / ([A Capital Goods Production Capacity] + 0.001)) ^ 8) ^ 0.125 * [A Metal Inventory] / ([A Metal Inventory] + [A Metal Buffer]) * [A Electronics Inventory] / ([A Electronics Inventory] + [A Electronics Buffer]), 0)))"
       },
       "description": "Actual A capital-goods production rate after capacity and input-inventory soft constraints."
     },
@@ -23481,7 +23481,7 @@
       "type": "VARIABLE",
       "name": "B Capital Goods Production Rate",
       "behavior": {
-        "value": "IfThenElse([Process Energy Enabled] = 1, [B Capital Goods Pre Energy Rate] * [B Capital Goods Energy Fulfillment Ratio], IfThenElse([Capital Goods Enabled] = 1, [B Desired Capital Goods Production] / (1 + ([B Desired Capital Goods Production] / ([B Capital Goods Production Capacity] + 0.001)) ^ 8) ^ 0.125 * [B Metal Inventory] / ([B Metal Inventory] + [B Metal Buffer]) * [B Electronics Inventory] / ([B Electronics Inventory] + [B Electronics Buffer]), 0))"
+        "value": "IfThenElse([Labor Market Enabled] = 1, (IfThenElse([Process Energy Enabled] = 1, [B Capital Goods Pre Energy Rate] * [B Capital Goods Energy Fulfillment Ratio], IfThenElse([Capital Goods Enabled] = 1, [B Desired Capital Goods Production] / (1 + ([B Desired Capital Goods Production] / ([B Capital Goods Production Capacity] + 0.001)) ^ 8) ^ 0.125 * [B Metal Inventory] / ([B Metal Inventory] + [B Metal Buffer]) * [B Electronics Inventory] / ([B Electronics Inventory] + [B Electronics Buffer]), 0))) * [B Labor Availability], IfThenElse([Process Energy Enabled] = 1, [B Capital Goods Pre Energy Rate] * [B Capital Goods Energy Fulfillment Ratio], IfThenElse([Capital Goods Enabled] = 1, [B Desired Capital Goods Production] / (1 + ([B Desired Capital Goods Production] / ([B Capital Goods Production Capacity] + 0.001)) ^ 8) ^ 0.125 * [B Metal Inventory] / ([B Metal Inventory] + [B Metal Buffer]) * [B Electronics Inventory] / ([B Electronics Inventory] + [B Electronics Buffer]), 0)))"
       },
       "description": "Actual B capital-goods production rate after capacity and input-inventory soft constraints."
     },
@@ -24680,7 +24680,7 @@
       "type": "VARIABLE",
       "name": "A Power Resource Extraction Rate",
       "behavior": {
-        "value": "IfThenElse([Process Energy Enabled] = 1, [A Power Resource Extraction Pre Energy Rate] * [A Power Resource Extraction Energy Fulfillment Ratio], IfThenElse([Deposits Enabled] = 1, [A Power Resource Deposit Unlimited Rate] / (1 + ([A Power Resource Deposit Unlimited Rate] / ([A Power Resource Proven Reserves] / [Power Resource Deposit Depletion Buffer Days] + 0.001)) ^ 8) ^ 0.125, IfThenElse([Power Resource Capital Enabled] = 1, [A Power Resource Mine Uncapped Output] / (1 + ([A Power Resource Mine Uncapped Output] / ([A Power Resource Mine Capacity] + 0.001)) ^ 8) ^ 0.125, IfThenElse([Power Resource Enabled] = 1, Max(0, ([A Power Resource Demand] + ([A Power Resource Target Inventory] - [A Power Resource Inventory]) / [Power Resource Extraction Adjustment Time]) * [Power Resource Extraction Headroom] * [A Power Resource Extraction Multiplier]), 0))))"
+        "value": "IfThenElse([Labor Market Enabled] = 1, (IfThenElse([Process Energy Enabled] = 1, [A Power Resource Extraction Pre Energy Rate] * [A Power Resource Extraction Energy Fulfillment Ratio], IfThenElse([Deposits Enabled] = 1, [A Power Resource Deposit Unlimited Rate] / (1 + ([A Power Resource Deposit Unlimited Rate] / ([A Power Resource Proven Reserves] / [Power Resource Deposit Depletion Buffer Days] + 0.001)) ^ 8) ^ 0.125, IfThenElse([Power Resource Capital Enabled] = 1, [A Power Resource Mine Uncapped Output] / (1 + ([A Power Resource Mine Uncapped Output] / ([A Power Resource Mine Capacity] + 0.001)) ^ 8) ^ 0.125, IfThenElse([Power Resource Enabled] = 1, Max(0, ([A Power Resource Demand] + ([A Power Resource Target Inventory] - [A Power Resource Inventory]) / [Power Resource Extraction Adjustment Time]) * [Power Resource Extraction Headroom] * [A Power Resource Extraction Multiplier]), 0))))) * [A Labor Availability], IfThenElse([Process Energy Enabled] = 1, [A Power Resource Extraction Pre Energy Rate] * [A Power Resource Extraction Energy Fulfillment Ratio], IfThenElse([Deposits Enabled] = 1, [A Power Resource Deposit Unlimited Rate] / (1 + ([A Power Resource Deposit Unlimited Rate] / ([A Power Resource Proven Reserves] / [Power Resource Deposit Depletion Buffer Days] + 0.001)) ^ 8) ^ 0.125, IfThenElse([Power Resource Capital Enabled] = 1, [A Power Resource Mine Uncapped Output] / (1 + ([A Power Resource Mine Uncapped Output] / ([A Power Resource Mine Capacity] + 0.001)) ^ 8) ^ 0.125, IfThenElse([Power Resource Enabled] = 1, Max(0, ([A Power Resource Demand] + ([A Power Resource Target Inventory] - [A Power Resource Inventory]) / [Power Resource Extraction Adjustment Time]) * [Power Resource Extraction Headroom] * [A Power Resource Extraction Multiplier]), 0)))))"
       },
       "description": "Primary power-resource extraction plan for colony A."
     },
@@ -24707,7 +24707,7 @@
       "type": "VARIABLE",
       "name": "A Available Generation",
       "behavior": {
-        "value": "IfThenElse([Power Resource Enabled] = 1, [A Desired Generation] * [A Power Resource Fulfillment], [A Power Active Generation Capacity])"
+        "value": "IfThenElse([Labor Market Enabled] = 1, (IfThenElse([Power Resource Enabled] = 1, [A Desired Generation] * [A Power Resource Fulfillment], [A Power Active Generation Capacity])) * [A Labor Availability], IfThenElse([Power Resource Enabled] = 1, [A Desired Generation] * [A Power Resource Fulfillment], [A Power Active Generation Capacity]))"
       },
       "description": "Energy actually available to serve demand after both capacity and operating-resource constraints in colony A."
     },
@@ -24807,7 +24807,7 @@
       "type": "VARIABLE",
       "name": "B Power Resource Extraction Rate",
       "behavior": {
-        "value": "IfThenElse([Process Energy Enabled] = 1, [B Power Resource Extraction Pre Energy Rate] * [B Power Resource Extraction Energy Fulfillment Ratio], IfThenElse([Deposits Enabled] = 1, [B Power Resource Deposit Unlimited Rate] / (1 + ([B Power Resource Deposit Unlimited Rate] / ([B Power Resource Proven Reserves] / [Power Resource Deposit Depletion Buffer Days] + 0.001)) ^ 8) ^ 0.125, IfThenElse([Power Resource Capital Enabled] = 1, [B Power Resource Mine Uncapped Output] / (1 + ([B Power Resource Mine Uncapped Output] / ([B Power Resource Mine Capacity] + 0.001)) ^ 8) ^ 0.125, IfThenElse([Power Resource Enabled] = 1, Max(0, ([B Power Resource Demand] + ([B Power Resource Target Inventory] - [B Power Resource Inventory]) / [Power Resource Extraction Adjustment Time]) * [Power Resource Extraction Headroom] * [B Power Resource Extraction Multiplier]), 0))))"
+        "value": "IfThenElse([Labor Market Enabled] = 1, (IfThenElse([Process Energy Enabled] = 1, [B Power Resource Extraction Pre Energy Rate] * [B Power Resource Extraction Energy Fulfillment Ratio], IfThenElse([Deposits Enabled] = 1, [B Power Resource Deposit Unlimited Rate] / (1 + ([B Power Resource Deposit Unlimited Rate] / ([B Power Resource Proven Reserves] / [Power Resource Deposit Depletion Buffer Days] + 0.001)) ^ 8) ^ 0.125, IfThenElse([Power Resource Capital Enabled] = 1, [B Power Resource Mine Uncapped Output] / (1 + ([B Power Resource Mine Uncapped Output] / ([B Power Resource Mine Capacity] + 0.001)) ^ 8) ^ 0.125, IfThenElse([Power Resource Enabled] = 1, Max(0, ([B Power Resource Demand] + ([B Power Resource Target Inventory] - [B Power Resource Inventory]) / [Power Resource Extraction Adjustment Time]) * [Power Resource Extraction Headroom] * [B Power Resource Extraction Multiplier]), 0))))) * [B Labor Availability], IfThenElse([Process Energy Enabled] = 1, [B Power Resource Extraction Pre Energy Rate] * [B Power Resource Extraction Energy Fulfillment Ratio], IfThenElse([Deposits Enabled] = 1, [B Power Resource Deposit Unlimited Rate] / (1 + ([B Power Resource Deposit Unlimited Rate] / ([B Power Resource Proven Reserves] / [Power Resource Deposit Depletion Buffer Days] + 0.001)) ^ 8) ^ 0.125, IfThenElse([Power Resource Capital Enabled] = 1, [B Power Resource Mine Uncapped Output] / (1 + ([B Power Resource Mine Uncapped Output] / ([B Power Resource Mine Capacity] + 0.001)) ^ 8) ^ 0.125, IfThenElse([Power Resource Enabled] = 1, Max(0, ([B Power Resource Demand] + ([B Power Resource Target Inventory] - [B Power Resource Inventory]) / [Power Resource Extraction Adjustment Time]) * [Power Resource Extraction Headroom] * [B Power Resource Extraction Multiplier]), 0)))))"
       },
       "description": "Primary power-resource extraction plan for colony B."
     },
@@ -24834,7 +24834,7 @@
       "type": "VARIABLE",
       "name": "B Available Generation",
       "behavior": {
-        "value": "IfThenElse([Power Resource Enabled] = 1, [B Desired Generation] * [B Power Resource Fulfillment], [B Power Active Generation Capacity])"
+        "value": "IfThenElse([Labor Market Enabled] = 1, (IfThenElse([Power Resource Enabled] = 1, [B Desired Generation] * [B Power Resource Fulfillment], [B Power Active Generation Capacity])) * [B Labor Availability], IfThenElse([Power Resource Enabled] = 1, [B Desired Generation] * [B Power Resource Fulfillment], [B Power Active Generation Capacity]))"
       },
       "description": "Energy actually available to serve demand after both capacity and operating-resource constraints in colony B."
     },
@@ -25554,7 +25554,7 @@
       "type": "VARIABLE",
       "name": "A Regolith Extraction Rate",
       "behavior": {
-        "value": "IfThenElse([Process Energy Enabled] = 1, [A Regolith Extraction Pre Energy Rate] * [A Regolith Extraction Energy Fulfillment Ratio], IfThenElse([Deposits Enabled] = 1, [A Regolith Deposit Unlimited Rate] / (1 + ([A Regolith Deposit Unlimited Rate] / ([A Regolith Proven Reserves] / [Regolith Deposit Depletion Buffer Days] + 0.001)) ^ 8) ^ 0.125, IfThenElse([Construction Materials Enabled] = 1, [A Desired Regolith Extraction] / (1 + ([A Desired Regolith Extraction] / ([A Regolith Extraction Capacity] + 0.001)) ^ 8) ^ 0.125, 0)))"
+        "value": "IfThenElse([Labor Market Enabled] = 1, (IfThenElse([Process Energy Enabled] = 1, [A Regolith Extraction Pre Energy Rate] * [A Regolith Extraction Energy Fulfillment Ratio], IfThenElse([Deposits Enabled] = 1, [A Regolith Deposit Unlimited Rate] / (1 + ([A Regolith Deposit Unlimited Rate] / ([A Regolith Proven Reserves] / [Regolith Deposit Depletion Buffer Days] + 0.001)) ^ 8) ^ 0.125, IfThenElse([Construction Materials Enabled] = 1, [A Desired Regolith Extraction] / (1 + ([A Desired Regolith Extraction] / ([A Regolith Extraction Capacity] + 0.001)) ^ 8) ^ 0.125, 0)))) * [A Labor Availability], IfThenElse([Process Energy Enabled] = 1, [A Regolith Extraction Pre Energy Rate] * [A Regolith Extraction Energy Fulfillment Ratio], IfThenElse([Deposits Enabled] = 1, [A Regolith Deposit Unlimited Rate] / (1 + ([A Regolith Deposit Unlimited Rate] / ([A Regolith Proven Reserves] / [Regolith Deposit Depletion Buffer Days] + 0.001)) ^ 8) ^ 0.125, IfThenElse([Construction Materials Enabled] = 1, [A Desired Regolith Extraction] / (1 + ([A Desired Regolith Extraction] / ([A Regolith Extraction Capacity] + 0.001)) ^ 8) ^ 0.125, 0))))"
       },
       "description": "Actual Regolith extraction rate after the soft capacity constraint in colony A."
     },
@@ -25646,7 +25646,7 @@
       "type": "VARIABLE",
       "name": "A Construction Materials Production Rate",
       "behavior": {
-        "value": "IfThenElse([Construction Materials Energy Enabled] = 1, [A Pre Energy Construction Materials Production Rate] * [A Construction Materials Energy Fulfillment Ratio], IfThenElse([Construction Materials Enabled] = 1, [A Desired Construction Materials Production] / (1 + ([A Desired Construction Materials Production] / ([A Construction Materials Production Capacity] + 0.001)) ^ 8) ^ 0.125 * [A Regolith Inventory] / ([A Regolith Inventory] + [Regolith Buffer Days] * Max([A Regolith Requirement], 0.000000001)), 0))"
+        "value": "IfThenElse([Labor Market Enabled] = 1, (IfThenElse([Construction Materials Energy Enabled] = 1, [A Pre Energy Construction Materials Production Rate] * [A Construction Materials Energy Fulfillment Ratio], IfThenElse([Construction Materials Enabled] = 1, [A Desired Construction Materials Production] / (1 + ([A Desired Construction Materials Production] / ([A Construction Materials Production Capacity] + 0.001)) ^ 8) ^ 0.125 * [A Regolith Inventory] / ([A Regolith Inventory] + [Regolith Buffer Days] * Max([A Regolith Requirement], 0.000000001)), 0))) * [A Labor Availability], IfThenElse([Construction Materials Energy Enabled] = 1, [A Pre Energy Construction Materials Production Rate] * [A Construction Materials Energy Fulfillment Ratio], IfThenElse([Construction Materials Enabled] = 1, [A Desired Construction Materials Production] / (1 + ([A Desired Construction Materials Production] / ([A Construction Materials Production Capacity] + 0.001)) ^ 8) ^ 0.125 * [A Regolith Inventory] / ([A Regolith Inventory] + [Regolith Buffer Days] * Max([A Regolith Requirement], 0.000000001)), 0)))"
       },
       "description": "Actual Construction Materials production rate after capacity and scale-free Regolith availability constraints in colony A."
     },
@@ -25790,7 +25790,7 @@
       "type": "VARIABLE",
       "name": "B Regolith Extraction Rate",
       "behavior": {
-        "value": "IfThenElse([Process Energy Enabled] = 1, [B Regolith Extraction Pre Energy Rate] * [B Regolith Extraction Energy Fulfillment Ratio], IfThenElse([Deposits Enabled] = 1, [B Regolith Deposit Unlimited Rate] / (1 + ([B Regolith Deposit Unlimited Rate] / ([B Regolith Proven Reserves] / [Regolith Deposit Depletion Buffer Days] + 0.001)) ^ 8) ^ 0.125, IfThenElse([Construction Materials Enabled] = 1, [B Desired Regolith Extraction] / (1 + ([B Desired Regolith Extraction] / ([B Regolith Extraction Capacity] + 0.001)) ^ 8) ^ 0.125, 0)))"
+        "value": "IfThenElse([Labor Market Enabled] = 1, (IfThenElse([Process Energy Enabled] = 1, [B Regolith Extraction Pre Energy Rate] * [B Regolith Extraction Energy Fulfillment Ratio], IfThenElse([Deposits Enabled] = 1, [B Regolith Deposit Unlimited Rate] / (1 + ([B Regolith Deposit Unlimited Rate] / ([B Regolith Proven Reserves] / [Regolith Deposit Depletion Buffer Days] + 0.001)) ^ 8) ^ 0.125, IfThenElse([Construction Materials Enabled] = 1, [B Desired Regolith Extraction] / (1 + ([B Desired Regolith Extraction] / ([B Regolith Extraction Capacity] + 0.001)) ^ 8) ^ 0.125, 0)))) * [B Labor Availability], IfThenElse([Process Energy Enabled] = 1, [B Regolith Extraction Pre Energy Rate] * [B Regolith Extraction Energy Fulfillment Ratio], IfThenElse([Deposits Enabled] = 1, [B Regolith Deposit Unlimited Rate] / (1 + ([B Regolith Deposit Unlimited Rate] / ([B Regolith Proven Reserves] / [Regolith Deposit Depletion Buffer Days] + 0.001)) ^ 8) ^ 0.125, IfThenElse([Construction Materials Enabled] = 1, [B Desired Regolith Extraction] / (1 + ([B Desired Regolith Extraction] / ([B Regolith Extraction Capacity] + 0.001)) ^ 8) ^ 0.125, 0))))"
       },
       "description": "Actual Regolith extraction rate after the soft capacity constraint in colony B."
     },
@@ -25882,7 +25882,7 @@
       "type": "VARIABLE",
       "name": "B Construction Materials Production Rate",
       "behavior": {
-        "value": "IfThenElse([Construction Materials Energy Enabled] = 1, [B Pre Energy Construction Materials Production Rate] * [B Construction Materials Energy Fulfillment Ratio], IfThenElse([Construction Materials Enabled] = 1, [B Desired Construction Materials Production] / (1 + ([B Desired Construction Materials Production] / ([B Construction Materials Production Capacity] + 0.001)) ^ 8) ^ 0.125 * [B Regolith Inventory] / ([B Regolith Inventory] + [Regolith Buffer Days] * Max([B Regolith Requirement], 0.000000001)), 0))"
+        "value": "IfThenElse([Labor Market Enabled] = 1, (IfThenElse([Construction Materials Energy Enabled] = 1, [B Pre Energy Construction Materials Production Rate] * [B Construction Materials Energy Fulfillment Ratio], IfThenElse([Construction Materials Enabled] = 1, [B Desired Construction Materials Production] / (1 + ([B Desired Construction Materials Production] / ([B Construction Materials Production Capacity] + 0.001)) ^ 8) ^ 0.125 * [B Regolith Inventory] / ([B Regolith Inventory] + [Regolith Buffer Days] * Max([B Regolith Requirement], 0.000000001)), 0))) * [B Labor Availability], IfThenElse([Construction Materials Energy Enabled] = 1, [B Pre Energy Construction Materials Production Rate] * [B Construction Materials Energy Fulfillment Ratio], IfThenElse([Construction Materials Enabled] = 1, [B Desired Construction Materials Production] / (1 + ([B Desired Construction Materials Production] / ([B Construction Materials Production Capacity] + 0.001)) ^ 8) ^ 0.125 * [B Regolith Inventory] / ([B Regolith Inventory] + [Regolith Buffer Days] * Max([B Regolith Requirement], 0.000000001)), 0)))"
       },
       "description": "Actual Construction Materials production rate after capacity and scale-free Regolith availability constraints in colony B."
     },
@@ -38325,7 +38325,7 @@
       "from": null,
       "to": "A Food Inventory",
       "behavior": {
-        "value": "IfThenElse([Food Enabled] = 1, Min([A Desired Food Production], [A Farm Effective Capacity]) * [A Farming Energy Fulfillment Ratio], 0)",
+        "value": "IfThenElse([Labor Market Enabled] = 1, (IfThenElse([Food Enabled] = 1, Min([A Desired Food Production], [A Farm Effective Capacity]) * [A Farming Energy Fulfillment Ratio], 0)) * [A Labor Availability], IfThenElse([Food Enabled] = 1, Min([A Desired Food Production], [A Farm Effective Capacity]) * [A Farming Energy Fulfillment Ratio], 0))",
         "non_negative": true
       },
       "description": "Food node: food grown."
@@ -38548,7 +38548,7 @@
       "from": null,
       "to": "B Food Inventory",
       "behavior": {
-        "value": "IfThenElse([Food Enabled] = 1, Min([B Desired Food Production], [B Farm Effective Capacity]) * [B Farming Energy Fulfillment Ratio], 0)",
+        "value": "IfThenElse([Labor Market Enabled] = 1, (IfThenElse([Food Enabled] = 1, Min([B Desired Food Production], [B Farm Effective Capacity]) * [B Farming Energy Fulfillment Ratio], 0)) * [B Labor Availability], IfThenElse([Food Enabled] = 1, Min([B Desired Food Production], [B Farm Effective Capacity]) * [B Farming Energy Fulfillment Ratio], 0))",
         "non_negative": true
       },
       "description": "Food node: food grown."
@@ -39991,6 +39991,822 @@
       "type": "LINK",
       "from": "Food Transport Load",
       "to": "Transport Required Active Throughput Capacity"
+    },
+    {
+      "type": "VARIABLE",
+      "name": "Labor Market Enabled",
+      "behavior": {
+        "value": 0
+      },
+      "description": "Labor market node: switch of the labor market (0 = every earlier series unchanged)."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "Metal Demand per Capita",
+      "behavior": {
+        "value": 0.5714285714285714
+      },
+      "description": "Labor market node: parameter Metal Demand per Capita."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "Electronics Demand per Capita",
+      "behavior": {
+        "value": 0.7142857142857143
+      },
+      "description": "Labor market node: parameter Electronics Demand per Capita."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "Wage Adjustment Rate",
+      "behavior": {
+        "value": 0.000277777777778
+      },
+      "description": "Labor market node: parameter Wage Adjustment Rate."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "Target Labor Tightness",
+      "behavior": {
+        "value": 0.95
+      },
+      "description": "Labor market node: parameter Target Labor Tightness."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "Wage Floor Share",
+      "behavior": {
+        "value": 0.3
+      },
+      "description": "Labor market node: parameter Wage Floor Share."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "Labor Demand Signal Time",
+      "behavior": {
+        "value": 10
+      },
+      "description": "Labor market node: parameter Labor Demand Signal Time."
+    },
+    {
+      "type": "STOCK",
+      "name": "A Labor Demand Signal",
+      "behavior": {
+        "initial_value": 14,
+        "non_negative": true
+      },
+      "description": "Labor market node: smoothed labor demand at unconstrained output."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "A Labor Availability",
+      "behavior": {
+        "value": "IfThenElse([Labor Market Enabled] = 1, Min(1, [A Labor Force] / Max([A Labor Demand Signal], 0.000001)), 1)"
+      },
+      "description": "Labor market node: share of the labor demand the labor force can staff."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "A Labor Demand",
+      "behavior": {
+        "value": "[A Total Labor Requirement] / Max([A Labor Availability], 0.000001)"
+      },
+      "description": "Labor market node: A Labor Demand."
+    },
+    {
+      "type": "FLOW",
+      "name": "A Labor Demand Signal Increase",
+      "from": null,
+      "to": "A Labor Demand Signal",
+      "behavior": {
+        "value": "Max([A Labor Demand] - [A Labor Demand Signal], 0) / [Labor Demand Signal Time]",
+        "non_negative": true
+      },
+      "description": "Labor market node: A Labor Demand Signal Increase."
+    },
+    {
+      "type": "FLOW",
+      "name": "A Labor Demand Signal Decrease",
+      "from": "A Labor Demand Signal",
+      "to": null,
+      "behavior": {
+        "value": "Max([A Labor Demand Signal] - [A Labor Demand], 0) / [Labor Demand Signal Time]",
+        "non_negative": true
+      },
+      "description": "Labor market node: A Labor Demand Signal Decrease."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "A Labor Tightness",
+      "behavior": {
+        "value": "[A Labor Demand Signal] / Max([A Labor Force], 0.000001)"
+      },
+      "description": "Labor market node: labor demand over labor force."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "A Initial Wage",
+      "behavior": {
+        "value": 100
+      },
+      "description": "Labor market node: wage at the start (floor reference)."
+    },
+    {
+      "type": "STOCK",
+      "name": "A Flexible Wage",
+      "behavior": {
+        "initial_value": 100,
+        "non_negative": true
+      },
+      "description": "Labor market node: wage that follows labor tightness."
+    },
+    {
+      "type": "FLOW",
+      "name": "A Wage Increase",
+      "from": null,
+      "to": "A Flexible Wage",
+      "behavior": {
+        "value": "IfThenElse([Labor Market Enabled] = 1, [A Flexible Wage] * [Wage Adjustment Rate] * Max([A Labor Tightness] - [Target Labor Tightness], 0) / [Target Labor Tightness], 0)",
+        "non_negative": true
+      },
+      "description": "Labor market node: A Wage Increase."
+    },
+    {
+      "type": "FLOW",
+      "name": "A Wage Decrease",
+      "from": "A Flexible Wage",
+      "to": null,
+      "behavior": {
+        "value": "IfThenElse([Labor Market Enabled] = 1, [A Flexible Wage] * [Wage Adjustment Rate] * Max([Target Labor Tightness] - [A Labor Tightness], 0) / [Target Labor Tightness] * Max([A Flexible Wage] - [Wage Floor Share] * [A Initial Wage], 0) / Max([A Flexible Wage], 0.000001), 0)",
+        "non_negative": true
+      },
+      "description": "Labor market node: A Wage Decrease."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "A External Local Base Demand",
+      "behavior": {
+        "value": 16
+      },
+      "description": "Labor market node: former external driver A Local Base Demand (kept for the switch-off branch)."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "A External Electronics Local Base Demand",
+      "behavior": {
+        "value": 20
+      },
+      "description": "Labor market node: former external driver A Electronics Local Base Demand (kept for the switch-off branch)."
+    },
+    {
+      "type": "STOCK",
+      "name": "B Labor Demand Signal",
+      "behavior": {
+        "initial_value": 4.25,
+        "non_negative": true
+      },
+      "description": "Labor market node: smoothed labor demand at unconstrained output."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "B Labor Availability",
+      "behavior": {
+        "value": "IfThenElse([Labor Market Enabled] = 1, Min(1, [B Labor Force] / Max([B Labor Demand Signal], 0.000001)), 1)"
+      },
+      "description": "Labor market node: share of the labor demand the labor force can staff."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "B Labor Demand",
+      "behavior": {
+        "value": "[B Total Labor Requirement] / Max([B Labor Availability], 0.000001)"
+      },
+      "description": "Labor market node: B Labor Demand."
+    },
+    {
+      "type": "FLOW",
+      "name": "B Labor Demand Signal Increase",
+      "from": null,
+      "to": "B Labor Demand Signal",
+      "behavior": {
+        "value": "Max([B Labor Demand] - [B Labor Demand Signal], 0) / [Labor Demand Signal Time]",
+        "non_negative": true
+      },
+      "description": "Labor market node: B Labor Demand Signal Increase."
+    },
+    {
+      "type": "FLOW",
+      "name": "B Labor Demand Signal Decrease",
+      "from": "B Labor Demand Signal",
+      "to": null,
+      "behavior": {
+        "value": "Max([B Labor Demand Signal] - [B Labor Demand], 0) / [Labor Demand Signal Time]",
+        "non_negative": true
+      },
+      "description": "Labor market node: B Labor Demand Signal Decrease."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "B Labor Tightness",
+      "behavior": {
+        "value": "[B Labor Demand Signal] / Max([B Labor Force], 0.000001)"
+      },
+      "description": "Labor market node: labor demand over labor force."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "B Initial Wage",
+      "behavior": {
+        "value": 140
+      },
+      "description": "Labor market node: wage at the start (floor reference)."
+    },
+    {
+      "type": "STOCK",
+      "name": "B Flexible Wage",
+      "behavior": {
+        "initial_value": 140,
+        "non_negative": true
+      },
+      "description": "Labor market node: wage that follows labor tightness."
+    },
+    {
+      "type": "FLOW",
+      "name": "B Wage Increase",
+      "from": null,
+      "to": "B Flexible Wage",
+      "behavior": {
+        "value": "IfThenElse([Labor Market Enabled] = 1, [B Flexible Wage] * [Wage Adjustment Rate] * Max([B Labor Tightness] - [Target Labor Tightness], 0) / [Target Labor Tightness], 0)",
+        "non_negative": true
+      },
+      "description": "Labor market node: B Wage Increase."
+    },
+    {
+      "type": "FLOW",
+      "name": "B Wage Decrease",
+      "from": "B Flexible Wage",
+      "to": null,
+      "behavior": {
+        "value": "IfThenElse([Labor Market Enabled] = 1, [B Flexible Wage] * [Wage Adjustment Rate] * Max([Target Labor Tightness] - [B Labor Tightness], 0) / [Target Labor Tightness] * Max([B Flexible Wage] - [Wage Floor Share] * [B Initial Wage], 0) / Max([B Flexible Wage], 0.000001), 0)",
+        "non_negative": true
+      },
+      "description": "Labor market node: B Wage Decrease."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "B External Local Base Demand",
+      "behavior": {
+        "value": 22
+      },
+      "description": "Labor market node: former external driver B Local Base Demand (kept for the switch-off branch)."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "B External Electronics Local Base Demand",
+      "behavior": {
+        "value": 16
+      },
+      "description": "Labor market node: former external driver B Electronics Local Base Demand (kept for the switch-off branch)."
+    },
+    {
+      "type": "LINK",
+      "from": "Labor Market Enabled",
+      "to": "A Labor Availability"
+    },
+    {
+      "type": "LINK",
+      "from": "A Labor Force",
+      "to": "A Labor Availability"
+    },
+    {
+      "type": "LINK",
+      "from": "A Labor Demand Signal",
+      "to": "A Labor Availability"
+    },
+    {
+      "type": "LINK",
+      "from": "A Total Labor Requirement",
+      "to": "A Labor Demand"
+    },
+    {
+      "type": "LINK",
+      "from": "A Labor Availability",
+      "to": "A Labor Demand"
+    },
+    {
+      "type": "LINK",
+      "from": "A Labor Demand",
+      "to": "A Labor Demand Signal Increase"
+    },
+    {
+      "type": "LINK",
+      "from": "A Labor Demand Signal",
+      "to": "A Labor Demand Signal Increase"
+    },
+    {
+      "type": "LINK",
+      "from": "Labor Demand Signal Time",
+      "to": "A Labor Demand Signal Increase"
+    },
+    {
+      "type": "LINK",
+      "from": "A Labor Demand Signal",
+      "to": "A Labor Demand Signal Decrease"
+    },
+    {
+      "type": "LINK",
+      "from": "A Labor Demand",
+      "to": "A Labor Demand Signal Decrease"
+    },
+    {
+      "type": "LINK",
+      "from": "Labor Demand Signal Time",
+      "to": "A Labor Demand Signal Decrease"
+    },
+    {
+      "type": "LINK",
+      "from": "A Labor Demand Signal",
+      "to": "A Labor Tightness"
+    },
+    {
+      "type": "LINK",
+      "from": "A Labor Force",
+      "to": "A Labor Tightness"
+    },
+    {
+      "type": "LINK",
+      "from": "Labor Market Enabled",
+      "to": "A Wage Increase"
+    },
+    {
+      "type": "LINK",
+      "from": "A Flexible Wage",
+      "to": "A Wage Increase"
+    },
+    {
+      "type": "LINK",
+      "from": "Wage Adjustment Rate",
+      "to": "A Wage Increase"
+    },
+    {
+      "type": "LINK",
+      "from": "A Labor Tightness",
+      "to": "A Wage Increase"
+    },
+    {
+      "type": "LINK",
+      "from": "Target Labor Tightness",
+      "to": "A Wage Increase"
+    },
+    {
+      "type": "LINK",
+      "from": "Labor Market Enabled",
+      "to": "A Wage Decrease"
+    },
+    {
+      "type": "LINK",
+      "from": "A Flexible Wage",
+      "to": "A Wage Decrease"
+    },
+    {
+      "type": "LINK",
+      "from": "Wage Adjustment Rate",
+      "to": "A Wage Decrease"
+    },
+    {
+      "type": "LINK",
+      "from": "Target Labor Tightness",
+      "to": "A Wage Decrease"
+    },
+    {
+      "type": "LINK",
+      "from": "A Labor Tightness",
+      "to": "A Wage Decrease"
+    },
+    {
+      "type": "LINK",
+      "from": "Wage Floor Share",
+      "to": "A Wage Decrease"
+    },
+    {
+      "type": "LINK",
+      "from": "A Initial Wage",
+      "to": "A Wage Decrease"
+    },
+    {
+      "type": "LINK",
+      "from": "Labor Market Enabled",
+      "to": "B Labor Availability"
+    },
+    {
+      "type": "LINK",
+      "from": "B Labor Force",
+      "to": "B Labor Availability"
+    },
+    {
+      "type": "LINK",
+      "from": "B Labor Demand Signal",
+      "to": "B Labor Availability"
+    },
+    {
+      "type": "LINK",
+      "from": "B Total Labor Requirement",
+      "to": "B Labor Demand"
+    },
+    {
+      "type": "LINK",
+      "from": "B Labor Availability",
+      "to": "B Labor Demand"
+    },
+    {
+      "type": "LINK",
+      "from": "B Labor Demand",
+      "to": "B Labor Demand Signal Increase"
+    },
+    {
+      "type": "LINK",
+      "from": "B Labor Demand Signal",
+      "to": "B Labor Demand Signal Increase"
+    },
+    {
+      "type": "LINK",
+      "from": "Labor Demand Signal Time",
+      "to": "B Labor Demand Signal Increase"
+    },
+    {
+      "type": "LINK",
+      "from": "B Labor Demand Signal",
+      "to": "B Labor Demand Signal Decrease"
+    },
+    {
+      "type": "LINK",
+      "from": "B Labor Demand",
+      "to": "B Labor Demand Signal Decrease"
+    },
+    {
+      "type": "LINK",
+      "from": "Labor Demand Signal Time",
+      "to": "B Labor Demand Signal Decrease"
+    },
+    {
+      "type": "LINK",
+      "from": "B Labor Demand Signal",
+      "to": "B Labor Tightness"
+    },
+    {
+      "type": "LINK",
+      "from": "B Labor Force",
+      "to": "B Labor Tightness"
+    },
+    {
+      "type": "LINK",
+      "from": "Labor Market Enabled",
+      "to": "B Wage Increase"
+    },
+    {
+      "type": "LINK",
+      "from": "B Flexible Wage",
+      "to": "B Wage Increase"
+    },
+    {
+      "type": "LINK",
+      "from": "Wage Adjustment Rate",
+      "to": "B Wage Increase"
+    },
+    {
+      "type": "LINK",
+      "from": "B Labor Tightness",
+      "to": "B Wage Increase"
+    },
+    {
+      "type": "LINK",
+      "from": "Target Labor Tightness",
+      "to": "B Wage Increase"
+    },
+    {
+      "type": "LINK",
+      "from": "Labor Market Enabled",
+      "to": "B Wage Decrease"
+    },
+    {
+      "type": "LINK",
+      "from": "B Flexible Wage",
+      "to": "B Wage Decrease"
+    },
+    {
+      "type": "LINK",
+      "from": "Wage Adjustment Rate",
+      "to": "B Wage Decrease"
+    },
+    {
+      "type": "LINK",
+      "from": "Target Labor Tightness",
+      "to": "B Wage Decrease"
+    },
+    {
+      "type": "LINK",
+      "from": "B Labor Tightness",
+      "to": "B Wage Decrease"
+    },
+    {
+      "type": "LINK",
+      "from": "Wage Floor Share",
+      "to": "B Wage Decrease"
+    },
+    {
+      "type": "LINK",
+      "from": "B Initial Wage",
+      "to": "B Wage Decrease"
+    },
+    {
+      "type": "LINK",
+      "from": "Labor Market Enabled",
+      "to": "A Wage"
+    },
+    {
+      "type": "LINK",
+      "from": "A Flexible Wage",
+      "to": "A Wage"
+    },
+    {
+      "type": "LINK",
+      "from": "A Initial Wage",
+      "to": "A Wage"
+    },
+    {
+      "type": "LINK",
+      "from": "Labor Market Enabled",
+      "to": "A Local Base Demand"
+    },
+    {
+      "type": "LINK",
+      "from": "Metal Demand per Capita",
+      "to": "A Local Base Demand"
+    },
+    {
+      "type": "LINK",
+      "from": "A Population",
+      "to": "A Local Base Demand"
+    },
+    {
+      "type": "LINK",
+      "from": "A External Local Base Demand",
+      "to": "A Local Base Demand"
+    },
+    {
+      "type": "LINK",
+      "from": "Labor Market Enabled",
+      "to": "A Electronics Local Base Demand"
+    },
+    {
+      "type": "LINK",
+      "from": "Electronics Demand per Capita",
+      "to": "A Electronics Local Base Demand"
+    },
+    {
+      "type": "LINK",
+      "from": "A Population",
+      "to": "A Electronics Local Base Demand"
+    },
+    {
+      "type": "LINK",
+      "from": "A External Electronics Local Base Demand",
+      "to": "A Electronics Local Base Demand"
+    },
+    {
+      "type": "LINK",
+      "from": "Labor Market Enabled",
+      "to": "A Mining Rate"
+    },
+    {
+      "type": "LINK",
+      "from": "A Labor Availability",
+      "to": "A Mining Rate"
+    },
+    {
+      "type": "LINK",
+      "from": "Labor Market Enabled",
+      "to": "A Smelting Rate"
+    },
+    {
+      "type": "LINK",
+      "from": "A Labor Availability",
+      "to": "A Smelting Rate"
+    },
+    {
+      "type": "LINK",
+      "from": "Labor Market Enabled",
+      "to": "A Electronics Production Rate"
+    },
+    {
+      "type": "LINK",
+      "from": "A Labor Availability",
+      "to": "A Electronics Production Rate"
+    },
+    {
+      "type": "LINK",
+      "from": "Labor Market Enabled",
+      "to": "A Capital Goods Production Rate"
+    },
+    {
+      "type": "LINK",
+      "from": "A Labor Availability",
+      "to": "A Capital Goods Production Rate"
+    },
+    {
+      "type": "LINK",
+      "from": "Labor Market Enabled",
+      "to": "A Regolith Extraction Rate"
+    },
+    {
+      "type": "LINK",
+      "from": "A Labor Availability",
+      "to": "A Regolith Extraction Rate"
+    },
+    {
+      "type": "LINK",
+      "from": "Labor Market Enabled",
+      "to": "A Construction Materials Production Rate"
+    },
+    {
+      "type": "LINK",
+      "from": "A Labor Availability",
+      "to": "A Construction Materials Production Rate"
+    },
+    {
+      "type": "LINK",
+      "from": "Labor Market Enabled",
+      "to": "A Power Resource Extraction Rate"
+    },
+    {
+      "type": "LINK",
+      "from": "A Labor Availability",
+      "to": "A Power Resource Extraction Rate"
+    },
+    {
+      "type": "LINK",
+      "from": "Labor Market Enabled",
+      "to": "A Available Generation"
+    },
+    {
+      "type": "LINK",
+      "from": "A Labor Availability",
+      "to": "A Available Generation"
+    },
+    {
+      "type": "LINK",
+      "from": "Labor Market Enabled",
+      "to": "A Food Production"
+    },
+    {
+      "type": "LINK",
+      "from": "A Labor Availability",
+      "to": "A Food Production"
+    },
+    {
+      "type": "LINK",
+      "from": "Labor Market Enabled",
+      "to": "B Wage"
+    },
+    {
+      "type": "LINK",
+      "from": "B Flexible Wage",
+      "to": "B Wage"
+    },
+    {
+      "type": "LINK",
+      "from": "B Initial Wage",
+      "to": "B Wage"
+    },
+    {
+      "type": "LINK",
+      "from": "Labor Market Enabled",
+      "to": "B Local Base Demand"
+    },
+    {
+      "type": "LINK",
+      "from": "Metal Demand per Capita",
+      "to": "B Local Base Demand"
+    },
+    {
+      "type": "LINK",
+      "from": "B Population",
+      "to": "B Local Base Demand"
+    },
+    {
+      "type": "LINK",
+      "from": "B External Local Base Demand",
+      "to": "B Local Base Demand"
+    },
+    {
+      "type": "LINK",
+      "from": "Labor Market Enabled",
+      "to": "B Electronics Local Base Demand"
+    },
+    {
+      "type": "LINK",
+      "from": "Electronics Demand per Capita",
+      "to": "B Electronics Local Base Demand"
+    },
+    {
+      "type": "LINK",
+      "from": "B Population",
+      "to": "B Electronics Local Base Demand"
+    },
+    {
+      "type": "LINK",
+      "from": "B External Electronics Local Base Demand",
+      "to": "B Electronics Local Base Demand"
+    },
+    {
+      "type": "LINK",
+      "from": "Labor Market Enabled",
+      "to": "B Mining Rate"
+    },
+    {
+      "type": "LINK",
+      "from": "B Labor Availability",
+      "to": "B Mining Rate"
+    },
+    {
+      "type": "LINK",
+      "from": "Labor Market Enabled",
+      "to": "B Smelting Rate"
+    },
+    {
+      "type": "LINK",
+      "from": "B Labor Availability",
+      "to": "B Smelting Rate"
+    },
+    {
+      "type": "LINK",
+      "from": "Labor Market Enabled",
+      "to": "B Electronics Production Rate"
+    },
+    {
+      "type": "LINK",
+      "from": "B Labor Availability",
+      "to": "B Electronics Production Rate"
+    },
+    {
+      "type": "LINK",
+      "from": "Labor Market Enabled",
+      "to": "B Capital Goods Production Rate"
+    },
+    {
+      "type": "LINK",
+      "from": "B Labor Availability",
+      "to": "B Capital Goods Production Rate"
+    },
+    {
+      "type": "LINK",
+      "from": "Labor Market Enabled",
+      "to": "B Regolith Extraction Rate"
+    },
+    {
+      "type": "LINK",
+      "from": "B Labor Availability",
+      "to": "B Regolith Extraction Rate"
+    },
+    {
+      "type": "LINK",
+      "from": "Labor Market Enabled",
+      "to": "B Construction Materials Production Rate"
+    },
+    {
+      "type": "LINK",
+      "from": "B Labor Availability",
+      "to": "B Construction Materials Production Rate"
+    },
+    {
+      "type": "LINK",
+      "from": "Labor Market Enabled",
+      "to": "B Power Resource Extraction Rate"
+    },
+    {
+      "type": "LINK",
+      "from": "B Labor Availability",
+      "to": "B Power Resource Extraction Rate"
+    },
+    {
+      "type": "LINK",
+      "from": "Labor Market Enabled",
+      "to": "B Available Generation"
+    },
+    {
+      "type": "LINK",
+      "from": "B Labor Availability",
+      "to": "B Available Generation"
+    },
+    {
+      "type": "LINK",
+      "from": "Labor Market Enabled",
+      "to": "B Food Production"
+    },
+    {
+      "type": "LINK",
+      "from": "B Labor Availability",
+      "to": "B Food Production"
     }
   ],
   "visualizations": [
@@ -41809,6 +42625,54 @@
         "Food Enabled": 1,
         "A Farm Land Capacity": 40,
         "B Farm Land Capacity": 40
+      }
+    },
+    {
+      "name": "v7.7.13 Labor Market",
+      "description": "Mode 49 (food) with the labor market: demand per capita x population, flexible wage, output limited by labor.",
+      "values": {
+        "Capital Lifecycle Enabled": 1,
+        "Intermediate Inputs Enabled": 1,
+        "Capital Goods Enabled": 1,
+        "Transport Capital Goods Enabled": 1,
+        "Power Resource Enabled": 1,
+        "Construction Materials Enabled": 1,
+        "Transport Construction Materials Enabled": 1,
+        "Construction Materials Energy Enabled": 1,
+        "Construction Materials Capital Enabled": 1,
+        "Capital Goods Capital Enabled": 1,
+        "Regolith Capital Enabled": 1,
+        "Ore Capital Enabled": 1,
+        "Timed Test Mode": 52,
+        "Power Resource Capital Enabled": 1,
+        "Deposits Enabled": 1,
+        "Process Energy Enabled": 1,
+        "Food Enabled": 1,
+        "Labor Market Enabled": 1
+      }
+    },
+    {
+      "name": "v7.7.13 Transport Surge with Labor Market",
+      "description": "Mode 50 (standard transport-demand surge with food) with the labor market.",
+      "values": {
+        "Capital Lifecycle Enabled": 1,
+        "Intermediate Inputs Enabled": 1,
+        "Capital Goods Enabled": 1,
+        "Transport Capital Goods Enabled": 1,
+        "Power Resource Enabled": 1,
+        "Construction Materials Enabled": 1,
+        "Transport Construction Materials Enabled": 1,
+        "Construction Materials Energy Enabled": 1,
+        "Construction Materials Capital Enabled": 1,
+        "Capital Goods Capital Enabled": 1,
+        "Regolith Capital Enabled": 1,
+        "Ore Capital Enabled": 1,
+        "Timed Test Mode": 53,
+        "Power Resource Capital Enabled": 1,
+        "Deposits Enabled": 1,
+        "Process Energy Enabled": 1,
+        "Food Enabled": 1,
+        "Labor Market Enabled": 1
       }
     }
   ]

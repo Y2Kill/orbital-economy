@@ -1,7 +1,7 @@
 {
   "format": "orbital-economy-parameter-annotations-v1",
-  "model": "Orbital Economy v7.7.12 r1 — Food",
-  "updated": "2026-10-09",
+  "model": "Orbital Economy v7.7.13 r1 — Labor Market",
+  "updated": "2026-10-10",
   "policy": "Каждый внешний параметр, влияющий на структуру поведения (сравнительные преимущества, нормирование, планирование), должен иметь аннотацию: роль, что меняет, доказательство (ссылка на прогон/документ). Несимметричные пары A/B аннотируются в первую очередь. Изменение значения = изменение модели → через change-policy, с обновлением аннотации.",
   "embedded_literals": [
     {
@@ -59,17 +59,6 @@
         "metal"
       ]
     },
-    "A Wage": {
-      "role": "Ставка труда (A 100 / B 140).",
-      "effect": "Входит в Metal Unit Cost (0.1×) и Electronics Unit Cost (0.05×): B дороже на 4/ед. металла и 2/ед. электроники. В v7.4 после исчезновения дешёвого feedstock B — второй фактор, из-за которого B теряет преимущество в электронике.",
-      "evidence": "Electronics Unit Cost Mode 17 @1080: A 13.75, B 16.71.",
-      "since": "v7.4 r2",
-      "applies_to_mirror": true,
-      "tags": [
-        "comparative-advantage",
-        "labor"
-      ]
-    },
     "A Mining Capacity": {
       "role": "Потолок добычи руды (A 70 / B 28 ore/день).",
       "effect": "Мягкий потолок Mining Rate. У A в baseline не связывает (добыча ~55); у B в связанном мире добыча ~11 ≪ 28. Именно поэтому шок Mode 18 сделан у A: ×0.5 у A режет плавку 39→25, ×0.5 у B ничего не меняет.",
@@ -90,28 +79,6 @@
       "tags": [
         "legacy",
         "comparative-advantage",
-        "electronics"
-      ]
-    },
-    "A Local Base Demand": {
-      "role": "Базовый конечный спрос на металл (A 16 / B 22 /день).",
-      "effect": "Масштаб конечного рынка металла; B — больший потребитель при меньшей добыче → структурный импорт металла B из A (~21–23/день).",
-      "evidence": "Shipment Rate A→B: 23.1 (Mode 12), 20.8 (Mode 17).",
-      "since": "v7.4 r2",
-      "applies_to_mirror": true,
-      "tags": [
-        "demand",
-        "metal"
-      ]
-    },
-    "A Electronics Local Base Demand": {
-      "role": "Базовый конечный спрос на электронику (A 20 / B 16 /день).",
-      "effect": "Масштаб рынка электроники; в v7.4 обе колонии производят примерно под свой спрос (A 22, B 15 @1080).",
-      "evidence": "Mode 17 @1080.",
-      "since": "v7.4 r2",
-      "applies_to_mirror": true,
-      "tags": [
-        "demand",
         "electronics"
       ]
     },
@@ -4124,6 +4091,151 @@
         "trade",
         "transport",
         "initial-stock"
+      ]
+    },
+    "Labor Market Enabled": {
+      "role": "Labor-market switch; default 0 and enabled only by new Modes 52–53.",
+      "effect": "At 0 every labor_market replacement selects the previous branch; at 1 population-driven demand, flexible wages and labor-availability guards are active.",
+      "evidence": "docs/tasks/034-labor-market/V7_7_13_ARCHITECTURE_SPEC.md §§0–5 and docs/research/CLOSURE_PROTOTYPE_2026-10-09_RU.md.",
+      "since": "v7.7.13 r1",
+      "tags": [
+        "labor-market",
+        "switch",
+        "regression-guard"
+      ]
+    },
+    "Metal Demand per Capita": {
+      "role": "External per-capita metal-demand norm, value 0.5714285714285714 (=16/28).",
+      "effect": "When the labor market is enabled, each region's Local Base Demand becomes this norm multiplied by its Population; it also replaces the old population-dependent target as a Planet P6 external driver.",
+      "evidence": "docs/tasks/034-labor-market/V7_7_13_ARCHITECTURE_SPEC.md §§0–5 and docs/research/CLOSURE_PROTOTYPE_2026-10-09_RU.md.",
+      "since": "v7.7.13 r1",
+      "tags": [
+        "labor-market",
+        "demand",
+        "population",
+        "p6"
+      ]
+    },
+    "Electronics Demand per Capita": {
+      "role": "External per-capita electronics-demand norm, value 0.7142857142857143 (=20/28).",
+      "effect": "When enabled, each region's Electronics Local Base Demand becomes this norm multiplied by Population; it is the corresponding Planet P6 external driver.",
+      "evidence": "docs/tasks/034-labor-market/V7_7_13_ARCHITECTURE_SPEC.md §§0–5 and docs/research/CLOSURE_PROTOTYPE_2026-10-09_RU.md.",
+      "since": "v7.7.13 r1",
+      "tags": [
+        "labor-market",
+        "demand",
+        "population",
+        "p6"
+      ]
+    },
+    "Wage Adjustment Rate": {
+      "role": "Flexible-wage adjustment rate, 0.000277777777778 per model day (10% per 360-day model year).",
+      "effect": "Scales Wage Increase/Decrease response to the gap between Labor Tightness and Target Labor Tightness.",
+      "evidence": "docs/tasks/034-labor-market/V7_7_13_ARCHITECTURE_SPEC.md §§0–5 and docs/research/CLOSURE_PROTOTYPE_2026-10-09_RU.md.",
+      "since": "v7.7.13 r1",
+      "tags": [
+        "labor-market",
+        "wage",
+        "time-rate"
+      ]
+    },
+    "Target Labor Tightness": {
+      "role": "Target ratio of smoothed labor demand to labor force, value 0.95.",
+      "effect": "Defines the wage equilibrium target; tightness above it raises wages, below it lowers wages.",
+      "evidence": "docs/tasks/034-labor-market/V7_7_13_ARCHITECTURE_SPEC.md §§0–5 and docs/research/CLOSURE_PROTOTYPE_2026-10-09_RU.md.",
+      "since": "v7.7.13 r1",
+      "tags": [
+        "labor-market",
+        "wage",
+        "labor",
+        "target"
+      ]
+    },
+    "Wage Floor Share": {
+      "role": "Lower bound for flexible wage as a share of the region's Initial Wage, value 0.3.",
+      "effect": "Prevents Flexible Wage from falling below 30% of the pre-labor-market wage.",
+      "evidence": "docs/tasks/034-labor-market/V7_7_13_ARCHITECTURE_SPEC.md §§0–5 and docs/research/CLOSURE_PROTOTYPE_2026-10-09_RU.md.",
+      "since": "v7.7.13 r1",
+      "tags": [
+        "labor-market",
+        "wage",
+        "floor"
+      ]
+    },
+    "Labor Demand Signal Time": {
+      "role": "Smoothing time of unconstrained labor demand, 10 model days.",
+      "effect": "Controls how quickly Labor Demand Signal follows labor demand reconstructed before the output guard.",
+      "evidence": "docs/tasks/034-labor-market/V7_7_13_ARCHITECTURE_SPEC.md §§0–5 and docs/research/CLOSURE_PROTOTYPE_2026-10-09_RU.md.",
+      "since": "v7.7.13 r1",
+      "tags": [
+        "labor-market",
+        "labor",
+        "time-constant"
+      ]
+    },
+    "A Initial Wage": {
+      "role": "Named copy of the pre-labor-market regional wage; A=100, B=140.",
+      "effect": "Provides the exact switch-off branch and the wage-floor reference without embedding asymmetric numeric literals in mirrored A/B formulas.",
+      "evidence": "V7_7_13_ARCHITECTURE_SPEC §§0–2; generated by labor_market from the accepted A/B Wage values.",
+      "since": "v7.7.13 r1",
+      "applies_to_mirror": true,
+      "tags": [
+        "labor-market",
+        "wage",
+        "legacy-value",
+        "symmetry"
+      ]
+    },
+    "A Flexible Wage": {
+      "role": "Initial flexible-wage STOCK; A starts at 100, B at 140, equal to each region's previous Wage.",
+      "effect": "Becomes the active Wage branch when Labor Market Enabled=1 and evolves through Wage Increase/Decrease.",
+      "evidence": "V7_7_13_ARCHITECTURE_SPEC §§1,5 and labor_market generator start-state rule.",
+      "since": "v7.7.13 r1",
+      "applies_to_mirror": true,
+      "tags": [
+        "labor-market",
+        "wage",
+        "initial-stock",
+        "symmetry"
+      ]
+    },
+    "A External Local Base Demand": {
+      "role": "Named copy of the former external metal-demand driver; A=16, B=22.",
+      "effect": "Preserves the exact switch-off Local Base Demand while enabled demand is recomputed from Metal Demand per Capita × Population.",
+      "evidence": "V7_7_13_ARCHITECTURE_SPEC §§0–2,5; accepted v7.7.12 regional Local Base Demand constants.",
+      "since": "v7.7.13 r1",
+      "applies_to_mirror": true,
+      "tags": [
+        "labor-market",
+        "demand",
+        "legacy-value",
+        "symmetry"
+      ]
+    },
+    "A External Electronics Local Base Demand": {
+      "role": "Named copy of the former external electronics-demand driver; A=20, B=16.",
+      "effect": "Preserves the exact switch-off Electronics Local Base Demand while enabled demand is recomputed from Electronics Demand per Capita × Population.",
+      "evidence": "V7_7_13_ARCHITECTURE_SPEC §§0–2; accepted v7.7.12 regional Electronics Local Base Demand constants.",
+      "since": "v7.7.13 r1",
+      "applies_to_mirror": true,
+      "tags": [
+        "labor-market",
+        "demand",
+        "legacy-value",
+        "symmetry"
+      ]
+    },
+    "A Labor Demand Signal": {
+      "role": "Initial smoothed unconstrained labor-demand STOCK; A=14, B=4.25 (= initial Population × Labor Participation Share 0.5).",
+      "effect": "Seeds the labor-availability guard without a startup discontinuity and is the denominator driver of Labor Availability/Tightness.",
+      "evidence": "V7_7_13_ARCHITECTURE_SPEC §§1,5 and labor_market generator: Population Initial × Labor Participation Share.",
+      "since": "v7.7.13 r1",
+      "applies_to_mirror": true,
+      "tags": [
+        "labor-market",
+        "labor",
+        "initial-stock",
+        "symmetry"
       ]
     }
   }

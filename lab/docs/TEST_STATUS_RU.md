@@ -1,29 +1,29 @@
-# Статус проверок Orbital Economy Lab v0.9.18 — baseline v7.7.12 r1
+# Статус проверок Orbital Economy Lab v0.9.18 — baseline v7.7.13 r1
 
 ## Принятая основа
 
-- Модель: **Orbital Economy v7.7.12 r1 — Food** — ACCEPTED 2026-10-09.
-- SHA-256: `e8829fa550172dfab9629a0d66b0c628c1d802c5c1a3826ab7a9a86365c9f234`.
-- Validation: `validation/validation-v7.7.12.json`.
-- Policy: `policy/change-policy-v7.7.12-strict.json` (default deny, rules: []).
+- Модель: **Orbital Economy v7.7.13 r1 — Labor Market** — ACCEPTED 2026-10-10.
+- SHA-256: `cede8ecf699995bc818646a2e922f87f3d798c002231fa70e14d3e357196d4f1`.
+- Validation: `validation/validation-v7.7.13.json`.
+- Policy: `policy/change-policy-v7.7.13-strict.json` (default deny, rules: []).
 - Engine: `simulation@9.0.0` pinned; каноническая платформа Windows x64 · Node 24.11.1 (`../../docs/VERSIONING_AND_AUTHORITY.md` §8), эталон `reference/accepted/series-digest.windows.json`.
-- Scenarios: Modes 0–51.
-- Предшественник: v7.7.11 r1 (`dbe824b34ad41b5b7d50a6df096b59268198dd4c02c2b36aba5645b24809f0d2`), лежит в `reference/v7.7.11/`.
+- Scenarios: Modes 0–53.
+- Предшественник: v7.7.12 r1 (`e8829fa550172dfab9629a0d66b0c628c1d802c5c1a3826ab7a9a86365c9f234`), лежит в `reference/v7.7.12/`.
 
-## Проверки promotion v7.7.12 (прогон 2026-10-09, каноническая платформа)
+## Проверки promotion v7.7.13 (прогон 2026-10-10, каноническая платформа)
 
 | Проверка | Результат |
 |---|---|
-| Validation Modes 0–51 | **PASS** — 52/52, 21241 проверок |
-| Capital Lifecycle conformance | **PASS** — 11 instances ядра, 0 NON_CONFORMING; `simple_capital` 6, `deposit` 6, `labor` 17, `population` 2 и `food` 2 instances CONFORMING |
-| Structure audit | **PASS** — 315 FLOW, 254 boundary, unclassified 0, closed-world 0, пары 27 |
+| Validation Modes 0–53 | **PASS** — 54/54, 22489 проверок |
+| Capital Lifecycle conformance | **PASS** — 11 instances ядра, 0 NON_CONFORMING; `simple_capital` 6, `deposit` 6, `labor` 17, `population` 2, `food` 2 и `labor_market` 2 instances CONFORMING |
+| Structure audit | **PASS** — 323 FLOW, 262 boundary, unclassified 0, closed-world 0, пары 27 |
 | A/B symmetry | **PASS** — mismatches 0, exceptions 0 |
-| Algebraic loop audit | **PASS** — 16 switches, 65536 combinations, loops 0 |
-| Planet closure (`planet_v1`) | **PASS** — P2 11/8/0/0, P3 16/2/1/0, P4 6/0, P5 19/0, P6 4, reversibility 0 |
+| Algebraic loop audit | **PASS** — 17 switches, 131072 combinations, loops 0 |
+| Planet closure (`planet_v1`) | **PASS** — P2 11/8/0/0, P3 16/2/1/0, P4 6/0, P5 19/0, P6 4 (нормы спроса на душу), reversibility 0 |
 | Energy balance | **PASS** — 8 потребителей; `priority` = Power Resource Extraction и Farming, приоритетная доля не ниже общей |
-| Parameter registry | 571 параметр(ов); 392 аннотировано; 69 несимметричных пар; 0 без аннотации |
-| Regression Modes 0–48 vs v7.7.11 r1 | **IDENTICAL** — 49 × `common=1637, changed=0, added=96, maxAbs=0` (`Food Enabled` = 0) |
-| Policy задачи 032 | **PASS** — 5067 событий, неожиданных 0 |
+| Parameter registry | 582 параметр(ов); 403 аннотировано; 71 несимметричных пар; 0 без аннотации |
+| Regression Modes 0–51 vs v7.7.12 r1 | **IDENTICAL** — 52 × `common=1733, changed=0, added=31, maxAbs=0` (`Labor Market Enabled` = 0) |
+| Policy задачи 034 | **PASS** — 1778 событий, неожиданных 0 |
 
 Прежние приёмки — `../../docs/ACCEPTANCE_STATUS.md`, раздел «Previous acceptances».
 
@@ -34,14 +34,14 @@
 | Скрипт | Результат |
 |---|---|
 | `SELF_TEST.cmd` (Modes 0, 12) | **PASS** |
-| `QA_SELF_TEST.cmd` | **PASS** 46/46 (Windows, promotion v7.7.12) |
-| `POLICY_SELF_TEST.cmd` | **PASS** 10/10 (Windows, promotion v7.7.12) |
-| `CONFORMANCE_SELF_TEST.cmd` | **PASS** 18/18 (Windows, promotion v7.7.12) |
-| `STRUCTURE_SELF_TEST.cmd` | **PASS** 21/21 (Windows, promotion v7.7.12) |
-| `LOOP_SELF_TEST.cmd` | **PASS** 19/19 (Windows, promotion v7.7.12); accepted 16 switches / 65536; fast path byte-identical to `--exhaustive` (case 16 pinned to <= 10 switches) |
-| `PLANET_SELF_TEST.cmd` | **PASS** 20/20 (Windows, promotion v7.7.12); accepted in planet_v1 mode: P2=11/6/0/0, P3=14/2/1/0, P4=6/0, P5=17/0 |
-| `NODE_SELF_TEST.cmd` | **PASS** 52/52 (Windows, promotion v7.7.12); слои снимаются по модели; узел с переключателем `food` лежит поверх всех: случаи прежних узлов работают на слоях без еды (validation без её фрагментов), снятие слоя убирает и его входы сценариев; узлы без переключателя (`labor`, `population`) — своя цепочка под узлами с переключателем, которые их читают; cases 46–52 на принятой модели снимают и собирают заново слой `food` |
-| `COMPARE_SELF_TEST.cmd` | **PASS** (Windows, promotion v7.7.12) |
+| `QA_SELF_TEST.cmd` | **PASS** 47/47 (Windows, promotion v7.7.13) |
+| `POLICY_SELF_TEST.cmd` | **PASS** 10/10 (Windows, promotion v7.7.13) |
+| `CONFORMANCE_SELF_TEST.cmd` | **PASS** 18/18 (Windows, promotion v7.7.13) |
+| `STRUCTURE_SELF_TEST.cmd` | **PASS** 21/21 (Windows, promotion v7.7.13) |
+| `LOOP_SELF_TEST.cmd` | **PASS** 19/19 (Windows, promotion v7.7.13); accepted 16 switches / 65536; fast path byte-identical to `--exhaustive` (case 16 pinned to <= 10 switches) |
+| `PLANET_SELF_TEST.cmd` | **PASS** 20/20 (Windows, promotion v7.7.13); accepted in planet_v1 mode: P2=11/6/0/0, P3=14/2/1/0, P4=6/0, P5=17/0 |
+| `NODE_SELF_TEST.cmd` | **PASS** 59/59 (Windows, promotion v7.7.13); слои снимаются по модели; узел с переключателем `labor_market` лежит поверх всех и снимается первым, `food` — под ним; случаи прежних узлов работают на слоях без верхних узлов (validation без их фрагментов, P6 — прежние драйверы); cases 53–59 на принятой модели снимают и собирают заново слой `labor_market` с восстановлением прежних чисел |
+| `COMPARE_SELF_TEST.cmd` | **PASS** (Windows, promotion v7.7.13) |
 
 ## Lab v0.9.14 — exact loop-audit speed-up (задача 025)
 
@@ -83,7 +83,7 @@ Accepted model, validation и policy задачей 018 не изменяютс�
 
 ## Рабочая область
 
-`input/model`, `input/validation`, `input/policy` и `reference/accepted/model` содержат принятые артефакты v7.7.12 r1, поэтому `RUN_LAB.cmd` и `CHECK_CANDIDATE.cmd` запускаются без аргументов; `CHECK_CANDIDATE` на нетронутой области даёт `BYTE_IDENTICAL`. Отчёты предыдущих прогонов в `output/` не входят в поставку: актуальные копии лежат в `docs/CAPITAL_LIFECYCLE_CONFORMANCE_REPORT.md`, `docs/STRUCTURE_AUDIT_REPORT.md`, `docs/PARAMETER_REGISTRY.md` пакета.
+`input/model`, `input/validation`, `input/policy` и `reference/accepted/model` содержат принятые артефакты v7.7.13 r1, поэтому `RUN_LAB.cmd` и `CHECK_CANDIDATE.cmd` запускаются без аргументов; `CHECK_CANDIDATE` на нетронутой области даёт `BYTE_IDENTICAL`. Отчёты предыдущих прогонов в `output/` не входят в поставку: актуальные копии лежат в `docs/CAPITAL_LIFECYCLE_CONFORMANCE_REPORT.md`, `docs/STRUCTURE_AUDIT_REPORT.md`, `docs/PARAMETER_REGISTRY.md` пакета.
 
 Канонический разбор дефектов r1 и того, что именно изменено в r2, — `docs/V7_6_R1_TO_R2_FIX_REPORT.md`; порядок команд воспроизведения — `docs/ACCEPTANCE_STATUS.md`.
 

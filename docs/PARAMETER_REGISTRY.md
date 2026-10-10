@@ -1,17 +1,17 @@
 # Orbital Economy — реестр внешних параметров
 
-- generated: 2026-10-09T14:51:25.377Z
-- model: Orbital Economy v7.7.12 r1 — Food — SHA-256 `e8829fa550172dfab9629a0d66b0c628c1d802c5c1a3826ab7a9a86365c9f234`
-- annotations: docs/PARAMETER_ANNOTATIONS.json (SHA-256 `ee05ad1e6ed55dbdc23791ba40a6a10aa9a1ce8a7ed939149f8857a7817bdc31`)
+- generated: 2026-10-10T16:51:24.397Z
+- model: Orbital Economy v7.7.13 r1 — Labor Market — SHA-256 `cede8ecf699995bc818646a2e922f87f3d798c002231fa70e14d3e357196d4f1`
+- annotations: docs/PARAMETER_ANNOTATIONS.json (SHA-256 `04ad8a1b57b1b252f0e9ce6e2102143c41c9cece7f9d53c7e2530777894a5767`)
 
 Всё, что модель не выводит сама: числовые константы, начальные запасы, переключатели, тестовые множители. Инвентарь сгенерирован из ModelJSON; аннотации («роль / что меняет / доказательство») ведутся вручную и версионируются вместе с baseline.
 
 ## Сводка
 
-- внешних величин: **571** (константы 380, начальные запасы 129, переключатели 27, тестовая обвязка 35)
-- по колониям: A 153, B 153, глобальные 265
-- аннотировано: **392 / 571** (69 %)
-- несимметричных пар A/B: **69**, из них без аннотации: **0**
+- внешних величин: **582** (константы 386, начальные запасы 133, переключатели 28, тестовая обвязка 35)
+- по колониям: A 155, B 155, глобальные 272
+- аннотировано: **403 / 582** (69 %)
+- несимметричных пар A/B: **71**, из них без аннотации: **0**
 
 ## Несимметричные пары A/B — что задаёт различия колоний
 
@@ -22,7 +22,7 @@
 | Electronics Capacity Planning Signal | Electronics | 1.25793 | 48.83148 | Соответствует v7.3-специализации (A почти не производит, B ~45). В v7.4 Mode 17 A перепланируется с 1.3 к ~22 — часть переходной динамики первых сотен дней. |
 | Electronics Domestic Supply Signal | Electronics | 20 | 16 | Инициализация realized import share без стартового скачка. |
 | Electronics Feedstock Base Cost | Electronics | 18 | 3 | В v7.3 — единственный источник преимущества B в электронике (B→A 21.7/день). В v7.4 при switch=1 не используется: вход = металл по Market Price. Исчезновение этого «подарка» и есть причина переворота специализации. |
-| Electronics Local Base Demand | Electronics | 20 | 16 | Масштаб рынка электроники; в v7.4 обе колонии производят примерно под свой спрос (A 22, B 15 @1080). |
+| External Electronics Local Base Demand | Electronics | 20 | 16 | Preserves the exact switch-off Electronics Local Base Demand while enabled demand is recomputed from Electronics Demand per Capita × Population. |
 | Test 13 Electronics Demand Applies | Electronics | 1 | 0 | При 1 разрешает существующий множитель v7.3 Temporary Electronics Demand Multiplier; при 0 заменяет его точным нейтральным ×1. Сохраняет прежнюю A/B-направленность теста в общей зеркальной цепочке. |
 | Test 14 Electronics Demand Applies | Electronics | 1 | 0 | При 1 разрешает существующий множитель v7.3 Sustained Electronics Growth Multiplier; при 0 заменяет его точным нейтральным ×1. Сохраняет прежнюю A/B-направленность теста в общей зеркальной цепочке. |
 | Test 15 Electronics Demand Applies | Electronics | 0 | 1 | При 1 разрешает существующий множитель v7.3 Electronics Demand Collapse Multiplier; при 0 заменяет его точным нейтральным ×1. Сохраняет прежнюю A/B-направленность теста в общей зеркальной цепочке. |
@@ -32,7 +32,9 @@
 | Test 7 Electronics Demand Applies | Electronics | 1 | 0 | При 1 разрешает существующий множитель Two Good Demand Surge Multiplier; при 0 заменяет его точным нейтральным ×1. Сохраняет прежнюю A/B-направленность теста в общей зеркальной цепочке. |
 | Test 8 Electronics Demand Applies | Electronics | 1 | 0 | При 1 разрешает существующий множитель Priority Stress Demand Multiplier; при 0 заменяет его точным нейтральным ×1. Сохраняет прежнюю A/B-направленность теста в общей зеркальной цепочке. |
 | Test 9 Electronics Demand Applies | Electronics | 1 | 0 | При 1 разрешает существующий множитель Two Industry Energy Stress Demand Multiplier; при 0 заменяет его точным нейтральным ×1. Сохраняет прежнюю A/B-направленность теста в общей зеркальной цепочке. |
-| Wage | Labor | 100 | 140 | Входит в Metal Unit Cost (0.1×) и Electronics Unit Cost (0.05×): B дороже на 4/ед. металла и 2/ед. электроники. В v7.4 после исчезновения дешёвого feedstock B — второй фактор, из-за которого B теряет преимущество в электронике. |
+| Flexible Wage | Labor | 100 | 140 | Becomes the active Wage branch when Labor Market Enabled=1 and evolves through Wage Increase/Decrease. |
+| Initial Wage | Labor | 100 | 140 | Provides the exact switch-off branch and the wage-floor reference without embedding asymmetric numeric literals in mirrored A/B formulas. |
+| Labor Demand Signal | Labor | 14 | 4.25 | Seeds the labor-availability guard without a startup discontinuity and is the denominator driver of Labor Availability/Tightness. |
 | Mining Capacity | Metal | 70 | 28 | Мягкий потолок Mining Rate. У A в baseline не связывает (добыча ~55); у B в связанном мире добыча ~11 ≪ 28. Именно поэтому шок Mode 18 сделан у A: ×0.5 у A режет плавку 39→25, ×0.5 у B ничего не меняет. |
 | Ore Base Cost | Metal | 4 | 14 | Определяет Ore Price → Metal Unit Cost → Domestic Offer → Market Price. Разрыв ×3.5 делает металл A дешевле (Mode 17 @1080: 30.5 vs 37.4) и задаёт направление торговли металлом A→B на всех сценариях. В v7.4 через Feedstock Price = Market Price это же преимущество переносится на электронику. |
 | Ore Extraction Signal | Metal | 42.227 | 8.373 | Seeds the reserve-target signal with the intentional A/B pair 42.227/8.373. |
@@ -56,12 +58,12 @@
 | Construction Materials Plant Active Capacity | Other | 3 | 2 | Starts active equal to installed capacity, preserving the prior base-capacity level before lifecycle adjustment; A/B are intentionally asymmetric (3 vs 2). |
 | Construction Materials Plant Installed Capacity | Other | 3 | 2 | Seeds lifecycle capital at the previously accepted base production capacity; A/B are intentionally asymmetric (3 vs 2). |
 | Domestic Supply Signal | Other | 16 | 22 | То же для металла. |
+| External Local Base Demand | Other | 16 | 22 | Preserves the exact switch-off Local Base Demand while enabled demand is recomputed from Metal Demand per Capita × Population. |
 | Farm Capacity | Other | 22 | 17.142206601972095 | Sets the starting productive capital of farms before expansion/depreciation dynamics. |
 | Farm Land Capacity | Other | 22 | 60 | Sets the maximum effective/desired farm scale by region and is the primary initial comparative advantage of B. |
 | Food Demand Signal | Other | 28 | 8.5 | Seeds demand planning at the pre-food demographic state, avoiding a startup smoothing transient. |
 | Food Inventory | Other | 840 | 255 | Sets starting coverage and prevents an artificial startup famine while farms/trade begin from the balanced start state. |
 | Food Production Signal | Other | 20.174088950502767 | 16.325911049497233 | Seeds farm energy requests and desired farm capacity at the physically balanced startup production plan. |
-| Local Base Demand | Other | 16 | 22 | Масштаб конечного рынка металла; B — больший потребитель при меньшей добыче → структурный импорт металла B из A (~21–23/день). |
 | Population Initial | Other | 28 | 8.5 | Sets the scale of each region's Population stock and, through participation 0.5, its labor force (A 14 / B 4.25), compared with the region's total labor requirement. A is the larger economy, so it starts with the larger population; in the first year both regions employ about 94 % of their labor force (Mode 46). |
 | Regolith Base Extraction Capacity | Other | 7 | 5 | Caps Regolith extraction through the standard soft-cap function. |
 | Regolith Mine Capacity | Other | 7 | 5 | Seeds mine capacity at the accepted A Regolith Base Extraction Capacity; A/B are intentionally asymmetric (7 vs 5). |
@@ -113,9 +115,9 @@
 | A Electronics Energy per Unit | constant | 12 | Энергоёмкость электроники (12; симметрично). | Electronics — второй потребитель энергии (A 22 × 12 ≈ 264). Одинакова у A и B: у B нет технологического преимущества в электронике. |  |
 | A Electronics Feedstock Base Cost | constant | 18 / 3 | Legacy-цена экзогенного feedstock (A 18 / B 3). Действует только при Intermediate Inputs Enabled = 0 (Modes 0–16). | В v7.3 — единственный источник преимущества B в электронике (B→A 21.7/день). В v7.4 при switch=1 не используется: вход = металл по Market Price. Исчезновение этого «подарка» и есть причина переворота специализации. | Mode 12 vs 17: Electronics B→A 21.7 → 0. |
 | A Electronics Labor per Unit | constant | 0.05 | Трудоёмкость электроники (0.05; симметрично). | Wage × 0.05 в Electronics Unit Cost. |  |
-| A Electronics Local Base Demand | constant | 20 / 16 | Базовый конечный спрос на электронику (A 20 / B 16 /день). | Масштаб рынка электроники; в v7.4 обе колонии производят примерно под свой спрос (A 22, B 15 @1080). | Mode 17 @1080. |
 | A Electronics Reference Price | constant | 28 | Референсная цена электроники (28; симметрично). | То же для электроники. В v7.4 unit cost A 13.75 / B 16.7 с наценкой 18 % — оба ниже 28, спрос выше базового. |  |
 | A Electronics Target Inventory | constant | 500 | Целевой запас электроники (500; симметрично). | То же для электроники (Electronics Shortage → Domestic Offer Price; Desired Production). |  |
+| A External Electronics Local Base Demand | constant | 20 / 16 | Named copy of the former external electronics-demand driver; A=20, B=16. | Preserves the exact switch-off Electronics Local Base Demand while enabled demand is recomputed from Electronics Demand per Capita × Population. | V7_7_13_ARCHITECTURE_SPEC §§0–2; accepted v7.7.12 regional Electronics Local Base Demand constants. |
 | A Feedstock per Electronics | constant | 1 | Legacy-расход feedstock на единицу электроники (1; только при switch=0). | В v7.4 заменён на Metal per Electronics. |  |
 | A Test 13 Electronics Demand Applies | constant | 1 / 0 | Флаг применимости electronics-demand шока Mode 13 к колонии A; значение 1. | При 1 разрешает существующий множитель v7.3 Temporary Electronics Demand Multiplier; при 0 заменяет его точным нейтральным ×1. Сохраняет прежнюю A/B-направленность теста в общей зеркальной цепочке. |  |
 | A Test 14 Electronics Demand Applies | constant | 1 / 0 | Флаг применимости electronics-demand шока Mode 14 к колонии A; значение 1. | При 1 разрешает существующий множитель v7.3 Sustained Electronics Growth Multiplier; при 0 заменяет его точным нейтральным ×1. Сохраняет прежнюю A/B-направленность теста в общей зеркальной цепочке. |  |
@@ -134,9 +136,9 @@
 | B Electronics Energy per Unit | constant | 12 | Энергоёмкость электроники (12; симметрично). | Electronics — второй потребитель энергии (A 22 × 12 ≈ 264). Одинакова у A и B: у B нет технологического преимущества в электронике. |  |
 | B Electronics Feedstock Base Cost | constant | 3 / 18 | Legacy-цена экзогенного feedstock (A 18 / B 3). Действует только при Intermediate Inputs Enabled = 0 (Modes 0–16). | В v7.3 — единственный источник преимущества B в электронике (B→A 21.7/день). В v7.4 при switch=1 не используется: вход = металл по Market Price. Исчезновение этого «подарка» и есть причина переворота специализации. | Mode 12 vs 17: Electronics B→A 21.7 → 0. |
 | B Electronics Labor per Unit | constant | 0.05 | Трудоёмкость электроники (0.05; симметрично). | Wage × 0.05 в Electronics Unit Cost. |  |
-| B Electronics Local Base Demand | constant | 16 / 20 | Базовый конечный спрос на электронику (A 20 / B 16 /день). | Масштаб рынка электроники; в v7.4 обе колонии производят примерно под свой спрос (A 22, B 15 @1080). | Mode 17 @1080. |
 | B Electronics Reference Price | constant | 28 | Референсная цена электроники (28; симметрично). | То же для электроники. В v7.4 unit cost A 13.75 / B 16.7 с наценкой 18 % — оба ниже 28, спрос выше базового. |  |
 | B Electronics Target Inventory | constant | 500 | Целевой запас электроники (500; симметрично). | То же для электроники (Electronics Shortage → Domestic Offer Price; Desired Production). |  |
+| B External Electronics Local Base Demand | constant | 16 / 20 | Named copy of the former external electronics-demand driver; A=20, B=16. | Preserves the exact switch-off Electronics Local Base Demand while enabled demand is recomputed from Electronics Demand per Capita × Population. | V7_7_13_ARCHITECTURE_SPEC §§0–2; accepted v7.7.12 regional Electronics Local Base Demand constants. |
 | B Feedstock per Electronics | constant | 1 | Legacy-расход feedstock на единицу электроники (1; только при switch=0). | В v7.4 заменён на Metal per Electronics. |  |
 | B Test 13 Electronics Demand Applies | constant | 0 / 1 | Флаг применимости electronics-demand шока Mode 13 к колонии B; значение 0. | При 1 разрешает существующий множитель v7.3 Temporary Electronics Demand Multiplier; при 0 заменяет его точным нейтральным ×1. Сохраняет прежнюю A/B-направленность теста в общей зеркальной цепочке. |  |
 | B Test 14 Electronics Demand Applies | constant | 0 / 1 | Флаг применимости electronics-demand шока Mode 14 к колонии B; значение 0. | При 1 разрешает существующий множитель v7.3 Sustained Electronics Growth Multiplier; при 0 заменяет его точным нейтральным ×1. Сохраняет прежнюю A/B-направленность теста в общей зеркальной цепочке. |  |
@@ -149,6 +151,7 @@
 | B Test 9 Electronics Demand Applies | constant | 0 / 1 | Флаг применимости electronics-demand шока Mode 9 к колонии B; значение 0. | При 1 разрешает существующий множитель Two Industry Energy Stress Demand Multiplier; при 0 заменяет его точным нейтральным ×1. Сохраняет прежнюю A/B-направленность теста в общей зеркальной цепочке. |  |
 | Electronics Activation Time | constant | 30 | Отраслевая policy kernel капитала (30 д). | Не часть kernel-контракта — отраслевая параметризация (KERNEL_SPEC §4.3). Сравнение секторов: CAPITAL_LIFECYCLE_SECTOR_MAPPING, последняя таблица. |  |
 | Electronics Construction Time | constant | 240 | Отраслевая policy kernel капитала (240 д). | Не часть kernel-контракта — отраслевая параметризация (KERNEL_SPEC §4.3). Сравнение секторов: CAPITAL_LIFECYCLE_SECTOR_MAPPING, последняя таблица. |  |
+| Electronics Demand per Capita | constant | 0.7142857142857143 | External per-capita electronics-demand norm, value 0.7142857142857143 (=20/28). | When enabled, each region's Electronics Local Base Demand becomes this norm multiplied by Population; it is the corresponding Planet P6 external driver. | docs/tasks/034-labor-market/V7_7_13_ARCHITECTURE_SPEC.md §§0–5 and docs/research/CLOSURE_PROTOTYPE_2026-10-09_RU.md. |
 | Electronics Import Share Sensitivity | constant | 100 | То же для электроники (100). | См. Import Share Sensitivity. |  |
 | Electronics Mothball Time | constant | 30 | Отраслевая policy kernel капитала (30 д). | Не часть kernel-контракта — отраслевая параметризация (KERNEL_SPEC §4.3). Сравнение секторов: CAPITAL_LIFECYCLE_SECTOR_MAPPING, последняя таблица. |  |
 | Electronics per Capital Goods Unit | constant | 0.5 | Electronics input coefficient of one abstract capital-goods unit. | Scales electronics withdrawn from local Electronics Inventory by the capital-goods production rate. | Start value 0.5 is specified by V7_5_ARCHITECTURE_SPEC §2; calibration parameter, no physical justification at this aggregation level. |
@@ -156,18 +159,26 @@
 | Metal per Electronics | constant | 0.25 | Материалоёмкость электроники по металлу (0.25 металла на единицу), глобальная. | Сила связи Metal→Electronics: спрос Electronics на металл = выпуск × 0.25 (A ~5.5, B ~3.7/день в Mode 17); вход в себестоимость = 0.25 × Market Price (≈7.6 у A, 9.4 у B) вместо legacy 18/3. При 1.0 связь удвоила бы спрос на металл. Не подгонялся к Mode 12; переворот специализации — следствие того, что у B нет собственного преимущества в электронике. | V7_4_ARCHITECTURE_SPEC §6; ACCEPTANCE_R2 §4. |
 | A Capital Goods Labor per Unit | constant | 2 | Capital Goods labor intensity for colony A, value 2. | Multiplies A Capital Goods output and its Automation Factor to form the process Labor Requirement. The A/B pair is intentionally symmetric at 2/2. | V7_7_10_ARCHITECTURE_SPEC §1–§2 and draft/process-labor.json. |
 | A Construction Materials Labor per Unit | constant | 0.3 | Construction Materials labor intensity for colony A, value 0.3. | Multiplies A Construction Materials output and its Automation Factor to form the process Labor Requirement. The A/B pair is intentionally symmetric at 0.3/0.3. | V7_7_10_ARCHITECTURE_SPEC §1–§2 and draft/process-labor.json. |
+| A Flexible Wage | initial_stock | 100 / 140 | Initial flexible-wage STOCK; A starts at 100, B at 140, equal to each region's previous Wage. | Becomes the active Wage branch when Labor Market Enabled=1 and evolves through Wage Increase/Decrease. | V7_7_13_ARCHITECTURE_SPEC §§1,5 and labor_market generator start-state rule. |
+| A Initial Wage | constant | 100 / 140 | Named copy of the pre-labor-market regional wage; A=100, B=140. | Provides the exact switch-off branch and the wage-floor reference without embedding asymmetric numeric literals in mirrored A/B formulas. | V7_7_13_ARCHITECTURE_SPEC §§0–2; generated by labor_market from the accepted A/B Wage values. |
+| A Labor Demand Signal | initial_stock | 14 / 4.25 | Initial smoothed unconstrained labor-demand STOCK; A=14, B=4.25 (= initial Population × Labor Participation Share 0.5). | Seeds the labor-availability guard without a startup discontinuity and is the denominator driver of Labor Availability/Tightness. | V7_7_13_ARCHITECTURE_SPEC §§1,5 and labor_market generator: Population Initial × Labor Participation Share. |
 | A Regolith Extraction Labor per Unit | constant | 0.2 | Regolith Extraction labor intensity for colony A, value 0.2. | Multiplies A Regolith Extraction output and its Automation Factor to form the process Labor Requirement. The A/B pair is intentionally symmetric at 0.2/0.2. | V7_7_10_ARCHITECTURE_SPEC §1–§2 and draft/process-labor.json. |
-| A Wage | constant | 100 / 140 | Ставка труда (A 100 / B 140). | Входит в Metal Unit Cost (0.1×) и Electronics Unit Cost (0.05×): B дороже на 4/ед. металла и 2/ед. электроники. В v7.4 после исчезновения дешёвого feedstock B — второй фактор, из-за которого B теряет преимущество в электронике. | Electronics Unit Cost Mode 17 @1080: A 13.75, B 16.71. |
 | Attractiveness Wage Weight | constant | 1 | Dimensionless exponent on normalized real wage in attractiveness, value 1. | Controls the contribution of Real Wage / Reference Real Wage to regional Attractiveness. | docs/research/POPULATION_PROTOTYPE_2026-10-04_RU.md prototype attractiveness formula; unit baseline weight retained. |
 | Automation Labor Exponent | constant | 1 | Automation response exponent, value 1. | Shapes the relation between Automation Level and Automation Factor; value 1 gives a linear response above the human-share floor. | V7_7_10_ARCHITECTURE_SPEC §1–§2 and draft/process-labor.json. |
 | B Capital Goods Labor per Unit | constant | 2 | Capital Goods labor intensity for colony B, value 2. | Multiplies B Capital Goods output and its Automation Factor to form the process Labor Requirement. The A/B pair is intentionally symmetric at 2/2. | V7_7_10_ARCHITECTURE_SPEC §1–§2 and draft/process-labor.json. |
 | B Construction Materials Labor per Unit | constant | 0.3 | Construction Materials labor intensity for colony B, value 0.3. | Multiplies B Construction Materials output and its Automation Factor to form the process Labor Requirement. The A/B pair is intentionally symmetric at 0.3/0.3. | V7_7_10_ARCHITECTURE_SPEC §1–§2 and draft/process-labor.json. |
+| B Flexible Wage | initial_stock | 140 / 100 | Initial flexible-wage STOCK; A starts at 100, B at 140, equal to each region's previous Wage. | Becomes the active Wage branch when Labor Market Enabled=1 and evolves through Wage Increase/Decrease. | V7_7_13_ARCHITECTURE_SPEC §§1,5 and labor_market generator start-state rule. |
+| B Initial Wage | constant | 140 / 100 | Named copy of the pre-labor-market regional wage; A=100, B=140. | Provides the exact switch-off branch and the wage-floor reference without embedding asymmetric numeric literals in mirrored A/B formulas. | V7_7_13_ARCHITECTURE_SPEC §§0–2; generated by labor_market from the accepted A/B Wage values. |
+| B Labor Demand Signal | initial_stock | 4.25 / 14 | Initial smoothed unconstrained labor-demand STOCK; A=14, B=4.25 (= initial Population × Labor Participation Share 0.5). | Seeds the labor-availability guard without a startup discontinuity and is the denominator driver of Labor Availability/Tightness. | V7_7_13_ARCHITECTURE_SPEC §§1,5 and labor_market generator: Population Initial × Labor Participation Share. |
 | B Regolith Extraction Labor per Unit | constant | 0.2 | Regolith Extraction labor intensity for colony B, value 0.2. | Multiplies B Regolith Extraction output and its Automation Factor to form the process Labor Requirement. The A/B pair is intentionally symmetric at 0.2/0.2. | V7_7_10_ARCHITECTURE_SPEC §1–§2 and draft/process-labor.json. |
-| B Wage | constant | 140 / 100 | Ставка труда (A 100 / B 140). | Входит в Metal Unit Cost (0.1×) и Electronics Unit Cost (0.05×): B дороже на 4/ед. металла и 2/ед. электроники. В v7.4 после исчезновения дешёвого feedstock B — второй фактор, из-за которого B теряет преимущество в электронике. | Electronics Unit Cost Mode 17 @1080: A 13.75, B 16.71. |
 | Food Labor per Unit | constant | 0.15 | Farm labor intensity, value 0.15 labor units per unit of food production. | Scales Farming Labor Requirement; labor remains accounting-only at Planet v2 step 2. | docs/tasks/032-food/V7_7_12_ARCHITECTURE_SPEC.md §§1–5 and docs/research/FOOD_PROTOTYPE_2026-10-05_RU.md. |
+| Labor Demand Signal Time | constant | 10 | Smoothing time of unconstrained labor demand, 10 model days. | Controls how quickly Labor Demand Signal follows labor demand reconstructed before the output guard. | docs/tasks/034-labor-market/V7_7_13_ARCHITECTURE_SPEC.md §§0–5 and docs/research/CLOSURE_PROTOTYPE_2026-10-09_RU.md. |
 | Labor Participation Share | constant | 0.5 | Dimensionless share of population counted as labor force, value 0.50. | Labor Force = Population × Labor Participation Share for each region. | docs/research/POPULATION_PROTOTYPE_2026-10-04_RU.md: third-series grid selected 0.50; V7_7_11_ARCHITECTURE_SPEC §1. |
 | Minimum Human Labor Share | constant | 0.05 | Automation floor parameter, value 0.05. | Sets the irreducible human share in every generated Automation Factor. | V7_7_10_ARCHITECTURE_SPEC §1–§2 and draft/process-labor.json. |
 | Reference Real Wage | constant | 100 | Reference real-wage level, value 100 in model wage units after price-index normalization. | Normalizes Real Wage in the attractiveness formula so the wage term is dimensionless. | docs/research/POPULATION_PROTOTYPE_2026-10-04_RU.md: reference real wage 100 was set manually; retained normalization baseline. |
+| Target Labor Tightness | constant | 0.95 | Target ratio of smoothed labor demand to labor force, value 0.95. | Defines the wage equilibrium target; tightness above it raises wages, below it lowers wages. | docs/tasks/034-labor-market/V7_7_13_ARCHITECTURE_SPEC.md §§0–5 and docs/research/CLOSURE_PROTOTYPE_2026-10-09_RU.md. |
+| Wage Adjustment Rate | constant | 0.000277777777778 | Flexible-wage adjustment rate, 0.000277777777778 per model day (10% per 360-day model year). | Scales Wage Increase/Decrease response to the gap between Labor Tightness and Target Labor Tightness. | docs/tasks/034-labor-market/V7_7_13_ARCHITECTURE_SPEC.md §§0–5 and docs/research/CLOSURE_PROTOTYPE_2026-10-09_RU.md. |
+| Wage Floor Share | constant | 0.3 | Lower bound for flexible wage as a share of the region's Initial Wage, value 0.3. | Prevents Flexible Wage from falling below 30% of the pre-labor-market wage. | docs/tasks/034-labor-market/V7_7_13_ARCHITECTURE_SPEC.md §§0–5 and docs/research/CLOSURE_PROTOTYPE_2026-10-09_RU.md. |
 | A Labor per Metal | constant | 0.1 | Трудоёмкость металла (0.1; симметрично). | Wage × 0.1 в Metal Unit Cost. |  |
 | A Metal Buffer | constant | 10 | Мягкость нормирования металла (10 единиц; симметрично). | Фактор доступности Inventory/(Inventory+10) для Local Sales и (v7.4) для поставок Electronics. При запасе ~300–500 даёт 0.97–0.98: физическое нормирование почти не проявляется, пока запас не опустошён; дефицит идёт через цену. Уменьшить буфер нельзя без переоценки всех сценариев — это меняет форму реакции всех рынков металла. | ACCEPTANCE_R2 §6; Mode 18: fulfillment A min 0.927 при запасе 127. |
 | A Metal Target Inventory | constant | 500 | Целевой запас металла (500; симметрично). | Через Metal Shortage задаёт дефицитную надбавку к Domestic Offer Price и слагаемое в Desired Smelting Rate. |  |
@@ -222,6 +233,7 @@
 | B Test 7 Metal Demand Applies | constant | 1 / 0 | Флаг применимости metal-demand шока Mode 7 к колонии B; значение 1. | При 1 разрешает существующий множитель Two Good Demand Surge Multiplier; при 0 заменяет его точным нейтральным ×1. Сохраняет прежнюю одностороннюю семантику при зеркальной формуле A/B. |  |
 | B Test 8 Metal Demand Applies | constant | 1 / 0 | Флаг применимости metal-demand шока Mode 8 к колонии B; значение 1. | При 1 разрешает существующий множитель Priority Stress Demand Multiplier; при 0 заменяет его точным нейтральным ×1. Сохраняет прежнюю одностороннюю семантику при зеркальной формуле A/B. |  |
 | B Test 9 Metal Demand Applies | constant | 1 / 0 | Флаг применимости metal-demand шока Mode 9 к колонии B; значение 1. | При 1 разрешает существующий множитель Two Industry Energy Stress Demand Multiplier; при 0 заменяет его точным нейтральным ×1. Сохраняет прежнюю одностороннюю семантику при зеркальной формуле A/B. |  |
+| Metal Demand per Capita | constant | 0.5714285714285714 | External per-capita metal-demand norm, value 0.5714285714285714 (=16/28). | When the labor market is enabled, each region's Local Base Demand becomes this norm multiplied by its Population; it also replaces the old population-dependent target as a Planet P6 external driver. | docs/tasks/034-labor-market/V7_7_13_ARCHITECTURE_SPEC.md §§0–5 and docs/research/CLOSURE_PROTOTYPE_2026-10-09_RU.md. |
 | Metal Input Adjustment Time | constant | 20 | Время подстройки буфера металла у Electronics (20 д). | Скорость, с которой отклонение буфера от цели превращается в дополнительный спрос на поставки. |  |
 | Metal Input Target Days | constant | 20 | Целевой буфер металла у Electronics в днях планируемого потребления (20). | Определяет Metal Input Target Inventory = pre-energy выпуск × 0.25 × 20 (A ~110, B ~75 единиц). Больше — больше запас и мягче реакция на перебои. | Mode 17 series: A Feedstock Inventory ~115 @1080. |
 | Metal per Capital Goods Unit | constant | 1 | Metal input coefficient of one abstract capital-goods unit. | Scales metal withdrawn from local Metal Inventory by the capital-goods production rate. | Start value 1 is specified by V7_5_ARCHITECTURE_SPEC §2; calibration parameter, no physical justification at this aggregation level. |
@@ -253,12 +265,12 @@
 | A Construction Materials Plant Active Capacity | initial_stock | 3 / 2 | Initial active construction-materials plant capacity for colony A, value 3. | Starts active equal to installed capacity, preserving the prior base-capacity level before lifecycle adjustment; A/B are intentionally asymmetric (3 vs 2). | V7_7_3_ARCHITECTURE_SPEC §2; same specified initial A/B capacities as Installed. |
 | A Construction Materials Plant Installed Capacity | initial_stock | 3 / 2 | Initial installed construction-materials plant capacity for colony A, value 3. | Seeds lifecycle capital at the previously accepted base production capacity; A/B are intentionally asymmetric (3 vs 2). | V7_7_3_ARCHITECTURE_SPEC §2 explicitly requires A=3, B=2 and mandatory annotation of the asymmetric pair. |
 | A Domestic Supply Signal | initial_stock | 16 / 22 | Начальный сигнал локального предложения металла (16 / 22). | То же для металла. |  |
+| A External Local Base Demand | constant | 16 / 22 | Named copy of the former external metal-demand driver; A=16, B=22. | Preserves the exact switch-off Local Base Demand while enabled demand is recomputed from Metal Demand per Capita × Population. | V7_7_13_ARCHITECTURE_SPEC §§0–2,5; accepted v7.7.12 regional Local Base Demand constants. |
 | A Farm Capacity | initial_stock | 22 / 17.142206601972095 | Initial physical farm capacity. Generated start values A=22, B=17.142206601972095 from initial population, land and the start-state export allocation. | Sets the starting productive capital of farms before expansion/depreciation dynamics. | lab/src/nodes/food.js start-state algorithm; V7_7_12_ARCHITECTURE_SPEC §5 notes B start ≈17.14. |
 | A Farm Land Capacity | switch | 22 / 60 | Regional farm-land soft cap. Initial values A=22, B=60; fertile B is an explicit owner decision. | Sets the maximum effective/desired farm scale by region and is the primary initial comparative advantage of B. | V7_7_12_ARCHITECTURE_SPEC §§1,3,5: A 22 / B 60; Mode 51 probes 40/40. |
 | A Food Demand Signal | initial_stock | 28 / 8.5 | Initial smoothed food-demand signal. A=28, B=8.5, equal to each region's initial population. | Seeds demand planning at the pre-food demographic state, avoiding a startup smoothing transient. | lab/src/nodes/food.js start-state algorithm: Food Demand Signal initial = population_initial. |
 | A Food Inventory | initial_stock | 840 / 255 | Initial food stock. A=840, B=255 = initial population (28 / 8.5) × 30 target coverage days. | Sets starting coverage and prevents an artificial startup famine while farms/trade begin from the balanced start state. | lab/src/nodes/food.js: Food Inventory initial = population_initial × Food Target Coverage Days. |
 | A Food Production Signal | initial_stock | 20.174088950502767 / 16.325911049497233 | Initial smoothed production plan. A=20.174088950502767, B=16.325911049497233 after land-limited A and B's assigned startup exports. | Seeds farm energy requests and desired farm capacity at the physically balanced startup production plan. | lab/src/nodes/food.js start-state algorithm (soft land efficiency plus startup export allocation); V7_7_12_ARCHITECTURE_SPEC §5. |
-| A Local Base Demand | constant | 16 / 22 | Базовый конечный спрос на металл (A 16 / B 22 /день). | Масштаб конечного рынка металла; B — больший потребитель при меньшей добыче → структурный импорт металла B из A (~21–23/день). | Shipment Rate A→B: 23.1 (Mode 12), 20.8 (Mode 17). |
 | A Population Initial | constant | 28 / 8.5 | Starting population of the region (A 28 / B 8.5, model units of people). | Sets the scale of each region's Population stock and, through participation 0.5, its labor force (A 14 / B 4.25), compared with the region's total labor requirement. A is the larger economy, so it starts with the larger population; in the first year both regions employ about 94 % of their labor force (Mode 46). | docs/research/POPULATION_PROTOTYPE_2026-10-04_RU.md (calibration, participation 0.50); docs/tasks/030-population/V7_7_11_ARCHITECTURE_SPEC.md §1. Added by the owner at acceptance: the task listed only the 11 shared parameters. |
 | A Regolith Base Extraction Capacity | constant | 7 / 5 | [calib] fixed extraction capacity (7). | Caps Regolith extraction through the standard soft-cap function. | Owner skeleton feasibility value; candidate run to confirm baseline and shock behaviour. |
 | A Regolith Demand Signal | initial_stock | 0.35 | Initial smoothed Regolith demand signal for colony A, value 0.35. | Seeds the STOCK sizing signal without reading instantaneous demand directly. | draft/regolith-mine.json; V7_7_5_ARCHITECTURE_SPEC §1. |
@@ -289,12 +301,12 @@
 | B Construction Materials Plant Active Capacity | initial_stock | 2 / 3 | Initial active construction-materials plant capacity for colony B, value 2. | Starts active equal to installed capacity, preserving the prior base-capacity level before lifecycle adjustment; A/B are intentionally asymmetric (3 vs 2). | V7_7_3_ARCHITECTURE_SPEC §2; same specified initial A/B capacities as Installed. |
 | B Construction Materials Plant Installed Capacity | initial_stock | 2 / 3 | Initial installed construction-materials plant capacity for colony B, value 2. | Seeds lifecycle capital at the previously accepted base production capacity; A/B are intentionally asymmetric (3 vs 2). | V7_7_3_ARCHITECTURE_SPEC §2 explicitly requires A=3, B=2 and mandatory annotation of the asymmetric pair. |
 | B Domestic Supply Signal | initial_stock | 22 / 16 | Начальный сигнал локального предложения металла (16 / 22). | То же для металла. |  |
+| B External Local Base Demand | constant | 22 / 16 | Named copy of the former external metal-demand driver; A=16, B=22. | Preserves the exact switch-off Local Base Demand while enabled demand is recomputed from Metal Demand per Capita × Population. | V7_7_13_ARCHITECTURE_SPEC §§0–2,5; accepted v7.7.12 regional Local Base Demand constants. |
 | B Farm Capacity | initial_stock | 17.142206601972095 / 22 | Initial physical farm capacity. Generated start values A=22, B=17.142206601972095 from initial population, land and the start-state export allocation. | Sets the starting productive capital of farms before expansion/depreciation dynamics. | lab/src/nodes/food.js start-state algorithm; V7_7_12_ARCHITECTURE_SPEC §5 notes B start ≈17.14. |
 | B Farm Land Capacity | switch | 60 / 22 | Regional farm-land soft cap. Initial values A=22, B=60; fertile B is an explicit owner decision. | Sets the maximum effective/desired farm scale by region and is the primary initial comparative advantage of B. | V7_7_12_ARCHITECTURE_SPEC §§1,3,5: A 22 / B 60; Mode 51 probes 40/40. |
 | B Food Demand Signal | initial_stock | 8.5 / 28 | Initial smoothed food-demand signal. A=28, B=8.5, equal to each region's initial population. | Seeds demand planning at the pre-food demographic state, avoiding a startup smoothing transient. | lab/src/nodes/food.js start-state algorithm: Food Demand Signal initial = population_initial. |
 | B Food Inventory | initial_stock | 255 / 840 | Initial food stock. A=840, B=255 = initial population (28 / 8.5) × 30 target coverage days. | Sets starting coverage and prevents an artificial startup famine while farms/trade begin from the balanced start state. | lab/src/nodes/food.js: Food Inventory initial = population_initial × Food Target Coverage Days. |
 | B Food Production Signal | initial_stock | 16.325911049497233 / 20.174088950502767 | Initial smoothed production plan. A=20.174088950502767, B=16.325911049497233 after land-limited A and B's assigned startup exports. | Seeds farm energy requests and desired farm capacity at the physically balanced startup production plan. | lab/src/nodes/food.js start-state algorithm (soft land efficiency plus startup export allocation); V7_7_12_ARCHITECTURE_SPEC §5. |
-| B Local Base Demand | constant | 22 / 16 | Базовый конечный спрос на металл (A 16 / B 22 /день). | Масштаб конечного рынка металла; B — больший потребитель при меньшей добыче → структурный импорт металла B из A (~21–23/день). | Shipment Rate A→B: 23.1 (Mode 12), 20.8 (Mode 17). |
 | B Population Initial | constant | 8.5 / 28 | Starting population of the region (A 28 / B 8.5, model units of people). | Sets the scale of each region's Population stock and, through participation 0.5, its labor force (A 14 / B 4.25), compared with the region's total labor requirement. A is the larger economy, so it starts with the larger population; in the first year both regions employ about 94 % of their labor force (Mode 46). | docs/research/POPULATION_PROTOTYPE_2026-10-04_RU.md (calibration, participation 0.50); docs/tasks/030-population/V7_7_11_ARCHITECTURE_SPEC.md §1. Added by the owner at acceptance: the task listed only the 11 shared parameters. |
 | B Regolith Base Extraction Capacity | constant | 5 / 7 | [calib] fixed extraction capacity (5). | Caps Regolith extraction through the standard soft-cap function. | Owner skeleton feasibility value; candidate run to confirm baseline and shock behaviour. |
 | B Regolith Demand Signal | initial_stock | 0.35 | Initial smoothed Regolith demand signal for colony B, value 0.35. | Seeds the STOCK sizing signal without reading instantaneous demand directly. | draft/regolith-mine.json; V7_7_5_ARCHITECTURE_SPEC §1. |
@@ -467,6 +479,7 @@
 | Deposits Enabled | switch | 1 | Deposit-layer master switch, raw value 1. | 0 preserves legacy extraction-rate formulas in Modes 0-43; 1 enables reserve targeting, exploration demand/consumption, and the smooth depletion cap. Extraction FLOW endpoints remain retargeted to Proven Reserves in all modes. | V7_7_8_ARCHITECTURE_SPEC §1–§2 and draft/deposits.json. |
 | Food Enabled | switch | 0 | Food-layer switch; default 0, enabled only by new Modes 49–51. | At 0 every food replacement selects the previous formula; at 1 food/farms/trade and their feedbacks are active. | docs/tasks/032-food/V7_7_12_ARCHITECTURE_SPEC.md §§1–5 and docs/research/FOOD_PROTOTYPE_2026-10-05_RU.md. |
 | Intermediate Inputs Enabled | switch | 1 | Переключатель v7.4 (1 в сыром файле; 0 в Modes 0–16; 1 в 17–20). | При 0 — точное воспроизведение v7.3 r2 (Feedstock из ∅ по legacy-цене). При 1 — металл как физический вход, Feedstock Extraction = 0, Feedstock Price = Market Price, Desired Smelting Rate += поставки. Только форма IfThenElse(switch, new, old). | CHECK_CANDIDATE r2: Modes 0–16 changed=0, maxAbs=0. |
+| Labor Market Enabled | switch | 0 | Labor-market switch; default 0 and enabled only by new Modes 52–53. | At 0 every labor_market replacement selects the previous branch; at 1 population-driven demand, flexible wages and labor-availability guards are active. | docs/tasks/034-labor-market/V7_7_13_ARCHITECTURE_SPEC.md §§0–5 and docs/research/CLOSURE_PROTOTYPE_2026-10-09_RU.md. |
 | Ore Capital Enabled | switch | 1 | Ore-mining simple-capital master switch, raw value 1. | 0 preserves accepted Modes 0-39 exactly; 1 makes effective mining capacity read ore-mine capital and enables mine expansion, depreciation, retirement, and backing-resource sinks. | V7_7_6_ARCHITECTURE_SPEC §0–§3; owner node declaration. |
 | Power Resource Capital Enabled | switch | 1 | Power-resource-extraction simple-capital master switch, raw value 1. | 0 preserves accepted Modes 0-41 exactly; 1 applies the smooth mine-capacity cap and enables mine expansion, depreciation, retirement, and backing-resource sinks. | V7_7_7_ARCHITECTURE_SPEC §0–§3; owner node declaration. |
 | Process Energy Enabled | switch | 1 | Process-energy layer master switch, raw value 1. | 0 preserves accepted v7.7.8 process-rate and allocator behaviour in Modes 0-45; 1 enables energy requests and fulfillment-limited process rates in Modes 46-47. | V7_7_9_ARCHITECTURE_SPEC §1–§2 and draft/process-energy.json. |
@@ -524,11 +537,11 @@
 | A Electronics Inventory | initial_stock | A | 500 | = |  |  |
 | A Electronics Inventory Adjustment Time | constant | A | 30 | = |  |  |
 | A Electronics Labor per Unit | constant | A | 0.05 | = |  | ✓ |
-| A Electronics Local Base Demand | constant | A | 20 | **16** |  | ✓ |
 | A Electronics Reference Price | constant | A | 28 | = |  | ✓ |
 | A Electronics Retired Factory Capacity | initial_stock | A | 0 | = | Cumulative permanently retired electronics capacity in A. |  |
 | A Electronics Scarcity Strength | constant | A | 1.5 | = |  |  |
 | A Electronics Target Inventory | constant | A | 500 | = |  | ✓ |
+| A External Electronics Local Base Demand | constant | A | 20 | **16** | Labor market node: former external driver A Electronics Local Base Demand (kept for the switch-off branch). | ✓ |
 | A Feedstock per Electronics | constant | A | 1 | = |  | ✓ |
 | A Legacy Electronics Factory Capacity | constant | A | 45 | = | Accepted v7.2 fixed A electronics factory capacity used only when Capital Lifecycle Enabled = 0. |  |
 | A Test 13 Electronics Demand Applies | constant | A | 1 | **0** | Applicability flag for Mode 13 electronics-demand test wiring in colony A. | ✓ |
@@ -560,11 +573,11 @@
 | B Electronics Inventory | initial_stock | B | 500 | = |  |  |
 | B Electronics Inventory Adjustment Time | constant | B | 30 | = |  |  |
 | B Electronics Labor per Unit | constant | B | 0.05 | = |  | ✓ |
-| B Electronics Local Base Demand | constant | B | 16 | **20** |  | ✓ |
 | B Electronics Reference Price | constant | B | 28 | = |  | ✓ |
 | B Electronics Retired Factory Capacity | initial_stock | B | 0 | = | Cumulative permanently retired electronics capacity in B. |  |
 | B Electronics Scarcity Strength | constant | B | 1.5 | = |  |  |
 | B Electronics Target Inventory | constant | B | 500 | = |  | ✓ |
+| B External Electronics Local Base Demand | constant | B | 16 | **20** | Labor market node: former external driver B Electronics Local Base Demand (kept for the switch-off branch). | ✓ |
 | B Feedstock per Electronics | constant | B | 1 | = |  | ✓ |
 | B Legacy Electronics Factory Capacity | constant | B | 45 | = | Accepted v7.2 fixed B electronics factory capacity used only when Capital Lifecycle Enabled = 0. |  |
 | B Test 13 Electronics Demand Applies | constant | B | 0 | **1** | Applicability flag for Mode 13 electronics-demand test wiring in colony B. | ✓ |
@@ -589,6 +602,7 @@
 | Electronics Cargo Goods Contract Value B to A | initial_stock | global | 0 |  | Supplier-side contract value attached to electronics currently in transit. |  |
 | Electronics Construction Time | constant | global | 240 |  | Structural time scale for adding installed electronics factory capacity. | ✓ |
 | Electronics Decommissioning Time | constant | global | 720 |  | Time from decommissioning commitment to completed retirement for electronics capital. |  |
+| Electronics Demand per Capita | constant | global | 0.7142857142857143 |  | Labor market node: parameter Electronics Demand per Capita. | ✓ |
 | Electronics Depreciation Rate | constant | global | 0.00005 |  | Physical end-of-life attrition rate of electronics factory capacity per day. |  |
 | Electronics Export Inventory Release Time | constant | global | 5 |  |  |  |
 | Electronics Export Reserve | constant | global | 100 |  |  |  |
@@ -611,18 +625,26 @@
 |---|---|---|---:|---:|---|:---:|
 | A Capital Goods Labor per Unit | constant | A | 2 | = | Generated labor element for A Capital Goods Labor per Unit. | ✓ |
 | A Construction Materials Labor per Unit | constant | A | 0.3 | = | Generated labor element for A Construction Materials Labor per Unit. | ✓ |
+| A Flexible Wage | initial_stock | A | 100 | **140** | Labor market node: wage that follows labor tightness. | ✓ |
+| A Initial Wage | constant | A | 100 | **140** | Labor market node: wage at the start (floor reference). | ✓ |
+| A Labor Demand Signal | initial_stock | A | 14 | **4.25** | Labor market node: smoothed labor demand at unconstrained output. | ✓ |
 | A Regolith Extraction Labor per Unit | constant | A | 0.2 | = | Generated labor element for A Regolith Extraction Labor per Unit. | ✓ |
-| A Wage | constant | A | 100 | **140** |  | ✓ |
 | Attractiveness Wage Weight | constant | global | 1 |  | Generated population element for Attractiveness Wage Weight. | ✓ |
 | Automation Labor Exponent | constant | global | 1 |  | Generated labor element for Automation Labor Exponent. | ✓ |
 | B Capital Goods Labor per Unit | constant | B | 2 | = | Generated labor element for B Capital Goods Labor per Unit. | ✓ |
 | B Construction Materials Labor per Unit | constant | B | 0.3 | = | Generated labor element for B Construction Materials Labor per Unit. | ✓ |
+| B Flexible Wage | initial_stock | B | 140 | **100** | Labor market node: wage that follows labor tightness. | ✓ |
+| B Initial Wage | constant | B | 140 | **100** | Labor market node: wage at the start (floor reference). | ✓ |
+| B Labor Demand Signal | initial_stock | B | 4.25 | **14** | Labor market node: smoothed labor demand at unconstrained output. | ✓ |
 | B Regolith Extraction Labor per Unit | constant | B | 0.2 | = | Generated labor element for B Regolith Extraction Labor per Unit. | ✓ |
-| B Wage | constant | B | 140 | **100** |  | ✓ |
 | Food Labor per Unit | constant | global | 0.15 |  | Food node: parameter Food Labor per Unit. | ✓ |
+| Labor Demand Signal Time | constant | global | 10 |  | Labor market node: parameter Labor Demand Signal Time. | ✓ |
 | Labor Participation Share | constant | global | 0.5 |  | Generated population element for Labor Participation Share. | ✓ |
 | Minimum Human Labor Share | constant | global | 0.05 |  | Generated labor element for Minimum Human Labor Share. | ✓ |
 | Reference Real Wage | constant | global | 100 |  | Generated population element for Reference Real Wage. | ✓ |
+| Target Labor Tightness | constant | global | 0.95 |  | Labor market node: parameter Target Labor Tightness. | ✓ |
+| Wage Adjustment Rate | constant | global | 0.000277777777778 |  | Labor market node: parameter Wage Adjustment Rate. | ✓ |
+| Wage Floor Share | constant | global | 0.3 |  | Labor market node: parameter Wage Floor Share. | ✓ |
 
 ### Metal
 
@@ -712,6 +734,7 @@
 | B Test 7 Metal Demand Applies | constant | B | 1 | **0** | Applicability flag for Mode 7 metal-demand test wiring in colony B. | ✓ |
 | B Test 8 Metal Demand Applies | constant | B | 1 | **0** | Applicability flag for Mode 8 metal-demand test wiring in colony B. | ✓ |
 | B Test 9 Metal Demand Applies | constant | B | 1 | **0** | Applicability flag for Mode 9 metal-demand test wiring in colony B. | ✓ |
+| Metal Demand per Capita | constant | global | 0.5714285714285714 |  | Labor market node: parameter Metal Demand per Capita. | ✓ |
 | Metal Input Adjustment Time | constant | global | 20 |  | Adjustment time in days for the Electronics Metal input buffer demand. Initial candidate r1 value from the approved specification. | ✓ |
 | Metal Input Target Days | constant | global | 20 |  | Target Electronics-owned Metal/feedstock buffer measured in days of coupled consumption. Initial candidate r1 value from the approved specification. | ✓ |
 | Metal per Capital Goods Unit | constant | global | 1 |  | Physical metal input per abstract capital-goods unit. | ✓ |
@@ -759,12 +782,12 @@
 | A Construction Materials Plant Retired Capacity | initial_stock | A | 0 | = | Cumulative retired construction-materials plant capacity in colony A. |  |
 | A Demand Elasticity | constant | A | 0.6 | = |  |  |
 | A Domestic Supply Signal | initial_stock | A | 16 | **22** | Smoothed recent domestic metal production available to A's buyers. | ✓ |
+| A External Local Base Demand | constant | A | 16 | **22** | Labor market node: former external driver A Local Base Demand (kept for the switch-off branch). | ✓ |
 | A Farm Capacity | initial_stock | A | 22 | **17.142206601972095** | Food node: farm capacity (capital). | ✓ |
 | A Farm Land Capacity | switch | A | 22 (сценарии: {"51":40}…) | **60** | Food node: farm land of region A (soft cap of its farms). | ✓ |
 | A Food Demand Signal | initial_stock | A | 28 | **8.5** | Food node: A Food Demand Signal. | ✓ |
 | A Food Inventory | initial_stock | A | 840 | **255** | Food node: A Food Inventory. | ✓ |
 | A Food Production Signal | initial_stock | A | 20.174088950502767 | **16.325911049497233** | Food node: smoothed production plan (energy request signal). | ✓ |
-| A Local Base Demand | constant | A | 16 | **22** | Local industrial metal demand at the reference price. | ✓ |
 | A Perceived Attractiveness | initial_stock | A | 1 | = | Generated population element for A Perceived Attractiveness. |  |
 | A Population Initial | constant | A | 28 | **8.5** | Generated population element for A Population Initial. | ✓ |
 | A Regolith Base Extraction Capacity | constant | A | 7 | **5** | [calib] Baseline Regolith extraction capacity in colony A. | ✓ |
@@ -802,12 +825,12 @@
 | B Construction Materials Plant Retired Capacity | initial_stock | B | 0 | = | Cumulative retired construction-materials plant capacity in colony B. |  |
 | B Demand Elasticity | constant | B | 0.6 | = |  |  |
 | B Domestic Supply Signal | initial_stock | B | 22 | **16** | Smoothed recent domestic metal production available to B's buyers. | ✓ |
+| B External Local Base Demand | constant | B | 22 | **16** | Labor market node: former external driver B Local Base Demand (kept for the switch-off branch). | ✓ |
 | B Farm Capacity | initial_stock | B | 17.142206601972095 | **22** | Food node: farm capacity (capital). | ✓ |
 | B Farm Land Capacity | switch | B | 60 (сценарии: {"51":40}…) | **22** | Food node: farm land of region B (soft cap of its farms). | ✓ |
 | B Food Demand Signal | initial_stock | B | 8.5 | **28** | Food node: B Food Demand Signal. | ✓ |
 | B Food Inventory | initial_stock | B | 255 | **840** | Food node: B Food Inventory. | ✓ |
 | B Food Production Signal | initial_stock | B | 16.325911049497233 | **20.174088950502767** | Food node: smoothed production plan (energy request signal). | ✓ |
-| B Local Base Demand | constant | B | 22 | **16** | Local industrial metal demand at the reference price. | ✓ |
 | B Perceived Attractiveness | initial_stock | B | 1 | = | Generated population element for B Perceived Attractiveness. |  |
 | B Population Initial | constant | B | 8.5 | **28** | Generated population element for B Population Initial. | ✓ |
 | B Regolith Base Extraction Capacity | constant | B | 5 | **7** | [calib] Baseline Regolith extraction capacity in colony B. | ✓ |
@@ -1008,8 +1031,9 @@
 | Construction Materials Enabled | switch | global | 1 (сценарии: {"0":0,"1":0,"2":0,"3":0,"4":0,"5":0,"6":0,"7":0,"8":0,"9":0…) |  | v7.7 master switch: construction materials physically constrain colonial capacity expansion. | ✓ |
 | Construction Materials Energy Enabled | switch | global | 1 (сценарии: {"0":0,"1":0,"2":0,"3":0,"4":0,"5":0,"6":0,"7":0,"8":0,"9":0…) |  | v7.7.2 switch: makes Construction Materials processing participate in the colony energy allocator. | ✓ |
 | Deposits Enabled | switch | global | 1 (сценарии: {"0":0,"1":0,"2":0,"3":0,"4":0,"5":0,"6":0,"7":0,"8":0,"9":0…) |  | Generated deposit element for Deposits Enabled. | ✓ |
-| Food Enabled | switch | global | 0 (сценарии: {"49":1,"50":1,"51":1}…) |  | Food node: switch of the food layer (0 = every earlier series unchanged). | ✓ |
+| Food Enabled | switch | global | 0 (сценарии: {"49":1,"50":1,"51":1,"52":1,"53":1}…) |  | Food node: switch of the food layer (0 = every earlier series unchanged). | ✓ |
 | Intermediate Inputs Enabled | switch | global | 1 (сценарии: {"0":0,"1":0,"2":0,"3":0,"4":0,"5":0,"6":0,"7":0,"8":0,"9":0…) |  | Master switch for v7.4 Metal-to-Electronics intermediate-input coupling. Modes 0-16 override to 0; Modes 17+ enable it. | ✓ |
+| Labor Market Enabled | switch | global | 0 (сценарии: {"52":1,"53":1}…) |  | Labor market node: switch of the labor market (0 = every earlier series unchanged). | ✓ |
 | Ore Capital Enabled | switch | global | 1 (сценарии: {"0":0,"1":0,"2":0,"3":0,"4":0,"5":0,"6":0,"7":0,"8":0,"9":0…) |  | Generated simple_capital switch for Ore Capital Enabled. | ✓ |
 | Power Resource Capital Enabled | switch | global | 1 (сценарии: {"0":0,"1":0,"2":0,"3":0,"4":0,"5":0,"6":0,"7":0,"8":0,"9":0…) |  | Generated simple_capital switch for Power Resource Capital Enabled. | ✓ |
 | Power Resource Enabled | switch | global | 0 (сценарии: {"0":0,"1":0,"2":0,"3":0,"4":0,"5":0,"6":0,"7":0,"8":0,"9":0…) |  | v7.6 master switch. When 0, the accepted v7.5.1 energy path is reproduced; when 1, generation requires a physical operating resource. |  |
