@@ -1,0 +1,48 @@
+{
+  "format": "orbital-economy-parameter-annotations-fragment-v1",
+  "model": "Orbital Economy v7.7.14 Recalibration candidate r1",
+  "updated": "2026-10-11",
+  "note": "Task 035 recalibration fragment. Updates exactly the three parameter annotations required by TASK_RU §2. Values follow the owner decision after sensitivity analysis; Target Labor Tightness is unchanged but explicitly marked as a key long-horizon wage parameter.",
+  "parameters": {
+    "Power Operating Reserve Factor": {
+      "role": "Generation operating-reserve factor, recalibrated from 1.02 to 1.10.",
+      "effect": "Generation capacity is planned at 110% of expected industrial load. This removes the thinnest reserve margin in the model and moves the system away from the energy-deficit threshold where small demand/model errors caused chronic shortage.",
+      "evidence": "docs/research/SENSITIVITY_2026-10-10_RU.md: Power Operating Reserve Factor is one of the strongest nonlinear parameters; on the 20-year pass, lowering the old 1.02 reserve produced chronic energy deficit and large output/price effects. Owner decision 2026-10-11: recalibrate to 1.10.",
+      "since": "v7.7.14 candidate r1",
+      "tags": [
+        "power",
+        "capacity",
+        "reserve",
+        "recalibration",
+        "sensitivity"
+      ]
+    },
+    "Labor Participation Share": {
+      "role": "Dimensionless share of population counted as labor force, recalibrated from 0.50 to 0.52.",
+      "effect": "Labor Force = Population × Labor Participation Share for each region. The 0.52 calibration moves colony A off the labor-shortage edge while preserving the intended labor-market mechanism; labor-demand signal initial stocks are recalibrated consistently to 14.56 / 4.42.",
+      "evidence": "docs/research/SENSITIVITY_2026-10-10_RU.md: participation is strongly nonlinear and its effect grows on the 20-year horizon; owner 80-year calibration decision on 2026-10-11 selected 0.52 to remove the shortage-edge behavior while keeping wages stable for roughly two decades.",
+      "since": "v7.7.14 candidate r1",
+      "tags": [
+        "population",
+        "labor",
+        "participation",
+        "recalibration",
+        "sensitivity"
+      ]
+    },
+    "Target Labor Tightness": {
+      "role": "KEY PARAMETER: target ratio of smoothed labor demand to labor force; value remains 0.95.",
+      "effect": "Sets the long-run wage equilibrium target: tightness above 0.95 raises wages and below 0.95 lowers them. The value is unchanged in v7.7.14 but is explicitly marked key because sensitivity grows materially on long horizons.",
+      "evidence": "docs/research/SENSITIVITY_2026-10-10_RU.md: Target Labor Tightness grows from moderate short-horizon sensitivity to a strong long-horizon wage driver; owner decision 2026-10-11 keeps 0.95 unchanged and marks it as a key parameter.",
+      "since": "v7.7.14 candidate r1",
+      "tags": [
+        "labor-market",
+        "wage",
+        "target",
+        "key-parameter",
+        "long-horizon",
+        "sensitivity"
+      ]
+    }
+  }
+}

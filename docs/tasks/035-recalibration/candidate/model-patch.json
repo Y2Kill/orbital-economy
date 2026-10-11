@@ -1,0 +1,23 @@
+{
+  "format": "orbital-economy-model-patch-v1",
+  "base_sha256": "cede8ecf699995bc818646a2e922f87f3d798c002231fa70e14d3e357196d4f1",
+  "name": "Orbital Economy v7.7.14 Recalibration candidate r1",
+  "replace_formulas": [
+    {
+      "name": "Power Operating Reserve Factor",
+      "value": 1.1
+    },
+    {
+      "name": "Labor Participation Share",
+      "value": 0.52
+    },
+    {
+      "name": "A Labor Demand Signal",
+      "initial_value": 14.56
+    },
+    {
+      "name": "B Labor Demand Signal",
+      "initial_value": 4.42
+    }
+  ]
+}

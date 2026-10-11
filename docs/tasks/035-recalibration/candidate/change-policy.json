@@ -1,0 +1,61 @@
+{
+  "format": "orbital-economy-change-policy-v1",
+  "name": "Orbital Economy v7.7.14 Recalibration candidate r1 - change contract",
+  "description": "Finalized from the owner draft for task 035. Accepted baseline: v7.7.13 r1. This is a full recalibration: exactly four definitions change; series may change in all Modes 0-53; structural, scenario and time-axis changes remain forbidden. Rules and validation_sha256 are unchanged from the owner draft.",
+  "accepted_model_sha256": "cede8ecf699995bc818646a2e922f87f3d798c002231fa70e14d3e357196d4f1",
+  "validation_sha256": "b28a25e4dc5a37494821e68cd068e0774c293d1aa91e0abb4df04c51f1b29576",
+  "comparison": {
+    "abs_tolerance": 0,
+    "rel_tolerance": null,
+    "rel_floor": 1e-12
+  },
+  "engine": {
+    "package": "simulation",
+    "version": "9.0.0"
+  },
+  "default_action": "deny",
+  "require_full_mode_coverage": true,
+  "rules": [
+    {
+      "id": "forbid-structural-drift",
+      "action": "deny",
+      "event": [
+        "element_added",
+        "element_removed",
+        "series_added",
+        "series_removed",
+        "mode_added",
+        "mode_removed",
+        "link_added",
+        "link_removed",
+        "type_changed",
+        "simulation_changed",
+        "time_axis_changed",
+        "scenario_renamed",
+        "scenario_input_changed"
+      ],
+      "name": "*"
+    },
+    {
+      "id": "recalibrate-four-values",
+      "action": "allow",
+      "event": "definition_changed",
+      "name": [
+        "Power Operating Reserve Factor",
+        "Labor Participation Share",
+        "A Labor Demand Signal",
+        "B Labor Demand Signal"
+      ],
+      "required": true,
+      "note": "Power Operating Reserve Factor 1.02 -> 1.10; Labor Participation Share 0.50 -> 0.52; the labor demand signal starts = initial population x participation (A 14.56, B 4.42), as the labor_market node generates it (V7_7_14_RECALIBRATION_SPEC §1)"
+    },
+    {
+      "id": "every-series-may-change",
+      "action": "allow",
+      "event": "series_changed",
+      "modes": "0-53",
+      "name": "*",
+      "note": "a recalibration: the generation reserve enters capacity planning in every capital-lifecycle Mode, participation changes the labor force and through it migration in every Mode (spec §3)"
+    }
+  ]
+}
