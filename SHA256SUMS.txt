@@ -401,6 +401,12 @@ debac6be58280c6c52b01b3a958f7f04ef619ea05fe2d15f533bdae5dcd075f3  ./docs/tasks/0
 66d1ccd25a5011439af04d72b820602bdcbcd330b287d88a4a41a71fb9d97e3d  ./docs/tasks/034-labor-market/draft/skeleton-patch.json
 884c092d1630d416caf897282f81d9cdd205e7271836e252d248f71e84c62ad6  ./docs/tasks/034-labor-market/draft/validation-v7.7.13-draft.json
 979137db1b2685dff0fd9ded2869d3baf3863d742e57473fc82731444e1aafb3  ./docs/tasks/034-labor-market/scope.json
+b1d83cd928c16331f3987ab8285cba8ae0b80e401dd72bae706bc6210cfff434  ./docs/tasks/035-recalibration/TASK_RU.md
+454b3e122df3767df64941d9c7d808e1ecbfbb5bcbaf50af5898121c27ab7fbe  ./docs/tasks/035-recalibration/V7_7_14_RECALIBRATION_SPEC.md
+3cdc634d0b59126999563321f6ec0d77bac5eb8b2e02561d6b2eb58d7f08b00b  ./docs/tasks/035-recalibration/draft/change-policy-v7.7.14-draft.json
+579b62d9e247904554e03fa6bb32ab6ea588bd75010c748afc61a4ddbdcbf0eb  ./docs/tasks/035-recalibration/draft/skeleton-patch.json
+b28a25e4dc5a37494821e68cd068e0774c293d1aa91e0abb4df04c51f1b29576  ./docs/tasks/035-recalibration/draft/validation-v7.7.14-draft.json
+9ac061df13a4fd4a579d007fd546e96625a3034f0e837c7b6a40e84c36d914fd  ./docs/tasks/035-recalibration/scope.json
 44d2e557f1cb2322739bc95ee2b6dcbf6d6fcb708da14e90d53250936e50da5c  ./docs/tasks/README_RU.md
 bbf818e93b88d606b3137b1bb69d60db8c41c9df4089025a921b1ca00f473244  ./lab/APPLY_PATCH.cmd
 5f5761d65866245077b6ea1588d5c74a5ed837ef427fd79250a614c819b35b63  ./lab/CHANGELOG.md
@@ -428,7 +434,7 @@ d6716ff18e6e38880597c84e5ed7968082477d3c09af7015dd173377ccfc864c  ./lab/README_R
 52bcfc0749480fa5467e713f3a6948258dccb560357eef5822f8bcee070c652c  ./lab/RUN_LAB.cmd
 324ccedcd35621f7716bc905acc67d09076f040075e68d8e1c5e657a32f48499  ./lab/RUN_TESTS.cmd
 b08fd6ad35bba528bf455553dfd5d9f7c68b81658f2cbf6cf2a3989afb647629  ./lab/SELF_TEST.cmd
-81b8e386ed8fe495803bff1e9befac72bec8f7348df90e79f593ab1f71d5032b  ./lab/SHA256SUMS.txt
+dbcc584116063a64d72b7a795fab28b50606aa1ef69f19380720f35396b64881  ./lab/SHA256SUMS.txt
 75120cad55eab07655f699135bd7997c2a18db496be28dbd8741ddecedd4bdda  ./lab/STRUCTURE_AUDIT.cmd
 7396a4da60a41cc41a67c7bb8baa619b0ad5be9e745c0c08f17c1a26a56a18e5  ./lab/STRUCTURE_SELF_TEST.cmd
 58cb8e2bf5a04de53a4c568c22bd8f840585e27dec55b701520b28472e6652b8  ./lab/docs/ARCHITECTURE_RU.md
@@ -477,7 +483,7 @@ e980c535ef0ade1768c9f4cdbf1058e219ad3e0eb21cc8fc9c4221a12f33c720  ./lab/src/depo
 1ffae379e11c3962d782cb10ea3bdd637ac4f0541d80e484d1501798d6184a26  ./lab/src/loop_audit.js
 d50e351606b701badfeba199e4adef824e30b1c6e14e1d27593c1a5347399d8e  ./lab/src/loop_qa.js
 6c8dbd8fc2705b12c0130e2226276328c9f84d2d6aa6c22a845e7ad53c1fadf8  ./lab/src/model.js
-23094d32b2036410bc236a6cdfdcf2fdf3457eef2734b1a7cc6b9e0974affd7c  ./lab/src/node_qa.js
+e8cb6753ed02cefbf3556f5cb397f4ec6391b5c2029484216a18fde50cca6c56  ./lab/src/node_qa.js
 334743997c6b2bd14177298d69dabd1472b17ed1f8ec29e352ac856373b30f05  ./lab/src/nodes/capital_lifecycle.js
 db5abb1bd96c438a0ca066cc300df8b8f691d083e6770814cd86a86cd1809b74  ./lab/src/nodes/deposit.js
 db55cf5aae42467bacd9fc0003e81fb75399bf9dd813009c2bb51701ba213fd4  ./lab/src/nodes/energy_consumer.js

@@ -1,0 +1,17 @@
+{
+  "task": "035",
+  "title": "v7.7.14 Recalibration: Power Operating Reserve Factor 1.02 -> 1.10, Labor Participation Share 0.50 -> 0.52 (labor demand signal starts follow); every series may change, nothing structural; 16 scenario checks re-thresholded",
+  "branch": "task/035-recalibration",
+  "allow": [],
+  "allow_binary": [],
+  "allow_protected": [
+    "docs/tasks/035-recalibration/candidate/**"
+  ],
+  "required_changes": [
+    "docs/tasks/035-recalibration/candidate/model-patch.json",
+    "docs/tasks/035-recalibration/candidate/validation.json",
+    "docs/tasks/035-recalibration/candidate/change-policy.json",
+    "docs/tasks/035-recalibration/candidate/PARAMETER_ANNOTATIONS_fragment.json"
+  ],
+  "sums_by": "reviewer"
+}

@@ -718,9 +718,10 @@ await expect('10. simple_capital fixture integrates with validation and static a
   const peakA = Math.max(...aCap), maxExpansion = Math.max(...aExpansion);
   const finalA = aCap[aCap.length - 1], finalB = bCap[bCap.length - 1];
   if (Math.abs(aCap[0] - 7) > 1e-9 || Math.abs(bCap[0] - 5) > 1e-9) throw new Error(`Mode 38 initial capacities differ: A=${aCap[0]}, B=${bCap[0]}`);
-  if (!(peakA > 8.5 && peakA < 9.2)) throw new Error(`Mode 38 A peak capacity ${peakA} outside prototype envelope 8.5..9.2`);
+  // Envelope covers the v7.7.5 prototype and the v7.7.14 recalibration (generation reserve 1.10: peak 9.41, final A 2.83).
+  if (!(peakA > 8.5 && peakA < 9.8)) throw new Error(`Mode 38 A peak capacity ${peakA} outside envelope 8.5..9.8`);
   if (!(maxExpansion > 0.05 && maxExpansion < 0.09)) throw new Error(`Mode 38 A Expansion max ${maxExpansion} outside prototype envelope 0.05..0.09`);
-  if (!(finalA > 1.5 && finalA < 3.2 && finalB > 0.1 && finalB < 0.5)) throw new Error(`Mode 38 final capacities outside prototype envelope: A=${finalA}, B=${finalB}`);
+  if (!(finalA > 1.5 && finalA < 3.4 && finalB > 0.1 && finalB < 0.5)) throw new Error(`Mode 38 final capacities outside prototype envelope: A=${finalA}, B=${finalB}`);
 
   simpleState = { base: baseModel, model, rebuildTarget: alreadyPresent ? acceptedLayer.target : model, validation: merged, expanded };
   return `simple=${expectedSimple} CONFORMING; loops=0; P2.simple=${expectedSimple}; unclassified=0; Mode38 PASS; A peak=${peakA.toFixed(3)}, expansion max=${maxExpansion.toFixed(4)}, final A/B=${finalA.toFixed(3)}/${finalB.toFixed(3)}`;
@@ -1550,8 +1551,13 @@ await expect('43. three-region population creates six migrations and preserves p
 
 await expect('44. strip and rebuild population model with zero definition/replacement/link differences', () => {
   if (!populationState?.target) throw new Error('case 40 did not produce population target');
-  const stripped = stripPopulationNode(populationState.target, populationFixture);
-  const expanded = expandNode(populationFixture, stripped);
+  // An accepted population layer is rebuilt from its accepted declaration: its parameters may be recalibrated
+  // (v7.7.14: participation 0.52) while the bench fixture keeps the task-029 values.
+  const decl = populationState.alreadyPresent
+    ? (populationDeclarations.find(x => JSON.stringify(x.decl?.colonies) === JSON.stringify(populationFixture.colonies))?.decl || populationFixture)
+    : populationFixture;
+  const stripped = stripPopulationNode(populationState.target, decl);
+  const expanded = expandNode(decl, stripped);
   const rebuilt = applyPatch(stripped, { format: PATCH_FORMAT, ...expanded.patch }).model;
   const a = new Map(populationState.target.elements.filter(e => e.type !== 'LINK').map(e => [e.name, def(e)]));
   const b = new Map(rebuilt.elements.filter(e => e.type !== 'LINK').map(e => [e.name, def(e)]));
