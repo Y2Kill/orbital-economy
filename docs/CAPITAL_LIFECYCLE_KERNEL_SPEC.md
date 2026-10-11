@@ -1,8 +1,8 @@
 # Capital Lifecycle Kernel — формальная спецификация
 
-Статус: **CURRENT / current lifecycle contract carried into v7.7.13 r1** (обновлено 2026-09-25). Kernel-v1 remains the common lifecycle foundation; all seven accepted instances now use kernel-v2 physical Capital Goods backing.
-Модель: `Orbital Economy v7.7.13 r1 — Labor Market`, SHA-256 `cede8ecf699995bc818646a2e922f87f3d798c002231fa70e14d3e357196d4f1`. Шахты реголита (v7.7.5), руды (v7.7.6) и энергоресурса (v7.7.7) — не экземпляры ядра, а простой капитал (`simple_capital`, свой плагин validation); число экземпляров ядра не изменилось. Capital Lifecycle structure is inherited from accepted v7.5.1.
-Машинная форма контракта: plugin `capital_lifecycle_kernel` в `validation/validation-v7.7.13.json`; проверяющий код `lab/src/lifecycle_conformance.js` (static) и `lab/src/checks.js` (runtime). При расхождении машинная форма и accepted code имеют приоритет.
+Статус: **CURRENT / current lifecycle contract carried into v7.7.14 r1** (обновлено 2026-09-25). Kernel-v1 remains the common lifecycle foundation; all seven accepted instances now use kernel-v2 physical Capital Goods backing.
+Модель: `Orbital Economy v7.7.14 r1 — Recalibration`, SHA-256 `bbb4f9ea5c522514a84e9de0cc5decf5585da0cd2dd3ec80a63e79d11c0f0375`. Шахты реголита (v7.7.5), руды (v7.7.6) и энергоресурса (v7.7.7) — не экземпляры ядра, а простой капитал (`simple_capital`, свой плагин validation); число экземпляров ядра не изменилось. Capital Lifecycle structure is inherited from accepted v7.5.1.
+Машинная форма контракта: plugin `capital_lifecycle_kernel` в `validation/validation-v7.7.14.json`; проверяющий код `lab/src/lifecycle_conformance.js` (static) и `lab/src/checks.js` (runtime). При расхождении машинная форма и accepted code имеют приоритет.
 
 ## 1. Зачем
 

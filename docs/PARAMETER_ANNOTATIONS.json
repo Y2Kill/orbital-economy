@@ -1,7 +1,7 @@
 {
   "format": "orbital-economy-parameter-annotations-v1",
-  "model": "Orbital Economy v7.7.13 r1 — Labor Market",
-  "updated": "2026-10-10",
+  "model": "Orbital Economy v7.7.14 r1 — Recalibration",
+  "updated": "2026-10-11",
   "policy": "Каждый внешний параметр, влияющий на структуру поведения (сравнительные преимущества, нормирование, планирование), должен иметь аннотацию: роль, что меняет, доказательство (ссылка на прогон/документ). Несимметричные пары A/B аннотируются в первую очередь. Изменение значения = изменение модели → через change-policy, с обновлением аннотации.",
   "embedded_literals": [
     {
@@ -496,11 +496,17 @@
       ]
     },
     "Power Operating Reserve Factor": {
-      "role": "Отраслевая policy kernel капитала (1.02).",
-      "effect": "Не часть kernel-контракта — отраслевая параметризация (KERNEL_SPEC §4.3). Сравнение секторов: CAPITAL_LIFECYCLE_SECTOR_MAPPING, последняя таблица.",
+      "role": "Generation operating-reserve factor, recalibrated from 1.02 to 1.10.",
+      "effect": "Generation capacity is planned at 110% of expected industrial load. This removes the thinnest reserve margin in the model and moves the system away from the energy-deficit threshold where small demand/model errors caused chronic shortage. A sector policy of the capital kernel, not part of the kernel contract (KERNEL_SPEC §4.3); sector comparison: CAPITAL_LIFECYCLE_SECTOR_MAPPING, last table.",
+      "evidence": "docs/research/SENSITIVITY_2026-10-10_RU.md: Power Operating Reserve Factor is one of the strongest nonlinear parameters; on the 20-year pass, lowering the old 1.02 reserve produced chronic energy deficit and large output/price effects. Owner decision 2026-10-11: recalibrate to 1.10.",
       "since": "v7.4 r2",
       "tags": [
-        "capital-policy"
+        "capital-policy",
+        "power",
+        "capacity",
+        "reserve",
+        "recalibration",
+        "sensitivity"
       ]
     },
     "Power Strategic Reserve Fraction": {
@@ -3669,15 +3675,16 @@
       ]
     },
     "Labor Participation Share": {
-      "role": "Dimensionless share of population counted as labor force, value 0.50.",
-      "effect": "Labor Force = Population × Labor Participation Share for each region.",
-      "evidence": "docs/research/POPULATION_PROTOTYPE_2026-10-04_RU.md: third-series grid selected 0.50; V7_7_11_ARCHITECTURE_SPEC §1.",
+      "role": "Dimensionless share of population counted as labor force, recalibrated from 0.50 to 0.52.",
+      "effect": "Labor Force = Population × Labor Participation Share for each region. The 0.52 calibration moves colony A off the labor-shortage edge while preserving the intended labor-market mechanism; labor-demand signal initial stocks are recalibrated consistently to 14.56 / 4.42.",
+      "evidence": "docs/research/SENSITIVITY_2026-10-10_RU.md: participation is strongly nonlinear and its effect grows on the 20-year horizon; owner 80-year calibration decision on 2026-10-11 selected 0.52 to remove the shortage-edge behavior while keeping wages stable for roughly two decades.",
       "since": "v7.7.11 r1",
       "tags": [
         "population",
         "labor",
         "participation",
-        "calibrated"
+        "recalibration",
+        "sensitivity"
       ]
     },
     "Migration Max Rate": {
@@ -4140,15 +4147,17 @@
       ]
     },
     "Target Labor Tightness": {
-      "role": "Target ratio of smoothed labor demand to labor force, value 0.95.",
-      "effect": "Defines the wage equilibrium target; tightness above it raises wages, below it lowers wages.",
-      "evidence": "docs/tasks/034-labor-market/V7_7_13_ARCHITECTURE_SPEC.md §§0–5 and docs/research/CLOSURE_PROTOTYPE_2026-10-09_RU.md.",
+      "role": "KEY PARAMETER: target ratio of smoothed labor demand to labor force; value remains 0.95.",
+      "effect": "Sets the long-run wage equilibrium target: tightness above 0.95 raises wages and below 0.95 lowers them. The value is unchanged in v7.7.14 but is explicitly marked key because sensitivity grows materially on long horizons.",
+      "evidence": "docs/research/SENSITIVITY_2026-10-10_RU.md: Target Labor Tightness grows from moderate short-horizon sensitivity to a strong long-horizon wage driver; owner decision 2026-10-11 keeps 0.95 unchanged and marks it as a key parameter.",
       "since": "v7.7.13 r1",
       "tags": [
         "labor-market",
         "wage",
-        "labor",
-        "target"
+        "target",
+        "key-parameter",
+        "long-horizon",
+        "sensitivity"
       ]
     },
     "Wage Floor Share": {
@@ -4226,7 +4235,7 @@
       ]
     },
     "A Labor Demand Signal": {
-      "role": "Initial smoothed unconstrained labor-demand STOCK; A=14, B=4.25 (= initial Population × Labor Participation Share 0.5).",
+      "role": "Initial smoothed unconstrained labor-demand STOCK; A=14.56, B=4.42 (= initial Population × Labor Participation Share 0.52; 14 / 4.25 before v7.7.14).",
       "effect": "Seeds the labor-availability guard without a startup discontinuity and is the denominator driver of Labor Availability/Tightness.",
       "evidence": "V7_7_13_ARCHITECTURE_SPEC §§1,5 and labor_market generator: Population Initial × Labor Participation Share.",
       "since": "v7.7.13 r1",

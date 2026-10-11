@@ -1,10 +1,10 @@
 # Orbital Economy Lab — structure audit
 
-- generated: 2026-10-10T16:51:23.763Z
-- model: Orbital Economy v7.7.13 r1 — Labor Market
-- model SHA-256: `cede8ecf699995bc818646a2e922f87f3d798c002231fa70e14d3e357196d4f1`
-- validation: Orbital Economy v7.7.13 validation r1
-- validation SHA-256: `e28b5800586577849a0631889291092d669f2f2911df8d47853a9dd148d36b85`
+- generated: 2026-10-11T15:17:35.298Z
+- model: Orbital Economy v7.7.14 r1 — Recalibration
+- model SHA-256: `bbb4f9ea5c522514a84e9de0cc5decf5585da0cd2dd3ec80a63e79d11c0f0375`
+- validation: Orbital Economy v7.7.14 validation r1
+- validation SHA-256: `e542ce789cc7c7fc8745e3f8efa1d58440e78067d7e66a080d5276e65fd5e647`
 - status: **PASS**
 
 ## Open boundaries (declared physical-boundary meter)
@@ -471,7 +471,7 @@ Declared unit-transformation pairs (source flow physically backed by sink flows;
 | initial_value | A Farm Capacity | 22 | B Farm Capacity | 17.142206601972095 |
 | initial_value | A to B Food Export Signal | 0 | B to A Food Export Signal | 7.825911049497232 |
 | initial_value | Food Cargo A to B | 0 | Food Cargo B to A | 78.25911049497232 |
-| initial_value | A Labor Demand Signal | 14 | B Labor Demand Signal | 4.25 |
+| initial_value | A Labor Demand Signal | 14.56 | B Labor Demand Signal | 4.42 |
 | value | A Initial Wage | 100 | B Initial Wage | 140 |
 | initial_value | A Flexible Wage | 100 | B Flexible Wage | 140 |
 | value | A External Local Base Demand | 16 | B External Local Base Demand | 22 |

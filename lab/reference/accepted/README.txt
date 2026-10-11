@@ -1,8 +1,8 @@
 CURRENT ACCEPTED BASELINE
 
-Orbital Economy v7.7.13 r1 — Labor Market
-Model SHA-256: cede8ecf699995bc818646a2e922f87f3d798c002231fa70e14d3e357196d4f1
-Validation SHA-256: e28b5800586577849a0631889291092d669f2f2911df8d47853a9dd148d36b85
+Orbital Economy v7.7.14 r1 — Recalibration
+Model SHA-256: bbb4f9ea5c522514a84e9de0cc5decf5585da0cd2dd3ec80a63e79d11c0f0375
+Validation SHA-256: e542ce789cc7c7fc8745e3f8efa1d58440e78067d7e66a080d5276e65fd5e647
 
 This directory is the accepted reference used by comparison/policy tools.
 

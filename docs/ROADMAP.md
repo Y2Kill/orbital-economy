@@ -1,10 +1,16 @@
 # Roadmap
 
 **Document status:** CURRENT  
-**Base:** Orbital Economy v7.7.13 r1 — Labor Market (accepted 2026-10-10)  
+**Base:** Orbital Economy v7.7.14 r1 — Recalibration (accepted 2026-10-11)  
 **Rule:** roadmap describes intent; executable accepted code remains authoritative for accepted behavior.
 
-## Current implementation — v7.7.13 Labor Market — Planet v2 step 3 (tasks 033 bench, 034 model)
+## Current implementation — v7.7.14 Recalibration (task 035)
+
+The sensitivity study of v7.7.13 (`docs/research/SENSITIVITY_2026-10-10_RU.md`: 352 constants ±20 % over 3 years, then 62 over 20 years — 27 matter in the long run) found two values on a threshold. Owner decisions 2026-10-11: generation reserve 1.02 → 1.10, labor participation 0.50 → 0.52 (chosen on 80-year runs), target labor tightness 0.95 kept and annotated as key; a full recalibration — new values in every Mode, 16 checks of earlier tasks re-thresholded. Done: task 035, v7.7.14 r1 (round 1; model equals the skeleton, validation byte-identical to the draft). The exact-regression chain from v7.7.0 ends here.
+
+Next: global sensitivity (Morris) on the 27 long-run parameters; full-stack versions of the main shocks; then the finance layer with household-income demand — it also gives the wage a way to feed labor demand (today the wage drifts whenever tightness is off 0.95).
+
+## v7.7.13 Labor Market — Planet v2 step 3 (tasks 033 bench, 034 model)
 
 Owner decisions 2026-10-10 on the prototype (`docs/research/CLOSURE_PROTOTYPE_2026-10-09_RU.md`): demand per capita at A's level × population, a wage that follows labor tightness (10 %/year, floor 30 %, target 0.95), output limited by labor availability as a guard; household-income demand is deferred to the finance layer (in the prototype it drives a wage spiral). Over 80 years the flexible wage merges the two regional labor markets (wages 104 / 108, employment 0.94 in both) and removes the step-2 paradox of people leaving A while A lacks hands; demand per capita shrinks B's demand from 22 to about 5. Integration step: dt 0.25 vs 0.125 differs by under 0.7 %. One switch `Labor Market Enabled`; Planet v2 redeclares the P6 demand drivers as the per-capita norms. Done: task 033 (bench, Lab v0.9.18, round 1): `labor_market` node type, plugin `labor_market`. Done: task 034, model v7.7.13 r1 (round 1; declaration and validation byte-identical to the drafts, model equals the skeleton). Next: sensitivity sweep and full-stack shock Modes, then the finance layer.
 

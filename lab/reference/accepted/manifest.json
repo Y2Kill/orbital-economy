@@ -1,15 +1,15 @@
 {
   "status": "ACCEPTED",
-  "model_name": "Orbital Economy v7.7.13 r1 — Labor Market",
-  "model_file": "orbital_economy_v7_7_13_r1_modeljson.json",
-  "model_sha256": "cede8ecf699995bc818646a2e922f87f3d798c002231fa70e14d3e357196d4f1",
-  "validation_file": "validation-v7.7.13.json",
-  "validation_sha256": "e28b5800586577849a0631889291092d669f2f2911df8d47853a9dd148d36b85",
-  "accepted_date": "2026-10-10",
+  "model_name": "Orbital Economy v7.7.14 r1 — Recalibration",
+  "model_file": "orbital_economy_v7_7_14_r1_modeljson.json",
+  "model_sha256": "bbb4f9ea5c522514a84e9de0cc5decf5585da0cd2dd3ec80a63e79d11c0f0375",
+  "validation_file": "validation-v7.7.14.json",
+  "validation_sha256": "e542ce789cc7c7fc8745e3f8efa1d58440e78067d7e66a080d5276e65fd5e647",
+  "accepted_date": "2026-10-11",
   "engine": "simulation@9.0.0",
   "notes": [
-    "v7.7.13: Planet v2 step 3 — the labor market closes the loop: demand per capita (A level) x population, a wage that follows labor tightness (10 %/year, floor 30 %, target 0.95), output limited by labor availability as a guard; one labor_market node, model/nodes/labor_market.json, switch Labor Market Enabled; P6 demand drivers are the per-capita norms. Household-income demand is deferred to the finance layer. See docs/tasks/034-labor-market/.",
-    "Modes 0-51 keep Labor Market Enabled = 0 and reproduce v7.7.12 r1 exactly; Mode 52 = Mode 49 with the labor market, Mode 53 = Mode 50 (transport surge with food) with the labor market.",
+    "v7.7.14: recalibration after the sensitivity study (docs/research/SENSITIVITY_2026-10-10_RU.md), owner decisions 2026-10-11: Power Operating Reserve Factor 1.02 -> 1.10, Labor Participation Share 0.50 -> 0.52 (labor demand signal starts 14.56 / 4.42 as the labor_market node generates them). No structural change. See docs/tasks/035-recalibration/.",
+    "A recalibration: no Mode reproduces v7.7.13 r1 (regression_modes = []); 16 scenario checks of earlier tasks were re-thresholded. The exact-regression chain from v7.7.0 ends here; later steps compare against v7.7.14.",
     "Exact numbers are defined on the canonical platform (docs/VERSIONING_AND_AUTHORITY.md section 8); series-digest.windows.json is the golden."
   ]
 }

@@ -1,7 +1,7 @@
 # Architecture
 
 **Document status:** CURRENT  
-**Base:** Orbital Economy v7.7.13 r1  
+**Base:** Orbital Economy v7.7.14 r1  
 **Rule:** this document describes accepted code; code is authoritative on conflict.
 
 ## 1. Model character
@@ -121,6 +121,8 @@ Transport uses a documented shared-infrastructure variation with a secondary Cap
 **Food (v7.7.12, Planet v2 step 2).** A `food` node (`model/nodes/food.json`, Lab v0.9.17) under the switch `Food Enabled` gives each region a food stock and need (1 a person a day), farms as capital on regional land (built from capital goods, softly capped by land; energy in the priority group with the energy sector; labor 0.15 a unit), and trade by need between every pair of regions: the short region orders, the supplier releases its surplus and plans for the orders; food goes first on the shared transport (up to 80 % of its capacity), goods share the rest. Food shortage lowers the living standard (food^0.5 × energy^0.5), raises deaths and lowers births; food price enters the price index. Every replacement is wrapped as `IfThenElse([Food Enabled] = 1, new, old)`, so Modes 0–48 are unchanged. Known limits: labor of carrying food is not counted; with food off the food price series reads about 0.002 (unused).
 
 **Labor market (v7.7.13, Planet v2 step 3).** A `labor_market` node (`model/nodes/labor_market.json`, Lab v0.9.18) under the switch `Labor Market Enabled` closes the population–consumption–labor–wage–production loop: the local base demand for metal and electronics = per-capita norm (A level) × population; the wage is a stock that follows labor tightness (labor demand / labor force) toward 0.95 at 10 % a year, not below 30 % of the start; every process rate of a region × labor availability = min(1, labor force / labor demand), where labor demand is the requirement at unconstrained output (a 10-day signal, no algebraic loop). The former constants live in `X Initial Wage` and `X External …` for the switch-off branch, so A/B formulas stay mirrored. Planet v2 redeclares the P6 demand drivers as the per-capita norms. Household-income demand is deferred to the finance layer (in the prototype it drives a wage spiral).
+
+**Recalibration (v7.7.14).** No structural change. A sensitivity study of v7.7.13 (`docs/research/SENSITIVITY_2026-10-10_RU.md`) found two values on a threshold, and the owner moved both off it: `Power Operating Reserve Factor` 1.02 → 1.10 (the generation reserve, the thinnest in the model; refinery 1.10, transport 1.15) and `Labor Participation Share` 0.50 → 0.52 (A off the labor-shortage edge). The labor demand signal starts at initial population × participation (A 14.56, B 4.42). `Target Labor Tightness` (0.95) stays and is annotated as the key long-run wage parameter.
 
 ## 6. Markets and trade
 

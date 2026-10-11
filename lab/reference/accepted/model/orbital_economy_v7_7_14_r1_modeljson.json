@@ -1,6 +1,6 @@
 {
   "engine": "SIMULATION_PACKAGE",
-  "name": "Orbital Economy v7.7.13 r1 — Labor Market",
+  "name": "Orbital Economy v7.7.14 r1 — Recalibration",
   "description": "Task 030 / Planet v2 step 1: add the declarative population node for A and B. Population, demography, migration and labor are accounting-only; no existing formula or scenario is changed and no new Mode is added.",
   "simulation": {
     "algorithm": "RK1",
@@ -1387,7 +1387,7 @@
       "type": "VARIABLE",
       "name": "Power Operating Reserve Factor",
       "behavior": {
-        "value": 1.02
+        "value": 1.1
       },
       "display": {
         "coordinates": [
@@ -37091,7 +37091,7 @@
       "type": "VARIABLE",
       "name": "Labor Participation Share",
       "behavior": {
-        "value": 0.5
+        "value": 0.52
       },
       "description": "Generated population element for Labor Participation Share."
     },
@@ -40052,7 +40052,7 @@
       "type": "STOCK",
       "name": "A Labor Demand Signal",
       "behavior": {
-        "initial_value": 14,
+        "initial_value": 14.56,
         "non_negative": true
       },
       "description": "Labor market node: smoothed labor demand at unconstrained output."
@@ -40162,7 +40162,7 @@
       "type": "STOCK",
       "name": "B Labor Demand Signal",
       "behavior": {
-        "initial_value": 4.25,
+        "initial_value": 4.42,
         "non_negative": true
       },
       "description": "Labor market node: smoothed labor demand at unconstrained output."
