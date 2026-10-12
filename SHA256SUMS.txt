@@ -414,6 +414,12 @@ b28a25e4dc5a37494821e68cd068e0774c293d1aa91e0abb4df04c51f1b29576  ./docs/tasks/0
 579b62d9e247904554e03fa6bb32ab6ea588bd75010c748afc61a4ddbdcbf0eb  ./docs/tasks/035-recalibration/draft/skeleton-patch.json
 b28a25e4dc5a37494821e68cd068e0774c293d1aa91e0abb4df04c51f1b29576  ./docs/tasks/035-recalibration/draft/validation-v7.7.14-draft.json
 9ac061df13a4fd4a579d007fd546e96625a3034f0e837c7b6a40e84c36d914fd  ./docs/tasks/035-recalibration/scope.json
+285f881ca422010674499e220ba933f7708611f08e8403d4dd350e3ef8575a66  ./docs/tasks/036-wage-pricing-node/TASK_RU.md
+fc658434ec4928bac74b31e71026393ed3b4d8e8493309f35e1ec2eca58aa814  ./docs/tasks/036-wage-pricing-node/fixtures/wage_pricing.json
+3c0da71b88b4c934c59245d850e8dda3d92559f8cbae82c3a8e3d5efa24895ad  ./docs/tasks/036-wage-pricing-node/reference/add_wp_modes.mjs
+acbec86cbb28343cf6c71820df4c3a8fa43c24c16c6ac1ff16baad2d8778c89b  ./docs/tasks/036-wage-pricing-node/reference/definition_fingerprint.mjs
+80bf252cb60e0ce7db2a2e4a925749d118a06a33b8e078a7eb5b0da1366075fd  ./docs/tasks/036-wage-pricing-node/reference/wage_pricing_node_prototype.mjs
+01d12ddd806566ca70462ee03e231c47558ff98bab8f089cb7289a3e1d3c8b3a  ./docs/tasks/036-wage-pricing-node/scope.json
 44d2e557f1cb2322739bc95ee2b6dcbf6d6fcb708da14e90d53250936e50da5c  ./docs/tasks/README_RU.md
 bbf818e93b88d606b3137b1bb69d60db8c41c9df4089025a921b1ca00f473244  ./lab/APPLY_PATCH.cmd
 5f5761d65866245077b6ea1588d5c74a5ed837ef427fd79250a614c819b35b63  ./lab/CHANGELOG.md

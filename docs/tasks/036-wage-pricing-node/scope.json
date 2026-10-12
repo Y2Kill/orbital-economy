@@ -1,0 +1,41 @@
+{
+  "task": "036",
+  "title": "wage_pricing node type: prices without labor (ore, energy, food) follow the regional wage proportionally (declared labor share), final demand responds to its market price (declared reference price, elasticity); all replacements switch-wrapped (Wage Pricing Enabled); validation plugin wage_pricing; node_qa layering with wage_pricing over every node (Lab v0.9.19)",
+  "branch": "task/036-wage-pricing-node",
+  "allow": [
+    "lab/src/nodes/**",
+    "lab/src/node_qa.js",
+    "lab/src/patch.js",
+    "lab/src/cli.js",
+    "lab/src/checks.js",
+    "lab/src/qa.js",
+    "lab/src/lifecycle_conformance.js",
+    "lab/src/conformance_run.js",
+    "lab/src/validation_schema.js",
+    "lab/src/structure_audit.js",
+    "lab/src/report.js",
+    "lab/src/runner.js",
+    "lab/fixtures/**",
+    "lab/package.json",
+    "lab/package-lock.json",
+    "lab/docs/NODES_RU.md",
+    "lab/docs/VALIDATION_FORMAT_RU.md",
+    "lab/docs/LIFECYCLE_CONFORMANCE_RU.md",
+    "lab/docs/HARNESS_QA_RU.md",
+    "lab/docs/TEST_STATUS_RU.md",
+    "lab/README_RU.md",
+    "lab/CHANGELOG.md"
+  ],
+  "allow_binary": [],
+  "allow_protected": [],
+  "required_changes": [
+    "lab/src/nodes/index.js",
+    "lab/src/checks.js",
+    "lab/src/node_qa.js",
+    "lab/src/qa.js",
+    "lab/fixtures/nodes/wage_pricing.json",
+    "lab/docs/NODES_RU.md",
+    "lab/CHANGELOG.md"
+  ],
+  "sums_by": "reviewer"
+}
