@@ -1,0 +1,22 @@
+{
+  "type": "wage_pricing",
+  "version": 1,
+  "colonies": ["A", "B"],
+  "switch": "Wage Pricing Enabled",
+  "parameters": {
+    "Price Demand Elasticity": 0.5
+  },
+  "inputs": {
+    "wage": "{C} Wage",
+    "initial_wage": "{C} Initial Wage"
+  },
+  "prices": [
+    { "name": "Ore", "target": "{C} Ore Price", "labor_share": { "A": 1, "B": 0.5 } },
+    { "name": "Energy", "target": "{C} Energy Price", "labor_share": { "A": 0.83, "B": 1 } },
+    { "name": "Food", "target": "{C} Food Price", "labor_share": { "A": 1, "B": 1 } }
+  ],
+  "demand": [
+    { "name": "Metal", "target": "{C} Effective Local Base Demand", "price": "{C} Market Price", "elasticity": "Price Demand Elasticity", "reference_price": { "A": 25.9, "B": 34.46 } },
+    { "name": "Electronics", "target": "{C} Effective Electronics Local Base Demand", "price": "{C} Electronics Market Price", "elasticity": "Price Demand Elasticity", "reference_price": { "A": 23.1, "B": 21.91 } }
+  ]
+}
