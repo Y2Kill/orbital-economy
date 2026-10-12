@@ -6,6 +6,7 @@ import { expandLabor, validateLaborDeclaration } from './labor.js';
 import { expandPopulation, validatePopulationDeclaration } from './population.js';
 import { expandFood, validateFoodDeclaration } from './food.js';
 import { expandLaborMarket, validateLaborMarketDeclaration } from './labor_market.js';
+import { expandWagePricing, validateWagePricingDeclaration } from './wage_pricing.js';
 
 const isObj = x => !!x && typeof x === 'object' && !Array.isArray(x);
 const isString = x => typeof x === 'string' && x.length > 0;
@@ -128,7 +129,8 @@ const REGISTRY = new Map([
   ['labor', { validate: validateLaborDeclaration, expand: expandLabor }],
   ['population', { validate: validatePopulationDeclaration, expand: expandPopulation }],
   ['food', { validate: validateFoodDeclaration, expand: expandFood }],
-  ['labor_market', { validate: validateLaborMarketDeclaration, expand: expandLaborMarket }]
+  ['labor_market', { validate: validateLaborMarketDeclaration, expand: expandLaborMarket }],
+  ['wage_pricing', { validate: validateWagePricingDeclaration, expand: expandWagePricing }]
 ]);
 
 export function validateNodeDeclaration(decl, path = 'node') {
