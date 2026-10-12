@@ -243,6 +243,35 @@ const STATIC_ONLY_PLUGINS = new Set(['open_boundaries', 'colony_symmetry', 'plan
 export function checkPlugin(plugin, ctx) {
   const results = [];
   if (STATIC_ONLY_PLUGINS.has(plugin.type)) return results;
+  if (plugin.type === 'wage_pricing') {
+    const tol = plugin.rel_tol ?? 1e-9;
+    const safe = (name, fn) => { try { return fn(); } catch (e) { return fail(name, e.message || String(e)); } };
+    for (const inst of plugin.instances || []) {
+      const label = inst.name || inst.colony || 'wage_pricing';
+      const identity = (column, expectedAt, title) => safe(`${label}: ${title} ${column}`, () => {
+        const actual = ctx.get(column), inputs = expectedAt.inputs.map(n => ctx.get(n));
+        let worst = 0, when = null;
+        for (let i=0; i<ctx.times.length; i++) {
+          const expected = expectedAt.fn(...inputs.map(a=>a[i]));
+          const err = Math.abs(actual[i]-expected) / Math.max(Math.abs(expected), 1e-12);
+          if (!Number.isFinite(err) || err>worst) { worst=err; when=ctx.times[i]; }
+        }
+        return worst<=tol ? pass(`${label}: ${title} ${column}`, {worstRelativeError:worst})
+          : fail(`${label}: ${title} ${column}`, `relative error ${worst} > ${tol} at day ${when}`);
+      });
+      results.push(identity(inst.relative_wage_change, {inputs:[inst.wage,inst.initial_wage],fn:(w,w0)=>w/Math.max(w0,1e-6)-1},'relative wage'));
+      for (const q of inst.demand || []) {
+        results.push(identity(q.factor,{inputs:[q.price,q.reference_price,q.elasticity],fn:(pr,ref,eta)=>Math.pow(Math.max(pr/ref,1e-6),-eta)},'demand factor'));
+      }
+      for (const q of inst.prices || []) results.push(safe(`${label}: positive price ${q.target}`, () => {
+        const a=ctx.get(q.target), bad=a.findIndex(v=>!Number.isFinite(v)||v<=0);
+        return bad<0 ? pass(`${label}: positive price ${q.target}`,{points:a.length})
+          : fail(`${label}: positive price ${q.target}`, `${q.target} = ${a[bad]} at day ${ctx.times[bad]}`);
+      }));
+    }
+    return results;
+  }
+
   if (plugin.type === 'labor_market') {
     const absTol = plugin.abs_tol ?? 1e-9, relTol = plugin.rel_tol ?? 1e-9;
     const safe = (name, fn) => { try { return fn(); } catch (e) { return fail(name, e.message || String(e)); } };
