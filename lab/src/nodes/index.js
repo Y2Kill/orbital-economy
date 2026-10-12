@@ -221,6 +221,7 @@ export function mergeNodeValidation(validation, fragments) {
   let population = out.plugins?.find(p => p.type === 'population') || null;
   let food = out.plugins?.find(p => p.type === 'food') || null;
   let laborMarket = out.plugins?.find(p => p.type === 'labor_market') || null;
+  let wagePricing = out.plugins?.find(p => p.type === 'wage_pricing') || null;
   let retirement = boundaries.categories.find(x => x.id === 'capital_retirement') || null;
   let exploration = boundaries.categories.find(x => x.id === 'exploration_expenditure') || null;
   let demographyBirths = boundaries.categories.find(x => x.id === 'demography_births') || null;
@@ -354,6 +355,21 @@ export function mergeNodeValidation(validation, fragments) {
         const existing = laborMarket.instances.find(x => x.name === generated.name);
         if (!existing) laborMarket.instances.push(structuredClone(generated));
         else if (!jsonEqual(existing, generated)) throw new Error(`validation fragment[${fi}]: labor_market instance "${generated.name}" already exists with a different definition`);
+      }
+    }
+    if ((fragment.wage_pricing_instances || []).length) {
+      const relTol = fragment.wage_pricing_rel_tol ?? 1e-9;
+      const sw = fragment.wage_pricing_switch;
+      if (!wagePricing) {
+        wagePricing = { type: 'wage_pricing', rel_tol: relTol, switch: sw, instances: [] };
+        out.plugins.push(wagePricing);
+      }
+      if (!Array.isArray(wagePricing.instances)) throw new Error('validation: wage_pricing.instances must be an array');
+      if ((wagePricing.rel_tol ?? 1e-9) !== relTol || wagePricing.switch !== sw) throw new Error('validation: wage_pricing plugin definition differs');
+      for (const inst of fragment.wage_pricing_instances) {
+        const existing = wagePricing.instances.find(x => x.name === inst.name);
+        if (!existing) wagePricing.instances.push(structuredClone(inst));
+        else if (!jsonEqual(existing, inst)) throw new Error(`validation fragment[${fi}]: wage_pricing instance "${inst.name}" differs`);
       }
     }
     const ensureBoundaryCategory = (id, direction, names, reason, current) => {
