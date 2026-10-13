@@ -52,19 +52,30 @@ export function validateWagePricingDeclaration(d, path, errors) {
       }
     }
   }
+  // Distinct templates may still resolve to the same target across groups or colonies.
+  const targets = new Map();
+  for (const kind of ['prices','demand']) for (const [i,item] of (Array.isArray(d[kind]) ? d[kind] : []).entries()) {
+    if (!object(item) || !nonempty(item.target)) continue;
+    for (const c of C) {
+      const name = sub(item.target,c), key = fold(name), p = path + '.' + kind + '[' + i + '].target';
+      if (targets.has(key)) errors.push(p + ': duplicate resolved target ' + name + ' (already at ' + targets.get(key) + ')');
+      else targets.set(key,p);
+    }
+  }
 }
 export function expandWagePricing(d, base) {
   const byName = new Map(base.elements.filter(e=>e.type!=='LINK'&&e.name).map(e=>[e.name,e]));
   const C=d.colonies, SW=d.switch, ON=`[${SW}] = 1`, I=d.inputs;
   const must = n => {const e=byName.get(n);if(!e)throw Error(`wage_pricing: base element missing: ${n}`);return e;};
   const val = n => String(must(n).behavior.value);
+  const valueTarget = e => e.type === 'VARIABLE' && (finite(e.behavior?.value) || nonempty(e.behavior?.value));
   const add=[],rep=[];
   const V=(name,value,note)=>add.push({type:'VARIABLE',name,behavior:{value},description:`Wage pricing node: ${note||name}.`});
   const wrap=(name,fresh)=>{const old=val(name);rep.push({name,value:`IfThenElse(${ON}, ${fresh(`(${old})`)}, ${old})`});};
   if(byName.has(SW))throw Error(`wage_pricing: switch "${SW}" already exists in base`);
   for(const X of C) {
     must(sub(I.wage,X));must(sub(I.initial_wage,X));
-    for(const p of d.prices){const e=must(sub(p.target,X));if(e.type!=='VARIABLE'||e.behavior?.value==null)throw Error(`wage_pricing: ${e.name} must be a VARIABLE with formula/value`);}
+    for(const p of d.prices){const e=must(sub(p.target,X));if(!valueTarget(e))throw Error(`wage_pricing: ${e.name} must be a VARIABLE with formula/value`);}
     for(const q of d.demand){const e=must(sub(q.target,X));if(e.type!=='VARIABLE'||e.behavior?.value==null)throw Error(`wage_pricing: ${e.name} must be a VARIABLE with formula/value`);must(sub(q.price,X));}
   }
   V(SW,0,'switch of wage pricing (0 = every earlier series unchanged)');

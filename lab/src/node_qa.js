@@ -53,8 +53,9 @@ import { runLifecycleConformance, runFoodConformance, runLaborMarketConformance,
 import { runStructureAudits } from './structure_audit.js';
 
 const root = path.resolve(process.cwd());
-const modelFile = discoverSingleJson(path.join(root, 'reference', 'accepted', 'model'), 'accepted ModelJSON');
-const validationFile = discoverSingleJson(path.join(root, 'input', 'validation'), 'validation JSON');
+const option = name => process.argv.find(a=>a.startsWith('--'+name+'='))?.slice(name.length+3);
+const modelFile = option('accepted-model') ? path.resolve(option('accepted-model')) : discoverSingleJson(path.join(root, 'reference', 'accepted', 'model'), 'accepted ModelJSON');
+const validationFile = option('accepted-validation') ? path.resolve(option('accepted-validation')) : discoverSingleJson(path.join(root, 'input', 'validation'), 'validation JSON');
 const nodeDir = path.resolve(root, '..', 'model', 'nodes');
 const declarationFiles = [
   path.join(nodeDir, 'construction-materials-plant.json'),
@@ -75,10 +76,8 @@ for (const f of [modelFile, validationFile, simpleFixtureFile, powerFixtureFile,
   }
 }
 
-const accepted = readJson(modelFile);
-const acceptedValidation = readJson(validationFile);
-// Every case below works on layers without the food node (v7.7.12 on); set after the layers are known.
-let validation = acceptedValidation;
+const suppliedAccepted = readJson(modelFile);
+const suppliedValidation = readJson(validationFile);
 const declarations = declarationFiles.map(readJson);
 const simpleFixture = readJson(simpleFixtureFile);
 const powerFixture = readJson(powerFixtureFile);
@@ -99,6 +98,13 @@ const laborDeclarations = allNodeDeclarations.filter(x => x.decl?.type === 'labo
 const populationDeclarations = allNodeDeclarations.filter(x => x.decl?.type === 'population');
 const foodDeclarations = allNodeDeclarations.filter(x => x.decl?.type === 'food');
 const laborMarketDeclarations = allNodeDeclarations.filter(x => x.decl?.type === 'labor_market');
+const wagePricingFixture = readJson(path.join(root, 'fixtures', 'nodes', 'wage_pricing.json'));
+const wagePricingDeclarations = allNodeDeclarations.filter(x => x.decl?.type === 'wage_pricing');
+// A synthetic accepted+node probe uses the fixture before task 037 installs a model declaration.
+if (!wagePricingDeclarations.length && suppliedAccepted.elements.some(e=>e.type!=='LINK'&&e.name===wagePricingFixture.switch)) wagePricingDeclarations.push({decl:wagePricingFixture});
+const accepted = wagePricingDeclarations.reduce((m,{decl})=>stripWagePricingNode(m,decl), suppliedAccepted);
+const acceptedValidation = wagePricingDeclarations.reduce((v,{decl})=>validationWithoutWagePricingFragment(v,decl), suppliedValidation);
+let validation = acceptedValidation;
 
 const caseOption = process.argv.find(a=>a.startsWith('--cases='))?.slice(8);
 const selectedCases = caseOption ? new Set(caseOption.split(',').flatMap(part=>{
@@ -458,10 +464,10 @@ function buildLayers(start, nodes = layeredNodes) {
     const peelable = n => n.decl.switch
       ? n.targets(n.decl).every(t => outerSwitchIs(current, t, n.decl.switch))
       : n.targets(n.decl).every(t => !remaining.some(o => o !== n && o.targets(o.decl).includes(t))) && unreadOutside(current, n);
-    // labor_market is the Planet-v2 outer layer by contract. Prefer it when present and structurally
-    // peelable; after it is removed, preserve the established v0.9.17 ordering unchanged.
+    // wage_pricing wraps labor_market/food policy; peel it first, then labor_market.
     const lm = remaining.findIndex(n => n.decl.type === 'labor_market' && peelable(n));
-    const i = lm >= 0 ? lm : remaining.findIndex(peelable);
+    const wp = remaining.findIndex(n => n.decl.type === 'wage_pricing' && peelable(n));
+    const i = wp >= 0 ? wp : lm >= 0 ? lm : remaining.findIndex(peelable);
     if (i < 0) throw new Error(`cannot determine node layering: none of ${remaining.map(n => n.decl.sector || n.decl.switch || n.decl.type).join(', ')} is outermost on all its replacement targets`);
     const [n] = remaining.splice(i, 1);
     const base = n.strip(current, n.decl);
@@ -471,7 +477,8 @@ function buildLayers(start, nodes = layeredNodes) {
   }
   return { layers: result, order, bottom: current };
 }
-const { layers } = buildLayers(accepted, layeredNodes);
+const acceptedLayeredNodes = [...layeredNodes,...wagePricingDeclarations.map(({decl})=>({decl,strip:stripWagePricingNode,targets:wagePricingReplacementNames,generated:wagePricingGeneratedNames}))];
+const { layers } = buildLayers(suppliedAccepted, acceptedLayeredNodes);
 const states = declarations.map(decl => layers.get(decl));
 // The switchless nodes (labor, population) are the newest layers and wrap nothing, so the switched-node order above
 // cannot place them: there a switchless base may also lack switched layers peeled earlier. Their own cases need the
@@ -490,10 +497,11 @@ function buildSwitchlessLayers(start, nodes = layeredNodes) {
       (own.has(String(e.to).toLowerCase()) || targets.has(String(e.to).toLowerCase())));
   };
   while (true) {
-    const peelable = n => touchesSwitchless(n) &&
+    const peelable = n => (n.decl.type === 'wage_pricing' || touchesSwitchless(n)) &&
       n.targets(n.decl).every(t => outerSwitchIs(current, t, n.decl.switch));
     const lm = switched.findIndex(n => n.decl.type === 'labor_market' && peelable(n));
-    const i = lm >= 0 ? lm : switched.findIndex(peelable);
+    const wp = switched.findIndex(n => n.decl.type === 'wage_pricing' && peelable(n));
+    const i = wp >= 0 ? wp : lm >= 0 ? lm : switched.findIndex(peelable);
     if (i < 0) break;
     const [n] = switched.splice(i, 1);
     current = n.strip(current, n.decl);
@@ -511,7 +519,15 @@ function buildSwitchlessLayers(start, nodes = layeredNodes) {
   }
   return { layers: result, prepeeled };
 }
-const { layers: switchlessLayers } = buildSwitchlessLayers(accepted);
+const { layers: switchlessLayers } = buildSwitchlessLayers(suppliedAccepted, acceptedLayeredNodes);
+
+function validationWithoutWagePricingFragment(raw, decl) {
+  const out = structuredClone(raw), names = new Set(decl.colonies.map(c=>c+' wage pricing'));
+  const plugin = out.plugins?.find(p=>p.type==='wage_pricing');
+  if(plugin?.instances)plugin.instances=plugin.instances.filter(i=>!names.has(i.name));
+  if(plugin && !plugin.instances?.length)out.plugins=out.plugins.filter(p=>p!==plugin);
+  return out;
+}
 
 function validationWithoutLaborMarketFragment(raw, fragment) {
   const out = structuredClone(raw);
@@ -1913,10 +1929,11 @@ await expect('59. labor_market is peeled first above food and every earlier node
 });
 
 
-const wagePricingFixture = readJson(path.join(root, 'fixtures', 'nodes', 'wage_pricing.json'));
 let wagePricingState = null;
 await expect('60. wage_pricing fixture expands and APPLY_PATCH matches prototype counts/fingerprint', () => {
-  const base = accepted;
+  const declaration = wagePricingDeclarations.find(x=>x.decl.switch===wagePricingFixture.switch)?.decl;
+  const layer = declaration ? layers.get(declaration) : null;
+  const base = layer?.base || accepted;
   const expanded = expandNode(wagePricingFixture, base);
   const p = expanded.patch;
   if (p.add_elements.length !== 18 || p.replace_formulas.length !== 10 || p.add_links.length !== 42) throw new Error('wage_pricing patch counts differ');
@@ -1925,6 +1942,7 @@ await expect('60. wage_pricing fixture expands and APPLY_PATCH matches prototype
   if (base.name.includes('v7.7.14') && fp !== '041bb60c716b2a66') throw new Error('definition fingerprint ' + fp + ', expected 041bb60c716b2a66');
   const byName = new Map(base.elements.filter(e => e.type !== 'LINK').map(e => [e.name,e]));
   for (const r of p.replace_formulas) if (oldBranch(r.value,wagePricingFixture.switch,r.name) !== String(byName.get(r.name).behavior.value)) throw new Error('old branch differs: '+r.name);
+  if(layer && definitionFingerprint(layer.target)!==fp)throw new Error('accepted wage_pricing layer does not rebuild exactly');
   wagePricingState = { base, model, expanded };
   return '18 elements / 10 replacements / 42 links; fingerprint=' + fp;
 });
@@ -1943,10 +1961,11 @@ await expect('61. wage_pricing fragments merge idempotently; static/audit/planet
   }
   const conf=runLifecycleConformance(wagePricingState.model,merged), wp=conf.wagePricing;
   if(conf.status!=='PASS'||wp?.status!=='PASS'||wp.summary.instances!==2)throw new Error('static conformance: '+JSON.stringify(conf));
+  const before=runStructureAudits(wagePricingState.base,acceptedValidation);
   const audits=runStructureAudits(wagePricingState.model,merged);
-  if(audits.status!=='PASS'||audits.openBoundaries.summary.openFlows!==262||audits.openBoundaries.summary.unclassified!==0||audits.colonySymmetry.summary.mismatches!==0||audits.planetClosure.status!=='PASS'||audits.algebraicLoops.combinationsWithLoops!==0)throw new Error('wage_pricing audit failed');
+  if(audits.status!=='PASS'||audits.openBoundaries.summary.openFlows!==before.openBoundaries.summary.openFlows||audits.openBoundaries.summary.unclassified!==0||audits.colonySymmetry.summary.mismatches!==0||audits.planetClosure.status!=='PASS'||audits.algebraicLoops.combinationsWithLoops!==0)throw new Error('wage_pricing audit failed');
   wagePricingState.validation=merged;
-  return 'wage_pricing=2 CONFORMING; boundaries=262/unclassified=0; symmetry=0; planet_v1 PASS; loops=0/'+audits.algebraicLoops.combinations+'; merge idempotent/conflicts rejected';
+  return 'wage_pricing=2 CONFORMING; boundaries='+audits.openBoundaries.summary.openFlows+'/unclassified=0; symmetry=0; planet_v1 PASS; loops=0/'+audits.algebraicLoops.combinations+'; merge idempotent/conflicts rejected';
 });
 
 await expect('62. wage_pricing switch-on trial passes every merged plugin and changes a price', () => {
@@ -2014,7 +2033,36 @@ await expect('65. wage_pricing schema/base rejects invalid declarations with pat
   await invalid(d=>d.inputs.extra='{C} Wage',/node\.inputs\.extra: unknown field/,'unknown field');
   await invalid(d=>d.parameters['Price Demand Elasticity']=0,/node\.parameters\.Price Demand Elasticity/,'nonpositive parameter');
   await invalid(d=>d.prices[0].labor_share.C=.5,/node\.prices\[0\]\.labor_share\.C: unknown field/,'extra region');
-  return 'six required invalid cases plus unknown field, zero parameter and extra region rejected';
+  await invalid(d=>d.prices[0].target=d.demand[0].target,/node\.demand\[0\]\.target: duplicate resolved target/,'duplicate target across price and demand');
+  const badValue=structuredClone(base);badValue.elements.find(e=>e.name==='A Ore Price'&&e.type!=='LINK').behavior.value=false;
+  await requireThrow(()=>expandNode(wagePricingFixture,badValue),/A Ore Price must be a VARIABLE with formula\/value/,'non-scalar target value');
+  return 'six required invalid cases plus unknown field, zero parameter, extra region, resolved target collision and non-scalar value rejected';
+});
+
+
+await expect('66. wage_pricing peels first and all cases 1-59 pass on synthetic accepted+node', () => {
+  if(!wagePricingState?.validation)throw new Error('case 61 did not produce validation');
+  const node={decl:wagePricingFixture,strip:stripWagePricingNode,targets:wagePricingReplacementNames,generated:wagePricingGeneratedNames};
+  const nodes=[...layeredNodes,node],chain=buildLayers(wagePricingState.model,nodes);
+  if(chain.order[0]?.decl.type!=='wage_pricing')throw new Error('wage_pricing not peeled first');
+  for(const n of nodes){const layer=chain.layers.get(n.decl);if(!layer)throw new Error('missing layer: '+n.decl.type);expandNode(n.decl,layer.base);}
+  const switchless=buildSwitchlessLayers(wagePricingState.model,nodes);
+  if(switchless.prepeeled[0]?.decl.type!=='wage_pricing')throw new Error('wage_pricing not peeled first before switchless layers');
+  const withInputs=structuredClone(wagePricingState.model);
+  for(const sc of withInputs.scenarios)sc.values[wagePricingFixture.switch]=1;
+  const stripped=stripWagePricingNode(withInputs,wagePricingFixture);
+  if(stripped.scenarios.some(sc=>wagePricingFixture.switch in sc.values))throw new Error('removed switch remains in scenario inputs');
+  const clean=validationWithoutWagePricingFragment(wagePricingState.validation,wagePricingFixture);
+  if(JSON.stringify(clean)!==JSON.stringify(acceptedValidation))throw new Error('validation differs after wage_pricing fragment removal');
+  const tmp=fs.mkdtempSync(path.join(os.tmpdir(),'orbital-economy-wage-layer-'));
+  try{
+    const model=path.join(tmp,'model.json'),validation=path.join(tmp,'validation.json');
+    fs.writeFileSync(model,JSON.stringify(withInputs));fs.writeFileSync(validation,JSON.stringify(wagePricingState.validation,null,2)+'\n');
+    const run=spawnSync(process.execPath,['--expose-gc',path.join(root,'src','node_qa.js'),'--cases=1-59','--accepted-model='+model,'--accepted-validation='+validation],{cwd:root,encoding:'utf8',maxBuffer:16<<20});
+    if(run.status!==0||!run.stdout.includes('NODE SELF-TEST: 59 passed, 0 failed'))throw new Error('accepted+node prior cases failed: '+(run.stderr||'')+'\n'+run.stdout);
+    console.log(run.stdout.trim());
+  }finally{fs.rmSync(tmp,{recursive:true,force:true});}
+  return 'wage_pricing first; '+nodes.length+' layers rebuildable; scenario inputs/validation removed; prior 59/59 PASS on accepted+node';
 });
 
 console.log(`\nNODE SELF-TEST: ${passed} passed, ${failed} failed`);
