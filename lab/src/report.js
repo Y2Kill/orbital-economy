@@ -76,6 +76,15 @@ export function writeReports(outDir, report) {
   }
   lines.push('');
 
+  if (conf?.wagePricing && conf.wagePricing.status !== 'SKIPPED') {
+    lines.push('## Wage pricing (static)', '', '- status: **' + conf.wagePricing.status + '**');
+    for (const e of conf.wagePricing.specErrors || []) lines.push('- FAIL spec: ' + esc(e));
+    for (const i of conf.wagePricing.instances || []) {
+      lines.push('- ' + esc(i.name) + ': **' + i.classification + '** (' + (i.checks.length-i.failures.length) + '/' + i.checks.length + ' checks)');
+      for (const f of i.failures) lines.push('  - FAIL ' + esc(f));
+    }
+    lines.push('');
+  }
   lines.push('## Structure audits (static)');
   lines.push('');
   const st = report.structure;

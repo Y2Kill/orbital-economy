@@ -113,6 +113,15 @@ export function writeConformanceReports(outDir, report) {
     l.push('');
   }
 
+  if (report?.wagePricing && report.wagePricing.status !== 'SKIPPED') {
+    l.push('## Wage pricing (static)', '', '- status: **' + report.wagePricing.status + '**');
+    for (const e of report.wagePricing.specErrors || []) l.push('- FAIL spec: ' + esc(e));
+    for (const i of report.wagePricing.instances || []) {
+      l.push('- ' + esc(i.name) + ': **' + i.classification + '** (' + (i.checks.length-i.failures.length) + '/' + i.checks.length + ' checks)');
+      for (const f of i.failures) l.push('  - FAIL ' + esc(f));
+    }
+    l.push('');
+  }
   l.push('## Kernel contract (reference)');
   l.push('');
   l.push('Flows and their fixed topology (∅ = outside the model boundary):');

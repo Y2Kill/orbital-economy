@@ -49,7 +49,7 @@ import {
   laborMarketReplacementNames
 } from './nodes/labor_market.js';
 import { wagePricingGeneratedNames, wagePricingReplacementNames } from './nodes/wage_pricing.js';
-import { runLifecycleConformance, runFoodConformance, runLaborMarketConformance } from './lifecycle_conformance.js';
+import { runLifecycleConformance, runFoodConformance, runLaborMarketConformance, runWagePricingConformance } from './lifecycle_conformance.js';
 import { runStructureAudits } from './structure_audit.js';
 
 const root = path.resolve(process.cwd());
@@ -100,12 +100,20 @@ const populationDeclarations = allNodeDeclarations.filter(x => x.decl?.type === 
 const foodDeclarations = allNodeDeclarations.filter(x => x.decl?.type === 'food');
 const laborMarketDeclarations = allNodeDeclarations.filter(x => x.decl?.type === 'labor_market');
 
+const caseOption = process.argv.find(a=>a.startsWith('--cases='))?.slice(8);
+const selectedCases = caseOption ? new Set(caseOption.split(',').flatMap(part=>{
+  if (!/^\d+(?:-\d+)?$/.test(part)) throw new Error('invalid --cases range: '+part);
+  const [a,b=a] = part.split('-').map(Number);
+  if(a>b)throw new Error('invalid --cases range: '+part);
+  return Array.from({length:b-a+1},(_,i)=>a+i);
+})) : null;
 let passed = 0, failed = 0;
 function mark(ok, name, detail = '') {
   if (ok) { passed++; console.log(`[PASS] ${name}${detail ? ` — ${detail}` : ''}`); }
   else { failed++; console.error(`[FAIL] ${name}${detail ? ` — ${detail}` : ''}`); }
 }
 async function expect(name, fn) {
+  if(selectedCases && !selectedCases.has(Number(name.match(/^\d+/)?.[0])))return;
   try {
     const v = await fn();
     mark(v !== false, name, typeof v === 'string' ? v : '');
@@ -115,6 +123,7 @@ async function expect(name, fn) {
 }
 
 async function expectThrows(name, fn, pattern) {
+  if(selectedCases && !selectedCases.has(Number(name.match(/^\d+/)?.[0])))return;
   try {
     await fn();
     mark(false, name, 'expected an exception');
@@ -1918,6 +1927,63 @@ await expect('60. wage_pricing fixture expands and APPLY_PATCH matches prototype
   for (const r of p.replace_formulas) if (oldBranch(r.value,wagePricingFixture.switch,r.name) !== String(byName.get(r.name).behavior.value)) throw new Error('old branch differs: '+r.name);
   wagePricingState = { base, model, expanded };
   return '18 elements / 10 replacements / 42 links; fingerprint=' + fp;
+});
+
+
+await expect('61. wage_pricing fragments merge idempotently; static/audit/planet/loops PASS', async () => {
+  if (!wagePricingState) throw new Error('case 60 did not produce state');
+  const merged = mergeNodeValidation(acceptedValidation,[wagePricingState.expanded.validation]);
+  const twice = mergeNodeValidation(merged,[wagePricingState.expanded.validation]);
+  if(JSON.stringify(merged)!==JSON.stringify(twice))throw new Error('merge is not idempotent');
+  const conflict=structuredClone(wagePricingState.expanded.validation);conflict.wage_pricing_instances[0].wage='Different Wage';
+  await requireThrow(()=>mergeNodeValidation(merged,[conflict]),/wage_pricing instance.*differs/,'conflicting instance');
+  for(const key of ['wage_pricing_switch','wage_pricing_rel_tol']){
+    const changed=structuredClone(wagePricingState.expanded.validation);changed[key]=key.endsWith('switch')?'Different Switch':1e-8;
+    await requireThrow(()=>mergeNodeValidation(merged,[changed]),/wage_pricing plugin definition differs/,'conflicting plugin');
+  }
+  const conf=runLifecycleConformance(wagePricingState.model,merged), wp=conf.wagePricing;
+  if(conf.status!=='PASS'||wp?.status!=='PASS'||wp.summary.instances!==2)throw new Error('static conformance: '+JSON.stringify(conf));
+  const audits=runStructureAudits(wagePricingState.model,merged);
+  if(audits.status!=='PASS'||audits.openBoundaries.summary.openFlows!==262||audits.openBoundaries.summary.unclassified!==0||audits.colonySymmetry.summary.mismatches!==0||audits.planetClosure.status!=='PASS'||audits.algebraicLoops.combinationsWithLoops!==0)throw new Error('wage_pricing audit failed');
+  wagePricingState.validation=merged;
+  return 'wage_pricing=2 CONFORMING; boundaries=262/unclassified=0; symmetry=0; planet_v1 PASS; loops=0/'+audits.algebraicLoops.combinations+'; merge idempotent/conflicts rejected';
+});
+
+await expect('62. wage_pricing switch-on trial passes every merged plugin and changes a price', () => {
+  if(!wagePricingState?.validation)throw new Error('case 61 did not produce validation');
+  const source=wagePricingState.model.scenarios.at(-1);
+  const run=enabled=>{
+    const trial=structuredClone(source);trial.values={...trial.values,[wagePricingFixture.switch]:enabled};
+    const model=loadModelJSON(modelJsonForScenario(wagePricingState.model,trial));
+    const errors=model.check();if(errors.length)throw new Error('model.check: '+errors.map(e=>e.message||e).join('; '));
+    const results=model.simulate();return {model,results,ctx:seriesContext(model,results)};
+  };
+  const on=run(1),checks=[checkFiniteAll(on.model,on.results),checkTimeAxis(on.results,wagePricingState.validation.expected_time_step??wagePricingState.model.simulation.time_step,wagePricingState.validation.time_step_tolerance??1e-12)];
+  const v=wagePricingState.validation;
+  if(v.non_negative_regex)checks.push(checkNonNegativeRegex(on.model,on.results,v.non_negative_regex.pattern,v.non_negative_regex.tolerance??1e-10));
+  for(const plugin of v.plugins)checks.push(...checkPlugin(plugin,on.ctx));
+  for(const c of v.global_checks||[])checks.push(runGenericCheck(c,on.ctx));
+  const bad=checks.filter(c=>c.status==='FAIL');if(bad.length)throw new Error(bad.map(c=>c.name+': '+c.message).join('; '));
+  const off=run(0);let moved=false;
+  for(const inst of wagePricingState.expanded.validation.wage_pricing_instances)for(const p of inst.prices){
+    const a=on.ctx.get(p.target),b=off.ctx.get(p.target);if(a.some((x,i)=>Math.abs(x-b[i])>1e-6))moved=true;
+  }
+  if(!moved)throw new Error('no declared price moved between switch=0 and switch=1');
+  return 'all merged runtime plugins PASS with switch=1; declared price movement against switch=0 observed';
+});
+
+await expect('63. three-region wage_pricing expands with 3 instances and static PASS', () => {
+  const decl=structuredClone(wagePricingFixture);decl.colonies=['A','B','C'];
+  for(const p of decl.prices)p.labor_share.C=p.labor_share.A;
+  for(const d of decl.demand)d.reference_price.C=d.reference_price.A;
+  const base={elements:[],scenarios:[]};
+  const names=new Set(decl.colonies.flatMap(c=>[decl.inputs.wage,decl.inputs.initial_wage,...decl.prices.map(p=>p.target),...decl.demand.flatMap(d=>[d.target,d.price])].map(n=>n.replaceAll('{C}',c))));
+  for(const name of names)base.elements.push({type:'VARIABLE',name,behavior:{value:10}});
+  const ex=expandNode(decl,base),model=applyPatch(base,{format:PATCH_FORMAT,...ex.patch}).model;
+  const v={plugins:[{type:'wage_pricing',switch:ex.validation.wage_pricing_switch,instances:ex.validation.wage_pricing_instances}]};
+  const conf=runWagePricingConformance(model,v);
+  if(conf.status!=='PASS'||conf.summary.instances!==3)throw new Error('three-region conformance: '+JSON.stringify(conf));
+  return '3 wage_pricing instances CONFORMING (default rel_tol=1e-9)';
 });
 
 await expect('64. strip wage_pricing by oldBranch and rebuild with zero definition/link differences', () => {

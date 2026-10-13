@@ -14,6 +14,7 @@ import { loadModelJSON, assertEngineVersion, EXPECTED_ENGINE_VERSION } from './e
 import { hashFloat64LE, doubleHex } from './series.js';
 import { checkValidationSchema } from './validation_schema.js';
 import { runValidation } from './runner.js';
+import { runWagePricingConformance } from './lifecycle_conformance.js';
 import { spawnSync } from 'node:child_process';
 
 const root = path.resolve(process.cwd());
@@ -574,6 +575,36 @@ try {
     const low=structuredClone(base);low.w=[100,20,90];const rl=checkPlugin(plugin,cx(low));if(!rl.some(r=>r.name.includes('wage above floor')&&r.status==='FAIL'))throw new Error('wage below floor did not fail');
     const badDemand=structuredClone(base);badDemand.target=[20,23,24];const rd=checkPlugin(plugin,cx(badDemand));if(!rd.some(r=>r.name.includes('demand identity')&&r.status==='FAIL'))throw new Error('demand mismatch did not fail');
     return 'good PASS; availability>1 FAIL; wage below floor FAIL; demand identity FAIL';
+  });
+
+
+  await expect('48 wage_pricing plugin: good passes; invalid share, factors, relative wage and nonpositive prices fail', async () => {
+    const times=[0,1,2],values={sw:[1,1,1],w:[100,80,120],w0:[100,100,100],rw:[0,-.2,.2],share:[.5,.5,.5],target:[10,9,11],market:[10,5,20],reference:[10,10,10],eta:[.5,.5,.5],factor:[1,Math.sqrt(2),Math.sqrt(.5)],demand:[20,20,20]};
+    const plugin={type:'wage_pricing',switch:'sw',instances:[{name:'QA wage pricing',colony:'A',wage:'w',initial_wage:'w0',relative_wage_change:'rw',prices:[{target:'target',labor_share:'share'}],demand:[{target:'demand',price:'market',reference_price:'reference',elasticity:'eta',factor:'factor'}]}]};
+    const cx=v=>({times,get(n){if(!(n in v))throw new Error('unknown series '+n);return v[n];}});
+    const good=checkPlugin(plugin,cx(values));if(!good.length||good.some(c=>c.status!=='PASS'))throw new Error('good runtime: '+JSON.stringify(good));
+    const raw={elements:Object.entries(values).map(([name,v])=>({type:'VARIABLE',name,behavior:{value:v[0]}}))};
+    const validation={plugins:[plugin]};
+    if(runWagePricingConformance(raw,validation).status!=='PASS')throw new Error('good static failed');
+    for(const [column,badValue,label] of [['share',1.01,'labor share'],['factor',1.1,'demand factor'],['rw',.1,'relative wage'],['target',0,'positive price'],['target',-1,'positive price']]){
+      const bad=structuredClone(values);bad[column][1]=badValue;
+      const result=checkPlugin(plugin,cx(bad));
+      if(!result.some(c=>c.status==='FAIL'&&c.name.includes(label)&&c.name.includes(column)))throw new Error(column+' corruption not caught');
+    }
+    for(const [column,value] of [['share',1.01],['reference',0],['eta',0],['reference','[w]']]){
+      const model=structuredClone(raw);model.elements.find(e=>e.name===column).behavior.value=value;
+      const result=runWagePricingConformance(model,validation);
+      if(result.status!=='FAIL'||!result.instances[0].failures.some(f=>f.includes(column)))throw new Error(column+' bad constant not caught statically');
+    }
+    const missing=structuredClone(raw);missing.elements=missing.elements.filter(e=>e.name!=='market');
+    if(runWagePricingConformance(missing,validation).status!=='FAIL')throw new Error('missing column not caught statically');
+    const nearZero=structuredClone(values);nearZero.w=[100,99.999999,100];nearZero.rw=nearZero.w.map(w=>w/100-1);nearZero.rw[1]+=1e-14;
+    if(checkPlugin(plugin,cx(nearZero)).some(c=>c.status!=='PASS'))throw new Error('cancellation-scale noise near zero rejected');
+    nearZero.rw[1]+=2e-9;
+    if(!checkPlugin(plugin,cx(nearZero)).some(c=>c.status==='FAIL'&&c.name.includes('relative wage')))throw new Error('above-tolerance near-zero wage error accepted');
+    const malformed=structuredClone(plugin);malformed.instances=[];
+    if(!checkPlugin(malformed,cx(values)).some(c=>c.status==='FAIL'))throw new Error('empty plugin silently passed');
+    return 'good static/runtime PASS; share/factor/wage/nonpositive price FAIL; missing/nonconstant/zero reference and elasticity FAIL';
   });
 
 } finally {

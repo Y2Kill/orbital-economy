@@ -1,3 +1,5 @@
+import { validateWagePricingSpec } from './lifecycle_conformance.js';
+
 function pass(name, details = {}) { return { status: 'PASS', name, ...details }; }
 function fail(name, message, details = {}) { return { status: 'FAIL', name, message, ...details }; }
 function warn(name, message, details = {}) { return { status: 'WARN', name, message, ...details }; }
@@ -244,16 +246,30 @@ export function checkPlugin(plugin, ctx) {
   const results = [];
   if (STATIC_ONLY_PLUGINS.has(plugin.type)) return results;
   if (plugin.type === 'wage_pricing') {
+    const specErrors = validateWagePricingSpec(plugin);
+    if (specErrors.length) return specErrors.map(e => fail('wage_pricing spec', e));
     const tol = plugin.rel_tol ?? 1e-9;
     const safe = (name, fn) => { try { return fn(); } catch (e) { return fail(name, e.message || String(e)); } };
     for (const inst of plugin.instances || []) {
       const label = inst.name || inst.colony || 'wage_pricing';
+      const bound = (column, valid, title) => safe(label + ': ' + title + ' ' + column, () => {
+        const values = ctx.get(column);
+        if (values.length !== ctx.times.length || !values.length) return fail(label + ': ' + title + ' ' + column, 'series length does not match non-empty time axis');
+        const i = values.findIndex(v => !Number.isFinite(v) || !valid(v));
+        return i < 0 ? pass(label + ': ' + title + ' ' + column) : fail(label + ': ' + title + ' ' + column, column + ' = ' + values[i] + ' at day ' + ctx.times[i]);
+      });
+      for (const p of inst.prices) results.push(bound(p.labor_share,v=>v>=0&&v<=1,'labor share in [0,1]'));
+      for (const d of inst.demand) {
+        results.push(bound(d.reference_price,v=>v>0,'positive reference price'));
+        results.push(bound(d.elasticity,v=>v>0,'positive elasticity'));
+      }
       const identity = (column, expectedAt, title) => safe(`${label}: ${title} ${column}`, () => {
         const actual = ctx.get(column), inputs = expectedAt.inputs.map(n => ctx.get(n));
+        if (!ctx.times.length || [actual,...inputs].some(a=>a.length!==ctx.times.length)) return fail(label + ': ' + title + ' ' + column, 'series length does not match non-empty time axis');
         let worst = 0, when = null;
         for (let i=0; i<ctx.times.length; i++) {
           const expected = expectedAt.fn(...inputs.map(a=>a[i]));
-          const err = Math.abs(actual[i]-expected) / Math.max(Math.abs(expected), 1e-12);
+          const err = Math.abs(actual[i]-expected) / Math.max(1, Math.abs(expected));
           if (!Number.isFinite(err) || err>worst) { worst=err; when=ctx.times[i]; }
         }
         return worst<=tol ? pass(`${label}: ${title} ${column}`, {worstRelativeError:worst})
@@ -263,11 +279,7 @@ export function checkPlugin(plugin, ctx) {
       for (const q of inst.demand || []) {
         results.push(identity(q.factor,{inputs:[q.price,q.reference_price,q.elasticity],fn:(pr,ref,eta)=>Math.pow(Math.max(pr/ref,1e-6),-eta)},'demand factor'));
       }
-      for (const q of inst.prices || []) results.push(safe(`${label}: positive price ${q.target}`, () => {
-        const a=ctx.get(q.target), bad=a.findIndex(v=>!Number.isFinite(v)||v<=0);
-        return bad<0 ? pass(`${label}: positive price ${q.target}`,{points:a.length})
-          : fail(`${label}: positive price ${q.target}`, `${q.target} = ${a[bad]} at day ${ctx.times[bad]}`);
-      }));
+      for (const q of inst.prices) results.push(bound(q.target,v=>v>0,'positive price'));
     }
     return results;
   }

@@ -565,6 +565,82 @@ export function checkLaborInstance(index,inst,plugin){
 }
 export function runLaborConformance(raw,validation,index=indexModel(raw)){const plugin=findLaborPlugin(validation);if(!plugin)return{status:'SKIPPED',instances:[],summary:{instances:0,conforming:0,nonConforming:0}};const specErrors=validateLaborSpec(plugin);if(specErrors.length)return{status:'FAIL',specErrors,instances:[],summary:{instances:0,conforming:0,nonConforming:0}};const instances=plugin.instances.map(i=>checkLaborInstance(index,i,plugin)),n=instances.filter(i=>i.classification==='NON_CONFORMING').length;return{status:n?'FAIL':'PASS',instances,summary:{instances:instances.length,conforming:instances.length-n,nonConforming:n}};}
 
+
+export function validateWagePricingSpec(plugin) {
+  const errors = [];
+  const obj = x => x !== null && typeof x === 'object' && !Array.isArray(x);
+  const fields = (x, allowed, required, path) => {
+    if (!obj(x)) { errors.push(path + ': must be an object'); return false; }
+    for (const k of Object.keys(x)) if (!allowed.includes(k)) errors.push(path + '.' + k + ': unknown field');
+    for (const k of required) if (typeof x[k] !== 'string' || !x[k].trim()) errors.push(path + '.' + k + ': non-empty string required');
+    return true;
+  };
+  if (!obj(plugin)) return ['wage_pricing: must be an object'];
+  const tol = plugin.rel_tol ?? 1e-9;
+  if (typeof tol !== 'number' || !Number.isFinite(tol) || tol <= 0) errors.push('wage_pricing.rel_tol: must be finite and > 0');
+  if (typeof plugin.switch !== 'string' || !plugin.switch.trim()) errors.push('wage_pricing.switch: non-empty string required');
+  if (!Array.isArray(plugin.instances) || !plugin.instances.length) return [...errors, 'wage_pricing.instances: non-empty array required'];
+  const names = new Set(), colonies = new Set();
+  for (const [i, inst] of plugin.instances.entries()) {
+    const p = 'wage_pricing.instances[' + i + ']';
+    const roles = ['name','colony','wage','initial_wage','relative_wage_change'];
+    if (!fields(inst,[...roles,'prices','demand'],roles,p)) continue;
+    for (const [key, seen] of [['name',names],['colony',colonies]]) {
+      if (seen.has(inst[key])) errors.push(p + '.' + key + ': duplicate ' + inst[key]);
+      seen.add(inst[key]);
+    }
+    const targets = new Set();
+    for (const kind of ['prices','demand']) {
+      if (!Array.isArray(inst[kind]) || !inst[kind].length) { errors.push(p + '.' + kind + ': non-empty array required'); continue; }
+      const keys = kind === 'prices' ? ['target','labor_share'] : ['target','price','reference_price','factor','elasticity'];
+      for (const [j, item] of inst[kind].entries()) {
+        const q = p + '.' + kind + '[' + j + ']';
+        if (!fields(item,keys,keys,q)) continue;
+        if (targets.has(item.target)) errors.push(q + '.target: duplicate ' + item.target);
+        targets.add(item.target);
+      }
+    }
+  }
+  return errors;
+}
+
+export function checkWagePricingInstance(index, inst, plugin) {
+  const checks = [];
+  const exists = name => {
+    const e = index.get(name);
+    checks.push(e ? pass('column ' + name) : fail('column ' + name, 'primitive not found: ' + name));
+    return e;
+  };
+  const constant = (name, valid, range) => {
+    const e = exists(name);
+    if (!e) return;
+    const value = e.behavior?.value;
+    const numeric = typeof value === 'number' || (typeof value === 'string' && /^-?(?:\d+(?:\.\d*)?|\.\d+)(?:e[+-]?\d+)?$/i.test(value.trim()));
+    if (e.type !== 'VARIABLE' || !numeric || !Number.isFinite(Number(value)) || !valid(Number(value))) {
+      checks.push(fail('constant ' + name, name + ': expected numeric VARIABLE constant ' + range));
+    } else checks.push(pass('constant ' + name));
+  };
+  for (const n of new Set([plugin.switch,inst.wage,inst.initial_wage,inst.relative_wage_change,
+    ...inst.prices.map(p=>p.target), ...inst.demand.flatMap(d=>[d.target,d.price,d.factor])])) exists(n);
+  for (const p of inst.prices) constant(p.labor_share, v=>v>=0 && v<=1, 'in [0,1]');
+  for (const d of inst.demand) {
+    constant(d.reference_price, v=>v>0, '> 0');
+    constant(d.elasticity, v=>v>0, '> 0');
+  }
+  const failed = checks.filter(c=>c.status==='FAIL');
+  return {name:inst.name,sector:inst.colony,classification:failed.length?'NON_CONFORMING':'CONFORMING',checks,variations:[],failures:failed.map(c=>c.name+': '+c.message)};
+}
+
+export function runWagePricingConformance(raw, validation, index = indexModel(raw)) {
+  const plugin = validation?.plugins?.find(p=>p?.type==='wage_pricing');
+  if (!plugin) return {status:'SKIPPED',instances:[],summary:{instances:0,conforming:0,nonConforming:0}};
+  const specErrors = validateWagePricingSpec(plugin);
+  if (specErrors.length) return {status:'FAIL',specErrors,instances:[],summary:{instances:0,conforming:0,nonConforming:0}};
+  const instances = plugin.instances.map(i=>checkWagePricingInstance(index,i,plugin));
+  const n = instances.filter(i=>i.classification==='NON_CONFORMING').length;
+  return {status:n?'FAIL':'PASS',instances,summary:{instances:instances.length,conforming:instances.length-n,nonConforming:n}};
+}
+
 // Entry point: raw ModelJSON + validation JSON -> conformance report object.
 export function runLifecycleConformance(raw, validation) {
   const plugin = findKernelPlugin(validation);
@@ -581,10 +657,11 @@ export function runLifecycleConformance(raw, validation) {
   const population = runPopulationConformance(raw, validation, index);
   const food = runFoodConformance(raw, validation, index);
   const laborMarket = runLaborMarketConformance(raw, validation, index);
+  const wagePricing = runWagePricingConformance(raw, validation, index);
   const anyNonConforming = instances.some(i => i.classification === 'NON_CONFORMING');
   const modelWideFail = modelWide.some(c => c.status === 'FAIL');
   return {
-    status: anyNonConforming || modelWideFail || simpleCapital.status === 'FAIL' || deposit.status === 'FAIL' || labor.status === 'FAIL' || population.status === 'FAIL' || food.status === 'FAIL' || laborMarket.status === 'FAIL' ? 'FAIL' : 'PASS',
+    status: anyNonConforming || modelWideFail || simpleCapital.status === 'FAIL' || deposit.status === 'FAIL' || labor.status === 'FAIL' || population.status === 'FAIL' || food.status === 'FAIL' || laborMarket.status === 'FAIL' || wagePricing.status === 'FAIL' ? 'FAIL' : 'PASS',
     format: KERNEL_FORMAT,
     kernel: { roles: Object.keys(KERNEL_ROLES).length, requiredRoles: REQUIRED_ROLES.length, flows: KERNEL_FLOWS.length, stocks: KERNEL_STOCKS.length },
     legacySwitch: plugin.legacy_switch || 'Capital Lifecycle Enabled',
@@ -601,7 +678,8 @@ export function runLifecycleConformance(raw, validation) {
     labor,
     population,
     food,
-    laborMarket
+    laborMarket,
+    wagePricing
   };
 }
 
@@ -640,6 +718,14 @@ export function printConformance(report, log = console.log) {
   if (report.laborMarket?.status !== 'SKIPPED') {
     log(`Labor market conformance: ${report.laborMarket.status}`);
     for(const inst of report.laborMarket.instances||[]){const checked=inst.checks.length,failed=inst.failures.length;log(`    ${inst.name.padEnd(32)} ${inst.classification}  (${checked-failed}/${checked} checks)`);for(const f of inst.failures)log(`        - ${f}`);}for(const e of report.laborMarket.specErrors||[])log(`    - ${e}`);
+  }
+  if (report.wagePricing && report.wagePricing.status !== 'SKIPPED') {
+    log('Wage pricing conformance: ' + report.wagePricing.status);
+    for (const inst of report.wagePricing.instances || []) {
+      log('    ' + inst.name + ' ' + inst.classification + ' (' + (inst.checks.length-inst.failures.length) + '/' + inst.checks.length + ' checks)');
+      for (const f of inst.failures) log('        - ' + f);
+    }
+    for (const e of report.wagePricing.specErrors || []) log('    - ' + e);
   }
   if (report.food?.status !== 'SKIPPED') {
     log(`Food conformance: ${report.food.status}`);
