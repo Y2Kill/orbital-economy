@@ -1,3 +1,11 @@
+## v0.9.19 — wage_pricing node
+
+- Новый declarative type wage_pricing: пропорциональная передача зарплаты в цены руды/энергии/еды и ценовой фактор эффективного спроса на металл/электронику под одним switch.
+- Fixture: 18 add / 10 replace / 42 LINK; fingerprint 041bb60c716b2a66 против v7.7.14.
+- Validation fragments/merge, static HARD conformance и runtime identities/positive prices; rel_tol=1e-9 с единичным нижним масштабом нормированной ошибки.
+- NODE 60–66, QA 48; wage_pricing снимается первым, прежние 1–59 повторяются на synthetic accepted+node; удаляются scenario inputs/validation.
+- Lab/package version 0.9.19; accepted model, validation, policy, engine и прежние node declarations не меняются.
+
 ## v0.9.18 — labor_market node
 
 - новый declarative type `labor_market` (Planet v2 step 3): спрос = per-capita norm × Population, гибкая зарплата и labor-availability guard выпуска;

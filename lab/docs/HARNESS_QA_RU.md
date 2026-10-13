@@ -1,4 +1,4 @@
-# QA самого Orbital Economy Lab v0.9.18
+# QA самого Orbital Economy Lab v0.9.19
 
 ## 1. Operational QA
 
@@ -296,3 +296,20 @@ Linux CI КТ2: https://github.com/Y2Kill/orbital-economy/actions/runs/370065015
 - **QA 47** — синтетический runtime plugin: good PASS; availability>1, wage ниже floor и demand identity при switch=1 должны FAIL.
 
 Целевые итоги v0.9.18: **NODE 59/59**, **QA 47/47**; остальные self-tests без изменения ожиданий.
+
+## v0.9.19 — wage_pricing node QA
+
+Задание 036: NODE 60–66 и QA 48. Windows: NODE 66/66, QA 48/48.
+
+- 60: APPLY_PATCH, 18/10/42; fingerprint против v7.7.14 — 041bb60c716b2a66; old branches сохранены.
+- 61: merge идемпотентен и отклоняет конфликты; static 2 instances; boundary без изменений, unclassified 0, symmetry 0, planet_v1 PASS, loops 0.
+- 62: switch=1 на последнем Mode; **все** merged plugins и generic checks проходят; хотя бы одна объявленная цена отличается от switch=0.
+- 63: три региона, 3 static instances CONFORMING.
+- 64: oldBranch strip/rebuild; 0 definition/replacement/link differences.
+- 65: ошибки schema/base с путями/именами, включая совпавшие раскрытые цели и недопустимый тип value.
+- 66: wage_pricing снимается первым над labor_market/food и switchless слоями; удалены scenario inputs/validation; subprocess запускает все прежние 1–59 на synthetic accepted+node и требует 59 PASS, 0 FAIL.
+- QA 48: good static/runtime; неверная share/factor/relative wage, неположительные цены; missing/nonconstant/zero reference/elasticity; шум/ошибка около нуля; пустой plugin.
+
+Для диагностики: node --expose-gc src/node_qa.js --cases=60-65. Полный CI не использует фильтр. Параметры --accepted-model=... --accepted-validation=... служат пробе нового принятого слоя без изменения production inputs.
+
+Приёмочный runtime использует reference/add_wp_modes.mjs из задания: Mode 54 = 52 + node, Mode 55 = 53 + node с правильным окном транспортного всплеска. Проверяются все plugins. Аудит пробной модели: 18 переключателей, 262144 комбинации, 0 петель. Подтверждения — REPORT_RU.md задания 036.

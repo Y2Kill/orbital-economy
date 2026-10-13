@@ -1,4 +1,4 @@
-# Declarative Nodes — Orbital Economy Lab v0.9.18
+# Declarative Nodes — Orbital Economy Lab v0.9.19
 
 ## 1. Назначение
 
@@ -13,7 +13,7 @@ Node declaration — короткое строгое описание повто
 
 ## 2. Поддерживаемый тип
 
-Registry содержит восемь типов: `capital_lifecycle`, `simple_capital`, `deposit`, `energy_consumer`, `labor`, `population`, `food` и `labor_market`, все `version: 1`.
+Registry содержит девять типов: `capital_lifecycle`, `simple_capital`, `deposit`, `energy_consumer`, `labor`, `population`, `food`, `labor_market` и `wage_pricing`, все `version: 1`.
 
 Минимальная форма:
 
@@ -461,3 +461,49 @@ Generated validation:
   ]
 }
 ```
+
+## Wage pricing node — v0.9.19
+
+Финансовый промежуточный слой задачи 036. Один переключатель Wage Pricing Enabled включает передачу зарплаты в цены без труда и ценовую эластичность конечного спроса. По умолчанию 0: каждая замена сохраняет прежнюю формулу в ветке else. STOCK/FLOW не создаются; граница модели, Planet P6 и прежние декларации не меняются.
+
+Полный пример (fixtures/nodes/wage_pricing.json):
+
+```json
+{
+  "type": "wage_pricing",
+  "version": 1,
+  "colonies": ["A", "B"],
+  "switch": "Wage Pricing Enabled",
+  "parameters": {
+    "Price Demand Elasticity": 0.5
+  },
+  "inputs": {
+    "wage": "{C} Wage",
+    "initial_wage": "{C} Initial Wage"
+  },
+  "prices": [
+    { "name": "Ore", "target": "{C} Ore Price", "labor_share": { "A": 1, "B": 0.5 } },
+    { "name": "Energy", "target": "{C} Energy Price", "labor_share": { "A": 0.83, "B": 1 } },
+    { "name": "Food", "target": "{C} Food Price", "labor_share": { "A": 1, "B": 1 } }
+  ],
+  "demand": [
+    { "name": "Metal", "target": "{C} Effective Local Base Demand", "price": "{C} Market Price", "elasticity": "Price Demand Elasticity", "reference_price": { "A": 25.9, "B": 34.46 } },
+    { "name": "Electronics", "target": "{C} Effective Electronics Local Base Demand", "price": "{C} Electronics Market Price", "elasticity": "Price Demand Elasticity", "reference_price": { "A": 23.1, "B": 21.91 } }
+  ]
+}
+```
+
+Строгая схема: version 1, не менее двух уникальных регионов; непустые parameters с конечными значениями > 0; inputs содержит ровно wage/initial_wage. Непустые prices/demand имеют уникальные name и target, включая раскрытые цели между группами и регионами. labor_share содержит ровно регионы декларации и значения [0,1]; reference_price — те же ключи и значения > 0; elasticity именует параметр. Все входы/цены существуют; цели — VARIABLE с конечным числом или непустой формулой. Неизвестные поля, отсутствующие элементы и конфликты порождаемых имён дают ошибки с путём/именем.
+
+На каждый X:
+- X Relative Wage Change = wage / Max(initial_wage, 1e-6) − 1;
+- X {name} Labor Share; цена = old × Max(1 + labor_share × relative_wage_change, 1e-6);
+- X {name} Demand Reference Price и X {name} Price Demand Factor = Max(market_price / reference_price, 1e-6)^(−elasticity); спрос = old × factor.
+
+Все цены и спрос обёрнуты в IfThenElse([switch] = 1, new, old). Общие VARIABLE — переключатель и параметры. LINK выводятся из ссылок новых формул и замен без дублей. Эталон против v7.7.14: **18 add / 10 replace / 42 LINK**, fingerprint **041bb60c716b2a66**.
+
+Передача пропорциональна: стоимость труда в единице еды может превышать всю её цену, поэтому аддитивное вычитание труда при падении зарплаты может обрушить цену. Доля труда задаётся в декларации как стартовая стоимость труда / стартовая цена, не больше 1; на старте относительное изменение зарплаты равно нулю и цены прежние.
+
+Ценовой фактор применяется к **Effective Local Base Demand** (и Electronics), сохраняя эффективную формулу прежних слоёв. Local Base Demand уже изменён labor_market в норму на душу × Population; wage_pricing лежит над ним и food, а не пересоздаёт их определения.
+
+Validation-фрагменты: wage_pricing_instances и wage_pricing_switch. Слияние создаёт один plugin wage_pricing с rel_tol=1e-9; повтор идентичного фрагмента идемпотентен, конфликт экземпляра/переключателя/допуска отклоняется. При снятии слоя node QA восстанавливает oldBranch, убирает порождённые элементы/LINK и их scenario inputs, удаляет wage_pricing validation перед тестами нижних слоёв.

@@ -453,3 +453,27 @@ Runtime проверяет:
 Фрагмент `labor_market` меняет только `planet_closure.demand_drivers`: из списка `parameters` удаляются прежние population-dependent targets `{C} Local Base Demand` и `{C} Electronics Local Base Demand`, вместо них добавляются внешние нормы `Metal Demand per Capita` и `Electronics Demand per Capita`. Поле `consumption` не меняется. Повторное слияние идемпотентно.
 
 Причина: после включения рынка труда конечный спрос = норма на душу × Population. Прежний target теперь зависит от STOCK Population и больше не может считаться внешним P6-драйвером; per-capita norm остаётся экзогенным параметром. При снятии верхнего `labor_market` слоя node QA восстанавливает прежний P6-контракт для нижних узлов.
+
+## wage_pricing — Lab v0.9.19
+
+rel_tol по умолчанию 1e-9; switch обязателен, instances непуст. На регион: name, colony, wage, initial_wage, relative_wage_change; prices[] содержит target/labor_share; demand[] — target/price/reference_price/factor/elasticity. Пример:
+
+```json
+{
+  "type": "wage_pricing", "rel_tol": 1e-9, "switch": "Wage Pricing Enabled",
+  "instances": [{
+    "name": "A wage pricing", "colony": "A", "wage": "A Wage",
+    "initial_wage": "A Initial Wage", "relative_wage_change": "A Relative Wage Change",
+    "prices": [{"target": "A Ore Price", "labor_share": "A Ore Labor Share"}],
+    "demand": [{"target": "A Effective Local Base Demand", "price": "A Market Price",
+      "reference_price": "A Metal Demand Reference Price", "factor": "A Metal Price Demand Factor",
+      "elasticity": "Price Demand Elasticity"}]
+  }]
+}
+```
+
+Static HARD: все названные колонки существуют; labor_share — числовая VARIABLE-константа [0,1], reference_price/elasticity — числовые VARIABLE-константы > 0. Пустые массивы, повторы экземпляров/регионов/целей и неизвестные поля mapping отклоняются. Ошибка переводит общий conformance в FAIL до simulation.
+
+Runtime во всех точках, независимо от switch: relative_wage_change = wage / Max(initial_wage, 1e-6) − 1; factor = Max(price / reference_price, 1e-6)^(−elasticity); prices.target > 0. Дополнительно проверяются диапазоны labor_share, положительность reference_price/elasticity и длины рядов. Нормированная ошибка = abs(actual−expected) / Max(1, abs(expected)), с rel_tol=1e-9. Единичный масштаб устраняет усиление округления у relative_wage_change около нуля; QA проверяет шум ниже допуска и ошибку выше него. FAIL содержит имя экземпляра и колонки.
+
+Структурных фрагментов нет: узел не добавляет потоки/пары и не переобъявляет P6. Снятие слоя удаляет его plugin/instances, сохраняя прежние validation.

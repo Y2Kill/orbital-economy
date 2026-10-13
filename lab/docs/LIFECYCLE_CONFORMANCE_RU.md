@@ -161,3 +161,7 @@ Case 12 `NODE_SELF_TEST` подставляет `{C} Regolith Requirement` (VARI
 ## Population conformance — v0.9.16
 
 Plugin `population` проходит отдельный HARD static conformance до simulation. Проверяются типы ролей, endpoints рождений/смертей, направленная миграция только между объявленными population STOCK, симметрия записей emigration/immigration и прямые dependency/LINK для рабочей силы и занятости. Любая ошибка даёт `population.status = FAIL` и переводит общий conformance в FAIL.
+
+## Wage pricing conformance — v0.9.19
+
+runWagePricingConformance проверяет схему mapping и существование всех колонок, labor_share как числовую константу [0,1], reference_price/elasticity как положительные числовые константы. Выдаёт CONFORMING/NON_CONFORMING по регионам. Этот plugin включён в общий HARD conformance; ошибки блокируют RUN_LAB и comparator. Результаты и точные имена колонок отражены в console, conformance JSON/Markdown и RUN_LAB JSON/Markdown. Runtime identities проверяются отдельно plugin wage_pricing.

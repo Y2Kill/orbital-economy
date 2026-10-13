@@ -1,4 +1,4 @@
-# Статус проверок Orbital Economy Lab v0.9.18 — baseline v7.7.14 r1
+# Статус проверок Orbital Economy Lab v0.9.19 — baseline v7.7.14 r1
 
 ## Принятая основа
 
@@ -172,3 +172,11 @@ Harness-only изменение: declarative node `labor_market`, validation plu
 Эталон fixture: **31 add / 24 replace / 108 LINK**, fingerprint `8ac752ca9a1175e4`. Static integration: labor_market 2 CONFORMING, open boundaries **262**, unclassified 0, symmetry mismatches 0, Planet P6 **4**, algebraic loops 0. Runtime case 55 включает switch и прогоняет **все** merged plugins.
 
 Linux CI на кодовой голове `f7757fd`: [run 38040788876](https://github.com/Y2Kill/orbital-economy/actions/runs/38040788876) — guard/tools/bench success; **QA 47/47**, **NODE 59/59**, `OVERALL: PASS`. Финальная документированная голова фиксируется в отчёте задачи после отдельного CI.
+
+## Task 036 / Lab v0.9.19
+
+Harness-only: wage_pricing, static/runtime plugin, NODE 60–66 и QA 48. Принятая v7.7.14, validation, policy и model/nodes остаются прежними.
+
+Подтверждено локально: 18/10/42, fingerprint 041bb60c716b2a66; NODE 60–65 PASS после исправления допуска около нуля; QA 48/48. Conformance/audit с пробными Modes: boundary 262, unclassified 0, symmetry 0, parameter differences 166, planet_v1 PASS, loops 0/262144. Modes 54–55 — OVERALL PASS всех plugins.
+
+Windows: NODE 66/66 (внутри NODE 66 — прежние 59/59 на accepted+node), QA 48/48, Structure 21/21, Loop 19/19, Planet 20/20, Conformance 18/18, Policy 10/10, Compare PASS. Полные RUN_LAB и CHECK_CANDIDATE, строгий guard и CI финальной головы фиксируются в REPORT_RU.md задания 036.
