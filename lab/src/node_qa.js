@@ -48,6 +48,7 @@ import {
   laborMarketGeneratedNames,
   laborMarketReplacementNames
 } from './nodes/labor_market.js';
+import { wagePricingGeneratedNames, wagePricingReplacementNames } from './nodes/wage_pricing.js';
 import { runLifecycleConformance, runFoodConformance, runLaborMarketConformance } from './lifecycle_conformance.js';
 import { runStructureAudits } from './structure_audit.js';
 
@@ -329,6 +330,20 @@ function stripLaborMarketNode(raw, decl) {
     if (e.type === 'LINK') return !generated.has(e.from) && !generated.has(e.to) && !extraLinks.has(e.from + '|' + e.to);
     return !generated.has(e.name);
   });
+  for (const sc of out.scenarios || []) if (sc.values) for (const k of Object.keys(sc.values)) if (generated.has(k)) delete sc.values[k];
+  return out;
+}
+
+function stripWagePricingNode(raw, decl) {
+  const out = structuredClone(raw), generated = new Set(wagePricingGeneratedNames(decl));
+  for (const name of wagePricingReplacementNames(decl)) {
+    const e = out.elements.find(x => x.type !== 'LINK' && x.name === name);
+    if (!e) throw new Error('wage_pricing: replacement target missing while stripping: ' + name);
+    const old = oldBranch(e.behavior.value, decl.switch, name);
+    e.behavior.value = /^-?(?:\d+(?:\.\d*)?|\.\d+)(?:e[+-]?\d+)?$/i.test(old) ? Number(old) : old;
+  }
+  out.elements = out.elements.filter(e => e.type === 'LINK'
+    ? !generated.has(e.from) && !generated.has(e.to) : !generated.has(e.name));
   for (const sc of out.scenarios || []) if (sc.values) for (const k of Object.keys(sc.values)) if (generated.has(k)) delete sc.values[k];
   return out;
 }
@@ -1886,6 +1901,54 @@ await expect('59. labor_market is peeled first above food and every earlier node
   for(const old of laborMarketState.expanded.validation.demand_drivers.replaces||[])if(!pc?.demand_drivers?.parameters?.includes(old))throw new Error('P6 old driver not restored: '+old);
   for(const fresh of laborMarketState.expanded.validation.demand_drivers.parameters||[])if(pc?.demand_drivers?.parameters?.includes(fresh))throw new Error('P6 per-capita driver remained after strip: '+fresh);
   return `labor_market peeled first; ${nodes.length} node layers rebuildable; P6 old drivers restored`;
+});
+
+
+const wagePricingFixture = readJson(path.join(root, 'fixtures', 'nodes', 'wage_pricing.json'));
+let wagePricingState = null;
+await expect('60. wage_pricing fixture expands and APPLY_PATCH matches prototype counts/fingerprint', () => {
+  const base = accepted;
+  const expanded = expandNode(wagePricingFixture, base);
+  const p = expanded.patch;
+  if (p.add_elements.length !== 18 || p.replace_formulas.length !== 10 || p.add_links.length !== 42) throw new Error('wage_pricing patch counts differ');
+  const model = applyPatch(base, { format: PATCH_FORMAT, ...p }).model;
+  const fp = definitionFingerprint(model);
+  if (base.name.includes('v7.7.14') && fp !== '041bb60c716b2a66') throw new Error('definition fingerprint ' + fp + ', expected 041bb60c716b2a66');
+  const byName = new Map(base.elements.filter(e => e.type !== 'LINK').map(e => [e.name,e]));
+  for (const r of p.replace_formulas) if (oldBranch(r.value,wagePricingFixture.switch,r.name) !== String(byName.get(r.name).behavior.value)) throw new Error('old branch differs: '+r.name);
+  wagePricingState = { base, model, expanded };
+  return '18 elements / 10 replacements / 42 links; fingerprint=' + fp;
+});
+
+await expect('64. strip wage_pricing by oldBranch and rebuild with zero definition/link differences', () => {
+  if (!wagePricingState) throw new Error('case 60 did not produce wage_pricing state');
+  const stripped = stripWagePricingNode(wagePricingState.model,wagePricingFixture);
+  const expanded = expandNode(wagePricingFixture,stripped);
+  const rebuilt = applyPatch(stripped,{format:PATCH_FORMAT,...expanded.patch}).model;
+  for (const [expected,actual] of [[wagePricingState.base,stripped],[wagePricingState.model,rebuilt]]) {
+    const a=new Map(expected.elements.filter(e=>e.type!=='LINK').map(e=>[e.name,def(e)]));
+    const b=new Map(actual.elements.filter(e=>e.type!=='LINK').map(e=>[e.name,def(e)]));
+    if(a.size!==b.size)throw new Error('element count differs');
+    for(const [name,value] of a)if(b.get(name)!==value)throw new Error('definition differs: '+name);
+    if(!sameSet(linkSet(expected),linkSet(actual)))throw new Error('link set differs');
+  }
+  return '0 definition/replacement/link differences';
+});
+
+await expect('65. wage_pricing schema/base rejects invalid declarations with paths/names', async () => {
+  const base=wagePricingState?.base || accepted;
+  const invalid=async (mutate,pattern,label)=>{const d=structuredClone(wagePricingFixture);mutate(d);await requireThrow(()=>expandNode(d,base),pattern,label);};
+  await invalid(d=>d.prices[0].labor_share.A=1.01,/node\.prices\[0\]\.labor_share\.A/,'share > 1');
+  await invalid(d=>delete d.demand[0].reference_price.B,/node\.demand\[0\]\.reference_price\.B/,'missing region');
+  await invalid(d=>d.demand[0].elasticity='Missing Elasticity',/node\.demand\[0\]\.elasticity/,'unknown elasticity');
+  await invalid(d=>d.prices[0].target='{C} Missing Price',/base element missing: A Missing Price/,'missing target');
+  await invalid(d=>d.prices[1].name=d.prices[0].name,/node\.prices\[1\]\.name: duplicate/,'duplicate name');
+  const collision=structuredClone(base);collision.elements.push({type:'VARIABLE',name:'A Relative Wage Change',behavior:{value:0}});
+  await requireThrow(()=>expandNode(wagePricingFixture,collision),/generated name conflicts.*A Relative Wage Change/,'generated name conflict');
+  await invalid(d=>d.inputs.extra='{C} Wage',/node\.inputs\.extra: unknown field/,'unknown field');
+  await invalid(d=>d.parameters['Price Demand Elasticity']=0,/node\.parameters\.Price Demand Elasticity/,'nonpositive parameter');
+  await invalid(d=>d.prices[0].labor_share.C=.5,/node\.prices\[0\]\.labor_share\.C: unknown field/,'extra region');
+  return 'six required invalid cases plus unknown field, zero parameter and extra region rejected';
 });
 
 console.log(`\nNODE SELF-TEST: ${passed} passed, ${failed} failed`);

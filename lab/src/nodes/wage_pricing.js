@@ -103,3 +103,14 @@ export function expandWagePricing(d, base) {
       demand:d.demand.map(q=>({target:sub(q.target,X),price:sub(q.price,X),reference_price:`${X} ${q.name} Demand Reference Price`,factor:`${X} ${q.name} Price Demand Factor`,elasticity:q.elasticity}))})),
     wage_pricing_switch:SW}};
 }
+
+export function wagePricingReplacementNames(d) {
+  return d.colonies.flatMap(c => [...d.prices, ...d.demand].map(x => sub(x.target, c)));
+}
+export function wagePricingGeneratedNames(d) {
+  return [d.switch, ...Object.keys(d.parameters), ...d.colonies.flatMap(c => [
+    c + ' Relative Wage Change',
+    ...d.prices.map(x => c + ' ' + x.name + ' Labor Share'),
+    ...d.demand.flatMap(x => [c + ' ' + x.name + ' Demand Reference Price', c + ' ' + x.name + ' Price Demand Factor'])
+  ])];
+}
