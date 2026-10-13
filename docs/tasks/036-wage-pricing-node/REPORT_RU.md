@@ -96,6 +96,18 @@
 - N2 и N3 подтверждены локально и CI КТ3. RUN_LAB всех 54 Modes PASS; CHECK_CANDIDATE принятой модели против себя ещё выполняется на всех 54 Modes.
 - После push ожидается ci.yml на документированной голове КТ4; ссылка/исход и строгий guard проверяются отдельным шагом. КТ4 пока не закрыта.
 
+### Финальные N1–N4 — локальные проверки завершены, 2026-10-13
+- N1: полный строгий guard на 18cb91a — PASS (0 fail, 2 ожидаемых SUMS warn при sums_by=reviewer). Remote main = f82ae80; все 33 refs тегов совпадают. CI документированной головы: https://github.com/Y2Kill/orbital-economy/actions/runs/38431868429 — пока выполняется; завершённые guard/tools-selftest PASS.
+- N2: Windows, Node v24.11.1 — NODE 66/66 (внутренний прогон прежних 1–59 на accepted+node: 59/59), QA 48/48, Structure 21/21, Loop 19/19, Planet 20/20, Conformance 18/18, Policy 10/10, Compare PASS. Linux bench КТ3 также целиком PASS.
+- N3: раскрытие и validation совпадают с эталоном целиком; APPLY_PATCH 18 / 10 / 42, fingerprint 041bb60c716b2a66; conformance/audit PASS, boundary 262, unclassified 0, symmetry 0, planet_v1 PASS, loops 0/262144. Modes 54–55 из reference/add_wp_modes.mjs: runtime всех merged plugins OVERALL PASS.
+- N4: раскрытие всех 11 model/nodes деклараций совпадает с main. Аудит принятой v7.7.14 сохранил boundary 262, unclassified 0, symmetry 0, 17 switches/131072 combinations/0 loops, planet_v1 PASS. Полный RUN_LAB: 54/54 Modes PASS, 22490 runtime-проверок, OVERALL PASS. CHECK_CANDIDATE принятой модели против себя: 54 Modes, BYTE_IDENTICAL, RUN STATUS COMPLETE, POLICY PASS; observed/unexpected/forbidden/hard blockers = 0.
+- Логи и JSON-отчёты проверены в lab/output/task036 (игнорируемые локальные артефакты). Принятые model/validation/policy, model/nodes, tools, vendor, .github, engine, planet_closure и оба SHA256SUMS не изменены. После зелёного CI КТ4 подтверждение сохраняется отдельным коммитом; CI этого коммита проверяется отдельно перед передачей на приёмку.
+
+### КТ4 — CI документированной головы подтверждён, 2026-10-13
+- https://github.com/Y2Kill/orbital-economy/actions/runs/38431868429 — success на 18cb91a: guard/tools-selftest/bench-selftests PASS, включая NODE 66/66, QA 48/48 и smoke Modes 0/12. Integrity пропущен по контракту sums_by=reviewer; SHA256SUMS не пересобирались.
+- Версия и документация КТ4, локальные N1–N4 и полный bench CI подтверждены. Эта запись сохраняется отдельным коммитом после зелёного CI. После push ci.yml итогового коммита журнала и полный строгий guard проверяются отдельно перед сообщением готовности и передачей PR на приёмку; результат финального CI указывается в PR.
+- Все изменения остаются в task/036-wage-pricing-node; история линейная, исходные восемь коммитов сохранены. Основные точки возврата: c166f5b (исходная), 32f187d (КТ1), 3254898 (КТ2), 0e7b45a (КТ3), 18cb91a (документированная КТ4). Возврат, если понадобится, выполняется новыми исправляющими коммитами без переписывания истории.
+
 ## Устройство — раунд 2
 
 Узел wage_pricing строго проверяет декларацию и раскрывает общий switch/параметры, региональное относительное изменение зарплаты, доли труда и опорные цены/факторы спроса. Все 10 замен switch-wrapped, при 0 сохраняют прежние ветви. LINK выводятся из ссылок, STOCK/FLOW не добавляются.
@@ -114,4 +126,4 @@ Node QA снимает wage_pricing первым над labor_market/food, во�
 
 ## Состояние раунда 2
 
-КТ1–КТ3 закрыты. КТ4 ожидает полного CHECK_CANDIDATE, строгого guard и зелёной финальной головы. Приёмку и продвижение в main выполняет владелец отдельным шагом. SHA256SUMS не менялись (sums_by=reviewer), [skip ci] не использовался; main, теги и защищённые файлы не изменялись.
+КТ1–КТ3 закрыты. Документированная КТ4 и локальные N1–N4 подтверждены; последняя проверка — CI отдельного итогового коммита этого журнала и строгий guard на нём. Готовность к приёмке сообщается после их PASS, со ссылкой на финальный CI в PR. Приёмку и продвижение в main выполняет владелец отдельным шагом. SHA256SUMS не менялись (sums_by=reviewer), [skip ci] не использовался; main, теги и защищённые файлы не изменялись.
