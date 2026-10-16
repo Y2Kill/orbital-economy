@@ -49,7 +49,8 @@ import {
   laborMarketReplacementNames
 } from './nodes/labor_market.js';
 import { wagePricingGeneratedNames, wagePricingReplacementNames } from './nodes/wage_pricing.js';
-import { runLifecycleConformance, runFoodConformance, runLaborMarketConformance, runWagePricingConformance } from './lifecycle_conformance.js';
+import { costPricingGeneratedNames, costPricingReplacementNames } from './nodes/cost_pricing.js';
+import { runLifecycleConformance, runFoodConformance, runLaborMarketConformance, runWagePricingConformance, runCostPricingConformance } from './lifecycle_conformance.js';
 import { runStructureAudits } from './structure_audit.js';
 
 const root = path.resolve(process.cwd());
@@ -360,6 +361,51 @@ function stripWagePricingNode(raw, decl) {
   out.elements = out.elements.filter(e => e.type === 'LINK'
     ? !generated.has(e.from) && !generated.has(e.to) : !generated.has(e.name));
   for (const sc of out.scenarios || []) if (sc.values) for (const k of Object.keys(sc.values)) if (generated.has(k)) delete sc.values[k];
+  return out;
+}
+
+function stripCostPricingNode(raw, decl) {
+  const out = structuredClone(raw);
+  const generated = new Set(costPricingGeneratedNames(decl));
+  const byName = new Map(out.elements.filter(e => e.type !== 'LINK' && e.name).map(e => [e.name, e]));
+  for (const name of costPricingReplacementNames(decl)) {
+    const element = byName.get(name);
+    if (!element) throw new Error('cost_pricing: replacement target missing: ' + name);
+    const old = oldBranch(element.behavior.value, decl.switch, name);
+    const reference = (decl.references || []).find(r =>
+      decl.colonies.some(c => r.target.replaceAll('{C}', c) === name));
+    if (reference) {
+      const colony = decl.colonies.find(c => reference.target.replaceAll('{C}', c) === name);
+      const initial = byName.get(colony + ' Initial ' + reference.name);
+      if (!initial || old !== '[' + initial.name + ']') {
+        throw new Error('cost_pricing: initial reference mismatch: ' + name);
+      }
+      element.behavior.value = initial.behavior.value;
+    } else {
+      element.behavior.value = old;
+    }
+  }
+  out.elements = out.elements.filter(e => e.type === 'LINK'
+    ? !generated.has(e.from) && !generated.has(e.to)
+    : !generated.has(e.name));
+  for (const sc of out.scenarios || []) {
+    if (sc.values) delete sc.values[decl.switch];
+  }
+  return out;
+}
+
+function validationWithoutCostPricingFragment(raw, fragment) {
+  const out = structuredClone(raw);
+  const names = new Set((fragment.cost_pricing_instances || []).map(i => i.name));
+  const plugin = out.plugins?.find(p => p.type === 'cost_pricing');
+  if (plugin?.instances) plugin.instances = plugin.instances.filter(i => !names.has(i.name));
+  if (plugin && !plugin.instances.length) out.plugins = out.plugins.filter(p => p !== plugin);
+  const boundary = out.plugins?.find(p => p.type === 'open_boundaries');
+  const information = boundary?.categories?.find(c => c.id === 'information_signal');
+  if (information?.name) {
+    information.name = information.name.filter(name =>
+      !(fragment.information_signal_names || []).includes(name));
+  }
   return out;
 }
 
@@ -2063,6 +2109,183 @@ await expect('66. wage_pricing peels first and all cases 1-59 pass on synthetic 
     console.log(run.stdout.trim());
   }finally{fs.rmSync(tmp,{recursive:true,force:true});}
   return 'wage_pricing first; '+nodes.length+' layers rebuildable; scenario inputs/validation removed; prior 59/59 PASS on accepted+node';
+});
+
+
+let costPricingState = null;
+const costPricingFixture = readJson(path.join(root, 'fixtures', 'nodes', 'cost_pricing.json'));
+
+await expect('67. cost_pricing fixture matches reference patch counts and fingerprint', () => {
+  const base = accepted;
+  const expanded = expandNode(costPricingFixture, base);
+  const patch = expanded.patch;
+  const counts = [patch.add_elements.length, patch.replace_formulas.length, patch.add_links.length];
+  if (counts.join('/') !== '81/22/356') throw new Error('unexpected expansion: ' + counts.join('/'));
+  const model = applyPatch(base, { format: PATCH_FORMAT, ...patch }).model;
+  const fingerprint = definitionFingerprint(model);
+  if (base.name.includes('v7.7.15') && fingerprint !== '6fe385abca34eabd') {
+    throw new Error('fingerprint ' + fingerprint + ' instead of 6fe385abca34eabd');
+  }
+  const original = new Map(base.elements.filter(e => e.type !== 'LINK').map(e => [e.name, e]));
+  for (const replace of patch.replace_formulas) {
+    const expected = costPricingFixture.references.some(ref => costPricingFixture.colonies.some(c => ref.target.replaceAll('{C}', c) === replace.name))
+      ? '[' + costPricingFixture.colonies.find(c => replace.name.startsWith(c + ' ')) + ' Initial ' +
+        costPricingFixture.references.find(ref => costPricingFixture.colonies.some(c => ref.target.replaceAll('{C}', c) === replace.name)).name + ']'
+      : String(original.get(replace.name)?.behavior.value);
+    if (oldBranch(replace.value, costPricingFixture.switch, replace.name) !== expected) {
+      throw new Error('unexpected old branch for ' + replace.name);
+    }
+  }
+  costPricingState = { base, model, expanded };
+  return '81/22/356; fingerprint ' + fingerprint;
+});
+
+await expect('68. cost_pricing validation merge, statics, boundaries and audit', () => {
+  if (!costPricingState) throw new Error('case 67 must run first');
+  const merged = mergeNodeValidation(acceptedValidation, [costPricingState.expanded.validation]);
+  if (JSON.stringify(merged) !== JSON.stringify(mergeNodeValidation(merged, [costPricingState.expanded.validation]))) {
+    throw new Error('validation merge is not idempotent');
+  }
+  const conflict = structuredClone(costPricingState.expanded.validation);
+  conflict.cost_pricing_instances[0].wage = 'Different Wage';
+  let rejected = false;
+  try { mergeNodeValidation(merged, [conflict]); } catch { rejected = true; }
+  if (!rejected) throw new Error('conflicting instance was accepted');
+  const conformance = runCostPricingConformance(costPricingState.model, merged);
+  if (conformance.status !== 'PASS' || conformance.summary.instances !== 2) {
+    throw new Error('cost_pricing static conformance failed: ' + JSON.stringify(conformance));
+  }
+  const before = runStructureAudits(costPricingState.base, acceptedValidation);
+  const audit = runStructureAudits(costPricingState.model, merged);
+  if (audit.status !== 'PASS' ||
+      audit.openBoundaries.summary.openFlows !== before.openBoundaries.summary.openFlows + 28 ||
+      audit.openBoundaries.summary.unclassified !== 0 ||
+      audit.colonySymmetry.summary.mismatches !== 0 ||
+      audit.planetClosure.status !== 'PASS' ||
+      audit.algebraicLoops.combinationsWithLoops !== 0) {
+    throw new Error('cost pricing structure audits failed: ' + JSON.stringify(audit));
+  }
+  costPricingState.validation = merged;
+  return '2 static instances, +28 boundary flows, zero unclassified/symmetry/loops';
+});
+
+await expect('69. cost_pricing switch-on runtime validates all plugins', () => {
+  if (!costPricingState?.validation) throw new Error('case 68 must run first');
+  const source = costPricingState.model.scenarios.at(-1);
+  const run = enabled => {
+    const trial = structuredClone(source);
+    trial.values = { ...trial.values, [costPricingFixture.switch]: enabled };
+    const model = loadModelJSON(modelJsonForScenario(costPricingState.model, trial));
+    const errors = model.check();
+    if (errors.length) throw new Error('model.check: ' + errors.map(e => e.message || e).join('; '));
+    const results = model.simulate();
+    return { model, results, ctx: seriesContext(model, results) };
+  };
+  const on = run(1);
+  const validation = costPricingState.validation;
+  const checks = [
+    checkFiniteAll(on.model, on.results),
+    checkTimeAxis(on.results, validation.expected_time_step ?? costPricingState.model.simulation.time_step,
+      validation.time_step_tolerance ?? 1e-12)
+  ];
+  if (validation.non_negative_regex) {
+    checks.push(checkNonNegativeRegex(on.model, on.results,
+      validation.non_negative_regex.pattern, validation.non_negative_regex.tolerance ?? 1e-10));
+  }
+  for (const plugin of validation.plugins) checks.push(...checkPlugin(plugin, on.ctx));
+  for (const check of validation.global_checks || []) checks.push(runGenericCheck(check, on.ctx));
+  const failures = checks.filter(check => check.status === 'FAIL');
+  if (failures.length) throw new Error(failures.map(f => f.name + ': ' + f.message).join('; '));
+  const off = run(0);
+  const increase = costPricingState.expanded.validation.cost_pricing_instances.some(inst =>
+    inst.prices.some(p => on.ctx.get(p.target).some((v, i) => v > off.ctx.get(p.target)[i] + 1e-6)));
+  if (!increase) throw new Error('no declared price increased');
+  return 'all validation plugins PASS; price rise observed';
+});
+
+await expect('70. cost_pricing synthetic three-region expansion and static PASS', () => {
+  const decl = structuredClone(costPricingFixture);
+  decl.colonies = ['A', 'B', 'C'];
+  for (const signal of decl.signals) signal.initial.C = signal.initial.A;
+  for (const reference of decl.references) reference.scale.C = reference.scale.A;
+  decl.price_index.scale.C = decl.price_index.scale.A;
+  const base = { elements: [], scenarios: [] };
+  const names = new Set();
+  for (const colony of decl.colonies) {
+    const sub = n => n.replaceAll('{C}', colony);
+    names.add(sub(decl.inputs.wage));
+    for (const s of decl.signals) {
+      if (!decl.costs.some(c => c.cost_price && sub(s.source) === colony + ' ' + c.name + ' Cost Price')) names.add(sub(s.source));
+    }
+    for (const c of decl.costs) {
+      if (c.extend) names.add(sub(c.extend));
+      for (const q of c.inputs || []) names.add(sub(q.per_unit));
+      for (const k of ['labor','automation','rent']) if (c[k]) names.add(sub(c[k]));
+      for (const x of Object.values(c.wear || {})) names.add(sub(x));
+    }
+    for (const p of decl.prices) {
+      names.add(sub(p.target));
+      for (const match of sub(p.scarcity).matchAll(/\[([^\]]+)\]/g)) names.add(match[1]);
+    }
+    for (const m of decl.markups) names.add(sub(m));
+    for (const r of decl.references) names.add(sub(r.target));
+    names.add(sub(decl.price_index.target));
+    names.add(decl.price_index.reference);
+  }
+  for (const name of names) base.elements.push({ type: 'VARIABLE', name, behavior: { value: 10 } });
+  const index = base.elements.find(e => e.name === 'A Price Index');
+  if (index) index.behavior.value = '[Food Price Reference]';
+  const idxB = base.elements.find(e => e.name === 'B Price Index');
+  if (idxB) idxB.behavior.value = '[Food Price Reference]';
+  const idxC = base.elements.find(e => e.name === 'C Price Index');
+  if (idxC) idxC.behavior.value = '[Food Price Reference]';
+  const result = expandNode(decl, base);
+  const model = applyPatch(base, { format: PATCH_FORMAT, ...result.patch }).model;
+  const plugin = { type: 'cost_pricing', switch: result.validation.cost_pricing_switch,
+    markup: result.validation.cost_pricing_markup, instances: result.validation.cost_pricing_instances };
+  const check = runCostPricingConformance(model, { plugins: [plugin] });
+  if (check.status !== 'PASS' || check.summary.instances !== 3) throw new Error('three-region static: ' + JSON.stringify(check));
+  return '3 regions / 3 static instances PASS';
+});
+
+await expect('71. cost_pricing reversible peel and rebuild preserve definitions and links', () => {
+  if (!costPricingState) throw new Error('case 67 must run first');
+  const stripped = stripCostPricingNode(costPricingState.model, costPricingFixture);
+  const patch = expandNode(costPricingFixture, stripped).patch;
+  const rebuilt = applyPatch(stripped, { format: PATCH_FORMAT, ...patch }).model;
+  for (const [expected, actual] of [[costPricingState.base, stripped], [costPricingState.model, rebuilt]]) {
+    const left = new Map(expected.elements.filter(e => e.type !== 'LINK').map(e => [e.name, def(e)]));
+    const right = new Map(actual.elements.filter(e => e.type !== 'LINK').map(e => [e.name, def(e)]));
+    if (left.size !== right.size) throw new Error('element count mismatch');
+    for (const [name, value] of left) if (right.get(name) !== value) throw new Error('definition mismatch: ' + name);
+    if (!sameSet(linkSet(expected), linkSet(actual))) throw new Error('LINK mismatch');
+  }
+  return '0 definition/replacement/link differences';
+});
+
+await expect('72. cost_pricing six required schema errors with paths', async () => {
+  const base = costPricingState?.base || accepted;
+  const invalid = async (mutate, pattern, label) => {
+    const decl = structuredClone(costPricingFixture);
+    mutate(decl);
+    await requireThrow(() => expandNode(decl, base), pattern, label);
+  };
+  await invalid(d => d.costs[0].inputs[0].signal = 'Unknown',
+    /node\.costs\[0\]\.inputs\[0\]\.signal/, 'unknown signal');
+  await invalid(d => delete d.references[0].scale.B,
+    /node\.references\[0\]\.scale\.B/, 'missing regional scale');
+  await invalid(d => d.prices[0].cost = 'Metal',
+    /node\.prices\[0\]\.cost/, 'extend cost');
+  await invalid(d => d.prices[0].scarcity += ' * [Missing Scarcity]',
+    /base element missing: Missing Scarcity/, 'missing scarcity reference');
+  await invalid(d => d.markups[1] = d.markups[0],
+    /node\.markups\[1\]: duplicate/, 'duplicate target');
+  const conflict = structuredClone(base);
+  conflict.elements.push({ type: 'VARIABLE', name: 'A Energy Cost Price Signal',
+    behavior: { value: 1 } });
+  await requireThrow(() => expandNode(costPricingFixture, conflict),
+    /generated name conflicts.*A Energy Cost Price Signal/, 'generated name conflict');
+  return 'six malformed declarations rejected';
 });
 
 console.log(`\nNODE SELF-TEST: ${passed} passed, ${failed} failed`);
