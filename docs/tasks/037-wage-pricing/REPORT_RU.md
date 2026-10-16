@@ -41,6 +41,15 @@
 - Подтверждение зелёного CI и накопленные диагностические записи сохраняются отдельным report-only коммитом. После push ожидается ci.yml на новой голове журнала; candidate.yml продолжает проверять неизменённую поставку `af7e690`.
 - Windows-сравнение продолжается по четырём диапазонам; завершённые сценарии имеют validation PASS и changed=0, maxAbs=0.
 
+### КТ2 — 2026-10-16 — полная Windows policy PASS, регрессия 0–53 сохранена
+
+- Все четыре штатных compare завершены с exit 0. В объединение вошли ровно Modes 0–55 без пропусков/повторов; SHA моделей и validation, engine, settings, schema и structure совпали во всех частях. candidate validation всех 56 Modes — PASS.
+- Во всех 54 прежних Modes 0–53: common=1764, changed=0, added=18, removed=0, maxAbs=0, time axis exact, прежние сценарные входы совпадают. Новые 18 рядов разрешены owner policy; ни один общий прежний ряд не изменён.
+- Штатный evaluate-policy на полном объединённом отчёте: **POLICY PASS**, observed=1045, expected=1045, unexpected=0, forbidden=0, thresholdExceeded=0, requiredMissing=0, hardBlockers=0, preflightErrors=0. require_full_mode_coverage=true сохранён. COMPARISON RESULT: COMMON_OUTPUTS_IDENTICAL_WITH_NEW_MODES; RUN STATUS COMPLETE.
+- Доказательства: lab/output/task037/compare-{0,1,2,3}/model-comparison.json, policy-windows/{model-comparison.json,coverage-proof.json,change-policy.json}, policy-windows.log. Слияние проверяет каждый Mode и ничего не ослабляет в policy; промежуточные незавершённые последовательные запуски в доказательства не включены.
+- Отдельный полный Linux candidate workflow: [38890777719](https://github.com/Y2Kill/orbital-economy/actions/runs/38890777719), исход проверяется отдельно. В КТ1 уже подтверждён [зелёный ci.yml на поставке](https://github.com/Y2Kill/orbital-economy/actions/runs/38890777712); после push КТ2 ожидается ci.yml на новой report-only голове.
+- Не подтвердилось: регрессии общих рядов и неожиданных policy-событий нет; изменения правил или порогов не потребовались. Дальше: КТ3 — записать полную validation и таблицу проверка → значение → порог → запас по окончательному Windows-отчёту.
+
 ## Поставка и устройство
 
 Поставляются ровно четыре файла в candidate/: model-patch.json, validation.json, change-policy.json, PARAMETER_ANNOTATIONS_fragment.json, и этот REPORT_RU.md. Узел wage_pricing раскрывает стенд; цена руды, энергии и еды каждого региона пропорционально отвечает на его зарплату. Фактор цены с эластичностью 0.5 умножает прежний эффективный конечный спрос на металл и электронику. При switch=0 выбираются прежние формулы. Внешняя ветка окна транспорта дополнена Mode 55.
