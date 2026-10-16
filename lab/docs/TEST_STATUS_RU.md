@@ -179,3 +179,8 @@ Harness-only: wage_pricing, static/runtime plugin, NODE 60–66 и QA 48. При
 Подтверждено локально: 18/10/42, fingerprint 041bb60c716b2a66; NODE 60–65 PASS после исправления допуска около нуля; QA 48/48. Conformance/audit с пробными Modes: boundary 262, unclassified 0, symmetry 0, parameter differences 166, planet_v1 PASS, loops 0/262144. Modes 54–55 — OVERALL PASS всех plugins.
 
 Windows: NODE 66/66 (внутри NODE 66 — прежние 59/59 на accepted+node), QA 48/48, Structure 21/21, Loop 19/19, Planet 20/20, Conformance 18/18, Policy 10/10, Compare PASS. Полные RUN_LAB и CHECK_CANDIDATE, строгий guard и CI финальной головы фиксируются в REPORT_RU.md задания 036.
+
+
+## Работа над Lab v0.9.20 (задача 038)
+
+Принятая модель остаётся v7.7.15. Эталонные показатели для проверки: 81 добавленный элемент, 22 замены, 356 связей, отпечаток `6fe385abca34eabd`; +28 открытых потоков при правильной классификации информационных сигналов. Итоги приёмочных прогонов Lab 0.9.20 и CI должны заполняться только после фактического исполнения; эта запись не является подтверждением PASS.
