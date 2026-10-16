@@ -1,0 +1,62 @@
+{
+  "format": "orbital-economy-parameter-annotations-fragment-v1",
+  "model": "Orbital Economy v7.7.15 Wage Pricing candidate r1",
+  "updated": "2026-10-16",
+  "note": "Task 037: all seven annotations required by architecture specification section 5. Regional pairs are annotated on A and apply to B through applies_to_mirror. Merge parameters into the accepted annotations for the candidate registry; do not replace the accepted annotations.",
+  "parameters": {
+    "Wage Pricing Enabled": {
+      "role": "Switch for proportional wage pass-through into ore, energy and food prices and price-responsive final demand; default 0, enabled only in Modes 54-55.",
+      "effect": "At 0 every wage_pricing replacement keeps the accepted formula. At 1 regional prices are multiplied by Max(1 + labor_share * relative_wage_change, 1e-6), and effective metal/electronics demand by its price demand factor.",
+      "evidence": "docs/tasks/037-wage-pricing/V7_7_15_ARCHITECTURE_SPEC.md sections 1, 3, 5; docs/research/FINANCE_PROTOTYPE_2026-10-12_RU.md: owner intermediate-step decision, proportional pass-through and price demand only.",
+      "since": "v7.7.15 candidate r1",
+      "tags": ["wage-pricing", "switch", "regression-guard"]
+    },
+    "Price Demand Elasticity": {
+      "role": "Positive price elasticity magnitude eta = 0.5, shared by regional metal and electronics final demand.",
+      "effect": "Price Demand Factor = Max(market_price / reference_price, 1e-6)^(-eta). It scales the previous Effective Local Base Demand, preserving the population and earlier layers; household income does not enter demand in this step.",
+      "evidence": "docs/tasks/037-wage-pricing/V7_7_15_ARCHITECTURE_SPEC.md sections 1, 5; docs/research/FINANCE_PROTOTYPE_2026-10-12_RU.md: owner selects price demand with eta 0.5; elasticity is an explicit prototype calibration, not an estimated law.",
+      "since": "v7.7.15 candidate r1",
+      "tags": ["wage-pricing", "demand", "elasticity"]
+    },
+    "A Food Labor Share": {
+      "role": "Symmetric food-price labor shares A = 1, B = 1: initial unit labor cost divided by initial food price, capped at 1.",
+      "effect": "Scales proportional regional food-price response to wage / initial_wage - 1. Food labor intensity 0.15 times initial wage gives 15 in A and 21 in B, above the initial food-price index near 10, so both ratios are capped at 1. It avoids the additive prototype's food-price collapse when B wages fall.",
+      "evidence": "docs/tasks/037-wage-pricing/V7_7_15_ARCHITECTURE_SPEC.md sections 1, 5; docs/research/FINANCE_PROTOTYPE_2026-10-12_RU.md: first-year Mode 52 reference levels on v7.7.14, proportional form and conclusions 3-4 about labor costs exceeding food prices.",
+      "since": "v7.7.15 candidate r1",
+      "applies_to_mirror": true,
+      "tags": ["wage-pricing", "food", "labor-share", "symmetric"]
+    },
+    "A Ore Labor Share": {
+      "role": "Asymmetric ore-price labor shares A = 1, B = 0.5: initial unit labor cost / initial ore price, capped at 1, using first-year Mode 52 levels on v7.7.14.",
+      "effect": "Scales each region's proportional ore-price response to its relative wage change. The A ratio exceeds 1 and is capped; B retains the prototype ratio 0.5. Initial prices remain unchanged when the relative wage change is zero.",
+      "evidence": "docs/tasks/037-wage-pricing/V7_7_15_ARCHITECTURE_SPEC.md sections 1, 5; docs/research/FINANCE_PROTOTYPE_2026-10-12_RU.md: proportional pass-through and conclusion 4 (ore A capped, ore B share 0.5).",
+      "since": "v7.7.15 candidate r1",
+      "applies_to_mirror": true,
+      "tags": ["wage-pricing", "ore", "labor-share", "asymmetry"]
+    },
+    "A Energy Labor Share": {
+      "role": "Asymmetric energy-price labor shares A = 0.83, B = 1: initial unit labor cost / initial energy price, capped at 1, using first-year Mode 52 levels on v7.7.14.",
+      "effect": "Scales proportional energy-price response to regional relative wage change. A retains the prototype ratio 0.83; the B ratio exceeds 1 and is capped at 1. The region's own wage drives its price, with the previous formula retained at switch 0.",
+      "evidence": "docs/tasks/037-wage-pricing/V7_7_15_ARCHITECTURE_SPEC.md sections 1, 5; docs/research/FINANCE_PROTOTYPE_2026-10-12_RU.md: proportional pass-through and conclusion 4 (energy A share 0.83, energy B capped).",
+      "since": "v7.7.15 candidate r1",
+      "applies_to_mirror": true,
+      "tags": ["wage-pricing", "energy", "labor-share", "asymmetry"]
+    },
+    "A Metal Demand Reference Price": {
+      "role": "Asymmetric reference metal prices A = 25.9, B = 34.46, the regional mean market prices over the first year of Mode 52 on accepted v7.7.14.",
+      "effect": "Denominator of the metal price ratio raised to -Price Demand Elasticity; normalises demand response to each region's baseline price level rather than imposing a common A/B price.",
+      "evidence": "docs/tasks/037-wage-pricing/V7_7_15_ARCHITECTURE_SPEC.md sections 1, 5; docs/research/FINANCE_PROTOTYPE_2026-10-12_RU.md: reference values are first-year Mode 52 means. Fixed owner calibration A 25.9 / B 34.46.",
+      "since": "v7.7.15 candidate r1",
+      "applies_to_mirror": true,
+      "tags": ["wage-pricing", "metal", "reference-price", "asymmetry"]
+    },
+    "A Electronics Demand Reference Price": {
+      "role": "Asymmetric reference electronics prices A = 23.1, B = 21.91, the regional mean market prices over the first year of Mode 52 on accepted v7.7.14.",
+      "effect": "Denominator of the electronics price ratio raised to -Price Demand Elasticity; preserves regional reference price levels when scaling effective electronics demand.",
+      "evidence": "docs/tasks/037-wage-pricing/V7_7_15_ARCHITECTURE_SPEC.md sections 1, 5; docs/research/FINANCE_PROTOTYPE_2026-10-12_RU.md: reference values are first-year Mode 52 means. Fixed owner calibration A 23.1 / B 21.91.",
+      "since": "v7.7.15 candidate r1",
+      "applies_to_mirror": true,
+      "tags": ["wage-pricing", "electronics", "reference-price", "asymmetry"]
+    }
+  }
+}

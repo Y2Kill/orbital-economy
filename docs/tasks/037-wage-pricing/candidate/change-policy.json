@@ -1,0 +1,132 @@
+{
+  "format": "orbital-economy-change-policy-v1",
+  "name": "Orbital Economy v7.7.15 Wage Pricing candidate r1 - change contract",
+  "description": "Finalised owner draft for V7_7_15_ARCHITECTURE_SPEC.md. Accepted baseline: v7.7.14 r1. Modes 0-53 must reproduce it exactly with Wage Pricing Enabled at its default 0; Modes 54-55 enable wage pricing. Owner rules and comparison tolerances are unchanged.",
+  "accepted_model_sha256": "bbb4f9ea5c522514a84e9de0cc5decf5585da0cd2dd3ec80a63e79d11c0f0375",
+  "validation_sha256": "3ef2797763b7abd9458284e8ac94d82a3e77d9ca120d369294ea50d79b8f5444",
+  "comparison": {
+    "abs_tolerance": 0,
+    "rel_tolerance": null,
+    "rel_floor": 1e-12
+  },
+  "engine": {
+    "package": "simulation",
+    "version": "9.0.0"
+  },
+  "default_action": "deny",
+  "require_full_mode_coverage": true,
+  "rules": [
+    {
+      "id": "regression-guard-modes-0-53",
+      "action": "deny",
+      "event": "series_changed",
+      "modes": "0-53",
+      "name": "*",
+      "note": "Modes 0-53 keep Wage Pricing Enabled = 0 (its default) and must reproduce v7.7.14 r1 exactly (first match wins)."
+    },
+    {
+      "id": "forbid-removals-and-structural-drift",
+      "action": "deny",
+      "event": [
+        "element_removed",
+        "series_removed",
+        "mode_removed",
+        "link_removed",
+        "type_changed",
+        "simulation_changed",
+        "time_axis_changed",
+        "scenario_renamed",
+        "scenario_input_changed"
+      ],
+      "name": "*"
+    },
+    {
+      "id": "add-wage-pricing",
+      "action": "allow",
+      "event": "element_added",
+      "name": [
+        "? Electronics Demand Reference Price",
+        "? Electronics Price Demand Factor",
+        "? Energy Labor Share",
+        "? Food Labor Share",
+        "? Metal Demand Reference Price",
+        "? Metal Price Demand Factor",
+        "? Ore Labor Share",
+        "? Relative Wage Change",
+        "Price Demand Elasticity",
+        "Wage Pricing Enabled"
+      ],
+      "required": true,
+      "note": "the wage_pricing node generated from its declaration (V7_7_15_ARCHITECTURE_SPEC §2): switch, price demand elasticity, per region relative wage change, labor shares of the ore, energy and food prices, demand reference prices and price demand factors"
+    },
+    {
+      "id": "change-definitions-per-spec",
+      "action": "allow",
+      "event": "definition_changed",
+      "name": [
+        "? Effective Electronics Local Base Demand",
+        "? Effective Local Base Demand",
+        "? Energy Price",
+        "? Food Price",
+        "? Ore Price",
+        "Test 2 Transport Surge Active"
+      ],
+      "required": true,
+      "note": "every replacement wrapped by Wage Pricing Enabled (ore, energy and food prices; effective metal and electronics demand); the transport-surge window also opens in Mode 55 (spec §1, §3)"
+    },
+    {
+      "id": "link-into-changed-definitions",
+      "action": "allow",
+      "event": "link_added",
+      "name": [
+        "* -> ? Effective Electronics Local Base Demand",
+        "* -> ? Effective Local Base Demand",
+        "* -> ? Energy Price",
+        "* -> ? Food Price",
+        "* -> ? Ore Price",
+        "* -> Test 2 Transport Surge Active"
+      ]
+    },
+    {
+      "id": "link-into-new-elements",
+      "action": "allow",
+      "event": "link_added",
+      "name": [
+        "* -> ? Electronics Demand Reference Price",
+        "* -> ? Electronics Price Demand Factor",
+        "* -> ? Energy Labor Share",
+        "* -> ? Food Labor Share",
+        "* -> ? Metal Demand Reference Price",
+        "* -> ? Metal Price Demand Factor",
+        "* -> ? Ore Labor Share",
+        "* -> ? Relative Wage Change",
+        "* -> Price Demand Elasticity",
+        "* -> Wage Pricing Enabled"
+      ]
+    },
+    {
+      "id": "add-modes-54-55",
+      "action": "allow",
+      "event": "mode_added",
+      "modes": "54-55",
+      "required": true
+    },
+    {
+      "id": "new-series-everywhere",
+      "action": "allow",
+      "event": "series_added",
+      "name": [
+        "? Electronics Demand Reference Price",
+        "? Electronics Price Demand Factor",
+        "? Energy Labor Share",
+        "? Food Labor Share",
+        "? Metal Demand Reference Price",
+        "? Metal Price Demand Factor",
+        "? Ore Labor Share",
+        "? Relative Wage Change",
+        "Price Demand Elasticity",
+        "Wage Pricing Enabled"
+      ]
+    }
+  ]
+}

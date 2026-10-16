@@ -1,0 +1,130 @@
+{
+  "format": "orbital-economy-model-patch-v1",
+  "base_sha256": "bbb4f9ea5c522514a84e9de0cc5decf5585da0cd2dd3ec80a63e79d11c0f0375",
+  "name": "Orbital Economy v7.7.15 Wage Pricing candidate r1",
+  "nodes": [
+    {
+      "type": "wage_pricing",
+      "version": 1,
+      "colonies": [
+        "A",
+        "B"
+      ],
+      "switch": "Wage Pricing Enabled",
+      "parameters": {
+        "Price Demand Elasticity": 0.5
+      },
+      "inputs": {
+        "wage": "{C} Wage",
+        "initial_wage": "{C} Initial Wage"
+      },
+      "prices": [
+        {
+          "name": "Ore",
+          "target": "{C} Ore Price",
+          "labor_share": {
+            "A": 1,
+            "B": 0.5
+          }
+        },
+        {
+          "name": "Energy",
+          "target": "{C} Energy Price",
+          "labor_share": {
+            "A": 0.83,
+            "B": 1
+          }
+        },
+        {
+          "name": "Food",
+          "target": "{C} Food Price",
+          "labor_share": {
+            "A": 1,
+            "B": 1
+          }
+        }
+      ],
+      "demand": [
+        {
+          "name": "Metal",
+          "target": "{C} Effective Local Base Demand",
+          "price": "{C} Market Price",
+          "elasticity": "Price Demand Elasticity",
+          "reference_price": {
+            "A": 25.9,
+            "B": 34.46
+          }
+        },
+        {
+          "name": "Electronics",
+          "target": "{C} Effective Electronics Local Base Demand",
+          "price": "{C} Electronics Market Price",
+          "elasticity": "Price Demand Elasticity",
+          "reference_price": {
+            "A": 23.1,
+            "B": 21.91
+          }
+        }
+      ]
+    }
+  ],
+  "replace_formulas": [
+    {
+      "name": "Test 2 Transport Surge Active",
+      "value": "IfThenElse([Timed Test Mode] = 55, [Temporary Test Window], IfThenElse([Timed Test Mode] = 53, [Temporary Test Window], IfThenElse([Timed Test Mode] = 50, [Temporary Test Window], IfThenElse([Timed Test Mode] = 2, [Temporary Test Window], IfThenElse([Timed Test Mode] = 24, [Temporary Test Window], IfThenElse([Timed Test Mode] = 31, [Temporary Test Window], IfThenElse([Timed Test Mode] = 35, [Temporary Test Window], IfThenElse([Timed Test Mode] = 37, [Temporary Test Window], IfThenElse([Timed Test Mode] = 39, [Temporary Test Window], IfThenElse([Timed Test Mode] = 41, [Temporary Test Window], IfThenElse([Timed Test Mode] = 43, [Temporary Test Window], IfThenElse([Timed Test Mode] = 45, [Temporary Test Window], IfThenElse([Timed Test Mode] = 47, [Temporary Test Window], 0)))))))))))))"
+    }
+  ],
+  "add_scenarios": [
+    {
+      "name": "v7.7.15 Wage Pricing",
+      "description": "Mode 52 (labor market) with wage pricing: ore, energy and food prices follow the regional wage; metal and electronics demand responds to its price.",
+      "values": {
+        "Capital Lifecycle Enabled": 1,
+        "Intermediate Inputs Enabled": 1,
+        "Capital Goods Enabled": 1,
+        "Transport Capital Goods Enabled": 1,
+        "Power Resource Enabled": 1,
+        "Construction Materials Enabled": 1,
+        "Transport Construction Materials Enabled": 1,
+        "Construction Materials Energy Enabled": 1,
+        "Construction Materials Capital Enabled": 1,
+        "Capital Goods Capital Enabled": 1,
+        "Regolith Capital Enabled": 1,
+        "Ore Capital Enabled": 1,
+        "Timed Test Mode": 54,
+        "Power Resource Capital Enabled": 1,
+        "Deposits Enabled": 1,
+        "Process Energy Enabled": 1,
+        "Food Enabled": 1,
+        "Labor Market Enabled": 1,
+        "Wage Pricing Enabled": 1
+      }
+    },
+    {
+      "name": "v7.7.15 Transport Surge with Wage Pricing",
+      "description": "Mode 53 (transport surge with the labor market) with wage pricing.",
+      "values": {
+        "Capital Lifecycle Enabled": 1,
+        "Intermediate Inputs Enabled": 1,
+        "Capital Goods Enabled": 1,
+        "Transport Capital Goods Enabled": 1,
+        "Power Resource Enabled": 1,
+        "Construction Materials Enabled": 1,
+        "Transport Construction Materials Enabled": 1,
+        "Construction Materials Energy Enabled": 1,
+        "Construction Materials Capital Enabled": 1,
+        "Capital Goods Capital Enabled": 1,
+        "Regolith Capital Enabled": 1,
+        "Ore Capital Enabled": 1,
+        "Timed Test Mode": 55,
+        "Power Resource Capital Enabled": 1,
+        "Deposits Enabled": 1,
+        "Process Energy Enabled": 1,
+        "Food Enabled": 1,
+        "Labor Market Enabled": 1,
+        "Wage Pricing Enabled": 1
+      }
+    }
+  ],
+  "modify_scenarios": []
+}
