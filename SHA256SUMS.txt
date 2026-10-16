@@ -437,6 +437,12 @@ eb86b557f8936f00f9d9f84b6cc0caf914f3ce5a18b348784d6839914af7e943  ./docs/tasks/0
 6c0c1ebc10fb5a709706d03f681eb4e61d753dbc69080ad004856a64cbe5f826  ./docs/tasks/037-wage-pricing/draft/validation-v7.7.15-draft.json
 fc658434ec4928bac74b31e71026393ed3b4d8e8493309f35e1ec2eca58aa814  ./docs/tasks/037-wage-pricing/draft/wage_pricing.json
 a5b4baee2af47ed867f78ad933ee79afc9469b3c369e8d612d4e367c0290594a  ./docs/tasks/037-wage-pricing/scope.json
+545429b5efc1a128efe8e609c50ac0b928604dcec50b4550ee7d00c849aee4e3  ./docs/tasks/038-cost-pricing-node/TASK_RU.md
+7f780d61d2c94aea990d0989d8a85f919795da573f5b2b47e36efe9731e8dd68  ./docs/tasks/038-cost-pricing-node/fixtures/cost_pricing.json
+e5bd25f4b55fb82d1ee6e135f782d0c99daa0d6fa1f469c6001510352e860e0d  ./docs/tasks/038-cost-pricing-node/reference/add_cp_modes.mjs
+6caf27b7f1942f25f7e0f7f86c20edda1e61bd190f48e01946baa6b784c9ed17  ./docs/tasks/038-cost-pricing-node/reference/cost_pricing_node_prototype.mjs
+acbec86cbb28343cf6c71820df4c3a8fa43c24c16c6ac1ff16baad2d8778c89b  ./docs/tasks/038-cost-pricing-node/reference/definition_fingerprint.mjs
+0c62bf6acc3d033970c5b920f6760798efed7ebc7c15ca55721cffe151b2b639  ./docs/tasks/038-cost-pricing-node/scope.json
 44d2e557f1cb2322739bc95ee2b6dcbf6d6fcb708da14e90d53250936e50da5c  ./docs/tasks/README_RU.md
 bbf818e93b88d606b3137b1bb69d60db8c41c9df4089025a921b1ca00f473244  ./lab/APPLY_PATCH.cmd
 660b04238d92e88caf5bf094dc7389589dc27a4c0199a5fce3a295eab7ec59c8  ./lab/CHANGELOG.md
