@@ -454,7 +454,7 @@ Runtime проверяет:
 
 Причина: после включения рынка труда конечный спрос = норма на душу × Population. Прежний target теперь зависит от STOCK Population и больше не может считаться внешним P6-драйвером; per-capita norm остаётся экзогенным параметром. При снятии верхнего `labor_market` слоя node QA восстанавливает прежний P6-контракт для нижних узлов.
 
-## wage_pricing — Lab v0.9.19
+## wage_pricing — Lab v0.9.20
 
 rel_tol по умолчанию 1e-9; switch обязателен, instances непуст. На регион: name, colony, wage, initial_wage, relative_wage_change; prices[] содержит target/labor_share; demand[] — target/price/reference_price/factor/elasticity. Пример:
 
@@ -477,3 +477,8 @@ Static HARD: все названные колонки существуют; labo
 Runtime во всех точках, независимо от switch: relative_wage_change = wage / Max(initial_wage, 1e-6) − 1; factor = Max(price / reference_price, 1e-6)^(−elasticity); prices.target > 0. Дополнительно проверяются диапазоны labor_share, положительность reference_price/elasticity и длины рядов. Нормированная ошибка = abs(actual−expected) / Max(1, abs(expected)), с rel_tol=1e-9. Единичный масштаб устраняет усиление округления у relative_wage_change около нуля; QA проверяет шум ниже допуска и ошибку выше него. FAIL содержит имя экземпляра и колонки.
 
 Структурных фрагментов нет: узел не добавляет потоки/пары и не переобъявляет P6. Снятие слоя удаляет его plugin/instances, сохраняя прежние validation.
+
+
+## cost_pricing (Lab v0.9.20)
+
+`plugins[]` принимает `{ "type": "cost_pricing", "rel_tol": 1e-9, "switch": "Cost Pricing Enabled", "markup": "Universal Markup", "instances": [...] }`. На регион экземпляр содержит `name`, `colony`, `wage`, `signals[]` с `signal`/`source`, `prices[]` и `cost_prices[]` с `target`/`full_cost`. Статика проверяет наличие колонок и положительную числовую константу наценки. Runtime проверяет неотрицательность сглаженных сигналов, положительность полных себестоимостей и цен, а также тождество затратной цены `full_cost * (1 + markup)` с относительной нормировкой `max(1, abs(expected))`. Потоки сигналов должны классифицироваться как `open_boundaries.information_signal`.
