@@ -2130,7 +2130,7 @@ await expect('66. wage_pricing peels first and all cases 1-59 pass on synthetic 
 let costPricingState = null;
 
 await expect('67. cost_pricing fixture matches reference patch counts and fingerprint', () => {
-  const base = accepted;
+  const base = withoutCost;
   const expanded = expandNode(costPricingFixture, base);
   const patch = expanded.patch;
   const counts = [patch.add_elements.length, patch.replace_formulas.length, patch.add_links.length];
@@ -2156,7 +2156,7 @@ await expect('67. cost_pricing fixture matches reference patch counts and finger
 
 await expect('68. cost_pricing validation merge, statics, boundaries and audit', () => {
   if (!costPricingState) throw new Error('case 67 must run first');
-  const merged = mergeNodeValidation(acceptedValidation, [costPricingState.expanded.validation]);
+  const merged = mergeNodeValidation(withoutCostValidation, [costPricingState.expanded.validation]);
   if (JSON.stringify(merged) !== JSON.stringify(mergeNodeValidation(merged, [costPricingState.expanded.validation]))) {
     throw new Error('validation merge is not idempotent');
   }
@@ -2169,7 +2169,7 @@ await expect('68. cost_pricing validation merge, statics, boundaries and audit',
   if (conformance.status !== 'PASS' || conformance.summary.instances !== 2) {
     throw new Error('cost_pricing static conformance failed: ' + JSON.stringify(conformance));
   }
-  const before = runStructureAudits(costPricingState.base, acceptedValidation);
+  const before = runStructureAudits(costPricingState.base, withoutCostValidation);
   const audit = runStructureAudits(costPricingState.model, merged);
   if (audit.status !== 'PASS' ||
       audit.openBoundaries.summary.openFlows !== before.openBoundaries.summary.openFlows + 28 ||
