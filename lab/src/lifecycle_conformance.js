@@ -772,7 +772,8 @@ export function runLifecycleConformance(raw, validation) {
     population,
     food,
     laborMarket,
-    wagePricing
+    wagePricing,
+    costPricing
   };
 }
 
