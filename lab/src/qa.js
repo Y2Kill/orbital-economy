@@ -607,6 +607,48 @@ try {
     return 'good static/runtime PASS; share/factor/wage/nonpositive price FAIL; missing/nonconstant/zero reference and elasticity FAIL';
   });
 
+
+  await expect('49 cost_pricing plugin: cost price identity and positivity checks', async () => {
+    const times = [0, 1, 2];
+    const values = {
+      sw: [1, 1, 1], mu: [.15, .15, .15],
+      wage: [100, 100, 100], signal: [5, 6, 7], source: [5, 6, 7],
+      full: [10, 20, 30], cost: [11.5, 23, 34.5],
+      market: [12, 24, 35]
+    };
+    const plugin = {
+      type: 'cost_pricing', switch: 'sw', markup: 'mu', rel_tol: 1e-9,
+      instances: [{
+        name: 'QA cost pricing', colony: 'A', wage: 'wage',
+        signals: [{ signal: 'signal', source: 'source' }],
+        prices: [{ target: 'market', full_cost: 'full' }],
+        cost_prices: [{ target: 'cost', full_cost: 'full' }]
+      }]
+    };
+    const context = v => ({
+      times,
+      get(name) {
+        if (!(name in v)) throw new Error('unknown series ' + name);
+        return v[name];
+      }
+    });
+    const test = (v, expected, label) => {
+      const results = checkPlugin(plugin, context(v));
+      if (!results.length || (results.some(r => r.status === 'FAIL') !== expected)) {
+        throw new Error(label + ': ' + JSON.stringify(results));
+      }
+    };
+    test(values, false, 'valid');
+    for (const [column, value] of [
+      ['cost', 999], ['full', 0], ['market', 0], ['signal', -1]
+    ]) {
+      const invalid = structuredClone(values);
+      invalid[column][1] = value;
+      test(invalid, true, column);
+    }
+    return 'valid PASS; incorrect cost price, nonpositive full cost/market and negative signal FAIL';
+  });
+
 } finally {
   fs.rmSync(tmp, { recursive: true, force: true });
 }
