@@ -557,11 +557,12 @@ function buildSwitchlessLayers(start, nodes = layeredNodes) {
       (own.has(String(e.to).toLowerCase()) || targets.has(String(e.to).toLowerCase())));
   };
   while (true) {
-    const peelable = n => (n.decl.type === 'wage_pricing' || touchesSwitchless(n)) &&
+    const peelable = n => (n.decl.type === 'cost_pricing' || n.decl.type === 'wage_pricing' || touchesSwitchless(n)) &&
       n.targets(n.decl).every(t => outerSwitchIs(current, t, n.decl.switch));
     const lm = switched.findIndex(n => n.decl.type === 'labor_market' && peelable(n));
     const wp = switched.findIndex(n => n.decl.type === 'wage_pricing' && peelable(n));
-    const i = wp >= 0 ? wp : lm >= 0 ? lm : switched.findIndex(peelable);
+    const cp = switched.findIndex(n => n.decl.type === 'cost_pricing' && peelable(n));
+    const i = cp >= 0 ? cp : wp >= 0 ? wp : lm >= 0 ? lm : switched.findIndex(peelable);
     if (i < 0) break;
     const [n] = switched.splice(i, 1);
     current = n.strip(current, n.decl);
