@@ -821,6 +821,15 @@ export function printConformance(report, log = console.log) {
     }
     for (const e of report.wagePricing.specErrors || []) log('    - ' + e);
   }
+  if (report.costPricing && report.costPricing.status !== 'SKIPPED') {
+    log('Cost pricing conformance: ' + report.costPricing.status);
+    for (const inst of report.costPricing.instances || []) {
+      log('    ' + inst.name + ' ' + inst.classification + ' (' +
+        (inst.checks.length - inst.failures.length) + '/' + inst.checks.length + ' checks)');
+      for (const failure of inst.failures) log('        - ' + failure);
+    }
+    for (const error of report.costPricing.specErrors || []) log('    - ' + error);
+  }
   if (report.food?.status !== 'SKIPPED') {
     log(`Food conformance: ${report.food.status}`);
     for(const inst of report.food.instances||[]){const checked=inst.checks.length,failed=inst.failures.length;log(`    ${inst.name.padEnd(32)} ${inst.classification}  (${checked-failed}/${checked} checks)`);for(const f of inst.failures)log(`        - ${f}`);}for(const e of report.food.specErrors||[])log(`    - ${e}`);
