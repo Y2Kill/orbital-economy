@@ -1,9 +1,9 @@
 # Current State
 
 **Document status:** CURRENT  
-**Describes code:** Orbital Economy v7.7.14 r1 — Recalibration  
-**Base:** accepted v7.7.13 r1 (Labor Market)  
-**Model SHA-256:** `bbb4f9ea5c522514a84e9de0cc5decf5585da0cd2dd3ec80a63e79d11c0f0375`
+**Describes code:** Orbital Economy v7.7.15 r1 — Wage Pricing  
+**Base:** accepted v7.7.14 r1 (Recalibration)  
+**Model SHA-256:** `a5a233129b013f838cac863e4f9b8aad9da8e90bacfe48763fcedefad929b975`
 
 > **Numbers of earlier steps.** v7.7.14 recalibrated the generation reserve (1.02 → 1.10) and labor participation (0.50 → 0.52), so series moved in every Mode (§2n). Figures quoted for a Mode in §§2–5 were measured on the version that introduced it unless marked v7.7.14; the current bounds are the checks of `validation/validation-v7.7.14.json`.
 
@@ -11,13 +11,13 @@
 
 | Property | Value |
 |---|---:|
-| ModelJSON elements | 5445 |
-| VARIABLE | 1292 |
+| ModelJSON elements | 5505 |
+| VARIABLE | 1310 |
 | STOCK | 149 |
 | FLOW | 323 |
-| LINK | 3681 |
-| Named primitives | 1764 |
-| Scenarios | 54 |
+| LINK | 3723 |
+| Named primitives | 1782 |
+| Scenarios | 56 |
 | Simulation | 0..1080 days |
 | Time step | 0.25 day |
 | Engine | `simulation@9.0.0` |
@@ -112,6 +112,10 @@ Switch `Labor Market Enabled` (0 in Modes 0–51). The loop population → deman
 
 No structural change; two values moved off a threshold found by the sensitivity study (`docs/research/SENSITIVITY_2026-10-10_RU.md`, owner decisions 2026-10-11): `Power Operating Reserve Factor` 1.02 → **1.10** (at 1.02 a 20 % lower reserve left A 20 % short of energy for the whole run) and `Labor Participation Share` 0.50 → **0.52** (at 0.50 A stood on the labor-shortage edge; a 20 % lower share halved A's output through the labor guard and the effect grew over time). The labor demand signal starts at initial population × participation (A 14.56, B 4.42). In Modes 0–11 only population and labor accounting moved (48–51 of 1764 series: participation → labor force → attractiveness → migration); in Modes 12–53 the reserve enters generation capacity planning and 720–1150 series moved. With the reserve, generation is also built before the shocks, energy shortages are milder everywhere, and 16 checks of earlier tasks were re-thresholded (`docs/tasks/035-recalibration/V7_7_14_RECALIBRATION_SPEC.md` §4). v7.7.14 values in Mode 52: B's demand at most 5.14 (Mode 49: 22), B smelts 1.67 a day on average, A's metal price 26.3, transport at most 11.1 in the third year, A's labor tightness at least 0.969 in the third year (a little slack), A's labor availability at least 0.994, B's wage down to 135.4; in Mode 53: the labor guard bites harder than in v7.7.13 — A's labor availability down to 0.946 (was 0.961), tightness up to 1.057 (was 1.040): with the larger reserve more generation is built and the surge needs more hands; B's wage down to 136.8.
 
+### 2o. Wage pricing (v7.7.15, finance layer, intermediate step)
+
+Switch `Wage Pricing Enabled` (0 in Modes 0–53). The ore, energy and food prices of each region follow its wage proportionally: price × Max(1 + labor share × (`X Wage` / `X Initial Wage` − 1), 1e-6). The labor shares are declared — start labor cost / start price, at most 1: ore A 1 / B 0.5, energy A 0.83 / B 1, food 1 / 1. Most shares hit the cap: the model's price level lies below labor content, which full money accounting will have to rebase to costs first. Final metal and electronics demand (`X Effective … Local Base Demand`) × Max(price / reference, 1e-6)^−0.5, with reference prices the year-1 means of Mode 52 (metal 25.9 / 34.46, electronics 23.1 / 21.91). One `wage_pricing` node (`model/nodes/wage_pricing.json`); no stocks or flows, the boundary stays 262. Over 3 years the effect is small (wages move by 3 %): B's ore gets cheaper (min 13.77 against 14.00 in Mode 52), its energy (0.0677 against 0.0700) and food (9.82 at most in the third year against 10.01) too, as B's wage falls to 135.3; B's real wage ends at 152.1 against 150.2; in the surge (Mode 55): the labor guard bites less (A's labor availability down to 0.964 instead of 0.946) and the A metal price peaks lower (33.4 instead of 36.5). Over 80 years (prototype on the server) B's cheaper food keeps its real income, fewer people leave, B smelts 7.8 instead of 1.7 and real incomes per head converge (58.6 / 60.0); B's labor tightness reaches 0.92 (`docs/research/FINANCE_PROTOTYPE_2026-10-12_RU.md`). Household budgets and money are not modelled yet: on the present prices they collapse the economy (the money circuit is not closed).
+
 ## 3. Energy Kernel v2
 
 The old abstraction was effectively:
@@ -176,7 +180,7 @@ Extraction adjusts toward current resource demand plus a target-inventory correc
 - `0`: all new resource flows are inert; `Available Generation` falls back to the accepted active-capacity path; generation cost falls back to the accepted v7.5.1 expression.
 - `1`: Energy Kernel v2 operates.
 
-In v7.6, Modes **0–24** were the exact-regression scope against v7.5.1 and Modes **25–26** were new. In v7.6.1, Modes **0–24** and **26** reproduced v7.6 r2 exactly (every series except the recalibrated constant's own series). In v7.7, Modes **0–26** set `Construction Materials Enabled = 0` and reproduce v7.6.1 r1 bit for bit on the canonical platform; Modes **27–29** are new. In v7.7.1, Modes **0–29** reproduce v7.7 r1 (switch `Transport Construction Materials Enabled`); in v7.7.2, Modes **0–31** set `Construction Materials Energy Enabled = 0` and reproduce v7.7.1 r1 bit for bit; Modes **32–33** are new. In v7.7.3, Modes **0–33** set `Construction Materials Capital Enabled = 0` and reproduce v7.7.2 r1 bit for bit; Modes **34–35** are new. In v7.7.4, Modes **0–35** set `Capital Goods Capital Enabled = 0` and reproduce v7.7.3 r1 bit for bit; Modes **36–37** are new. In v7.7.5, Modes **0–37** set `Regolith Capital Enabled = 0` and reproduce v7.7.4 r1 bit for bit; Modes **38–39** are new. In v7.7.6, Modes **0–39** set `Ore Capital Enabled = 0` and reproduce v7.7.5 r1 bit for bit; Modes **40–41** are new. In v7.7.7, Modes **0–41** set `Power Resource Capital Enabled = 0` and reproduce v7.7.6 r1 bit for bit; Modes **42–43** are new. In v7.7.8, Modes **0–43** set `Deposits Enabled = 0` and reproduce v7.7.7 r1 bit for bit; Modes **44–45** are new. In v7.7.9, Modes **0–45** set `Process Energy Enabled = 0` and reproduce v7.7.8 r1 bit for bit; Modes **46–47** are new. In v7.7.10, Modes **0–47** reproduce v7.7.9 r1 bit for bit without a switch (automation 0); Mode **48** is new. In v7.7.11, Modes **0–48** reproduce v7.7.10 r1 bit for bit: the population layer only adds elements. In v7.7.12, Modes **0–48** reproduce v7.7.11 r1 bit for bit (`Food Enabled` = 0); Modes **49–51** are new. In v7.7.13, Modes **0–51** reproduce v7.7.12 r1 bit for bit (`Labor Market Enabled` = 0); Modes **52–53** are new. v7.7.14 is a recalibration: no Mode reproduces v7.7.13 r1, and the exact-regression chain ends there.
+In v7.6, Modes **0–24** were the exact-regression scope against v7.5.1 and Modes **25–26** were new. In v7.6.1, Modes **0–24** and **26** reproduced v7.6 r2 exactly (every series except the recalibrated constant's own series). In v7.7, Modes **0–26** set `Construction Materials Enabled = 0` and reproduce v7.6.1 r1 bit for bit on the canonical platform; Modes **27–29** are new. In v7.7.1, Modes **0–29** reproduce v7.7 r1 (switch `Transport Construction Materials Enabled`); in v7.7.2, Modes **0–31** set `Construction Materials Energy Enabled = 0` and reproduce v7.7.1 r1 bit for bit; Modes **32–33** are new. In v7.7.3, Modes **0–33** set `Construction Materials Capital Enabled = 0` and reproduce v7.7.2 r1 bit for bit; Modes **34–35** are new. In v7.7.4, Modes **0–35** set `Capital Goods Capital Enabled = 0` and reproduce v7.7.3 r1 bit for bit; Modes **36–37** are new. In v7.7.5, Modes **0–37** set `Regolith Capital Enabled = 0` and reproduce v7.7.4 r1 bit for bit; Modes **38–39** are new. In v7.7.6, Modes **0–39** set `Ore Capital Enabled = 0` and reproduce v7.7.5 r1 bit for bit; Modes **40–41** are new. In v7.7.7, Modes **0–41** set `Power Resource Capital Enabled = 0` and reproduce v7.7.6 r1 bit for bit; Modes **42–43** are new. In v7.7.8, Modes **0–43** set `Deposits Enabled = 0` and reproduce v7.7.7 r1 bit for bit; Modes **44–45** are new. In v7.7.9, Modes **0–45** set `Process Energy Enabled = 0` and reproduce v7.7.8 r1 bit for bit; Modes **46–47** are new. In v7.7.10, Modes **0–47** reproduce v7.7.9 r1 bit for bit without a switch (automation 0); Mode **48** is new. In v7.7.11, Modes **0–48** reproduce v7.7.10 r1 bit for bit: the population layer only adds elements. In v7.7.12, Modes **0–48** reproduce v7.7.11 r1 bit for bit (`Food Enabled` = 0); Modes **49–51** are new. In v7.7.13, Modes **0–51** reproduce v7.7.12 r1 bit for bit (`Labor Market Enabled` = 0); Modes **52–53** are new. v7.7.14 is a recalibration: no Mode reproduces v7.7.13 r1, and the exact-regression chain ends there. In v7.7.15, Modes **0–53** reproduce v7.7.14 r1 bit for bit (`Wage Pricing Enabled` = 0); Modes **54–55** are new.
 
 ## 5. New scenarios
 
@@ -286,9 +290,13 @@ Mode 49 is Mode 46 with food: both regions fully fed, B ships A 5.2–7.8 food a
 
 Mode 52 is Mode 49 with the labor market; Mode 53 is Mode 50 (transport surge with food) with the labor market. See 2m.
 
+### Modes 54–55 — Wage pricing
+
+Mode 54 is Mode 52 with wage pricing; Mode 55 is Mode 53 (transport surge with the labor market) with wage pricing. See 2o.
+
 ## 6. Static QA
 
-| Metric | v7.7.14 r1 |
+| Metric | v7.7.15 r1 |
 |---|---:|
 | FLOW | 323 |
 | Boundary flows | 262 |
@@ -297,7 +305,7 @@ Mode 52 is Mode 49 with the labor market; Mode 53 is Mode 50 (transport surge wi
 | Unpaired transformation flows | 0 |
 | Declared external-capital violations | **0** |
 | A/B symmetry mismatches | **0** |
-| A/B parameter differences | 158 |
+| A/B parameter differences | 166 |
 | Capital lifecycle instances | 11 |
 | Capital lifecycle non-conforming | **0** |
 | Simple capital instances | 6 (non-conforming **0**) |
@@ -305,8 +313,9 @@ Mode 52 is Mode 49 with the labor market; Mode 53 is Mode 50 (transport surge wi
 | Population instances | 2 (non-conforming **0**) |
 | Food instances | 2 (non-conforming **0**) |
 | Labor market instances | 2 (non-conforming **0**) |
+| Wage pricing instances | 2 (non-conforming **0**) |
 
-Executable validation Modes 0–53 (`validation/validation-v7.7.14.json`) was run on the canonical platform on 2026-10-11: **54/54 PASS** (22490 checks); a recalibration, so no Mode reproduces v7.7.13 r1 (policy: 39839 expected changes, nothing structural). v7.7.13 had reproduced v7.7.12 r1 exactly in Modes 0–51. v7.7.12 had reproduced v7.7.11 r1 exactly in Modes 0–48. v7.7.11 had reproduced v7.7.10 r1 exactly in Modes 0–48. v7.7.10 had reproduced v7.7.9 r1 exactly in Modes 0–47. v7.7.9 had reproduced v7.7.8 r1 exactly in Modes 0–45. v7.7.6 had reproduced v7.7.5 r1 exactly in Modes 0–39. v7.7.5 had reproduced v7.7.4 r1 exactly in Modes 0–37. v7.7.4 had reproduced v7.7.3 r1 exactly in Modes 0–35. v7.7.3 had reproduced v7.7.2 r1 exactly in Modes 0–33. v7.7.2 had reproduced v7.7.1 r1 exactly in Modes 0–31. v7.7.1 had reproduced v7.7 r1 exactly in Modes 0–29. Static: algebraic loops 0 of 131072 switch combinations; Planet v1 closure in `planet_v1` mode — P2 11/8/0/0, P3 16/2/1/0, P4 6/0, P5 19/0, P6 4. v7.7 had reproduced v7.6.1 r1 exactly in Modes 0–26. v7.6.1 had reproduced v7.6 r2 in Modes 0–24 and 26 apart from the recalibrated constant's own series. v7.6 r2 in its turn reproduced v7.5.1 r1 exactly in Modes 0–24 (25 × `common=963, changed=0, maxAbs=0`, 41 added series). See `ACCEPTANCE_STATUS.md`.
+Executable validation Modes 0–55 (`validation/validation-v7.7.15.json`) was run on the canonical platform on 2026-10-16: **56/56 PASS** (24669 checks); Modes 0–53 reproduce v7.7.14 r1 exactly (54 × `common=1764, changed=0, maxAbs=0`, 18 added series). v7.7.14 was a recalibration (no Mode reproduced v7.7.13 r1). v7.7.13 had reproduced v7.7.12 r1 exactly in Modes 0–51. v7.7.12 had reproduced v7.7.11 r1 exactly in Modes 0–48. v7.7.11 had reproduced v7.7.10 r1 exactly in Modes 0–48. v7.7.10 had reproduced v7.7.9 r1 exactly in Modes 0–47. v7.7.9 had reproduced v7.7.8 r1 exactly in Modes 0–45. v7.7.6 had reproduced v7.7.5 r1 exactly in Modes 0–39. v7.7.5 had reproduced v7.7.4 r1 exactly in Modes 0–37. v7.7.4 had reproduced v7.7.3 r1 exactly in Modes 0–35. v7.7.3 had reproduced v7.7.2 r1 exactly in Modes 0–33. v7.7.2 had reproduced v7.7.1 r1 exactly in Modes 0–31. v7.7.1 had reproduced v7.7 r1 exactly in Modes 0–29. Static: algebraic loops 0 of 262144 switch combinations; Planet v1 closure in `planet_v1` mode — P2 11/8/0/0, P3 16/2/1/0, P4 6/0, P5 19/0, P6 4. v7.7 had reproduced v7.6.1 r1 exactly in Modes 0–26. v7.6.1 had reproduced v7.6 r2 in Modes 0–24 and 26 apart from the recalibrated constant's own series. v7.6 r2 in its turn reproduced v7.5.1 r1 exactly in Modes 0–24 (25 × `common=963, changed=0, maxAbs=0`, 41 added series). See `ACCEPTANCE_STATUS.md`.
 
 ## 7. What v7.6 deliberately does not implement
 

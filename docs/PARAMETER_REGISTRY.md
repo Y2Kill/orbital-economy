@@ -1,17 +1,17 @@
 # Orbital Economy — реестр внешних параметров
 
-- generated: 2026-10-11T15:17:35.614Z
-- model: Orbital Economy v7.7.14 r1 — Recalibration — SHA-256 `bbb4f9ea5c522514a84e9de0cc5decf5585da0cd2dd3ec80a63e79d11c0f0375`
-- annotations: docs/PARAMETER_ANNOTATIONS.json (SHA-256 `4ad6af46d5a202061ead16316103719fced8f47d96222b2547edf1b9b435b7d2`)
+- generated: 2026-10-16T13:58:42.788Z
+- model: Orbital Economy v7.7.15 r1 — Wage Pricing — SHA-256 `a5a233129b013f838cac863e4f9b8aad9da8e90bacfe48763fcedefad929b975`
+- annotations: docs/PARAMETER_ANNOTATIONS.json (SHA-256 `4e67d4c264a724b5e9788b536d55cd3616101d2434fe10a058602ee15cc03c52`)
 
 Всё, что модель не выводит сама: числовые константы, начальные запасы, переключатели, тестовые множители. Инвентарь сгенерирован из ModelJSON; аннотации («роль / что меняет / доказательство») ведутся вручную и версионируются вместе с baseline.
 
 ## Сводка
 
-- внешних величин: **582** (константы 386, начальные запасы 133, переключатели 28, тестовая обвязка 35)
-- по колониям: A 155, B 155, глобальные 272
-- аннотировано: **403 / 582** (69 %)
-- несимметричных пар A/B: **71**, из них без аннотации: **0**
+- внешних величин: **594** (константы 397, начальные запасы 133, переключатели 29, тестовая обвязка 35)
+- по колониям: A 160, B 160, глобальные 274
+- аннотировано: **415 / 594** (70 %)
+- несимметричных пар A/B: **75**, из них без аннотации: **0**
 
 ## Несимметричные пары A/B — что задаёт различия колоний
 
@@ -20,6 +20,7 @@
 | Параметр (без префикса) | Сектор | A | B | Аннотация |
 |---|---|---:|---:|---|
 | Electronics Capacity Planning Signal | Electronics | 1.25793 | 48.83148 | Соответствует v7.3-специализации (A почти не производит, B ~45). В v7.4 Mode 17 A перепланируется с 1.3 к ~22 — часть переходной динамики первых сотен дней. |
+| Electronics Demand Reference Price | Electronics | 23.1 | 21.91 | Denominator of the electronics price ratio raised to -Price Demand Elasticity; preserves regional reference price levels when scaling effective electronics demand. |
 | Electronics Domestic Supply Signal | Electronics | 20 | 16 | Инициализация realized import share без стартового скачка. |
 | Electronics Feedstock Base Cost | Electronics | 18 | 3 | В v7.3 — единственный источник преимущества B в электронике (B→A 21.7/день). В v7.4 при switch=1 не используется: вход = металл по Market Price. Исчезновение этого «подарка» и есть причина переворота специализации. |
 | External Electronics Local Base Demand | Electronics | 20 | 16 | Preserves the exact switch-off Electronics Local Base Demand while enabled demand is recomputed from Electronics Demand per Capita × Population. |
@@ -35,9 +36,11 @@
 | Flexible Wage | Labor | 100 | 140 | Becomes the active Wage branch when Labor Market Enabled=1 and evolves through Wage Increase/Decrease. |
 | Initial Wage | Labor | 100 | 140 | Provides the exact switch-off branch and the wage-floor reference without embedding asymmetric numeric literals in mirrored A/B formulas. |
 | Labor Demand Signal | Labor | 14.56 | 4.42 | Seeds the labor-availability guard without a startup discontinuity and is the denominator driver of Labor Availability/Tightness. |
+| Metal Demand Reference Price | Metal | 25.9 | 34.46 | Denominator of the metal price ratio raised to -Price Demand Elasticity; normalises demand response to each region's baseline price level rather than imposing a common A/B price. |
 | Mining Capacity | Metal | 70 | 28 | Мягкий потолок Mining Rate. У A в baseline не связывает (добыча ~55); у B в связанном мире добыча ~11 ≪ 28. Именно поэтому шок Mode 18 сделан у A: ×0.5 у A режет плавку 39→25, ×0.5 у B ничего не меняет. |
 | Ore Base Cost | Metal | 4 | 14 | Определяет Ore Price → Metal Unit Cost → Domestic Offer → Market Price. Разрыв ×3.5 делает металл A дешевле (Mode 17 @1080: 30.5 vs 37.4) и задаёт направление торговли металлом A→B на всех сценариях. В v7.4 через Feedstock Price = Market Price это же преимущество переносится на электронику. |
 | Ore Extraction Signal | Metal | 42.227 | 8.373 | Seeds the reserve-target signal with the intentional A/B pair 42.227/8.373. |
+| Ore Labor Share | Metal | 1 | 0.5 | Scales each region's proportional ore-price response to its relative wage change. The A ratio exceeds 1 and is capped; B retains the prototype ratio 0.5. Initial prices remain unchanged when the relative wage change is zero. |
 | Ore Mine Capacity | Metal | 70 | 28 | Seeds mine capacity at the accepted A Mining Capacity; A/B are intentionally asymmetric (70 vs 28). |
 | Ore Proven Reserves Initial | Metal | 200000 | 36000 | Seeds the stock that supplies extraction; A/B pair is 200000/36000. |
 | Ore Undiscovered Resource Initial | Metal | 20000000 | 3600000 | Seeds the finite planetary-scale undiscovered-resource STOCK; A/B pair is 20000000/3600000. |
@@ -75,6 +78,7 @@
 | Test 4 Headroom Applies | Other | 0 | 1 | Оборачивает существующий общий power multiplier через IfThenElse(flag=1, multiplier, 1), сохраняя старую одностороннюю тестовую обвязку при зеркальной формуле. |
 | Test 6 Headroom Applies | Other | 1 | 0 | Оборачивает существующий общий power multiplier через IfThenElse(flag=1, multiplier, 1), сохраняя старую одностороннюю тестовую обвязку при зеркальной формуле. |
 | Energy Demand Signal | Power | 1100 | 480 | Инициализация ценового сигнала дефицита энергии. |
+| Energy Labor Share | Power | 0.83 | 1 | Scales proportional energy-price response to regional relative wage change. A retains the prototype ratio 0.83; the B ratio exceeds 1 and is capped at 1. The region's own wage drives its price, with the previous formula retained at switch 0. |
 | Legacy Power Installed Generation Capacity | Power | 1350 | 550 | В Modes 0–11 мощность генерации постоянна; при lifecycle=1 заменяется стоком Power Installed Generation Capital с тем же стартом. |
 | Mining Energy Signal | Power | 42.227 | 8.373 | Seeds the request signal; A/B pair is 42.227/8.373. |
 | Power Active Generation Capital | Power | 1350 | 550 | Старт без mothballed-резерва в энергетике. |
@@ -111,6 +115,7 @@
 | A Electronics Capacity Planning Signal | initial_stock | 1.25793 / 48.83148 | Начальный 60-дневный сигнал планирования электронных мощностей (A 1.26 / B 48.8). | Соответствует v7.3-специализации (A почти не производит, B ~45). В v7.4 Mode 17 A перепланируется с 1.3 к ~22 — часть переходной динамики первых сотен дней. | Mode 17 series. |
 | A Electronics Capital Goods per Capacity | constant | 11.5 | Capital-goods units required for one unit of new electronics installed capacity in colony A. | Scales both total equipment demand and physical equipment consumption generated by sector expansion. | Start value 11.5 from V7_5_ARCHITECTURE_SPEC §2. It is a calibration coefficient; the refinery/electronics starts are heuristically tied to legacy financial capital-cost scale, not a physical measurement. |
 | A Electronics Construction Materials per Capacity | constant | 12 | [calib] physical-material norm, value 12. | Scales Electronics Construction Materials demand and sink flow. | Order-of-magnitude matched to Capital Goods norm 11.5 per spec; candidate run checks consequences. |
+| A Electronics Demand Reference Price | constant | 23.1 / 21.91 | Asymmetric reference electronics prices A = 23.1, B = 21.91, the regional mean market prices over the first year of Mode 52 on accepted v7.7.14. | Denominator of the electronics price ratio raised to -Price Demand Elasticity; preserves regional reference price levels when scaling effective electronics demand. | docs/tasks/037-wage-pricing/V7_7_15_ARCHITECTURE_SPEC.md sections 1, 5; docs/research/FINANCE_PROTOTYPE_2026-10-12_RU.md: reference values are first-year Mode 52 means. Fixed owner calibration A 23.1 / B 21.91. |
 | A Electronics Domestic Supply Signal | initial_stock | 20 / 16 | Начальный сигнал локального предложения электроники (= базовому спросу 20 / 16). | Инициализация realized import share без стартового скачка. |  |
 | A Electronics Energy per Unit | constant | 12 | Энергоёмкость электроники (12; симметрично). | Electronics — второй потребитель энергии (A 22 × 12 ≈ 264). Одинакова у A и B: у B нет технологического преимущества в электронике. |  |
 | A Electronics Feedstock Base Cost | constant | 18 / 3 | Legacy-цена экзогенного feedstock (A 18 / B 3). Действует только при Intermediate Inputs Enabled = 0 (Modes 0–16). | В v7.3 — единственный источник преимущества B в электронике (B→A 21.7/день). В v7.4 при switch=1 не используется: вход = металл по Market Price. Исчезновение этого «подарка» и есть причина переворота специализации. | Mode 12 vs 17: Electronics B→A 21.7 → 0. |
@@ -132,6 +137,7 @@
 | B Electronics Capacity Planning Signal | initial_stock | 48.83148 / 1.25793 | Начальный 60-дневный сигнал планирования электронных мощностей (A 1.26 / B 48.8). | Соответствует v7.3-специализации (A почти не производит, B ~45). В v7.4 Mode 17 A перепланируется с 1.3 к ~22 — часть переходной динамики первых сотен дней. | Mode 17 series. |
 | B Electronics Capital Goods per Capacity | constant | 11.5 | Capital-goods units required for one unit of new electronics installed capacity in colony B. | Scales both total equipment demand and physical equipment consumption generated by sector expansion. | Start value 11.5 from V7_5_ARCHITECTURE_SPEC §2. It is a calibration coefficient; the refinery/electronics starts are heuristically tied to legacy financial capital-cost scale, not a physical measurement. |
 | B Electronics Construction Materials per Capacity | constant | 12 | [calib] physical-material norm, value 12. | Scales Electronics Construction Materials demand and sink flow. | Order-of-magnitude matched to Capital Goods norm 11.5 per spec; candidate run checks consequences. |
+| B Electronics Demand Reference Price | constant | 21.91 / 23.1 | Asymmetric reference electronics prices A = 23.1, B = 21.91, the regional mean market prices over the first year of Mode 52 on accepted v7.7.14. | Denominator of the electronics price ratio raised to -Price Demand Elasticity; preserves regional reference price levels when scaling effective electronics demand. | docs/tasks/037-wage-pricing/V7_7_15_ARCHITECTURE_SPEC.md sections 1, 5; docs/research/FINANCE_PROTOTYPE_2026-10-12_RU.md: reference values are first-year Mode 52 means. Fixed owner calibration A 23.1 / B 21.91. |
 | B Electronics Domestic Supply Signal | initial_stock | 16 / 20 | Начальный сигнал локального предложения электроники (= базовому спросу 20 / 16). | Инициализация realized import share без стартового скачка. |  |
 | B Electronics Energy per Unit | constant | 12 | Энергоёмкость электроники (12; симметрично). | Electronics — второй потребитель энергии (A 22 × 12 ≈ 264). Одинакова у A и B: у B нет технологического преимущества в электронике. |  |
 | B Electronics Feedstock Base Cost | constant | 3 / 18 | Legacy-цена экзогенного feedstock (A 18 / B 3). Действует только при Intermediate Inputs Enabled = 0 (Modes 0–16). | В v7.3 — единственный источник преимущества B в электронике (B→A 21.7/день). В v7.4 при switch=1 не используется: вход = металл по Market Price. Исчезновение этого «подарка» и есть причина переворота специализации. | Mode 12 vs 17: Electronics B→A 21.7 → 0. |
@@ -160,6 +166,7 @@
 | A Capital Goods Labor per Unit | constant | 2 | Capital Goods labor intensity for colony A, value 2. | Multiplies A Capital Goods output and its Automation Factor to form the process Labor Requirement. The A/B pair is intentionally symmetric at 2/2. | V7_7_10_ARCHITECTURE_SPEC §1–§2 and draft/process-labor.json. |
 | A Construction Materials Labor per Unit | constant | 0.3 | Construction Materials labor intensity for colony A, value 0.3. | Multiplies A Construction Materials output and its Automation Factor to form the process Labor Requirement. The A/B pair is intentionally symmetric at 0.3/0.3. | V7_7_10_ARCHITECTURE_SPEC §1–§2 and draft/process-labor.json. |
 | A Flexible Wage | initial_stock | 100 / 140 | Initial flexible-wage STOCK; A starts at 100, B at 140, equal to each region's previous Wage. | Becomes the active Wage branch when Labor Market Enabled=1 and evolves through Wage Increase/Decrease. | V7_7_13_ARCHITECTURE_SPEC §§1,5 and labor_market generator start-state rule. |
+| A Food Labor Share | constant | 1 | Symmetric food-price labor shares A = 1, B = 1: initial unit labor cost divided by initial food price, capped at 1. | Scales proportional regional food-price response to wage / initial_wage - 1. Food labor intensity 0.15 times initial wage gives 15 in A and 21 in B, above the initial food-price index near 10, so both ratios are capped at 1. It avoids the additive prototype's food-price collapse when B wages fall. | docs/tasks/037-wage-pricing/V7_7_15_ARCHITECTURE_SPEC.md sections 1, 5; docs/research/FINANCE_PROTOTYPE_2026-10-12_RU.md: first-year Mode 52 reference levels on v7.7.14, proportional form and conclusions 3-4 about labor costs exceeding food prices. |
 | A Initial Wage | constant | 100 / 140 | Named copy of the pre-labor-market regional wage; A=100, B=140. | Provides the exact switch-off branch and the wage-floor reference without embedding asymmetric numeric literals in mirrored A/B formulas. | V7_7_13_ARCHITECTURE_SPEC §§0–2; generated by labor_market from the accepted A/B Wage values. |
 | A Labor Demand Signal | initial_stock | 14.56 / 4.42 | Initial smoothed unconstrained labor-demand STOCK; A=14.56, B=4.42 (= initial Population × Labor Participation Share 0.52; 14 / 4.25 before v7.7.14). | Seeds the labor-availability guard without a startup discontinuity and is the denominator driver of Labor Availability/Tightness. | V7_7_13_ARCHITECTURE_SPEC §§1,5 and labor_market generator: Population Initial × Labor Participation Share. |
 | A Regolith Extraction Labor per Unit | constant | 0.2 | Regolith Extraction labor intensity for colony A, value 0.2. | Multiplies A Regolith Extraction output and its Automation Factor to form the process Labor Requirement. The A/B pair is intentionally symmetric at 0.2/0.2. | V7_7_10_ARCHITECTURE_SPEC §1–§2 and draft/process-labor.json. |
@@ -168,6 +175,7 @@
 | B Capital Goods Labor per Unit | constant | 2 | Capital Goods labor intensity for colony B, value 2. | Multiplies B Capital Goods output and its Automation Factor to form the process Labor Requirement. The A/B pair is intentionally symmetric at 2/2. | V7_7_10_ARCHITECTURE_SPEC §1–§2 and draft/process-labor.json. |
 | B Construction Materials Labor per Unit | constant | 0.3 | Construction Materials labor intensity for colony B, value 0.3. | Multiplies B Construction Materials output and its Automation Factor to form the process Labor Requirement. The A/B pair is intentionally symmetric at 0.3/0.3. | V7_7_10_ARCHITECTURE_SPEC §1–§2 and draft/process-labor.json. |
 | B Flexible Wage | initial_stock | 140 / 100 | Initial flexible-wage STOCK; A starts at 100, B at 140, equal to each region's previous Wage. | Becomes the active Wage branch when Labor Market Enabled=1 and evolves through Wage Increase/Decrease. | V7_7_13_ARCHITECTURE_SPEC §§1,5 and labor_market generator start-state rule. |
+| B Food Labor Share | constant | 1 | Symmetric food-price labor shares A = 1, B = 1: initial unit labor cost divided by initial food price, capped at 1. | Scales proportional regional food-price response to wage / initial_wage - 1. Food labor intensity 0.15 times initial wage gives 15 in A and 21 in B, above the initial food-price index near 10, so both ratios are capped at 1. It avoids the additive prototype's food-price collapse when B wages fall. | docs/tasks/037-wage-pricing/V7_7_15_ARCHITECTURE_SPEC.md sections 1, 5; docs/research/FINANCE_PROTOTYPE_2026-10-12_RU.md: first-year Mode 52 reference levels on v7.7.14, proportional form and conclusions 3-4 about labor costs exceeding food prices. |
 | B Initial Wage | constant | 140 / 100 | Named copy of the pre-labor-market regional wage; A=100, B=140. | Provides the exact switch-off branch and the wage-floor reference without embedding asymmetric numeric literals in mirrored A/B formulas. | V7_7_13_ARCHITECTURE_SPEC §§0–2; generated by labor_market from the accepted A/B Wage values. |
 | B Labor Demand Signal | initial_stock | 4.42 / 14.56 | Initial smoothed unconstrained labor-demand STOCK; A=14.56, B=4.42 (= initial Population × Labor Participation Share 0.52; 14 / 4.25 before v7.7.14). | Seeds the labor-availability guard without a startup discontinuity and is the denominator driver of Labor Availability/Tightness. | V7_7_13_ARCHITECTURE_SPEC §§1,5 and labor_market generator: Population Initial × Labor Participation Share. |
 | B Regolith Extraction Labor per Unit | constant | 0.2 | Regolith Extraction labor intensity for colony B, value 0.2. | Multiplies B Regolith Extraction output and its Automation Factor to form the process Labor Requirement. The A/B pair is intentionally symmetric at 0.2/0.2. | V7_7_10_ARCHITECTURE_SPEC §1–§2 and draft/process-labor.json. |
@@ -181,6 +189,7 @@
 | Wage Floor Share | constant | 0.3 | Lower bound for flexible wage as a share of the region's Initial Wage, value 0.3. | Prevents Flexible Wage from falling below 30% of the pre-labor-market wage. | docs/tasks/034-labor-market/V7_7_13_ARCHITECTURE_SPEC.md §§0–5 and docs/research/CLOSURE_PROTOTYPE_2026-10-09_RU.md. |
 | A Labor per Metal | constant | 0.1 | Трудоёмкость металла (0.1; симметрично). | Wage × 0.1 в Metal Unit Cost. |  |
 | A Metal Buffer | constant | 10 | Мягкость нормирования металла (10 единиц; симметрично). | Фактор доступности Inventory/(Inventory+10) для Local Sales и (v7.4) для поставок Electronics. При запасе ~300–500 даёт 0.97–0.98: физическое нормирование почти не проявляется, пока запас не опустошён; дефицит идёт через цену. Уменьшить буфер нельзя без переоценки всех сценариев — это меняет форму реакции всех рынков металла. | ACCEPTANCE_R2 §6; Mode 18: fulfillment A min 0.927 при запасе 127. |
+| A Metal Demand Reference Price | constant | 25.9 / 34.46 | Asymmetric reference metal prices A = 25.9, B = 34.46, the regional mean market prices over the first year of Mode 52 on accepted v7.7.14. | Denominator of the metal price ratio raised to -Price Demand Elasticity; normalises demand response to each region's baseline price level rather than imposing a common A/B price. | docs/tasks/037-wage-pricing/V7_7_15_ARCHITECTURE_SPEC.md sections 1, 5; docs/research/FINANCE_PROTOTYPE_2026-10-12_RU.md: reference values are first-year Mode 52 means. Fixed owner calibration A 25.9 / B 34.46. |
 | A Metal Target Inventory | constant | 500 | Целевой запас металла (500; симметрично). | Через Metal Shortage задаёт дефицитную надбавку к Domestic Offer Price и слагаемое в Desired Smelting Rate. |  |
 | A Mining Automation Level | switch | 0 | Mining automation level for colony A, initial value 0. | Controls A Mining Automation Factor. The A/B pair is intentionally symmetric at 0/0 in the base model; Mode 48 overrides only the A value to 0.5 as a probe. | V7_7_10_ARCHITECTURE_SPEC §1–§2 and draft/process-labor.json. |
 | A Mining Capacity | constant | 70 / 28 | Потолок добычи руды (A 70 / B 28 ore/день). | Мягкий потолок Mining Rate. У A в baseline не связывает (добыча ~55); у B в связанном мире добыча ~11 ≪ 28. Именно поэтому шок Mode 18 сделан у A: ×0.5 у A режет плавку 39→25, ×0.5 у B ничего не меняет. | FEEDBACK_R1 §5; Mode 18 series. |
@@ -188,6 +197,7 @@
 | A Ore Base Cost | constant | 4 / 14 | Стоимость руды колонии (A 4 / B 14) — главный источник сравнительного преимущества A в металле. | Определяет Ore Price → Metal Unit Cost → Domestic Offer → Market Price. Разрыв ×3.5 делает металл A дешевле (Mode 17 @1080: 30.5 vs 37.4) и задаёт направление торговли металлом A→B на всех сценариях. В v7.4 через Feedstock Price = Market Price это же преимущество переносится на электронику. | Mode 12/17 таблицы (ACCEPTANCE_R2); Mode 4 (Reverse Advantage) меняет именно этот параметр и разворачивает торговлю. |
 | A Ore Demand Signal | initial_stock | 25 | Initial smoothed ore-demand signal for colony A, value 25. | Seeds the STOCK sizing signal; the shared initial value intentionally differs from A's actual starting demand and converges with a 3-day adjustment time. | draft/ore-mine.json; V7_7_6_ARCHITECTURE_SPEC §1. |
 | A Ore Extraction Signal | initial_stock | 42.227 / 8.373 | Initial smoothed Ore extraction signal for colony A, value 42.227. | Seeds the reserve-target signal with the intentional A/B pair 42.227/8.373. | V7_7_8_ARCHITECTURE_SPEC §1–§2 and draft/deposits.json. |
+| A Ore Labor Share | constant | 1 / 0.5 | Asymmetric ore-price labor shares A = 1, B = 0.5: initial unit labor cost / initial ore price, capped at 1, using first-year Mode 52 levels on v7.7.14. | Scales each region's proportional ore-price response to its relative wage change. The A ratio exceeds 1 and is capped; B retains the prototype ratio 0.5. Initial prices remain unchanged when the relative wage change is zero. | docs/tasks/037-wage-pricing/V7_7_15_ARCHITECTURE_SPEC.md sections 1, 5; docs/research/FINANCE_PROTOTYPE_2026-10-12_RU.md: proportional pass-through and conclusion 4 (ore A capped, ore B share 0.5). |
 | A Ore Mine Capacity | initial_stock | 70 / 28 | Initial simple-capital ore-mine capacity for colony A, value 70. | Seeds mine capacity at the accepted A Mining Capacity; A/B are intentionally asymmetric (70 vs 28). | TASK_RU §2 and V7_7_6_ARCHITECTURE_SPEC §0–§2 explicitly require A=70, B=28. |
 | A Ore per Metal | constant | 1.4 | Расход руды на металл (1.4; симметрично). | Материалоёмкость плавки; вместе с Ore Base Cost задаёт сырьевую часть Metal Unit Cost (A 5.6, B 19.6). |  |
 | A Ore Proven Reserves Initial | constant | 200000 / 36000 | Initial proven Ore reserves for colony A, value 200000. | Seeds the stock that supplies extraction; A/B pair is 200000/36000. | V7_7_8_ARCHITECTURE_SPEC §1–§2 and draft/deposits.json. |
@@ -208,6 +218,7 @@
 | A Test 9 Metal Demand Applies | constant | 0 / 1 | Флаг применимости metal-demand шока Mode 9 к колонии A; значение 0. | При 1 разрешает существующий множитель Two Industry Energy Stress Demand Multiplier; при 0 заменяет его точным нейтральным ×1. Сохраняет прежнюю одностороннюю семантику при зеркальной формуле A/B. |  |
 | B Labor per Metal | constant | 0.1 | Трудоёмкость металла (0.1; симметрично). | Wage × 0.1 в Metal Unit Cost. |  |
 | B Metal Buffer | constant | 10 | Мягкость нормирования металла (10 единиц; симметрично). | Фактор доступности Inventory/(Inventory+10) для Local Sales и (v7.4) для поставок Electronics. При запасе ~300–500 даёт 0.97–0.98: физическое нормирование почти не проявляется, пока запас не опустошён; дефицит идёт через цену. Уменьшить буфер нельзя без переоценки всех сценариев — это меняет форму реакции всех рынков металла. | ACCEPTANCE_R2 §6; Mode 18: fulfillment A min 0.927 при запасе 127. |
+| B Metal Demand Reference Price | constant | 34.46 / 25.9 | Asymmetric reference metal prices A = 25.9, B = 34.46, the regional mean market prices over the first year of Mode 52 on accepted v7.7.14. | Denominator of the metal price ratio raised to -Price Demand Elasticity; normalises demand response to each region's baseline price level rather than imposing a common A/B price. | docs/tasks/037-wage-pricing/V7_7_15_ARCHITECTURE_SPEC.md sections 1, 5; docs/research/FINANCE_PROTOTYPE_2026-10-12_RU.md: reference values are first-year Mode 52 means. Fixed owner calibration A 25.9 / B 34.46. |
 | B Metal Target Inventory | constant | 500 | Целевой запас металла (500; симметрично). | Через Metal Shortage задаёт дефицитную надбавку к Domestic Offer Price и слагаемое в Desired Smelting Rate. |  |
 | B Mining Automation Level | constant | 0 | Mining automation level for colony B, initial value 0. | Controls B Mining Automation Factor. The A/B pair is intentionally symmetric at 0/0 in the base model; Mode 48 overrides only the A value to 0.5 as a probe. | V7_7_10_ARCHITECTURE_SPEC §1–§2 and draft/process-labor.json. |
 | B Mining Capacity | constant | 28 / 70 | Потолок добычи руды (A 70 / B 28 ore/день). | Мягкий потолок Mining Rate. У A в baseline не связывает (добыча ~55); у B в связанном мире добыча ~11 ≪ 28. Именно поэтому шок Mode 18 сделан у A: ×0.5 у A режет плавку 39→25, ×0.5 у B ничего не меняет. | FEEDBACK_R1 §5; Mode 18 series. |
@@ -215,6 +226,7 @@
 | B Ore Base Cost | constant | 14 / 4 | Стоимость руды колонии (A 4 / B 14) — главный источник сравнительного преимущества A в металле. | Определяет Ore Price → Metal Unit Cost → Domestic Offer → Market Price. Разрыв ×3.5 делает металл A дешевле (Mode 17 @1080: 30.5 vs 37.4) и задаёт направление торговли металлом A→B на всех сценариях. В v7.4 через Feedstock Price = Market Price это же преимущество переносится на электронику. | Mode 12/17 таблицы (ACCEPTANCE_R2); Mode 4 (Reverse Advantage) меняет именно этот параметр и разворачивает торговлю. |
 | B Ore Demand Signal | initial_stock | 25 | Initial smoothed ore-demand signal for colony B, value 25. | Seeds the STOCK sizing signal; the shared initial value intentionally differs from B's actual starting demand and causes only the documented startup transient. | draft/ore-mine.json; V7_7_6_ARCHITECTURE_SPEC §1. |
 | B Ore Extraction Signal | initial_stock | 8.373 / 42.227 | Initial smoothed Ore extraction signal for colony B, value 8.373. | Seeds the reserve-target signal with the intentional A/B pair 42.227/8.373. | V7_7_8_ARCHITECTURE_SPEC §1–§2 and draft/deposits.json. |
+| B Ore Labor Share | constant | 0.5 / 1 | Asymmetric ore-price labor shares A = 1, B = 0.5: initial unit labor cost / initial ore price, capped at 1, using first-year Mode 52 levels on v7.7.14. | Scales each region's proportional ore-price response to its relative wage change. The A ratio exceeds 1 and is capped; B retains the prototype ratio 0.5. Initial prices remain unchanged when the relative wage change is zero. | docs/tasks/037-wage-pricing/V7_7_15_ARCHITECTURE_SPEC.md sections 1, 5; docs/research/FINANCE_PROTOTYPE_2026-10-12_RU.md: proportional pass-through and conclusion 4 (ore A capped, ore B share 0.5). |
 | B Ore Mine Capacity | initial_stock | 28 / 70 | Initial simple-capital ore-mine capacity for colony B, value 28. | Seeds mine capacity at the accepted B Mining Capacity; A/B are intentionally asymmetric (70 vs 28). | TASK_RU §2 and V7_7_6_ARCHITECTURE_SPEC §0–§2 explicitly require A=70, B=28. |
 | B Ore per Metal | constant | 1.4 | Расход руды на металл (1.4; симметрично). | Материалоёмкость плавки; вместе с Ore Base Cost задаёт сырьевую часть Metal Unit Cost (A 5.6, B 19.6). |  |
 | B Ore Proven Reserves Initial | constant | 36000 / 200000 | Initial proven Ore reserves for colony B, value 36000. | Seeds the stock that supplies extraction; A/B pair is 200000/36000. | V7_7_8_ARCHITECTURE_SPEC §1–§2 and draft/deposits.json. |
@@ -368,6 +380,7 @@
 | Migration Max Rate | constant | 0.0000555555555556 | Maximum migration outflow fraction, 0.0000555555555556 per model day (2.0% per 360-day model year). | Caps each directed migration flow before attractiveness-gap sensitivity is applied. | docs/research/POPULATION_PROTOTYPE_2026-10-04_RU.md: no more than 2% of population per year; V7_7_11_ARCHITECTURE_SPEC §1. |
 | Population Base Death Rate | constant | 0.0000277777777778 | Baseline death rate, 0.0000277777777778 per model day (1.0% per 360-day model year). | Multiplies Population and the living-standard mortality factor to form each region's Deaths outflow. | docs/research/POPULATION_PROTOTYPE_2026-10-04_RU.md: deaths 1.0%/year; V7_7_11_ARCHITECTURE_SPEC §1. |
 | Population Birth Rate | constant | 0.0000333333333333 | Natural birth rate, 0.0000333333333333 per model day (1.2% per 360-day model year). | Multiplies each region's Population stock to form its Births inflow. | docs/research/POPULATION_PROTOTYPE_2026-10-04_RU.md: births 1.2%/year; V7_7_11_ARCHITECTURE_SPEC §1. |
+| Price Demand Elasticity | constant | 0.5 | Positive price elasticity magnitude eta = 0.5, shared by regional metal and electronics final demand. | Price Demand Factor = Max(market_price / reference_price, 1e-6)^(-eta). It scales the previous Effective Local Base Demand, preserving the population and earlier layers; household income does not enter demand in this step. | docs/tasks/037-wage-pricing/V7_7_15_ARCHITECTURE_SPEC.md sections 1, 5; docs/research/FINANCE_PROTOTYPE_2026-10-12_RU.md: owner selects price demand with eta 0.5; elasticity is an explicit prototype calibration, not an estimated law. |
 | Regolith Adjustment Time | constant | 10 | Regolith inventory correction time. | Higher value slows extraction response. | V7_7_ARCHITECTURE_SPEC §2; owner-defined non-[calib] value. |
 | Regolith Buffer Days | constant | 1 | Scale-free Regolith availability buffer, days of requirement. | Higher value makes raw-resource limitation bind sooner. | V7_7_ARCHITECTURE_SPEC §2; owner-defined non-[calib] value. |
 | Regolith Demand Signal Adjustment Time | constant | 3 | Regolith demand-signal adjustment time, value 3 days. | Controls lag from instantaneous Regolith Requirement to the STOCK signal used for mine sizing and prevents same-step demand feedback. | V7_7_5_ARCHITECTURE_SPEC §1–§2; simple_capital STOCK sizing rule in lab/docs/NODES_RU.md. |
@@ -386,6 +399,7 @@
 | Regolith Target Days | constant | 10 | Regolith target inventory, days of requirement. | Higher value raises raw-resource stock target. | V7_7_ARCHITECTURE_SPEC §2; owner-defined non-[calib] value. |
 | A Capital Goods Energy Signal | initial_stock | 0 | Initial smoothed Capital Goods energy signal for colony A, value 0. | Seeds the request signal; A/B pair is 0/0. | V7_7_9_ARCHITECTURE_SPEC §1–§2 and draft/process-energy.json. |
 | A Energy Demand Signal | initial_stock | 1100 / 480 | Начальный 3-дневный сигнал спроса на энергию (A 1100 / B 480). | Инициализация ценового сигнала дефицита энергии. |  |
+| A Energy Labor Share | constant | 0.83 / 1 | Asymmetric energy-price labor shares A = 0.83, B = 1: initial unit labor cost / initial energy price, capped at 1, using first-year Mode 52 levels on v7.7.14. | Scales proportional energy-price response to regional relative wage change. A retains the prototype ratio 0.83; the B ratio exceeds 1 and is capped at 1. The region's own wage drives its price, with the previous formula retained at switch 0. | docs/tasks/037-wage-pricing/V7_7_15_ARCHITECTURE_SPEC.md sections 1, 5; docs/research/FINANCE_PROTOTYPE_2026-10-12_RU.md: proportional pass-through and conclusion 4 (energy A share 0.83, energy B capped). |
 | A Energy per Metal | constant | 30 | Энергоёмкость металла (30; симметрично). | Металл — главный потребитель энергии: плавка A ~45/день × 30 = 1350 из ~1680 запрошенной энергии A. Поэтому рост плавки под связью (Mode 17/19) тянет энергодефицит A. | Mode 17: A Total Requested Energy 1676 @1080. |
 | A Generation Automation Level | switch | 0 | Generation automation level for colony A, initial value 0. | Controls A Generation Automation Factor. The A/B pair is intentionally symmetric at 0/0 in the base model; Mode 48 overrides only the A value to 0.5 as a probe. | V7_7_10_ARCHITECTURE_SPEC §1–§2 and draft/process-labor.json. |
 | A Generation Labor per Unit | constant | 0.001 | Generation labor intensity for colony A, value 0.001. | Multiplies A Generation output and its Automation Factor to form the process Labor Requirement. The A/B pair is intentionally symmetric at 0.001/0.001. | V7_7_10_ARCHITECTURE_SPEC §1–§2 and draft/process-labor.json. |
@@ -411,6 +425,7 @@
 | A Test 26 Energy Kernel Capacity Shock Applies | constant | 1 / 0 | Applicability flag for the Mode 26 capacity-only control shock in colony A. | 1 applies the shared Energy Kernel Capacity Shock Factor to A active generation capacity; 0 substitutes the exact neutral multiplier 1. A=1, B=0. | Mode 26 run (r2 acceptance, 2026-09-25): A capacity 1359 -> 660 inside the window with resource fulfillment held at 1.00; B unaffected. |
 | B Capital Goods Energy Signal | initial_stock | 0 | Initial smoothed Capital Goods energy signal for colony B, value 0. | Seeds the request signal; A/B pair is 0/0. | V7_7_9_ARCHITECTURE_SPEC §1–§2 and draft/process-energy.json. |
 | B Energy Demand Signal | initial_stock | 480 / 1100 | Начальный 3-дневный сигнал спроса на энергию (A 1100 / B 480). | Инициализация ценового сигнала дефицита энергии. |  |
+| B Energy Labor Share | constant | 1 / 0.83 | Asymmetric energy-price labor shares A = 0.83, B = 1: initial unit labor cost / initial energy price, capped at 1, using first-year Mode 52 levels on v7.7.14. | Scales proportional energy-price response to regional relative wage change. A retains the prototype ratio 0.83; the B ratio exceeds 1 and is capped at 1. The region's own wage drives its price, with the previous formula retained at switch 0. | docs/tasks/037-wage-pricing/V7_7_15_ARCHITECTURE_SPEC.md sections 1, 5; docs/research/FINANCE_PROTOTYPE_2026-10-12_RU.md: proportional pass-through and conclusion 4 (energy A share 0.83, energy B capped). |
 | B Energy per Metal | constant | 30 | Энергоёмкость металла (30; симметрично). | Металл — главный потребитель энергии: плавка A ~45/день × 30 = 1350 из ~1680 запрошенной энергии A. Поэтому рост плавки под связью (Mode 17/19) тянет энергодефицит A. | Mode 17: A Total Requested Energy 1676 @1080. |
 | B Generation Automation Level | constant | 0 | Generation automation level for colony B, initial value 0. | Controls B Generation Automation Factor. The A/B pair is intentionally symmetric at 0/0 in the base model; Mode 48 overrides only the A value to 0.5 as a probe. | V7_7_10_ARCHITECTURE_SPEC §1–§2 and draft/process-labor.json. |
 | B Generation Labor per Unit | constant | 0.001 | Generation labor intensity for colony B, value 0.001. | Multiplies B Generation output and its Automation Factor to form the process Labor Requirement. The A/B pair is intentionally symmetric at 0.001/0.001. | V7_7_10_ARCHITECTURE_SPEC §1–§2 and draft/process-labor.json. |
@@ -485,6 +500,7 @@
 | Process Energy Enabled | switch | 1 | Process-energy layer master switch, raw value 1. | 0 preserves accepted v7.7.8 process-rate and allocator behaviour in Modes 0-45; 1 enables energy requests and fulfillment-limited process rates in Modes 46-47. | V7_7_9_ARCHITECTURE_SPEC §1–§2 and draft/process-energy.json. |
 | Regolith Capital Enabled | switch | 1 | Regolith simple-capital master switch, raw value 1. | 0 preserves accepted Modes 0-37 exactly; 1 makes regolith extraction capacity read mine capital and enables mine expansion, depreciation, retirement, and backing-resource sinks. | V7_7_5_ARCHITECTURE_SPEC §0–§3; owner node declaration. |
 | Transport Construction Materials Enabled | switch | 1 | v7.7.1 shared-Transport Construction Materials master switch. | 0 preserves Modes 0-29 exactly; 1 makes shared Transport expansion require both Capital Goods and Construction Materials. | V7_7_1_ARCHITECTURE_SPEC §0–§3. |
+| Wage Pricing Enabled | switch | 0 | Switch for proportional wage pass-through into ore, energy and food prices and price-responsive final demand; default 0, enabled only in Modes 54-55. | At 0 every wage_pricing replacement keeps the accepted formula. At 1 regional prices are multiplied by Max(1 + labor_share * relative_wage_change, 1e-6), and effective metal/electronics demand by its price demand factor. | docs/tasks/037-wage-pricing/V7_7_15_ARCHITECTURE_SPEC.md sections 1, 3, 5; docs/research/FINANCE_PROTOTYPE_2026-10-12_RU.md: owner intermediate-step decision, proportional pass-through and price demand only. |
 | Priority Stress A Ore Base Cost | test_wiring | 4 | Нейтральная A-сторона override-константа ore base cost для Mode 8. | Равна A Ore Base Cost = 4; позволяет A Effective Ore Base Cost иметь ту же test chain, что B, сохраняя прежний результат. |  |
 | Reverse A Mining Capacity | test_wiring | 70 | Нейтральная A-сторона override-константа mining capacity для Mode 4. | Равна A Mining Capacity = 70; симметризует ветку Reverse Advantage без изменения численного результата A. |  |
 | Reverse A Wage | test_wiring | 100 | Нейтральная A-сторона override-константа Mode 4; зеркало Reverse B Wage. | Равна A Wage = 100, поэтому введение A Effective Wage не меняет A в Mode 4; позволяет сделать cost wiring A/B структурно зеркальным. |  |
@@ -526,6 +542,7 @@
 | A Electronics Construction Materials per Capacity | constant | A | 12 | = | [calib] Construction Materials consumed per unit of new A Electronics installed capacity. | ✓ |
 | A Electronics Decommissioning Factory Capacity | initial_stock | A | 0 | = | A electronics capital committed to permanent retirement but not yet fully dismantled. |  |
 | A Electronics Demand Elasticity | constant | A | 0.6 | = |  |  |
+| A Electronics Demand Reference Price | constant | A | 23.1 | **21.91** | Wage pricing node: electronics price at which demand is the norm. | ✓ |
 | A Electronics Domestic Supply Signal | initial_stock | A | 20 | **16** |  | ✓ |
 | A Electronics Energy per Unit | constant | A | 12 | = |  | ✓ |
 | A Electronics Feedstock Adjustment Time | constant | A | 40 | = |  |  |
@@ -562,6 +579,7 @@
 | B Electronics Construction Materials per Capacity | constant | B | 12 | = | [calib] Construction Materials consumed per unit of new B Electronics installed capacity. | ✓ |
 | B Electronics Decommissioning Factory Capacity | initial_stock | B | 0 | = | B electronics capital committed to permanent retirement but not yet fully dismantled. |  |
 | B Electronics Demand Elasticity | constant | B | 0.6 | = |  |  |
+| B Electronics Demand Reference Price | constant | B | 21.91 | **23.1** | Wage pricing node: electronics price at which demand is the norm. | ✓ |
 | B Electronics Domestic Supply Signal | initial_stock | B | 16 | **20** |  | ✓ |
 | B Electronics Energy per Unit | constant | B | 12 | = |  | ✓ |
 | B Electronics Feedstock Adjustment Time | constant | B | 40 | = |  |  |
@@ -626,6 +644,7 @@
 | A Capital Goods Labor per Unit | constant | A | 2 | = | Generated labor element for A Capital Goods Labor per Unit. | ✓ |
 | A Construction Materials Labor per Unit | constant | A | 0.3 | = | Generated labor element for A Construction Materials Labor per Unit. | ✓ |
 | A Flexible Wage | initial_stock | A | 100 | **140** | Labor market node: wage that follows labor tightness. | ✓ |
+| A Food Labor Share | constant | A | 1 | = | Wage pricing node: share of labor in the start food price (at most 1). | ✓ |
 | A Initial Wage | constant | A | 100 | **140** | Labor market node: wage at the start (floor reference). | ✓ |
 | A Labor Demand Signal | initial_stock | A | 14.56 | **4.42** | Labor market node: smoothed labor demand at unconstrained output. | ✓ |
 | A Regolith Extraction Labor per Unit | constant | A | 0.2 | = | Generated labor element for A Regolith Extraction Labor per Unit. | ✓ |
@@ -634,6 +653,7 @@
 | B Capital Goods Labor per Unit | constant | B | 2 | = | Generated labor element for B Capital Goods Labor per Unit. | ✓ |
 | B Construction Materials Labor per Unit | constant | B | 0.3 | = | Generated labor element for B Construction Materials Labor per Unit. | ✓ |
 | B Flexible Wage | initial_stock | B | 140 | **100** | Labor market node: wage that follows labor tightness. | ✓ |
+| B Food Labor Share | constant | B | 1 | = | Wage pricing node: share of labor in the start food price (at most 1). | ✓ |
 | B Initial Wage | constant | B | 140 | **100** | Labor market node: wage at the start (floor reference). | ✓ |
 | B Labor Demand Signal | initial_stock | B | 4.42 | **14.56** | Labor market node: smoothed labor demand at unconstrained output. | ✓ |
 | B Regolith Extraction Labor per Unit | constant | B | 0.2 | = | Generated labor element for B Regolith Extraction Labor per Unit. | ✓ |
@@ -653,6 +673,7 @@
 | A Labor per Metal | constant | A | 0.1 | = |  | ✓ |
 | A Metal Adjustment Time | constant | A | 30 | = |  |  |
 | A Metal Buffer | constant | A | 10 | = |  | ✓ |
+| A Metal Demand Reference Price | constant | A | 25.9 | **34.46** | Wage pricing node: metal price at which demand is the norm. | ✓ |
 | A Metal Inventory | initial_stock | A | 500 | = |  |  |
 | A Metal Scarcity Strength | constant | A | 1.5 | = |  |  |
 | A Metal Target Inventory | constant | A | 500 | = |  | ✓ |
@@ -665,6 +686,7 @@
 | A Ore Demand Signal | initial_stock | A | 25 | = | Generated simple_capital demand signal for A Ore Demand Signal. | ✓ |
 | A Ore Extraction Signal | initial_stock | A | 42.227 | **8.373** | Generated deposit element for A Ore Extraction Signal. | ✓ |
 | A Ore Inventory | initial_stock | A | 2500 | = |  |  |
+| A Ore Labor Share | constant | A | 1 | **0.5** | Wage pricing node: share of labor in the start ore price (at most 1). | ✓ |
 | A Ore Mine Capacity | initial_stock | A | 70 | **28** | Generated simple_capital capacity for A Ore Mine Capacity. | ✓ |
 | A Ore per Metal | constant | A | 1.4 | = |  | ✓ |
 | A Ore Proven Reserves Initial | constant | A | 200000 | **36000** | Generated deposit element for A Ore Proven Reserves Initial. | ✓ |
@@ -695,6 +717,7 @@
 | B Labor per Metal | constant | B | 0.1 | = |  | ✓ |
 | B Metal Adjustment Time | constant | B | 30 | = |  |  |
 | B Metal Buffer | constant | B | 10 | = |  | ✓ |
+| B Metal Demand Reference Price | constant | B | 34.46 | **25.9** | Wage pricing node: metal price at which demand is the norm. | ✓ |
 | B Metal Inventory | initial_stock | B | 500 | = |  |  |
 | B Metal Scarcity Strength | constant | B | 1.5 | = |  |  |
 | B Metal Target Inventory | constant | B | 500 | = |  | ✓ |
@@ -707,6 +730,7 @@
 | B Ore Demand Signal | initial_stock | B | 25 | = | Generated simple_capital demand signal for B Ore Demand Signal. | ✓ |
 | B Ore Extraction Signal | initial_stock | B | 8.373 | **42.227** | Generated deposit element for B Ore Extraction Signal. | ✓ |
 | B Ore Inventory | initial_stock | B | 2500 | = |  |  |
+| B Ore Labor Share | constant | B | 0.5 | **1** | Wage pricing node: share of labor in the start ore price (at most 1). | ✓ |
 | B Ore Mine Capacity | initial_stock | B | 28 | **70** | Generated simple_capital capacity for B Ore Mine Capacity. | ✓ |
 | B Ore per Metal | constant | B | 1.4 | = |  | ✓ |
 | B Ore Proven Reserves Initial | constant | B | 36000 | **200000** | Generated deposit element for B Ore Proven Reserves Initial. | ✓ |
@@ -894,6 +918,7 @@
 | Migration Max Rate | constant | global | 0.0000555555555556 |  | Generated population element for Migration Max Rate. | ✓ |
 | Population Base Death Rate | constant | global | 0.0000277777777778 |  | Generated population element for Population Base Death Rate. | ✓ |
 | Population Birth Rate | constant | global | 0.0000333333333333 |  | Generated population element for Population Birth Rate. | ✓ |
+| Price Demand Elasticity | constant | global | 0.5 |  | Wage pricing node: parameter Price Demand Elasticity. | ✓ |
 | Regolith Adjustment Time | constant | global | 10 |  | First-order inventory correction time for desired Regolith extraction. | ✓ |
 | Regolith Buffer Days | constant | global | 1 |  | Scale-free Regolith availability half-saturation buffer in days of current Regolith requirement. | ✓ |
 | Regolith Demand Signal Adjustment Time | constant | global | 3 |  | Generated simple_capital signal adjustment time for Regolith Demand Signal Adjustment Time. | ✓ |
@@ -919,6 +944,7 @@
 |---|---|---|---:|---:|---|:---:|
 | A Capital Goods Energy Signal | initial_stock | A | 0 | = | Generated energy_consumer element for A Capital Goods Energy Signal. | ✓ |
 | A Energy Demand Signal | initial_stock | A | 1100 | **480** | Short-memory perceived requested load used for price formation. The stock breaks the instantaneous price-demand algebraic loop. | ✓ |
+| A Energy Labor Share | constant | A | 0.83 | **1** | Wage pricing node: share of labor in the start energy price (at most 1). | ✓ |
 | A Energy per Metal | constant | A | 30 | = |  | ✓ |
 | A Expansion Utilization Power | constant | A | 4 | = |  |  |
 | A Generation Automation Level | switch | A | 0 (сценарии: {"48":0.5}…) | = | Generated labor element for A Generation Automation Level. | ✓ |
@@ -948,6 +974,7 @@
 | A Test 26 Energy Kernel Capacity Shock Applies | constant | A | 1 | **0** | Applicability flag for symmetric Energy Kernel v2 capacity-shock wiring. | ✓ |
 | B Capital Goods Energy Signal | initial_stock | B | 0 | = | Generated energy_consumer element for B Capital Goods Energy Signal. | ✓ |
 | B Energy Demand Signal | initial_stock | B | 480 | **1100** | Short-memory perceived requested load used for price formation. The stock breaks the instantaneous price-demand algebraic loop. | ✓ |
+| B Energy Labor Share | constant | B | 1 | **0.83** | Wage pricing node: share of labor in the start energy price (at most 1). | ✓ |
 | B Energy per Metal | constant | B | 30 | = |  | ✓ |
 | B Expansion Utilization Power | constant | B | 4 | = |  |  |
 | B Generation Automation Level | constant | B | 0 | = | Generated labor element for B Generation Automation Level. | ✓ |
@@ -1031,9 +1058,9 @@
 | Construction Materials Enabled | switch | global | 1 (сценарии: {"0":0,"1":0,"2":0,"3":0,"4":0,"5":0,"6":0,"7":0,"8":0,"9":0…) |  | v7.7 master switch: construction materials physically constrain colonial capacity expansion. | ✓ |
 | Construction Materials Energy Enabled | switch | global | 1 (сценарии: {"0":0,"1":0,"2":0,"3":0,"4":0,"5":0,"6":0,"7":0,"8":0,"9":0…) |  | v7.7.2 switch: makes Construction Materials processing participate in the colony energy allocator. | ✓ |
 | Deposits Enabled | switch | global | 1 (сценарии: {"0":0,"1":0,"2":0,"3":0,"4":0,"5":0,"6":0,"7":0,"8":0,"9":0…) |  | Generated deposit element for Deposits Enabled. | ✓ |
-| Food Enabled | switch | global | 0 (сценарии: {"49":1,"50":1,"51":1,"52":1,"53":1}…) |  | Food node: switch of the food layer (0 = every earlier series unchanged). | ✓ |
+| Food Enabled | switch | global | 0 (сценарии: {"49":1,"50":1,"51":1,"52":1,"53":1,"54":1,"55":1}…) |  | Food node: switch of the food layer (0 = every earlier series unchanged). | ✓ |
 | Intermediate Inputs Enabled | switch | global | 1 (сценарии: {"0":0,"1":0,"2":0,"3":0,"4":0,"5":0,"6":0,"7":0,"8":0,"9":0…) |  | Master switch for v7.4 Metal-to-Electronics intermediate-input coupling. Modes 0-16 override to 0; Modes 17+ enable it. | ✓ |
-| Labor Market Enabled | switch | global | 0 (сценарии: {"52":1,"53":1}…) |  | Labor market node: switch of the labor market (0 = every earlier series unchanged). | ✓ |
+| Labor Market Enabled | switch | global | 0 (сценарии: {"52":1,"53":1,"54":1,"55":1}…) |  | Labor market node: switch of the labor market (0 = every earlier series unchanged). | ✓ |
 | Ore Capital Enabled | switch | global | 1 (сценарии: {"0":0,"1":0,"2":0,"3":0,"4":0,"5":0,"6":0,"7":0,"8":0,"9":0…) |  | Generated simple_capital switch for Ore Capital Enabled. | ✓ |
 | Power Resource Capital Enabled | switch | global | 1 (сценарии: {"0":0,"1":0,"2":0,"3":0,"4":0,"5":0,"6":0,"7":0,"8":0,"9":0…) |  | Generated simple_capital switch for Power Resource Capital Enabled. | ✓ |
 | Power Resource Enabled | switch | global | 0 (сценарии: {"0":0,"1":0,"2":0,"3":0,"4":0,"5":0,"6":0,"7":0,"8":0,"9":0…) |  | v7.6 master switch. When 0, the accepted v7.5.1 energy path is reproduced; when 1, generation requires a physical operating resource. |  |
@@ -1041,6 +1068,7 @@
 | Regolith Capital Enabled | switch | global | 1 (сценарии: {"0":0,"1":0,"2":0,"3":0,"4":0,"5":0,"6":0,"7":0,"8":0,"9":0…) |  | Generated simple_capital switch for Regolith Capital Enabled. | ✓ |
 | Transport Capital Goods Enabled | switch | global | 1 (сценарии: {"0":0,"1":0,"2":0,"3":0,"4":0,"5":0,"6":0,"7":0,"8":0,"9":0…) |  | v7.5.1 regression switch: when enabled, Transport Capacity Expansion is physically backed by Capital Goods drawn from A/B regional inventories. |  |
 | Transport Construction Materials Enabled | switch | global | 1 (сценарии: {"0":0,"1":0,"2":0,"3":0,"4":0,"5":0,"6":0,"7":0,"8":0,"9":0…) |  | v7.7.1 master switch: shared Transport expansion physically requires Construction Materials. | ✓ |
+| Wage Pricing Enabled | switch | global | 0 (сценарии: {"54":1,"55":1}…) |  | Wage pricing node: switch of wage pricing (0 = every earlier series unchanged). | ✓ |
 
 ### Test
 

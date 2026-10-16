@@ -1,10 +1,10 @@
 # Orbital Economy Lab — Capital Lifecycle Kernel conformance
 
-- generated: 2026-10-11T15:17:29.885Z
-- model: Orbital Economy v7.7.14 r1 — Recalibration
-- model SHA-256: `bbb4f9ea5c522514a84e9de0cc5decf5585da0cd2dd3ec80a63e79d11c0f0375`
-- validation: Orbital Economy v7.7.14 validation r1
-- validation SHA-256: `e542ce789cc7c7fc8745e3f8efa1d58440e78067d7e66a080d5276e65fd5e647`
+- generated: 2026-10-16T13:58:31.263Z
+- model: Orbital Economy v7.7.15 r1 — Wage Pricing
+- model SHA-256: `a5a233129b013f838cac863e4f9b8aad9da8e90bacfe48763fcedefad929b975`
+- validation: Orbital Economy v7.7.15 validation r1
+- validation SHA-256: `1b04e5a629a32fa44af0464cb9fd9b3b6cc9680358adbd04354cf7b2ed8cab92`
 - kernel format: orbital-economy-capital-lifecycle-kernel-v1
 - status: **PASS**
 
@@ -510,6 +510,12 @@ Roles:
 | B Regolith Deposit | Regolith | **CONFORMING** | 9/9 | 0 |
 | A Power Resource Deposit | Power Resource | **CONFORMING** | 9/9 | 0 |
 | B Power Resource Deposit | Power Resource | **CONFORMING** | 9/9 | 0 |
+
+## Wage pricing (static)
+
+- status: **PASS**
+- A wage pricing: **CONFORMING** (27/27 checks)
+- B wage pricing: **CONFORMING** (27/27 checks)
 
 ## Kernel contract (reference)
 

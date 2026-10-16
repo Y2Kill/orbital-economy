@@ -2,14 +2,14 @@
 
 A deterministic System Dynamics model of a two-region planetary economy, together with the bench that accepts changes to it.
 
-**Accepted baseline:** v7.7.14 r1 — Recalibration
-**Model SHA-256:** `bbb4f9ea5c522514a84e9de0cc5decf5585da0cd2dd3ec80a63e79d11c0f0375`
+**Accepted baseline:** v7.7.15 r1 — Wage Pricing
+**Model SHA-256:** `a5a233129b013f838cac863e4f9b8aad9da8e90bacfe48763fcedefad929b975`
 **Engine contract:** `simulation@9.0.0` (pinned)
 **Canonical platform:** Windows x64 · Node 24.11.1 — bit-exact numbers are defined here only; Linux differs in the last bits (`docs/VERSIONING_AND_AUTHORITY.md` §8)
-**Scenarios:** Modes 0–53 · 0..1080 days · dt 0.25 · RK1
-**Accepted:** 2026-10-11 — validation 54/54 PASS; a recalibration of two values, so no Mode reproduces the previous accepted baseline (v7.7.13 r1); its change policy allowed every series to change and nothing structural
+**Scenarios:** Modes 0–55 · 0..1080 days · dt 0.25 · RK1
+**Accepted:** 2026-10-16 — validation 56/56 PASS; Modes 0–53 bit-identical to the previous accepted baseline (v7.7.14 r1) on the canonical platform
 
-Two regions (A and B) each run ore → metal → electronics, a power sector, and a capital-goods sector that physically backs capacity expansion; they trade over shared transport with endogenous prices. Capital has an explicit lifecycle (installed / active / mothballed / decommissioned), expansion consumes capital goods, since v7.6 generation consumes a physical operating resource, and since v7.7 every capacity expansion (colonial, and since v7.7.1 shared transport) also needs construction materials processed from extracted regolith, since v7.7.2 that processing draws energy from the same allocator as smelting and electronics, since v7.7.3 its capacity is capital — a construction-materials plant on the same lifecycle kernel as the other sectors — since v7.7.4 capital-goods production capacity is capital too, since v7.7.5 regolith extraction runs on a mine that is simple capital, generated from a node declaration (`model/nodes/`), since v7.7.6 ore mining does too, since v7.7.7 energy-resource extraction has a mine as well — every production capacity is now capital — since v7.7.8 every extraction draws from proven reserves that capital-backed exploration replenishes from a planetary-scale undiscovered resource, since v7.7.9 ore, regolith and energy-resource extraction and capital-goods production draw energy from their colony allocator, energy-sector own use first, since v7.7.10 every process declares its labor requirement with an automation factor — Planet v1 is closed (`planet_closure` in `planet_v1` mode) — and since v7.7.11 (Planet v2, step 1) each region has a population — births, deaths and migration by perceived attractiveness (real wage × employment × living standard) — and labor is accounted (labor force, employment, unemployment, labor shortage); accounting only — and since v7.7.12 (Planet v2, step 2) regions grow and trade food: farms are capital on regional land that needs capital goods, labor and energy (in the priority group with the energy sector), food is traded by need and goes first on the shared transport, and food shortage lowers the living standard, raises deaths and lowers births (switch `Food Enabled`; Modes 49–51), and since v7.7.13 (Planet v2, step 3) the labor market closes the loop: demand follows population at a per-capita norm, the wage follows labor tightness and output is limited by labor availability (switch `Labor Market Enabled`; Modes 52–53), and since v7.7.14 two threshold values are recalibrated after a sensitivity study: generation reserve 1.10 (was 1.02) and labor participation 0.52 (was 0.50).
+Two regions (A and B) each run ore → metal → electronics, a power sector, and a capital-goods sector that physically backs capacity expansion; they trade over shared transport with endogenous prices. Capital has an explicit lifecycle (installed / active / mothballed / decommissioned), expansion consumes capital goods, since v7.6 generation consumes a physical operating resource, and since v7.7 every capacity expansion (colonial, and since v7.7.1 shared transport) also needs construction materials processed from extracted regolith, since v7.7.2 that processing draws energy from the same allocator as smelting and electronics, since v7.7.3 its capacity is capital — a construction-materials plant on the same lifecycle kernel as the other sectors — since v7.7.4 capital-goods production capacity is capital too, since v7.7.5 regolith extraction runs on a mine that is simple capital, generated from a node declaration (`model/nodes/`), since v7.7.6 ore mining does too, since v7.7.7 energy-resource extraction has a mine as well — every production capacity is now capital — since v7.7.8 every extraction draws from proven reserves that capital-backed exploration replenishes from a planetary-scale undiscovered resource, since v7.7.9 ore, regolith and energy-resource extraction and capital-goods production draw energy from their colony allocator, energy-sector own use first, since v7.7.10 every process declares its labor requirement with an automation factor — Planet v1 is closed (`planet_closure` in `planet_v1` mode) — and since v7.7.11 (Planet v2, step 1) each region has a population — births, deaths and migration by perceived attractiveness (real wage × employment × living standard) — and labor is accounted (labor force, employment, unemployment, labor shortage); accounting only — and since v7.7.12 (Planet v2, step 2) regions grow and trade food: farms are capital on regional land that needs capital goods, labor and energy (in the priority group with the energy sector), food is traded by need and goes first on the shared transport, and food shortage lowers the living standard, raises deaths and lowers births (switch `Food Enabled`; Modes 49–51), and since v7.7.13 (Planet v2, step 3) the labor market closes the loop: demand follows population at a per-capita norm, the wage follows labor tightness and output is limited by labor availability (switch `Labor Market Enabled`; Modes 52–53), and since v7.7.14 two threshold values are recalibrated after a sensitivity study: generation reserve 1.10 (was 1.02) and labor participation 0.52 (was 0.50), and since v7.7.15 (finance layer, intermediate step) ore, energy and food prices follow the regional wage and final demand responds to its price (switch `Wage Pricing Enabled`; Modes 54–55).
 
 ## Repository layout
 
@@ -19,7 +19,7 @@ validation/     executable validation contract (HARD invariants, plugins, per-Mo
 policy/         strict default-deny change policy, bound to the SHA-256 of both files above
 docs/           documentation aligned to the accepted model, generated audit reports, version history
 lab/            Orbital Economy Lab — the bench: run, compare, audit, policy-check, apply patches
-reference/      the previous accepted baseline (v7.7.13 r1), the model the current one was compared against
+reference/      the previous accepted baseline (v7.7.14 r1), kept for exact regression comparison
 tools/          repository tooling: integrity manifests (build_sums), task-branch acceptance guard (check_branch)
 BASELINE_MANIFEST.json   what is accepted, with every SHA-256 and every gate result
 SHA256SUMS.txt           integrity of the whole tree (lab/ has its own for the bench)
@@ -38,14 +38,14 @@ RUN_LAB.cmd
 Everything else is one command:
 
 ```bat
-RUN_TESTS.cmd ..\model\orbital_economy_v7_7_14_r1_modeljson.json ..\validation\validation-v7.7.14.json all
-COMPARE_MODELS.cmd ..\reference\v7.7.13\model\orbital_economy_v7_7_13_r1_modeljson.json ..\model\orbital_economy_v7_7_14_r1_modeljson.json ..\validation\validation-v7.7.14.json all
+RUN_TESTS.cmd ..\model\orbital_economy_v7_7_15_r1_modeljson.json ..\validation\validation-v7.7.15.json all
+COMPARE_MODELS.cmd ..\reference\v7.7.14\model\orbital_economy_v7_7_14_r1_modeljson.json ..\model\orbital_economy_v7_7_15_r1_modeljson.json ..\validation\validation-v7.7.15.json 0-53
 LIFECYCLE_CONFORMANCE.cmd   STRUCTURE_AUDIT.cmd   PARAMETER_REGISTRY.cmd
 CHECK_CANDIDATE.cmd         (accepted vs candidate + change policy — the acceptance gate)
 QA_SELF_TEST.cmd  POLICY_SELF_TEST.cmd  CONFORMANCE_SELF_TEST.cmd  STRUCTURE_SELF_TEST.cmd  COMPARE_SELF_TEST.cmd
 ```
 
-On a clean checkout `CHECK_CANDIDATE.cmd` reports `BYTE_IDENTICAL` and `POLICY RESULT: PASS`: the accepted model is its own candidate. The `COMPARE_MODELS` line above reports `DIFFERENT_OUTPUTS`: v7.7.14 is a recalibration (generation reserve and labor participation), so series change in every Mode; nothing is added or removed.
+On a clean checkout `CHECK_CANDIDATE.cmd` reports `BYTE_IDENTICAL` and `POLICY RESULT: PASS`: the accepted model is its own candidate. The `COMPARE_MODELS` line above reports `changed=0, maxAbs=0` in every Mode 0–53 (18 added series each).
 
 
 ## CI
@@ -101,6 +101,7 @@ Rules that do not bend:
 | Food and farms: farms on land, trade by need, food first on transport, effects on people — Planet v2 step 2 (v7.7.12) | `docs/tasks/031-food-node/`, `docs/tasks/032-food/`, `docs/research/FOOD_PROTOTYPE_2026-10-05_RU.md` |
 | Labor market: demand per capita × population, flexible wage, output limited by labor — Planet v2 step 3 (v7.7.13) | `docs/tasks/033-labor-market-node/`, `docs/tasks/034-labor-market/`, `docs/research/CLOSURE_PROTOTYPE_2026-10-09_RU.md` |
 | Sensitivity study and recalibration: generation reserve 1.10, labor participation 0.52 (v7.7.14) | `docs/research/SENSITIVITY_2026-10-10_RU.md`, `docs/tasks/035-recalibration/` |
+| Finance layer, intermediate step: wage in ore, energy and food prices, price-responsive demand (v7.7.15) | `docs/research/FINANCE_PROTOTYPE_2026-10-12_RU.md`, `docs/tasks/036-wage-pricing-node/`, `docs/tasks/037-wage-pricing/` |
 | What Planet v1 means and how it is counted | `docs/PLANET_V1_CONTRACT_RU.md` |
 | Capital lifecycle contract and role mapping | `docs/CAPITAL_LIFECYCLE_KERNEL_SPEC.md`, `docs/CAPITAL_LIFECYCLE_SECTOR_MAPPING.md` |
 | Structure of the whole economy | `docs/ARCHITECTURE.md` |
@@ -114,7 +115,7 @@ Documentation is mixed-language by history: model documentation is English, proc
 
 ## Versioning
 
-One accepted baseline lives in the tree; earlier ones are commits and tags (`v7.6-r2`, `v7.6.1-r1`, `v7.7-r1`, `v7.7.1-r1`, `v7.7.2-r1`, `v7.7.3-r1`, `v7.7.4-r1`, `v7.7.5-r1`, `v7.7.6-r1`, `v7.7.7-r1`, `v7.7.8-r1`, `v7.7.9-r1`, `v7.7.10-r1`, `v7.7.11-r1`, `v7.7.12-r1`, `v7.7.13-r1`, `v7.7.14-r1`), not directories. `reference/` carries only the immediately previous accepted model, because exact regression is measured against it. Model, validation and policy are rewritten together at acceptance, and `BASELINE_MANIFEST.json` plus both `SHA256SUMS.txt` are regenerated in the same commit.
+One accepted baseline lives in the tree; earlier ones are commits and tags (`v7.6-r2`, `v7.6.1-r1`, `v7.7-r1`, `v7.7.1-r1`, `v7.7.2-r1`, `v7.7.3-r1`, `v7.7.4-r1`, `v7.7.5-r1`, `v7.7.6-r1`, `v7.7.7-r1`, `v7.7.8-r1`, `v7.7.9-r1`, `v7.7.10-r1`, `v7.7.11-r1`, `v7.7.12-r1`, `v7.7.13-r1`, `v7.7.14-r1`, `v7.7.15-r1`), not directories. `reference/` carries only the immediately previous accepted model, because exact regression is measured against it. Model, validation and policy are rewritten together at acceptance, and `BASELINE_MANIFEST.json` plus both `SHA256SUMS.txt` are regenerated in the same commit.
 
 The engine is frozen at `simulation@9.0.0`; upgrading it requires a new golden cross-check, not a dependency bump (`lab/ENGINE_PIN.md`).
 

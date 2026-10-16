@@ -1,10 +1,10 @@
 # Orbital Economy Lab — structure audit
 
-- generated: 2026-10-11T15:17:35.298Z
-- model: Orbital Economy v7.7.14 r1 — Recalibration
-- model SHA-256: `bbb4f9ea5c522514a84e9de0cc5decf5585da0cd2dd3ec80a63e79d11c0f0375`
-- validation: Orbital Economy v7.7.14 validation r1
-- validation SHA-256: `e542ce789cc7c7fc8745e3f8efa1d58440e78067d7e66a080d5276e65fd5e647`
+- generated: 2026-10-16T13:58:42.459Z
+- model: Orbital Economy v7.7.15 r1 — Wage Pricing
+- model SHA-256: `a5a233129b013f838cac863e4f9b8aad9da8e90bacfe48763fcedefad929b975`
+- validation: Orbital Economy v7.7.15 validation r1
+- validation SHA-256: `1b04e5a629a32fa44af0464cb9fd9b3b6cc9680358adbd04354cf7b2ed8cab92`
 - status: **PASS**
 
 ## Open boundaries (declared physical-boundary meter)
@@ -390,8 +390,8 @@ Declared unit-transformation pairs (source flow physically backed by sink flows;
 ## Colony symmetry
 
 - tokens: A ↔ B
-- mirrored pairs checked: 1414; mirrored links checked: 3464
-- structural mismatches: **0**; numeric parameter differences (allowed): 158; elements under exceptions: 0
+- mirrored pairs checked: 1430; mirrored links checked: 3506
+- structural mismatches: **0**; numeric parameter differences (allowed): 166; elements under exceptions: 0
 
 <details><summary>Numeric parameter differences between colonies (allowed)</summary>
 
@@ -476,6 +476,10 @@ Declared unit-transformation pairs (source flow physically backed by sink flows;
 | initial_value | A Flexible Wage | 100 | B Flexible Wage | 140 |
 | value | A External Local Base Demand | 16 | B External Local Base Demand | 22 |
 | value | A External Electronics Local Base Demand | 20 | B External Electronics Local Base Demand | 16 |
+| value | A Ore Labor Share | 1 | B Ore Labor Share | 0.5 |
+| value | A Energy Labor Share | 0.83 | B Energy Labor Share | 1 |
+| value | A Metal Demand Reference Price | 25.9 | B Metal Demand Reference Price | 34.46 |
+| value | A Electronics Demand Reference Price | 23.1 | B Electronics Demand Reference Price | 21.91 |
 
 </details>
 
@@ -657,6 +661,6 @@ Declared unit-transformation pairs (source flow physically backed by sink flows;
 ## Algebraic loops (switch-aware, unconditional static audit)
 
 - status: **PASS**
-- switches: 17 — Capital Lifecycle Enabled, Intermediate Inputs Enabled, Capital Goods Enabled, Transport Capital Goods Enabled, Power Resource Enabled, Construction Materials Enabled, Transport Construction Materials Enabled, Construction Materials Energy Enabled, Construction Materials Capital Enabled, Capital Goods Capital Enabled, Regolith Capital Enabled, Ore Capital Enabled, Power Resource Capital Enabled, Deposits Enabled, Process Energy Enabled, Food Enabled, Labor Market Enabled
-- combinations: 131072; with loops: **0**
+- switches: 18 — Capital Lifecycle Enabled, Intermediate Inputs Enabled, Capital Goods Enabled, Transport Capital Goods Enabled, Power Resource Enabled, Construction Materials Enabled, Transport Construction Materials Enabled, Construction Materials Energy Enabled, Construction Materials Capital Enabled, Capital Goods Capital Enabled, Regolith Capital Enabled, Ore Capital Enabled, Power Resource Capital Enabled, Deposits Enabled, Process Energy Enabled, Food Enabled, Labor Market Enabled, Wage Pricing Enabled
+- combinations: 262144; with loops: **0**
 - Modes with loops: none

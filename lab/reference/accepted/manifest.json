@@ -1,15 +1,15 @@
 {
   "status": "ACCEPTED",
-  "model_name": "Orbital Economy v7.7.14 r1 — Recalibration",
-  "model_file": "orbital_economy_v7_7_14_r1_modeljson.json",
-  "model_sha256": "bbb4f9ea5c522514a84e9de0cc5decf5585da0cd2dd3ec80a63e79d11c0f0375",
-  "validation_file": "validation-v7.7.14.json",
-  "validation_sha256": "e542ce789cc7c7fc8745e3f8efa1d58440e78067d7e66a080d5276e65fd5e647",
-  "accepted_date": "2026-10-11",
+  "model_name": "Orbital Economy v7.7.15 r1 — Wage Pricing",
+  "model_file": "orbital_economy_v7_7_15_r1_modeljson.json",
+  "model_sha256": "a5a233129b013f838cac863e4f9b8aad9da8e90bacfe48763fcedefad929b975",
+  "validation_file": "validation-v7.7.15.json",
+  "validation_sha256": "1b04e5a629a32fa44af0464cb9fd9b3b6cc9680358adbd04354cf7b2ed8cab92",
+  "accepted_date": "2026-10-16",
   "engine": "simulation@9.0.0",
   "notes": [
-    "v7.7.14: recalibration after the sensitivity study (docs/research/SENSITIVITY_2026-10-10_RU.md), owner decisions 2026-10-11: Power Operating Reserve Factor 1.02 -> 1.10, Labor Participation Share 0.50 -> 0.52 (labor demand signal starts 14.56 / 4.42 as the labor_market node generates them). No structural change. See docs/tasks/035-recalibration/.",
-    "A recalibration: no Mode reproduces v7.7.13 r1 (regression_modes = []); 16 scenario checks of earlier tasks were re-thresholded. The exact-regression chain from v7.7.0 ends here; later steps compare against v7.7.14.",
+    "v7.7.15: finance layer, intermediate step (owner decisions 2026-10-12) — ore, energy and food prices follow the regional wage proportionally (declared labor shares), final metal and electronics demand responds to its price (elasticity 0.5); one wage_pricing node, model/nodes/wage_pricing.json, switch Wage Pricing Enabled. Full money accounting comes next. See docs/tasks/037-wage-pricing/.",
+    "Modes 0-53 keep Wage Pricing Enabled = 0 and reproduce v7.7.14 r1 exactly; Mode 54 = Mode 52 with wage pricing, Mode 55 = Mode 53 (transport surge with the labor market) with wage pricing.",
     "Exact numbers are defined on the canonical platform (docs/VERSIONING_AND_AUTHORITY.md section 8); series-digest.windows.json is the golden."
   ]
 }

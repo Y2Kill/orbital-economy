@@ -1,7 +1,7 @@
 # Architecture
 
 **Document status:** CURRENT  
-**Base:** Orbital Economy v7.7.14 r1  
+**Base:** Orbital Economy v7.7.15 r1  
 **Rule:** this document describes accepted code; code is authoritative on conflict.
 
 ## 1. Model character
@@ -123,6 +123,8 @@ Transport uses a documented shared-infrastructure variation with a secondary Cap
 **Labor market (v7.7.13, Planet v2 step 3).** A `labor_market` node (`model/nodes/labor_market.json`, Lab v0.9.18) under the switch `Labor Market Enabled` closes the population–consumption–labor–wage–production loop: the local base demand for metal and electronics = per-capita norm (A level) × population; the wage is a stock that follows labor tightness (labor demand / labor force) toward 0.95 at 10 % a year, not below 30 % of the start; every process rate of a region × labor availability = min(1, labor force / labor demand), where labor demand is the requirement at unconstrained output (a 10-day signal, no algebraic loop). The former constants live in `X Initial Wage` and `X External …` for the switch-off branch, so A/B formulas stay mirrored. Planet v2 redeclares the P6 demand drivers as the per-capita norms. Household-income demand is deferred to the finance layer (in the prototype it drives a wage spiral).
 
 **Recalibration (v7.7.14).** No structural change. A sensitivity study of v7.7.13 (`docs/research/SENSITIVITY_2026-10-10_RU.md`) found two values on a threshold, and the owner moved both off it: `Power Operating Reserve Factor` 1.02 → 1.10 (the generation reserve, the thinnest in the model; refinery 1.10, transport 1.15) and `Labor Participation Share` 0.50 → 0.52 (A off the labor-shortage edge). The labor demand signal starts at initial population × participation (A 14.56, B 4.42). `Target Labor Tightness` (0.95) stays and is annotated as the key long-run wage parameter.
+
+**Wage pricing (v7.7.15, finance layer, intermediate step).** A `wage_pricing` node (`model/nodes/wage_pricing.json`, Lab v0.9.19) under the switch `Wage Pricing Enabled`: the ore, energy and food prices of each region × Max(1 + labor share × (wage / initial wage − 1), 1e-6), with labor shares declared per region (start labor cost / start price, at most 1 — the model's price level lies below labor content, so most shares are 1); the effective metal and electronics demand × Max(price / reference, 1e-6)^−0.5. No stocks or flows. Owner decisions 2026-10-12 (`docs/research/FINANCE_PROTOTYPE_2026-10-12_RU.md`): household budgets on the present prices collapse the economy (the money circuit is not closed), so real income and wage pass-through come first and full money accounting follows.
 
 ## 6. Markets and trade
 

@@ -1,6 +1,6 @@
 {
   "engine": "SIMULATION_PACKAGE",
-  "name": "Orbital Economy v7.7.14 r1 — Recalibration",
+  "name": "Orbital Economy v7.7.15 r1 — Wage Pricing",
   "description": "Task 030 / Planet v2 step 1: add the declarative population node for A and B. Population, demography, migration and labor are accounting-only; no existing formula or scenario is changed and no new Mode is added.",
   "simulation": {
     "algorithm": "RK1",
@@ -151,7 +151,7 @@
       "type": "VARIABLE",
       "name": "A Energy Price",
       "behavior": {
-        "value": "[A Effective Power Generation Cost] * (1 + [Energy Scarcity Price Strength] * [A Perceived Energy Scarcity Ratio])"
+        "value": "IfThenElse([Wage Pricing Enabled] = 1, ([A Effective Power Generation Cost] * (1 + [Energy Scarcity Price Strength] * [A Perceived Energy Scarcity Ratio])) * Max(1 + [A Energy Labor Share] * [A Relative Wage Change], 0.000001), [A Effective Power Generation Cost] * (1 + [Energy Scarcity Price Strength] * [A Perceived Energy Scarcity Ratio]))"
       },
       "display": {
         "coordinates": [
@@ -507,7 +507,7 @@
       "type": "VARIABLE",
       "name": "A Ore Price",
       "behavior": {
-        "value": "[A Effective Ore Base Cost] * (1 + [A Ore Scarcity Strength] * [A Ore Shortage] / [A Ore Target Inventory])"
+        "value": "IfThenElse([Wage Pricing Enabled] = 1, ([A Effective Ore Base Cost] * (1 + [A Ore Scarcity Strength] * [A Ore Shortage] / [A Ore Target Inventory])) * Max(1 + [A Ore Labor Share] * [A Relative Wage Change], 0.000001), [A Effective Ore Base Cost] * (1 + [A Ore Scarcity Strength] * [A Ore Shortage] / [A Ore Target Inventory]))"
       },
       "display": {
         "coordinates": [
@@ -4241,7 +4241,7 @@
       "type": "VARIABLE",
       "name": "B Energy Price",
       "behavior": {
-        "value": "[B Effective Power Generation Cost] * (1 + [Energy Scarcity Price Strength] * [B Perceived Energy Scarcity Ratio])"
+        "value": "IfThenElse([Wage Pricing Enabled] = 1, ([B Effective Power Generation Cost] * (1 + [Energy Scarcity Price Strength] * [B Perceived Energy Scarcity Ratio])) * Max(1 + [B Energy Labor Share] * [B Relative Wage Change], 0.000001), [B Effective Power Generation Cost] * (1 + [Energy Scarcity Price Strength] * [B Perceived Energy Scarcity Ratio]))"
       },
       "display": {
         "coordinates": [
@@ -4597,7 +4597,7 @@
       "type": "VARIABLE",
       "name": "B Ore Price",
       "behavior": {
-        "value": "[B Effective Ore Base Cost] * (1 + [B Ore Scarcity Strength] * [B Ore Shortage] / [B Ore Target Inventory])"
+        "value": "IfThenElse([Wage Pricing Enabled] = 1, ([B Effective Ore Base Cost] * (1 + [B Ore Scarcity Strength] * [B Ore Shortage] / [B Ore Target Inventory])) * Max(1 + [B Ore Labor Share] * [B Relative Wage Change], 0.000001), [B Effective Ore Base Cost] * (1 + [B Ore Scarcity Strength] * [B Ore Shortage] / [B Ore Target Inventory]))"
       },
       "display": {
         "coordinates": [
@@ -9731,7 +9731,7 @@
       "type": "VARIABLE",
       "name": "Test 2 Transport Surge Active",
       "behavior": {
-        "value": "IfThenElse([Timed Test Mode] = 53, [Temporary Test Window], IfThenElse([Timed Test Mode] = 50, [Temporary Test Window], IfThenElse([Timed Test Mode] = 2, [Temporary Test Window], IfThenElse([Timed Test Mode] = 24, [Temporary Test Window], IfThenElse([Timed Test Mode] = 31, [Temporary Test Window], IfThenElse([Timed Test Mode] = 35, [Temporary Test Window], IfThenElse([Timed Test Mode] = 37, [Temporary Test Window], IfThenElse([Timed Test Mode] = 39, [Temporary Test Window], IfThenElse([Timed Test Mode] = 41, [Temporary Test Window], IfThenElse([Timed Test Mode] = 43, [Temporary Test Window], IfThenElse([Timed Test Mode] = 45, [Temporary Test Window], IfThenElse([Timed Test Mode] = 47, [Temporary Test Window], 0))))))))))))"
+        "value": "IfThenElse([Timed Test Mode] = 55, [Temporary Test Window], IfThenElse([Timed Test Mode] = 53, [Temporary Test Window], IfThenElse([Timed Test Mode] = 50, [Temporary Test Window], IfThenElse([Timed Test Mode] = 2, [Temporary Test Window], IfThenElse([Timed Test Mode] = 24, [Temporary Test Window], IfThenElse([Timed Test Mode] = 31, [Temporary Test Window], IfThenElse([Timed Test Mode] = 35, [Temporary Test Window], IfThenElse([Timed Test Mode] = 37, [Temporary Test Window], IfThenElse([Timed Test Mode] = 39, [Temporary Test Window], IfThenElse([Timed Test Mode] = 41, [Temporary Test Window], IfThenElse([Timed Test Mode] = 43, [Temporary Test Window], IfThenElse([Timed Test Mode] = 45, [Temporary Test Window], IfThenElse([Timed Test Mode] = 47, [Temporary Test Window], 0)))))))))))))"
       },
       "display": {
         "coordinates": [
@@ -9801,7 +9801,7 @@
       "type": "VARIABLE",
       "name": "A Effective Local Base Demand",
       "behavior": {
-        "value": "IfThenElse([Intermediate Inputs Enabled] = 1, IfThenElse([Test 20 Coupled Metal Demand Growth Active] = 1, [A Local Base Demand] * IfThenElse([A Test 20 Metal Demand Applies] = 1, [v7.4 Coupled Metal Demand Growth Multiplier], 1), IfThenElse([Test 16 Sustained Metal Energy Growth Active] = 1, [A Local Base Demand] * IfThenElse([A Test 16 Metal Demand Applies] = 1, [v7.3 Sustained Metal Demand Growth Multiplier], 1), IfThenElse([Test 9 Two Industry Energy Stress Active] = 1, [A Local Base Demand] * IfThenElse([A Test 9 Metal Demand Applies] = 1, [Two Industry Energy Stress Demand Multiplier], 1), IfThenElse([Test 8 Metal Priority Scarcity Active] = 1, [A Local Base Demand] * IfThenElse([A Test 8 Metal Demand Applies] = 1, [Priority Stress Demand Multiplier], 1), IfThenElse([Test 7 Two Good Transport Surge Active] = 1, [A Local Base Demand] * IfThenElse([A Test 7 Metal Demand Applies] = 1, [Two Good Demand Surge Multiplier], 1), IfThenElse([Test 2 Transport Surge Active] = 1, [A Local Base Demand] * IfThenElse([A Test 2 Metal Demand Applies] = 1, [Transport Demand Surge Multiplier], 1), IfThenElse([Test 3 Low Demand Active] = 1, [A Local Base Demand] * IfThenElse([A Test 3 Metal Demand Applies] = 1, [Low Demand Multiplier], 1), [A Local Base Demand]))))))), IfThenElse([Test 16 Sustained Metal Energy Growth Active] = 1, [A Local Base Demand] * IfThenElse([A Test 16 Metal Demand Applies] = 1, [v7.3 Sustained Metal Demand Growth Multiplier], 1), IfThenElse([Test 9 Two Industry Energy Stress Active] = 1, [A Local Base Demand] * IfThenElse([A Test 9 Metal Demand Applies] = 1, [Two Industry Energy Stress Demand Multiplier], 1), IfThenElse([Test 8 Metal Priority Scarcity Active] = 1, [A Local Base Demand] * IfThenElse([A Test 8 Metal Demand Applies] = 1, [Priority Stress Demand Multiplier], 1), IfThenElse([Test 7 Two Good Transport Surge Active] = 1, [A Local Base Demand] * IfThenElse([A Test 7 Metal Demand Applies] = 1, [Two Good Demand Surge Multiplier], 1), IfThenElse([Test 2 Transport Surge Active] = 1, [A Local Base Demand] * IfThenElse([A Test 2 Metal Demand Applies] = 1, [Transport Demand Surge Multiplier], 1), IfThenElse([Test 3 Low Demand Active] = 1, [A Local Base Demand] * IfThenElse([A Test 3 Metal Demand Applies] = 1, [Low Demand Multiplier], 1), [A Local Base Demand])))))))"
+        "value": "IfThenElse([Wage Pricing Enabled] = 1, (IfThenElse([Intermediate Inputs Enabled] = 1, IfThenElse([Test 20 Coupled Metal Demand Growth Active] = 1, [A Local Base Demand] * IfThenElse([A Test 20 Metal Demand Applies] = 1, [v7.4 Coupled Metal Demand Growth Multiplier], 1), IfThenElse([Test 16 Sustained Metal Energy Growth Active] = 1, [A Local Base Demand] * IfThenElse([A Test 16 Metal Demand Applies] = 1, [v7.3 Sustained Metal Demand Growth Multiplier], 1), IfThenElse([Test 9 Two Industry Energy Stress Active] = 1, [A Local Base Demand] * IfThenElse([A Test 9 Metal Demand Applies] = 1, [Two Industry Energy Stress Demand Multiplier], 1), IfThenElse([Test 8 Metal Priority Scarcity Active] = 1, [A Local Base Demand] * IfThenElse([A Test 8 Metal Demand Applies] = 1, [Priority Stress Demand Multiplier], 1), IfThenElse([Test 7 Two Good Transport Surge Active] = 1, [A Local Base Demand] * IfThenElse([A Test 7 Metal Demand Applies] = 1, [Two Good Demand Surge Multiplier], 1), IfThenElse([Test 2 Transport Surge Active] = 1, [A Local Base Demand] * IfThenElse([A Test 2 Metal Demand Applies] = 1, [Transport Demand Surge Multiplier], 1), IfThenElse([Test 3 Low Demand Active] = 1, [A Local Base Demand] * IfThenElse([A Test 3 Metal Demand Applies] = 1, [Low Demand Multiplier], 1), [A Local Base Demand]))))))), IfThenElse([Test 16 Sustained Metal Energy Growth Active] = 1, [A Local Base Demand] * IfThenElse([A Test 16 Metal Demand Applies] = 1, [v7.3 Sustained Metal Demand Growth Multiplier], 1), IfThenElse([Test 9 Two Industry Energy Stress Active] = 1, [A Local Base Demand] * IfThenElse([A Test 9 Metal Demand Applies] = 1, [Two Industry Energy Stress Demand Multiplier], 1), IfThenElse([Test 8 Metal Priority Scarcity Active] = 1, [A Local Base Demand] * IfThenElse([A Test 8 Metal Demand Applies] = 1, [Priority Stress Demand Multiplier], 1), IfThenElse([Test 7 Two Good Transport Surge Active] = 1, [A Local Base Demand] * IfThenElse([A Test 7 Metal Demand Applies] = 1, [Two Good Demand Surge Multiplier], 1), IfThenElse([Test 2 Transport Surge Active] = 1, [A Local Base Demand] * IfThenElse([A Test 2 Metal Demand Applies] = 1, [Transport Demand Surge Multiplier], 1), IfThenElse([Test 3 Low Demand Active] = 1, [A Local Base Demand] * IfThenElse([A Test 3 Metal Demand Applies] = 1, [Low Demand Multiplier], 1), [A Local Base Demand])))))))) * [A Metal Price Demand Factor], IfThenElse([Intermediate Inputs Enabled] = 1, IfThenElse([Test 20 Coupled Metal Demand Growth Active] = 1, [A Local Base Demand] * IfThenElse([A Test 20 Metal Demand Applies] = 1, [v7.4 Coupled Metal Demand Growth Multiplier], 1), IfThenElse([Test 16 Sustained Metal Energy Growth Active] = 1, [A Local Base Demand] * IfThenElse([A Test 16 Metal Demand Applies] = 1, [v7.3 Sustained Metal Demand Growth Multiplier], 1), IfThenElse([Test 9 Two Industry Energy Stress Active] = 1, [A Local Base Demand] * IfThenElse([A Test 9 Metal Demand Applies] = 1, [Two Industry Energy Stress Demand Multiplier], 1), IfThenElse([Test 8 Metal Priority Scarcity Active] = 1, [A Local Base Demand] * IfThenElse([A Test 8 Metal Demand Applies] = 1, [Priority Stress Demand Multiplier], 1), IfThenElse([Test 7 Two Good Transport Surge Active] = 1, [A Local Base Demand] * IfThenElse([A Test 7 Metal Demand Applies] = 1, [Two Good Demand Surge Multiplier], 1), IfThenElse([Test 2 Transport Surge Active] = 1, [A Local Base Demand] * IfThenElse([A Test 2 Metal Demand Applies] = 1, [Transport Demand Surge Multiplier], 1), IfThenElse([Test 3 Low Demand Active] = 1, [A Local Base Demand] * IfThenElse([A Test 3 Metal Demand Applies] = 1, [Low Demand Multiplier], 1), [A Local Base Demand]))))))), IfThenElse([Test 16 Sustained Metal Energy Growth Active] = 1, [A Local Base Demand] * IfThenElse([A Test 16 Metal Demand Applies] = 1, [v7.3 Sustained Metal Demand Growth Multiplier], 1), IfThenElse([Test 9 Two Industry Energy Stress Active] = 1, [A Local Base Demand] * IfThenElse([A Test 9 Metal Demand Applies] = 1, [Two Industry Energy Stress Demand Multiplier], 1), IfThenElse([Test 8 Metal Priority Scarcity Active] = 1, [A Local Base Demand] * IfThenElse([A Test 8 Metal Demand Applies] = 1, [Priority Stress Demand Multiplier], 1), IfThenElse([Test 7 Two Good Transport Surge Active] = 1, [A Local Base Demand] * IfThenElse([A Test 7 Metal Demand Applies] = 1, [Two Good Demand Surge Multiplier], 1), IfThenElse([Test 2 Transport Surge Active] = 1, [A Local Base Demand] * IfThenElse([A Test 2 Metal Demand Applies] = 1, [Transport Demand Surge Multiplier], 1), IfThenElse([Test 3 Low Demand Active] = 1, [A Local Base Demand] * IfThenElse([A Test 3 Metal Demand Applies] = 1, [Low Demand Multiplier], 1), [A Local Base Demand]))))))))"
       },
       "display": {
         "coordinates": [
@@ -9818,7 +9818,7 @@
       "type": "VARIABLE",
       "name": "B Effective Local Base Demand",
       "behavior": {
-        "value": "IfThenElse([Intermediate Inputs Enabled] = 1, IfThenElse([Test 20 Coupled Metal Demand Growth Active] = 1, [B Local Base Demand] * IfThenElse([B Test 20 Metal Demand Applies] = 1, [v7.4 Coupled Metal Demand Growth Multiplier], 1), IfThenElse([Test 16 Sustained Metal Energy Growth Active] = 1, [B Local Base Demand] * IfThenElse([B Test 16 Metal Demand Applies] = 1, [v7.3 Sustained Metal Demand Growth Multiplier], 1), IfThenElse([Test 9 Two Industry Energy Stress Active] = 1, [B Local Base Demand] * IfThenElse([B Test 9 Metal Demand Applies] = 1, [Two Industry Energy Stress Demand Multiplier], 1), IfThenElse([Test 8 Metal Priority Scarcity Active] = 1, [B Local Base Demand] * IfThenElse([B Test 8 Metal Demand Applies] = 1, [Priority Stress Demand Multiplier], 1), IfThenElse([Test 7 Two Good Transport Surge Active] = 1, [B Local Base Demand] * IfThenElse([B Test 7 Metal Demand Applies] = 1, [Two Good Demand Surge Multiplier], 1), IfThenElse([Test 2 Transport Surge Active] = 1, [B Local Base Demand] * IfThenElse([B Test 2 Metal Demand Applies] = 1, [Transport Demand Surge Multiplier], 1), IfThenElse([Test 3 Low Demand Active] = 1, [B Local Base Demand] * IfThenElse([B Test 3 Metal Demand Applies] = 1, [Low Demand Multiplier], 1), [B Local Base Demand]))))))), IfThenElse([Test 16 Sustained Metal Energy Growth Active] = 1, [B Local Base Demand] * IfThenElse([B Test 16 Metal Demand Applies] = 1, [v7.3 Sustained Metal Demand Growth Multiplier], 1), IfThenElse([Test 9 Two Industry Energy Stress Active] = 1, [B Local Base Demand] * IfThenElse([B Test 9 Metal Demand Applies] = 1, [Two Industry Energy Stress Demand Multiplier], 1), IfThenElse([Test 8 Metal Priority Scarcity Active] = 1, [B Local Base Demand] * IfThenElse([B Test 8 Metal Demand Applies] = 1, [Priority Stress Demand Multiplier], 1), IfThenElse([Test 7 Two Good Transport Surge Active] = 1, [B Local Base Demand] * IfThenElse([B Test 7 Metal Demand Applies] = 1, [Two Good Demand Surge Multiplier], 1), IfThenElse([Test 2 Transport Surge Active] = 1, [B Local Base Demand] * IfThenElse([B Test 2 Metal Demand Applies] = 1, [Transport Demand Surge Multiplier], 1), IfThenElse([Test 3 Low Demand Active] = 1, [B Local Base Demand] * IfThenElse([B Test 3 Metal Demand Applies] = 1, [Low Demand Multiplier], 1), [B Local Base Demand])))))))"
+        "value": "IfThenElse([Wage Pricing Enabled] = 1, (IfThenElse([Intermediate Inputs Enabled] = 1, IfThenElse([Test 20 Coupled Metal Demand Growth Active] = 1, [B Local Base Demand] * IfThenElse([B Test 20 Metal Demand Applies] = 1, [v7.4 Coupled Metal Demand Growth Multiplier], 1), IfThenElse([Test 16 Sustained Metal Energy Growth Active] = 1, [B Local Base Demand] * IfThenElse([B Test 16 Metal Demand Applies] = 1, [v7.3 Sustained Metal Demand Growth Multiplier], 1), IfThenElse([Test 9 Two Industry Energy Stress Active] = 1, [B Local Base Demand] * IfThenElse([B Test 9 Metal Demand Applies] = 1, [Two Industry Energy Stress Demand Multiplier], 1), IfThenElse([Test 8 Metal Priority Scarcity Active] = 1, [B Local Base Demand] * IfThenElse([B Test 8 Metal Demand Applies] = 1, [Priority Stress Demand Multiplier], 1), IfThenElse([Test 7 Two Good Transport Surge Active] = 1, [B Local Base Demand] * IfThenElse([B Test 7 Metal Demand Applies] = 1, [Two Good Demand Surge Multiplier], 1), IfThenElse([Test 2 Transport Surge Active] = 1, [B Local Base Demand] * IfThenElse([B Test 2 Metal Demand Applies] = 1, [Transport Demand Surge Multiplier], 1), IfThenElse([Test 3 Low Demand Active] = 1, [B Local Base Demand] * IfThenElse([B Test 3 Metal Demand Applies] = 1, [Low Demand Multiplier], 1), [B Local Base Demand]))))))), IfThenElse([Test 16 Sustained Metal Energy Growth Active] = 1, [B Local Base Demand] * IfThenElse([B Test 16 Metal Demand Applies] = 1, [v7.3 Sustained Metal Demand Growth Multiplier], 1), IfThenElse([Test 9 Two Industry Energy Stress Active] = 1, [B Local Base Demand] * IfThenElse([B Test 9 Metal Demand Applies] = 1, [Two Industry Energy Stress Demand Multiplier], 1), IfThenElse([Test 8 Metal Priority Scarcity Active] = 1, [B Local Base Demand] * IfThenElse([B Test 8 Metal Demand Applies] = 1, [Priority Stress Demand Multiplier], 1), IfThenElse([Test 7 Two Good Transport Surge Active] = 1, [B Local Base Demand] * IfThenElse([B Test 7 Metal Demand Applies] = 1, [Two Good Demand Surge Multiplier], 1), IfThenElse([Test 2 Transport Surge Active] = 1, [B Local Base Demand] * IfThenElse([B Test 2 Metal Demand Applies] = 1, [Transport Demand Surge Multiplier], 1), IfThenElse([Test 3 Low Demand Active] = 1, [B Local Base Demand] * IfThenElse([B Test 3 Metal Demand Applies] = 1, [Low Demand Multiplier], 1), [B Local Base Demand])))))))) * [B Metal Price Demand Factor], IfThenElse([Intermediate Inputs Enabled] = 1, IfThenElse([Test 20 Coupled Metal Demand Growth Active] = 1, [B Local Base Demand] * IfThenElse([B Test 20 Metal Demand Applies] = 1, [v7.4 Coupled Metal Demand Growth Multiplier], 1), IfThenElse([Test 16 Sustained Metal Energy Growth Active] = 1, [B Local Base Demand] * IfThenElse([B Test 16 Metal Demand Applies] = 1, [v7.3 Sustained Metal Demand Growth Multiplier], 1), IfThenElse([Test 9 Two Industry Energy Stress Active] = 1, [B Local Base Demand] * IfThenElse([B Test 9 Metal Demand Applies] = 1, [Two Industry Energy Stress Demand Multiplier], 1), IfThenElse([Test 8 Metal Priority Scarcity Active] = 1, [B Local Base Demand] * IfThenElse([B Test 8 Metal Demand Applies] = 1, [Priority Stress Demand Multiplier], 1), IfThenElse([Test 7 Two Good Transport Surge Active] = 1, [B Local Base Demand] * IfThenElse([B Test 7 Metal Demand Applies] = 1, [Two Good Demand Surge Multiplier], 1), IfThenElse([Test 2 Transport Surge Active] = 1, [B Local Base Demand] * IfThenElse([B Test 2 Metal Demand Applies] = 1, [Transport Demand Surge Multiplier], 1), IfThenElse([Test 3 Low Demand Active] = 1, [B Local Base Demand] * IfThenElse([B Test 3 Metal Demand Applies] = 1, [Low Demand Multiplier], 1), [B Local Base Demand]))))))), IfThenElse([Test 16 Sustained Metal Energy Growth Active] = 1, [B Local Base Demand] * IfThenElse([B Test 16 Metal Demand Applies] = 1, [v7.3 Sustained Metal Demand Growth Multiplier], 1), IfThenElse([Test 9 Two Industry Energy Stress Active] = 1, [B Local Base Demand] * IfThenElse([B Test 9 Metal Demand Applies] = 1, [Two Industry Energy Stress Demand Multiplier], 1), IfThenElse([Test 8 Metal Priority Scarcity Active] = 1, [B Local Base Demand] * IfThenElse([B Test 8 Metal Demand Applies] = 1, [Priority Stress Demand Multiplier], 1), IfThenElse([Test 7 Two Good Transport Surge Active] = 1, [B Local Base Demand] * IfThenElse([B Test 7 Metal Demand Applies] = 1, [Two Good Demand Surge Multiplier], 1), IfThenElse([Test 2 Transport Surge Active] = 1, [B Local Base Demand] * IfThenElse([B Test 2 Metal Demand Applies] = 1, [Transport Demand Surge Multiplier], 1), IfThenElse([Test 3 Low Demand Active] = 1, [B Local Base Demand] * IfThenElse([B Test 3 Metal Demand Applies] = 1, [Low Demand Multiplier], 1), [B Local Base Demand]))))))))"
       },
       "display": {
         "coordinates": [
@@ -11713,7 +11713,7 @@
       "type": "VARIABLE",
       "name": "A Effective Electronics Local Base Demand",
       "behavior": {
-        "value": "IfThenElse([Intermediate Inputs Enabled] = 1, IfThenElse([Test 23 Investment Boom Active] = 1, [A Electronics Local Base Demand] * IfThenElse([A Test 23 Electronics Demand Applies] = 1, [v7.5 Investment Boom Multiplier], 1), IfThenElse([Test 19 Coupled Electronics Growth Active] = 1, [A Electronics Local Base Demand] * IfThenElse([A Test 19 Electronics Demand Applies] = 1, [v7.4 Coupled Electronics Growth Multiplier], 1), IfThenElse([Test 14 Sustained Electronics Growth Active] = 1, [A Electronics Local Base Demand] * IfThenElse([A Test 14 Electronics Demand Applies] = 1, [v7.3 Sustained Electronics Growth Multiplier], 1), IfThenElse([Test 13 Temporary Electronics Lifecycle Surge Active] = 1, [A Electronics Local Base Demand] * IfThenElse([A Test 13 Electronics Demand Applies] = 1, [v7.3 Temporary Electronics Demand Multiplier], 1), IfThenElse([Test 9 Two Industry Energy Stress Active] = 1, [A Electronics Local Base Demand] * IfThenElse([A Test 9 Electronics Demand Applies] = 1, [Two Industry Energy Stress Demand Multiplier], 1), IfThenElse([Test 8 Metal Priority Scarcity Active] = 1, [A Electronics Local Base Demand] * IfThenElse([A Test 8 Electronics Demand Applies] = 1, [Priority Stress Demand Multiplier], 1), IfThenElse([Test 5 Electronics Demand Surge Active] = 1, [A Electronics Local Base Demand] * IfThenElse([A Test 5 Electronics Demand Applies] = 1, [Electronics Demand Surge Multiplier], 1), IfThenElse([Test 7 Two Good Transport Surge Active] = 1, [A Electronics Local Base Demand] * IfThenElse([A Test 7 Electronics Demand Applies] = 1, [Two Good Demand Surge Multiplier], 1), IfThenElse([Test 15 Electronics Collapse Recovery Active] = 1, [A Electronics Local Base Demand] * IfThenElse([A Test 15 Electronics Demand Applies] = 1, [v7.3 Electronics Demand Collapse Multiplier], 1), [A Electronics Local Base Demand]))))))))), IfThenElse([Test 14 Sustained Electronics Growth Active] = 1, [A Electronics Local Base Demand] * IfThenElse([A Test 14 Electronics Demand Applies] = 1, [v7.3 Sustained Electronics Growth Multiplier], 1), IfThenElse([Test 13 Temporary Electronics Lifecycle Surge Active] = 1, [A Electronics Local Base Demand] * IfThenElse([A Test 13 Electronics Demand Applies] = 1, [v7.3 Temporary Electronics Demand Multiplier], 1), IfThenElse([Test 9 Two Industry Energy Stress Active] = 1, [A Electronics Local Base Demand] * IfThenElse([A Test 9 Electronics Demand Applies] = 1, [Two Industry Energy Stress Demand Multiplier], 1), IfThenElse([Test 8 Metal Priority Scarcity Active] = 1, [A Electronics Local Base Demand] * IfThenElse([A Test 8 Electronics Demand Applies] = 1, [Priority Stress Demand Multiplier], 1), IfThenElse([Test 5 Electronics Demand Surge Active] = 1, [A Electronics Local Base Demand] * IfThenElse([A Test 5 Electronics Demand Applies] = 1, [Electronics Demand Surge Multiplier], 1), IfThenElse([Test 7 Two Good Transport Surge Active] = 1, [A Electronics Local Base Demand] * IfThenElse([A Test 7 Electronics Demand Applies] = 1, [Two Good Demand Surge Multiplier], 1), IfThenElse([Test 15 Electronics Collapse Recovery Active] = 1, [A Electronics Local Base Demand] * IfThenElse([A Test 15 Electronics Demand Applies] = 1, [v7.3 Electronics Demand Collapse Multiplier], 1), [A Electronics Local Base Demand]))))))))"
+        "value": "IfThenElse([Wage Pricing Enabled] = 1, (IfThenElse([Intermediate Inputs Enabled] = 1, IfThenElse([Test 23 Investment Boom Active] = 1, [A Electronics Local Base Demand] * IfThenElse([A Test 23 Electronics Demand Applies] = 1, [v7.5 Investment Boom Multiplier], 1), IfThenElse([Test 19 Coupled Electronics Growth Active] = 1, [A Electronics Local Base Demand] * IfThenElse([A Test 19 Electronics Demand Applies] = 1, [v7.4 Coupled Electronics Growth Multiplier], 1), IfThenElse([Test 14 Sustained Electronics Growth Active] = 1, [A Electronics Local Base Demand] * IfThenElse([A Test 14 Electronics Demand Applies] = 1, [v7.3 Sustained Electronics Growth Multiplier], 1), IfThenElse([Test 13 Temporary Electronics Lifecycle Surge Active] = 1, [A Electronics Local Base Demand] * IfThenElse([A Test 13 Electronics Demand Applies] = 1, [v7.3 Temporary Electronics Demand Multiplier], 1), IfThenElse([Test 9 Two Industry Energy Stress Active] = 1, [A Electronics Local Base Demand] * IfThenElse([A Test 9 Electronics Demand Applies] = 1, [Two Industry Energy Stress Demand Multiplier], 1), IfThenElse([Test 8 Metal Priority Scarcity Active] = 1, [A Electronics Local Base Demand] * IfThenElse([A Test 8 Electronics Demand Applies] = 1, [Priority Stress Demand Multiplier], 1), IfThenElse([Test 5 Electronics Demand Surge Active] = 1, [A Electronics Local Base Demand] * IfThenElse([A Test 5 Electronics Demand Applies] = 1, [Electronics Demand Surge Multiplier], 1), IfThenElse([Test 7 Two Good Transport Surge Active] = 1, [A Electronics Local Base Demand] * IfThenElse([A Test 7 Electronics Demand Applies] = 1, [Two Good Demand Surge Multiplier], 1), IfThenElse([Test 15 Electronics Collapse Recovery Active] = 1, [A Electronics Local Base Demand] * IfThenElse([A Test 15 Electronics Demand Applies] = 1, [v7.3 Electronics Demand Collapse Multiplier], 1), [A Electronics Local Base Demand]))))))))), IfThenElse([Test 14 Sustained Electronics Growth Active] = 1, [A Electronics Local Base Demand] * IfThenElse([A Test 14 Electronics Demand Applies] = 1, [v7.3 Sustained Electronics Growth Multiplier], 1), IfThenElse([Test 13 Temporary Electronics Lifecycle Surge Active] = 1, [A Electronics Local Base Demand] * IfThenElse([A Test 13 Electronics Demand Applies] = 1, [v7.3 Temporary Electronics Demand Multiplier], 1), IfThenElse([Test 9 Two Industry Energy Stress Active] = 1, [A Electronics Local Base Demand] * IfThenElse([A Test 9 Electronics Demand Applies] = 1, [Two Industry Energy Stress Demand Multiplier], 1), IfThenElse([Test 8 Metal Priority Scarcity Active] = 1, [A Electronics Local Base Demand] * IfThenElse([A Test 8 Electronics Demand Applies] = 1, [Priority Stress Demand Multiplier], 1), IfThenElse([Test 5 Electronics Demand Surge Active] = 1, [A Electronics Local Base Demand] * IfThenElse([A Test 5 Electronics Demand Applies] = 1, [Electronics Demand Surge Multiplier], 1), IfThenElse([Test 7 Two Good Transport Surge Active] = 1, [A Electronics Local Base Demand] * IfThenElse([A Test 7 Electronics Demand Applies] = 1, [Two Good Demand Surge Multiplier], 1), IfThenElse([Test 15 Electronics Collapse Recovery Active] = 1, [A Electronics Local Base Demand] * IfThenElse([A Test 15 Electronics Demand Applies] = 1, [v7.3 Electronics Demand Collapse Multiplier], 1), [A Electronics Local Base Demand]))))))))) * [A Electronics Price Demand Factor], IfThenElse([Intermediate Inputs Enabled] = 1, IfThenElse([Test 23 Investment Boom Active] = 1, [A Electronics Local Base Demand] * IfThenElse([A Test 23 Electronics Demand Applies] = 1, [v7.5 Investment Boom Multiplier], 1), IfThenElse([Test 19 Coupled Electronics Growth Active] = 1, [A Electronics Local Base Demand] * IfThenElse([A Test 19 Electronics Demand Applies] = 1, [v7.4 Coupled Electronics Growth Multiplier], 1), IfThenElse([Test 14 Sustained Electronics Growth Active] = 1, [A Electronics Local Base Demand] * IfThenElse([A Test 14 Electronics Demand Applies] = 1, [v7.3 Sustained Electronics Growth Multiplier], 1), IfThenElse([Test 13 Temporary Electronics Lifecycle Surge Active] = 1, [A Electronics Local Base Demand] * IfThenElse([A Test 13 Electronics Demand Applies] = 1, [v7.3 Temporary Electronics Demand Multiplier], 1), IfThenElse([Test 9 Two Industry Energy Stress Active] = 1, [A Electronics Local Base Demand] * IfThenElse([A Test 9 Electronics Demand Applies] = 1, [Two Industry Energy Stress Demand Multiplier], 1), IfThenElse([Test 8 Metal Priority Scarcity Active] = 1, [A Electronics Local Base Demand] * IfThenElse([A Test 8 Electronics Demand Applies] = 1, [Priority Stress Demand Multiplier], 1), IfThenElse([Test 5 Electronics Demand Surge Active] = 1, [A Electronics Local Base Demand] * IfThenElse([A Test 5 Electronics Demand Applies] = 1, [Electronics Demand Surge Multiplier], 1), IfThenElse([Test 7 Two Good Transport Surge Active] = 1, [A Electronics Local Base Demand] * IfThenElse([A Test 7 Electronics Demand Applies] = 1, [Two Good Demand Surge Multiplier], 1), IfThenElse([Test 15 Electronics Collapse Recovery Active] = 1, [A Electronics Local Base Demand] * IfThenElse([A Test 15 Electronics Demand Applies] = 1, [v7.3 Electronics Demand Collapse Multiplier], 1), [A Electronics Local Base Demand]))))))))), IfThenElse([Test 14 Sustained Electronics Growth Active] = 1, [A Electronics Local Base Demand] * IfThenElse([A Test 14 Electronics Demand Applies] = 1, [v7.3 Sustained Electronics Growth Multiplier], 1), IfThenElse([Test 13 Temporary Electronics Lifecycle Surge Active] = 1, [A Electronics Local Base Demand] * IfThenElse([A Test 13 Electronics Demand Applies] = 1, [v7.3 Temporary Electronics Demand Multiplier], 1), IfThenElse([Test 9 Two Industry Energy Stress Active] = 1, [A Electronics Local Base Demand] * IfThenElse([A Test 9 Electronics Demand Applies] = 1, [Two Industry Energy Stress Demand Multiplier], 1), IfThenElse([Test 8 Metal Priority Scarcity Active] = 1, [A Electronics Local Base Demand] * IfThenElse([A Test 8 Electronics Demand Applies] = 1, [Priority Stress Demand Multiplier], 1), IfThenElse([Test 5 Electronics Demand Surge Active] = 1, [A Electronics Local Base Demand] * IfThenElse([A Test 5 Electronics Demand Applies] = 1, [Electronics Demand Surge Multiplier], 1), IfThenElse([Test 7 Two Good Transport Surge Active] = 1, [A Electronics Local Base Demand] * IfThenElse([A Test 7 Electronics Demand Applies] = 1, [Two Good Demand Surge Multiplier], 1), IfThenElse([Test 15 Electronics Collapse Recovery Active] = 1, [A Electronics Local Base Demand] * IfThenElse([A Test 15 Electronics Demand Applies] = 1, [v7.3 Electronics Demand Collapse Multiplier], 1), [A Electronics Local Base Demand])))))))))"
       },
       "display": {
         "coordinates": [
@@ -12229,7 +12229,7 @@
       "type": "VARIABLE",
       "name": "B Effective Electronics Local Base Demand",
       "behavior": {
-        "value": "IfThenElse([Intermediate Inputs Enabled] = 1, IfThenElse([Test 23 Investment Boom Active] = 1, [B Electronics Local Base Demand] * IfThenElse([B Test 23 Electronics Demand Applies] = 1, [v7.5 Investment Boom Multiplier], 1), IfThenElse([Test 19 Coupled Electronics Growth Active] = 1, [B Electronics Local Base Demand] * IfThenElse([B Test 19 Electronics Demand Applies] = 1, [v7.4 Coupled Electronics Growth Multiplier], 1), IfThenElse([Test 14 Sustained Electronics Growth Active] = 1, [B Electronics Local Base Demand] * IfThenElse([B Test 14 Electronics Demand Applies] = 1, [v7.3 Sustained Electronics Growth Multiplier], 1), IfThenElse([Test 13 Temporary Electronics Lifecycle Surge Active] = 1, [B Electronics Local Base Demand] * IfThenElse([B Test 13 Electronics Demand Applies] = 1, [v7.3 Temporary Electronics Demand Multiplier], 1), IfThenElse([Test 9 Two Industry Energy Stress Active] = 1, [B Electronics Local Base Demand] * IfThenElse([B Test 9 Electronics Demand Applies] = 1, [Two Industry Energy Stress Demand Multiplier], 1), IfThenElse([Test 8 Metal Priority Scarcity Active] = 1, [B Electronics Local Base Demand] * IfThenElse([B Test 8 Electronics Demand Applies] = 1, [Priority Stress Demand Multiplier], 1), IfThenElse([Test 5 Electronics Demand Surge Active] = 1, [B Electronics Local Base Demand] * IfThenElse([B Test 5 Electronics Demand Applies] = 1, [Electronics Demand Surge Multiplier], 1), IfThenElse([Test 7 Two Good Transport Surge Active] = 1, [B Electronics Local Base Demand] * IfThenElse([B Test 7 Electronics Demand Applies] = 1, [Two Good Demand Surge Multiplier], 1), IfThenElse([Test 15 Electronics Collapse Recovery Active] = 1, [B Electronics Local Base Demand] * IfThenElse([B Test 15 Electronics Demand Applies] = 1, [v7.3 Electronics Demand Collapse Multiplier], 1), [B Electronics Local Base Demand]))))))))), IfThenElse([Test 14 Sustained Electronics Growth Active] = 1, [B Electronics Local Base Demand] * IfThenElse([B Test 14 Electronics Demand Applies] = 1, [v7.3 Sustained Electronics Growth Multiplier], 1), IfThenElse([Test 13 Temporary Electronics Lifecycle Surge Active] = 1, [B Electronics Local Base Demand] * IfThenElse([B Test 13 Electronics Demand Applies] = 1, [v7.3 Temporary Electronics Demand Multiplier], 1), IfThenElse([Test 9 Two Industry Energy Stress Active] = 1, [B Electronics Local Base Demand] * IfThenElse([B Test 9 Electronics Demand Applies] = 1, [Two Industry Energy Stress Demand Multiplier], 1), IfThenElse([Test 8 Metal Priority Scarcity Active] = 1, [B Electronics Local Base Demand] * IfThenElse([B Test 8 Electronics Demand Applies] = 1, [Priority Stress Demand Multiplier], 1), IfThenElse([Test 5 Electronics Demand Surge Active] = 1, [B Electronics Local Base Demand] * IfThenElse([B Test 5 Electronics Demand Applies] = 1, [Electronics Demand Surge Multiplier], 1), IfThenElse([Test 7 Two Good Transport Surge Active] = 1, [B Electronics Local Base Demand] * IfThenElse([B Test 7 Electronics Demand Applies] = 1, [Two Good Demand Surge Multiplier], 1), IfThenElse([Test 15 Electronics Collapse Recovery Active] = 1, [B Electronics Local Base Demand] * IfThenElse([B Test 15 Electronics Demand Applies] = 1, [v7.3 Electronics Demand Collapse Multiplier], 1), [B Electronics Local Base Demand]))))))))"
+        "value": "IfThenElse([Wage Pricing Enabled] = 1, (IfThenElse([Intermediate Inputs Enabled] = 1, IfThenElse([Test 23 Investment Boom Active] = 1, [B Electronics Local Base Demand] * IfThenElse([B Test 23 Electronics Demand Applies] = 1, [v7.5 Investment Boom Multiplier], 1), IfThenElse([Test 19 Coupled Electronics Growth Active] = 1, [B Electronics Local Base Demand] * IfThenElse([B Test 19 Electronics Demand Applies] = 1, [v7.4 Coupled Electronics Growth Multiplier], 1), IfThenElse([Test 14 Sustained Electronics Growth Active] = 1, [B Electronics Local Base Demand] * IfThenElse([B Test 14 Electronics Demand Applies] = 1, [v7.3 Sustained Electronics Growth Multiplier], 1), IfThenElse([Test 13 Temporary Electronics Lifecycle Surge Active] = 1, [B Electronics Local Base Demand] * IfThenElse([B Test 13 Electronics Demand Applies] = 1, [v7.3 Temporary Electronics Demand Multiplier], 1), IfThenElse([Test 9 Two Industry Energy Stress Active] = 1, [B Electronics Local Base Demand] * IfThenElse([B Test 9 Electronics Demand Applies] = 1, [Two Industry Energy Stress Demand Multiplier], 1), IfThenElse([Test 8 Metal Priority Scarcity Active] = 1, [B Electronics Local Base Demand] * IfThenElse([B Test 8 Electronics Demand Applies] = 1, [Priority Stress Demand Multiplier], 1), IfThenElse([Test 5 Electronics Demand Surge Active] = 1, [B Electronics Local Base Demand] * IfThenElse([B Test 5 Electronics Demand Applies] = 1, [Electronics Demand Surge Multiplier], 1), IfThenElse([Test 7 Two Good Transport Surge Active] = 1, [B Electronics Local Base Demand] * IfThenElse([B Test 7 Electronics Demand Applies] = 1, [Two Good Demand Surge Multiplier], 1), IfThenElse([Test 15 Electronics Collapse Recovery Active] = 1, [B Electronics Local Base Demand] * IfThenElse([B Test 15 Electronics Demand Applies] = 1, [v7.3 Electronics Demand Collapse Multiplier], 1), [B Electronics Local Base Demand]))))))))), IfThenElse([Test 14 Sustained Electronics Growth Active] = 1, [B Electronics Local Base Demand] * IfThenElse([B Test 14 Electronics Demand Applies] = 1, [v7.3 Sustained Electronics Growth Multiplier], 1), IfThenElse([Test 13 Temporary Electronics Lifecycle Surge Active] = 1, [B Electronics Local Base Demand] * IfThenElse([B Test 13 Electronics Demand Applies] = 1, [v7.3 Temporary Electronics Demand Multiplier], 1), IfThenElse([Test 9 Two Industry Energy Stress Active] = 1, [B Electronics Local Base Demand] * IfThenElse([B Test 9 Electronics Demand Applies] = 1, [Two Industry Energy Stress Demand Multiplier], 1), IfThenElse([Test 8 Metal Priority Scarcity Active] = 1, [B Electronics Local Base Demand] * IfThenElse([B Test 8 Electronics Demand Applies] = 1, [Priority Stress Demand Multiplier], 1), IfThenElse([Test 5 Electronics Demand Surge Active] = 1, [B Electronics Local Base Demand] * IfThenElse([B Test 5 Electronics Demand Applies] = 1, [Electronics Demand Surge Multiplier], 1), IfThenElse([Test 7 Two Good Transport Surge Active] = 1, [B Electronics Local Base Demand] * IfThenElse([B Test 7 Electronics Demand Applies] = 1, [Two Good Demand Surge Multiplier], 1), IfThenElse([Test 15 Electronics Collapse Recovery Active] = 1, [B Electronics Local Base Demand] * IfThenElse([B Test 15 Electronics Demand Applies] = 1, [v7.3 Electronics Demand Collapse Multiplier], 1), [B Electronics Local Base Demand]))))))))) * [B Electronics Price Demand Factor], IfThenElse([Intermediate Inputs Enabled] = 1, IfThenElse([Test 23 Investment Boom Active] = 1, [B Electronics Local Base Demand] * IfThenElse([B Test 23 Electronics Demand Applies] = 1, [v7.5 Investment Boom Multiplier], 1), IfThenElse([Test 19 Coupled Electronics Growth Active] = 1, [B Electronics Local Base Demand] * IfThenElse([B Test 19 Electronics Demand Applies] = 1, [v7.4 Coupled Electronics Growth Multiplier], 1), IfThenElse([Test 14 Sustained Electronics Growth Active] = 1, [B Electronics Local Base Demand] * IfThenElse([B Test 14 Electronics Demand Applies] = 1, [v7.3 Sustained Electronics Growth Multiplier], 1), IfThenElse([Test 13 Temporary Electronics Lifecycle Surge Active] = 1, [B Electronics Local Base Demand] * IfThenElse([B Test 13 Electronics Demand Applies] = 1, [v7.3 Temporary Electronics Demand Multiplier], 1), IfThenElse([Test 9 Two Industry Energy Stress Active] = 1, [B Electronics Local Base Demand] * IfThenElse([B Test 9 Electronics Demand Applies] = 1, [Two Industry Energy Stress Demand Multiplier], 1), IfThenElse([Test 8 Metal Priority Scarcity Active] = 1, [B Electronics Local Base Demand] * IfThenElse([B Test 8 Electronics Demand Applies] = 1, [Priority Stress Demand Multiplier], 1), IfThenElse([Test 5 Electronics Demand Surge Active] = 1, [B Electronics Local Base Demand] * IfThenElse([B Test 5 Electronics Demand Applies] = 1, [Electronics Demand Surge Multiplier], 1), IfThenElse([Test 7 Two Good Transport Surge Active] = 1, [B Electronics Local Base Demand] * IfThenElse([B Test 7 Electronics Demand Applies] = 1, [Two Good Demand Surge Multiplier], 1), IfThenElse([Test 15 Electronics Collapse Recovery Active] = 1, [B Electronics Local Base Demand] * IfThenElse([B Test 15 Electronics Demand Applies] = 1, [v7.3 Electronics Demand Collapse Multiplier], 1), [B Electronics Local Base Demand]))))))))), IfThenElse([Test 14 Sustained Electronics Growth Active] = 1, [B Electronics Local Base Demand] * IfThenElse([B Test 14 Electronics Demand Applies] = 1, [v7.3 Sustained Electronics Growth Multiplier], 1), IfThenElse([Test 13 Temporary Electronics Lifecycle Surge Active] = 1, [B Electronics Local Base Demand] * IfThenElse([B Test 13 Electronics Demand Applies] = 1, [v7.3 Temporary Electronics Demand Multiplier], 1), IfThenElse([Test 9 Two Industry Energy Stress Active] = 1, [B Electronics Local Base Demand] * IfThenElse([B Test 9 Electronics Demand Applies] = 1, [Two Industry Energy Stress Demand Multiplier], 1), IfThenElse([Test 8 Metal Priority Scarcity Active] = 1, [B Electronics Local Base Demand] * IfThenElse([B Test 8 Electronics Demand Applies] = 1, [Priority Stress Demand Multiplier], 1), IfThenElse([Test 5 Electronics Demand Surge Active] = 1, [B Electronics Local Base Demand] * IfThenElse([B Test 5 Electronics Demand Applies] = 1, [Electronics Demand Surge Multiplier], 1), IfThenElse([Test 7 Two Good Transport Surge Active] = 1, [B Electronics Local Base Demand] * IfThenElse([B Test 7 Electronics Demand Applies] = 1, [Two Good Demand Surge Multiplier], 1), IfThenElse([Test 15 Electronics Collapse Recovery Active] = 1, [B Electronics Local Base Demand] * IfThenElse([B Test 15 Electronics Demand Applies] = 1, [v7.3 Electronics Demand Collapse Multiplier], 1), [B Electronics Local Base Demand])))))))))"
       },
       "display": {
         "coordinates": [
@@ -38342,7 +38342,7 @@
       "type": "VARIABLE",
       "name": "A Food Price",
       "behavior": {
-        "value": "[Food Price Reference] * ([Food Target Coverage Days] / Max([A Food Coverage Days], 1)) ^ [Food Price Elasticity]"
+        "value": "IfThenElse([Wage Pricing Enabled] = 1, ([Food Price Reference] * ([Food Target Coverage Days] / Max([A Food Coverage Days], 1)) ^ [Food Price Elasticity]) * Max(1 + [A Food Labor Share] * [A Relative Wage Change], 0.000001), [Food Price Reference] * ([Food Target Coverage Days] / Max([A Food Coverage Days], 1)) ^ [Food Price Elasticity])"
       },
       "description": "Food node: scarcity price of food."
     },
@@ -38565,7 +38565,7 @@
       "type": "VARIABLE",
       "name": "B Food Price",
       "behavior": {
-        "value": "[Food Price Reference] * ([Food Target Coverage Days] / Max([B Food Coverage Days], 1)) ^ [Food Price Elasticity]"
+        "value": "IfThenElse([Wage Pricing Enabled] = 1, ([Food Price Reference] * ([Food Target Coverage Days] / Max([B Food Coverage Days], 1)) ^ [Food Price Elasticity]) * Max(1 + [B Food Labor Share] * [B Relative Wage Change], 0.000001), [Food Price Reference] * ([Food Target Coverage Days] / Max([B Food Coverage Days], 1)) ^ [Food Price Elasticity])"
       },
       "description": "Food node: scarcity price of food."
     },
@@ -40807,6 +40807,360 @@
       "type": "LINK",
       "from": "B Labor Availability",
       "to": "B Food Production"
+    },
+    {
+      "type": "VARIABLE",
+      "name": "Wage Pricing Enabled",
+      "behavior": {
+        "value": 0
+      },
+      "description": "Wage pricing node: switch of wage pricing (0 = every earlier series unchanged)."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "Price Demand Elasticity",
+      "behavior": {
+        "value": 0.5
+      },
+      "description": "Wage pricing node: parameter Price Demand Elasticity."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "A Relative Wage Change",
+      "behavior": {
+        "value": "[A Wage] / Max([A Initial Wage], 0.000001) - 1"
+      },
+      "description": "Wage pricing node: wage relative to its start, minus one."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "A Ore Labor Share",
+      "behavior": {
+        "value": 1
+      },
+      "description": "Wage pricing node: share of labor in the start ore price (at most 1)."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "A Energy Labor Share",
+      "behavior": {
+        "value": 0.83
+      },
+      "description": "Wage pricing node: share of labor in the start energy price (at most 1)."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "A Food Labor Share",
+      "behavior": {
+        "value": 1
+      },
+      "description": "Wage pricing node: share of labor in the start food price (at most 1)."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "A Metal Demand Reference Price",
+      "behavior": {
+        "value": 25.9
+      },
+      "description": "Wage pricing node: metal price at which demand is the norm."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "A Metal Price Demand Factor",
+      "behavior": {
+        "value": "Max([A Market Price] / [A Metal Demand Reference Price], 0.000001) ^ (-[Price Demand Elasticity])"
+      },
+      "description": "Wage pricing node: metal demand response to its price."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "A Electronics Demand Reference Price",
+      "behavior": {
+        "value": 23.1
+      },
+      "description": "Wage pricing node: electronics price at which demand is the norm."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "A Electronics Price Demand Factor",
+      "behavior": {
+        "value": "Max([A Electronics Market Price] / [A Electronics Demand Reference Price], 0.000001) ^ (-[Price Demand Elasticity])"
+      },
+      "description": "Wage pricing node: electronics demand response to its price."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "B Relative Wage Change",
+      "behavior": {
+        "value": "[B Wage] / Max([B Initial Wage], 0.000001) - 1"
+      },
+      "description": "Wage pricing node: wage relative to its start, minus one."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "B Ore Labor Share",
+      "behavior": {
+        "value": 0.5
+      },
+      "description": "Wage pricing node: share of labor in the start ore price (at most 1)."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "B Energy Labor Share",
+      "behavior": {
+        "value": 1
+      },
+      "description": "Wage pricing node: share of labor in the start energy price (at most 1)."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "B Food Labor Share",
+      "behavior": {
+        "value": 1
+      },
+      "description": "Wage pricing node: share of labor in the start food price (at most 1)."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "B Metal Demand Reference Price",
+      "behavior": {
+        "value": 34.46
+      },
+      "description": "Wage pricing node: metal price at which demand is the norm."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "B Metal Price Demand Factor",
+      "behavior": {
+        "value": "Max([B Market Price] / [B Metal Demand Reference Price], 0.000001) ^ (-[Price Demand Elasticity])"
+      },
+      "description": "Wage pricing node: metal demand response to its price."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "B Electronics Demand Reference Price",
+      "behavior": {
+        "value": 21.91
+      },
+      "description": "Wage pricing node: electronics price at which demand is the norm."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "B Electronics Price Demand Factor",
+      "behavior": {
+        "value": "Max([B Electronics Market Price] / [B Electronics Demand Reference Price], 0.000001) ^ (-[Price Demand Elasticity])"
+      },
+      "description": "Wage pricing node: electronics demand response to its price."
+    },
+    {
+      "type": "LINK",
+      "from": "A Wage",
+      "to": "A Relative Wage Change"
+    },
+    {
+      "type": "LINK",
+      "from": "A Initial Wage",
+      "to": "A Relative Wage Change"
+    },
+    {
+      "type": "LINK",
+      "from": "A Market Price",
+      "to": "A Metal Price Demand Factor"
+    },
+    {
+      "type": "LINK",
+      "from": "A Metal Demand Reference Price",
+      "to": "A Metal Price Demand Factor"
+    },
+    {
+      "type": "LINK",
+      "from": "Price Demand Elasticity",
+      "to": "A Metal Price Demand Factor"
+    },
+    {
+      "type": "LINK",
+      "from": "A Electronics Market Price",
+      "to": "A Electronics Price Demand Factor"
+    },
+    {
+      "type": "LINK",
+      "from": "A Electronics Demand Reference Price",
+      "to": "A Electronics Price Demand Factor"
+    },
+    {
+      "type": "LINK",
+      "from": "Price Demand Elasticity",
+      "to": "A Electronics Price Demand Factor"
+    },
+    {
+      "type": "LINK",
+      "from": "B Wage",
+      "to": "B Relative Wage Change"
+    },
+    {
+      "type": "LINK",
+      "from": "B Initial Wage",
+      "to": "B Relative Wage Change"
+    },
+    {
+      "type": "LINK",
+      "from": "B Market Price",
+      "to": "B Metal Price Demand Factor"
+    },
+    {
+      "type": "LINK",
+      "from": "B Metal Demand Reference Price",
+      "to": "B Metal Price Demand Factor"
+    },
+    {
+      "type": "LINK",
+      "from": "Price Demand Elasticity",
+      "to": "B Metal Price Demand Factor"
+    },
+    {
+      "type": "LINK",
+      "from": "B Electronics Market Price",
+      "to": "B Electronics Price Demand Factor"
+    },
+    {
+      "type": "LINK",
+      "from": "B Electronics Demand Reference Price",
+      "to": "B Electronics Price Demand Factor"
+    },
+    {
+      "type": "LINK",
+      "from": "Price Demand Elasticity",
+      "to": "B Electronics Price Demand Factor"
+    },
+    {
+      "type": "LINK",
+      "from": "Wage Pricing Enabled",
+      "to": "A Ore Price"
+    },
+    {
+      "type": "LINK",
+      "from": "A Ore Labor Share",
+      "to": "A Ore Price"
+    },
+    {
+      "type": "LINK",
+      "from": "A Relative Wage Change",
+      "to": "A Ore Price"
+    },
+    {
+      "type": "LINK",
+      "from": "Wage Pricing Enabled",
+      "to": "A Energy Price"
+    },
+    {
+      "type": "LINK",
+      "from": "A Energy Labor Share",
+      "to": "A Energy Price"
+    },
+    {
+      "type": "LINK",
+      "from": "A Relative Wage Change",
+      "to": "A Energy Price"
+    },
+    {
+      "type": "LINK",
+      "from": "Wage Pricing Enabled",
+      "to": "A Food Price"
+    },
+    {
+      "type": "LINK",
+      "from": "A Food Labor Share",
+      "to": "A Food Price"
+    },
+    {
+      "type": "LINK",
+      "from": "A Relative Wage Change",
+      "to": "A Food Price"
+    },
+    {
+      "type": "LINK",
+      "from": "Wage Pricing Enabled",
+      "to": "A Effective Local Base Demand"
+    },
+    {
+      "type": "LINK",
+      "from": "A Metal Price Demand Factor",
+      "to": "A Effective Local Base Demand"
+    },
+    {
+      "type": "LINK",
+      "from": "Wage Pricing Enabled",
+      "to": "A Effective Electronics Local Base Demand"
+    },
+    {
+      "type": "LINK",
+      "from": "A Electronics Price Demand Factor",
+      "to": "A Effective Electronics Local Base Demand"
+    },
+    {
+      "type": "LINK",
+      "from": "Wage Pricing Enabled",
+      "to": "B Ore Price"
+    },
+    {
+      "type": "LINK",
+      "from": "B Ore Labor Share",
+      "to": "B Ore Price"
+    },
+    {
+      "type": "LINK",
+      "from": "B Relative Wage Change",
+      "to": "B Ore Price"
+    },
+    {
+      "type": "LINK",
+      "from": "Wage Pricing Enabled",
+      "to": "B Energy Price"
+    },
+    {
+      "type": "LINK",
+      "from": "B Energy Labor Share",
+      "to": "B Energy Price"
+    },
+    {
+      "type": "LINK",
+      "from": "B Relative Wage Change",
+      "to": "B Energy Price"
+    },
+    {
+      "type": "LINK",
+      "from": "Wage Pricing Enabled",
+      "to": "B Food Price"
+    },
+    {
+      "type": "LINK",
+      "from": "B Food Labor Share",
+      "to": "B Food Price"
+    },
+    {
+      "type": "LINK",
+      "from": "B Relative Wage Change",
+      "to": "B Food Price"
+    },
+    {
+      "type": "LINK",
+      "from": "Wage Pricing Enabled",
+      "to": "B Effective Local Base Demand"
+    },
+    {
+      "type": "LINK",
+      "from": "B Metal Price Demand Factor",
+      "to": "B Effective Local Base Demand"
+    },
+    {
+      "type": "LINK",
+      "from": "Wage Pricing Enabled",
+      "to": "B Effective Electronics Local Base Demand"
+    },
+    {
+      "type": "LINK",
+      "from": "B Electronics Price Demand Factor",
+      "to": "B Effective Electronics Local Base Demand"
     }
   ],
   "visualizations": [
@@ -42673,6 +43027,56 @@
         "Process Energy Enabled": 1,
         "Food Enabled": 1,
         "Labor Market Enabled": 1
+      }
+    },
+    {
+      "name": "v7.7.15 Wage Pricing",
+      "description": "Mode 52 (labor market) with wage pricing: ore, energy and food prices follow the regional wage; metal and electronics demand responds to its price.",
+      "values": {
+        "Capital Lifecycle Enabled": 1,
+        "Intermediate Inputs Enabled": 1,
+        "Capital Goods Enabled": 1,
+        "Transport Capital Goods Enabled": 1,
+        "Power Resource Enabled": 1,
+        "Construction Materials Enabled": 1,
+        "Transport Construction Materials Enabled": 1,
+        "Construction Materials Energy Enabled": 1,
+        "Construction Materials Capital Enabled": 1,
+        "Capital Goods Capital Enabled": 1,
+        "Regolith Capital Enabled": 1,
+        "Ore Capital Enabled": 1,
+        "Timed Test Mode": 54,
+        "Power Resource Capital Enabled": 1,
+        "Deposits Enabled": 1,
+        "Process Energy Enabled": 1,
+        "Food Enabled": 1,
+        "Labor Market Enabled": 1,
+        "Wage Pricing Enabled": 1
+      }
+    },
+    {
+      "name": "v7.7.15 Transport Surge with Wage Pricing",
+      "description": "Mode 53 (transport surge with the labor market) with wage pricing.",
+      "values": {
+        "Capital Lifecycle Enabled": 1,
+        "Intermediate Inputs Enabled": 1,
+        "Capital Goods Enabled": 1,
+        "Transport Capital Goods Enabled": 1,
+        "Power Resource Enabled": 1,
+        "Construction Materials Enabled": 1,
+        "Transport Construction Materials Enabled": 1,
+        "Construction Materials Energy Enabled": 1,
+        "Construction Materials Capital Enabled": 1,
+        "Capital Goods Capital Enabled": 1,
+        "Regolith Capital Enabled": 1,
+        "Ore Capital Enabled": 1,
+        "Timed Test Mode": 55,
+        "Power Resource Capital Enabled": 1,
+        "Deposits Enabled": 1,
+        "Process Energy Enabled": 1,
+        "Food Enabled": 1,
+        "Labor Market Enabled": 1,
+        "Wage Pricing Enabled": 1
       }
     }
   ]

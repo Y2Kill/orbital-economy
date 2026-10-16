@@ -1,10 +1,16 @@
 # Roadmap
 
 **Document status:** CURRENT  
-**Base:** Orbital Economy v7.7.14 r1 — Recalibration (accepted 2026-10-11)  
+**Base:** Orbital Economy v7.7.15 r1 — Wage Pricing (accepted 2026-10-16)  
 **Rule:** roadmap describes intent; executable accepted code remains authoritative for accepted behavior.
 
-## Current implementation — v7.7.14 Recalibration (task 035)
+## Current implementation — v7.7.15 Wage Pricing — finance layer, intermediate step (tasks 036 bench, 037 model)
+
+Owner decisions 2026-10-12 (`docs/research/FINANCE_PROTOTYPE_2026-10-12_RU.md`): household budgets on the present prices collapse the economy over 20 years — the money circuit is not closed (A pays wages of 1456 a day, households buy goods and food for 915; firms hold no money, prices are not cost-based). Option 3: real income and wage pass-through now, full money accounting on top later. The step: ore, energy and food prices follow the regional wage proportionally (declared labor shares), metal and electronics demand responds to its price (η = 0.5); income demand is not introduced. Over 80 years B's cheaper food keeps its real income, B smelts 7.8 instead of 1.7, real incomes converge. Done: tasks 036 (Lab v0.9.19) and 037 (v7.7.15 r1, round 1; model equals the skeleton).
+
+Next: full money accounting — first rebase prices to costs (the price level lies below labor content: most labor shares hit the cap of 1), then money stocks of households and firms with every payment two-sided, a regional balance of payments, savings.
+
+## v7.7.14 Recalibration (task 035)
 
 The sensitivity study of v7.7.13 (`docs/research/SENSITIVITY_2026-10-10_RU.md`: 352 constants ±20 % over 3 years, then 62 over 20 years — 27 matter in the long run) found two values on a threshold. Owner decisions 2026-10-11: generation reserve 1.02 → 1.10, labor participation 0.50 → 0.52 (chosen on 80-year runs), target labor tightness 0.95 kept and annotated as key; a full recalibration — new values in every Mode, 16 checks of earlier tasks re-thresholded. Done: task 035, v7.7.14 r1 (round 1; model equals the skeleton, validation byte-identical to the draft). The exact-regression chain from v7.7.0 ends here.
 
