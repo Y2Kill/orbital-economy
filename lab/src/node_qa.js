@@ -379,6 +379,11 @@ function stripCostPricingNode(raw, decl) {
   const out = structuredClone(raw);
   const generated = new Set(costPricingGeneratedNames(decl));
   const byName = new Map(out.elements.filter(e => e.type !== 'LINK' && e.name).map(e => [e.name, e]));
+  // Markup targets were numeric VARIABLE constants before cost_pricing wrapped them.
+  // oldBranch() returns text; restore the original JSON number type, not a string.
+  const markupTargets = new Set((decl.colonies || []).flatMap(colony =>
+    (decl.markups || []).map(name => name.replaceAll('{C}', colony))));
+  const numericLiteral = /^-?(?:\d+(?:\.\d*)?|\.\d+)(?:e[+-]?\d+)?$/i;
   for (const name of costPricingReplacementNames(decl)) {
     const element = byName.get(name);
     if (!element) throw new Error('cost_pricing: replacement target missing: ' + name);
@@ -392,6 +397,8 @@ function stripCostPricingNode(raw, decl) {
         throw new Error('cost_pricing: initial reference mismatch: ' + name);
       }
       element.behavior.value = initial.behavior.value;
+    } else if (markupTargets.has(name) && numericLiteral.test(old.trim())) {
+      element.behavior.value = Number(old);
     } else {
       element.behavior.value = old;
     }
@@ -2265,6 +2272,20 @@ await expect('70. cost_pricing synthetic three-region expansion and static PASS'
 await expect('71. cost_pricing reversible peel and rebuild preserve definitions and links', () => {
   if (!costPricingState) throw new Error('case 67 must run first');
   const stripped = stripCostPricingNode(costPricingState.model, costPricingFixture);
+  const source = new Map(costPricingState.base.elements
+    .filter(e => e.type !== 'LINK').map(e => [e.name, e]));
+  for (const colony of costPricingFixture.colonies) {
+    for (const template of costPricingFixture.markups) {
+      const name = template.replaceAll('{C}', colony);
+      const restored = stripped.elements.find(e => e.type !== 'LINK' && e.name === name);
+      const original = source.get(name);
+      if (!restored || typeof restored.behavior.value !== 'number' ||
+          typeof original?.behavior.value !== 'number' ||
+          !Object.is(restored.behavior.value, original.behavior.value)) {
+        throw new Error('cost_pricing: markup must restore numeric constant: ' + name);
+      }
+    }
+  }
   const patch = expandNode(costPricingFixture, stripped).patch;
   const rebuilt = applyPatch(stripped, { format: PATCH_FORMAT, ...patch }).model;
   for (const [expected, actual] of [[costPricingState.base, stripped], [costPricingState.model, rebuilt]]) {
