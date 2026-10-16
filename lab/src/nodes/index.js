@@ -407,6 +407,14 @@ export function mergeNodeValidation(validation, fragments) {
       for (const name of names) if (!current.name.includes(name)) current.name.push(name);
       return current;
     };
+    if ((fragment.cost_pricing_instances || []).length) {
+      if (!information || !Array.isArray(information.name)) {
+        throw new Error('validation: open_boundaries information_signal category is required for cost_pricing');
+      }
+      for (const name of fragment.information_signal_names || []) {
+        if (!information.name.includes(name)) information.name.push(name);
+      }
+    }
     demographyBirths = ensureBoundaryCategory('demography_births', 'source', fragment.demography_births_names,
       'people enter the model by birth (Planet v2 population)', demographyBirths);
     demographyDeaths = ensureBoundaryCategory('demography_deaths', 'sink', fragment.demography_deaths_names,
