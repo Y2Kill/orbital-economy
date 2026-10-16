@@ -2302,5 +2302,60 @@ await expect('72. cost_pricing six required schema errors with paths', async () 
   return 'six malformed declarations rejected';
 });
 
+
+await expect('73. cost_pricing peels first; preceding 66 cases survive accepted+node', () => {
+  if (!costPricingState?.validation) throw new Error('case 68 must run first');
+  const node = {
+    decl: costPricingFixture,
+    strip: stripCostPricingNode,
+    targets: costPricingReplacementNames,
+    generated: costPricingGeneratedNames
+  };
+  const nodes = [...acceptedLayeredNodes.filter(n => n.decl.type !== 'cost_pricing'), node];
+  const chain = buildLayers(costPricingState.model, nodes);
+  if (chain.order[0]?.decl.type !== 'cost_pricing') {
+    throw new Error('cost_pricing not peeled first');
+  }
+  for (const n of nodes) {
+    const layer = chain.layers.get(n.decl);
+    if (!layer) throw new Error('missing layer: ' + n.decl.type);
+    expandNode(n.decl, layer.base);
+  }
+  const switchless = buildSwitchlessLayers(costPricingState.model, nodes);
+  if (switchless.prepeeled[0]?.decl.type !== 'cost_pricing') {
+    throw new Error('cost_pricing not first before switchless layers');
+  }
+  const withInputs = structuredClone(costPricingState.model);
+  for (const scenario of withInputs.scenarios || []) {
+    scenario.values[costPricingFixture.switch] = 1;
+  }
+  const stripped = stripCostPricingNode(withInputs, costPricingFixture);
+  if ((stripped.scenarios || []).some(sc => costPricingFixture.switch in sc.values)) {
+    throw new Error('cost_pricing switch survived stripping');
+  }
+  const clean = validationWithoutCostPricingFragment(costPricingState.validation, costPricingState.expanded.validation);
+  if (JSON.stringify(clean) !== JSON.stringify(withoutCostValidation)) {
+    throw new Error('cost_pricing validation not restored');
+  }
+  const tmp = fs.mkdtempSync(path.join(os.tmpdir(), 'orbital-economy-cost-layer-'));
+  try {
+    const modelFile = path.join(tmp, 'model.json');
+    const validationFile = path.join(tmp, 'validation.json');
+    fs.writeFileSync(modelFile, JSON.stringify(withInputs));
+    fs.writeFileSync(validationFile, JSON.stringify(costPricingState.validation, null, 2) + '\n');
+    const run = spawnSync(process.execPath, [
+      '--expose-gc', path.join(root, 'src', 'node_qa.js'), '--cases=1-66',
+      '--accepted-model=' + modelFile, '--accepted-validation=' + validationFile
+    ], { cwd: root, encoding: 'utf8', maxBuffer: 16 << 20 });
+    if (run.status !== 0 || !run.stdout.includes('NODE SELF-TEST: 66 passed, 0 failed')) {
+      throw new Error('preceding cases on cost-pricing accepted model failed: ' +
+        (run.stderr || '') + '\n' + (run.stdout || ''));
+    }
+  } finally {
+    fs.rmSync(tmp, { recursive: true, force: true });
+  }
+  return 'cost_pricing first; older 66 cases PASS on accepted+node';
+});
+
 console.log(`\nNODE SELF-TEST: ${passed} passed, ${failed} failed`);
 if (failed) process.exitCode = 1;
