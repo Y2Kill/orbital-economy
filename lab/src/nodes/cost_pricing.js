@@ -169,6 +169,43 @@ export function validateCostPricingDeclaration(decl, path, errors) {
   }
 }
 
+
+// Names used by reversible layering in node_qa.
+export function costPricingGeneratedNames(decl) {
+  const names = [decl.switch, ...Object.keys(decl.parameters || {})];
+  for (const colony of decl.colonies || []) {
+    for (const signal of decl.signals || []) {
+      const name = `${colony} ${signal.name} Cost Price Signal`;
+      names.push(name, name + ' Increase', name + ' Decrease');
+    }
+    for (const cost of decl.costs || []) {
+      if (cost.extend) {
+        names.push(`${colony} ${cost.name} Capital Wear`);
+      } else {
+        names.push(`${colony} ${cost.name} Full Cost`);
+        if (cost.cost_price) names.push(`${colony} ${cost.name} Cost Price`);
+      }
+    }
+    for (const ref of decl.references || []) {
+      names.push(`${colony} Initial ${ref.name}`, `${colony} ${ref.name} Cost Scale`);
+    }
+    names.push(`${colony} Food Index Cost Scale`, `${colony} Food Index Reference`);
+  }
+  return names;
+}
+
+export function costPricingReplacementNames(decl) {
+  const names = [];
+  for (const colony of decl.colonies || []) {
+    for (const cost of decl.costs || []) if (cost.extend) names.push(substitute(cost.extend, colony));
+    for (const price of decl.prices || []) names.push(substitute(price.target, colony));
+    for (const markup of decl.markups || []) names.push(substitute(markup, colony));
+    for (const ref of decl.references || []) names.push(substitute(ref.target, colony));
+    if (decl.price_index?.target) names.push(substitute(decl.price_index.target, colony));
+  }
+  return names;
+}
+
 export function expandCostPricing(decl, base) {
   const byName = new Map(base.elements.filter(e => e.type !== 'LINK' && e.name).map(e => [e.name, e]));
   const C = decl.colonies, SW = decl.switch, ON = `[${SW}] = 1`, I = decl.inputs, P = decl.parameters;
