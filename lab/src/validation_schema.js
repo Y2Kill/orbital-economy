@@ -44,6 +44,7 @@ const PLUGIN_FIELDS = {
   food: ['abs_tol', 'instances', 'transport'],
   labor_market: ['abs_tol', 'rel_tol', 'switch', 'floor', 'instances'],
   wage_pricing: ['rel_tol', 'switch', 'instances'],
+  cost_pricing: ['rel_tol', 'switch', 'markup', 'instances'],
   transport_allocator: ['abs_tol'],
   open_boundaries: ['enforce', 'categories', 'transformation_pairs'],
   colony_symmetry: ['tokens', 'enforce', 'exceptions'],
