@@ -224,6 +224,7 @@ export function mergeNodeValidation(validation, fragments) {
   let food = out.plugins?.find(p => p.type === 'food') || null;
   let laborMarket = out.plugins?.find(p => p.type === 'labor_market') || null;
   let wagePricing = out.plugins?.find(p => p.type === 'wage_pricing') || null;
+  let costPricing = out.plugins?.find(p => p.type === 'cost_pricing') || null;
   let retirement = boundaries.categories.find(x => x.id === 'capital_retirement') || null;
   let exploration = boundaries.categories.find(x => x.id === 'exploration_expenditure') || null;
   let demographyBirths = boundaries.categories.find(x => x.id === 'demography_births') || null;
@@ -372,6 +373,26 @@ export function mergeNodeValidation(validation, fragments) {
         const existing = wagePricing.instances.find(x => x.name === inst.name);
         if (!existing) wagePricing.instances.push(structuredClone(inst));
         else if (!jsonEqual(existing, inst)) throw new Error(`validation fragment[${fi}]: wage_pricing instance "${inst.name}" differs`);
+      }
+    }
+    if ((fragment.cost_pricing_instances || []).length) {
+      const relTol = fragment.cost_pricing_rel_tol ?? 1e-9;
+      const sw = fragment.cost_pricing_switch;
+      const markup = fragment.cost_pricing_markup;
+      if (!costPricing) {
+        costPricing = { type: 'cost_pricing', rel_tol: relTol, switch: sw, markup, instances: [] };
+        out.plugins.push(costPricing);
+      }
+      if (!Array.isArray(costPricing.instances)) throw new Error('validation: cost_pricing.instances must be an array');
+      if ((costPricing.rel_tol ?? 1e-9) !== relTol || costPricing.switch !== sw || costPricing.markup !== markup) {
+        throw new Error('validation: cost_pricing plugin definition differs');
+      }
+      for (const inst of fragment.cost_pricing_instances) {
+        const existing = costPricing.instances.find(x => x.name === inst.name);
+        if (!existing) costPricing.instances.push(structuredClone(inst));
+        else if (!jsonEqual(existing, inst)) {
+          throw new Error(`validation fragment[${fi}]: cost_pricing instance "${inst.name}" differs`);
+        }
       }
     }
     const ensureBoundaryCategory = (id, direction, names, reason, current) => {
