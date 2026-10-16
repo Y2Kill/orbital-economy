@@ -1,4 +1,4 @@
-# Orbital Economy Lab v0.9.19
+# Orbital Economy Lab v0.9.20
 
 Локальный стенд для запуска, проверки, regression-анализа, policy-gating, Capital Lifecycle Kernel и статических аудитов структуры для ModelJSON Orbital Economy. v0.9.19 добавляет declarative wage_pricing: передачу региональной зарплаты в цены без труда, ценовой фактор эффективного конечного спроса, static/runtime validation и верхний слой node QA. v0.9.18 добавляет declarative `labor_market`: спрос по населению, гибкую зарплату, labor-availability guard и переобъявление Planet P6. v0.9.17 добавляет declarative `food`. v0.9.16 добавляет declarative `population`: региональное население, рождения/смерти, миграцию по привлекательности, учёт труда и проверку сохранения людей без обратной связи на экономику. v0.9.15 добавляет declarative `labor`. v0.9.14 ускоряет switch-aware algebraic-loop audit точными сокращениями без изменения результата и сохраняет полный `--exhaustive` путь как эталон. v0.9.13 добавляет declarative `energy_consumer`, явный STOCK-сигнал энергетического запроса в Planet closure и runtime-проверку приоритетных потребителей. v0.9.12 добавляет node `deposit`, безопасный `retarget_flows` для endpoints существующих FLOW и deposit conformance/runtime checks. v0.9.11 расширяет `simple_capital`: smooth cap для скорости без capacity-параметра и раздельный initial sizing signal по колониям. v0.9.10 добавляет строгую статическую схему validation: ошибки формы блокируют запуск до simulation. v0.9.6 добавляет `planet_closure`: декларативную per-process карту критериев Planet v1 P2–P6 с dependency paths, exceptions/debt counters и режимами `report/classify/planet_v1/planet_strict`.
 
@@ -938,3 +938,8 @@ Generated validation добавляет plugin `labor_market`, информац�
 ## Задание 036 — финансовый промежуточный слой
 
 Тип wage_pricing включается через Wage Pricing Enabled (по умолчанию 0). Fixture: 18 элементов / 10 замен / 42 связи; fingerprint против v7.7.14 — 041bb60c716b2a66. Модель, validation и policy принятой основы прежние. Применение узла к модели — отдельное задание 037. Декларация/формулы: NODES_RU.md; mapping/plugins: VALIDATION_FORMAT_RU.md; проверки: HARNESS_QA_RU.md и REPORT_RU.md задания 036.
+
+
+## Lab 0.9.20 — узел cost_pricing
+
+Добавлен declarative `cost_pricing` для полных затратных цен с трудом, амортизацией, сырьём, энергией и рентой, единой наценкой, сглаженными региональными сигналами и калибровкой опорных цен. Образец декларации находится в `fixtures/nodes/cost_pricing.json`, спецификация — в `docs/NODES_RU.md`. Switch `Cost Pricing Enabled` по умолчанию равен 0; включение предназначено для модели следующей задачи, а не изменения принятой v7.7.15.
