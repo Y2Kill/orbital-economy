@@ -641,6 +641,98 @@ export function runWagePricingConformance(raw, validation, index = indexModel(ra
   return {status:n?'FAIL':'PASS',instances,summary:{instances:instances.length,conforming:instances.length-n,nonConforming:n}};
 }
 
+export function validateCostPricingSpec(plugin) {
+  const errors = [];
+  const required = (obj, fields, path) => {
+    if (!obj || typeof obj !== 'object' || Array.isArray(obj)) {
+      errors.push(path + ': must be an object');
+      return false;
+    }
+    for (const field of fields) {
+      if (typeof obj[field] !== 'string' || !obj[field].trim()) {
+        errors.push(path + '.' + field + ': non-empty string required');
+      }
+    }
+    return true;
+  };
+  if (!required(plugin, ['switch', 'markup'], 'cost_pricing')) return errors;
+  const tol = plugin.rel_tol ?? 1e-9;
+  if (typeof tol !== 'number' || !Number.isFinite(tol) || tol <= 0) {
+    errors.push('cost_pricing.rel_tol: must be finite and > 0');
+  }
+  if (!Array.isArray(plugin.instances) || !plugin.instances.length) {
+    errors.push('cost_pricing.instances: non-empty array required');
+    return errors;
+  }
+  const names = new Set();
+  for (const [i, inst] of plugin.instances.entries()) {
+    const p = 'cost_pricing.instances[' + i + ']';
+    if (!required(inst, ['name', 'colony', 'wage'], p)) continue;
+    if (names.has(inst.name)) errors.push(p + '.name: duplicate ' + inst.name);
+    names.add(inst.name);
+    for (const [key, fields] of Object.entries({
+      signals: ['signal', 'source'],
+      prices: ['target', 'full_cost'],
+      cost_prices: ['target', 'full_cost']
+    })) {
+      if (!Array.isArray(inst[key])) {
+        errors.push(p + '.' + key + ': array required');
+        continue;
+      }
+      for (const [j, item] of inst[key].entries()) {
+        required(item, fields, p + '.' + key + '[' + j + ']');
+      }
+    }
+  }
+  return errors;
+}
+
+export function runCostPricingConformance(raw, validation, index = indexModel(raw)) {
+  const plugin = validation?.plugins?.find(p => p?.type === 'cost_pricing');
+  const empty = { instances: 0, conforming: 0, nonConforming: 0 };
+  if (!plugin) return { status: 'SKIPPED', instances: [], summary: empty };
+  const specErrors = validateCostPricingSpec(plugin);
+  if (specErrors.length) return { status: 'FAIL', specErrors, instances: [], summary: empty };
+  const instances = plugin.instances.map(inst => {
+    const checks = [];
+    const exists = name => {
+      const el = index.get(name);
+      checks.push(el ? pass('column ' + name) : fail('column ' + name, 'primitive not found: ' + name));
+      return el;
+    };
+    for (const name of new Set([
+      plugin.switch, inst.wage,
+      ...inst.signals.flatMap(s => [s.signal, s.source]),
+      ...inst.prices.flatMap(p => [p.target, p.full_cost]),
+      ...inst.cost_prices.flatMap(p => [p.target, p.full_cost])
+    ])) exists(name);
+    const markup = exists(plugin.markup);
+    if (markup) {
+      const value = markup.behavior?.value;
+      const numerical = typeof value === 'number' ||
+        (typeof value === 'string' && /^-?(?:\\d+(?:\\.\\d*)?|\\.\\d+)(?:e[+-]?\\d+)?$/i.test(value.trim()));
+      checks.push(markup.type === 'VARIABLE' && numerical && Number.isFinite(Number(value)) && Number(value) > 0
+        ? pass('constant ' + plugin.markup)
+        : fail('constant ' + plugin.markup, plugin.markup + ': expected positive numeric VARIABLE constant'));
+    }
+    const failures = checks.filter(c => c.status === 'FAIL');
+    return {
+      name: inst.name,
+      sector: inst.colony,
+      classification: failures.length ? 'NON_CONFORMING' : 'CONFORMING',
+      checks,
+      variations: [],
+      failures: failures.map(c => c.name + ': ' + c.message)
+    };
+  });
+  const count = instances.filter(i => i.classification === 'NON_CONFORMING').length;
+  return {
+    status: count ? 'FAIL' : 'PASS',
+    instances,
+    summary: { instances: instances.length, conforming: instances.length - count, nonConforming: count }
+  };
+}
+
 // Entry point: raw ModelJSON + validation JSON -> conformance report object.
 export function runLifecycleConformance(raw, validation) {
   const plugin = findKernelPlugin(validation);
@@ -658,10 +750,11 @@ export function runLifecycleConformance(raw, validation) {
   const food = runFoodConformance(raw, validation, index);
   const laborMarket = runLaborMarketConformance(raw, validation, index);
   const wagePricing = runWagePricingConformance(raw, validation, index);
+  const costPricing = runCostPricingConformance(raw, validation, index);
   const anyNonConforming = instances.some(i => i.classification === 'NON_CONFORMING');
   const modelWideFail = modelWide.some(c => c.status === 'FAIL');
   return {
-    status: anyNonConforming || modelWideFail || simpleCapital.status === 'FAIL' || deposit.status === 'FAIL' || labor.status === 'FAIL' || population.status === 'FAIL' || food.status === 'FAIL' || laborMarket.status === 'FAIL' || wagePricing.status === 'FAIL' ? 'FAIL' : 'PASS',
+    status: anyNonConforming || modelWideFail || simpleCapital.status === 'FAIL' || deposit.status === 'FAIL' || labor.status === 'FAIL' || population.status === 'FAIL' || food.status === 'FAIL' || laborMarket.status === 'FAIL' || wagePricing.status === 'FAIL' || costPricing.status === 'FAIL' ? 'FAIL' : 'PASS',
     format: KERNEL_FORMAT,
     kernel: { roles: Object.keys(KERNEL_ROLES).length, requiredRoles: REQUIRED_ROLES.length, flows: KERNEL_FLOWS.length, stocks: KERNEL_STOCKS.length },
     legacySwitch: plugin.legacy_switch || 'Capital Lifecycle Enabled',
