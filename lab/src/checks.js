@@ -245,6 +245,51 @@ const STATIC_ONLY_PLUGINS = new Set(['open_boundaries', 'colony_symmetry', 'plan
 export function checkPlugin(plugin, ctx) {
   const results = [];
   if (STATIC_ONLY_PLUGINS.has(plugin.type)) return results;
+  if (plugin.type === 'cost_pricing') {
+    const tol = plugin.rel_tol ?? 1e-9;
+    const safe = (name, fn) => {
+      try { return fn(); }
+      catch (error) { return fail(name, error.message || String(error)); }
+    };
+    const nonnegative = (label, column, strictlyPositive) => safe(`${label}: ${column}`, () => {
+      const values = ctx.get(column);
+      const bad = values.findIndex(v => !Number.isFinite(v) || (strictlyPositive ? v <= 0 : v < 0));
+      return bad < 0
+        ? pass(`${label}: ${column}`, { points: values.length })
+        : fail(`${label}: ${column}`, `${column} = ${values[bad]} at day ${ctx.times[bad]}`);
+    });
+    const markup = ctx.get(plugin.markup);
+    for (const inst of plugin.instances || []) {
+      const label = inst.name || inst.colony || 'cost_pricing';
+      for (const sig of inst.signals || []) {
+        results.push(nonnegative(label, sig.signal, false));
+      }
+      for (const item of inst.prices || []) {
+        results.push(nonnegative(label, item.full_cost, true));
+        results.push(nonnegative(label, item.target, true));
+      }
+      for (const item of inst.cost_prices || []) {
+        results.push(nonnegative(label, item.full_cost, true));
+        results.push(safe(`${label}: cost price ${item.target}`, () => {
+          const actual = ctx.get(item.target), full = ctx.get(item.full_cost);
+          let worst = 0, at = null;
+          for (let i = 0; i < ctx.times.length; i++) {
+            const expected = full[i] * (1 + markup[i]);
+            const err = Math.abs(actual[i] - expected) / Math.max(1, Math.abs(expected));
+            if (!Number.isFinite(err) || err > worst) {
+              worst = err;
+              at = ctx.times[i];
+            }
+          }
+          return worst <= tol
+            ? pass(`${label}: cost price ${item.target}`, { worstRelativeError: worst })
+            : fail(`${label}: cost price ${item.target}`, `relative error ${worst} > ${tol} at day ${at}`);
+        }));
+      }
+    }
+    return results;
+  }
+
   if (plugin.type === 'wage_pricing') {
     const specErrors = validateWagePricingSpec(plugin);
     if (specErrors.length) return specErrors.map(e => fail('wage_pricing spec', e));
