@@ -422,6 +422,14 @@ fc658434ec4928bac74b31e71026393ed3b4d8e8493309f35e1ec2eca58aa814  ./docs/tasks/0
 acbec86cbb28343cf6c71820df4c3a8fa43c24c16c6ac1ff16baad2d8778c89b  ./docs/tasks/036-wage-pricing-node/reference/definition_fingerprint.mjs
 80bf252cb60e0ce7db2a2e4a925749d118a06a33b8e078a7eb5b0da1366075fd  ./docs/tasks/036-wage-pricing-node/reference/wage_pricing_node_prototype.mjs
 01d12ddd806566ca70462ee03e231c47558ff98bab8f089cb7289a3e1d3c8b3a  ./docs/tasks/036-wage-pricing-node/scope.json
+4b54d97ef8fe29ee6274752c440f2516a41cf8a8d6def021ecc56ba9f4ab4780  ./docs/tasks/037-wage-pricing/TASK_RU.md
+4e49f3c85bb3dbe96ad7b74e91260ae16000b8a73cd02200f02e121e86228038  ./docs/tasks/037-wage-pricing/V7_7_15_ARCHITECTURE_SPEC.md
+f84b487a4e4be3dd09b38e8cb76d9487ad338075e000f743386096402cd36ee3  ./docs/tasks/037-wage-pricing/V7_7_15_TEST_PLAN.md
+eb86b557f8936f00f9d9f84b6cc0caf914f3ce5a18b348784d6839914af7e943  ./docs/tasks/037-wage-pricing/draft/change-policy-v7.7.15-draft.json
+74cb72df421748ecd248996537c58878ed8a516bca772ae31bb40863c4e51533  ./docs/tasks/037-wage-pricing/draft/skeleton-patch.json
+6c0c1ebc10fb5a709706d03f681eb4e61d753dbc69080ad004856a64cbe5f826  ./docs/tasks/037-wage-pricing/draft/validation-v7.7.15-draft.json
+fc658434ec4928bac74b31e71026393ed3b4d8e8493309f35e1ec2eca58aa814  ./docs/tasks/037-wage-pricing/draft/wage_pricing.json
+a5b4baee2af47ed867f78ad933ee79afc9469b3c369e8d612d4e367c0290594a  ./docs/tasks/037-wage-pricing/scope.json
 44d2e557f1cb2322739bc95ee2b6dcbf6d6fcb708da14e90d53250936e50da5c  ./docs/tasks/README_RU.md
 bbf818e93b88d606b3137b1bb69d60db8c41c9df4089025a921b1ca00f473244  ./lab/APPLY_PATCH.cmd
 660b04238d92e88caf5bf094dc7389589dc27a4c0199a5fce3a295eab7ec59c8  ./lab/CHANGELOG.md

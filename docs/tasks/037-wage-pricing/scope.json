@@ -1,0 +1,17 @@
+{
+  "task": "037",
+  "title": "v7.7.15 Wage Pricing: ore, energy and food prices follow the regional wage proportionally, final metal and electronics demand responds to its price, via the wage_pricing node under switch Wage Pricing Enabled (Modes 0-53 unchanged); surge wiring for Mode 55; Modes 54 (wage pricing), 55 (transport surge with wage pricing) (finance layer, intermediate step)",
+  "branch": "task/037-wage-pricing",
+  "allow": [],
+  "allow_binary": [],
+  "allow_protected": [
+    "docs/tasks/037-wage-pricing/candidate/**"
+  ],
+  "required_changes": [
+    "docs/tasks/037-wage-pricing/candidate/model-patch.json",
+    "docs/tasks/037-wage-pricing/candidate/validation.json",
+    "docs/tasks/037-wage-pricing/candidate/change-policy.json",
+    "docs/tasks/037-wage-pricing/candidate/PARAMETER_ANNOTATIONS_fragment.json"
+  ],
+  "sums_by": "reviewer"
+}
