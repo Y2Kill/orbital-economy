@@ -100,11 +100,22 @@ const populationDeclarations = allNodeDeclarations.filter(x => x.decl?.type === 
 const foodDeclarations = allNodeDeclarations.filter(x => x.decl?.type === 'food');
 const laborMarketDeclarations = allNodeDeclarations.filter(x => x.decl?.type === 'labor_market');
 const wagePricingFixture = readJson(path.join(root, 'fixtures', 'nodes', 'wage_pricing.json'));
+const costPricingFixture = readJson(path.join(root, 'fixtures', 'nodes', 'cost_pricing.json'));
 const wagePricingDeclarations = allNodeDeclarations.filter(x => x.decl?.type === 'wage_pricing');
 // A synthetic accepted+node probe uses the fixture before task 037 installs a model declaration.
 if (!wagePricingDeclarations.length && suppliedAccepted.elements.some(e=>e.type!=='LINK'&&e.name===wagePricingFixture.switch)) wagePricingDeclarations.push({decl:wagePricingFixture});
-const accepted = wagePricingDeclarations.reduce((m,{decl})=>stripWagePricingNode(m,decl), suppliedAccepted);
-const acceptedValidation = wagePricingDeclarations.reduce((v,{decl})=>validationWithoutWagePricingFragment(v,decl), suppliedValidation);
+const costPricingDeclarations = allNodeDeclarations.filter(x => x.decl?.type === 'cost_pricing');
+if (!costPricingDeclarations.length &&
+    suppliedAccepted.elements.some(e => e.type !== 'LINK' && e.name === costPricingFixture.switch)) {
+  costPricingDeclarations.push({ decl: costPricingFixture });
+}
+const withoutCost = costPricingDeclarations.reduce((m, {decl}) => stripCostPricingNode(m, decl), suppliedAccepted);
+const costFragments = costPricingDeclarations.map(({decl}) =>
+  expandNode(decl, stripCostPricingNode(suppliedAccepted, decl)).validation);
+const withoutCostValidation = costFragments.reduce(
+  (v, fragment) => validationWithoutCostPricingFragment(v, fragment), suppliedValidation);
+const accepted = wagePricingDeclarations.reduce((m,{decl})=>stripWagePricingNode(m,decl), withoutCost);
+const acceptedValidation = wagePricingDeclarations.reduce((v,{decl})=>validationWithoutWagePricingFragment(v,decl), withoutCostValidation);
 let validation = acceptedValidation;
 
 const caseOption = process.argv.find(a=>a.startsWith('--cases='))?.slice(8);
@@ -513,7 +524,8 @@ function buildLayers(start, nodes = layeredNodes) {
     // wage_pricing wraps labor_market/food policy; peel it first, then labor_market.
     const lm = remaining.findIndex(n => n.decl.type === 'labor_market' && peelable(n));
     const wp = remaining.findIndex(n => n.decl.type === 'wage_pricing' && peelable(n));
-    const i = wp >= 0 ? wp : lm >= 0 ? lm : remaining.findIndex(peelable);
+    const cp = remaining.findIndex(n => n.decl.type === 'cost_pricing' && peelable(n));
+    const i = cp >= 0 ? cp : wp >= 0 ? wp : lm >= 0 ? lm : remaining.findIndex(peelable);
     if (i < 0) throw new Error(`cannot determine node layering: none of ${remaining.map(n => n.decl.sector || n.decl.switch || n.decl.type).join(', ')} is outermost on all its replacement targets`);
     const [n] = remaining.splice(i, 1);
     const base = n.strip(current, n.decl);
@@ -523,7 +535,9 @@ function buildLayers(start, nodes = layeredNodes) {
   }
   return { layers: result, order, bottom: current };
 }
-const acceptedLayeredNodes = [...layeredNodes,...wagePricingDeclarations.map(({decl})=>({decl,strip:stripWagePricingNode,targets:wagePricingReplacementNames,generated:wagePricingGeneratedNames}))];
+const acceptedLayeredNodes = [...layeredNodes,
+  ...wagePricingDeclarations.map(({decl})=>({decl,strip:stripWagePricingNode,targets:wagePricingReplacementNames,generated:wagePricingGeneratedNames})),
+  ...costPricingDeclarations.map(({decl})=>({decl,strip:stripCostPricingNode,targets:costPricingReplacementNames,generated:costPricingGeneratedNames}))];
 const { layers } = buildLayers(suppliedAccepted, acceptedLayeredNodes);
 const states = declarations.map(decl => layers.get(decl));
 // The switchless nodes (labor, population) are the newest layers and wrap nothing, so the switched-node order above
@@ -2113,7 +2127,6 @@ await expect('66. wage_pricing peels first and all cases 1-59 pass on synthetic 
 
 
 let costPricingState = null;
-const costPricingFixture = readJson(path.join(root, 'fixtures', 'nodes', 'cost_pricing.json'));
 
 await expect('67. cost_pricing fixture matches reference patch counts and fingerprint', () => {
   const base = accepted;
