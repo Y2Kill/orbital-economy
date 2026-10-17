@@ -445,6 +445,14 @@ e5bd25f4b55fb82d1ee6e135f782d0c99daa0d6fa1f469c6001510352e860e0d  ./docs/tasks/0
 6caf27b7f1942f25f7e0f7f86c20edda1e61bd190f48e01946baa6b784c9ed17  ./docs/tasks/038-cost-pricing-node/reference/cost_pricing_node_prototype.mjs
 acbec86cbb28343cf6c71820df4c3a8fa43c24c16c6ac1ff16baad2d8778c89b  ./docs/tasks/038-cost-pricing-node/reference/definition_fingerprint.mjs
 0c62bf6acc3d033970c5b920f6760798efed7ebc7c15ca55721cffe151b2b639  ./docs/tasks/038-cost-pricing-node/scope.json
+9c74bf51fef588c81868c5e53c6802b26a041aac9bf82354a473d28db8b62c14  ./docs/tasks/039-cost-pricing/TASK_RU.md
+469d92af8e535457015fab6b50928163cc41d89c0a9c0ac992d3be4703beb500  ./docs/tasks/039-cost-pricing/V7_7_16_ARCHITECTURE_SPEC.md
+47432fdc7a934f47316431afad7566fb6195c1dc2882688322e826bfd5b51bdf  ./docs/tasks/039-cost-pricing/V7_7_16_TEST_PLAN.md
+62c01c83fb3ccf5f8f403ce2575d3003062d7dd850c0935ec57a76c14ed66cfd  ./docs/tasks/039-cost-pricing/draft/change-policy-v7.7.16-draft.json
+7f780d61d2c94aea990d0989d8a85f919795da573f5b2b47e36efe9731e8dd68  ./docs/tasks/039-cost-pricing/draft/cost_pricing.json
+717485cf58db77b02263cd91858839b4f8ddabf2b085bf3229ae7170c877dfe2  ./docs/tasks/039-cost-pricing/draft/skeleton-patch.json
+b05285abdef696def671b951e05047a7c273c7f2b712dbf8a05c076ff3872890  ./docs/tasks/039-cost-pricing/draft/validation-v7.7.16-draft.json
+959a3516f89102aa87f5e625af740ed12159f7463105224ed1aef9df975d3c85  ./docs/tasks/039-cost-pricing/scope.json
 44d2e557f1cb2322739bc95ee2b6dcbf6d6fcb708da14e90d53250936e50da5c  ./docs/tasks/README_RU.md
 bbf818e93b88d606b3137b1bb69d60db8c41c9df4089025a921b1ca00f473244  ./lab/APPLY_PATCH.cmd
 bd0f2c3436852fba37e516f5ca8c87b91eb634083d7cbe19ccd216cfd0f6730e  ./lab/CHANGELOG.md
@@ -472,7 +480,7 @@ e3bd55139e386562446e06bfbcd52333a51350b5170866e10a59b05d8b0e63d9  ./lab/LICENSE-
 52bcfc0749480fa5467e713f3a6948258dccb560357eef5822f8bcee070c652c  ./lab/RUN_LAB.cmd
 324ccedcd35621f7716bc905acc67d09076f040075e68d8e1c5e657a32f48499  ./lab/RUN_TESTS.cmd
 b08fd6ad35bba528bf455553dfd5d9f7c68b81658f2cbf6cf2a3989afb647629  ./lab/SELF_TEST.cmd
-836bb1b41e33e4dcf028604aed77e083207ee306318a9b6e8a60920d4f46b25f  ./lab/SHA256SUMS.txt
+12d63f704162e718785f910f29204d9a7aeee08c752bf989d0e551f3a2ff2ecf  ./lab/SHA256SUMS.txt
 75120cad55eab07655f699135bd7997c2a18db496be28dbd8741ddecedd4bdda  ./lab/STRUCTURE_AUDIT.cmd
 7396a4da60a41cc41a67c7bb8baa619b0ad5be9e745c0c08f17c1a26a56a18e5  ./lab/STRUCTURE_SELF_TEST.cmd
 58cb8e2bf5a04de53a4c568c22bd8f840585e27dec55b701520b28472e6652b8  ./lab/docs/ARCHITECTURE_RU.md
@@ -523,7 +531,7 @@ e980c535ef0ade1768c9f4cdbf1058e219ad3e0eb21cc8fc9c4221a12f33c720  ./lab/src/depo
 1ffae379e11c3962d782cb10ea3bdd637ac4f0541d80e484d1501798d6184a26  ./lab/src/loop_audit.js
 d50e351606b701badfeba199e4adef824e30b1c6e14e1d27593c1a5347399d8e  ./lab/src/loop_qa.js
 6c8dbd8fc2705b12c0130e2226276328c9f84d2d6aa6c22a845e7ad53c1fadf8  ./lab/src/model.js
-09a16d338e3160442df4532674e6a42553640aa369e0db8851a20f18b3117621  ./lab/src/node_qa.js
+f16cc4a85546d5dc5ef97b16b902d1c13aa27a30f853c3b086366afdae55c665  ./lab/src/node_qa.js
 334743997c6b2bd14177298d69dabd1472b17ed1f8ec29e352ac856373b30f05  ./lab/src/nodes/capital_lifecycle.js
 25a91735697512cf713f4d3d06704b48a9e008110ce38e5520dc77401314a1d7  ./lab/src/nodes/cost_pricing.js
 db5abb1bd96c438a0ca066cc300df8b8f691d083e6770814cd86a86cd1809b74  ./lab/src/nodes/deposit.js

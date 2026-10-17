@@ -101,12 +101,14 @@ const foodDeclarations = allNodeDeclarations.filter(x => x.decl?.type === 'food'
 const laborMarketDeclarations = allNodeDeclarations.filter(x => x.decl?.type === 'labor_market');
 const wagePricingFixture = readJson(path.join(root, 'fixtures', 'nodes', 'wage_pricing.json'));
 const costPricingFixture = readJson(path.join(root, 'fixtures', 'nodes', 'cost_pricing.json'));
-const wagePricingDeclarations = allNodeDeclarations.filter(x => x.decl?.type === 'wage_pricing');
+// A switched top layer is peeled only when the supplied model carries its switch: a nested run on a lower
+// layer (case 66 inside an accepted model that already has cost_pricing) must not peel a node it does not have.
+const carriesSwitch = sw => suppliedAccepted.elements.some(e => e.type !== 'LINK' && e.name === sw);
+const wagePricingDeclarations = allNodeDeclarations.filter(x => x.decl?.type === 'wage_pricing' && carriesSwitch(x.decl.switch));
 // A synthetic accepted+node probe uses the fixture before task 037 installs a model declaration.
-if (!wagePricingDeclarations.length && suppliedAccepted.elements.some(e=>e.type!=='LINK'&&e.name===wagePricingFixture.switch)) wagePricingDeclarations.push({decl:wagePricingFixture});
-const costPricingDeclarations = allNodeDeclarations.filter(x => x.decl?.type === 'cost_pricing');
-if (!costPricingDeclarations.length &&
-    suppliedAccepted.elements.some(e => e.type !== 'LINK' && e.name === costPricingFixture.switch)) {
+if (!wagePricingDeclarations.length && carriesSwitch(wagePricingFixture.switch)) wagePricingDeclarations.push({decl:wagePricingFixture});
+const costPricingDeclarations = allNodeDeclarations.filter(x => x.decl?.type === 'cost_pricing' && carriesSwitch(x.decl.switch));
+if (!costPricingDeclarations.length && carriesSwitch(costPricingFixture.switch)) {
   costPricingDeclarations.push({ decl: costPricingFixture });
 }
 const withoutCost = costPricingDeclarations.reduce((m, {decl}) => stripCostPricingNode(m, decl), suppliedAccepted);
