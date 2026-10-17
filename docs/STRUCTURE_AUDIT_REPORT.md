@@ -1,15 +1,15 @@
 # Orbital Economy Lab — structure audit
 
-- generated: 2026-10-16T13:58:42.459Z
-- model: Orbital Economy v7.7.15 r1 — Wage Pricing
-- model SHA-256: `a5a233129b013f838cac863e4f9b8aad9da8e90bacfe48763fcedefad929b975`
-- validation: Orbital Economy v7.7.15 validation r1
-- validation SHA-256: `1b04e5a629a32fa44af0464cb9fd9b3b6cc9680358adbd04354cf7b2ed8cab92`
+- generated: 2026-10-17T09:33:55.757Z
+- model: Orbital Economy v7.7.16 r1 — Cost Pricing
+- model SHA-256: `e512efbb45f54dd08785d960626e8eb5baf4b8fc811efc6d9692265d71a1dd3e`
+- validation: Orbital Economy v7.7.16 validation r1
+- validation SHA-256: `dd124ce56d165d4926f2eb91d50388806a7859082862ecab91a7faa4244202f6`
 - status: **PASS**
 
 ## Open boundaries (declared physical-boundary meter)
 
-- flows total: 323; crossing the model boundary: 262; classified: 262; unclassified: 0
+- flows total: 351; crossing the model boundary: 290; classified: 290; unclassified: 0
 - closed-world violations: **0** (mode: `classify`) — zero means the currently declared closed-world boundary contract is satisfied; it is not a Planet v1 completeness claim
 - declared transformation pairs: 27; transformation flows without a pair: 0
 
@@ -21,7 +21,7 @@
 | final_consumption | yes | 6 | final goods leave the economy as consumption |
 | power_resource_consumption | yes | 2 | v7.6 physical operating resource is consumed in exact proportion to actual delivered generation. |
 | unit_transformation | yes | 8 | input stock -> output stock conversion modelled as a sink/source pair (different units); every flow here must belong to a declared transformation pair whose numeric identity is checked at runtime |
-| information_signal | yes | 102 | smoothing / information stocks, not matter |
+| information_signal | yes | 130 | smoothing / information stocks, not matter |
 | financial_accounting | yes | 16 | money bookkeeping, not matter |
 | capital_state_accounting | yes | 33 | Active is an operational-state sub-account of Installed; these flows change state, not physical capital |
 | capital_transformation | yes | 57 | v7.5/v7.5.1: installed capital expansion is a unit transformation of Capital Goods; regional sectors use one local sink, shared Transport uses two A/B regional sinks whose total identity is checked at runtime. v7.7: colonial sector expansion is additionally backed by a local Construction Materials sink. v7.7.1: shared Transport expansion is additionally backed by construction materials from both A and B inventories (two legs). v7.7.3: construction-materials plant expansion is backed by local capital goods and construction materials. v7.7.4: capital-goods plant expansion is backed by local capital goods and construction materials. |
@@ -105,7 +105,7 @@ Declared unit-transformation pairs (source flow physically backed by sink flows;
 - B Electronics Feedstock Consumption
 - B Electronics Production
 
-**information_signal** (102)
+**information_signal** (130)
 
 - A Electronics Capacity Planning Signal Increase
 - A Electronics Capacity Planning Signal Decrease
@@ -209,6 +209,34 @@ Declared unit-transformation pairs (source flow physically backed by sink flows;
 - B Labor Demand Signal Decrease
 - B Wage Increase
 - B Wage Decrease
+- A Energy Cost Price Signal Increase
+- A Energy Cost Price Signal Decrease
+- A Power Resource Cost Price Signal Increase
+- A Power Resource Cost Price Signal Decrease
+- A Metal Cost Price Signal Increase
+- A Metal Cost Price Signal Decrease
+- A Electronics Cost Price Signal Increase
+- A Electronics Cost Price Signal Decrease
+- A Capital Goods Cost Price Signal Increase
+- A Capital Goods Cost Price Signal Decrease
+- A Construction Materials Cost Price Signal Increase
+- A Construction Materials Cost Price Signal Decrease
+- A Regolith Cost Price Signal Increase
+- A Regolith Cost Price Signal Decrease
+- B Energy Cost Price Signal Increase
+- B Energy Cost Price Signal Decrease
+- B Power Resource Cost Price Signal Increase
+- B Power Resource Cost Price Signal Decrease
+- B Metal Cost Price Signal Increase
+- B Metal Cost Price Signal Decrease
+- B Electronics Cost Price Signal Increase
+- B Electronics Cost Price Signal Decrease
+- B Capital Goods Cost Price Signal Increase
+- B Capital Goods Cost Price Signal Decrease
+- B Construction Materials Cost Price Signal Increase
+- B Construction Materials Cost Price Signal Decrease
+- B Regolith Cost Price Signal Increase
+- B Regolith Cost Price Signal Decrease
 
 **financial_accounting** (16)
 
@@ -390,8 +418,8 @@ Declared unit-transformation pairs (source flow physically backed by sink flows;
 ## Colony symmetry
 
 - tokens: A ↔ B
-- mirrored pairs checked: 1430; mirrored links checked: 3506
-- structural mismatches: **0**; numeric parameter differences (allowed): 166; elements under exceptions: 0
+- mirrored pairs checked: 1508; mirrored links checked: 3862
+- structural mismatches: **0**; numeric parameter differences (allowed): 186; elements under exceptions: 0
 
 <details><summary>Numeric parameter differences between colonies (allowed)</summary>
 
@@ -480,6 +508,16 @@ Declared unit-transformation pairs (source flow physically backed by sink flows;
 | value | A Energy Labor Share | 0.83 | B Energy Labor Share | 1 |
 | value | A Metal Demand Reference Price | 25.9 | B Metal Demand Reference Price | 34.46 |
 | value | A Electronics Demand Reference Price | 23.1 | B Electronics Demand Reference Price | 21.91 |
+| initial_value | A Energy Cost Price Signal | 0.5731 | B Energy Cost Price Signal | 0.6787 |
+| initial_value | A Power Resource Cost Price Signal | 0.31 | B Power Resource Cost Price Signal | 0.4085 |
+| initial_value | A Metal Cost Price Signal | 49.95 | B Metal Cost Price Signal | 80.99 |
+| initial_value | A Electronics Cost Price Signal | 28.32 | B Electronics Cost Price Signal | 41.12 |
+| initial_value | A Capital Goods Cost Price Signal | 336.9 | B Capital Goods Cost Price Signal | 478.2 |
+| initial_value | A Construction Materials Cost Price Signal | 109.6 | B Construction Materials Cost Price Signal | 148.8 |
+| initial_value | A Regolith Cost Price Signal | 29.69 | B Regolith Cost Price Signal | 40.15 |
+| value | A Reference Metal Price Cost Scale | 2.254 | B Reference Metal Price Cost Scale | 2.028 |
+| value | A Electronics Reference Price Cost Scale | 1.972 | B Electronics Reference Price Cost Scale | 2.027 |
+| value | A Food Index Cost Scale | 1.754 | B Food Index Cost Scale | 2.475 |
 
 </details>
 
@@ -661,6 +699,6 @@ Declared unit-transformation pairs (source flow physically backed by sink flows;
 ## Algebraic loops (switch-aware, unconditional static audit)
 
 - status: **PASS**
-- switches: 18 — Capital Lifecycle Enabled, Intermediate Inputs Enabled, Capital Goods Enabled, Transport Capital Goods Enabled, Power Resource Enabled, Construction Materials Enabled, Transport Construction Materials Enabled, Construction Materials Energy Enabled, Construction Materials Capital Enabled, Capital Goods Capital Enabled, Regolith Capital Enabled, Ore Capital Enabled, Power Resource Capital Enabled, Deposits Enabled, Process Energy Enabled, Food Enabled, Labor Market Enabled, Wage Pricing Enabled
-- combinations: 262144; with loops: **0**
+- switches: 19 — Capital Lifecycle Enabled, Intermediate Inputs Enabled, Capital Goods Enabled, Transport Capital Goods Enabled, Power Resource Enabled, Construction Materials Enabled, Transport Construction Materials Enabled, Construction Materials Energy Enabled, Construction Materials Capital Enabled, Capital Goods Capital Enabled, Regolith Capital Enabled, Ore Capital Enabled, Power Resource Capital Enabled, Deposits Enabled, Process Energy Enabled, Food Enabled, Labor Market Enabled, Wage Pricing Enabled, Cost Pricing Enabled
+- combinations: 524288; with loops: **0**
 - Modes with loops: none

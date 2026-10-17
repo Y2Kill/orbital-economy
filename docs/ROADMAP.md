@@ -1,10 +1,16 @@
 # Roadmap
 
 **Document status:** CURRENT  
-**Base:** Orbital Economy v7.7.15 r1 — Wage Pricing (accepted 2026-10-16)  
+**Base:** Orbital Economy v7.7.16 r1 — Cost Pricing (accepted 2026-10-17)  
 **Rule:** roadmap describes intent; executable accepted code remains authoritative for accepted behavior.
 
-## Current implementation — v7.7.15 Wage Pricing — finance layer, intermediate step (tasks 036 bench, 037 model)
+## Current implementation — v7.7.16 Cost Pricing — full money accounting, step 1 (tasks 038 bench, 039 model)
+
+Owner decisions 2026-10-16 (`docs/research/COST_PRICES_PROTOTYPE_2026-10-16_RU.md`): prices rise to full unit cost while wages stay, the old base prices stay as a rent on top, one 15 % markup for every good. The analysis showed the old prices of power resource, energy, ore and food below their labor content (power resource ×6.6, energy ×3.7); at cost prices the price level is about ×2.2 and the consumer basket of A costs more than its wage bill — the rest is rent and profits, the income that closes the money circuit. Done: tasks 038 (Lab v0.9.20, three rounds) and 039 (v7.7.16 r1). Over 80 years the real wage of A holds, B smelts 7.1 instead of 2.3.
+
+Next: money stocks — household and firm money with every payment two-sided, household income = wages + distributed profits + rent, a regional balance of payments; then move the whole model to cost prices (a recalibration of every Mode).
+
+## v7.7.15 Wage Pricing — finance layer, intermediate step (tasks 036 bench, 037 model)
 
 Owner decisions 2026-10-12 (`docs/research/FINANCE_PROTOTYPE_2026-10-12_RU.md`): household budgets on the present prices collapse the economy over 20 years — the money circuit is not closed (A pays wages of 1456 a day, households buy goods and food for 915; firms hold no money, prices are not cost-based). Option 3: real income and wage pass-through now, full money accounting on top later. The step: ore, energy and food prices follow the regional wage proportionally (declared labor shares), metal and electronics demand responds to its price (η = 0.5); income demand is not introduced. Over 80 years B's cheaper food keeps its real income, B smelts 7.8 instead of 1.7, real incomes converge. Done: tasks 036 (Lab v0.9.19) and 037 (v7.7.15 r1, round 1; model equals the skeleton).
 

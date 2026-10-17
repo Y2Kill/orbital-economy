@@ -1,8 +1,8 @@
 CURRENT ACCEPTED BASELINE
 
-Orbital Economy v7.7.15 r1 — Wage Pricing
-Model SHA-256: a5a233129b013f838cac863e4f9b8aad9da8e90bacfe48763fcedefad929b975
-Validation SHA-256: 1b04e5a629a32fa44af0464cb9fd9b3b6cc9680358adbd04354cf7b2ed8cab92
+Orbital Economy v7.7.16 r1 — Cost Pricing
+Model SHA-256: e512efbb45f54dd08785d960626e8eb5baf4b8fc811efc6d9692265d71a1dd3e
+Validation SHA-256: dd124ce56d165d4926f2eb91d50388806a7859082862ecab91a7faa4244202f6
 
 This directory is the accepted reference used by comparison/policy tools.
 

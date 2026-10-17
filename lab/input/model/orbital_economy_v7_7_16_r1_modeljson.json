@@ -1,6 +1,6 @@
 {
   "engine": "SIMULATION_PACKAGE",
-  "name": "Orbital Economy v7.7.15 r1 — Wage Pricing",
+  "name": "Orbital Economy v7.7.16 r1 — Cost Pricing",
   "description": "Task 030 / Planet v2 step 1: add the declarative population node for A and B. Population, demography, migration and labor are accounting-only; no existing formula or scenario is changed and no new Mode is added.",
   "simulation": {
     "algorithm": "RK1",
@@ -151,7 +151,7 @@
       "type": "VARIABLE",
       "name": "A Energy Price",
       "behavior": {
-        "value": "IfThenElse([Wage Pricing Enabled] = 1, ([A Effective Power Generation Cost] * (1 + [Energy Scarcity Price Strength] * [A Perceived Energy Scarcity Ratio])) * Max(1 + [A Energy Labor Share] * [A Relative Wage Change], 0.000001), [A Effective Power Generation Cost] * (1 + [Energy Scarcity Price Strength] * [A Perceived Energy Scarcity Ratio]))"
+        "value": "IfThenElse([Cost Pricing Enabled] = 1, [A Energy Full Cost] * (1 + [Universal Markup]) * (1 + [Energy Scarcity Price Strength] * [A Perceived Energy Scarcity Ratio]), IfThenElse([Wage Pricing Enabled] = 1, ([A Effective Power Generation Cost] * (1 + [Energy Scarcity Price Strength] * [A Perceived Energy Scarcity Ratio])) * Max(1 + [A Energy Labor Share] * [A Relative Wage Change], 0.000001), [A Effective Power Generation Cost] * (1 + [Energy Scarcity Price Strength] * [A Perceived Energy Scarcity Ratio])))"
       },
       "display": {
         "coordinates": [
@@ -210,7 +210,7 @@
       "type": "VARIABLE",
       "name": "A Reference Metal Price",
       "behavior": {
-        "value": 40
+        "value": "IfThenElse([Cost Pricing Enabled] = 1, [A Initial Reference Metal Price] * [A Reference Metal Price Cost Scale], [A Initial Reference Metal Price])"
       },
       "display": {
         "coordinates": [
@@ -470,7 +470,7 @@
       "type": "VARIABLE",
       "name": "A Base Markup",
       "behavior": {
-        "value": 0.15
+        "value": "IfThenElse([Cost Pricing Enabled] = 1, [Universal Markup], 0.15)"
       },
       "display": {
         "coordinates": [
@@ -507,7 +507,7 @@
       "type": "VARIABLE",
       "name": "A Ore Price",
       "behavior": {
-        "value": "IfThenElse([Wage Pricing Enabled] = 1, ([A Effective Ore Base Cost] * (1 + [A Ore Scarcity Strength] * [A Ore Shortage] / [A Ore Target Inventory])) * Max(1 + [A Ore Labor Share] * [A Relative Wage Change], 0.000001), [A Effective Ore Base Cost] * (1 + [A Ore Scarcity Strength] * [A Ore Shortage] / [A Ore Target Inventory]))"
+        "value": "IfThenElse([Cost Pricing Enabled] = 1, [A Ore Full Cost] * (1 + [Universal Markup]) * (1 + [A Ore Scarcity Strength] * [A Ore Shortage] / [A Ore Target Inventory]), IfThenElse([Wage Pricing Enabled] = 1, ([A Effective Ore Base Cost] * (1 + [A Ore Scarcity Strength] * [A Ore Shortage] / [A Ore Target Inventory])) * Max(1 + [A Ore Labor Share] * [A Relative Wage Change], 0.000001), [A Effective Ore Base Cost] * (1 + [A Ore Scarcity Strength] * [A Ore Shortage] / [A Ore Target Inventory])))"
       },
       "display": {
         "coordinates": [
@@ -524,7 +524,7 @@
       "type": "VARIABLE",
       "name": "A Metal Unit Cost",
       "behavior": {
-        "value": "[A Ore per Metal] * [A Ore Price] + [A Energy per Metal] * [A Effective Energy Price] + ([A Labor per Metal] * [A Smelting Automation Factor]) * [A Effective Wage]"
+        "value": "IfThenElse([Cost Pricing Enabled] = 1, ([A Ore per Metal] * [A Ore Price] + [A Energy per Metal] * [A Effective Energy Price] + ([A Labor per Metal] * [A Smelting Automation Factor]) * [A Effective Wage]) + [A Metal Capital Wear], [A Ore per Metal] * [A Ore Price] + [A Energy per Metal] * [A Effective Energy Price] + ([A Labor per Metal] * [A Smelting Automation Factor]) * [A Effective Wage])"
       },
       "display": {
         "coordinates": [
@@ -4241,7 +4241,7 @@
       "type": "VARIABLE",
       "name": "B Energy Price",
       "behavior": {
-        "value": "IfThenElse([Wage Pricing Enabled] = 1, ([B Effective Power Generation Cost] * (1 + [Energy Scarcity Price Strength] * [B Perceived Energy Scarcity Ratio])) * Max(1 + [B Energy Labor Share] * [B Relative Wage Change], 0.000001), [B Effective Power Generation Cost] * (1 + [Energy Scarcity Price Strength] * [B Perceived Energy Scarcity Ratio]))"
+        "value": "IfThenElse([Cost Pricing Enabled] = 1, [B Energy Full Cost] * (1 + [Universal Markup]) * (1 + [Energy Scarcity Price Strength] * [B Perceived Energy Scarcity Ratio]), IfThenElse([Wage Pricing Enabled] = 1, ([B Effective Power Generation Cost] * (1 + [Energy Scarcity Price Strength] * [B Perceived Energy Scarcity Ratio])) * Max(1 + [B Energy Labor Share] * [B Relative Wage Change], 0.000001), [B Effective Power Generation Cost] * (1 + [Energy Scarcity Price Strength] * [B Perceived Energy Scarcity Ratio])))"
       },
       "display": {
         "coordinates": [
@@ -4300,7 +4300,7 @@
       "type": "VARIABLE",
       "name": "B Reference Metal Price",
       "behavior": {
-        "value": 40
+        "value": "IfThenElse([Cost Pricing Enabled] = 1, [B Initial Reference Metal Price] * [B Reference Metal Price Cost Scale], [B Initial Reference Metal Price])"
       },
       "display": {
         "coordinates": [
@@ -4560,7 +4560,7 @@
       "type": "VARIABLE",
       "name": "B Base Markup",
       "behavior": {
-        "value": 0.15
+        "value": "IfThenElse([Cost Pricing Enabled] = 1, [Universal Markup], 0.15)"
       },
       "display": {
         "coordinates": [
@@ -4597,7 +4597,7 @@
       "type": "VARIABLE",
       "name": "B Ore Price",
       "behavior": {
-        "value": "IfThenElse([Wage Pricing Enabled] = 1, ([B Effective Ore Base Cost] * (1 + [B Ore Scarcity Strength] * [B Ore Shortage] / [B Ore Target Inventory])) * Max(1 + [B Ore Labor Share] * [B Relative Wage Change], 0.000001), [B Effective Ore Base Cost] * (1 + [B Ore Scarcity Strength] * [B Ore Shortage] / [B Ore Target Inventory]))"
+        "value": "IfThenElse([Cost Pricing Enabled] = 1, [B Ore Full Cost] * (1 + [Universal Markup]) * (1 + [B Ore Scarcity Strength] * [B Ore Shortage] / [B Ore Target Inventory]), IfThenElse([Wage Pricing Enabled] = 1, ([B Effective Ore Base Cost] * (1 + [B Ore Scarcity Strength] * [B Ore Shortage] / [B Ore Target Inventory])) * Max(1 + [B Ore Labor Share] * [B Relative Wage Change], 0.000001), [B Effective Ore Base Cost] * (1 + [B Ore Scarcity Strength] * [B Ore Shortage] / [B Ore Target Inventory])))"
       },
       "display": {
         "coordinates": [
@@ -4614,7 +4614,7 @@
       "type": "VARIABLE",
       "name": "B Metal Unit Cost",
       "behavior": {
-        "value": "[B Ore per Metal] * [B Ore Price] + [B Energy per Metal] * [B Effective Energy Price] + ([B Labor per Metal] * [B Smelting Automation Factor]) * [B Effective Wage]"
+        "value": "IfThenElse([Cost Pricing Enabled] = 1, ([B Ore per Metal] * [B Ore Price] + [B Energy per Metal] * [B Effective Energy Price] + ([B Labor per Metal] * [B Smelting Automation Factor]) * [B Effective Wage]) + [B Metal Capital Wear], [B Ore per Metal] * [B Ore Price] + [B Energy per Metal] * [B Effective Energy Price] + ([B Labor per Metal] * [B Smelting Automation Factor]) * [B Effective Wage])"
       },
       "display": {
         "coordinates": [
@@ -9731,7 +9731,7 @@
       "type": "VARIABLE",
       "name": "Test 2 Transport Surge Active",
       "behavior": {
-        "value": "IfThenElse([Timed Test Mode] = 55, [Temporary Test Window], IfThenElse([Timed Test Mode] = 53, [Temporary Test Window], IfThenElse([Timed Test Mode] = 50, [Temporary Test Window], IfThenElse([Timed Test Mode] = 2, [Temporary Test Window], IfThenElse([Timed Test Mode] = 24, [Temporary Test Window], IfThenElse([Timed Test Mode] = 31, [Temporary Test Window], IfThenElse([Timed Test Mode] = 35, [Temporary Test Window], IfThenElse([Timed Test Mode] = 37, [Temporary Test Window], IfThenElse([Timed Test Mode] = 39, [Temporary Test Window], IfThenElse([Timed Test Mode] = 41, [Temporary Test Window], IfThenElse([Timed Test Mode] = 43, [Temporary Test Window], IfThenElse([Timed Test Mode] = 45, [Temporary Test Window], IfThenElse([Timed Test Mode] = 47, [Temporary Test Window], 0)))))))))))))"
+        "value": "IfThenElse([Timed Test Mode] = 57, [Temporary Test Window], IfThenElse([Timed Test Mode] = 55, [Temporary Test Window], IfThenElse([Timed Test Mode] = 53, [Temporary Test Window], IfThenElse([Timed Test Mode] = 50, [Temporary Test Window], IfThenElse([Timed Test Mode] = 2, [Temporary Test Window], IfThenElse([Timed Test Mode] = 24, [Temporary Test Window], IfThenElse([Timed Test Mode] = 31, [Temporary Test Window], IfThenElse([Timed Test Mode] = 35, [Temporary Test Window], IfThenElse([Timed Test Mode] = 37, [Temporary Test Window], IfThenElse([Timed Test Mode] = 39, [Temporary Test Window], IfThenElse([Timed Test Mode] = 41, [Temporary Test Window], IfThenElse([Timed Test Mode] = 43, [Temporary Test Window], IfThenElse([Timed Test Mode] = 45, [Temporary Test Window], IfThenElse([Timed Test Mode] = 47, [Temporary Test Window], 0))))))))))))))"
       },
       "display": {
         "coordinates": [
@@ -11395,7 +11395,7 @@
       "type": "VARIABLE",
       "name": "A Electronics Reference Price",
       "behavior": {
-        "value": 28
+        "value": "IfThenElse([Cost Pricing Enabled] = 1, [A Initial Electronics Reference Price] * [A Electronics Reference Price Cost Scale], [A Initial Electronics Reference Price])"
       },
       "display": {
         "coordinates": [
@@ -11655,7 +11655,7 @@
       "type": "VARIABLE",
       "name": "A Electronics Base Markup",
       "behavior": {
-        "value": 0.18
+        "value": "IfThenElse([Cost Pricing Enabled] = 1, [Universal Markup], 0.18)"
       },
       "display": {
         "coordinates": [
@@ -11764,7 +11764,7 @@
       "type": "VARIABLE",
       "name": "A Electronics Unit Cost",
       "behavior": {
-        "value": "IfThenElse([Intermediate Inputs Enabled] = 1, [Metal per Electronics] * [A Electronics Feedstock Price] + [A Electronics Energy per Unit] * [A Energy Price] + ([A Electronics Labor per Unit] * [A Electronics Automation Factor]) * [A Wage], [A Feedstock per Electronics] * [A Electronics Feedstock Price] + [A Electronics Energy per Unit] * [A Energy Price] + ([A Electronics Labor per Unit] * [A Electronics Automation Factor]) * [A Wage])"
+        "value": "IfThenElse([Cost Pricing Enabled] = 1, (IfThenElse([Intermediate Inputs Enabled] = 1, [Metal per Electronics] * [A Electronics Feedstock Price] + [A Electronics Energy per Unit] * [A Energy Price] + ([A Electronics Labor per Unit] * [A Electronics Automation Factor]) * [A Wage], [A Feedstock per Electronics] * [A Electronics Feedstock Price] + [A Electronics Energy per Unit] * [A Energy Price] + ([A Electronics Labor per Unit] * [A Electronics Automation Factor]) * [A Wage])) + [A Electronics Capital Wear], IfThenElse([Intermediate Inputs Enabled] = 1, [Metal per Electronics] * [A Electronics Feedstock Price] + [A Electronics Energy per Unit] * [A Energy Price] + ([A Electronics Labor per Unit] * [A Electronics Automation Factor]) * [A Wage], [A Feedstock per Electronics] * [A Electronics Feedstock Price] + [A Electronics Energy per Unit] * [A Energy Price] + ([A Electronics Labor per Unit] * [A Electronics Automation Factor]) * [A Wage]))"
       },
       "display": {
         "coordinates": [
@@ -11911,7 +11911,7 @@
       "type": "VARIABLE",
       "name": "B Electronics Reference Price",
       "behavior": {
-        "value": 28
+        "value": "IfThenElse([Cost Pricing Enabled] = 1, [B Initial Electronics Reference Price] * [B Electronics Reference Price Cost Scale], [B Initial Electronics Reference Price])"
       },
       "display": {
         "coordinates": [
@@ -12171,7 +12171,7 @@
       "type": "VARIABLE",
       "name": "B Electronics Base Markup",
       "behavior": {
-        "value": 0.18
+        "value": "IfThenElse([Cost Pricing Enabled] = 1, [Universal Markup], 0.18)"
       },
       "display": {
         "coordinates": [
@@ -12280,7 +12280,7 @@
       "type": "VARIABLE",
       "name": "B Electronics Unit Cost",
       "behavior": {
-        "value": "IfThenElse([Intermediate Inputs Enabled] = 1, [Metal per Electronics] * [B Electronics Feedstock Price] + [B Electronics Energy per Unit] * [B Energy Price] + ([B Electronics Labor per Unit] * [B Electronics Automation Factor]) * [B Wage], [B Feedstock per Electronics] * [B Electronics Feedstock Price] + [B Electronics Energy per Unit] * [B Energy Price] + ([B Electronics Labor per Unit] * [B Electronics Automation Factor]) * [B Wage])"
+        "value": "IfThenElse([Cost Pricing Enabled] = 1, (IfThenElse([Intermediate Inputs Enabled] = 1, [Metal per Electronics] * [B Electronics Feedstock Price] + [B Electronics Energy per Unit] * [B Energy Price] + ([B Electronics Labor per Unit] * [B Electronics Automation Factor]) * [B Wage], [B Feedstock per Electronics] * [B Electronics Feedstock Price] + [B Electronics Energy per Unit] * [B Energy Price] + ([B Electronics Labor per Unit] * [B Electronics Automation Factor]) * [B Wage])) + [B Electronics Capital Wear], IfThenElse([Intermediate Inputs Enabled] = 1, [Metal per Electronics] * [B Electronics Feedstock Price] + [B Electronics Energy per Unit] * [B Energy Price] + ([B Electronics Labor per Unit] * [B Electronics Automation Factor]) * [B Wage], [B Feedstock per Electronics] * [B Electronics Feedstock Price] + [B Electronics Energy per Unit] * [B Energy Price] + ([B Electronics Labor per Unit] * [B Electronics Automation Factor]) * [B Wage]))"
       },
       "display": {
         "coordinates": [
@@ -24758,7 +24758,7 @@
       "type": "VARIABLE",
       "name": "A Power Resource Price",
       "behavior": {
-        "value": "[Base Power Resource Price] * (1 + [Power Resource Scarcity Price Strength] * (1 - [A Perceived Power Resource Fulfillment]))"
+        "value": "IfThenElse([Cost Pricing Enabled] = 1, [A Power Resource Full Cost] * (1 + [Universal Markup]) * (1 + [Power Resource Scarcity Price Strength] * (1 - [A Perceived Power Resource Fulfillment])), [Base Power Resource Price] * (1 + [Power Resource Scarcity Price Strength] * (1 - [A Perceived Power Resource Fulfillment])))"
       },
       "description": "Power-resource price in colony A, with a scarcity premium from physical fulfillment."
     },
@@ -24853,7 +24853,7 @@
       "type": "VARIABLE",
       "name": "B Power Resource Price",
       "behavior": {
-        "value": "[Base Power Resource Price] * (1 + [Power Resource Scarcity Price Strength] * (1 - [B Perceived Power Resource Fulfillment]))"
+        "value": "IfThenElse([Cost Pricing Enabled] = 1, [B Power Resource Full Cost] * (1 + [Universal Markup]) * (1 + [Power Resource Scarcity Price Strength] * (1 - [B Perceived Power Resource Fulfillment])), [Base Power Resource Price] * (1 + [Power Resource Scarcity Price Strength] * (1 - [B Perceived Power Resource Fulfillment])))"
       },
       "description": "Power-resource price in colony B, with a scarcity premium from physical fulfillment."
     },
@@ -37242,7 +37242,7 @@
       "type": "VARIABLE",
       "name": "A Price Index",
       "behavior": {
-        "value": "IfThenElse([Food Enabled] = 1, ((([A Market Price] / [A Reference Metal Price] + [A Electronics Market Price] / [A Electronics Reference Price]) / 2) * 2 + [A Food Price] / [Food Price Reference]) / 3, ([A Market Price] / [A Reference Metal Price] + [A Electronics Market Price] / [A Electronics Reference Price]) / 2)"
+        "value": "IfThenElse([Cost Pricing Enabled] = 1, (IfThenElse([Food Enabled] = 1, ((([A Market Price] / [A Reference Metal Price] + [A Electronics Market Price] / [A Electronics Reference Price]) / 2) * 2 + [A Food Price] / [A Food Index Reference]) / 3, ([A Market Price] / [A Reference Metal Price] + [A Electronics Market Price] / [A Electronics Reference Price]) / 2)), IfThenElse([Food Enabled] = 1, ((([A Market Price] / [A Reference Metal Price] + [A Electronics Market Price] / [A Electronics Reference Price]) / 2) * 2 + [A Food Price] / [Food Price Reference]) / 3, ([A Market Price] / [A Reference Metal Price] + [A Electronics Market Price] / [A Electronics Reference Price]) / 2))"
       },
       "description": "Generated population element for A Price Index."
     },
@@ -37384,7 +37384,7 @@
       "type": "VARIABLE",
       "name": "B Price Index",
       "behavior": {
-        "value": "IfThenElse([Food Enabled] = 1, ((([B Market Price] / [B Reference Metal Price] + [B Electronics Market Price] / [B Electronics Reference Price]) / 2) * 2 + [B Food Price] / [Food Price Reference]) / 3, ([B Market Price] / [B Reference Metal Price] + [B Electronics Market Price] / [B Electronics Reference Price]) / 2)"
+        "value": "IfThenElse([Cost Pricing Enabled] = 1, (IfThenElse([Food Enabled] = 1, ((([B Market Price] / [B Reference Metal Price] + [B Electronics Market Price] / [B Electronics Reference Price]) / 2) * 2 + [B Food Price] / [B Food Index Reference]) / 3, ([B Market Price] / [B Reference Metal Price] + [B Electronics Market Price] / [B Electronics Reference Price]) / 2)), IfThenElse([Food Enabled] = 1, ((([B Market Price] / [B Reference Metal Price] + [B Electronics Market Price] / [B Electronics Reference Price]) / 2) * 2 + [B Food Price] / [Food Price Reference]) / 3, ([B Market Price] / [B Reference Metal Price] + [B Electronics Market Price] / [B Electronics Reference Price]) / 2))"
       },
       "description": "Generated population element for B Price Index."
     },
@@ -38342,7 +38342,7 @@
       "type": "VARIABLE",
       "name": "A Food Price",
       "behavior": {
-        "value": "IfThenElse([Wage Pricing Enabled] = 1, ([Food Price Reference] * ([Food Target Coverage Days] / Max([A Food Coverage Days], 1)) ^ [Food Price Elasticity]) * Max(1 + [A Food Labor Share] * [A Relative Wage Change], 0.000001), [Food Price Reference] * ([Food Target Coverage Days] / Max([A Food Coverage Days], 1)) ^ [Food Price Elasticity])"
+        "value": "IfThenElse([Cost Pricing Enabled] = 1, [A Food Full Cost] * (1 + [Universal Markup]) * ([Food Target Coverage Days] / Max([A Food Coverage Days], 1)) ^ [Food Price Elasticity], IfThenElse([Wage Pricing Enabled] = 1, ([Food Price Reference] * ([Food Target Coverage Days] / Max([A Food Coverage Days], 1)) ^ [Food Price Elasticity]) * Max(1 + [A Food Labor Share] * [A Relative Wage Change], 0.000001), [Food Price Reference] * ([Food Target Coverage Days] / Max([A Food Coverage Days], 1)) ^ [Food Price Elasticity]))"
       },
       "description": "Food node: scarcity price of food."
     },
@@ -38565,7 +38565,7 @@
       "type": "VARIABLE",
       "name": "B Food Price",
       "behavior": {
-        "value": "IfThenElse([Wage Pricing Enabled] = 1, ([Food Price Reference] * ([Food Target Coverage Days] / Max([B Food Coverage Days], 1)) ^ [Food Price Elasticity]) * Max(1 + [B Food Labor Share] * [B Relative Wage Change], 0.000001), [Food Price Reference] * ([Food Target Coverage Days] / Max([B Food Coverage Days], 1)) ^ [Food Price Elasticity])"
+        "value": "IfThenElse([Cost Pricing Enabled] = 1, [B Food Full Cost] * (1 + [Universal Markup]) * ([Food Target Coverage Days] / Max([B Food Coverage Days], 1)) ^ [Food Price Elasticity], IfThenElse([Wage Pricing Enabled] = 1, ([Food Price Reference] * ([Food Target Coverage Days] / Max([B Food Coverage Days], 1)) ^ [Food Price Elasticity]) * Max(1 + [B Food Labor Share] * [B Relative Wage Change], 0.000001), [Food Price Reference] * ([Food Target Coverage Days] / Max([B Food Coverage Days], 1)) ^ [Food Price Elasticity]))"
       },
       "description": "Food node: scarcity price of food."
     },
@@ -41161,6 +41161,2532 @@
       "type": "LINK",
       "from": "B Electronics Price Demand Factor",
       "to": "B Effective Electronics Local Base Demand"
+    },
+    {
+      "type": "VARIABLE",
+      "name": "Cost Pricing Enabled",
+      "behavior": {
+        "value": 0
+      },
+      "description": "Cost pricing node: switch of cost pricing (0 = every earlier series unchanged)."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "Universal Markup",
+      "behavior": {
+        "value": 0.15
+      },
+      "description": "Cost pricing node: parameter Universal Markup."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "Cost Price Signal Time",
+      "behavior": {
+        "value": 10
+      },
+      "description": "Cost pricing node: parameter Cost Price Signal Time."
+    },
+    {
+      "type": "STOCK",
+      "name": "A Energy Cost Price Signal",
+      "behavior": {
+        "initial_value": 0.5731,
+        "non_negative": true
+      },
+      "description": "Cost pricing node: energy price seen by the cost formulas, smoothed."
+    },
+    {
+      "type": "FLOW",
+      "name": "A Energy Cost Price Signal Increase",
+      "from": null,
+      "to": "A Energy Cost Price Signal",
+      "behavior": {
+        "value": "IfThenElse([Cost Pricing Enabled] = 1, Max([A Energy Price] - [A Energy Cost Price Signal], 0) / [Cost Price Signal Time], 0)",
+        "non_negative": true
+      },
+      "description": "Cost pricing node: A Energy Cost Price Signal Increase."
+    },
+    {
+      "type": "FLOW",
+      "name": "A Energy Cost Price Signal Decrease",
+      "from": "A Energy Cost Price Signal",
+      "to": null,
+      "behavior": {
+        "value": "IfThenElse([Cost Pricing Enabled] = 1, Max([A Energy Cost Price Signal] - [A Energy Price], 0) / [Cost Price Signal Time], 0)",
+        "non_negative": true
+      },
+      "description": "Cost pricing node: A Energy Cost Price Signal Decrease."
+    },
+    {
+      "type": "STOCK",
+      "name": "A Power Resource Cost Price Signal",
+      "behavior": {
+        "initial_value": 0.31,
+        "non_negative": true
+      },
+      "description": "Cost pricing node: power resource price seen by the cost formulas, smoothed."
+    },
+    {
+      "type": "FLOW",
+      "name": "A Power Resource Cost Price Signal Increase",
+      "from": null,
+      "to": "A Power Resource Cost Price Signal",
+      "behavior": {
+        "value": "IfThenElse([Cost Pricing Enabled] = 1, Max([A Power Resource Price] - [A Power Resource Cost Price Signal], 0) / [Cost Price Signal Time], 0)",
+        "non_negative": true
+      },
+      "description": "Cost pricing node: A Power Resource Cost Price Signal Increase."
+    },
+    {
+      "type": "FLOW",
+      "name": "A Power Resource Cost Price Signal Decrease",
+      "from": "A Power Resource Cost Price Signal",
+      "to": null,
+      "behavior": {
+        "value": "IfThenElse([Cost Pricing Enabled] = 1, Max([A Power Resource Cost Price Signal] - [A Power Resource Price], 0) / [Cost Price Signal Time], 0)",
+        "non_negative": true
+      },
+      "description": "Cost pricing node: A Power Resource Cost Price Signal Decrease."
+    },
+    {
+      "type": "STOCK",
+      "name": "A Metal Cost Price Signal",
+      "behavior": {
+        "initial_value": 49.95,
+        "non_negative": true
+      },
+      "description": "Cost pricing node: metal price seen by the cost formulas, smoothed."
+    },
+    {
+      "type": "FLOW",
+      "name": "A Metal Cost Price Signal Increase",
+      "from": null,
+      "to": "A Metal Cost Price Signal",
+      "behavior": {
+        "value": "IfThenElse([Cost Pricing Enabled] = 1, Max([A Market Price] - [A Metal Cost Price Signal], 0) / [Cost Price Signal Time], 0)",
+        "non_negative": true
+      },
+      "description": "Cost pricing node: A Metal Cost Price Signal Increase."
+    },
+    {
+      "type": "FLOW",
+      "name": "A Metal Cost Price Signal Decrease",
+      "from": "A Metal Cost Price Signal",
+      "to": null,
+      "behavior": {
+        "value": "IfThenElse([Cost Pricing Enabled] = 1, Max([A Metal Cost Price Signal] - [A Market Price], 0) / [Cost Price Signal Time], 0)",
+        "non_negative": true
+      },
+      "description": "Cost pricing node: A Metal Cost Price Signal Decrease."
+    },
+    {
+      "type": "STOCK",
+      "name": "A Electronics Cost Price Signal",
+      "behavior": {
+        "initial_value": 28.32,
+        "non_negative": true
+      },
+      "description": "Cost pricing node: electronics price seen by the cost formulas, smoothed."
+    },
+    {
+      "type": "FLOW",
+      "name": "A Electronics Cost Price Signal Increase",
+      "from": null,
+      "to": "A Electronics Cost Price Signal",
+      "behavior": {
+        "value": "IfThenElse([Cost Pricing Enabled] = 1, Max([A Electronics Market Price] - [A Electronics Cost Price Signal], 0) / [Cost Price Signal Time], 0)",
+        "non_negative": true
+      },
+      "description": "Cost pricing node: A Electronics Cost Price Signal Increase."
+    },
+    {
+      "type": "FLOW",
+      "name": "A Electronics Cost Price Signal Decrease",
+      "from": "A Electronics Cost Price Signal",
+      "to": null,
+      "behavior": {
+        "value": "IfThenElse([Cost Pricing Enabled] = 1, Max([A Electronics Cost Price Signal] - [A Electronics Market Price], 0) / [Cost Price Signal Time], 0)",
+        "non_negative": true
+      },
+      "description": "Cost pricing node: A Electronics Cost Price Signal Decrease."
+    },
+    {
+      "type": "STOCK",
+      "name": "A Capital Goods Cost Price Signal",
+      "behavior": {
+        "initial_value": 336.9,
+        "non_negative": true
+      },
+      "description": "Cost pricing node: capital goods price seen by the cost formulas, smoothed."
+    },
+    {
+      "type": "FLOW",
+      "name": "A Capital Goods Cost Price Signal Increase",
+      "from": null,
+      "to": "A Capital Goods Cost Price Signal",
+      "behavior": {
+        "value": "IfThenElse([Cost Pricing Enabled] = 1, Max([A Capital Goods Cost Price] - [A Capital Goods Cost Price Signal], 0) / [Cost Price Signal Time], 0)",
+        "non_negative": true
+      },
+      "description": "Cost pricing node: A Capital Goods Cost Price Signal Increase."
+    },
+    {
+      "type": "FLOW",
+      "name": "A Capital Goods Cost Price Signal Decrease",
+      "from": "A Capital Goods Cost Price Signal",
+      "to": null,
+      "behavior": {
+        "value": "IfThenElse([Cost Pricing Enabled] = 1, Max([A Capital Goods Cost Price Signal] - [A Capital Goods Cost Price], 0) / [Cost Price Signal Time], 0)",
+        "non_negative": true
+      },
+      "description": "Cost pricing node: A Capital Goods Cost Price Signal Decrease."
+    },
+    {
+      "type": "STOCK",
+      "name": "A Construction Materials Cost Price Signal",
+      "behavior": {
+        "initial_value": 109.6,
+        "non_negative": true
+      },
+      "description": "Cost pricing node: construction materials price seen by the cost formulas, smoothed."
+    },
+    {
+      "type": "FLOW",
+      "name": "A Construction Materials Cost Price Signal Increase",
+      "from": null,
+      "to": "A Construction Materials Cost Price Signal",
+      "behavior": {
+        "value": "IfThenElse([Cost Pricing Enabled] = 1, Max([A Construction Materials Cost Price] - [A Construction Materials Cost Price Signal], 0) / [Cost Price Signal Time], 0)",
+        "non_negative": true
+      },
+      "description": "Cost pricing node: A Construction Materials Cost Price Signal Increase."
+    },
+    {
+      "type": "FLOW",
+      "name": "A Construction Materials Cost Price Signal Decrease",
+      "from": "A Construction Materials Cost Price Signal",
+      "to": null,
+      "behavior": {
+        "value": "IfThenElse([Cost Pricing Enabled] = 1, Max([A Construction Materials Cost Price Signal] - [A Construction Materials Cost Price], 0) / [Cost Price Signal Time], 0)",
+        "non_negative": true
+      },
+      "description": "Cost pricing node: A Construction Materials Cost Price Signal Decrease."
+    },
+    {
+      "type": "STOCK",
+      "name": "A Regolith Cost Price Signal",
+      "behavior": {
+        "initial_value": 29.69,
+        "non_negative": true
+      },
+      "description": "Cost pricing node: regolith price seen by the cost formulas, smoothed."
+    },
+    {
+      "type": "FLOW",
+      "name": "A Regolith Cost Price Signal Increase",
+      "from": null,
+      "to": "A Regolith Cost Price Signal",
+      "behavior": {
+        "value": "IfThenElse([Cost Pricing Enabled] = 1, Max([A Regolith Cost Price] - [A Regolith Cost Price Signal], 0) / [Cost Price Signal Time], 0)",
+        "non_negative": true
+      },
+      "description": "Cost pricing node: A Regolith Cost Price Signal Increase."
+    },
+    {
+      "type": "FLOW",
+      "name": "A Regolith Cost Price Signal Decrease",
+      "from": "A Regolith Cost Price Signal",
+      "to": null,
+      "behavior": {
+        "value": "IfThenElse([Cost Pricing Enabled] = 1, Max([A Regolith Cost Price Signal] - [A Regolith Cost Price], 0) / [Cost Price Signal Time], 0)",
+        "non_negative": true
+      },
+      "description": "Cost pricing node: A Regolith Cost Price Signal Decrease."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "A Ore Full Cost",
+      "behavior": {
+        "value": "[Mining Energy per Unit] * [A Energy Cost Price Signal] + [A Mining Labor per Unit] * [A Mining Automation Factor] * [A Wage] + ([Ore Mine Capital Goods per Capacity] * [A Capital Goods Cost Price Signal] + [Ore Mine Construction Materials per Capacity] * [A Construction Materials Cost Price Signal]) * [Ore Mine Depreciation Rate] + [A Effective Ore Base Cost]"
+      },
+      "description": "Cost pricing node: full unit cost of ore (materials, energy, labor, capital wear, rent)."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "A Regolith Full Cost",
+      "behavior": {
+        "value": "[Regolith Extraction Energy per Unit] * [A Energy Cost Price Signal] + [A Regolith Extraction Labor per Unit] * [A Regolith Extraction Automation Factor] * [A Wage] + ([Regolith Mine Capital Goods per Capacity] * [A Capital Goods Cost Price Signal] + [Regolith Mine Construction Materials per Capacity] * [A Construction Materials Cost Price Signal]) * [Regolith Mine Depreciation Rate]"
+      },
+      "description": "Cost pricing node: full unit cost of regolith (materials, energy, labor, capital wear, rent)."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "A Regolith Cost Price",
+      "behavior": {
+        "value": "[A Regolith Full Cost] * (1 + [Universal Markup])"
+      },
+      "description": "Cost pricing node: cost price of regolith (no market)."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "A Power Resource Full Cost",
+      "behavior": {
+        "value": "[Power Resource Extraction Energy per Unit] * [A Energy Cost Price Signal] + [A Power Resource Extraction Labor per Unit] * [A Power Resource Extraction Automation Factor] * [A Wage] + ([Power Resource Mine Capital Goods per Capacity] * [A Capital Goods Cost Price Signal] + [Power Resource Mine Construction Materials per Capacity] * [A Construction Materials Cost Price Signal]) * [Power Resource Mine Depreciation Rate] + [Base Power Resource Price]"
+      },
+      "description": "Cost pricing node: full unit cost of power resource (materials, energy, labor, capital wear, rent)."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "A Energy Full Cost",
+      "behavior": {
+        "value": "[Power Resource per Energy] * [A Power Resource Cost Price Signal] + [A Generation Labor per Unit] * [A Generation Automation Factor] * [A Wage] + ([A Power Capital Goods per Capacity] * [A Capital Goods Cost Price Signal] + [A Power Construction Materials per Capacity] * [A Construction Materials Cost Price Signal]) * [Power Depreciation Rate] + [A Power Generation Cost]"
+      },
+      "description": "Cost pricing node: full unit cost of energy (materials, energy, labor, capital wear, rent)."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "A Capital Goods Full Cost",
+      "behavior": {
+        "value": "[Metal per Capital Goods Unit] * [A Metal Cost Price Signal] + [Electronics per Capital Goods Unit] * [A Electronics Cost Price Signal] + [Capital Goods Energy per Unit] * [A Energy Cost Price Signal] + [A Capital Goods Labor per Unit] * [A Capital Goods Automation Factor] * [A Wage] + ([Capital Goods Plant Capital Goods per Capacity] * [A Capital Goods Cost Price Signal] + [Capital Goods Plant Construction Materials per Capacity] * [A Construction Materials Cost Price Signal]) * [Capital Goods Plant Depreciation Rate]"
+      },
+      "description": "Cost pricing node: full unit cost of capital goods (materials, energy, labor, capital wear, rent)."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "A Capital Goods Cost Price",
+      "behavior": {
+        "value": "[A Capital Goods Full Cost] * (1 + [Universal Markup])"
+      },
+      "description": "Cost pricing node: cost price of capital goods (no market)."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "A Construction Materials Full Cost",
+      "behavior": {
+        "value": "[Regolith per Construction Materials Unit] * [A Regolith Cost Price Signal] + [Construction Materials Energy per Unit] * [A Energy Cost Price Signal] + [A Construction Materials Labor per Unit] * [A Construction Materials Automation Factor] * [A Wage] + ([Construction Materials Plant Capital Goods per Capacity] * [A Capital Goods Cost Price Signal] + [Construction Materials Plant Construction Materials per Capacity] * [A Construction Materials Cost Price Signal]) * [Construction Materials Plant Depreciation Rate]"
+      },
+      "description": "Cost pricing node: full unit cost of construction materials (materials, energy, labor, capital wear, rent)."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "A Construction Materials Cost Price",
+      "behavior": {
+        "value": "[A Construction Materials Full Cost] * (1 + [Universal Markup])"
+      },
+      "description": "Cost pricing node: cost price of construction materials (no market)."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "A Food Full Cost",
+      "behavior": {
+        "value": "[Food Energy per Unit] * [A Energy Cost Price Signal] + [Food Labor per Unit] * [A Wage] + ([Farm Capital Goods per Capacity] * [A Capital Goods Cost Price Signal]) * [Farm Depreciation Rate]"
+      },
+      "description": "Cost pricing node: full unit cost of food (materials, energy, labor, capital wear, rent)."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "A Metal Capital Wear",
+      "behavior": {
+        "value": "([A Refinery Capital Goods per Capacity] * [A Capital Goods Cost Price Signal] + [A Refinery Construction Materials per Capacity] * [A Construction Materials Cost Price Signal]) * [A Refinery Depreciation Rate]"
+      },
+      "description": "Cost pricing node: metal capital wear per unit."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "A Electronics Capital Wear",
+      "behavior": {
+        "value": "([A Electronics Capital Goods per Capacity] * [A Capital Goods Cost Price Signal] + [A Electronics Construction Materials per Capacity] * [A Construction Materials Cost Price Signal]) * [Electronics Depreciation Rate]"
+      },
+      "description": "Cost pricing node: electronics capital wear per unit."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "A Initial Reference Metal Price",
+      "behavior": {
+        "value": 40
+      },
+      "description": "Cost pricing node: reference metal price before cost pricing."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "A Reference Metal Price Cost Scale",
+      "behavior": {
+        "value": 2.254
+      },
+      "description": "Cost pricing node: reference metal price scale: start price under cost pricing / start price."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "A Initial Electronics Reference Price",
+      "behavior": {
+        "value": 28
+      },
+      "description": "Cost pricing node: electronics reference price before cost pricing."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "A Electronics Reference Price Cost Scale",
+      "behavior": {
+        "value": 1.972
+      },
+      "description": "Cost pricing node: electronics reference price scale: start price under cost pricing / start price."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "A Food Index Cost Scale",
+      "behavior": {
+        "value": 1.754
+      },
+      "description": "Cost pricing node: food reference scale of the price index."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "A Food Index Reference",
+      "behavior": {
+        "value": "[Food Price Reference] * [A Food Index Cost Scale]"
+      },
+      "description": "Cost pricing node: regional food reference of the price index."
+    },
+    {
+      "type": "STOCK",
+      "name": "B Energy Cost Price Signal",
+      "behavior": {
+        "initial_value": 0.6787,
+        "non_negative": true
+      },
+      "description": "Cost pricing node: energy price seen by the cost formulas, smoothed."
+    },
+    {
+      "type": "FLOW",
+      "name": "B Energy Cost Price Signal Increase",
+      "from": null,
+      "to": "B Energy Cost Price Signal",
+      "behavior": {
+        "value": "IfThenElse([Cost Pricing Enabled] = 1, Max([B Energy Price] - [B Energy Cost Price Signal], 0) / [Cost Price Signal Time], 0)",
+        "non_negative": true
+      },
+      "description": "Cost pricing node: B Energy Cost Price Signal Increase."
+    },
+    {
+      "type": "FLOW",
+      "name": "B Energy Cost Price Signal Decrease",
+      "from": "B Energy Cost Price Signal",
+      "to": null,
+      "behavior": {
+        "value": "IfThenElse([Cost Pricing Enabled] = 1, Max([B Energy Cost Price Signal] - [B Energy Price], 0) / [Cost Price Signal Time], 0)",
+        "non_negative": true
+      },
+      "description": "Cost pricing node: B Energy Cost Price Signal Decrease."
+    },
+    {
+      "type": "STOCK",
+      "name": "B Power Resource Cost Price Signal",
+      "behavior": {
+        "initial_value": 0.4085,
+        "non_negative": true
+      },
+      "description": "Cost pricing node: power resource price seen by the cost formulas, smoothed."
+    },
+    {
+      "type": "FLOW",
+      "name": "B Power Resource Cost Price Signal Increase",
+      "from": null,
+      "to": "B Power Resource Cost Price Signal",
+      "behavior": {
+        "value": "IfThenElse([Cost Pricing Enabled] = 1, Max([B Power Resource Price] - [B Power Resource Cost Price Signal], 0) / [Cost Price Signal Time], 0)",
+        "non_negative": true
+      },
+      "description": "Cost pricing node: B Power Resource Cost Price Signal Increase."
+    },
+    {
+      "type": "FLOW",
+      "name": "B Power Resource Cost Price Signal Decrease",
+      "from": "B Power Resource Cost Price Signal",
+      "to": null,
+      "behavior": {
+        "value": "IfThenElse([Cost Pricing Enabled] = 1, Max([B Power Resource Cost Price Signal] - [B Power Resource Price], 0) / [Cost Price Signal Time], 0)",
+        "non_negative": true
+      },
+      "description": "Cost pricing node: B Power Resource Cost Price Signal Decrease."
+    },
+    {
+      "type": "STOCK",
+      "name": "B Metal Cost Price Signal",
+      "behavior": {
+        "initial_value": 80.99,
+        "non_negative": true
+      },
+      "description": "Cost pricing node: metal price seen by the cost formulas, smoothed."
+    },
+    {
+      "type": "FLOW",
+      "name": "B Metal Cost Price Signal Increase",
+      "from": null,
+      "to": "B Metal Cost Price Signal",
+      "behavior": {
+        "value": "IfThenElse([Cost Pricing Enabled] = 1, Max([B Market Price] - [B Metal Cost Price Signal], 0) / [Cost Price Signal Time], 0)",
+        "non_negative": true
+      },
+      "description": "Cost pricing node: B Metal Cost Price Signal Increase."
+    },
+    {
+      "type": "FLOW",
+      "name": "B Metal Cost Price Signal Decrease",
+      "from": "B Metal Cost Price Signal",
+      "to": null,
+      "behavior": {
+        "value": "IfThenElse([Cost Pricing Enabled] = 1, Max([B Metal Cost Price Signal] - [B Market Price], 0) / [Cost Price Signal Time], 0)",
+        "non_negative": true
+      },
+      "description": "Cost pricing node: B Metal Cost Price Signal Decrease."
+    },
+    {
+      "type": "STOCK",
+      "name": "B Electronics Cost Price Signal",
+      "behavior": {
+        "initial_value": 41.12,
+        "non_negative": true
+      },
+      "description": "Cost pricing node: electronics price seen by the cost formulas, smoothed."
+    },
+    {
+      "type": "FLOW",
+      "name": "B Electronics Cost Price Signal Increase",
+      "from": null,
+      "to": "B Electronics Cost Price Signal",
+      "behavior": {
+        "value": "IfThenElse([Cost Pricing Enabled] = 1, Max([B Electronics Market Price] - [B Electronics Cost Price Signal], 0) / [Cost Price Signal Time], 0)",
+        "non_negative": true
+      },
+      "description": "Cost pricing node: B Electronics Cost Price Signal Increase."
+    },
+    {
+      "type": "FLOW",
+      "name": "B Electronics Cost Price Signal Decrease",
+      "from": "B Electronics Cost Price Signal",
+      "to": null,
+      "behavior": {
+        "value": "IfThenElse([Cost Pricing Enabled] = 1, Max([B Electronics Cost Price Signal] - [B Electronics Market Price], 0) / [Cost Price Signal Time], 0)",
+        "non_negative": true
+      },
+      "description": "Cost pricing node: B Electronics Cost Price Signal Decrease."
+    },
+    {
+      "type": "STOCK",
+      "name": "B Capital Goods Cost Price Signal",
+      "behavior": {
+        "initial_value": 478.2,
+        "non_negative": true
+      },
+      "description": "Cost pricing node: capital goods price seen by the cost formulas, smoothed."
+    },
+    {
+      "type": "FLOW",
+      "name": "B Capital Goods Cost Price Signal Increase",
+      "from": null,
+      "to": "B Capital Goods Cost Price Signal",
+      "behavior": {
+        "value": "IfThenElse([Cost Pricing Enabled] = 1, Max([B Capital Goods Cost Price] - [B Capital Goods Cost Price Signal], 0) / [Cost Price Signal Time], 0)",
+        "non_negative": true
+      },
+      "description": "Cost pricing node: B Capital Goods Cost Price Signal Increase."
+    },
+    {
+      "type": "FLOW",
+      "name": "B Capital Goods Cost Price Signal Decrease",
+      "from": "B Capital Goods Cost Price Signal",
+      "to": null,
+      "behavior": {
+        "value": "IfThenElse([Cost Pricing Enabled] = 1, Max([B Capital Goods Cost Price Signal] - [B Capital Goods Cost Price], 0) / [Cost Price Signal Time], 0)",
+        "non_negative": true
+      },
+      "description": "Cost pricing node: B Capital Goods Cost Price Signal Decrease."
+    },
+    {
+      "type": "STOCK",
+      "name": "B Construction Materials Cost Price Signal",
+      "behavior": {
+        "initial_value": 148.8,
+        "non_negative": true
+      },
+      "description": "Cost pricing node: construction materials price seen by the cost formulas, smoothed."
+    },
+    {
+      "type": "FLOW",
+      "name": "B Construction Materials Cost Price Signal Increase",
+      "from": null,
+      "to": "B Construction Materials Cost Price Signal",
+      "behavior": {
+        "value": "IfThenElse([Cost Pricing Enabled] = 1, Max([B Construction Materials Cost Price] - [B Construction Materials Cost Price Signal], 0) / [Cost Price Signal Time], 0)",
+        "non_negative": true
+      },
+      "description": "Cost pricing node: B Construction Materials Cost Price Signal Increase."
+    },
+    {
+      "type": "FLOW",
+      "name": "B Construction Materials Cost Price Signal Decrease",
+      "from": "B Construction Materials Cost Price Signal",
+      "to": null,
+      "behavior": {
+        "value": "IfThenElse([Cost Pricing Enabled] = 1, Max([B Construction Materials Cost Price Signal] - [B Construction Materials Cost Price], 0) / [Cost Price Signal Time], 0)",
+        "non_negative": true
+      },
+      "description": "Cost pricing node: B Construction Materials Cost Price Signal Decrease."
+    },
+    {
+      "type": "STOCK",
+      "name": "B Regolith Cost Price Signal",
+      "behavior": {
+        "initial_value": 40.15,
+        "non_negative": true
+      },
+      "description": "Cost pricing node: regolith price seen by the cost formulas, smoothed."
+    },
+    {
+      "type": "FLOW",
+      "name": "B Regolith Cost Price Signal Increase",
+      "from": null,
+      "to": "B Regolith Cost Price Signal",
+      "behavior": {
+        "value": "IfThenElse([Cost Pricing Enabled] = 1, Max([B Regolith Cost Price] - [B Regolith Cost Price Signal], 0) / [Cost Price Signal Time], 0)",
+        "non_negative": true
+      },
+      "description": "Cost pricing node: B Regolith Cost Price Signal Increase."
+    },
+    {
+      "type": "FLOW",
+      "name": "B Regolith Cost Price Signal Decrease",
+      "from": "B Regolith Cost Price Signal",
+      "to": null,
+      "behavior": {
+        "value": "IfThenElse([Cost Pricing Enabled] = 1, Max([B Regolith Cost Price Signal] - [B Regolith Cost Price], 0) / [Cost Price Signal Time], 0)",
+        "non_negative": true
+      },
+      "description": "Cost pricing node: B Regolith Cost Price Signal Decrease."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "B Ore Full Cost",
+      "behavior": {
+        "value": "[Mining Energy per Unit] * [B Energy Cost Price Signal] + [B Mining Labor per Unit] * [B Mining Automation Factor] * [B Wage] + ([Ore Mine Capital Goods per Capacity] * [B Capital Goods Cost Price Signal] + [Ore Mine Construction Materials per Capacity] * [B Construction Materials Cost Price Signal]) * [Ore Mine Depreciation Rate] + [B Effective Ore Base Cost]"
+      },
+      "description": "Cost pricing node: full unit cost of ore (materials, energy, labor, capital wear, rent)."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "B Regolith Full Cost",
+      "behavior": {
+        "value": "[Regolith Extraction Energy per Unit] * [B Energy Cost Price Signal] + [B Regolith Extraction Labor per Unit] * [B Regolith Extraction Automation Factor] * [B Wage] + ([Regolith Mine Capital Goods per Capacity] * [B Capital Goods Cost Price Signal] + [Regolith Mine Construction Materials per Capacity] * [B Construction Materials Cost Price Signal]) * [Regolith Mine Depreciation Rate]"
+      },
+      "description": "Cost pricing node: full unit cost of regolith (materials, energy, labor, capital wear, rent)."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "B Regolith Cost Price",
+      "behavior": {
+        "value": "[B Regolith Full Cost] * (1 + [Universal Markup])"
+      },
+      "description": "Cost pricing node: cost price of regolith (no market)."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "B Power Resource Full Cost",
+      "behavior": {
+        "value": "[Power Resource Extraction Energy per Unit] * [B Energy Cost Price Signal] + [B Power Resource Extraction Labor per Unit] * [B Power Resource Extraction Automation Factor] * [B Wage] + ([Power Resource Mine Capital Goods per Capacity] * [B Capital Goods Cost Price Signal] + [Power Resource Mine Construction Materials per Capacity] * [B Construction Materials Cost Price Signal]) * [Power Resource Mine Depreciation Rate] + [Base Power Resource Price]"
+      },
+      "description": "Cost pricing node: full unit cost of power resource (materials, energy, labor, capital wear, rent)."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "B Energy Full Cost",
+      "behavior": {
+        "value": "[Power Resource per Energy] * [B Power Resource Cost Price Signal] + [B Generation Labor per Unit] * [B Generation Automation Factor] * [B Wage] + ([B Power Capital Goods per Capacity] * [B Capital Goods Cost Price Signal] + [B Power Construction Materials per Capacity] * [B Construction Materials Cost Price Signal]) * [Power Depreciation Rate] + [B Power Generation Cost]"
+      },
+      "description": "Cost pricing node: full unit cost of energy (materials, energy, labor, capital wear, rent)."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "B Capital Goods Full Cost",
+      "behavior": {
+        "value": "[Metal per Capital Goods Unit] * [B Metal Cost Price Signal] + [Electronics per Capital Goods Unit] * [B Electronics Cost Price Signal] + [Capital Goods Energy per Unit] * [B Energy Cost Price Signal] + [B Capital Goods Labor per Unit] * [B Capital Goods Automation Factor] * [B Wage] + ([Capital Goods Plant Capital Goods per Capacity] * [B Capital Goods Cost Price Signal] + [Capital Goods Plant Construction Materials per Capacity] * [B Construction Materials Cost Price Signal]) * [Capital Goods Plant Depreciation Rate]"
+      },
+      "description": "Cost pricing node: full unit cost of capital goods (materials, energy, labor, capital wear, rent)."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "B Capital Goods Cost Price",
+      "behavior": {
+        "value": "[B Capital Goods Full Cost] * (1 + [Universal Markup])"
+      },
+      "description": "Cost pricing node: cost price of capital goods (no market)."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "B Construction Materials Full Cost",
+      "behavior": {
+        "value": "[Regolith per Construction Materials Unit] * [B Regolith Cost Price Signal] + [Construction Materials Energy per Unit] * [B Energy Cost Price Signal] + [B Construction Materials Labor per Unit] * [B Construction Materials Automation Factor] * [B Wage] + ([Construction Materials Plant Capital Goods per Capacity] * [B Capital Goods Cost Price Signal] + [Construction Materials Plant Construction Materials per Capacity] * [B Construction Materials Cost Price Signal]) * [Construction Materials Plant Depreciation Rate]"
+      },
+      "description": "Cost pricing node: full unit cost of construction materials (materials, energy, labor, capital wear, rent)."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "B Construction Materials Cost Price",
+      "behavior": {
+        "value": "[B Construction Materials Full Cost] * (1 + [Universal Markup])"
+      },
+      "description": "Cost pricing node: cost price of construction materials (no market)."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "B Food Full Cost",
+      "behavior": {
+        "value": "[Food Energy per Unit] * [B Energy Cost Price Signal] + [Food Labor per Unit] * [B Wage] + ([Farm Capital Goods per Capacity] * [B Capital Goods Cost Price Signal]) * [Farm Depreciation Rate]"
+      },
+      "description": "Cost pricing node: full unit cost of food (materials, energy, labor, capital wear, rent)."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "B Metal Capital Wear",
+      "behavior": {
+        "value": "([B Refinery Capital Goods per Capacity] * [B Capital Goods Cost Price Signal] + [B Refinery Construction Materials per Capacity] * [B Construction Materials Cost Price Signal]) * [B Refinery Depreciation Rate]"
+      },
+      "description": "Cost pricing node: metal capital wear per unit."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "B Electronics Capital Wear",
+      "behavior": {
+        "value": "([B Electronics Capital Goods per Capacity] * [B Capital Goods Cost Price Signal] + [B Electronics Construction Materials per Capacity] * [B Construction Materials Cost Price Signal]) * [Electronics Depreciation Rate]"
+      },
+      "description": "Cost pricing node: electronics capital wear per unit."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "B Initial Reference Metal Price",
+      "behavior": {
+        "value": 40
+      },
+      "description": "Cost pricing node: reference metal price before cost pricing."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "B Reference Metal Price Cost Scale",
+      "behavior": {
+        "value": 2.028
+      },
+      "description": "Cost pricing node: reference metal price scale: start price under cost pricing / start price."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "B Initial Electronics Reference Price",
+      "behavior": {
+        "value": 28
+      },
+      "description": "Cost pricing node: electronics reference price before cost pricing."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "B Electronics Reference Price Cost Scale",
+      "behavior": {
+        "value": 2.027
+      },
+      "description": "Cost pricing node: electronics reference price scale: start price under cost pricing / start price."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "B Food Index Cost Scale",
+      "behavior": {
+        "value": 2.475
+      },
+      "description": "Cost pricing node: food reference scale of the price index."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "B Food Index Reference",
+      "behavior": {
+        "value": "[Food Price Reference] * [B Food Index Cost Scale]"
+      },
+      "description": "Cost pricing node: regional food reference of the price index."
+    },
+    {
+      "type": "LINK",
+      "from": "Cost Pricing Enabled",
+      "to": "A Energy Cost Price Signal Increase"
+    },
+    {
+      "type": "LINK",
+      "from": "A Energy Price",
+      "to": "A Energy Cost Price Signal Increase"
+    },
+    {
+      "type": "LINK",
+      "from": "A Energy Cost Price Signal",
+      "to": "A Energy Cost Price Signal Increase"
+    },
+    {
+      "type": "LINK",
+      "from": "Cost Price Signal Time",
+      "to": "A Energy Cost Price Signal Increase"
+    },
+    {
+      "type": "LINK",
+      "from": "Cost Pricing Enabled",
+      "to": "A Energy Cost Price Signal Decrease"
+    },
+    {
+      "type": "LINK",
+      "from": "A Energy Cost Price Signal",
+      "to": "A Energy Cost Price Signal Decrease"
+    },
+    {
+      "type": "LINK",
+      "from": "A Energy Price",
+      "to": "A Energy Cost Price Signal Decrease"
+    },
+    {
+      "type": "LINK",
+      "from": "Cost Price Signal Time",
+      "to": "A Energy Cost Price Signal Decrease"
+    },
+    {
+      "type": "LINK",
+      "from": "Cost Pricing Enabled",
+      "to": "A Power Resource Cost Price Signal Increase"
+    },
+    {
+      "type": "LINK",
+      "from": "A Power Resource Price",
+      "to": "A Power Resource Cost Price Signal Increase"
+    },
+    {
+      "type": "LINK",
+      "from": "A Power Resource Cost Price Signal",
+      "to": "A Power Resource Cost Price Signal Increase"
+    },
+    {
+      "type": "LINK",
+      "from": "Cost Price Signal Time",
+      "to": "A Power Resource Cost Price Signal Increase"
+    },
+    {
+      "type": "LINK",
+      "from": "Cost Pricing Enabled",
+      "to": "A Power Resource Cost Price Signal Decrease"
+    },
+    {
+      "type": "LINK",
+      "from": "A Power Resource Cost Price Signal",
+      "to": "A Power Resource Cost Price Signal Decrease"
+    },
+    {
+      "type": "LINK",
+      "from": "A Power Resource Price",
+      "to": "A Power Resource Cost Price Signal Decrease"
+    },
+    {
+      "type": "LINK",
+      "from": "Cost Price Signal Time",
+      "to": "A Power Resource Cost Price Signal Decrease"
+    },
+    {
+      "type": "LINK",
+      "from": "Cost Pricing Enabled",
+      "to": "A Metal Cost Price Signal Increase"
+    },
+    {
+      "type": "LINK",
+      "from": "A Market Price",
+      "to": "A Metal Cost Price Signal Increase"
+    },
+    {
+      "type": "LINK",
+      "from": "A Metal Cost Price Signal",
+      "to": "A Metal Cost Price Signal Increase"
+    },
+    {
+      "type": "LINK",
+      "from": "Cost Price Signal Time",
+      "to": "A Metal Cost Price Signal Increase"
+    },
+    {
+      "type": "LINK",
+      "from": "Cost Pricing Enabled",
+      "to": "A Metal Cost Price Signal Decrease"
+    },
+    {
+      "type": "LINK",
+      "from": "A Metal Cost Price Signal",
+      "to": "A Metal Cost Price Signal Decrease"
+    },
+    {
+      "type": "LINK",
+      "from": "A Market Price",
+      "to": "A Metal Cost Price Signal Decrease"
+    },
+    {
+      "type": "LINK",
+      "from": "Cost Price Signal Time",
+      "to": "A Metal Cost Price Signal Decrease"
+    },
+    {
+      "type": "LINK",
+      "from": "Cost Pricing Enabled",
+      "to": "A Electronics Cost Price Signal Increase"
+    },
+    {
+      "type": "LINK",
+      "from": "A Electronics Market Price",
+      "to": "A Electronics Cost Price Signal Increase"
+    },
+    {
+      "type": "LINK",
+      "from": "A Electronics Cost Price Signal",
+      "to": "A Electronics Cost Price Signal Increase"
+    },
+    {
+      "type": "LINK",
+      "from": "Cost Price Signal Time",
+      "to": "A Electronics Cost Price Signal Increase"
+    },
+    {
+      "type": "LINK",
+      "from": "Cost Pricing Enabled",
+      "to": "A Electronics Cost Price Signal Decrease"
+    },
+    {
+      "type": "LINK",
+      "from": "A Electronics Cost Price Signal",
+      "to": "A Electronics Cost Price Signal Decrease"
+    },
+    {
+      "type": "LINK",
+      "from": "A Electronics Market Price",
+      "to": "A Electronics Cost Price Signal Decrease"
+    },
+    {
+      "type": "LINK",
+      "from": "Cost Price Signal Time",
+      "to": "A Electronics Cost Price Signal Decrease"
+    },
+    {
+      "type": "LINK",
+      "from": "Cost Pricing Enabled",
+      "to": "A Capital Goods Cost Price Signal Increase"
+    },
+    {
+      "type": "LINK",
+      "from": "A Capital Goods Cost Price",
+      "to": "A Capital Goods Cost Price Signal Increase"
+    },
+    {
+      "type": "LINK",
+      "from": "A Capital Goods Cost Price Signal",
+      "to": "A Capital Goods Cost Price Signal Increase"
+    },
+    {
+      "type": "LINK",
+      "from": "Cost Price Signal Time",
+      "to": "A Capital Goods Cost Price Signal Increase"
+    },
+    {
+      "type": "LINK",
+      "from": "Cost Pricing Enabled",
+      "to": "A Capital Goods Cost Price Signal Decrease"
+    },
+    {
+      "type": "LINK",
+      "from": "A Capital Goods Cost Price Signal",
+      "to": "A Capital Goods Cost Price Signal Decrease"
+    },
+    {
+      "type": "LINK",
+      "from": "A Capital Goods Cost Price",
+      "to": "A Capital Goods Cost Price Signal Decrease"
+    },
+    {
+      "type": "LINK",
+      "from": "Cost Price Signal Time",
+      "to": "A Capital Goods Cost Price Signal Decrease"
+    },
+    {
+      "type": "LINK",
+      "from": "Cost Pricing Enabled",
+      "to": "A Construction Materials Cost Price Signal Increase"
+    },
+    {
+      "type": "LINK",
+      "from": "A Construction Materials Cost Price",
+      "to": "A Construction Materials Cost Price Signal Increase"
+    },
+    {
+      "type": "LINK",
+      "from": "A Construction Materials Cost Price Signal",
+      "to": "A Construction Materials Cost Price Signal Increase"
+    },
+    {
+      "type": "LINK",
+      "from": "Cost Price Signal Time",
+      "to": "A Construction Materials Cost Price Signal Increase"
+    },
+    {
+      "type": "LINK",
+      "from": "Cost Pricing Enabled",
+      "to": "A Construction Materials Cost Price Signal Decrease"
+    },
+    {
+      "type": "LINK",
+      "from": "A Construction Materials Cost Price Signal",
+      "to": "A Construction Materials Cost Price Signal Decrease"
+    },
+    {
+      "type": "LINK",
+      "from": "A Construction Materials Cost Price",
+      "to": "A Construction Materials Cost Price Signal Decrease"
+    },
+    {
+      "type": "LINK",
+      "from": "Cost Price Signal Time",
+      "to": "A Construction Materials Cost Price Signal Decrease"
+    },
+    {
+      "type": "LINK",
+      "from": "Cost Pricing Enabled",
+      "to": "A Regolith Cost Price Signal Increase"
+    },
+    {
+      "type": "LINK",
+      "from": "A Regolith Cost Price",
+      "to": "A Regolith Cost Price Signal Increase"
+    },
+    {
+      "type": "LINK",
+      "from": "A Regolith Cost Price Signal",
+      "to": "A Regolith Cost Price Signal Increase"
+    },
+    {
+      "type": "LINK",
+      "from": "Cost Price Signal Time",
+      "to": "A Regolith Cost Price Signal Increase"
+    },
+    {
+      "type": "LINK",
+      "from": "Cost Pricing Enabled",
+      "to": "A Regolith Cost Price Signal Decrease"
+    },
+    {
+      "type": "LINK",
+      "from": "A Regolith Cost Price Signal",
+      "to": "A Regolith Cost Price Signal Decrease"
+    },
+    {
+      "type": "LINK",
+      "from": "A Regolith Cost Price",
+      "to": "A Regolith Cost Price Signal Decrease"
+    },
+    {
+      "type": "LINK",
+      "from": "Cost Price Signal Time",
+      "to": "A Regolith Cost Price Signal Decrease"
+    },
+    {
+      "type": "LINK",
+      "from": "Mining Energy per Unit",
+      "to": "A Ore Full Cost"
+    },
+    {
+      "type": "LINK",
+      "from": "A Energy Cost Price Signal",
+      "to": "A Ore Full Cost"
+    },
+    {
+      "type": "LINK",
+      "from": "A Mining Labor per Unit",
+      "to": "A Ore Full Cost"
+    },
+    {
+      "type": "LINK",
+      "from": "A Mining Automation Factor",
+      "to": "A Ore Full Cost"
+    },
+    {
+      "type": "LINK",
+      "from": "A Wage",
+      "to": "A Ore Full Cost"
+    },
+    {
+      "type": "LINK",
+      "from": "Ore Mine Capital Goods per Capacity",
+      "to": "A Ore Full Cost"
+    },
+    {
+      "type": "LINK",
+      "from": "A Capital Goods Cost Price Signal",
+      "to": "A Ore Full Cost"
+    },
+    {
+      "type": "LINK",
+      "from": "Ore Mine Construction Materials per Capacity",
+      "to": "A Ore Full Cost"
+    },
+    {
+      "type": "LINK",
+      "from": "A Construction Materials Cost Price Signal",
+      "to": "A Ore Full Cost"
+    },
+    {
+      "type": "LINK",
+      "from": "Ore Mine Depreciation Rate",
+      "to": "A Ore Full Cost"
+    },
+    {
+      "type": "LINK",
+      "from": "A Effective Ore Base Cost",
+      "to": "A Ore Full Cost"
+    },
+    {
+      "type": "LINK",
+      "from": "Regolith Extraction Energy per Unit",
+      "to": "A Regolith Full Cost"
+    },
+    {
+      "type": "LINK",
+      "from": "A Energy Cost Price Signal",
+      "to": "A Regolith Full Cost"
+    },
+    {
+      "type": "LINK",
+      "from": "A Regolith Extraction Labor per Unit",
+      "to": "A Regolith Full Cost"
+    },
+    {
+      "type": "LINK",
+      "from": "A Regolith Extraction Automation Factor",
+      "to": "A Regolith Full Cost"
+    },
+    {
+      "type": "LINK",
+      "from": "A Wage",
+      "to": "A Regolith Full Cost"
+    },
+    {
+      "type": "LINK",
+      "from": "Regolith Mine Capital Goods per Capacity",
+      "to": "A Regolith Full Cost"
+    },
+    {
+      "type": "LINK",
+      "from": "A Capital Goods Cost Price Signal",
+      "to": "A Regolith Full Cost"
+    },
+    {
+      "type": "LINK",
+      "from": "Regolith Mine Construction Materials per Capacity",
+      "to": "A Regolith Full Cost"
+    },
+    {
+      "type": "LINK",
+      "from": "A Construction Materials Cost Price Signal",
+      "to": "A Regolith Full Cost"
+    },
+    {
+      "type": "LINK",
+      "from": "Regolith Mine Depreciation Rate",
+      "to": "A Regolith Full Cost"
+    },
+    {
+      "type": "LINK",
+      "from": "A Regolith Full Cost",
+      "to": "A Regolith Cost Price"
+    },
+    {
+      "type": "LINK",
+      "from": "Universal Markup",
+      "to": "A Regolith Cost Price"
+    },
+    {
+      "type": "LINK",
+      "from": "Power Resource Extraction Energy per Unit",
+      "to": "A Power Resource Full Cost"
+    },
+    {
+      "type": "LINK",
+      "from": "A Energy Cost Price Signal",
+      "to": "A Power Resource Full Cost"
+    },
+    {
+      "type": "LINK",
+      "from": "A Power Resource Extraction Labor per Unit",
+      "to": "A Power Resource Full Cost"
+    },
+    {
+      "type": "LINK",
+      "from": "A Power Resource Extraction Automation Factor",
+      "to": "A Power Resource Full Cost"
+    },
+    {
+      "type": "LINK",
+      "from": "A Wage",
+      "to": "A Power Resource Full Cost"
+    },
+    {
+      "type": "LINK",
+      "from": "Power Resource Mine Capital Goods per Capacity",
+      "to": "A Power Resource Full Cost"
+    },
+    {
+      "type": "LINK",
+      "from": "A Capital Goods Cost Price Signal",
+      "to": "A Power Resource Full Cost"
+    },
+    {
+      "type": "LINK",
+      "from": "Power Resource Mine Construction Materials per Capacity",
+      "to": "A Power Resource Full Cost"
+    },
+    {
+      "type": "LINK",
+      "from": "A Construction Materials Cost Price Signal",
+      "to": "A Power Resource Full Cost"
+    },
+    {
+      "type": "LINK",
+      "from": "Power Resource Mine Depreciation Rate",
+      "to": "A Power Resource Full Cost"
+    },
+    {
+      "type": "LINK",
+      "from": "Base Power Resource Price",
+      "to": "A Power Resource Full Cost"
+    },
+    {
+      "type": "LINK",
+      "from": "Power Resource per Energy",
+      "to": "A Energy Full Cost"
+    },
+    {
+      "type": "LINK",
+      "from": "A Power Resource Cost Price Signal",
+      "to": "A Energy Full Cost"
+    },
+    {
+      "type": "LINK",
+      "from": "A Generation Labor per Unit",
+      "to": "A Energy Full Cost"
+    },
+    {
+      "type": "LINK",
+      "from": "A Generation Automation Factor",
+      "to": "A Energy Full Cost"
+    },
+    {
+      "type": "LINK",
+      "from": "A Wage",
+      "to": "A Energy Full Cost"
+    },
+    {
+      "type": "LINK",
+      "from": "A Power Capital Goods per Capacity",
+      "to": "A Energy Full Cost"
+    },
+    {
+      "type": "LINK",
+      "from": "A Capital Goods Cost Price Signal",
+      "to": "A Energy Full Cost"
+    },
+    {
+      "type": "LINK",
+      "from": "A Power Construction Materials per Capacity",
+      "to": "A Energy Full Cost"
+    },
+    {
+      "type": "LINK",
+      "from": "A Construction Materials Cost Price Signal",
+      "to": "A Energy Full Cost"
+    },
+    {
+      "type": "LINK",
+      "from": "Power Depreciation Rate",
+      "to": "A Energy Full Cost"
+    },
+    {
+      "type": "LINK",
+      "from": "A Power Generation Cost",
+      "to": "A Energy Full Cost"
+    },
+    {
+      "type": "LINK",
+      "from": "Metal per Capital Goods Unit",
+      "to": "A Capital Goods Full Cost"
+    },
+    {
+      "type": "LINK",
+      "from": "A Metal Cost Price Signal",
+      "to": "A Capital Goods Full Cost"
+    },
+    {
+      "type": "LINK",
+      "from": "Electronics per Capital Goods Unit",
+      "to": "A Capital Goods Full Cost"
+    },
+    {
+      "type": "LINK",
+      "from": "A Electronics Cost Price Signal",
+      "to": "A Capital Goods Full Cost"
+    },
+    {
+      "type": "LINK",
+      "from": "Capital Goods Energy per Unit",
+      "to": "A Capital Goods Full Cost"
+    },
+    {
+      "type": "LINK",
+      "from": "A Energy Cost Price Signal",
+      "to": "A Capital Goods Full Cost"
+    },
+    {
+      "type": "LINK",
+      "from": "A Capital Goods Labor per Unit",
+      "to": "A Capital Goods Full Cost"
+    },
+    {
+      "type": "LINK",
+      "from": "A Capital Goods Automation Factor",
+      "to": "A Capital Goods Full Cost"
+    },
+    {
+      "type": "LINK",
+      "from": "A Wage",
+      "to": "A Capital Goods Full Cost"
+    },
+    {
+      "type": "LINK",
+      "from": "Capital Goods Plant Capital Goods per Capacity",
+      "to": "A Capital Goods Full Cost"
+    },
+    {
+      "type": "LINK",
+      "from": "A Capital Goods Cost Price Signal",
+      "to": "A Capital Goods Full Cost"
+    },
+    {
+      "type": "LINK",
+      "from": "Capital Goods Plant Construction Materials per Capacity",
+      "to": "A Capital Goods Full Cost"
+    },
+    {
+      "type": "LINK",
+      "from": "A Construction Materials Cost Price Signal",
+      "to": "A Capital Goods Full Cost"
+    },
+    {
+      "type": "LINK",
+      "from": "Capital Goods Plant Depreciation Rate",
+      "to": "A Capital Goods Full Cost"
+    },
+    {
+      "type": "LINK",
+      "from": "A Capital Goods Full Cost",
+      "to": "A Capital Goods Cost Price"
+    },
+    {
+      "type": "LINK",
+      "from": "Universal Markup",
+      "to": "A Capital Goods Cost Price"
+    },
+    {
+      "type": "LINK",
+      "from": "Regolith per Construction Materials Unit",
+      "to": "A Construction Materials Full Cost"
+    },
+    {
+      "type": "LINK",
+      "from": "A Regolith Cost Price Signal",
+      "to": "A Construction Materials Full Cost"
+    },
+    {
+      "type": "LINK",
+      "from": "Construction Materials Energy per Unit",
+      "to": "A Construction Materials Full Cost"
+    },
+    {
+      "type": "LINK",
+      "from": "A Energy Cost Price Signal",
+      "to": "A Construction Materials Full Cost"
+    },
+    {
+      "type": "LINK",
+      "from": "A Construction Materials Labor per Unit",
+      "to": "A Construction Materials Full Cost"
+    },
+    {
+      "type": "LINK",
+      "from": "A Construction Materials Automation Factor",
+      "to": "A Construction Materials Full Cost"
+    },
+    {
+      "type": "LINK",
+      "from": "A Wage",
+      "to": "A Construction Materials Full Cost"
+    },
+    {
+      "type": "LINK",
+      "from": "Construction Materials Plant Capital Goods per Capacity",
+      "to": "A Construction Materials Full Cost"
+    },
+    {
+      "type": "LINK",
+      "from": "A Capital Goods Cost Price Signal",
+      "to": "A Construction Materials Full Cost"
+    },
+    {
+      "type": "LINK",
+      "from": "Construction Materials Plant Construction Materials per Capacity",
+      "to": "A Construction Materials Full Cost"
+    },
+    {
+      "type": "LINK",
+      "from": "A Construction Materials Cost Price Signal",
+      "to": "A Construction Materials Full Cost"
+    },
+    {
+      "type": "LINK",
+      "from": "Construction Materials Plant Depreciation Rate",
+      "to": "A Construction Materials Full Cost"
+    },
+    {
+      "type": "LINK",
+      "from": "A Construction Materials Full Cost",
+      "to": "A Construction Materials Cost Price"
+    },
+    {
+      "type": "LINK",
+      "from": "Universal Markup",
+      "to": "A Construction Materials Cost Price"
+    },
+    {
+      "type": "LINK",
+      "from": "Food Energy per Unit",
+      "to": "A Food Full Cost"
+    },
+    {
+      "type": "LINK",
+      "from": "A Energy Cost Price Signal",
+      "to": "A Food Full Cost"
+    },
+    {
+      "type": "LINK",
+      "from": "Food Labor per Unit",
+      "to": "A Food Full Cost"
+    },
+    {
+      "type": "LINK",
+      "from": "A Wage",
+      "to": "A Food Full Cost"
+    },
+    {
+      "type": "LINK",
+      "from": "Farm Capital Goods per Capacity",
+      "to": "A Food Full Cost"
+    },
+    {
+      "type": "LINK",
+      "from": "A Capital Goods Cost Price Signal",
+      "to": "A Food Full Cost"
+    },
+    {
+      "type": "LINK",
+      "from": "Farm Depreciation Rate",
+      "to": "A Food Full Cost"
+    },
+    {
+      "type": "LINK",
+      "from": "A Refinery Capital Goods per Capacity",
+      "to": "A Metal Capital Wear"
+    },
+    {
+      "type": "LINK",
+      "from": "A Capital Goods Cost Price Signal",
+      "to": "A Metal Capital Wear"
+    },
+    {
+      "type": "LINK",
+      "from": "A Refinery Construction Materials per Capacity",
+      "to": "A Metal Capital Wear"
+    },
+    {
+      "type": "LINK",
+      "from": "A Construction Materials Cost Price Signal",
+      "to": "A Metal Capital Wear"
+    },
+    {
+      "type": "LINK",
+      "from": "A Refinery Depreciation Rate",
+      "to": "A Metal Capital Wear"
+    },
+    {
+      "type": "LINK",
+      "from": "A Electronics Capital Goods per Capacity",
+      "to": "A Electronics Capital Wear"
+    },
+    {
+      "type": "LINK",
+      "from": "A Capital Goods Cost Price Signal",
+      "to": "A Electronics Capital Wear"
+    },
+    {
+      "type": "LINK",
+      "from": "A Electronics Construction Materials per Capacity",
+      "to": "A Electronics Capital Wear"
+    },
+    {
+      "type": "LINK",
+      "from": "A Construction Materials Cost Price Signal",
+      "to": "A Electronics Capital Wear"
+    },
+    {
+      "type": "LINK",
+      "from": "Electronics Depreciation Rate",
+      "to": "A Electronics Capital Wear"
+    },
+    {
+      "type": "LINK",
+      "from": "Food Price Reference",
+      "to": "A Food Index Reference"
+    },
+    {
+      "type": "LINK",
+      "from": "A Food Index Cost Scale",
+      "to": "A Food Index Reference"
+    },
+    {
+      "type": "LINK",
+      "from": "Cost Pricing Enabled",
+      "to": "B Energy Cost Price Signal Increase"
+    },
+    {
+      "type": "LINK",
+      "from": "B Energy Price",
+      "to": "B Energy Cost Price Signal Increase"
+    },
+    {
+      "type": "LINK",
+      "from": "B Energy Cost Price Signal",
+      "to": "B Energy Cost Price Signal Increase"
+    },
+    {
+      "type": "LINK",
+      "from": "Cost Price Signal Time",
+      "to": "B Energy Cost Price Signal Increase"
+    },
+    {
+      "type": "LINK",
+      "from": "Cost Pricing Enabled",
+      "to": "B Energy Cost Price Signal Decrease"
+    },
+    {
+      "type": "LINK",
+      "from": "B Energy Cost Price Signal",
+      "to": "B Energy Cost Price Signal Decrease"
+    },
+    {
+      "type": "LINK",
+      "from": "B Energy Price",
+      "to": "B Energy Cost Price Signal Decrease"
+    },
+    {
+      "type": "LINK",
+      "from": "Cost Price Signal Time",
+      "to": "B Energy Cost Price Signal Decrease"
+    },
+    {
+      "type": "LINK",
+      "from": "Cost Pricing Enabled",
+      "to": "B Power Resource Cost Price Signal Increase"
+    },
+    {
+      "type": "LINK",
+      "from": "B Power Resource Price",
+      "to": "B Power Resource Cost Price Signal Increase"
+    },
+    {
+      "type": "LINK",
+      "from": "B Power Resource Cost Price Signal",
+      "to": "B Power Resource Cost Price Signal Increase"
+    },
+    {
+      "type": "LINK",
+      "from": "Cost Price Signal Time",
+      "to": "B Power Resource Cost Price Signal Increase"
+    },
+    {
+      "type": "LINK",
+      "from": "Cost Pricing Enabled",
+      "to": "B Power Resource Cost Price Signal Decrease"
+    },
+    {
+      "type": "LINK",
+      "from": "B Power Resource Cost Price Signal",
+      "to": "B Power Resource Cost Price Signal Decrease"
+    },
+    {
+      "type": "LINK",
+      "from": "B Power Resource Price",
+      "to": "B Power Resource Cost Price Signal Decrease"
+    },
+    {
+      "type": "LINK",
+      "from": "Cost Price Signal Time",
+      "to": "B Power Resource Cost Price Signal Decrease"
+    },
+    {
+      "type": "LINK",
+      "from": "Cost Pricing Enabled",
+      "to": "B Metal Cost Price Signal Increase"
+    },
+    {
+      "type": "LINK",
+      "from": "B Market Price",
+      "to": "B Metal Cost Price Signal Increase"
+    },
+    {
+      "type": "LINK",
+      "from": "B Metal Cost Price Signal",
+      "to": "B Metal Cost Price Signal Increase"
+    },
+    {
+      "type": "LINK",
+      "from": "Cost Price Signal Time",
+      "to": "B Metal Cost Price Signal Increase"
+    },
+    {
+      "type": "LINK",
+      "from": "Cost Pricing Enabled",
+      "to": "B Metal Cost Price Signal Decrease"
+    },
+    {
+      "type": "LINK",
+      "from": "B Metal Cost Price Signal",
+      "to": "B Metal Cost Price Signal Decrease"
+    },
+    {
+      "type": "LINK",
+      "from": "B Market Price",
+      "to": "B Metal Cost Price Signal Decrease"
+    },
+    {
+      "type": "LINK",
+      "from": "Cost Price Signal Time",
+      "to": "B Metal Cost Price Signal Decrease"
+    },
+    {
+      "type": "LINK",
+      "from": "Cost Pricing Enabled",
+      "to": "B Electronics Cost Price Signal Increase"
+    },
+    {
+      "type": "LINK",
+      "from": "B Electronics Market Price",
+      "to": "B Electronics Cost Price Signal Increase"
+    },
+    {
+      "type": "LINK",
+      "from": "B Electronics Cost Price Signal",
+      "to": "B Electronics Cost Price Signal Increase"
+    },
+    {
+      "type": "LINK",
+      "from": "Cost Price Signal Time",
+      "to": "B Electronics Cost Price Signal Increase"
+    },
+    {
+      "type": "LINK",
+      "from": "Cost Pricing Enabled",
+      "to": "B Electronics Cost Price Signal Decrease"
+    },
+    {
+      "type": "LINK",
+      "from": "B Electronics Cost Price Signal",
+      "to": "B Electronics Cost Price Signal Decrease"
+    },
+    {
+      "type": "LINK",
+      "from": "B Electronics Market Price",
+      "to": "B Electronics Cost Price Signal Decrease"
+    },
+    {
+      "type": "LINK",
+      "from": "Cost Price Signal Time",
+      "to": "B Electronics Cost Price Signal Decrease"
+    },
+    {
+      "type": "LINK",
+      "from": "Cost Pricing Enabled",
+      "to": "B Capital Goods Cost Price Signal Increase"
+    },
+    {
+      "type": "LINK",
+      "from": "B Capital Goods Cost Price",
+      "to": "B Capital Goods Cost Price Signal Increase"
+    },
+    {
+      "type": "LINK",
+      "from": "B Capital Goods Cost Price Signal",
+      "to": "B Capital Goods Cost Price Signal Increase"
+    },
+    {
+      "type": "LINK",
+      "from": "Cost Price Signal Time",
+      "to": "B Capital Goods Cost Price Signal Increase"
+    },
+    {
+      "type": "LINK",
+      "from": "Cost Pricing Enabled",
+      "to": "B Capital Goods Cost Price Signal Decrease"
+    },
+    {
+      "type": "LINK",
+      "from": "B Capital Goods Cost Price Signal",
+      "to": "B Capital Goods Cost Price Signal Decrease"
+    },
+    {
+      "type": "LINK",
+      "from": "B Capital Goods Cost Price",
+      "to": "B Capital Goods Cost Price Signal Decrease"
+    },
+    {
+      "type": "LINK",
+      "from": "Cost Price Signal Time",
+      "to": "B Capital Goods Cost Price Signal Decrease"
+    },
+    {
+      "type": "LINK",
+      "from": "Cost Pricing Enabled",
+      "to": "B Construction Materials Cost Price Signal Increase"
+    },
+    {
+      "type": "LINK",
+      "from": "B Construction Materials Cost Price",
+      "to": "B Construction Materials Cost Price Signal Increase"
+    },
+    {
+      "type": "LINK",
+      "from": "B Construction Materials Cost Price Signal",
+      "to": "B Construction Materials Cost Price Signal Increase"
+    },
+    {
+      "type": "LINK",
+      "from": "Cost Price Signal Time",
+      "to": "B Construction Materials Cost Price Signal Increase"
+    },
+    {
+      "type": "LINK",
+      "from": "Cost Pricing Enabled",
+      "to": "B Construction Materials Cost Price Signal Decrease"
+    },
+    {
+      "type": "LINK",
+      "from": "B Construction Materials Cost Price Signal",
+      "to": "B Construction Materials Cost Price Signal Decrease"
+    },
+    {
+      "type": "LINK",
+      "from": "B Construction Materials Cost Price",
+      "to": "B Construction Materials Cost Price Signal Decrease"
+    },
+    {
+      "type": "LINK",
+      "from": "Cost Price Signal Time",
+      "to": "B Construction Materials Cost Price Signal Decrease"
+    },
+    {
+      "type": "LINK",
+      "from": "Cost Pricing Enabled",
+      "to": "B Regolith Cost Price Signal Increase"
+    },
+    {
+      "type": "LINK",
+      "from": "B Regolith Cost Price",
+      "to": "B Regolith Cost Price Signal Increase"
+    },
+    {
+      "type": "LINK",
+      "from": "B Regolith Cost Price Signal",
+      "to": "B Regolith Cost Price Signal Increase"
+    },
+    {
+      "type": "LINK",
+      "from": "Cost Price Signal Time",
+      "to": "B Regolith Cost Price Signal Increase"
+    },
+    {
+      "type": "LINK",
+      "from": "Cost Pricing Enabled",
+      "to": "B Regolith Cost Price Signal Decrease"
+    },
+    {
+      "type": "LINK",
+      "from": "B Regolith Cost Price Signal",
+      "to": "B Regolith Cost Price Signal Decrease"
+    },
+    {
+      "type": "LINK",
+      "from": "B Regolith Cost Price",
+      "to": "B Regolith Cost Price Signal Decrease"
+    },
+    {
+      "type": "LINK",
+      "from": "Cost Price Signal Time",
+      "to": "B Regolith Cost Price Signal Decrease"
+    },
+    {
+      "type": "LINK",
+      "from": "Mining Energy per Unit",
+      "to": "B Ore Full Cost"
+    },
+    {
+      "type": "LINK",
+      "from": "B Energy Cost Price Signal",
+      "to": "B Ore Full Cost"
+    },
+    {
+      "type": "LINK",
+      "from": "B Mining Labor per Unit",
+      "to": "B Ore Full Cost"
+    },
+    {
+      "type": "LINK",
+      "from": "B Mining Automation Factor",
+      "to": "B Ore Full Cost"
+    },
+    {
+      "type": "LINK",
+      "from": "B Wage",
+      "to": "B Ore Full Cost"
+    },
+    {
+      "type": "LINK",
+      "from": "Ore Mine Capital Goods per Capacity",
+      "to": "B Ore Full Cost"
+    },
+    {
+      "type": "LINK",
+      "from": "B Capital Goods Cost Price Signal",
+      "to": "B Ore Full Cost"
+    },
+    {
+      "type": "LINK",
+      "from": "Ore Mine Construction Materials per Capacity",
+      "to": "B Ore Full Cost"
+    },
+    {
+      "type": "LINK",
+      "from": "B Construction Materials Cost Price Signal",
+      "to": "B Ore Full Cost"
+    },
+    {
+      "type": "LINK",
+      "from": "Ore Mine Depreciation Rate",
+      "to": "B Ore Full Cost"
+    },
+    {
+      "type": "LINK",
+      "from": "B Effective Ore Base Cost",
+      "to": "B Ore Full Cost"
+    },
+    {
+      "type": "LINK",
+      "from": "Regolith Extraction Energy per Unit",
+      "to": "B Regolith Full Cost"
+    },
+    {
+      "type": "LINK",
+      "from": "B Energy Cost Price Signal",
+      "to": "B Regolith Full Cost"
+    },
+    {
+      "type": "LINK",
+      "from": "B Regolith Extraction Labor per Unit",
+      "to": "B Regolith Full Cost"
+    },
+    {
+      "type": "LINK",
+      "from": "B Regolith Extraction Automation Factor",
+      "to": "B Regolith Full Cost"
+    },
+    {
+      "type": "LINK",
+      "from": "B Wage",
+      "to": "B Regolith Full Cost"
+    },
+    {
+      "type": "LINK",
+      "from": "Regolith Mine Capital Goods per Capacity",
+      "to": "B Regolith Full Cost"
+    },
+    {
+      "type": "LINK",
+      "from": "B Capital Goods Cost Price Signal",
+      "to": "B Regolith Full Cost"
+    },
+    {
+      "type": "LINK",
+      "from": "Regolith Mine Construction Materials per Capacity",
+      "to": "B Regolith Full Cost"
+    },
+    {
+      "type": "LINK",
+      "from": "B Construction Materials Cost Price Signal",
+      "to": "B Regolith Full Cost"
+    },
+    {
+      "type": "LINK",
+      "from": "Regolith Mine Depreciation Rate",
+      "to": "B Regolith Full Cost"
+    },
+    {
+      "type": "LINK",
+      "from": "B Regolith Full Cost",
+      "to": "B Regolith Cost Price"
+    },
+    {
+      "type": "LINK",
+      "from": "Universal Markup",
+      "to": "B Regolith Cost Price"
+    },
+    {
+      "type": "LINK",
+      "from": "Power Resource Extraction Energy per Unit",
+      "to": "B Power Resource Full Cost"
+    },
+    {
+      "type": "LINK",
+      "from": "B Energy Cost Price Signal",
+      "to": "B Power Resource Full Cost"
+    },
+    {
+      "type": "LINK",
+      "from": "B Power Resource Extraction Labor per Unit",
+      "to": "B Power Resource Full Cost"
+    },
+    {
+      "type": "LINK",
+      "from": "B Power Resource Extraction Automation Factor",
+      "to": "B Power Resource Full Cost"
+    },
+    {
+      "type": "LINK",
+      "from": "B Wage",
+      "to": "B Power Resource Full Cost"
+    },
+    {
+      "type": "LINK",
+      "from": "Power Resource Mine Capital Goods per Capacity",
+      "to": "B Power Resource Full Cost"
+    },
+    {
+      "type": "LINK",
+      "from": "B Capital Goods Cost Price Signal",
+      "to": "B Power Resource Full Cost"
+    },
+    {
+      "type": "LINK",
+      "from": "Power Resource Mine Construction Materials per Capacity",
+      "to": "B Power Resource Full Cost"
+    },
+    {
+      "type": "LINK",
+      "from": "B Construction Materials Cost Price Signal",
+      "to": "B Power Resource Full Cost"
+    },
+    {
+      "type": "LINK",
+      "from": "Power Resource Mine Depreciation Rate",
+      "to": "B Power Resource Full Cost"
+    },
+    {
+      "type": "LINK",
+      "from": "Base Power Resource Price",
+      "to": "B Power Resource Full Cost"
+    },
+    {
+      "type": "LINK",
+      "from": "Power Resource per Energy",
+      "to": "B Energy Full Cost"
+    },
+    {
+      "type": "LINK",
+      "from": "B Power Resource Cost Price Signal",
+      "to": "B Energy Full Cost"
+    },
+    {
+      "type": "LINK",
+      "from": "B Generation Labor per Unit",
+      "to": "B Energy Full Cost"
+    },
+    {
+      "type": "LINK",
+      "from": "B Generation Automation Factor",
+      "to": "B Energy Full Cost"
+    },
+    {
+      "type": "LINK",
+      "from": "B Wage",
+      "to": "B Energy Full Cost"
+    },
+    {
+      "type": "LINK",
+      "from": "B Power Capital Goods per Capacity",
+      "to": "B Energy Full Cost"
+    },
+    {
+      "type": "LINK",
+      "from": "B Capital Goods Cost Price Signal",
+      "to": "B Energy Full Cost"
+    },
+    {
+      "type": "LINK",
+      "from": "B Power Construction Materials per Capacity",
+      "to": "B Energy Full Cost"
+    },
+    {
+      "type": "LINK",
+      "from": "B Construction Materials Cost Price Signal",
+      "to": "B Energy Full Cost"
+    },
+    {
+      "type": "LINK",
+      "from": "Power Depreciation Rate",
+      "to": "B Energy Full Cost"
+    },
+    {
+      "type": "LINK",
+      "from": "B Power Generation Cost",
+      "to": "B Energy Full Cost"
+    },
+    {
+      "type": "LINK",
+      "from": "Metal per Capital Goods Unit",
+      "to": "B Capital Goods Full Cost"
+    },
+    {
+      "type": "LINK",
+      "from": "B Metal Cost Price Signal",
+      "to": "B Capital Goods Full Cost"
+    },
+    {
+      "type": "LINK",
+      "from": "Electronics per Capital Goods Unit",
+      "to": "B Capital Goods Full Cost"
+    },
+    {
+      "type": "LINK",
+      "from": "B Electronics Cost Price Signal",
+      "to": "B Capital Goods Full Cost"
+    },
+    {
+      "type": "LINK",
+      "from": "Capital Goods Energy per Unit",
+      "to": "B Capital Goods Full Cost"
+    },
+    {
+      "type": "LINK",
+      "from": "B Energy Cost Price Signal",
+      "to": "B Capital Goods Full Cost"
+    },
+    {
+      "type": "LINK",
+      "from": "B Capital Goods Labor per Unit",
+      "to": "B Capital Goods Full Cost"
+    },
+    {
+      "type": "LINK",
+      "from": "B Capital Goods Automation Factor",
+      "to": "B Capital Goods Full Cost"
+    },
+    {
+      "type": "LINK",
+      "from": "B Wage",
+      "to": "B Capital Goods Full Cost"
+    },
+    {
+      "type": "LINK",
+      "from": "Capital Goods Plant Capital Goods per Capacity",
+      "to": "B Capital Goods Full Cost"
+    },
+    {
+      "type": "LINK",
+      "from": "B Capital Goods Cost Price Signal",
+      "to": "B Capital Goods Full Cost"
+    },
+    {
+      "type": "LINK",
+      "from": "Capital Goods Plant Construction Materials per Capacity",
+      "to": "B Capital Goods Full Cost"
+    },
+    {
+      "type": "LINK",
+      "from": "B Construction Materials Cost Price Signal",
+      "to": "B Capital Goods Full Cost"
+    },
+    {
+      "type": "LINK",
+      "from": "Capital Goods Plant Depreciation Rate",
+      "to": "B Capital Goods Full Cost"
+    },
+    {
+      "type": "LINK",
+      "from": "B Capital Goods Full Cost",
+      "to": "B Capital Goods Cost Price"
+    },
+    {
+      "type": "LINK",
+      "from": "Universal Markup",
+      "to": "B Capital Goods Cost Price"
+    },
+    {
+      "type": "LINK",
+      "from": "Regolith per Construction Materials Unit",
+      "to": "B Construction Materials Full Cost"
+    },
+    {
+      "type": "LINK",
+      "from": "B Regolith Cost Price Signal",
+      "to": "B Construction Materials Full Cost"
+    },
+    {
+      "type": "LINK",
+      "from": "Construction Materials Energy per Unit",
+      "to": "B Construction Materials Full Cost"
+    },
+    {
+      "type": "LINK",
+      "from": "B Energy Cost Price Signal",
+      "to": "B Construction Materials Full Cost"
+    },
+    {
+      "type": "LINK",
+      "from": "B Construction Materials Labor per Unit",
+      "to": "B Construction Materials Full Cost"
+    },
+    {
+      "type": "LINK",
+      "from": "B Construction Materials Automation Factor",
+      "to": "B Construction Materials Full Cost"
+    },
+    {
+      "type": "LINK",
+      "from": "B Wage",
+      "to": "B Construction Materials Full Cost"
+    },
+    {
+      "type": "LINK",
+      "from": "Construction Materials Plant Capital Goods per Capacity",
+      "to": "B Construction Materials Full Cost"
+    },
+    {
+      "type": "LINK",
+      "from": "B Capital Goods Cost Price Signal",
+      "to": "B Construction Materials Full Cost"
+    },
+    {
+      "type": "LINK",
+      "from": "Construction Materials Plant Construction Materials per Capacity",
+      "to": "B Construction Materials Full Cost"
+    },
+    {
+      "type": "LINK",
+      "from": "B Construction Materials Cost Price Signal",
+      "to": "B Construction Materials Full Cost"
+    },
+    {
+      "type": "LINK",
+      "from": "Construction Materials Plant Depreciation Rate",
+      "to": "B Construction Materials Full Cost"
+    },
+    {
+      "type": "LINK",
+      "from": "B Construction Materials Full Cost",
+      "to": "B Construction Materials Cost Price"
+    },
+    {
+      "type": "LINK",
+      "from": "Universal Markup",
+      "to": "B Construction Materials Cost Price"
+    },
+    {
+      "type": "LINK",
+      "from": "Food Energy per Unit",
+      "to": "B Food Full Cost"
+    },
+    {
+      "type": "LINK",
+      "from": "B Energy Cost Price Signal",
+      "to": "B Food Full Cost"
+    },
+    {
+      "type": "LINK",
+      "from": "Food Labor per Unit",
+      "to": "B Food Full Cost"
+    },
+    {
+      "type": "LINK",
+      "from": "B Wage",
+      "to": "B Food Full Cost"
+    },
+    {
+      "type": "LINK",
+      "from": "Farm Capital Goods per Capacity",
+      "to": "B Food Full Cost"
+    },
+    {
+      "type": "LINK",
+      "from": "B Capital Goods Cost Price Signal",
+      "to": "B Food Full Cost"
+    },
+    {
+      "type": "LINK",
+      "from": "Farm Depreciation Rate",
+      "to": "B Food Full Cost"
+    },
+    {
+      "type": "LINK",
+      "from": "B Refinery Capital Goods per Capacity",
+      "to": "B Metal Capital Wear"
+    },
+    {
+      "type": "LINK",
+      "from": "B Capital Goods Cost Price Signal",
+      "to": "B Metal Capital Wear"
+    },
+    {
+      "type": "LINK",
+      "from": "B Refinery Construction Materials per Capacity",
+      "to": "B Metal Capital Wear"
+    },
+    {
+      "type": "LINK",
+      "from": "B Construction Materials Cost Price Signal",
+      "to": "B Metal Capital Wear"
+    },
+    {
+      "type": "LINK",
+      "from": "B Refinery Depreciation Rate",
+      "to": "B Metal Capital Wear"
+    },
+    {
+      "type": "LINK",
+      "from": "B Electronics Capital Goods per Capacity",
+      "to": "B Electronics Capital Wear"
+    },
+    {
+      "type": "LINK",
+      "from": "B Capital Goods Cost Price Signal",
+      "to": "B Electronics Capital Wear"
+    },
+    {
+      "type": "LINK",
+      "from": "B Electronics Construction Materials per Capacity",
+      "to": "B Electronics Capital Wear"
+    },
+    {
+      "type": "LINK",
+      "from": "B Construction Materials Cost Price Signal",
+      "to": "B Electronics Capital Wear"
+    },
+    {
+      "type": "LINK",
+      "from": "Electronics Depreciation Rate",
+      "to": "B Electronics Capital Wear"
+    },
+    {
+      "type": "LINK",
+      "from": "Food Price Reference",
+      "to": "B Food Index Reference"
+    },
+    {
+      "type": "LINK",
+      "from": "B Food Index Cost Scale",
+      "to": "B Food Index Reference"
+    },
+    {
+      "type": "LINK",
+      "from": "Cost Pricing Enabled",
+      "to": "A Metal Unit Cost"
+    },
+    {
+      "type": "LINK",
+      "from": "A Metal Capital Wear",
+      "to": "A Metal Unit Cost"
+    },
+    {
+      "type": "LINK",
+      "from": "Cost Pricing Enabled",
+      "to": "A Electronics Unit Cost"
+    },
+    {
+      "type": "LINK",
+      "from": "A Electronics Capital Wear",
+      "to": "A Electronics Unit Cost"
+    },
+    {
+      "type": "LINK",
+      "from": "Cost Pricing Enabled",
+      "to": "A Ore Price"
+    },
+    {
+      "type": "LINK",
+      "from": "A Ore Full Cost",
+      "to": "A Ore Price"
+    },
+    {
+      "type": "LINK",
+      "from": "Universal Markup",
+      "to": "A Ore Price"
+    },
+    {
+      "type": "LINK",
+      "from": "Cost Pricing Enabled",
+      "to": "A Power Resource Price"
+    },
+    {
+      "type": "LINK",
+      "from": "A Power Resource Full Cost",
+      "to": "A Power Resource Price"
+    },
+    {
+      "type": "LINK",
+      "from": "Universal Markup",
+      "to": "A Power Resource Price"
+    },
+    {
+      "type": "LINK",
+      "from": "Cost Pricing Enabled",
+      "to": "A Energy Price"
+    },
+    {
+      "type": "LINK",
+      "from": "A Energy Full Cost",
+      "to": "A Energy Price"
+    },
+    {
+      "type": "LINK",
+      "from": "Universal Markup",
+      "to": "A Energy Price"
+    },
+    {
+      "type": "LINK",
+      "from": "Cost Pricing Enabled",
+      "to": "A Food Price"
+    },
+    {
+      "type": "LINK",
+      "from": "A Food Full Cost",
+      "to": "A Food Price"
+    },
+    {
+      "type": "LINK",
+      "from": "Universal Markup",
+      "to": "A Food Price"
+    },
+    {
+      "type": "LINK",
+      "from": "Cost Pricing Enabled",
+      "to": "A Base Markup"
+    },
+    {
+      "type": "LINK",
+      "from": "Universal Markup",
+      "to": "A Base Markup"
+    },
+    {
+      "type": "LINK",
+      "from": "Cost Pricing Enabled",
+      "to": "A Electronics Base Markup"
+    },
+    {
+      "type": "LINK",
+      "from": "Universal Markup",
+      "to": "A Electronics Base Markup"
+    },
+    {
+      "type": "LINK",
+      "from": "Cost Pricing Enabled",
+      "to": "A Reference Metal Price"
+    },
+    {
+      "type": "LINK",
+      "from": "A Initial Reference Metal Price",
+      "to": "A Reference Metal Price"
+    },
+    {
+      "type": "LINK",
+      "from": "A Reference Metal Price Cost Scale",
+      "to": "A Reference Metal Price"
+    },
+    {
+      "type": "LINK",
+      "from": "Cost Pricing Enabled",
+      "to": "A Electronics Reference Price"
+    },
+    {
+      "type": "LINK",
+      "from": "A Initial Electronics Reference Price",
+      "to": "A Electronics Reference Price"
+    },
+    {
+      "type": "LINK",
+      "from": "A Electronics Reference Price Cost Scale",
+      "to": "A Electronics Reference Price"
+    },
+    {
+      "type": "LINK",
+      "from": "Cost Pricing Enabled",
+      "to": "A Price Index"
+    },
+    {
+      "type": "LINK",
+      "from": "A Food Index Reference",
+      "to": "A Price Index"
+    },
+    {
+      "type": "LINK",
+      "from": "Cost Pricing Enabled",
+      "to": "B Metal Unit Cost"
+    },
+    {
+      "type": "LINK",
+      "from": "B Metal Capital Wear",
+      "to": "B Metal Unit Cost"
+    },
+    {
+      "type": "LINK",
+      "from": "Cost Pricing Enabled",
+      "to": "B Electronics Unit Cost"
+    },
+    {
+      "type": "LINK",
+      "from": "B Electronics Capital Wear",
+      "to": "B Electronics Unit Cost"
+    },
+    {
+      "type": "LINK",
+      "from": "Cost Pricing Enabled",
+      "to": "B Ore Price"
+    },
+    {
+      "type": "LINK",
+      "from": "B Ore Full Cost",
+      "to": "B Ore Price"
+    },
+    {
+      "type": "LINK",
+      "from": "Universal Markup",
+      "to": "B Ore Price"
+    },
+    {
+      "type": "LINK",
+      "from": "Cost Pricing Enabled",
+      "to": "B Power Resource Price"
+    },
+    {
+      "type": "LINK",
+      "from": "B Power Resource Full Cost",
+      "to": "B Power Resource Price"
+    },
+    {
+      "type": "LINK",
+      "from": "Universal Markup",
+      "to": "B Power Resource Price"
+    },
+    {
+      "type": "LINK",
+      "from": "Cost Pricing Enabled",
+      "to": "B Energy Price"
+    },
+    {
+      "type": "LINK",
+      "from": "B Energy Full Cost",
+      "to": "B Energy Price"
+    },
+    {
+      "type": "LINK",
+      "from": "Universal Markup",
+      "to": "B Energy Price"
+    },
+    {
+      "type": "LINK",
+      "from": "Cost Pricing Enabled",
+      "to": "B Food Price"
+    },
+    {
+      "type": "LINK",
+      "from": "B Food Full Cost",
+      "to": "B Food Price"
+    },
+    {
+      "type": "LINK",
+      "from": "Universal Markup",
+      "to": "B Food Price"
+    },
+    {
+      "type": "LINK",
+      "from": "Cost Pricing Enabled",
+      "to": "B Base Markup"
+    },
+    {
+      "type": "LINK",
+      "from": "Universal Markup",
+      "to": "B Base Markup"
+    },
+    {
+      "type": "LINK",
+      "from": "Cost Pricing Enabled",
+      "to": "B Electronics Base Markup"
+    },
+    {
+      "type": "LINK",
+      "from": "Universal Markup",
+      "to": "B Electronics Base Markup"
+    },
+    {
+      "type": "LINK",
+      "from": "Cost Pricing Enabled",
+      "to": "B Reference Metal Price"
+    },
+    {
+      "type": "LINK",
+      "from": "B Initial Reference Metal Price",
+      "to": "B Reference Metal Price"
+    },
+    {
+      "type": "LINK",
+      "from": "B Reference Metal Price Cost Scale",
+      "to": "B Reference Metal Price"
+    },
+    {
+      "type": "LINK",
+      "from": "Cost Pricing Enabled",
+      "to": "B Electronics Reference Price"
+    },
+    {
+      "type": "LINK",
+      "from": "B Initial Electronics Reference Price",
+      "to": "B Electronics Reference Price"
+    },
+    {
+      "type": "LINK",
+      "from": "B Electronics Reference Price Cost Scale",
+      "to": "B Electronics Reference Price"
+    },
+    {
+      "type": "LINK",
+      "from": "Cost Pricing Enabled",
+      "to": "B Price Index"
+    },
+    {
+      "type": "LINK",
+      "from": "B Food Index Reference",
+      "to": "B Price Index"
     }
   ],
   "visualizations": [
@@ -43077,6 +45603,56 @@
         "Food Enabled": 1,
         "Labor Market Enabled": 1,
         "Wage Pricing Enabled": 1
+      }
+    },
+    {
+      "name": "v7.7.16 Cost Pricing",
+      "description": "Mode 52 (labor market) with cost pricing: every price is full unit cost (materials, energy, labor, capital wear, rent) x 1.15 x its scarcity factor.",
+      "values": {
+        "Capital Lifecycle Enabled": 1,
+        "Intermediate Inputs Enabled": 1,
+        "Capital Goods Enabled": 1,
+        "Transport Capital Goods Enabled": 1,
+        "Power Resource Enabled": 1,
+        "Construction Materials Enabled": 1,
+        "Transport Construction Materials Enabled": 1,
+        "Construction Materials Energy Enabled": 1,
+        "Construction Materials Capital Enabled": 1,
+        "Capital Goods Capital Enabled": 1,
+        "Regolith Capital Enabled": 1,
+        "Ore Capital Enabled": 1,
+        "Timed Test Mode": 56,
+        "Power Resource Capital Enabled": 1,
+        "Deposits Enabled": 1,
+        "Process Energy Enabled": 1,
+        "Food Enabled": 1,
+        "Labor Market Enabled": 1,
+        "Cost Pricing Enabled": 1
+      }
+    },
+    {
+      "name": "v7.7.16 Transport Surge with Cost Pricing",
+      "description": "Mode 53 (transport surge with the labor market) with cost pricing.",
+      "values": {
+        "Capital Lifecycle Enabled": 1,
+        "Intermediate Inputs Enabled": 1,
+        "Capital Goods Enabled": 1,
+        "Transport Capital Goods Enabled": 1,
+        "Power Resource Enabled": 1,
+        "Construction Materials Enabled": 1,
+        "Transport Construction Materials Enabled": 1,
+        "Construction Materials Energy Enabled": 1,
+        "Construction Materials Capital Enabled": 1,
+        "Capital Goods Capital Enabled": 1,
+        "Regolith Capital Enabled": 1,
+        "Ore Capital Enabled": 1,
+        "Timed Test Mode": 57,
+        "Power Resource Capital Enabled": 1,
+        "Deposits Enabled": 1,
+        "Process Energy Enabled": 1,
+        "Food Enabled": 1,
+        "Labor Market Enabled": 1,
+        "Cost Pricing Enabled": 1
       }
     }
   ]

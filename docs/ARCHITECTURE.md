@@ -1,7 +1,7 @@
 # Architecture
 
 **Document status:** CURRENT  
-**Base:** Orbital Economy v7.7.15 r1  
+**Base:** Orbital Economy v7.7.16 r1  
 **Rule:** this document describes accepted code; code is authoritative on conflict.
 
 ## 1. Model character
@@ -125,6 +125,8 @@ Transport uses a documented shared-infrastructure variation with a secondary Cap
 **Recalibration (v7.7.14).** No structural change. A sensitivity study of v7.7.13 (`docs/research/SENSITIVITY_2026-10-10_RU.md`) found two values on a threshold, and the owner moved both off it: `Power Operating Reserve Factor` 1.02 → 1.10 (the generation reserve, the thinnest in the model; refinery 1.10, transport 1.15) and `Labor Participation Share` 0.50 → 0.52 (A off the labor-shortage edge). The labor demand signal starts at initial population × participation (A 14.56, B 4.42). `Target Labor Tightness` (0.95) stays and is annotated as the key long-run wage parameter.
 
 **Wage pricing (v7.7.15, finance layer, intermediate step).** A `wage_pricing` node (`model/nodes/wage_pricing.json`, Lab v0.9.19) under the switch `Wage Pricing Enabled`: the ore, energy and food prices of each region × Max(1 + labor share × (wage / initial wage − 1), 1e-6), with labor shares declared per region (start labor cost / start price, at most 1 — the model's price level lies below labor content, so most shares are 1); the effective metal and electronics demand × Max(price / reference, 1e-6)^−0.5. No stocks or flows. Owner decisions 2026-10-12 (`docs/research/FINANCE_PROTOTYPE_2026-10-12_RU.md`): household budgets on the present prices collapse the economy (the money circuit is not closed), so real income and wage pass-through come first and full money accounting follows.
+
+**Cost pricing (v7.7.16, full money accounting, step 1).** A `cost_pricing` node (`model/nodes/cost_pricing.json`, Lab v0.9.20) under the switch `Cost Pricing Enabled`: the ore, power resource, energy and food prices of each region = full unit cost × (1 + 0.15) × the old scarcity factor, where full unit cost = materials and energy at 10-day smoothed regional prices + labor × automation × wage + capital wear (capital goods and construction materials per capacity × depreciation, at their cost prices) + a rent (the old base price, owner decision: rent on top of costs). Capital goods, construction materials and regolith get cost prices; metal and electronics unit costs gain capital wear; one universal markup of 15 %. Reference prices and the food reference of the price index are scaled per region so that demand and the real wage keep their level (calibrated: the year-1 price index equals Mode 52 to four digits). The smoothed signals cut the same-step loops between energy, power resource and ore; fixed costs per capacity stay in profits (a price depending on current output would loop). The price level is about ×2.2: the old prices of ore, energy, power resource and food lay below their labor content, so wages paid did not come back through prices (`docs/research/COST_PRICES_PROTOTYPE_2026-10-16_RU.md`).
 
 ## 6. Markets and trade
 

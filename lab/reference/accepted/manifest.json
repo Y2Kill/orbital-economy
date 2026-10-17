@@ -1,15 +1,15 @@
 {
   "status": "ACCEPTED",
-  "model_name": "Orbital Economy v7.7.15 r1 — Wage Pricing",
-  "model_file": "orbital_economy_v7_7_15_r1_modeljson.json",
-  "model_sha256": "a5a233129b013f838cac863e4f9b8aad9da8e90bacfe48763fcedefad929b975",
-  "validation_file": "validation-v7.7.15.json",
-  "validation_sha256": "1b04e5a629a32fa44af0464cb9fd9b3b6cc9680358adbd04354cf7b2ed8cab92",
-  "accepted_date": "2026-10-16",
+  "model_name": "Orbital Economy v7.7.16 r1 — Cost Pricing",
+  "model_file": "orbital_economy_v7_7_16_r1_modeljson.json",
+  "model_sha256": "e512efbb45f54dd08785d960626e8eb5baf4b8fc811efc6d9692265d71a1dd3e",
+  "validation_file": "validation-v7.7.16.json",
+  "validation_sha256": "dd124ce56d165d4926f2eb91d50388806a7859082862ecab91a7faa4244202f6",
+  "accepted_date": "2026-10-17",
   "engine": "simulation@9.0.0",
   "notes": [
-    "v7.7.15: finance layer, intermediate step (owner decisions 2026-10-12) — ore, energy and food prices follow the regional wage proportionally (declared labor shares), final metal and electronics demand responds to its price (elasticity 0.5); one wage_pricing node, model/nodes/wage_pricing.json, switch Wage Pricing Enabled. Full money accounting comes next. See docs/tasks/037-wage-pricing/.",
-    "Modes 0-53 keep Wage Pricing Enabled = 0 and reproduce v7.7.14 r1 exactly; Mode 54 = Mode 52 with wage pricing, Mode 55 = Mode 53 (transport surge with the labor market) with wage pricing.",
+    "v7.7.16: full money accounting, step 1 (owner decisions 2026-10-16) — prices of ore, power resource, energy and food at full unit cost (materials and energy through smoothed price signals, labor x wage, capital wear, rent = the old base price) x 1.15 x their scarcity factor; cost prices of capital goods, construction materials and regolith; one 15 % markup; reference prices and the price index scaled per region; one cost_pricing node, model/nodes/cost_pricing.json, switch Cost Pricing Enabled. Money stocks come next. See docs/tasks/039-cost-pricing/.",
+    "Modes 0-55 keep Cost Pricing Enabled = 0 and reproduce v7.7.15 r1 exactly; Mode 56 = Mode 52 with cost pricing, Mode 57 = Mode 53 (transport surge with the labor market) with cost pricing.",
     "Exact numbers are defined on the canonical platform (docs/VERSIONING_AND_AUTHORITY.md section 8); series-digest.windows.json is the golden."
   ]
 }
