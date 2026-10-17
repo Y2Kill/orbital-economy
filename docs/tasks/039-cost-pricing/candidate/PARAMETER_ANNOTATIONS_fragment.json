@@ -1,0 +1,229 @@
+{
+  "format": "orbital-economy-parameter-annotations-fragment-v1",
+  "model": "Orbital Economy v7.7.16 Cost Pricing candidate r1",
+  "updated": "2026-10-17",
+  "note": "Task 039, specification §5: 27 new regional/global annotations plus three revised rent annotations; obsolete A Reference Metal Price and A Electronics Reference Price intentionally omitted. Merge into accepted annotations.",
+  "parameters": {
+    "Cost Pricing Enabled": {
+      "role": "Switch: cost-based prices enabled in Modes 56–57; 0 by default.",
+      "effect": "When off, previous 56 modes retain their accepted formulas and values.",
+      "evidence": "docs/research/COST_PRICES_PROTOTYPE_2026-10-16_RU.md; docs/tasks/039-cost-pricing/V7_7_16_ARCHITECTURE_SPEC.md §5; ARCHIVE/evidence/042-cost-pricing-node/calibrate.mjs.",
+      "since": "v7.7.16 candidate r1",
+      "tags": [
+        "cost-pricing",
+        "switch"
+      ]
+    },
+    "Universal Markup": {
+      "role": "Universal cost-price markup: 0.15 for all goods.",
+      "effect": "Price = full unit cost × (1 + 0.15), optionally multiplied by scarcity.",
+      "evidence": "docs/research/COST_PRICES_PROTOTYPE_2026-10-16_RU.md; docs/tasks/039-cost-pricing/V7_7_16_ARCHITECTURE_SPEC.md §5; ARCHIVE/evidence/042-cost-pricing-node/calibrate.mjs.",
+      "since": "v7.7.16 candidate r1",
+      "tags": [
+        "cost-pricing",
+        "markup"
+      ]
+    },
+    "Cost Price Signal Time": {
+      "role": "Ten-day smoothing horizon = 10 for price signals.",
+      "effect": "Smoothed stocks break instantaneous circular dependencies of ore, power resources and energy.",
+      "evidence": "docs/research/COST_PRICES_PROTOTYPE_2026-10-16_RU.md; docs/tasks/039-cost-pricing/V7_7_16_ARCHITECTURE_SPEC.md §5; ARCHIVE/evidence/042-cost-pricing-node/calibrate.mjs.",
+      "since": "v7.7.16 candidate r1",
+      "tags": [
+        "cost-pricing",
+        "smoothing"
+      ]
+    },
+    "A Energy Cost Price Signal": {
+      "role": "Initial energy cost-price signal (A 0.5731; B 0.6787); source prices at time zero with cost pricing enabled.",
+      "effect": "Sets starting value of each regional smoothed energy price stock, calibrated to enabled-mode source at t=0.",
+      "evidence": "docs/research/COST_PRICES_PROTOTYPE_2026-10-16_RU.md; docs/tasks/039-cost-pricing/V7_7_16_ARCHITECTURE_SPEC.md §5; ARCHIVE/evidence/042-cost-pricing-node/calibrate.mjs.",
+      "since": "v7.7.16 candidate r1",
+      "applies_to_mirror": true,
+      "tags": [
+        "cost-pricing",
+        "signal",
+        "calibration",
+        "asymmetry"
+      ]
+    },
+    "A Power Resource Cost Price Signal": {
+      "role": "Initial power resource cost-price signal (A 0.31; B 0.4085); source prices at time zero with cost pricing enabled.",
+      "effect": "Sets starting value of each regional smoothed power resource price stock, calibrated to enabled-mode source at t=0.",
+      "evidence": "docs/research/COST_PRICES_PROTOTYPE_2026-10-16_RU.md; docs/tasks/039-cost-pricing/V7_7_16_ARCHITECTURE_SPEC.md §5; ARCHIVE/evidence/042-cost-pricing-node/calibrate.mjs.",
+      "since": "v7.7.16 candidate r1",
+      "applies_to_mirror": true,
+      "tags": [
+        "cost-pricing",
+        "signal",
+        "calibration",
+        "asymmetry"
+      ]
+    },
+    "A Metal Cost Price Signal": {
+      "role": "Initial metal cost-price signal (A 49.95; B 80.99); source prices at time zero with cost pricing enabled.",
+      "effect": "Sets starting value of each regional smoothed metal price stock, calibrated to enabled-mode source at t=0.",
+      "evidence": "docs/research/COST_PRICES_PROTOTYPE_2026-10-16_RU.md; docs/tasks/039-cost-pricing/V7_7_16_ARCHITECTURE_SPEC.md §5; ARCHIVE/evidence/042-cost-pricing-node/calibrate.mjs.",
+      "since": "v7.7.16 candidate r1",
+      "applies_to_mirror": true,
+      "tags": [
+        "cost-pricing",
+        "signal",
+        "calibration",
+        "asymmetry"
+      ]
+    },
+    "A Electronics Cost Price Signal": {
+      "role": "Initial electronics cost-price signal (A 28.32; B 41.12); source prices at time zero with cost pricing enabled.",
+      "effect": "Sets starting value of each regional smoothed electronics price stock, calibrated to enabled-mode source at t=0.",
+      "evidence": "docs/research/COST_PRICES_PROTOTYPE_2026-10-16_RU.md; docs/tasks/039-cost-pricing/V7_7_16_ARCHITECTURE_SPEC.md §5; ARCHIVE/evidence/042-cost-pricing-node/calibrate.mjs.",
+      "since": "v7.7.16 candidate r1",
+      "applies_to_mirror": true,
+      "tags": [
+        "cost-pricing",
+        "signal",
+        "calibration",
+        "asymmetry"
+      ]
+    },
+    "A Capital Goods Cost Price Signal": {
+      "role": "Initial capital goods cost-price signal (A 336.9; B 478.2); source prices at time zero with cost pricing enabled.",
+      "effect": "Sets starting value of each regional smoothed capital goods price stock, calibrated to enabled-mode source at t=0.",
+      "evidence": "docs/research/COST_PRICES_PROTOTYPE_2026-10-16_RU.md; docs/tasks/039-cost-pricing/V7_7_16_ARCHITECTURE_SPEC.md §5; ARCHIVE/evidence/042-cost-pricing-node/calibrate.mjs.",
+      "since": "v7.7.16 candidate r1",
+      "applies_to_mirror": true,
+      "tags": [
+        "cost-pricing",
+        "signal",
+        "calibration",
+        "asymmetry"
+      ]
+    },
+    "A Construction Materials Cost Price Signal": {
+      "role": "Initial construction materials cost-price signal (A 109.6; B 148.8); source prices at time zero with cost pricing enabled.",
+      "effect": "Sets starting value of each regional smoothed construction materials price stock, calibrated to enabled-mode source at t=0.",
+      "evidence": "docs/research/COST_PRICES_PROTOTYPE_2026-10-16_RU.md; docs/tasks/039-cost-pricing/V7_7_16_ARCHITECTURE_SPEC.md §5; ARCHIVE/evidence/042-cost-pricing-node/calibrate.mjs.",
+      "since": "v7.7.16 candidate r1",
+      "applies_to_mirror": true,
+      "tags": [
+        "cost-pricing",
+        "signal",
+        "calibration",
+        "asymmetry"
+      ]
+    },
+    "A Regolith Cost Price Signal": {
+      "role": "Initial regolith cost-price signal (A 29.69; B 40.15); source prices at time zero with cost pricing enabled.",
+      "effect": "Sets starting value of each regional smoothed regolith price stock, calibrated to enabled-mode source at t=0.",
+      "evidence": "docs/research/COST_PRICES_PROTOTYPE_2026-10-16_RU.md; docs/tasks/039-cost-pricing/V7_7_16_ARCHITECTURE_SPEC.md §5; ARCHIVE/evidence/042-cost-pricing-node/calibrate.mjs.",
+      "since": "v7.7.16 candidate r1",
+      "applies_to_mirror": true,
+      "tags": [
+        "cost-pricing",
+        "signal",
+        "calibration",
+        "asymmetry"
+      ]
+    },
+    "A Reference Metal Price Cost Scale": {
+      "role": "Regional reference metal price calibration scale (A 2.254; B 2.028).",
+      "effect": "First-year average price under cost pricing divided by Mode 52 first-year average; stabilises baseline demand and nominal-to-real reference.",
+      "evidence": "docs/research/COST_PRICES_PROTOTYPE_2026-10-16_RU.md; docs/tasks/039-cost-pricing/V7_7_16_ARCHITECTURE_SPEC.md §5; ARCHIVE/evidence/042-cost-pricing-node/calibrate.mjs.",
+      "since": "v7.7.16 candidate r1",
+      "applies_to_mirror": true,
+      "tags": [
+        "cost-pricing",
+        "reference",
+        "calibration",
+        "asymmetry"
+      ]
+    },
+    "A Electronics Reference Price Cost Scale": {
+      "role": "Regional electronics reference price calibration scale (A 1.972; B 2.027).",
+      "effect": "First-year average price under cost pricing divided by Mode 52 first-year average; stabilises baseline demand and nominal-to-real reference.",
+      "evidence": "docs/research/COST_PRICES_PROTOTYPE_2026-10-16_RU.md; docs/tasks/039-cost-pricing/V7_7_16_ARCHITECTURE_SPEC.md §5; ARCHIVE/evidence/042-cost-pricing-node/calibrate.mjs.",
+      "since": "v7.7.16 candidate r1",
+      "applies_to_mirror": true,
+      "tags": [
+        "cost-pricing",
+        "reference",
+        "calibration",
+        "asymmetry"
+      ]
+    },
+    "A Food Index Cost Scale": {
+      "role": "Regional food index reference scale (A 1.754; B 2.475).",
+      "effect": "Scales the regional food reference in price-index calculation to preserve comparable initial real wages.",
+      "evidence": "docs/research/COST_PRICES_PROTOTYPE_2026-10-16_RU.md; docs/tasks/039-cost-pricing/V7_7_16_ARCHITECTURE_SPEC.md §5; ARCHIVE/evidence/042-cost-pricing-node/calibrate.mjs.",
+      "since": "v7.7.16 candidate r1",
+      "applies_to_mirror": true,
+      "tags": [
+        "cost-pricing",
+        "food",
+        "calibration",
+        "asymmetry"
+      ]
+    },
+    "A Initial Reference Metal Price": {
+      "role": "Symmetric stored initial reference price (A/B 40).",
+      "effect": "Preserves the accepted numeric reference when cost pricing wraps reference-price formulas; serves as the switch-off branch.",
+      "evidence": "docs/research/COST_PRICES_PROTOTYPE_2026-10-16_RU.md; docs/tasks/039-cost-pricing/V7_7_16_ARCHITECTURE_SPEC.md §5; ARCHIVE/evidence/042-cost-pricing-node/calibrate.mjs.",
+      "since": "v7.7.16 candidate r1",
+      "applies_to_mirror": true,
+      "tags": [
+        "cost-pricing",
+        "reference",
+        "symmetric"
+      ]
+    },
+    "A Initial Electronics Reference Price": {
+      "role": "Symmetric stored initial reference price (A/B 28).",
+      "effect": "Preserves the accepted numeric reference when cost pricing wraps reference-price formulas; serves as the switch-off branch.",
+      "evidence": "docs/research/COST_PRICES_PROTOTYPE_2026-10-16_RU.md; docs/tasks/039-cost-pricing/V7_7_16_ARCHITECTURE_SPEC.md §5; ARCHIVE/evidence/042-cost-pricing-node/calibrate.mjs.",
+      "since": "v7.7.16 candidate r1",
+      "applies_to_mirror": true,
+      "tags": [
+        "cost-pricing",
+        "reference",
+        "symmetric"
+      ]
+    },
+    "A Ore Base Cost": {
+      "role": "Стоимость руды колонии (A 4 / B 14) — главный источник сравнительного преимущества A в металле. With cost pricing enabled, this legacy base amount is economic rent above production unit costs.",
+      "effect": "Определяет Ore Price → Metal Unit Cost → Domestic Offer → Market Price. Разрыв ×3.5 делает металл A дешевле (Mode 17 @1080: 30.5 vs 37.4) и задаёт направление торговли металлом A→B на всех сценариях. В v7.4 через Feedstock Price = Market Price это же преимущество переносится на электронику. Under cost_pricing it contributes rent on top of material, energy, labor and depreciation unit costs.",
+      "evidence": "Mode 12/17 таблицы (ACCEPTANCE_R2); Mode 4 (Reverse Advantage) меняет именно этот параметр и разворачивает торговлю.; docs/research/COST_PRICES_PROTOTYPE_2026-10-16_RU.md; docs/tasks/039-cost-pricing/V7_7_16_ARCHITECTURE_SPEC.md §5; ARCHIVE/evidence/042-cost-pricing-node/calibrate.mjs.",
+      "since": "v7.4 r2",
+      "applies_to_mirror": true,
+      "tags": [
+        "comparative-advantage",
+        "metal",
+        "cost-pricing",
+        "rent"
+      ]
+    },
+    "A Power Generation Cost": {
+      "role": "Себестоимость генерации (A 0.08 / B 0.03 за единицу энергии). With cost pricing enabled, this legacy base amount is economic rent above production unit costs.",
+      "effect": "Базовая цена энергии до дефицитной надбавки; B энергетически дешевле, но энергия не торгуется, поэтому это влияет только на локальные unit cost (Energy per Metal 30 → 2.4 vs 0.9 на единицу металла). Under cost_pricing it contributes rent on top of material, energy, labor and depreciation unit costs.",
+      "evidence": "Mode 10 (Cheap Energy) тестирует именно этот канал.; docs/research/COST_PRICES_PROTOTYPE_2026-10-16_RU.md; docs/tasks/039-cost-pricing/V7_7_16_ARCHITECTURE_SPEC.md §5; ARCHIVE/evidence/042-cost-pricing-node/calibrate.mjs.",
+      "since": "v7.4 r2",
+      "applies_to_mirror": true,
+      "tags": [
+        "energy",
+        "cost",
+        "cost-pricing",
+        "rent"
+      ]
+    },
+    "Base Power Resource Price": {
+      "role": "Base physical operating-resource price. With cost pricing enabled, this legacy base amount is economic rent above production unit costs.",
+      "effect": "Adds an explicit resource-cost component to generation when Energy Kernel v2 is enabled. Under cost_pricing it contributes rent on top of material, energy, labor and depreciation unit costs.",
+      "evidence": "v7.6 Energy Kernel v2 specification and Modes 25/26 validation contract.; docs/research/COST_PRICES_PROTOTYPE_2026-10-16_RU.md; docs/tasks/039-cost-pricing/V7_7_16_ARCHITECTURE_SPEC.md §5; ARCHIVE/evidence/042-cost-pricing-node/calibrate.mjs.",
+      "since": "v7.6 r1",
+      "tags": [
+        "energy-kernel-v2",
+        "cost-pricing",
+        "rent"
+      ]
+    }
+  }
+}
