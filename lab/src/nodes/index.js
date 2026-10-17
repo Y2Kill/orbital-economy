@@ -227,6 +227,7 @@ export function mergeNodeValidation(validation, fragments) {
   let laborMarket = out.plugins?.find(p => p.type === 'labor_market') || null;
   let wagePricing = out.plugins?.find(p => p.type === 'wage_pricing') || null;
   let costPricing = out.plugins?.find(p => p.type === 'cost_pricing') || null;
+  let money = out.plugins?.find(p => p.type === 'money') || null;
   let retirement = boundaries.categories.find(x => x.id === 'capital_retirement') || null;
   let exploration = boundaries.categories.find(x => x.id === 'exploration_expenditure') || null;
   let demographyBirths = boundaries.categories.find(x => x.id === 'demography_births') || null;
@@ -394,6 +395,51 @@ export function mergeNodeValidation(validation, fragments) {
         if (!existing) costPricing.instances.push(structuredClone(inst));
         else if (!jsonEqual(existing, inst)) {
           throw new Error(`validation fragment[${fi}]: cost_pricing instance "${inst.name}" differs`);
+        }
+      }
+    }
+    if ((fragment.money_instances || []).length) {
+      const absTol = fragment.money_abs_tol ?? 1e-6;
+      const relTol = fragment.money_rel_tol ?? 1e-9;
+      const sw = fragment.money_switch;
+      const transport = fragment.money_transport;
+      if (!money) {
+        money = { type: 'money', abs_tol: absTol, rel_tol: relTol, switch: sw,
+          transport: structuredClone(transport), instances: [] };
+        out.plugins.push(money);
+      }
+      if (!Array.isArray(money.instances)) {
+        throw new Error('validation: money.instances must be an array');
+      }
+      if ((money.abs_tol ?? 1e-6) !== absTol ||
+          (money.rel_tol ?? 1e-9) !== relTol ||
+          money.switch !== sw || !jsonEqual(money.transport, transport)) {
+        throw new Error('validation: money plugin definition differs');
+      }
+      for (const instance of fragment.money_instances) {
+        const existing = money.instances.find(item => item.name === instance.name);
+        if (!existing) money.instances.push(structuredClone(instance));
+        else if (!jsonEqual(existing, instance)) {
+          throw new Error(`validation: money instance "${instance.name}" differs`);
+        }
+      }
+      if ((fragment.money_boundary_flows || []).length) {
+        let financial = boundaries.categories.find(c => c.id === 'financial_accounting');
+        if (!financial) {
+          financial = {
+            id: 'financial_accounting',
+            closed_world: true,
+            direction: 'source',
+            name: [],
+            reason: 'money transfers between households, firms and transport (closed accounting)'
+          };
+          boundaries.categories.push(financial);
+        }
+        if (!Array.isArray(financial.name)) {
+          throw new Error('validation: financial_accounting.name must be an array');
+        }
+        for (const name of fragment.money_boundary_flows) {
+          if (!financial.name.includes(name)) financial.name.push(name);
         }
       }
     }
