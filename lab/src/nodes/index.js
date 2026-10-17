@@ -429,7 +429,6 @@ export function mergeNodeValidation(validation, fragments) {
           financial = {
             id: 'financial_accounting',
             closed_world: true,
-            direction: 'source',
             name: [],
             reason: 'money transfers between households, firms and transport (closed accounting)'
           };
