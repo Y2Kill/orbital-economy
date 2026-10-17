@@ -50,7 +50,8 @@ import {
 } from './nodes/labor_market.js';
 import { wagePricingGeneratedNames, wagePricingReplacementNames } from './nodes/wage_pricing.js';
 import { costPricingGeneratedNames, costPricingReplacementNames } from './nodes/cost_pricing.js';
-import { runLifecycleConformance, runFoodConformance, runLaborMarketConformance, runWagePricingConformance, runCostPricingConformance } from './lifecycle_conformance.js';
+import { moneyGeneratedNames, moneyReplacementNames } from './nodes/money.js';
+import { runLifecycleConformance, runFoodConformance, runLaborMarketConformance, runWagePricingConformance, runCostPricingConformance, runMoneyConformance } from './lifecycle_conformance.js';
 import { runStructureAudits } from './structure_audit.js';
 
 const root = path.resolve(process.cwd());
@@ -101,21 +102,33 @@ const foodDeclarations = allNodeDeclarations.filter(x => x.decl?.type === 'food'
 const laborMarketDeclarations = allNodeDeclarations.filter(x => x.decl?.type === 'labor_market');
 const wagePricingFixture = readJson(path.join(root, 'fixtures', 'nodes', 'wage_pricing.json'));
 const costPricingFixture = readJson(path.join(root, 'fixtures', 'nodes', 'cost_pricing.json'));
+const moneyFixture = readJson(path.join(root, 'fixtures', 'nodes', 'money.json'));
 // A switched top layer is peeled only when the supplied model carries its switch: a nested run on a lower
 // layer (case 66 inside an accepted model that already has cost_pricing) must not peel a node it does not have.
 const carriesSwitch = sw => suppliedAccepted.elements.some(e => e.type !== 'LINK' && e.name === sw);
 const wagePricingDeclarations = allNodeDeclarations.filter(x => x.decl?.type === 'wage_pricing' && carriesSwitch(x.decl.switch));
 // A synthetic accepted+node probe uses the fixture before task 037 installs a model declaration.
 if (!wagePricingDeclarations.length && carriesSwitch(wagePricingFixture.switch)) wagePricingDeclarations.push({decl:wagePricingFixture});
+const moneyDeclarations = allNodeDeclarations.filter(x =>
+  x.decl?.type === 'money' && carriesSwitch(x.decl.switch));
+if (!moneyDeclarations.length && carriesSwitch(moneyFixture.switch)) {
+  moneyDeclarations.push({ decl: moneyFixture });
+}
+const withoutMoney = moneyDeclarations.reduce((model, { decl }) =>
+  stripMoneyNode(model, decl), suppliedAccepted);
+const moneyFragments = moneyDeclarations.map(({ decl }) =>
+  expandNode(decl, stripMoneyNode(suppliedAccepted, decl)).validation);
+const withoutMoneyValidation = moneyFragments.reduce(
+  (v, fragment) => validationWithoutMoneyFragment(v, fragment), suppliedValidation);
 const costPricingDeclarations = allNodeDeclarations.filter(x => x.decl?.type === 'cost_pricing' && carriesSwitch(x.decl.switch));
 if (!costPricingDeclarations.length && carriesSwitch(costPricingFixture.switch)) {
   costPricingDeclarations.push({ decl: costPricingFixture });
 }
-const withoutCost = costPricingDeclarations.reduce((m, {decl}) => stripCostPricingNode(m, decl), suppliedAccepted);
+const withoutCost = costPricingDeclarations.reduce((m, {decl}) => stripCostPricingNode(m, decl), withoutMoney);
 const costFragments = costPricingDeclarations.map(({decl}) =>
-  expandNode(decl, stripCostPricingNode(suppliedAccepted, decl)).validation);
+  expandNode(decl, stripCostPricingNode(withoutMoney, decl)).validation);
 const withoutCostValidation = costFragments.reduce(
-  (v, fragment) => validationWithoutCostPricingFragment(v, fragment), suppliedValidation);
+  (v, fragment) => validationWithoutCostPricingFragment(v, fragment), withoutMoneyValidation);
 const accepted = wagePricingDeclarations.reduce((m,{decl})=>stripWagePricingNode(m,decl), withoutCost);
 const acceptedValidation = wagePricingDeclarations.reduce((v,{decl})=>validationWithoutWagePricingFragment(v,decl), withoutCostValidation);
 let validation = acceptedValidation;
@@ -377,6 +390,51 @@ function stripWagePricingNode(raw, decl) {
   return out;
 }
 
+function stripMoneyNode(raw, decl) {
+  const result = structuredClone(raw);
+  const generated = new Set(moneyGeneratedNames(decl));
+  const byName = new Map(result.elements.filter(e => e.type !== 'LINK' && e.name)
+    .map(element => [element.name, element]));
+  for (const name of moneyReplacementNames(decl)) {
+    const original = byName.get(name);
+    if (!original) throw new Error('money: replacement target missing: ' + name);
+    const old = oldBranch(original.behavior.value, decl.switch, name);
+    const prefix = name.slice(0, name.indexOf(' '));
+    const unscaled = prefix + ' Unscaled ' + name.slice(prefix.length + 1);
+    if (old !== '[' + unscaled + ']' || !byName.has(unscaled)) {
+      throw new Error('money: old branch does not reference ' + unscaled);
+    }
+    original.behavior.value = byName.get(unscaled).behavior.value;
+  }
+  result.elements = result.elements.filter(element => element.type === 'LINK'
+    ? !generated.has(element.from) && !generated.has(element.to)
+    : !generated.has(element.name));
+  for (const scenario of result.scenarios || []) {
+    if (scenario.values) delete scenario.values[decl.switch];
+  }
+  return result;
+}
+
+function validationWithoutMoneyFragment(validation, fragment) {
+  const result = structuredClone(validation);
+  const removed = new Set((fragment.money_instances || []).map(instance => instance.name));
+  const plugin = result.plugins?.find(item => item.type === 'money');
+  if (plugin?.instances) {
+    plugin.instances = plugin.instances.filter(instance => !removed.has(instance.name));
+    if (!plugin.instances.length) result.plugins = result.plugins.filter(item => item !== plugin);
+  }
+  const boundaries = result.plugins?.find(item => item.type === 'open_boundaries');
+  const category = boundaries?.categories?.find(item => item.id === 'financial_accounting');
+  if (category?.name) {
+    const flows = new Set(fragment.money_boundary_flows || []);
+    category.name = category.name.filter(name => !flows.has(name));
+    if (!category.name.length) {
+      boundaries.categories = boundaries.categories.filter(item => item !== category);
+    }
+  }
+  return result;
+}
+
 function stripCostPricingNode(raw, decl) {
   const out = structuredClone(raw);
   const generated = new Set(costPricingGeneratedNames(decl));
@@ -534,7 +592,8 @@ function buildLayers(start, nodes = layeredNodes) {
     const lm = remaining.findIndex(n => n.decl.type === 'labor_market' && peelable(n));
     const wp = remaining.findIndex(n => n.decl.type === 'wage_pricing' && peelable(n));
     const cp = remaining.findIndex(n => n.decl.type === 'cost_pricing' && peelable(n));
-    const i = cp >= 0 ? cp : wp >= 0 ? wp : lm >= 0 ? lm : remaining.findIndex(peelable);
+    const mn = remaining.findIndex(n => n.decl.type === 'money' && peelable(n));
+    const i = mn >= 0 ? mn : cp >= 0 ? cp : wp >= 0 ? wp : lm >= 0 ? lm : remaining.findIndex(peelable);
     if (i < 0) throw new Error(`cannot determine node layering: none of ${remaining.map(n => n.decl.sector || n.decl.switch || n.decl.type).join(', ')} is outermost on all its replacement targets`);
     const [n] = remaining.splice(i, 1);
     const base = n.strip(current, n.decl);
@@ -545,6 +604,8 @@ function buildLayers(start, nodes = layeredNodes) {
   return { layers: result, order, bottom: current };
 }
 const acceptedLayeredNodes = [...layeredNodes,
+  ...moneyDeclarations.map(({decl}) => ({decl, strip:stripMoneyNode,
+    targets:moneyReplacementNames, generated:moneyGeneratedNames})),
   ...wagePricingDeclarations.map(({decl})=>({decl,strip:stripWagePricingNode,targets:wagePricingReplacementNames,generated:wagePricingGeneratedNames})),
   ...costPricingDeclarations.map(({decl})=>({decl,strip:stripCostPricingNode,targets:costPricingReplacementNames,generated:costPricingGeneratedNames}))];
 const { layers } = buildLayers(suppliedAccepted, acceptedLayeredNodes);
@@ -566,12 +627,13 @@ function buildSwitchlessLayers(start, nodes = layeredNodes) {
       (own.has(String(e.to).toLowerCase()) || targets.has(String(e.to).toLowerCase())));
   };
   while (true) {
-    const peelable = n => (n.decl.type === 'cost_pricing' || n.decl.type === 'wage_pricing' || touchesSwitchless(n)) &&
+    const peelable = n => (n.decl.type === 'money' || n.decl.type === 'cost_pricing' || n.decl.type === 'wage_pricing' || touchesSwitchless(n)) &&
       n.targets(n.decl).every(t => outerSwitchIs(current, t, n.decl.switch));
     const lm = switched.findIndex(n => n.decl.type === 'labor_market' && peelable(n));
     const wp = switched.findIndex(n => n.decl.type === 'wage_pricing' && peelable(n));
     const cp = switched.findIndex(n => n.decl.type === 'cost_pricing' && peelable(n));
-    const i = cp >= 0 ? cp : wp >= 0 ? wp : lm >= 0 ? lm : switched.findIndex(peelable);
+    const mn = switched.findIndex(n => n.decl.type === 'money' && peelable(n));
+    const i = mn >= 0 ? mn : cp >= 0 ? cp : wp >= 0 ? wp : lm >= 0 ? lm : switched.findIndex(peelable);
     if (i < 0) break;
     const [n] = switched.splice(i, 1);
     current = n.strip(current, n.decl);
@@ -2378,6 +2440,74 @@ await expect('73. cost_pricing peels first; preceding 66 cases survive accepted+
     fs.rmSync(tmp, { recursive: true, force: true });
   }
   return 'cost_pricing first; older 66 cases PASS on accepted+node';
+});
+
+
+let moneyState = null;
+
+await expect('74. money fixture expands with reference counts and fingerprint', () => {
+  const base = withoutMoney;
+  const expanded = expandNode(moneyFixture, base);
+  const counts = [expanded.patch.add_elements.length,
+    expanded.patch.replace_formulas.length, expanded.patch.add_links.length].join('/');
+  if (counts !== '68/4/193') throw new Error('money expansion counts ' + counts);
+  const model = applyPatch(base, { format: PATCH_FORMAT, ...expanded.patch }).model;
+  const fingerprint = definitionFingerprint(model);
+  if (base.name.includes('v7.7.16') && fingerprint !== 'b126c6aeba3e57cf') {
+    throw new Error('money fingerprint ' + fingerprint + ', expected b126c6aeba3e57cf');
+  }
+  for (const replace of expanded.patch.replace_formulas) {
+    const name = replace.name, prefix = name.slice(0, name.indexOf(' '));
+    const unscaled = prefix + ' Unscaled ' + name.slice(prefix.length + 1);
+    if (oldBranch(replace.value, moneyFixture.switch, name) !== '[' + unscaled + ']') {
+      throw new Error('money wrong old branch: ' + name);
+    }
+  }
+  moneyState = { base, model, expanded };
+  return counts + ', fingerprint ' + fingerprint;
+});
+
+await expect('78. money layer can be stripped and rebuilt without differences', () => {
+  if (!moneyState) throw new Error('case 74 must run first');
+  const stripped = stripMoneyNode(moneyState.model, moneyFixture);
+  const rebuilt = applyPatch(stripped, { format: PATCH_FORMAT,
+    ...expandNode(moneyFixture, stripped).patch }).model;
+  for (const [expected, actual] of [[moneyState.base, stripped], [moneyState.model, rebuilt]]) {
+    const a = new Map(expected.elements.filter(e => e.type !== 'LINK')
+      .map(e => [e.name, def(e)]));
+    const b = new Map(actual.elements.filter(e => e.type !== 'LINK')
+      .map(e => [e.name, def(e)]));
+    if (a.size !== b.size) throw new Error('money: primitive count mismatch');
+    for (const [name, value] of a) {
+      if (b.get(name) !== value) throw new Error('money: definition differs: ' + name);
+    }
+    if (!sameSet(linkSet(expected), linkSet(actual))) throw new Error('money: LINK difference');
+  }
+  return '0 primitive definitions and LINK differences';
+});
+
+await expect('79. money strict schema and base reject six malformed declarations', async () => {
+  const base = moneyState?.base || withoutMoney;
+  const invalid = async (change, pattern, label) => {
+    const decl = structuredClone(moneyFixture);
+    change(decl);
+    await requireThrow(() => expandNode(decl, base), pattern, label);
+  };
+  await invalid(d => { d.parameters.Unexpected = 42; },
+    /node\.parameters\.Unexpected/, 'unknown parameter');
+  await invalid(d => { delete d.initial.household_money.B; },
+    /node\.initial\.household_money\.B/, 'missing initial');
+  await invalid(d => { d.purchases.forEach(p => delete p.budget); },
+    /node\.purchases/, 'no budgeted goods');
+  await invalid(d => { d.trade.goods[0] = 'Delivered from {from}'; },
+    /node\.trade\.goods\[0\]/, 'missing destination placeholder');
+  await invalid(d => { d.purchases[1].budget = '{C} Absent Demand'; },
+    /money: base element missing: A Absent Demand/, 'missing budget target');
+  const conflicting = structuredClone(base);
+  conflicting.elements.push({ type: 'VARIABLE', name: 'A Wage Bill', behavior: { value: 1 } });
+  await requireThrow(() => expandNode(moneyFixture, conflicting),
+    /money: generated name conflicts.*A Wage Bill/, 'generated name collision');
+  return 'six expected invalid cases rejected';
 });
 
 console.log(`\nNODE SELF-TEST: ${passed} passed, ${failed} failed`);
