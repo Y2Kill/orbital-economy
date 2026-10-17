@@ -1,4 +1,4 @@
-import { validateWagePricingSpec } from './lifecycle_conformance.js';
+import { validateWagePricingSpec, validateMoneySpec } from './lifecycle_conformance.js';
 
 function pass(name, details = {}) { return { status: 'PASS', name, ...details }; }
 function fail(name, message, details = {}) { return { status: 'FAIL', name, message, ...details }; }
@@ -245,6 +245,90 @@ const STATIC_ONLY_PLUGINS = new Set(['open_boundaries', 'colony_symmetry', 'plan
 export function checkPlugin(plugin, ctx) {
   const results = [];
   if (STATIC_ONLY_PLUGINS.has(plugin.type)) return results;
+  if (plugin.type === 'money') {
+    const specErrors = validateMoneySpec(plugin);
+    if (specErrors.length) return specErrors.map(error => fail('money spec', error));
+    const absTol = plugin.abs_tol ?? 1e-6;
+    const relTol = plugin.rel_tol ?? 1e-9;
+    const times = ctx.times;
+    const safe = (name, work) => {
+      try { return work(); }
+      catch (error) { return fail(name, error.message || String(error)); }
+    };
+    const series = name => {
+      const values = ctx.get(name);
+      if (!times.length || values.length !== times.length) {
+        throw new Error(name + ': series length differs from time axis');
+      }
+      return values;
+    };
+    const bound = (inst, name, column) => safe(inst.name + ': ' + name + ' ' + column, () => {
+      const data = series(column);
+      const bad = data.findIndex(value => !Number.isFinite(value) || value < 0);
+      return bad < 0
+        ? pass(inst.name + ': ' + name + ' ' + column)
+        : fail(inst.name + ': ' + name + ' ' + column,
+          column + '=' + data[bad] + ' at day ' + times[bad]);
+    });
+    for (const inst of plugin.instances) {
+      const title = inst.name + ': income identity ' + inst.income;
+      results.push(safe(title, () => {
+        const actual = series(inst.income);
+        const columns = [inst.wage_bill, inst.rent, inst.dividends, inst.transport_income]
+          .map(series);
+        let maxError = 0, at = null;
+        for (let i = 0; i < times.length; i++) {
+          const expected = columns.reduce((sum, values) => sum + values[i], 0);
+          const error = Math.abs(actual[i] - expected) / Math.max(1, Math.abs(expected));
+          if (!Number.isFinite(error) || error > maxError) {
+            maxError = error;
+            at = times[i];
+          }
+        }
+        return maxError <= relTol
+          ? pass(title, { maxRelativeError: maxError })
+          : fail(title, `relative error ${maxError} > ${relTol} at day ${at}`);
+      }));
+      results.push(bound(inst, 'nonnegative dividends', inst.dividends));
+      results.push(bound(inst, 'nonnegative budget factor', inst.budget_factor));
+    }
+    results.push(safe('money: exports equal imports', () => {
+      const exports = plugin.instances.map(inst => series(inst.exports));
+      const imports = plugin.instances.map(inst => series(inst.imports));
+      for (let i = 0; i < times.length; i++) {
+        const out = exports.reduce((sum, v) => sum + v[i], 0);
+        const incoming = imports.reduce((sum, v) => sum + v[i], 0);
+        const error = Math.abs(out - incoming) / Math.max(1, Math.abs(out), Math.abs(incoming));
+        if (!Number.isFinite(error) || error > relTol) {
+          return fail('money: exports equal imports',
+            `sum exports ${out} differs from sum imports ${incoming} at day ${times[i]}`);
+        }
+      }
+      return pass('money: exports equal imports');
+    }));
+    results.push(safe('money: total money conserved', () => {
+      const balances = plugin.instances.flatMap(inst =>
+        [series(inst.household_money), series(inst.firm_money)]);
+      balances.push(series(plugin.transport.money));
+      const total = i => balances.reduce((sum, v) => sum + v[i], 0);
+      const initial = total(0);
+      const allowed = absTol * Math.max(1, Math.abs(initial));
+      let worst = 0, at = null;
+      for (let i = 0; i < times.length; i++) {
+        const drift = Math.abs(total(i) - initial);
+        if (!Number.isFinite(drift) || drift > worst) {
+          worst = drift;
+          at = times[i];
+        }
+      }
+      return worst <= allowed
+        ? pass('money: total money conserved', { initial, maxAbsDrift: worst })
+        : fail('money: total money conserved',
+          `total drift ${worst} > ${allowed} at day ${at}`);
+    }));
+    return results;
+  }
+
   if (plugin.type === 'cost_pricing') {
     const tol = plugin.rel_tol ?? 1e-9;
     const safe = (name, fn) => {
