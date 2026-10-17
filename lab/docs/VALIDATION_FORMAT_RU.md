@@ -454,7 +454,7 @@ Runtime проверяет:
 
 Причина: после включения рынка труда конечный спрос = норма на душу × Population. Прежний target теперь зависит от STOCK Population и больше не может считаться внешним P6-драйвером; per-capita norm остаётся экзогенным параметром. При снятии верхнего `labor_market` слоя node QA восстанавливает прежний P6-контракт для нижних узлов.
 
-## wage_pricing — Lab v0.9.20
+## wage_pricing — Lab v0.9.21
 
 rel_tol по умолчанию 1e-9; switch обязателен, instances непуст. На регион: name, colony, wage, initial_wage, relative_wage_change; prices[] содержит target/labor_share; demand[] — target/price/reference_price/factor/elasticity. Пример:
 
@@ -482,3 +482,7 @@ Runtime во всех точках, независимо от switch: relative_w
 ## cost_pricing (Lab v0.9.20)
 
 `plugins[]` принимает `{ "type": "cost_pricing", "rel_tol": 1e-9, "switch": "Cost Pricing Enabled", "markup": "Universal Markup", "instances": [...] }`. На регион экземпляр содержит `name`, `colony`, `wage`, `signals[]` с `signal`/`source`, `prices[]` и `cost_prices[]` с `target`/`full_cost`. Статика проверяет наличие колонок и положительную числовую константу наценки. Runtime проверяет неотрицательность сглаженных сигналов, положительность полных себестоимостей и цен, а также тождество затратной цены `full_cost * (1 + markup)` с относительной нормировкой `max(1, abs(expected))`. Потоки сигналов должны классифицироваться как `open_boundaries.information_signal`.
+
+## money — Lab v0.9.21
+
+Плагин `{ "type": "money", "abs_tol": 1e-6, "rel_tol": 1e-9, "switch": "Money Enabled", "transport": { "money": "Transport Money", "payout": "Transport Payout" }, "instances": [...] }`. Региональный экземпляр содержит `name`, `colony`, `wage_bill`, `rent`, `dividends`, `transport_income`, `income`, `purchases`, `household_money`, `firm_money`, `exports`, `imports`, `import_freight`, `budget_factor`. Статика проверяет все названные колонки; runtime проверяет тождество дохода, неотрицательные дивиденды и доли бюджета, замкнутую торговлю и сохранение общей суммы денег с допуском `abs_tol * Max(1, abs(initial_total))`. Относительная нормировка тождества `max(1, abs(expected))`. Денежные граничные FLOW в `open_boundaries` классифицируются как `financial_accounting` (входы и выходы). Снятие слоя удаляет фрагмент validation и его денежные граничные потоки.
