@@ -1,0 +1,150 @@
+{
+  "format": "orbital-economy-model-patch-v1",
+  "base_sha256": "e512efbb45f54dd08785d960626e8eb5baf4b8fc811efc6d9692265d71a1dd3e",
+  "name": "Orbital Economy v7.7.17 Money candidate r1",
+  "nodes": [
+    {
+      "type": "money",
+      "version": 1,
+      "colonies": [
+        "A",
+        "B"
+      ],
+      "switch": "Money Enabled",
+      "parameters": {
+        "Firm Money Target Days": 60,
+        "Dividend Payout Time": 90,
+        "Transport Payout Time": 30,
+        "Household Income Smoothing Time": 30,
+        "Household Money Target Days": 60,
+        "Household Money Adjustment Time": 180
+      },
+      "inputs": {
+        "wage": "{C} Wage",
+        "employment": "{C} Employment"
+      },
+      "rents": [
+        {
+          "price": "{C} Effective Ore Base Cost",
+          "quantity": "{C} Mining"
+        },
+        {
+          "price": "Base Power Resource Price",
+          "quantity": "{C} Power Resource Extraction"
+        },
+        {
+          "price": "{C} Power Generation Cost",
+          "quantity": "{C} Available Generation"
+        }
+      ],
+      "purchases": [
+        {
+          "quantity": "{C} Food Consumption",
+          "price": "{C} Food Price"
+        },
+        {
+          "quantity": "{C} Local Sales",
+          "price": "{C} Market Price",
+          "budget": "{C} Local Demand"
+        },
+        {
+          "quantity": "{C} Electronics Local Sales",
+          "price": "{C} Electronics Market Price",
+          "budget": "{C} Electronics Local Demand"
+        }
+      ],
+      "trade": {
+        "goods": [
+          "Recognize Delivered Metal Goods Value {from} to {to}",
+          "Recognize Delivered Electronics Goods Value {from} to {to}"
+        ],
+        "freight": [
+          "Recognize Delivered Metal Freight Value {from} to {to}",
+          "Recognize Delivered Electronics Freight Value {from} to {to}"
+        ],
+        "food": {
+          "arrival": "Food Arrival {from} to {to}",
+          "price": "{from} Food Price",
+          "freight_weight": "Food Freight Weight per Unit",
+          "freight_price": "Freight Price"
+        }
+      },
+      "initial": {
+        "household_money": {
+          "A": 182470,
+          "B": 38425
+        },
+        "firm_money": {
+          "A": 183970,
+          "B": 37742
+        },
+        "smoothed_income": {
+          "A": 2857.8,
+          "B": 608.85
+        },
+        "transport_money": 1253.5
+      }
+    }
+  ],
+  "replace_formulas": [
+    {
+      "name": "Test 2 Transport Surge Active",
+      "value": "IfThenElse([Timed Test Mode] = 59, [Temporary Test Window], IfThenElse([Timed Test Mode] = 57, [Temporary Test Window], IfThenElse([Timed Test Mode] = 55, [Temporary Test Window], IfThenElse([Timed Test Mode] = 53, [Temporary Test Window], IfThenElse([Timed Test Mode] = 50, [Temporary Test Window], IfThenElse([Timed Test Mode] = 2, [Temporary Test Window], IfThenElse([Timed Test Mode] = 24, [Temporary Test Window], IfThenElse([Timed Test Mode] = 31, [Temporary Test Window], IfThenElse([Timed Test Mode] = 35, [Temporary Test Window], IfThenElse([Timed Test Mode] = 37, [Temporary Test Window], IfThenElse([Timed Test Mode] = 39, [Temporary Test Window], IfThenElse([Timed Test Mode] = 41, [Temporary Test Window], IfThenElse([Timed Test Mode] = 43, [Temporary Test Window], IfThenElse([Timed Test Mode] = 45, [Temporary Test Window], IfThenElse([Timed Test Mode] = 47, [Temporary Test Window], 0)))))))))))))))"
+    }
+  ],
+  "add_scenarios": [
+    {
+      "name": "v7.7.17 Money",
+      "description": "Mode 56 (cost pricing) with money: household, firm and transport money with every payment; household budgets scale final metal and electronics demand.",
+      "values": {
+        "Capital Lifecycle Enabled": 1,
+        "Intermediate Inputs Enabled": 1,
+        "Capital Goods Enabled": 1,
+        "Transport Capital Goods Enabled": 1,
+        "Power Resource Enabled": 1,
+        "Construction Materials Enabled": 1,
+        "Transport Construction Materials Enabled": 1,
+        "Construction Materials Energy Enabled": 1,
+        "Construction Materials Capital Enabled": 1,
+        "Capital Goods Capital Enabled": 1,
+        "Regolith Capital Enabled": 1,
+        "Ore Capital Enabled": 1,
+        "Timed Test Mode": 58,
+        "Power Resource Capital Enabled": 1,
+        "Deposits Enabled": 1,
+        "Process Energy Enabled": 1,
+        "Food Enabled": 1,
+        "Labor Market Enabled": 1,
+        "Cost Pricing Enabled": 1,
+        "Money Enabled": 1
+      }
+    },
+    {
+      "name": "v7.7.17 Transport Surge with Money",
+      "description": "Mode 57 (transport surge with cost pricing) with money.",
+      "values": {
+        "Capital Lifecycle Enabled": 1,
+        "Intermediate Inputs Enabled": 1,
+        "Capital Goods Enabled": 1,
+        "Transport Capital Goods Enabled": 1,
+        "Power Resource Enabled": 1,
+        "Construction Materials Enabled": 1,
+        "Transport Construction Materials Enabled": 1,
+        "Construction Materials Energy Enabled": 1,
+        "Construction Materials Capital Enabled": 1,
+        "Capital Goods Capital Enabled": 1,
+        "Regolith Capital Enabled": 1,
+        "Ore Capital Enabled": 1,
+        "Timed Test Mode": 59,
+        "Power Resource Capital Enabled": 1,
+        "Deposits Enabled": 1,
+        "Process Energy Enabled": 1,
+        "Food Enabled": 1,
+        "Labor Market Enabled": 1,
+        "Cost Pricing Enabled": 1,
+        "Money Enabled": 1
+      }
+    }
+  ],
+  "modify_scenarios": []
+}
