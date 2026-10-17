@@ -1,0 +1,82 @@
+{
+  "type": "money",
+  "version": 1,
+  "colonies": [
+    "A",
+    "B"
+  ],
+  "switch": "Money Enabled",
+  "parameters": {
+    "Firm Money Target Days": 60,
+    "Dividend Payout Time": 90,
+    "Transport Payout Time": 30,
+    "Household Income Smoothing Time": 30,
+    "Household Money Target Days": 60,
+    "Household Money Adjustment Time": 180
+  },
+  "inputs": {
+    "wage": "{C} Wage",
+    "employment": "{C} Employment"
+  },
+  "rents": [
+    {
+      "price": "{C} Effective Ore Base Cost",
+      "quantity": "{C} Mining"
+    },
+    {
+      "price": "Base Power Resource Price",
+      "quantity": "{C} Power Resource Extraction"
+    },
+    {
+      "price": "{C} Power Generation Cost",
+      "quantity": "{C} Available Generation"
+    }
+  ],
+  "purchases": [
+    {
+      "quantity": "{C} Food Consumption",
+      "price": "{C} Food Price"
+    },
+    {
+      "quantity": "{C} Local Sales",
+      "price": "{C} Market Price",
+      "budget": "{C} Local Demand"
+    },
+    {
+      "quantity": "{C} Electronics Local Sales",
+      "price": "{C} Electronics Market Price",
+      "budget": "{C} Electronics Local Demand"
+    }
+  ],
+  "trade": {
+    "goods": [
+      "Recognize Delivered Metal Goods Value {from} to {to}",
+      "Recognize Delivered Electronics Goods Value {from} to {to}"
+    ],
+    "freight": [
+      "Recognize Delivered Metal Freight Value {from} to {to}",
+      "Recognize Delivered Electronics Freight Value {from} to {to}"
+    ],
+    "food": {
+      "arrival": "Food Arrival {from} to {to}",
+      "price": "{from} Food Price",
+      "freight_weight": "Food Freight Weight per Unit",
+      "freight_price": "Freight Price"
+    }
+  },
+  "initial": {
+    "household_money": {
+      "A": 182470,
+      "B": 38425
+    },
+    "firm_money": {
+      "A": 183970,
+      "B": 37742
+    },
+    "smoothed_income": {
+      "A": 2857.8,
+      "B": 608.85
+    },
+    "transport_money": 1253.5
+  }
+}
