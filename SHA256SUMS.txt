@@ -468,6 +468,14 @@ d09f1d5388e106492fe861d9bdeca37f6b79edc4aa97e8a773c2852d12e91d61  ./docs/tasks/0
 acbec86cbb28343cf6c71820df4c3a8fa43c24c16c6ac1ff16baad2d8778c89b  ./docs/tasks/040-money-node/reference/definition_fingerprint.mjs
 c8be7530622cdeda6f2a6497880c86d2a095f62eea3d3289184178d4dc8b9901  ./docs/tasks/040-money-node/reference/money_node_prototype.mjs
 99c8d443c215a6e7d392ab459b61fd3b26c9aa9e9814c1827eecb9c4cbf8cf7b  ./docs/tasks/040-money-node/scope.json
+60c01cd2792168705894042d0deabdd9d8e050634733c5c557512aaa93507f71  ./docs/tasks/041-money/TASK_RU.md
+82797902cba6b9feb191ac18b6900887fde13b734204f0834a355d5d4bd898f0  ./docs/tasks/041-money/V7_7_17_ARCHITECTURE_SPEC.md
+37efa7d70e87948b78fc55ad41fd4e916573166e53cfd45951dcb635411c624f  ./docs/tasks/041-money/V7_7_17_TEST_PLAN.md
+314551524e9d94991de5ddf7098aebd3f26d20a93b145ae216afe0071e46506e  ./docs/tasks/041-money/draft/change-policy-v7.7.17-draft.json
+69d417aeb46a555151bab2086535a83d08a6adf08a0ac9759141624d5d976bd8  ./docs/tasks/041-money/draft/money.json
+4bca9c9bf33dcabf14c8aa0c456d1f6cd95c987f6dbc483d8ea7feae30dc27d7  ./docs/tasks/041-money/draft/skeleton-patch.json
+705ef4d1ea4965375782d763e9d96bd4a9b0a18758955367ffd387b7018e3b02  ./docs/tasks/041-money/draft/validation-v7.7.17-draft.json
+83f0a013e937c8f050278381ee47923f8ffe17b89a20e05f87c86bcea170b6ed  ./docs/tasks/041-money/scope.json
 44d2e557f1cb2322739bc95ee2b6dcbf6d6fcb708da14e90d53250936e50da5c  ./docs/tasks/README_RU.md
 bbf818e93b88d606b3137b1bb69d60db8c41c9df4089025a921b1ca00f473244  ./lab/APPLY_PATCH.cmd
 03799002cfccb38ee10f474f00942ec7bb14d843507597a9566221799ee45f79  ./lab/CHANGELOG.md

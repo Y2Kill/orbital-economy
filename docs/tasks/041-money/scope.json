@@ -1,0 +1,17 @@
+{
+  "task": "041",
+  "title": "v7.7.17 Money: household, firm and transport money with every payment, freight paid out by trade share, household budgets scaling final demand, via the money node under switch Money Enabled (Modes 0-57 unchanged); surge wiring for Mode 59; Modes 58 (money on cost pricing), 59 (transport surge with money) (full money accounting, step 2)",
+  "branch": "task/041-money",
+  "allow": [],
+  "allow_binary": [],
+  "allow_protected": [
+    "docs/tasks/041-money/candidate/**"
+  ],
+  "required_changes": [
+    "docs/tasks/041-money/candidate/model-patch.json",
+    "docs/tasks/041-money/candidate/validation.json",
+    "docs/tasks/041-money/candidate/change-policy.json",
+    "docs/tasks/041-money/candidate/PARAMETER_ANNOTATIONS_fragment.json"
+  ],
+  "sums_by": "reviewer"
+}
