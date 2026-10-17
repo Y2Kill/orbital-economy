@@ -232,18 +232,34 @@ export function expandMoney(decl, base) {
     [...String(value).matchAll(/\[([^\]]+)\]/g)].map(match => match[1])
   )];
   for (const X of C) {
-    must(sub(I.wage, X)); must(sub(I.employment, X));
-    for (const r of decl.rents) { must(sub(r.price, X)); must(sub(r.quantity, X)); }
-    for (const p of decl.purchases) { must(sub(p.quantity, X)); must(sub(p.price, X)); if (p.budget) { const e = must(sub(p.budget, X)); if (e.type !== 'VARIABLE') throw new Error(`money: ${e.name} must be a VARIABLE`); } }
+    must(sub(I.wage, X));
+    must(sub(I.employment, X));
+    for (const rent of decl.rents) {
+      must(sub(rent.price, X));
+      must(sub(rent.quantity, X));
+    }
+    for (const purchase of decl.purchases) {
+      must(sub(purchase.quantity, X));
+      must(sub(purchase.price, X));
+      if (purchase.budget) {
+        const target = must(sub(purchase.budget, X));
+        if (target.type !== 'VARIABLE') {
+          throw new Error(`money: ${target.name} must be a VARIABLE`);
+        }
+      }
+    }
   }
   for (const [X, Y] of pairs) {
     for (const g of [...T.goods, ...T.freight]) must(sub(g, X, Y));
     must(sub(T.food.arrival, X, Y));
   }
-  must(T.food.freight_weight); must(T.food.freight_price);
+  must(T.food.freight_weight);
+  must(T.food.freight_price);
 
   V(SW, 0, 'switch of money accounting and household budgets (0 = every earlier series unchanged)');
-  for (const [k, v] of Object.entries(decl.parameters)) V(k, v, `parameter ${k}`);
+  for (const [key, value] of Object.entries(decl.parameters)) {
+    V(key, value, `parameter ${key}`);
+  }
   const goodsValue = (X, Y) => [...T.goods.map(g => `[${sub(g, X, Y)}]`), `[${sub(T.food.arrival, X, Y)}] * [${sub(T.food.price, X)}]`].join(' + ');
   const freightValue = (X, Y) => [...T.freight.map(g => `[${sub(g, X, Y)}]`), `[${sub(T.food.arrival, X, Y)}] * [${T.food.freight_weight}] * [${T.food.freight_price}]`].join(' + ');
   for (const X of C) {
@@ -294,15 +310,24 @@ export function expandMoney(decl, base) {
     }
   }
 
-  for (const e of add) if (byName.has(e.name)) throw new Error(`money: generated name conflicts with base element "${e.name}"`);
+  for (const element of add) {
+    if (byName.has(element.name)) {
+      throw new Error(`money: generated name conflicts with base element "${element.name}"`);
+    }
+  }
   const added = new Map(add.map(e => [e.name, e]));
   const resolve = n => added.get(n) || byName.get(n);
   const have = new Set(base.elements.filter(e => e.type === 'LINK').map(e => `${e.from}|${e.to}`));
   const links = [];
   for (const [to, v] of [...add.map(e => [e.name, e.behavior.value ?? e.behavior.initial_value]), ...rep.map(r => [r.name, r.value])]) {
     for (const r of refsOf(v)) {
-      const src = resolve(r); if (!src) throw new Error(`money: ${to}: unresolved [${r}]`);
-      const k = `${src.name}|${to}`; if (!have.has(k)) { have.add(k); links.push({ from: src.name, to }); }
+      const src = resolve(r);
+      if (!src) throw new Error(`money: ${to}: unresolved [${r}]`);
+      const k = `${src.name}|${to}`;
+      if (!have.has(k)) {
+        have.add(k);
+        links.push({ from: src.name, to });
+      }
     }
   }
   const validation = {
