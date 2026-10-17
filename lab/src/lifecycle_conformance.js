@@ -733,6 +733,75 @@ export function runCostPricingConformance(raw, validation, index = indexModel(ra
   };
 }
 
+export function validateMoneySpec(plugin) {
+  const errors = [];
+  if (!plugin || typeof plugin !== 'object') return ['money: object required'];
+  for (const key of ['switch', 'transport']) {
+    if (!(key in plugin)) errors.push('money.' + key + ': required');
+  }
+  for (const [name, fallback] of [['abs_tol', 1e-6], ['rel_tol', 1e-9]]) {
+    const value = plugin[name] ?? fallback;
+    if (typeof value !== 'number' || !Number.isFinite(value) || value <= 0) {
+      errors.push('money.' + name + ': finite number > 0 required');
+    }
+  }
+  if (!Array.isArray(plugin.instances) || plugin.instances.length < 2) {
+    errors.push('money.instances: at least two regions required');
+  }
+  if (!plugin.transport || typeof plugin.transport.money !== 'string' ||
+      typeof plugin.transport.payout !== 'string') {
+    errors.push('money.transport: money and payout required');
+  }
+  const columns = ['name', 'colony', 'wage_bill', 'rent', 'dividends',
+    'transport_income', 'income', 'purchases', 'household_money', 'firm_money',
+    'exports', 'imports', 'import_freight', 'budget_factor'];
+  const seen = new Set();
+  for (const [i, inst] of (plugin.instances || []).entries()) {
+    if (!inst || typeof inst !== 'object') {
+      errors.push(`money.instances[${i}]: object required`);
+      continue;
+    }
+    for (const key of columns) {
+      if (typeof inst[key] !== 'string' || !inst[key].trim()) {
+        errors.push(`money.instances[${i}].${key}: non-empty string required`);
+      }
+    }
+    if (seen.has(inst.name)) errors.push(`money.instances[${i}].name: duplicate`);
+    seen.add(inst.name);
+  }
+  return errors;
+}
+
+export function runMoneyConformance(raw, validation, index = indexModel(raw)) {
+  const plugin = validation?.plugins?.find(p => p?.type === 'money');
+  const empty = { instances: 0, conforming: 0, nonConforming: 0 };
+  if (!plugin) return { status: 'SKIPPED', instances: [], summary: empty };
+  const specErrors = validateMoneySpec(plugin);
+  if (specErrors.length) return { status: 'FAIL', specErrors, instances: [], summary: empty };
+  const instances = plugin.instances.map(inst => {
+    const names = [plugin.switch, ...Object.values(plugin.transport),
+      ...Object.entries(inst).filter(([key]) => key !== 'name' && key !== 'colony').map(([, value]) => value)];
+    const checks = [...new Set(names)].map(name =>
+      index.has(name) ? pass('column ' + name) :
+        fail('column ' + name, 'primitive not found: ' + name));
+    const failures = checks.filter(check => check.status === 'FAIL');
+    return {
+      name: inst.name,
+      sector: inst.colony,
+      classification: failures.length ? 'NON_CONFORMING' : 'CONFORMING',
+      checks,
+      variations: [],
+      failures: failures.map(c => c.name + ': ' + c.message)
+    };
+  });
+  const bad = instances.filter(inst => inst.classification === 'NON_CONFORMING').length;
+  return {
+    status: bad ? 'FAIL' : 'PASS',
+    instances,
+    summary: { instances: instances.length, conforming: instances.length - bad, nonConforming: bad }
+  };
+}
+
 // Entry point: raw ModelJSON + validation JSON -> conformance report object.
 export function runLifecycleConformance(raw, validation) {
   const plugin = findKernelPlugin(validation);
@@ -751,10 +820,11 @@ export function runLifecycleConformance(raw, validation) {
   const laborMarket = runLaborMarketConformance(raw, validation, index);
   const wagePricing = runWagePricingConformance(raw, validation, index);
   const costPricing = runCostPricingConformance(raw, validation, index);
+  const money = runMoneyConformance(raw, validation, index);
   const anyNonConforming = instances.some(i => i.classification === 'NON_CONFORMING');
   const modelWideFail = modelWide.some(c => c.status === 'FAIL');
   return {
-    status: anyNonConforming || modelWideFail || simpleCapital.status === 'FAIL' || deposit.status === 'FAIL' || labor.status === 'FAIL' || population.status === 'FAIL' || food.status === 'FAIL' || laborMarket.status === 'FAIL' || wagePricing.status === 'FAIL' || costPricing.status === 'FAIL' ? 'FAIL' : 'PASS',
+    status: anyNonConforming || modelWideFail || simpleCapital.status === 'FAIL' || deposit.status === 'FAIL' || labor.status === 'FAIL' || population.status === 'FAIL' || food.status === 'FAIL' || laborMarket.status === 'FAIL' || wagePricing.status === 'FAIL' || costPricing.status === 'FAIL' || money.status === 'FAIL' ? 'FAIL' : 'PASS',
     format: KERNEL_FORMAT,
     kernel: { roles: Object.keys(KERNEL_ROLES).length, requiredRoles: REQUIRED_ROLES.length, flows: KERNEL_FLOWS.length, stocks: KERNEL_STOCKS.length },
     legacySwitch: plugin.legacy_switch || 'Capital Lifecycle Enabled',
@@ -773,7 +843,8 @@ export function runLifecycleConformance(raw, validation) {
     food,
     laborMarket,
     wagePricing,
-    costPricing
+    costPricing,
+    money
   };
 }
 
@@ -820,6 +891,14 @@ export function printConformance(report, log = console.log) {
       for (const f of inst.failures) log('        - ' + f);
     }
     for (const e of report.wagePricing.specErrors || []) log('    - ' + e);
+  }
+  if (report.money && report.money.status !== 'SKIPPED') {
+    log('Money conformance: ' + report.money.status);
+    for (const inst of report.money.instances || []) {
+      log('    ' + inst.name + ': ' + inst.classification);
+      for (const failure of inst.failures) log('        - ' + failure);
+    }
+    for (const error of report.money.specErrors || []) log('    - ' + error);
   }
   if (report.costPricing && report.costPricing.status !== 'SKIPPED') {
     log('Cost pricing conformance: ' + report.costPricing.status);
