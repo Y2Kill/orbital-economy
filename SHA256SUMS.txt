@@ -460,6 +460,12 @@ b05285abdef696def671b951e05047a7c273c7f2b712dbf8a05c076ff3872890  ./docs/tasks/0
 717485cf58db77b02263cd91858839b4f8ddabf2b085bf3229ae7170c877dfe2  ./docs/tasks/039-cost-pricing/draft/skeleton-patch.json
 b05285abdef696def671b951e05047a7c273c7f2b712dbf8a05c076ff3872890  ./docs/tasks/039-cost-pricing/draft/validation-v7.7.16-draft.json
 959a3516f89102aa87f5e625af740ed12159f7463105224ed1aef9df975d3c85  ./docs/tasks/039-cost-pricing/scope.json
+d09f1d5388e106492fe861d9bdeca37f6b79edc4aa97e8a773c2852d12e91d61  ./docs/tasks/040-money-node/TASK_RU.md
+69d417aeb46a555151bab2086535a83d08a6adf08a0ac9759141624d5d976bd8  ./docs/tasks/040-money-node/fixtures/money.json
+516cbd745b12f4a6afa2d50783701bae63e28af6a62d9f57cea6b1e9b4b21c3c  ./docs/tasks/040-money-node/reference/add_money_modes.mjs
+acbec86cbb28343cf6c71820df4c3a8fa43c24c16c6ac1ff16baad2d8778c89b  ./docs/tasks/040-money-node/reference/definition_fingerprint.mjs
+c8be7530622cdeda6f2a6497880c86d2a095f62eea3d3289184178d4dc8b9901  ./docs/tasks/040-money-node/reference/money_node_prototype.mjs
+99c8d443c215a6e7d392ab459b61fd3b26c9aa9e9814c1827eecb9c4cbf8cf7b  ./docs/tasks/040-money-node/scope.json
 44d2e557f1cb2322739bc95ee2b6dcbf6d6fcb708da14e90d53250936e50da5c  ./docs/tasks/README_RU.md
 bbf818e93b88d606b3137b1bb69d60db8c41c9df4089025a921b1ca00f473244  ./lab/APPLY_PATCH.cmd
 bd0f2c3436852fba37e516f5ca8c87b91eb634083d7cbe19ccd216cfd0f6730e  ./lab/CHANGELOG.md
