@@ -1,0 +1,17 @@
+{
+  "task": "039",
+  "title": "v7.7.16 Cost Pricing: prices of ore, power resource, energy and food at full unit cost x 1.15 x their scarcity factor, cost prices of capital goods, construction materials and regolith, one 15 % markup, via the cost_pricing node under switch Cost Pricing Enabled (Modes 0-55 unchanged); surge wiring for Mode 57; Modes 56 (cost pricing), 57 (transport surge with cost pricing) (full money accounting, step 1)",
+  "branch": "task/039-cost-pricing",
+  "allow": [],
+  "allow_binary": [],
+  "allow_protected": [
+    "docs/tasks/039-cost-pricing/candidate/**"
+  ],
+  "required_changes": [
+    "docs/tasks/039-cost-pricing/candidate/model-patch.json",
+    "docs/tasks/039-cost-pricing/candidate/validation.json",
+    "docs/tasks/039-cost-pricing/candidate/change-policy.json",
+    "docs/tasks/039-cost-pricing/candidate/PARAMETER_ANNOTATIONS_fragment.json"
+  ],
+  "sums_by": "reviewer"
+}

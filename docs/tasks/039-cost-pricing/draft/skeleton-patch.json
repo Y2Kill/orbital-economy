@@ -1,0 +1,343 @@
+{
+  "format": "orbital-economy-model-patch-v1",
+  "base_sha256": "a5a233129b013f838cac863e4f9b8aad9da8e90bacfe48763fcedefad929b975",
+  "name": "Orbital Economy v7.7.16 skeleton",
+  "nodes": [
+    {
+      "type": "cost_pricing",
+      "version": 1,
+      "colonies": [
+        "A",
+        "B"
+      ],
+      "switch": "Cost Pricing Enabled",
+      "parameters": {
+        "Universal Markup": 0.15,
+        "Cost Price Signal Time": 10
+      },
+      "inputs": {
+        "wage": "{C} Wage"
+      },
+      "signals": [
+        {
+          "name": "Energy",
+          "source": "{C} Energy Price",
+          "initial": {
+            "A": 0.5731,
+            "B": 0.6787
+          }
+        },
+        {
+          "name": "Power Resource",
+          "source": "{C} Power Resource Price",
+          "initial": {
+            "A": 0.31,
+            "B": 0.4085
+          }
+        },
+        {
+          "name": "Metal",
+          "source": "{C} Market Price",
+          "initial": {
+            "A": 49.95,
+            "B": 80.99
+          }
+        },
+        {
+          "name": "Electronics",
+          "source": "{C} Electronics Market Price",
+          "initial": {
+            "A": 28.32,
+            "B": 41.12
+          }
+        },
+        {
+          "name": "Capital Goods",
+          "source": "{C} Capital Goods Cost Price",
+          "initial": {
+            "A": 336.9,
+            "B": 478.2
+          }
+        },
+        {
+          "name": "Construction Materials",
+          "source": "{C} Construction Materials Cost Price",
+          "initial": {
+            "A": 109.6,
+            "B": 148.8
+          }
+        },
+        {
+          "name": "Regolith",
+          "source": "{C} Regolith Cost Price",
+          "initial": {
+            "A": 29.69,
+            "B": 40.15
+          }
+        }
+      ],
+      "wear_signals": {
+        "capital_goods": "Capital Goods",
+        "construction_materials": "Construction Materials"
+      },
+      "costs": [
+        {
+          "name": "Ore",
+          "inputs": [
+            {
+              "per_unit": "Mining Energy per Unit",
+              "signal": "Energy"
+            }
+          ],
+          "labor": "{C} Mining Labor per Unit",
+          "automation": "{C} Mining Automation Factor",
+          "wear": {
+            "capital_goods": "Ore Mine Capital Goods per Capacity",
+            "construction_materials": "Ore Mine Construction Materials per Capacity",
+            "depreciation": "Ore Mine Depreciation Rate"
+          },
+          "rent": "{C} Effective Ore Base Cost"
+        },
+        {
+          "name": "Regolith",
+          "cost_price": true,
+          "inputs": [
+            {
+              "per_unit": "Regolith Extraction Energy per Unit",
+              "signal": "Energy"
+            }
+          ],
+          "labor": "{C} Regolith Extraction Labor per Unit",
+          "automation": "{C} Regolith Extraction Automation Factor",
+          "wear": {
+            "capital_goods": "Regolith Mine Capital Goods per Capacity",
+            "construction_materials": "Regolith Mine Construction Materials per Capacity",
+            "depreciation": "Regolith Mine Depreciation Rate"
+          }
+        },
+        {
+          "name": "Power Resource",
+          "inputs": [
+            {
+              "per_unit": "Power Resource Extraction Energy per Unit",
+              "signal": "Energy"
+            }
+          ],
+          "labor": "{C} Power Resource Extraction Labor per Unit",
+          "automation": "{C} Power Resource Extraction Automation Factor",
+          "wear": {
+            "capital_goods": "Power Resource Mine Capital Goods per Capacity",
+            "construction_materials": "Power Resource Mine Construction Materials per Capacity",
+            "depreciation": "Power Resource Mine Depreciation Rate"
+          },
+          "rent": "Base Power Resource Price"
+        },
+        {
+          "name": "Energy",
+          "inputs": [
+            {
+              "per_unit": "Power Resource per Energy",
+              "signal": "Power Resource"
+            }
+          ],
+          "labor": "{C} Generation Labor per Unit",
+          "automation": "{C} Generation Automation Factor",
+          "wear": {
+            "capital_goods": "{C} Power Capital Goods per Capacity",
+            "construction_materials": "{C} Power Construction Materials per Capacity",
+            "depreciation": "Power Depreciation Rate"
+          },
+          "rent": "{C} Power Generation Cost"
+        },
+        {
+          "name": "Capital Goods",
+          "cost_price": true,
+          "inputs": [
+            {
+              "per_unit": "Metal per Capital Goods Unit",
+              "signal": "Metal"
+            },
+            {
+              "per_unit": "Electronics per Capital Goods Unit",
+              "signal": "Electronics"
+            },
+            {
+              "per_unit": "Capital Goods Energy per Unit",
+              "signal": "Energy"
+            }
+          ],
+          "labor": "{C} Capital Goods Labor per Unit",
+          "automation": "{C} Capital Goods Automation Factor",
+          "wear": {
+            "capital_goods": "Capital Goods Plant Capital Goods per Capacity",
+            "construction_materials": "Capital Goods Plant Construction Materials per Capacity",
+            "depreciation": "Capital Goods Plant Depreciation Rate"
+          }
+        },
+        {
+          "name": "Construction Materials",
+          "cost_price": true,
+          "inputs": [
+            {
+              "per_unit": "Regolith per Construction Materials Unit",
+              "signal": "Regolith"
+            },
+            {
+              "per_unit": "Construction Materials Energy per Unit",
+              "signal": "Energy"
+            }
+          ],
+          "labor": "{C} Construction Materials Labor per Unit",
+          "automation": "{C} Construction Materials Automation Factor",
+          "wear": {
+            "capital_goods": "Construction Materials Plant Capital Goods per Capacity",
+            "construction_materials": "Construction Materials Plant Construction Materials per Capacity",
+            "depreciation": "Construction Materials Plant Depreciation Rate"
+          }
+        },
+        {
+          "name": "Food",
+          "inputs": [
+            {
+              "per_unit": "Food Energy per Unit",
+              "signal": "Energy"
+            }
+          ],
+          "labor": "Food Labor per Unit",
+          "wear": {
+            "capital_goods": "Farm Capital Goods per Capacity",
+            "depreciation": "Farm Depreciation Rate"
+          }
+        },
+        {
+          "name": "Metal",
+          "extend": "{C} Metal Unit Cost",
+          "wear": {
+            "capital_goods": "{C} Refinery Capital Goods per Capacity",
+            "construction_materials": "{C} Refinery Construction Materials per Capacity",
+            "depreciation": "{C} Refinery Depreciation Rate"
+          }
+        },
+        {
+          "name": "Electronics",
+          "extend": "{C} Electronics Unit Cost",
+          "wear": {
+            "capital_goods": "{C} Electronics Capital Goods per Capacity",
+            "construction_materials": "{C} Electronics Construction Materials per Capacity",
+            "depreciation": "Electronics Depreciation Rate"
+          }
+        }
+      ],
+      "prices": [
+        {
+          "target": "{C} Ore Price",
+          "cost": "Ore",
+          "scarcity": "(1 + [{C} Ore Scarcity Strength] * [{C} Ore Shortage] / [{C} Ore Target Inventory])"
+        },
+        {
+          "target": "{C} Power Resource Price",
+          "cost": "Power Resource",
+          "scarcity": "(1 + [Power Resource Scarcity Price Strength] * (1 - [{C} Perceived Power Resource Fulfillment]))"
+        },
+        {
+          "target": "{C} Energy Price",
+          "cost": "Energy",
+          "scarcity": "(1 + [Energy Scarcity Price Strength] * [{C} Perceived Energy Scarcity Ratio])"
+        },
+        {
+          "target": "{C} Food Price",
+          "cost": "Food",
+          "scarcity": "([Food Target Coverage Days] / Max([{C} Food Coverage Days], 1)) ^ [Food Price Elasticity]"
+        }
+      ],
+      "markups": [
+        "{C} Base Markup",
+        "{C} Electronics Base Markup"
+      ],
+      "references": [
+        {
+          "name": "Reference Metal Price",
+          "target": "{C} Reference Metal Price",
+          "scale": {
+            "A": 2.254,
+            "B": 2.028
+          }
+        },
+        {
+          "name": "Electronics Reference Price",
+          "target": "{C} Electronics Reference Price",
+          "scale": {
+            "A": 1.972,
+            "B": 2.027
+          }
+        }
+      ],
+      "price_index": {
+        "target": "{C} Price Index",
+        "reference": "Food Price Reference",
+        "scale": {
+          "A": 1.754,
+          "B": 2.475
+        }
+      }
+    }
+  ],
+  "replace_formulas": [
+    {
+      "name": "Test 2 Transport Surge Active",
+      "value": "IfThenElse([Timed Test Mode] = 57, [Temporary Test Window], IfThenElse([Timed Test Mode] = 55, [Temporary Test Window], IfThenElse([Timed Test Mode] = 53, [Temporary Test Window], IfThenElse([Timed Test Mode] = 50, [Temporary Test Window], IfThenElse([Timed Test Mode] = 2, [Temporary Test Window], IfThenElse([Timed Test Mode] = 24, [Temporary Test Window], IfThenElse([Timed Test Mode] = 31, [Temporary Test Window], IfThenElse([Timed Test Mode] = 35, [Temporary Test Window], IfThenElse([Timed Test Mode] = 37, [Temporary Test Window], IfThenElse([Timed Test Mode] = 39, [Temporary Test Window], IfThenElse([Timed Test Mode] = 41, [Temporary Test Window], IfThenElse([Timed Test Mode] = 43, [Temporary Test Window], IfThenElse([Timed Test Mode] = 45, [Temporary Test Window], IfThenElse([Timed Test Mode] = 47, [Temporary Test Window], 0))))))))))))))"
+    }
+  ],
+  "add_scenarios": [
+    {
+      "name": "v7.7.16 Cost Pricing",
+      "description": "Mode 52 (labor market) with cost pricing: every price is full unit cost (materials, energy, labor, capital wear, rent) x 1.15 x its scarcity factor.",
+      "values": {
+        "Capital Lifecycle Enabled": 1,
+        "Intermediate Inputs Enabled": 1,
+        "Capital Goods Enabled": 1,
+        "Transport Capital Goods Enabled": 1,
+        "Power Resource Enabled": 1,
+        "Construction Materials Enabled": 1,
+        "Transport Construction Materials Enabled": 1,
+        "Construction Materials Energy Enabled": 1,
+        "Construction Materials Capital Enabled": 1,
+        "Capital Goods Capital Enabled": 1,
+        "Regolith Capital Enabled": 1,
+        "Ore Capital Enabled": 1,
+        "Timed Test Mode": 56,
+        "Power Resource Capital Enabled": 1,
+        "Deposits Enabled": 1,
+        "Process Energy Enabled": 1,
+        "Food Enabled": 1,
+        "Labor Market Enabled": 1,
+        "Cost Pricing Enabled": 1
+      }
+    },
+    {
+      "name": "v7.7.16 Transport Surge with Cost Pricing",
+      "description": "Mode 53 (transport surge with the labor market) with cost pricing.",
+      "values": {
+        "Capital Lifecycle Enabled": 1,
+        "Intermediate Inputs Enabled": 1,
+        "Capital Goods Enabled": 1,
+        "Transport Capital Goods Enabled": 1,
+        "Power Resource Enabled": 1,
+        "Construction Materials Enabled": 1,
+        "Transport Construction Materials Enabled": 1,
+        "Construction Materials Energy Enabled": 1,
+        "Construction Materials Capital Enabled": 1,
+        "Capital Goods Capital Enabled": 1,
+        "Regolith Capital Enabled": 1,
+        "Ore Capital Enabled": 1,
+        "Timed Test Mode": 57,
+        "Power Resource Capital Enabled": 1,
+        "Deposits Enabled": 1,
+        "Process Energy Enabled": 1,
+        "Food Enabled": 1,
+        "Labor Market Enabled": 1,
+        "Cost Pricing Enabled": 1
+      }
+    }
+  ]
+}
