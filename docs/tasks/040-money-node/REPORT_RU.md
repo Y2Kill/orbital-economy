@@ -33,7 +33,7 @@
 - По замечанию приёмки исправлена NODE 73: `costPricingState.model` собран без `money`, но ранее набор `acceptedLayeredNodes` включал `money` из внешней принятой модели, что давало `none of Money Enabled is outermost on all its replacement targets`. Теперь каждый слой с переключателем участвует только при наличии этого переключателя **именно в разбираемой модели**.
 - То же правило явно применено к NODE 66 (`wagePricingState.model`) и NODE 80 (`moneyState.model`). Условия слоистости и денежные формулы не менялись.
 - Коммит `e703e5e`: только `lab/src/node_qa.js`, LF, синтаксический контроль JavaScript PASS.
-- Предыдущая проверка urlGitHub Actions #39038302716https://github.com/Y2Kill/orbital-economy/actions/runs/39038302716: NODE 74–79 PASS, NODE 80 FAIL на вложенной NODE 73; guard/tools/QA PASS.
+- Предыдущая проверка [GitHub Actions #39038302716](https://github.com/Y2Kill/orbital-economy/actions/runs/39038302716): NODE 74–79 PASS, NODE 80 FAIL на вложенной NODE 73; guard/tools/QA PASS.
 - Новый `ci.yml` для `e703e5e`: `39041961286`, проверка по отдельным запросам (guard и tools-selftest PASS, остальные этапы в работе на момент записи).
 - **КТ3**: дефект маршрутизации слоёв исправлен, однако закрытие NODE 80 и полного `bench-selftests` зависит от завершения CI.
 - **КТ4**: поставка Lab 0.9.21 и документации готова; полный зелёный CI на финальной голове необходимо подтвердить отдельно.
