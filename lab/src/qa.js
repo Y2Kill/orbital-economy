@@ -649,6 +649,59 @@ try {
     return 'valid PASS; incorrect cost price, nonpositive full cost/market and negative signal FAIL';
   });
 
+
+  await expect('50 money plugin: income, dividends, trade and total money conservation', async () => {
+    const times = [0, 1, 2];
+    const series = {
+      sw: [1,1,1],
+      wageA: [5,5,5], rentA: [2,2,2], divA: [1,1,1], freightA: [2,2,2],
+      incomeA: [10,10,10], purchaseA: [8,8,8], homeA: [100,102,104], firmA: [200,197,194],
+      exportA: [8,8,8], importA: [4,4,4], importFreightA: [1,1,1], budgetA: [1,1,1],
+      wageB: [4,4,4], rentB: [1,1,1], divB: [1,1,1], freightB: [1,1,1],
+      incomeB: [7,7,7], purchaseB: [8,8,8], homeB: [50,51,52], firmB: [100,99,98],
+      exportB: [4,4,4], importB: [8,8,8], importFreightB: [1,1,1], budgetB: [.8,.8,.8],
+      transport: [20,20,20], payout: [2,2,2]
+    };
+    const inst = (region, suffix) => ({
+      name: region + ' money', colony: region, wage_bill: 'wage' + suffix,
+      rent: 'rent' + suffix, dividends: 'div' + suffix,
+      transport_income: 'freight' + suffix, income: 'income' + suffix,
+      purchases: 'purchase' + suffix, household_money: 'home' + suffix,
+      firm_money: 'firm' + suffix, exports: 'export' + suffix,
+      imports: 'import' + suffix, import_freight: 'importFreight' + suffix,
+      budget_factor: 'budget' + suffix
+    });
+    const plugin = { type: 'money', switch: 'sw', abs_tol: 1e-6, rel_tol: 1e-9,
+      transport: { money: 'transport', payout: 'payout' },
+      instances: [inst('A','A'), inst('B','B')] };
+    const context = data => ({
+      times,
+      get(name) {
+        if (!(name in data)) throw new Error('missing series ' + name);
+        return data[name];
+      }
+    });
+    const check = (data, expectFailure, namePart) => {
+      const outcome = checkPlugin(plugin, context(data));
+      if (!outcome.length || (outcome.some(x => x.status === 'FAIL') !== expectFailure) ||
+          (expectFailure && !outcome.some(x => x.status === 'FAIL' && x.name.includes(namePart)))) {
+        throw new Error(namePart + ': ' + JSON.stringify(outcome));
+      }
+    };
+    check(series, false, 'good');
+    for (const [column, value, failure] of [
+      ['incomeA', 12, 'income identity'],
+      ['divA', -1, 'dividends'],
+      ['exportA', 9, 'exports equal imports'],
+      ['homeB', 100, 'total money conserved']
+    ]) {
+      const broken = structuredClone(series);
+      broken[column][1] = value;
+      check(broken, true, failure);
+    }
+    return 'good PASS; income/dividends/trade/money conservation violations FAIL';
+  });
+
 } finally {
   fs.rmSync(tmp, { recursive: true, force: true });
 }
