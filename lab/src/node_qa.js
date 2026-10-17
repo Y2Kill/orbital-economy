@@ -2467,6 +2467,124 @@ await expect('74. money fixture expands with reference counts and fingerprint', 
   return counts + ', fingerprint ' + fingerprint;
 });
 
+await expect('75. money validation fragments, conformance and audits PASS', () => {
+  if (!moneyState) throw new Error('case 74 must run first');
+  const merged = mergeNodeValidation(withoutMoneyValidation, [moneyState.expanded.validation]);
+  const again = mergeNodeValidation(merged, [moneyState.expanded.validation]);
+  if (JSON.stringify(merged) !== JSON.stringify(again)) {
+    throw new Error('money validation merge is not idempotent');
+  }
+  const conflict = structuredClone(moneyState.expanded.validation);
+  conflict.money_instances[0].income = 'Wrong Income';
+  let rejected = false;
+  try { mergeNodeValidation(merged, [conflict]); } catch { rejected = true; }
+  if (!rejected) throw new Error('money conflicting instance accepted');
+  const staticResult = runMoneyConformance(moneyState.model, merged);
+  if (staticResult.status !== 'PASS' || staticResult.summary.instances !== 2) {
+    throw new Error('money static conformance: ' + JSON.stringify(staticResult));
+  }
+  const before = runStructureAudits(moneyState.base, withoutMoneyValidation);
+  const after = runStructureAudits(moneyState.model, merged);
+  if (after.status !== 'PASS' ||
+      after.openBoundaries.summary.openFlows !== before.openBoundaries.summary.openFlows + 12 ||
+      after.openBoundaries.summary.unclassified !== 0 ||
+      after.colonySymmetry.summary.mismatches !== 0 ||
+      after.planetClosure.status !== 'PASS' ||
+      after.algebraicLoops.combinationsWithLoops !== 0) {
+    throw new Error('money audit failed: ' + JSON.stringify(after));
+  }
+  moneyState.validation = merged;
+  return '2 CONFORMING, +12 financial flows, 0 unclassified/symmetry/loops';
+});
+
+await expect('76. trial Modes 58/59 money accounting and all plugins PASS', () => {
+  if (!moneyState?.validation) throw new Error('case 75 must run first');
+  const trialModel = structuredClone(moneyState.model);
+  const surge = trialModel.elements.find(e => e.type !== 'LINK' &&
+    e.name === 'Test 2 Transport Surge Active');
+  surge.behavior.value = 'IfThenElse([Timed Test Mode] = 59, [Temporary Test Window], ' +
+    surge.behavior.value + ')';
+  for (const [from, mode] of [[56,58],[57,59]]) {
+    const original = trialModel.scenarios.find(sc => sc.values['Timed Test Mode'] === from);
+    if (!original) throw new Error('trial base Mode ' + from + ' absent');
+    trialModel.scenarios.push({
+      name: 'money trial Mode ' + mode,
+      description: 'cost pricing and household budget accounting',
+      values: { ...structuredClone(original.values),
+        'Timed Test Mode': mode, [moneyFixture.switch]: 1 }
+    });
+  }
+  const validation = moneyState.validation;
+  for (const mode of [58,59]) {
+    const scenario = trialModel.scenarios.find(sc => sc.values['Timed Test Mode'] === mode);
+    const model = loadModelJSON(modelJsonForScenario(trialModel, scenario));
+    const errors = model.check();
+    if (errors.length) throw new Error('Mode ' + mode + ': model.check ' +
+      errors.map(e => e.message || e).join('; '));
+    const results = model.simulate();
+    const ctx = seriesContext(model, results);
+    const checks = [checkFiniteAll(model, results),
+      checkTimeAxis(results, validation.expected_time_step ?? trialModel.simulation.time_step,
+        validation.time_step_tolerance ?? 1e-12)];
+    if (validation.non_negative_regex) {
+      checks.push(checkNonNegativeRegex(model, results, validation.non_negative_regex.pattern,
+        validation.non_negative_regex.tolerance ?? 1e-10));
+    }
+    for (const plugin of validation.plugins) checks.push(...checkPlugin(plugin, ctx));
+    for (const check of validation.global_checks || []) checks.push(runGenericCheck(check, ctx));
+    const failures = checks.filter(check => check.status === 'FAIL');
+    if (failures.length) throw new Error('Mode ' + mode + ': ' +
+      failures.slice(0, 8).map(e => e.name + ': ' + e.message).join('; '));
+    const budgetMoves = moneyState.expanded.validation.money_instances.some(
+      inst => ctx.get(inst.budget_factor).some(value => Math.abs(value - 1) > 1e-4));
+    if (!budgetMoves) throw new Error('Mode ' + mode + ': budget factor never deviates from 1');
+  }
+  return 'Modes 58/59 full plugin runtime PASS; money conserved and budgets active';
+});
+
+await expect('77. money three-region synthetic expansion and static PASS', () => {
+  const decl = structuredClone(moneyFixture);
+  decl.colonies = ['A','B','C'];
+  for (const field of ['household_money','firm_money','smoothed_income']) {
+    decl.initial[field].C = decl.initial[field].A;
+  }
+  const names = new Set();
+  const sub = (template, from, to) => template.replaceAll('{C}', from)
+    .replaceAll('{from}', from).replaceAll('{to}', to ?? '');
+  for (const X of decl.colonies) {
+    names.add(sub(decl.inputs.wage, X));
+    names.add(sub(decl.inputs.employment, X));
+    for (const r of decl.rents) {
+      names.add(sub(r.price, X));
+      names.add(sub(r.quantity, X));
+    }
+    for (const p of decl.purchases) {
+      names.add(sub(p.quantity, X));
+      names.add(sub(p.price, X));
+      if (p.budget) names.add(sub(p.budget, X));
+    }
+    for (const Y of decl.colonies.filter(region => region !== X)) {
+      for (const t of [...decl.trade.goods, ...decl.trade.freight, decl.trade.food.arrival]) {
+        names.add(sub(t, X, Y));
+      }
+    }
+  }
+  names.add(decl.trade.food.freight_weight);
+  names.add(decl.trade.food.freight_price);
+  const base = { elements: [...names].map(name =>
+    ({ type: 'VARIABLE', name, behavior: { value: 10 } })), scenarios: [] };
+  const expanded = expandNode(decl, base);
+  const model = applyPatch(base, { format: PATCH_FORMAT, ...expanded.patch }).model;
+  const plugin = { type: 'money', switch: expanded.validation.money_switch,
+    transport: expanded.validation.money_transport,
+    instances: expanded.validation.money_instances };
+  const conformance = runMoneyConformance(model, { plugins: [plugin] });
+  if (conformance.status !== 'PASS' || conformance.summary.instances !== 3) {
+    throw new Error('money three-region conformance: ' + JSON.stringify(conformance));
+  }
+  return '3 regions and ordered-pair trade inputs; 3 CONFORMING';
+});
+
 await expect('78. money layer can be stripped and rebuilt without differences', () => {
   if (!moneyState) throw new Error('case 74 must run first');
   const stripped = stripMoneyNode(moneyState.model, moneyFixture);
@@ -2508,6 +2626,54 @@ await expect('79. money strict schema and base reject six malformed declarations
   await requireThrow(() => expandNode(moneyFixture, conflicting),
     /money: generated name conflicts.*A Wage Bill/, 'generated name collision');
   return 'six expected invalid cases rejected';
+});
+
+
+await expect('80. money first layer and 73 earlier NODE cases survive accepted+money', () => {
+  if (!moneyState?.validation) throw new Error('case 75 must run first');
+  const node = { decl: moneyFixture, strip: stripMoneyNode,
+    targets: moneyReplacementNames, generated: moneyGeneratedNames };
+  const nodes = [...acceptedLayeredNodes.filter(n => n.decl.type !== 'money'), node];
+  const chain = buildLayers(moneyState.model, nodes);
+  if (chain.order[0]?.decl.type !== 'money') throw new Error('money not first layer');
+  for (const n of nodes) {
+    const layer = chain.layers.get(n.decl);
+    if (!layer) throw new Error('money: layer missing ' + n.decl.type);
+    expandNode(n.decl, layer.base);
+  }
+  const switchless = buildSwitchlessLayers(moneyState.model, nodes);
+  if (switchless.prepeeled[0]?.decl.type !== 'money') {
+    throw new Error('money not first switchless prepeeled layer');
+  }
+  const withInputs = structuredClone(moneyState.model);
+  for (const scenario of withInputs.scenarios) scenario.values[moneyFixture.switch] = 1;
+  const stripped = stripMoneyNode(withInputs, moneyFixture);
+  if (stripped.scenarios.some(s => moneyFixture.switch in s.values)) {
+    throw new Error('money scenario switch not removed');
+  }
+  const cleanValidation = validationWithoutMoneyFragment(
+    moneyState.validation, moneyState.expanded.validation);
+  if (JSON.stringify(cleanValidation) !== JSON.stringify(withoutMoneyValidation)) {
+    throw new Error('money validation fragment not removed');
+  }
+  const temp = fs.mkdtempSync(path.join(os.tmpdir(), 'orbital-economy-money-layer-'));
+  try {
+    const modelFile = path.join(temp, 'model.json');
+    const validationFile = path.join(temp, 'validation.json');
+    fs.writeFileSync(modelFile, JSON.stringify(withInputs));
+    fs.writeFileSync(validationFile, JSON.stringify(moneyState.validation, null, 2) + '\n');
+    const run = spawnSync(process.execPath, [
+      '--expose-gc', path.join(root, 'src', 'node_qa.js'), '--cases=1-73',
+      '--accepted-model=' + modelFile, '--accepted-validation=' + validationFile
+    ], { cwd: root, encoding: 'utf8', maxBuffer: 16 << 20 });
+    if (run.status !== 0 || !run.stdout.includes('NODE SELF-TEST: 73 passed, 0 failed')) {
+      throw new Error('previous 73 cases on accepted+money failed: ' +
+        (run.stderr || '') + '\n' + (run.stdout || ''));
+    }
+  } finally {
+    fs.rmSync(temp, { recursive: true, force: true });
+  }
+  return 'money first; older 73/73 PASS on accepted+money';
 });
 
 console.log(`\nNODE SELF-TEST: ${passed} passed, ${failed} failed`);
