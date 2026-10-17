@@ -15,8 +15,10 @@
 - `replace_formulas`: только `Test 2 Transport Surge Active` с веткой для Mode 59; `add_scenarios`: только Modes 58–59, оба с `Cost Pricing Enabled = 1` и `Money Enabled = 1`; Modes 0–57 не модифицированы.
 - Заявленные владельцем результаты skeleton: 6203 элемента, 60 Modes, fingerprint `d2567e8bf199a505`, money 2 CONFORMING, boundaries 302, unclassified 0, symmetry 0, loops 0/1048576, `planet_v1` PASS. На кандидате до CI эти результаты не подтверждены.
 
-### КТ2 — ожидает поставки validation и policy
-- Policy должна сохранить `validation_sha256` оригинального черновика и строгую регрессию Modes 0–57: `changed = 0`.
+### КТ2 — validation и policy поставлены, CI ожидается
+- `candidate/validation.json` скопирована **байт в байт** через GitHub blob из проверенного owner draft. JSON структурно корректен, строго равен `JSON.stringify(v, null, 2) + "\\n"`, 60 сценариев, завершающий LF; код и пороги не менялись. Коммит `8a63579`.
+- `candidate/change-policy.json` скопирована из `draft/change-policy-v7.7.17-draft.json`; изменено только поле `name` на финальное `Orbital Economy v7.7.17 Money candidate r1 - change contract`. Все восемь правил, сравнение с базой и `validation_sha256 = 705ef4d1ea4965375782d763e9d96bd4a9b0a18758955367ffd387b7018e3b02` сохранены. Коммит `07f408d`.
+- По проверке владельца на skeleton policy PASS, всего 4212 ожидаемых событий, неожиданных 0; регрессия Modes 0–57: `changed = 0, maxAbs = 0`. Подтверждение именно candidate.yml ещё ожидается.
 
 ### КТ3 — ожидает полного прогона
 - Пороговые тесты Modes 58–59 изложены в `V7_7_17_TEST_PLAN.md`. Предоставленные владельцем результаты skeleton — validation 60/60, 29220 проверок, policy PASS (4212 событий), без неожиданных.
@@ -42,7 +44,7 @@
 
 ## Отличия
 - От проверенного skeleton: только имя кандидата и явный пустой массив `modify_scenarios`; декларация, замена формулы, сценарии и их числовые константы не менялись.
-- Validation и policy предполагаются без изменений правил/калибровок; финализация названия policy будет отражена в журнале.
+- Validation поставлена побайтно как черновик владельца; в policy изменено только имя кандидата, правила, пороги и SHA validation не менялись.
 - Других механизмов (кредит, проценты, межрегиональная собственность) не добавлено.
 
 ## Ограничения
