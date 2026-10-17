@@ -655,7 +655,7 @@ try {
     const series = {
       sw: [1,1,1],
       wageA: [5,5,5], rentA: [2,2,2], divA: [1,1,1], freightA: [2,2,2],
-      incomeA: [10,10,10], purchaseA: [8,8,8], homeA: [100,102,104], firmA: [200,197,194],
+      incomeA: [10,10,10], purchaseA: [8,8,8], homeA: [100,102,104], firmA: [200,198,196],
       exportA: [8,8,8], importA: [4,4,4], importFreightA: [1,1,1], budgetA: [1,1,1],
       wageB: [4,4,4], rentB: [1,1,1], divB: [1,1,1], freightB: [1,1,1],
       incomeB: [7,7,7], purchaseB: [8,8,8], homeB: [50,51,52], firmB: [100,99,98],
