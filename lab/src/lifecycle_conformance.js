@@ -782,7 +782,7 @@ export function runMoneyConformance(raw, validation, index = indexModel(raw)) {
     const names = [plugin.switch, ...Object.values(plugin.transport),
       ...Object.entries(inst).filter(([key]) => key !== 'name' && key !== 'colony').map(([, value]) => value)];
     const checks = [...new Set(names)].map(name =>
-      index.has(name) ? pass('column ' + name) :
+      index.get(name) ? pass('column ' + name) :
         fail('column ' + name, 'primitive not found: ' + name));
     const failures = checks.filter(check => check.status === 'FAIL');
     return {
