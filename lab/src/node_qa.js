@@ -2175,7 +2175,9 @@ await expect('65. wage_pricing schema/base rejects invalid declarations with pat
 await expect('66. wage_pricing peels first and all cases 1-59 pass on synthetic accepted+node', () => {
   if(!wagePricingState?.validation)throw new Error('case 61 did not produce validation');
   const node={decl:wagePricingFixture,strip:stripWagePricingNode,targets:wagePricingReplacementNames,generated:wagePricingGeneratedNames};
-  const nodes=[...layeredNodes,node],chain=buildLayers(wagePricingState.model,nodes);
+  const present = sw => wagePricingState.model.elements.some(e => e.type !== 'LINK' && e.name === sw);
+  const nodes = [...layeredNodes.filter(n => !n.decl.switch || present(n.decl.switch)), node];
+  const chain = buildLayers(wagePricingState.model, nodes);
   if(chain.order[0]?.decl.type!=='wage_pricing')throw new Error('wage_pricing not peeled first');
   for(const n of nodes){const layer=chain.layers.get(n.decl);if(!layer)throw new Error('missing layer: '+n.decl.type);expandNode(n.decl,layer.base);}
   const switchless=buildSwitchlessLayers(wagePricingState.model,nodes);
@@ -2396,7 +2398,9 @@ await expect('73. cost_pricing peels first; preceding 66 cases survive accepted+
     targets: costPricingReplacementNames,
     generated: costPricingGeneratedNames
   };
-  const nodes = [...acceptedLayeredNodes.filter(n => n.decl.type !== 'cost_pricing'), node];
+  const present = sw => costPricingState.model.elements.some(e => e.type !== 'LINK' && e.name === sw);
+  const nodes = [...acceptedLayeredNodes.filter(n =>
+    n.decl.type !== 'cost_pricing' && (!n.decl.switch || present(n.decl.switch))), node];
   const chain = buildLayers(costPricingState.model, nodes);
   if (chain.order[0]?.decl.type !== 'cost_pricing') {
     throw new Error('cost_pricing not peeled first');
@@ -2633,7 +2637,9 @@ await expect('80. money first layer and 73 earlier NODE cases survive accepted+m
   if (!moneyState?.validation) throw new Error('case 75 must run first');
   const node = { decl: moneyFixture, strip: stripMoneyNode,
     targets: moneyReplacementNames, generated: moneyGeneratedNames };
-  const nodes = [...acceptedLayeredNodes.filter(n => n.decl.type !== 'money'), node];
+  const present = sw => moneyState.model.elements.some(e => e.type !== 'LINK' && e.name === sw);
+  const nodes = [...acceptedLayeredNodes.filter(n =>
+    n.decl.type !== 'money' && (!n.decl.switch || present(n.decl.switch))), node];
   const chain = buildLayers(moneyState.model, nodes);
   if (chain.order[0]?.decl.type !== 'money') throw new Error('money not first layer');
   for (const n of nodes) {
