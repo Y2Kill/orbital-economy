@@ -1,17 +1,17 @@
 # Orbital Economy — реестр внешних параметров
 
-- generated: 2026-10-17T09:33:56.157Z
-- model: Orbital Economy v7.7.16 r1 — Cost Pricing — SHA-256 `e512efbb45f54dd08785d960626e8eb5baf4b8fc811efc6d9692265d71a1dd3e`
-- annotations: docs/PARAMETER_ANNOTATIONS.json (SHA-256 `54e5f03d78b8a7c579528b5647f738a16b1c55001e99869444c68044075d4fc4`)
+- generated: 2026-10-18T07:24:48.082Z
+- model: Orbital Economy v7.7.17 r1 — Money — SHA-256 `43625d458d7bfc20e6b3a0868b4f3f2f503f249075e65c7afac9353ddca137c9`
+- annotations: docs/PARAMETER_ANNOTATIONS.json (SHA-256 `b6171a54948a800ed985e58edc06085b490eb85e8797bde2615537174ac8eb60`)
 
 Всё, что модель не выводит сама: числовые константы, начальные запасы, переключатели, тестовые множители. Инвентарь сгенерирован из ModelJSON; аннотации («роль / что меняет / доказательство») ведутся вручную и версионируются вместе с baseline.
 
 ## Сводка
 
-- внешних величин: **613** (константы 401, начальные запасы 147, переключатели 30, тестовая обвязка 35)
-- по колониям: A 168, B 168, глобальные 277
-- аннотировано: **438 / 613** (71 %)
-- несимметричных пар A/B: **85**, из них без аннотации: **0**
+- внешних величин: **627** (константы 407, начальные запасы 154, переключатели 31, тестовая обвязка 35)
+- по колониям: A 171, B 171, глобальные 285
+- аннотировано: **452 / 627** (72 %)
+- несимметричных пар A/B: **88**, из них без аннотации: **0**
 
 ## Несимметричные пары A/B — что задаёт различия колоний
 
@@ -70,16 +70,19 @@
 | External Local Base Demand | Other | 16 | 22 | Preserves the exact switch-off Local Base Demand while enabled demand is recomputed from Metal Demand per Capita × Population. |
 | Farm Capacity | Other | 22 | 17.142206601972095 | Sets the starting productive capital of farms before expansion/depreciation dynamics. |
 | Farm Land Capacity | Other | 22 | 60 | Sets the maximum effective/desired farm scale by region and is the primary initial comparative advantage of B. |
+| Firm Money | Other | 183970 | 37742 | Начальный запас фирм около 60 дней фонда зарплаты; регулирует начальные выплаты дивидендов и ликвидность. |
 | Food Demand Signal | Other | 28 | 8.5 | Seeds demand planning at the pre-food demographic state, avoiding a startup smoothing transient. |
 | Food Index Cost Scale | Other | 1.754 | 2.475 | Scales the regional food reference in price-index calculation to preserve comparable initial real wages. |
 | Food Inventory | Other | 840 | 255 | Sets starting coverage and prevents an artificial startup famine while farms/trade begin from the balanced start state. |
 | Food Production Signal | Other | 20.174088950502767 | 16.325911049497233 | Seeds farm energy requests and desired farm capacity at the physically balanced startup production plan. |
+| Household Money | Other | 182470 | 38425 | Начальный денежный запас домохозяйств, откалиброванный к равновесию Mode 58; определяет начальную дистанцию до целевых 60 дней сглаженного дохода. |
 | Population Initial | Other | 28 | 8.5 | Sets the scale of each region's Population stock and, through participation 0.5, its labor force (A 14 / B 4.25), compared with the region's total labor requirement. A is the larger economy, so it starts with the larger population; in the first year both regions employ about 94 % of their labor force (Mode 46). |
 | Regolith Base Extraction Capacity | Other | 7 | 5 | Caps Regolith extraction through the standard soft-cap function. |
 | Regolith Cost Price Signal | Other | 29.69 | 40.15 | Sets starting value of each regional smoothed regolith price stock, calibrated to enabled-mode source at t=0. |
 | Regolith Mine Capacity | Other | 7 | 5 | Seeds mine capacity at the accepted A Regolith Base Extraction Capacity; A/B are intentionally asymmetric (7 vs 5). |
 | Regolith Proven Reserves Initial | Other | 5400 | 3600 | Seeds the stock that supplies extraction; A/B pair is 5400/3600. |
 | Regolith Undiscovered Resource Initial | Other | 540000 | 360000 | Seeds the finite planetary-scale undiscovered-resource STOCK; A/B pair is 540000/360000. |
+| Smoothed Household Income | Other | 2857.8 | 608.85 | Инициализирует бюджетный план расходов; получен из средних 5-го года Mode 58 для каждого региона. |
 | Test 22 Capital Goods Shock Applies | Other | 1 | 0 | 1 applies the shared 0.3 production-capacity multiplier; 0 substitutes exact neutral multiplier 1. |
 | Test 28 Construction Materials Shock Applies | Other | 1 | 0 | Keeps Mode 28 shock wiring structurally symmetric while selecting A only. |
 | Test 29 Regolith Shock Applies | Other | 1 | 0 | Keeps Mode 29 shock wiring structurally symmetric while selecting A only. |
@@ -300,10 +303,12 @@
 | A External Local Base Demand | constant | 16 / 22 | Named copy of the former external metal-demand driver; A=16, B=22. | Preserves the exact switch-off Local Base Demand while enabled demand is recomputed from Metal Demand per Capita × Population. | V7_7_13_ARCHITECTURE_SPEC §§0–2,5; accepted v7.7.12 regional Local Base Demand constants. |
 | A Farm Capacity | initial_stock | 22 / 17.142206601972095 | Initial physical farm capacity. Generated start values A=22, B=17.142206601972095 from initial population, land and the start-state export allocation. | Sets the starting productive capital of farms before expansion/depreciation dynamics. | lab/src/nodes/food.js start-state algorithm; V7_7_12_ARCHITECTURE_SPEC §5 notes B start ≈17.14. |
 | A Farm Land Capacity | switch | 22 / 60 | Regional farm-land soft cap. Initial values A=22, B=60; fertile B is an explicit owner decision. | Sets the maximum effective/desired farm scale by region and is the primary initial comparative advantage of B. | V7_7_12_ARCHITECTURE_SPEC §§1,3,5: A 22 / B 60; Mode 51 probes 40/40. |
+| A Firm Money | initial_stock | 183970 / 37742 | Начальные деньги сводного сектора фирм (A 183970; B 37742), калибровка: средние 5-го года Mode 58, три итерации. | Начальный запас фирм около 60 дней фонда зарплаты; регулирует начальные выплаты дивидендов и ликвидность. | ARCHIVE/evidence/045-money-node/calibrate.mjs; docs/research/MONEY_ACCOUNTING_PROTOTYPE_2026-10-17_RU.md; docs/tasks/041-money/V7_7_17_ARCHITECTURE_SPEC.md §5 |
 | A Food Demand Signal | initial_stock | 28 / 8.5 | Initial smoothed food-demand signal. A=28, B=8.5, equal to each region's initial population. | Seeds demand planning at the pre-food demographic state, avoiding a startup smoothing transient. | lab/src/nodes/food.js start-state algorithm: Food Demand Signal initial = population_initial. |
 | A Food Index Cost Scale | constant | 1.754 / 2.475 | Regional food index reference scale (A 1.754; B 2.475). | Scales the regional food reference in price-index calculation to preserve comparable initial real wages. | docs/research/COST_PRICES_PROTOTYPE_2026-10-16_RU.md; docs/tasks/039-cost-pricing/V7_7_16_ARCHITECTURE_SPEC.md §5; ARCHIVE/evidence/042-cost-pricing-node/calibrate.mjs. |
 | A Food Inventory | initial_stock | 840 / 255 | Initial food stock. A=840, B=255 = initial population (28 / 8.5) × 30 target coverage days. | Sets starting coverage and prevents an artificial startup famine while farms/trade begin from the balanced start state. | lab/src/nodes/food.js: Food Inventory initial = population_initial × Food Target Coverage Days. |
 | A Food Production Signal | initial_stock | 20.174088950502767 / 16.325911049497233 | Initial smoothed production plan. A=20.174088950502767, B=16.325911049497233 after land-limited A and B's assigned startup exports. | Seeds farm energy requests and desired farm capacity at the physically balanced startup production plan. | lab/src/nodes/food.js start-state algorithm (soft land efficiency plus startup export allocation); V7_7_12_ARCHITECTURE_SPEC §5. |
+| A Household Money | initial_stock | 182470 / 38425 | Начальные деньги домохозяйств (A 182470; B 38425), калибровка: средние 5-го года Mode 58, три итерации. | Начальный денежный запас домохозяйств, откалиброванный к равновесию Mode 58; определяет начальную дистанцию до целевых 60 дней сглаженного дохода. | ARCHIVE/evidence/045-money-node/calibrate.mjs; docs/research/MONEY_ACCOUNTING_PROTOTYPE_2026-10-17_RU.md; docs/tasks/041-money/V7_7_17_ARCHITECTURE_SPEC.md §5 |
 | A Population Initial | constant | 28 / 8.5 | Starting population of the region (A 28 / B 8.5, model units of people). | Sets the scale of each region's Population stock and, through participation 0.5, its labor force (A 14 / B 4.25), compared with the region's total labor requirement. A is the larger economy, so it starts with the larger population; in the first year both regions employ about 94 % of their labor force (Mode 46). | docs/research/POPULATION_PROTOTYPE_2026-10-04_RU.md (calibration, participation 0.50); docs/tasks/030-population/V7_7_11_ARCHITECTURE_SPEC.md §1. Added by the owner at acceptance: the task listed only the 11 shared parameters. |
 | A Regolith Base Extraction Capacity | constant | 7 / 5 | [calib] fixed extraction capacity (7). | Caps Regolith extraction through the standard soft-cap function. | Owner skeleton feasibility value; candidate run to confirm baseline and shock behaviour. |
 | A Regolith Cost Price Signal | initial_stock | 29.69 / 40.15 | Initial regolith cost-price signal (A 29.69; B 40.15); source prices at time zero with cost pricing enabled. | Sets starting value of each regional smoothed regolith price stock, calibrated to enabled-mode source at t=0. | docs/research/COST_PRICES_PROTOTYPE_2026-10-16_RU.md; docs/tasks/039-cost-pricing/V7_7_16_ARCHITECTURE_SPEC.md §5; ARCHIVE/evidence/042-cost-pricing-node/calibrate.mjs. |
@@ -314,6 +319,7 @@
 | A Regolith Mine Capacity | initial_stock | 7 / 5 | Initial simple-capital mine capacity for colony A, value 7. | Seeds mine capacity at the accepted A Regolith Base Extraction Capacity; A/B are intentionally asymmetric (7 vs 5). | TASK_RU §2 and V7_7_5_ARCHITECTURE_SPEC §0–§2 explicitly require A=7, B=5. |
 | A Regolith Proven Reserves Initial | constant | 5400 / 3600 | Initial proven Regolith reserves for colony A, value 5400. | Seeds the stock that supplies extraction; A/B pair is 5400/3600. | V7_7_8_ARCHITECTURE_SPEC §1–§2 and draft/deposits.json. |
 | A Regolith Undiscovered Resource Initial | constant | 540000 / 360000 | Initial undiscovered Regolith resource for colony A, value 540000. | Seeds the finite planetary-scale undiscovered-resource STOCK; A/B pair is 540000/360000. | V7_7_8_ARCHITECTURE_SPEC §1–§2 and draft/deposits.json. |
+| A Smoothed Household Income | initial_stock | 2857.8 / 608.85 | Начальный сглаженный доход домохозяйств (A 2857.8; B 608.85), калибровка: средние 5-го года Mode 58, три итерации. | Инициализирует бюджетный план расходов; получен из средних 5-го года Mode 58 для каждого региона. | ARCHIVE/evidence/045-money-node/calibrate.mjs; docs/research/MONEY_ACCOUNTING_PROTOTYPE_2026-10-17_RU.md; docs/tasks/041-money/V7_7_17_ARCHITECTURE_SPEC.md §5 |
 | A Test 22 Capital Goods Shock Applies | constant | 1 / 0 | Applicability flag for Mode 22 capital-goods supply shock in colony A. | 1 applies the shared 0.3 production-capacity multiplier; 0 substitutes exact neutral multiplier 1. | Scenario wiring from V7_5_ARCHITECTURE_SPEC §4: A=1, B=0; test-only parameter. |
 | A Test 28 Construction Materials Shock Applies | constant | 1 / 0 | Test-only applicability flag (1). | Keeps Mode 28 shock wiring structurally symmetric while selecting A only. | V7_7_ARCHITECTURE_SPEC §4. |
 | A Test 29 Regolith Shock Applies | constant | 1 / 0 | Test-only applicability flag (1). | Keeps Mode 29 shock wiring structurally symmetric while selecting A only. | V7_7_ARCHITECTURE_SPEC §4. |
@@ -340,10 +346,12 @@
 | B External Local Base Demand | constant | 22 / 16 | Named copy of the former external metal-demand driver; A=16, B=22. | Preserves the exact switch-off Local Base Demand while enabled demand is recomputed from Metal Demand per Capita × Population. | V7_7_13_ARCHITECTURE_SPEC §§0–2,5; accepted v7.7.12 regional Local Base Demand constants. |
 | B Farm Capacity | initial_stock | 17.142206601972095 / 22 | Initial physical farm capacity. Generated start values A=22, B=17.142206601972095 from initial population, land and the start-state export allocation. | Sets the starting productive capital of farms before expansion/depreciation dynamics. | lab/src/nodes/food.js start-state algorithm; V7_7_12_ARCHITECTURE_SPEC §5 notes B start ≈17.14. |
 | B Farm Land Capacity | switch | 60 / 22 | Regional farm-land soft cap. Initial values A=22, B=60; fertile B is an explicit owner decision. | Sets the maximum effective/desired farm scale by region and is the primary initial comparative advantage of B. | V7_7_12_ARCHITECTURE_SPEC §§1,3,5: A 22 / B 60; Mode 51 probes 40/40. |
+| B Firm Money | initial_stock | 37742 / 183970 | Начальные деньги сводного сектора фирм (A 183970; B 37742), калибровка: средние 5-го года Mode 58, три итерации. | Начальный запас фирм около 60 дней фонда зарплаты; регулирует начальные выплаты дивидендов и ликвидность. | ARCHIVE/evidence/045-money-node/calibrate.mjs; docs/research/MONEY_ACCOUNTING_PROTOTYPE_2026-10-17_RU.md; docs/tasks/041-money/V7_7_17_ARCHITECTURE_SPEC.md §5 |
 | B Food Demand Signal | initial_stock | 8.5 / 28 | Initial smoothed food-demand signal. A=28, B=8.5, equal to each region's initial population. | Seeds demand planning at the pre-food demographic state, avoiding a startup smoothing transient. | lab/src/nodes/food.js start-state algorithm: Food Demand Signal initial = population_initial. |
 | B Food Index Cost Scale | constant | 2.475 / 1.754 | Regional food index reference scale (A 1.754; B 2.475). | Scales the regional food reference in price-index calculation to preserve comparable initial real wages. | docs/research/COST_PRICES_PROTOTYPE_2026-10-16_RU.md; docs/tasks/039-cost-pricing/V7_7_16_ARCHITECTURE_SPEC.md §5; ARCHIVE/evidence/042-cost-pricing-node/calibrate.mjs. |
 | B Food Inventory | initial_stock | 255 / 840 | Initial food stock. A=840, B=255 = initial population (28 / 8.5) × 30 target coverage days. | Sets starting coverage and prevents an artificial startup famine while farms/trade begin from the balanced start state. | lab/src/nodes/food.js: Food Inventory initial = population_initial × Food Target Coverage Days. |
 | B Food Production Signal | initial_stock | 16.325911049497233 / 20.174088950502767 | Initial smoothed production plan. A=20.174088950502767, B=16.325911049497233 after land-limited A and B's assigned startup exports. | Seeds farm energy requests and desired farm capacity at the physically balanced startup production plan. | lab/src/nodes/food.js start-state algorithm (soft land efficiency plus startup export allocation); V7_7_12_ARCHITECTURE_SPEC §5. |
+| B Household Money | initial_stock | 38425 / 182470 | Начальные деньги домохозяйств (A 182470; B 38425), калибровка: средние 5-го года Mode 58, три итерации. | Начальный денежный запас домохозяйств, откалиброванный к равновесию Mode 58; определяет начальную дистанцию до целевых 60 дней сглаженного дохода. | ARCHIVE/evidence/045-money-node/calibrate.mjs; docs/research/MONEY_ACCOUNTING_PROTOTYPE_2026-10-17_RU.md; docs/tasks/041-money/V7_7_17_ARCHITECTURE_SPEC.md §5 |
 | B Population Initial | constant | 8.5 / 28 | Starting population of the region (A 28 / B 8.5, model units of people). | Sets the scale of each region's Population stock and, through participation 0.5, its labor force (A 14 / B 4.25), compared with the region's total labor requirement. A is the larger economy, so it starts with the larger population; in the first year both regions employ about 94 % of their labor force (Mode 46). | docs/research/POPULATION_PROTOTYPE_2026-10-04_RU.md (calibration, participation 0.50); docs/tasks/030-population/V7_7_11_ARCHITECTURE_SPEC.md §1. Added by the owner at acceptance: the task listed only the 11 shared parameters. |
 | B Regolith Base Extraction Capacity | constant | 5 / 7 | [calib] fixed extraction capacity (5). | Caps Regolith extraction through the standard soft-cap function. | Owner skeleton feasibility value; candidate run to confirm baseline and shock behaviour. |
 | B Regolith Cost Price Signal | initial_stock | 40.15 / 29.69 | Initial regolith cost-price signal (A 29.69; B 40.15); source prices at time zero with cost pricing enabled. | Sets starting value of each regional smoothed regolith price stock, calibrated to enabled-mode source at t=0. | docs/research/COST_PRICES_PROTOTYPE_2026-10-16_RU.md; docs/tasks/039-cost-pricing/V7_7_16_ARCHITECTURE_SPEC.md §5; ARCHIVE/evidence/042-cost-pricing-node/calibrate.mjs. |
@@ -354,6 +362,7 @@
 | B Regolith Mine Capacity | initial_stock | 5 / 7 | Initial simple-capital mine capacity for colony B, value 5. | Seeds mine capacity at the accepted B Regolith Base Extraction Capacity; A/B are intentionally asymmetric (7 vs 5). | TASK_RU §2 and V7_7_5_ARCHITECTURE_SPEC §0–§2 explicitly require A=7, B=5. |
 | B Regolith Proven Reserves Initial | constant | 3600 / 5400 | Initial proven Regolith reserves for colony B, value 3600. | Seeds the stock that supplies extraction; A/B pair is 5400/3600. | V7_7_8_ARCHITECTURE_SPEC §1–§2 and draft/deposits.json. |
 | B Regolith Undiscovered Resource Initial | constant | 360000 / 540000 | Initial undiscovered Regolith resource for colony B, value 360000. | Seeds the finite planetary-scale undiscovered-resource STOCK; A/B pair is 540000/360000. | V7_7_8_ARCHITECTURE_SPEC §1–§2 and draft/deposits.json. |
+| B Smoothed Household Income | initial_stock | 608.85 / 2857.8 | Начальный сглаженный доход домохозяйств (A 2857.8; B 608.85), калибровка: средние 5-го года Mode 58, три итерации. | Инициализирует бюджетный план расходов; получен из средних 5-го года Mode 58 для каждого региона. | ARCHIVE/evidence/045-money-node/calibrate.mjs; docs/research/MONEY_ACCOUNTING_PROTOTYPE_2026-10-17_RU.md; docs/tasks/041-money/V7_7_17_ARCHITECTURE_SPEC.md §5 |
 | B Test 22 Capital Goods Shock Applies | constant | 0 / 1 | Applicability flag for Mode 22 capital-goods supply shock in colony B. | 1 applies the shared 0.3 production-capacity multiplier; 0 substitutes exact neutral multiplier 1. | Scenario wiring from V7_5_ARCHITECTURE_SPEC §4: A=1, B=0; test-only parameter. |
 | B Test 28 Construction Materials Shock Applies | constant | 0 / 1 | Test-only applicability flag (0). | Keeps Mode 28 shock wiring structurally symmetric while selecting A only. | V7_7_ARCHITECTURE_SPEC §4. |
 | B Test 29 Regolith Shock Applies | constant | 0 / 1 | Test-only applicability flag (0). | Keeps Mode 29 shock wiring structurally symmetric while selecting A only. | V7_7_ARCHITECTURE_SPEC §4. |
@@ -389,11 +398,13 @@
 | Construction Materials Target Days | constant | 30 | Construction Materials inventory target, days of desired demand. | Higher value raises desired stock coverage. | V7_7_ARCHITECTURE_SPEC §2; owner-defined non-[calib] value. |
 | Cost Price Signal Time | constant | 10 | Ten-day smoothing horizon = 10 for price signals. | Smoothed stocks break instantaneous circular dependencies of ore, power resources and energy. | docs/research/COST_PRICES_PROTOTYPE_2026-10-16_RU.md; docs/tasks/039-cost-pricing/V7_7_16_ARCHITECTURE_SPEC.md §5; ARCHIVE/evidence/042-cost-pricing-node/calibrate.mjs. |
 | Death Living Standard Sensitivity | constant | 1 | Dimensionless mortality elasticity to living standard, value 1. | At value 1, mortality varies inversely with living standard, subject to the node's floor. | docs/research/POPULATION_PROTOTYPE_2026-10-04_RU.md: mortality × living-standard^-1; retained baseline, not separately fitted. |
+| Dividend Payout Time | constant | 90 | Срок выплаты дивидендов: 90 дней. | Определяет скорость перевода избытка денег фирм домохозяйствам; не создаёт/уничтожает деньги. | Решения владельца от 2026-10-17; docs/research/MONEY_ACCOUNTING_PROTOTYPE_2026-10-17_RU.md; docs/tasks/041-money/V7_7_17_ARCHITECTURE_SPEC.md §5 |
 | Famine Death Sensitivity | constant | 2 | Mortality sensitivity to food fulfillment, exponent 2. | Multiplies the previous death flow by fulfillment^-2 (with the node floor), increasing mortality under food shortage. | docs/tasks/032-food/V7_7_12_ARCHITECTURE_SPEC.md §§1–5 and docs/research/FOOD_PROTOTYPE_2026-10-05_RU.md. |
 | Farm Capacity Adjustment Time | constant | 360 | Farm capacity adjustment time, 360 model days. | Sets the rate at which desired additional farm capacity is converted into Farm Desired Expansion. | docs/tasks/032-food/V7_7_12_ARCHITECTURE_SPEC.md §§1–5 and docs/research/FOOD_PROTOTYPE_2026-10-05_RU.md. |
 | Farm Capital Goods per Capacity | constant | 0.3 | Capital-goods requirement for farm expansion, value 0.3 goods per unit of farm capacity. | Converts Farm Expansion into capital-goods consumption and added Capital Goods Demand. | docs/tasks/032-food/V7_7_12_ARCHITECTURE_SPEC.md §§1–5 and docs/research/FOOD_PROTOTYPE_2026-10-05_RU.md. |
 | Farm Depreciation Rate | constant | 0.0000555555555556 | Farm depreciation rate, 0.0000555555555556 per model day (2% per 360-day model year). | Removes Farm Capacity through Farm Depreciation while food is enabled. | docs/tasks/032-food/V7_7_12_ARCHITECTURE_SPEC.md §§1–5 and docs/research/FOOD_PROTOTYPE_2026-10-05_RU.md. |
 | Farm Desired Capacity Margin | constant | 1.15 | Desired farm capacity margin, value 1.15. | Targets farm capacity at 115% of the production signal, subject to the land cap. | docs/tasks/032-food/V7_7_12_ARCHITECTURE_SPEC.md §§1–5 and docs/research/FOOD_PROTOTYPE_2026-10-05_RU.md. |
+| Firm Money Target Days | constant | 60 | Целевой запас денег фирм: 60 дней. | Цель денежных остатков фирм равна числу дней фонда оплаты труда; избыток распределяется дивидендами. | Решения владельца от 2026-10-17; docs/research/MONEY_ACCOUNTING_PROTOTYPE_2026-10-17_RU.md; docs/tasks/041-money/V7_7_17_ARCHITECTURE_SPEC.md §5 |
 | Food Buffer Days | constant | 5 | Coverage needed for full immediate fulfillment, 5 model days. | Maps Food Coverage Days to Food Fulfillment; five buffer days or more gives fulfillment 1. | docs/tasks/032-food/V7_7_12_ARCHITECTURE_SPEC.md §§1–5 and docs/research/FOOD_PROTOTYPE_2026-10-05_RU.md. |
 | Food Demand Signal Time | constant | 30 | Demand smoothing time, 30 model days. | Controls adjustment of Food Demand Signal toward current population-driven Food Demand. | docs/tasks/032-food/V7_7_12_ARCHITECTURE_SPEC.md §§1–5 and docs/research/FOOD_PROTOTYPE_2026-10-05_RU.md. |
 | Food Inventory Adjustment Time | constant | 30 | Inventory correction time, 30 model days. | Controls how quickly shortages/excess relative to target stock alter desired production and import need. | docs/tasks/032-food/V7_7_12_ARCHITECTURE_SPEC.md §§1–5 and docs/research/FOOD_PROTOTYPE_2026-10-05_RU.md. |
@@ -402,6 +413,9 @@
 | Food Price Reference | constant | 10 | Reference food price, value 10 model price units. | Anchors Food Price when coverage is at the target level and normalizes food's contribution to Price Index. | docs/tasks/032-food/V7_7_12_ARCHITECTURE_SPEC.md §§1–5 and docs/research/FOOD_PROTOTYPE_2026-10-05_RU.md. |
 | Food Production Signal Time | constant | 90 | Production/export-order smoothing time, 90 model days. | Controls Food Production Signal and pairwise Food Export Signal adjustment. | docs/tasks/032-food/V7_7_12_ARCHITECTURE_SPEC.md §§1–5 and docs/research/FOOD_PROTOTYPE_2026-10-05_RU.md. |
 | Food Target Coverage Days | constant | 30 | Target inventory coverage, 30 model days. | Sets initial Food Inventory and the inventory target used by production/import planning and Food Price. | docs/tasks/032-food/V7_7_12_ARCHITECTURE_SPEC.md §§1–5 and docs/research/FOOD_PROTOTYPE_2026-10-05_RU.md. |
+| Household Income Smoothing Time | constant | 30 | Время сглаживания дохода домохозяйств: 30 дней. | Определяет инерцию сглаженного дохода, на основе которого домохозяйства планируют траты. | Решения владельца от 2026-10-17; docs/research/MONEY_ACCOUNTING_PROTOTYPE_2026-10-17_RU.md; docs/tasks/041-money/V7_7_17_ARCHITECTURE_SPEC.md §5 |
+| Household Money Adjustment Time | constant | 180 | Время коррекции денежных остатков домохозяйств: 180 дней. | Определяет скорость компенсации разности между текущими деньгами и целевым запасом в плане расходов. | Решения владельца от 2026-10-17; docs/research/MONEY_ACCOUNTING_PROTOTYPE_2026-10-17_RU.md; docs/tasks/041-money/V7_7_17_ARCHITECTURE_SPEC.md §5 |
+| Household Money Target Days | constant | 60 | KEY PARAMETER — целевой запас денег домохозяйств: 60 дней. | Ключевой параметр, определяющий уровень экономической активности: цель денежных запасов домохозяйств равна указанному числу дней сглаженного дохода; изменение смещает долгосрочный спрос и производство. | Решения владельца от 2026-10-17; docs/research/MONEY_ACCOUNTING_PROTOTYPE_2026-10-17_RU.md; docs/tasks/041-money/V7_7_17_ARCHITECTURE_SPEC.md §5 |
 | Living Food Weight | constant | 0.5 | Food exponent in Living Standard, value 0.5. | Weights food fulfillment as the square-root factor in the food-enabled living-standard product. | docs/tasks/032-food/V7_7_12_ARCHITECTURE_SPEC.md §§1–5 and docs/research/FOOD_PROTOTYPE_2026-10-05_RU.md. |
 | Migration Gap Sensitivity | constant | 4 | Dimensionless gain from normalized perceived-attractiveness gap to migration pressure, value 4. | Scales the positive attractiveness gap before the migration factor is capped at 1. | docs/research/POPULATION_PROTOTYPE_2026-10-04_RU.md prototype migration setup; retained baseline coefficient, not separately fitted. |
 | Migration Max Rate | constant | 0.0000555555555556 | Maximum migration outflow fraction, 0.0000555555555556 per model day (2.0% per 360-day model year). | Caps each directed migration flow before attractiveness-gap sensitivity is applied. | docs/research/POPULATION_PROTOTYPE_2026-10-04_RU.md: no more than 2% of population per year; V7_7_11_ARCHITECTURE_SPEC §1. |
@@ -528,6 +542,7 @@
 | Food Enabled | switch | 0 | Food-layer switch; default 0, enabled only by new Modes 49–51. | At 0 every food replacement selects the previous formula; at 1 food/farms/trade and their feedbacks are active. | docs/tasks/032-food/V7_7_12_ARCHITECTURE_SPEC.md §§1–5 and docs/research/FOOD_PROTOTYPE_2026-10-05_RU.md. |
 | Intermediate Inputs Enabled | switch | 1 | Переключатель v7.4 (1 в сыром файле; 0 в Modes 0–16; 1 в 17–20). | При 0 — точное воспроизведение v7.3 r2 (Feedstock из ∅ по legacy-цене). При 1 — металл как физический вход, Feedstock Extraction = 0, Feedstock Price = Market Price, Desired Smelting Rate += поставки. Только форма IfThenElse(switch, new, old). | CHECK_CANDIDATE r2: Modes 0–16 changed=0, maxAbs=0. |
 | Labor Market Enabled | switch | 0 | Labor-market switch; default 0 and enabled only by new Modes 52–53. | At 0 every labor_market replacement selects the previous branch; at 1 population-driven demand, flexible wages and labor-availability guards are active. | docs/tasks/034-labor-market/V7_7_13_ARCHITECTURE_SPEC.md §§0–5 and docs/research/CLOSURE_PROTOTYPE_2026-10-09_RU.md. |
+| Money Enabled | switch | 0 | Переключатель денежного учёта (0 по умолчанию, 1 в Modes 58–59). | Включает парные денежные платежи и бюджетные ограничения спроса только при Cost Pricing Enabled = 1; Modes 0–57 не меняются. | Решения владельца от 2026-10-17; docs/research/MONEY_ACCOUNTING_PROTOTYPE_2026-10-17_RU.md; docs/tasks/041-money/V7_7_17_ARCHITECTURE_SPEC.md §5 |
 | Ore Capital Enabled | switch | 1 | Ore-mining simple-capital master switch, raw value 1. | 0 preserves accepted Modes 0-39 exactly; 1 makes effective mining capacity read ore-mine capital and enables mine expansion, depreciation, retirement, and backing-resource sinks. | V7_7_6_ARCHITECTURE_SPEC §0–§3; owner node declaration. |
 | Power Resource Capital Enabled | switch | 1 | Power-resource-extraction simple-capital master switch, raw value 1. | 0 preserves accepted Modes 0-41 exactly; 1 applies the smooth mine-capacity cap and enables mine expansion, depreciation, retirement, and backing-resource sinks. | V7_7_7_ARCHITECTURE_SPEC §0–§3; owner node declaration. |
 | Process Energy Enabled | switch | 1 | Process-energy layer master switch, raw value 1. | 0 preserves accepted v7.7.8 process-rate and allocator behaviour in Modes 0-45; 1 enables energy requests and fulfillment-limited process rates in Modes 46-47. | V7_7_9_ARCHITECTURE_SPEC §1–§2 and draft/process-energy.json. |
@@ -558,6 +573,8 @@
 | Transport Construction Time | constant | 120 | Отраслевая policy kernel капитала (120 д). | Не часть kernel-контракта — отраслевая параметризация (KERNEL_SPEC §4.3). Сравнение секторов: CAPITAL_LIFECYCLE_SECTOR_MAPPING, последняя таблица. |  |
 | Transport Installed Throughput Capacity | initial_stock | 20 | Начальная пропускная способность транспорта (20 т/день). | Стартовый общий ресурс перевозок обоих товаров; далее эндогенно через Transport kernel. |  |
 | Transport Labor per Unit | constant | 0.1 | Shared transport labor intensity, value 0.1. | Multiplies Capacity Limited Total Transport Load and Transport Automation Factor to form Shared Labor Requirement. | V7_7_10_ARCHITECTURE_SPEC §1–§2 and draft/process-labor.json. |
+| Transport Money | initial_stock | 1253.5 | Начальные деньги общего транспортного сектора: 1253.5. | Накопленный фрахт поступает на транспортный счёт и возвращается домохозяйствам обоих регионов; старт задан калибровкой неподвижной точки. | ARCHIVE/evidence/045-money-node/calibrate.mjs; docs/research/MONEY_ACCOUNTING_PROTOTYPE_2026-10-17_RU.md; docs/tasks/041-money/V7_7_17_ARCHITECTURE_SPEC.md §5 |
+| Transport Payout Time | constant | 30 | Время выплаты денег транспорта: 30 дней. | Накопленный фрахт выплачивается домохозяйствам по доле региона в торговле. | Решения владельца от 2026-10-17; docs/research/MONEY_ACCOUNTING_PROTOTYPE_2026-10-17_RU.md; docs/tasks/041-money/V7_7_17_ARCHITECTURE_SPEC.md §5 |
 | Travel Time | constant | 10 | Время в пути A↔B (10 дней; глобально). | Задержка физических поставок (Cargo в пути) и фрахтовая часть landed price (Transit Cost 0.2/т·день). Не орбитальная физика — абстракция, одинаково годится для планетарных регионов. |  |
 
 ## Полный инвентарь по секторам
@@ -849,10 +866,12 @@
 | A External Local Base Demand | constant | A | 16 | **22** | Labor market node: former external driver A Local Base Demand (kept for the switch-off branch). | ✓ |
 | A Farm Capacity | initial_stock | A | 22 | **17.142206601972095** | Food node: farm capacity (capital). | ✓ |
 | A Farm Land Capacity | switch | A | 22 (сценарии: {"51":40}…) | **60** | Food node: farm land of region A (soft cap of its farms). | ✓ |
+| A Firm Money | initial_stock | A | 183970 | **37742** | Money node: money held by the consolidated firms. | ✓ |
 | A Food Demand Signal | initial_stock | A | 28 | **8.5** | Food node: A Food Demand Signal. | ✓ |
 | A Food Index Cost Scale | constant | A | 1.754 | **2.475** | Cost pricing node: food reference scale of the price index. | ✓ |
 | A Food Inventory | initial_stock | A | 840 | **255** | Food node: A Food Inventory. | ✓ |
 | A Food Production Signal | initial_stock | A | 20.174088950502767 | **16.325911049497233** | Food node: smoothed production plan (energy request signal). | ✓ |
+| A Household Money | initial_stock | A | 182470 | **38425** | Money node: money held by the households. | ✓ |
 | A Perceived Attractiveness | initial_stock | A | 1 | = | Generated population element for A Perceived Attractiveness. |  |
 | A Population Initial | constant | A | 28 | **8.5** | Generated population element for A Population Initial. | ✓ |
 | A Regolith Base Extraction Capacity | constant | A | 7 | **5** | [calib] Baseline Regolith extraction capacity in colony A. | ✓ |
@@ -864,6 +883,7 @@
 | A Regolith Mine Capacity | initial_stock | A | 7 | **5** | Generated simple_capital capacity for A Regolith Mine Capacity. | ✓ |
 | A Regolith Proven Reserves Initial | constant | A | 5400 | **3600** | Generated deposit element for A Regolith Proven Reserves Initial. | ✓ |
 | A Regolith Undiscovered Resource Initial | constant | A | 540000 | **360000** | Generated deposit element for A Regolith Undiscovered Resource Initial. | ✓ |
+| A Smoothed Household Income | initial_stock | A | 2857.8 | **608.85** | Money node: household income seen by the spending plan. | ✓ |
 | A Test 22 Capital Goods Shock Applies | constant | A | 1 | **0** | Applicability flag for Mode 22 capital-goods supply shock in colony A. | ✓ |
 | A Test 28 Construction Materials Shock Applies | constant | A | 1 | **0** | Applicability flag for symmetric Mode 28 Construction Materials shock wiring in colony A. | ✓ |
 | A Test 29 Regolith Shock Applies | constant | A | 1 | **0** | Applicability flag for symmetric Mode 29 Regolith shock wiring in colony A. | ✓ |
@@ -895,10 +915,12 @@
 | B External Local Base Demand | constant | B | 22 | **16** | Labor market node: former external driver B Local Base Demand (kept for the switch-off branch). | ✓ |
 | B Farm Capacity | initial_stock | B | 17.142206601972095 | **22** | Food node: farm capacity (capital). | ✓ |
 | B Farm Land Capacity | switch | B | 60 (сценарии: {"51":40}…) | **22** | Food node: farm land of region B (soft cap of its farms). | ✓ |
+| B Firm Money | initial_stock | B | 37742 | **183970** | Money node: money held by the consolidated firms. | ✓ |
 | B Food Demand Signal | initial_stock | B | 8.5 | **28** | Food node: B Food Demand Signal. | ✓ |
 | B Food Index Cost Scale | constant | B | 2.475 | **1.754** | Cost pricing node: food reference scale of the price index. | ✓ |
 | B Food Inventory | initial_stock | B | 255 | **840** | Food node: B Food Inventory. | ✓ |
 | B Food Production Signal | initial_stock | B | 16.325911049497233 | **20.174088950502767** | Food node: smoothed production plan (energy request signal). | ✓ |
+| B Household Money | initial_stock | B | 38425 | **182470** | Money node: money held by the households. | ✓ |
 | B Perceived Attractiveness | initial_stock | B | 1 | = | Generated population element for B Perceived Attractiveness. |  |
 | B Population Initial | constant | B | 8.5 | **28** | Generated population element for B Population Initial. | ✓ |
 | B Regolith Base Extraction Capacity | constant | B | 5 | **7** | [calib] Baseline Regolith extraction capacity in colony B. | ✓ |
@@ -910,6 +932,7 @@
 | B Regolith Mine Capacity | initial_stock | B | 5 | **7** | Generated simple_capital capacity for B Regolith Mine Capacity. | ✓ |
 | B Regolith Proven Reserves Initial | constant | B | 3600 | **5400** | Generated deposit element for B Regolith Proven Reserves Initial. | ✓ |
 | B Regolith Undiscovered Resource Initial | constant | B | 360000 | **540000** | Generated deposit element for B Regolith Undiscovered Resource Initial. | ✓ |
+| B Smoothed Household Income | initial_stock | B | 608.85 | **2857.8** | Money node: household income seen by the spending plan. | ✓ |
 | B Test 22 Capital Goods Shock Applies | constant | B | 0 | **1** | Applicability flag for Mode 22 capital-goods supply shock in colony B. | ✓ |
 | B Test 28 Construction Materials Shock Applies | constant | B | 0 | **1** | Applicability flag for symmetric Mode 28 Construction Materials shock wiring in colony B. | ✓ |
 | B Test 29 Regolith Shock Applies | constant | B | 0 | **1** | Applicability flag for symmetric Mode 29 Regolith shock wiring in colony B. | ✓ |
@@ -946,11 +969,13 @@
 | Construction Materials Target Days | constant | global | 30 |  | Target Construction Materials inventory coverage in days of desired construction demand. | ✓ |
 | Cost Price Signal Time | constant | global | 10 |  | Cost pricing node: parameter Cost Price Signal Time. | ✓ |
 | Death Living Standard Sensitivity | constant | global | 1 |  | Generated population element for Death Living Standard Sensitivity. | ✓ |
+| Dividend Payout Time | constant | global | 90 |  | Money node: parameter Dividend Payout Time. | ✓ |
 | Famine Death Sensitivity | constant | global | 2 |  | Food node: parameter Famine Death Sensitivity. | ✓ |
 | Farm Capacity Adjustment Time | constant | global | 360 |  | Food node: parameter Farm Capacity Adjustment Time. | ✓ |
 | Farm Capital Goods per Capacity | constant | global | 0.3 |  | Food node: parameter Farm Capital Goods per Capacity. | ✓ |
 | Farm Depreciation Rate | constant | global | 0.0000555555555556 |  | Food node: parameter Farm Depreciation Rate. | ✓ |
 | Farm Desired Capacity Margin | constant | global | 1.15 |  | Food node: parameter Farm Desired Capacity Margin. | ✓ |
+| Firm Money Target Days | constant | global | 60 |  | Money node: parameter Firm Money Target Days. | ✓ |
 | Food Buffer Days | constant | global | 5 |  | Food node: parameter Food Buffer Days. | ✓ |
 | Food Demand Signal Time | constant | global | 30 |  | Food node: parameter Food Demand Signal Time. | ✓ |
 | Food Inventory Adjustment Time | constant | global | 30 |  | Food node: parameter Food Inventory Adjustment Time. | ✓ |
@@ -959,6 +984,9 @@
 | Food Price Reference | constant | global | 10 |  | Food node: parameter Food Price Reference. | ✓ |
 | Food Production Signal Time | constant | global | 90 |  | Food node: parameter Food Production Signal Time. | ✓ |
 | Food Target Coverage Days | constant | global | 30 |  | Food node: parameter Food Target Coverage Days. | ✓ |
+| Household Income Smoothing Time | constant | global | 30 |  | Money node: parameter Household Income Smoothing Time. | ✓ |
+| Household Money Adjustment Time | constant | global | 180 |  | Money node: parameter Household Money Adjustment Time. | ✓ |
+| Household Money Target Days | constant | global | 60 |  | Money node: parameter Household Money Target Days. | ✓ |
 | Living Food Weight | constant | global | 0.5 |  | Food node: parameter Living Food Weight. | ✓ |
 | Migration Gap Sensitivity | constant | global | 4 |  | Generated population element for Migration Gap Sensitivity. | ✓ |
 | Migration Max Rate | constant | global | 0.0000555555555556 |  | Generated population element for Migration Max Rate. | ✓ |
@@ -1108,11 +1136,12 @@
 | Construction Materials Capital Enabled | switch | global | 1 (сценарии: {"0":0,"1":0,"2":0,"3":0,"4":0,"5":0,"6":0,"7":0,"8":0,"9":0…) |  | v7.7.3 switch: enables construction-materials processing capacity as lifecycle capital. | ✓ |
 | Construction Materials Enabled | switch | global | 1 (сценарии: {"0":0,"1":0,"2":0,"3":0,"4":0,"5":0,"6":0,"7":0,"8":0,"9":0…) |  | v7.7 master switch: construction materials physically constrain colonial capacity expansion. | ✓ |
 | Construction Materials Energy Enabled | switch | global | 1 (сценарии: {"0":0,"1":0,"2":0,"3":0,"4":0,"5":0,"6":0,"7":0,"8":0,"9":0…) |  | v7.7.2 switch: makes Construction Materials processing participate in the colony energy allocator. | ✓ |
-| Cost Pricing Enabled | switch | global | 0 (сценарии: {"56":1,"57":1}…) |  | Cost pricing node: switch of cost pricing (0 = every earlier series unchanged). | ✓ |
+| Cost Pricing Enabled | switch | global | 0 (сценарии: {"56":1,"57":1,"58":1,"59":1}…) |  | Cost pricing node: switch of cost pricing (0 = every earlier series unchanged). | ✓ |
 | Deposits Enabled | switch | global | 1 (сценарии: {"0":0,"1":0,"2":0,"3":0,"4":0,"5":0,"6":0,"7":0,"8":0,"9":0…) |  | Generated deposit element for Deposits Enabled. | ✓ |
 | Food Enabled | switch | global | 0 (сценарии: {"49":1,"50":1,"51":1,"52":1,"53":1,"54":1,"55":1,"56":1,"57…) |  | Food node: switch of the food layer (0 = every earlier series unchanged). | ✓ |
 | Intermediate Inputs Enabled | switch | global | 1 (сценарии: {"0":0,"1":0,"2":0,"3":0,"4":0,"5":0,"6":0,"7":0,"8":0,"9":0…) |  | Master switch for v7.4 Metal-to-Electronics intermediate-input coupling. Modes 0-16 override to 0; Modes 17+ enable it. | ✓ |
-| Labor Market Enabled | switch | global | 0 (сценарии: {"52":1,"53":1,"54":1,"55":1,"56":1,"57":1}…) |  | Labor market node: switch of the labor market (0 = every earlier series unchanged). | ✓ |
+| Labor Market Enabled | switch | global | 0 (сценарии: {"52":1,"53":1,"54":1,"55":1,"56":1,"57":1,"58":1,"59":1}…) |  | Labor market node: switch of the labor market (0 = every earlier series unchanged). | ✓ |
+| Money Enabled | switch | global | 0 (сценарии: {"58":1,"59":1}…) |  | Money node: switch of money accounting and household budgets (0 = every earlier series unchanged). | ✓ |
 | Ore Capital Enabled | switch | global | 1 (сценарии: {"0":0,"1":0,"2":0,"3":0,"4":0,"5":0,"6":0,"7":0,"8":0,"9":0…) |  | Generated simple_capital switch for Ore Capital Enabled. | ✓ |
 | Power Resource Capital Enabled | switch | global | 1 (сценарии: {"0":0,"1":0,"2":0,"3":0,"4":0,"5":0,"6":0,"7":0,"8":0,"9":0…) |  | Generated simple_capital switch for Power Resource Capital Enabled. | ✓ |
 | Power Resource Enabled | switch | global | 0 (сценарии: {"0":0,"1":0,"2":0,"3":0,"4":0,"5":0,"6":0,"7":0,"8":0,"9":0…) |  | v7.6 master switch. When 0, the accepted v7.5.1 energy path is reproduced; when 1, generation requires a physical operating resource. |  |
@@ -1212,8 +1241,10 @@
 | Transport Installed Throughput Capacity | initial_stock | global | 20 |  | Physical installed route throughput capacity. Changes slowly through fleet/infrastructure investment, permanent retirement and depreciation. | ✓ |
 | Transport Labor per Unit | constant | global | 0.1 |  | Generated labor element for Transport Labor per Unit. | ✓ |
 | Transport Loss Closure Fraction | constant | global | 0.5 |  |  |  |
+| Transport Money | initial_stock | global | 1253.5 |  | Money node: freight held by the shared transport. | ✓ |
 | Transport Mothball Time | constant | global | 7 |  | Days to remove excess transport capacity from active service. |  |
 | Transport Operating Reserve Factor | constant | global | 1.15 |  | Desired active route capacity relative to requested shipment volume. |  |
+| Transport Payout Time | constant | global | 30 |  | Money node: parameter Transport Payout Time. | ✓ |
 | Transport Reinvestment Fraction | constant | global | 0.4 |  |  |  |
 | Transport Retired Capacity | initial_stock | global | 0 |  | Cumulative transport capacity physically retired. Future versions may split this into reusable hulls/modules, salvage material and waste. |  |
 | Transport Scarcity Strength | constant | global | 1 |  |  |  |

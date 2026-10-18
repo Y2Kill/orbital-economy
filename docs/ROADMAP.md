@@ -1,10 +1,16 @@
 # Roadmap
 
 **Document status:** CURRENT  
-**Base:** Orbital Economy v7.7.16 r1 — Cost Pricing (accepted 2026-10-17)  
+**Base:** Orbital Economy v7.7.17 r1 — Money (accepted 2026-10-18)  
 **Rule:** roadmap describes intent; executable accepted code remains authoritative for accepted behavior.
 
-## Current implementation — v7.7.16 Cost Pricing — full money accounting, step 1 (tasks 038 bench, 039 model)
+## Current implementation — v7.7.17 Money — full money accounting, step 2 (tasks 040 bench, 041 model)
+
+Owner decisions 2026-10-17 (`docs/research/MONEY_ACCOUNTING_PROTOTYPE_2026-10-17_RU.md`): one consolidated firm sector per region; rent and dividends to the households of the region; freight to the households of both regions by trade share; accounting first, then household budgets. The accounting prototype showed the circuit closed on cost prices — each region's household saving equals its balance of payments — and two leaks left: B's chronic trade deficit and freight with no owner; budgets and the transport payout closed both, stable over 80 years. On the old prices budgets wipe out both regions, so money works only with cost pricing. Done: tasks 040 (Lab v0.9.21, two rounds) and 041 (v7.7.17 r1).
+
+Next: one recalibration that switches cost pricing and money on in every Mode and re-thresholds the checks of earlier tasks (as v7.7.14); then, if needed, credit, interest and cross-region ownership.
+
+## v7.7.16 Cost Pricing — full money accounting, step 1 (tasks 038 bench, 039 model)
 
 Owner decisions 2026-10-16 (`docs/research/COST_PRICES_PROTOTYPE_2026-10-16_RU.md`): prices rise to full unit cost while wages stay, the old base prices stay as a rent on top, one 15 % markup for every good. The analysis showed the old prices of power resource, energy, ore and food below their labor content (power resource ×6.6, energy ×3.7); at cost prices the price level is about ×2.2 and the consumer basket of A costs more than its wage bill — the rest is rent and profits, the income that closes the money circuit. Done: tasks 038 (Lab v0.9.20, three rounds) and 039 (v7.7.16 r1). Over 80 years the real wage of A holds, B smelts 7.1 instead of 2.3.
 

@@ -1,5 +1,5 @@
 {
-  "name": "Orbital Economy v7.7.16 validation r1",
+  "name": "Orbital Economy v7.7.17 validation r1",
   "mode_variable": "Timed Test Mode",
   "expected_time_step": 0.25,
   "time_step_tolerance": 1e-12,
@@ -64,7 +64,9 @@
     52,
     53,
     54,
-    55
+    55,
+    56,
+    57
   ],
   "regression_tolerance": 0,
   "plugins": [
@@ -619,7 +621,19 @@
           "closed_world": true,
           "name": [
             "Book * Contract Value *",
-            "Recognize Delivered * Value *"
+            "Recognize Delivered * Value *",
+            "A Household Income Flow",
+            "A Household Purchases Flow",
+            "A Firm Cash Flow",
+            "A Dividend Flow",
+            "A Smoothed Income Change",
+            "B Household Income Flow",
+            "B Household Purchases Flow",
+            "B Firm Cash Flow",
+            "B Dividend Flow",
+            "B Smoothed Income Change",
+            "Transport Freight Income",
+            "Transport Payout Flow"
           ],
           "reason": "money bookkeeping, not matter"
         },
@@ -1951,6 +1965,50 @@
               "full_cost": "B Construction Materials Full Cost"
             }
           ]
+        }
+      ]
+    },
+    {
+      "type": "money",
+      "abs_tol": 0.000001,
+      "rel_tol": 1e-9,
+      "switch": "Money Enabled",
+      "transport": {
+        "money": "Transport Money",
+        "payout": "Transport Payout"
+      },
+      "instances": [
+        {
+          "name": "A money",
+          "colony": "A",
+          "wage_bill": "A Wage Bill",
+          "rent": "A Rent Payments",
+          "dividends": "A Dividends",
+          "transport_income": "A Transport Income",
+          "income": "A Household Income",
+          "purchases": "A Household Purchases",
+          "household_money": "A Household Money",
+          "firm_money": "A Firm Money",
+          "exports": "A Export Goods Revenue",
+          "imports": "A Import Goods Payments",
+          "import_freight": "A Import Freight Payments",
+          "budget_factor": "A Budget Factor"
+        },
+        {
+          "name": "B money",
+          "colony": "B",
+          "wage_bill": "B Wage Bill",
+          "rent": "B Rent Payments",
+          "dividends": "B Dividends",
+          "transport_income": "B Transport Income",
+          "income": "B Household Income",
+          "purchases": "B Household Purchases",
+          "household_money": "B Household Money",
+          "firm_money": "B Firm Money",
+          "exports": "B Export Goods Revenue",
+          "imports": "B Import Goods Payments",
+          "import_freight": "B Import Freight Payments",
+          "budget_factor": "B Budget Factor"
         }
       ]
     }
@@ -77885,6 +77943,1828 @@
         {
           "type": "metric",
           "name": "Mode 57: A stays fully fed through the surge",
+          "column": "A Food Fulfillment",
+          "metric": "min",
+          "op": ">=",
+          "value": 0.99
+        }
+      ]
+    },
+    "58": {
+      "name": "v7.7.17 Money",
+      "checks": [
+        {
+          "type": "identity",
+          "name": "Mode 58: A CM plant Capital Goods pair identity",
+          "abs_tol": 1e-8,
+          "terms": [
+            {
+              "column": "A Construction Materials Plant Capital Goods Consumption",
+              "coef": 1
+            },
+            {
+              "column": "A Construction Materials Plant Expansion",
+              "coef": -5
+            }
+          ],
+          "note": "Construction Materials Plant Capital Goods per Capacity = 5."
+        },
+        {
+          "type": "identity",
+          "name": "Mode 58: A CM plant Construction Materials pair identity",
+          "abs_tol": 1e-8,
+          "terms": [
+            {
+              "column": "A Construction Materials Plant Construction Materials Consumption",
+              "coef": 1
+            },
+            {
+              "column": "A Construction Materials Plant Expansion",
+              "coef": -5
+            }
+          ],
+          "note": "Construction Materials Plant Construction Materials per Capacity = 5."
+        },
+        {
+          "type": "identity",
+          "name": "Mode 58: A CM production capacity equals plant active capacity",
+          "abs_tol": 1e-8,
+          "terms": [
+            {
+              "column": "A Construction Materials Production Capacity",
+              "coef": 1
+            },
+            {
+              "column": "A Construction Materials Plant Active Capacity",
+              "coef": -1
+            }
+          ],
+          "note": "No Mode-28 shock is active in Modes 34-35."
+        },
+        {
+          "type": "identity",
+          "name": "Mode 58: A regolith -> Construction Materials pair identity",
+          "abs_tol": 1e-8,
+          "terms": [
+            {
+              "column": "A Construction Materials Regolith Consumption",
+              "coef": 1
+            },
+            {
+              "column": "A Construction Materials Production Rate",
+              "coef": -2
+            }
+          ],
+          "note": "Regolith per Construction Materials Unit = 2."
+        },
+        {
+          "type": "identity",
+          "name": "Mode 58: A Refinery Construction Materials pair identity",
+          "abs_tol": 1e-8,
+          "terms": [
+            {
+              "column": "A Refinery Construction Materials Consumption",
+              "coef": 1
+            },
+            {
+              "column": "A Refinery Expansion",
+              "coef": -20
+            }
+          ]
+        },
+        {
+          "type": "identity",
+          "name": "Mode 58: A Electronics Construction Materials pair identity",
+          "abs_tol": 1e-8,
+          "terms": [
+            {
+              "column": "A Electronics Construction Materials Consumption",
+              "coef": 1
+            },
+            {
+              "column": "A Electronics Factory Expansion",
+              "coef": -12
+            }
+          ]
+        },
+        {
+          "type": "identity",
+          "name": "Mode 58: A Power Construction Materials pair identity",
+          "abs_tol": 1e-8,
+          "terms": [
+            {
+              "column": "A Power Construction Materials Consumption",
+              "coef": 1
+            },
+            {
+              "column": "A Power Generation Expansion",
+              "coef": -1
+            }
+          ]
+        },
+        {
+          "type": "identity",
+          "name": "Mode 58: A Refinery Capital Goods pair identity",
+          "abs_tol": 1e-8,
+          "terms": [
+            {
+              "column": "A Refinery Capital Goods Consumption",
+              "coef": 1
+            },
+            {
+              "column": "A Refinery Expansion",
+              "coef": -17
+            }
+          ]
+        },
+        {
+          "type": "identity",
+          "name": "Mode 58: A Electronics Capital Goods pair identity",
+          "abs_tol": 1e-8,
+          "terms": [
+            {
+              "column": "A Electronics Capital Goods Consumption",
+              "coef": 1
+            },
+            {
+              "column": "A Electronics Factory Expansion",
+              "coef": -11.5
+            }
+          ]
+        },
+        {
+          "type": "identity",
+          "name": "Mode 58: A Power Capital Goods pair identity",
+          "abs_tol": 1e-8,
+          "terms": [
+            {
+              "column": "A Power Capital Goods Consumption",
+              "coef": 1
+            },
+            {
+              "column": "A Power Generation Expansion",
+              "coef": -0.5
+            }
+          ]
+        },
+        {
+          "type": "identity",
+          "name": "Mode 58: B CM plant Capital Goods pair identity",
+          "abs_tol": 1e-8,
+          "terms": [
+            {
+              "column": "B Construction Materials Plant Capital Goods Consumption",
+              "coef": 1
+            },
+            {
+              "column": "B Construction Materials Plant Expansion",
+              "coef": -5
+            }
+          ],
+          "note": "Construction Materials Plant Capital Goods per Capacity = 5."
+        },
+        {
+          "type": "identity",
+          "name": "Mode 58: B CM plant Construction Materials pair identity",
+          "abs_tol": 1e-8,
+          "terms": [
+            {
+              "column": "B Construction Materials Plant Construction Materials Consumption",
+              "coef": 1
+            },
+            {
+              "column": "B Construction Materials Plant Expansion",
+              "coef": -5
+            }
+          ],
+          "note": "Construction Materials Plant Construction Materials per Capacity = 5."
+        },
+        {
+          "type": "identity",
+          "name": "Mode 58: B CM production capacity equals plant active capacity",
+          "abs_tol": 1e-8,
+          "terms": [
+            {
+              "column": "B Construction Materials Production Capacity",
+              "coef": 1
+            },
+            {
+              "column": "B Construction Materials Plant Active Capacity",
+              "coef": -1
+            }
+          ],
+          "note": "No Mode-28 shock is active in Modes 34-35."
+        },
+        {
+          "type": "identity",
+          "name": "Mode 58: B regolith -> Construction Materials pair identity",
+          "abs_tol": 1e-8,
+          "terms": [
+            {
+              "column": "B Construction Materials Regolith Consumption",
+              "coef": 1
+            },
+            {
+              "column": "B Construction Materials Production Rate",
+              "coef": -2
+            }
+          ],
+          "note": "Regolith per Construction Materials Unit = 2."
+        },
+        {
+          "type": "identity",
+          "name": "Mode 58: B Refinery Construction Materials pair identity",
+          "abs_tol": 1e-8,
+          "terms": [
+            {
+              "column": "B Refinery Construction Materials Consumption",
+              "coef": 1
+            },
+            {
+              "column": "B Refinery Expansion",
+              "coef": -20
+            }
+          ]
+        },
+        {
+          "type": "identity",
+          "name": "Mode 58: B Electronics Construction Materials pair identity",
+          "abs_tol": 1e-8,
+          "terms": [
+            {
+              "column": "B Electronics Construction Materials Consumption",
+              "coef": 1
+            },
+            {
+              "column": "B Electronics Factory Expansion",
+              "coef": -12
+            }
+          ]
+        },
+        {
+          "type": "identity",
+          "name": "Mode 58: B Power Construction Materials pair identity",
+          "abs_tol": 1e-8,
+          "terms": [
+            {
+              "column": "B Power Construction Materials Consumption",
+              "coef": 1
+            },
+            {
+              "column": "B Power Generation Expansion",
+              "coef": -1
+            }
+          ]
+        },
+        {
+          "type": "identity",
+          "name": "Mode 58: B Refinery Capital Goods pair identity",
+          "abs_tol": 1e-8,
+          "terms": [
+            {
+              "column": "B Refinery Capital Goods Consumption",
+              "coef": 1
+            },
+            {
+              "column": "B Refinery Expansion",
+              "coef": -17
+            }
+          ]
+        },
+        {
+          "type": "identity",
+          "name": "Mode 58: B Electronics Capital Goods pair identity",
+          "abs_tol": 1e-8,
+          "terms": [
+            {
+              "column": "B Electronics Capital Goods Consumption",
+              "coef": 1
+            },
+            {
+              "column": "B Electronics Factory Expansion",
+              "coef": -11.5
+            }
+          ]
+        },
+        {
+          "type": "identity",
+          "name": "Mode 58: B Power Capital Goods pair identity",
+          "abs_tol": 1e-8,
+          "terms": [
+            {
+              "column": "B Power Capital Goods Consumption",
+              "coef": 1
+            },
+            {
+              "column": "B Power Generation Expansion",
+              "coef": -0.5
+            }
+          ]
+        },
+        {
+          "type": "identity",
+          "name": "Mode 58: Transport Construction Materials pair identity",
+          "abs_tol": 1e-8,
+          "terms": [
+            {
+              "column": "A Transport Construction Materials Consumption",
+              "coef": 1
+            },
+            {
+              "column": "B Transport Construction Materials Consumption",
+              "coef": 1
+            },
+            {
+              "column": "Transport Capacity Expansion",
+              "coef": -3
+            }
+          ]
+        },
+        {
+          "type": "identity",
+          "name": "Mode 58: Transport Capital Goods pair identity",
+          "abs_tol": 1e-8,
+          "terms": [
+            {
+              "column": "A Transport Capital Goods Consumption",
+              "coef": 1
+            },
+            {
+              "column": "B Transport Capital Goods Consumption",
+              "coef": 1
+            },
+            {
+              "column": "Transport Capacity Expansion",
+              "coef": -2.8333333333333335
+            }
+          ]
+        },
+        {
+          "type": "identity",
+          "name": "Mode 58: A CG plant Capital Goods pair identity",
+          "abs_tol": 1e-8,
+          "terms": [
+            {
+              "column": "A Capital Goods Plant Capital Goods Consumption",
+              "coef": 1
+            },
+            {
+              "column": "A Capital Goods Plant Expansion",
+              "coef": -5
+            }
+          ],
+          "note": "Capital Goods Plant Capital Goods per Capacity = 5."
+        },
+        {
+          "type": "identity",
+          "name": "Mode 58: A CG plant Construction Materials pair identity",
+          "abs_tol": 1e-8,
+          "terms": [
+            {
+              "column": "A Capital Goods Plant Construction Materials Consumption",
+              "coef": 1
+            },
+            {
+              "column": "A Capital Goods Plant Expansion",
+              "coef": -5
+            }
+          ],
+          "note": "Capital Goods Plant Construction Materials per Capacity = 5."
+        },
+        {
+          "type": "identity",
+          "name": "Mode 58: A Capital Goods production capacity equals plant active capacity",
+          "abs_tol": 1e-8,
+          "terms": [
+            {
+              "column": "A Capital Goods Production Capacity",
+              "coef": 1
+            },
+            {
+              "column": "A Capital Goods Plant Active Capacity",
+              "coef": -1
+            }
+          ],
+          "note": "No Mode-22 shock is active in Modes 36-37."
+        },
+        {
+          "type": "identity",
+          "name": "Mode 58: B CG plant Capital Goods pair identity",
+          "abs_tol": 1e-8,
+          "terms": [
+            {
+              "column": "B Capital Goods Plant Capital Goods Consumption",
+              "coef": 1
+            },
+            {
+              "column": "B Capital Goods Plant Expansion",
+              "coef": -5
+            }
+          ],
+          "note": "Capital Goods Plant Capital Goods per Capacity = 5."
+        },
+        {
+          "type": "identity",
+          "name": "Mode 58: B CG plant Construction Materials pair identity",
+          "abs_tol": 1e-8,
+          "terms": [
+            {
+              "column": "B Capital Goods Plant Construction Materials Consumption",
+              "coef": 1
+            },
+            {
+              "column": "B Capital Goods Plant Expansion",
+              "coef": -5
+            }
+          ],
+          "note": "Capital Goods Plant Construction Materials per Capacity = 5."
+        },
+        {
+          "type": "identity",
+          "name": "Mode 58: B Capital Goods production capacity equals plant active capacity",
+          "abs_tol": 1e-8,
+          "terms": [
+            {
+              "column": "B Capital Goods Production Capacity",
+              "coef": 1
+            },
+            {
+              "column": "B Capital Goods Plant Active Capacity",
+              "coef": -1
+            }
+          ],
+          "note": "No Mode-22 shock is active in Modes 36-37."
+        },
+        {
+          "type": "identity",
+          "name": "Mode 58: A Regolith Mine Capital Goods pair identity",
+          "abs_tol": 1e-8,
+          "terms": [
+            {
+              "column": "A Regolith Mine Capital Goods Consumption",
+              "coef": 1
+            },
+            {
+              "column": "A Regolith Mine Expansion",
+              "coef": -2
+            }
+          ],
+          "note": "Regolith Mine Capital Goods per Capacity = 2."
+        },
+        {
+          "type": "identity",
+          "name": "Mode 58: A Regolith Mine Construction Materials pair identity",
+          "abs_tol": 1e-8,
+          "terms": [
+            {
+              "column": "A Regolith Mine Construction Materials Consumption",
+              "coef": 1
+            },
+            {
+              "column": "A Regolith Mine Expansion",
+              "coef": -2
+            }
+          ],
+          "note": "Regolith Mine Construction Materials per Capacity = 2."
+        },
+        {
+          "type": "identity",
+          "name": "Mode 58: A Regolith extraction capacity equals mine capacity",
+          "abs_tol": 1e-8,
+          "terms": [
+            {
+              "column": "A Regolith Extraction Capacity",
+              "coef": 1
+            },
+            {
+              "column": "A Regolith Mine Capacity",
+              "coef": -1
+            }
+          ],
+          "note": "Regolith Capital Enabled = 1 and no Mode-29 regolith-capacity shock is active in Modes 38-39."
+        },
+        {
+          "type": "identity",
+          "name": "Mode 58: B Regolith Mine Capital Goods pair identity",
+          "abs_tol": 1e-8,
+          "terms": [
+            {
+              "column": "B Regolith Mine Capital Goods Consumption",
+              "coef": 1
+            },
+            {
+              "column": "B Regolith Mine Expansion",
+              "coef": -2
+            }
+          ],
+          "note": "Regolith Mine Capital Goods per Capacity = 2."
+        },
+        {
+          "type": "identity",
+          "name": "Mode 58: B Regolith Mine Construction Materials pair identity",
+          "abs_tol": 1e-8,
+          "terms": [
+            {
+              "column": "B Regolith Mine Construction Materials Consumption",
+              "coef": 1
+            },
+            {
+              "column": "B Regolith Mine Expansion",
+              "coef": -2
+            }
+          ],
+          "note": "Regolith Mine Construction Materials per Capacity = 2."
+        },
+        {
+          "type": "identity",
+          "name": "Mode 58: B Regolith extraction capacity equals mine capacity",
+          "abs_tol": 1e-8,
+          "terms": [
+            {
+              "column": "B Regolith Extraction Capacity",
+              "coef": 1
+            },
+            {
+              "column": "B Regolith Mine Capacity",
+              "coef": -1
+            }
+          ],
+          "note": "Regolith Capital Enabled = 1 and no Mode-29 regolith-capacity shock is active in Modes 38-39."
+        },
+        {
+          "type": "identity",
+          "name": "Mode 58: A Ore Mine Capital Goods pair identity",
+          "abs_tol": 1e-8,
+          "terms": [
+            {
+              "column": "A Ore Mine Capital Goods Consumption",
+              "coef": 1
+            },
+            {
+              "column": "A Ore Mine Expansion",
+              "coef": -0.5
+            }
+          ]
+        },
+        {
+          "type": "identity",
+          "name": "Mode 58: A Ore Mine Construction Materials pair identity",
+          "abs_tol": 1e-8,
+          "terms": [
+            {
+              "column": "A Ore Mine Construction Materials Consumption",
+              "coef": 1
+            },
+            {
+              "column": "A Ore Mine Expansion",
+              "coef": -0.5
+            }
+          ]
+        },
+        {
+          "type": "identity",
+          "name": "Mode 58: A effective mining capacity equals ore mine capacity",
+          "abs_tol": 1e-8,
+          "terms": [
+            {
+              "column": "A Effective Mining Capacity",
+              "coef": 1
+            },
+            {
+              "column": "A Ore Mine Capacity",
+              "coef": -1
+            }
+          ]
+        },
+        {
+          "type": "identity",
+          "name": "Mode 58: B Ore Mine Capital Goods pair identity",
+          "abs_tol": 1e-8,
+          "terms": [
+            {
+              "column": "B Ore Mine Capital Goods Consumption",
+              "coef": 1
+            },
+            {
+              "column": "B Ore Mine Expansion",
+              "coef": -0.5
+            }
+          ]
+        },
+        {
+          "type": "identity",
+          "name": "Mode 58: B Ore Mine Construction Materials pair identity",
+          "abs_tol": 1e-8,
+          "terms": [
+            {
+              "column": "B Ore Mine Construction Materials Consumption",
+              "coef": 1
+            },
+            {
+              "column": "B Ore Mine Expansion",
+              "coef": -0.5
+            }
+          ]
+        },
+        {
+          "type": "identity",
+          "name": "Mode 58: B effective mining capacity equals ore mine capacity",
+          "abs_tol": 1e-8,
+          "terms": [
+            {
+              "column": "B Effective Mining Capacity",
+              "coef": 1
+            },
+            {
+              "column": "B Ore Mine Capacity",
+              "coef": -1
+            }
+          ]
+        },
+        {
+          "type": "identity",
+          "name": "Mode 58: A Power Resource Mine Capital Goods pair identity",
+          "abs_tol": 1e-8,
+          "terms": [
+            {
+              "column": "A Power Resource Mine Capital Goods Consumption",
+              "coef": 1
+            },
+            {
+              "column": "A Power Resource Mine Expansion",
+              "coef": -0.02
+            }
+          ]
+        },
+        {
+          "type": "identity",
+          "name": "Mode 58: A Power Resource Mine Construction Materials pair identity",
+          "abs_tol": 1e-8,
+          "terms": [
+            {
+              "column": "A Power Resource Mine Construction Materials Consumption",
+              "coef": 1
+            },
+            {
+              "column": "A Power Resource Mine Expansion",
+              "coef": -0.02
+            }
+          ]
+        },
+        {
+          "type": "identity",
+          "name": "Mode 58: B Power Resource Mine Capital Goods pair identity",
+          "abs_tol": 1e-8,
+          "terms": [
+            {
+              "column": "B Power Resource Mine Capital Goods Consumption",
+              "coef": 1
+            },
+            {
+              "column": "B Power Resource Mine Expansion",
+              "coef": -0.02
+            }
+          ]
+        },
+        {
+          "type": "identity",
+          "name": "Mode 58: B Power Resource Mine Construction Materials pair identity",
+          "abs_tol": 1e-8,
+          "terms": [
+            {
+              "column": "B Power Resource Mine Construction Materials Consumption",
+              "coef": 1
+            },
+            {
+              "column": "B Power Resource Mine Expansion",
+              "coef": -0.02
+            }
+          ]
+        },
+        {
+          "type": "identity",
+          "name": "Mode 58: A Ore exploration Capital Goods pair identity",
+          "abs_tol": 1e-8,
+          "terms": [
+            {
+              "column": "A Ore Exploration Capital Goods Consumption",
+              "coef": 1
+            },
+            {
+              "column": "A Ore Exploration",
+              "coef": -0.0002
+            }
+          ]
+        },
+        {
+          "type": "identity",
+          "name": "Mode 58: B Ore exploration Capital Goods pair identity",
+          "abs_tol": 1e-8,
+          "terms": [
+            {
+              "column": "B Ore Exploration Capital Goods Consumption",
+              "coef": 1
+            },
+            {
+              "column": "B Ore Exploration",
+              "coef": -0.0002
+            }
+          ]
+        },
+        {
+          "type": "identity",
+          "name": "Mode 58: A Regolith exploration Capital Goods pair identity",
+          "abs_tol": 1e-8,
+          "terms": [
+            {
+              "column": "A Regolith Exploration Capital Goods Consumption",
+              "coef": 1
+            },
+            {
+              "column": "A Regolith Exploration",
+              "coef": -0.0005
+            }
+          ]
+        },
+        {
+          "type": "identity",
+          "name": "Mode 58: B Regolith exploration Capital Goods pair identity",
+          "abs_tol": 1e-8,
+          "terms": [
+            {
+              "column": "B Regolith Exploration Capital Goods Consumption",
+              "coef": 1
+            },
+            {
+              "column": "B Regolith Exploration",
+              "coef": -0.0005
+            }
+          ]
+        },
+        {
+          "type": "identity",
+          "name": "Mode 58: A Power Resource exploration Capital Goods pair identity",
+          "abs_tol": 1e-8,
+          "terms": [
+            {
+              "column": "A Power Resource Exploration Capital Goods Consumption",
+              "coef": 1
+            },
+            {
+              "column": "A Power Resource Exploration",
+              "coef": -0.000007
+            }
+          ]
+        },
+        {
+          "type": "identity",
+          "name": "Mode 58: B Power Resource exploration Capital Goods pair identity",
+          "abs_tol": 1e-8,
+          "terms": [
+            {
+              "column": "B Power Resource Exploration Capital Goods Consumption",
+              "coef": 1
+            },
+            {
+              "column": "B Power Resource Exploration",
+              "coef": -0.000007
+            }
+          ]
+        },
+        {
+          "type": "relation",
+          "name": "Mode 58: A Mining rate does not exceed its pre-energy rate",
+          "left": "A Mining Rate",
+          "op": "<=",
+          "right": "A Mining Pre Energy Rate",
+          "abs_tol": 1e-9
+        },
+        {
+          "type": "relation",
+          "name": "Mode 58: B Mining rate does not exceed its pre-energy rate",
+          "left": "B Mining Rate",
+          "op": "<=",
+          "right": "B Mining Pre Energy Rate",
+          "abs_tol": 1e-9
+        },
+        {
+          "type": "relation",
+          "name": "Mode 58: A Regolith Extraction rate does not exceed its pre-energy rate",
+          "left": "A Regolith Extraction Rate",
+          "op": "<=",
+          "right": "A Regolith Extraction Pre Energy Rate",
+          "abs_tol": 1e-9
+        },
+        {
+          "type": "relation",
+          "name": "Mode 58: B Regolith Extraction rate does not exceed its pre-energy rate",
+          "left": "B Regolith Extraction Rate",
+          "op": "<=",
+          "right": "B Regolith Extraction Pre Energy Rate",
+          "abs_tol": 1e-9
+        },
+        {
+          "type": "relation",
+          "name": "Mode 58: A Power Resource Extraction rate does not exceed its pre-energy rate",
+          "left": "A Power Resource Extraction Rate",
+          "op": "<=",
+          "right": "A Power Resource Extraction Pre Energy Rate",
+          "abs_tol": 1e-9
+        },
+        {
+          "type": "relation",
+          "name": "Mode 58: B Power Resource Extraction rate does not exceed its pre-energy rate",
+          "left": "B Power Resource Extraction Rate",
+          "op": "<=",
+          "right": "B Power Resource Extraction Pre Energy Rate",
+          "abs_tol": 1e-9
+        },
+        {
+          "type": "relation",
+          "name": "Mode 58: A Capital Goods rate does not exceed its pre-energy rate",
+          "left": "A Capital Goods Production Rate",
+          "op": "<=",
+          "right": "A Capital Goods Pre Energy Rate",
+          "abs_tol": 1e-9
+        },
+        {
+          "type": "relation",
+          "name": "Mode 58: B Capital Goods rate does not exceed its pre-energy rate",
+          "left": "B Capital Goods Production Rate",
+          "op": "<=",
+          "right": "B Capital Goods Pre Energy Rate",
+          "abs_tol": 1e-9
+        },
+        {
+          "type": "metric",
+          "name": "Mode 58: A energy-sector own use is always fully served",
+          "column": "A Priority Energy Fulfillment Ratio",
+          "metric": "min",
+          "op": ">=",
+          "value": 0.999
+        },
+        {
+          "type": "metric",
+          "name": "Mode 58: B energy-sector own use is always fully served",
+          "column": "B Priority Energy Fulfillment Ratio",
+          "metric": "min",
+          "op": ">=",
+          "value": 0.999
+        },
+        {
+          "type": "metric",
+          "name": "Mode 58: the budget holds B demand to its income; skeleton end 3.40 (Mode 56: 5.85)",
+          "column": "B Local Demand",
+          "metric": "last",
+          "op": "<",
+          "value": 4
+        },
+        {
+          "type": "metric",
+          "name": "Mode 58: the trade deficit of B is gone; skeleton end -37 (Mode 56: -238)",
+          "column": "B Balance of Payments",
+          "metric": "last",
+          "op": ">",
+          "value": -120
+        },
+        {
+          "type": "metric",
+          "name": "Mode 58: B households stay out of debt; skeleton min 37537",
+          "column": "B Household Money",
+          "metric": "min",
+          "op": ">",
+          "value": 30000
+        },
+        {
+          "type": "metric",
+          "name": "Mode 58: A households hold money near their target; skeleton min 162778",
+          "column": "A Household Money",
+          "metric": "min",
+          "op": ">",
+          "value": 140000
+        },
+        {
+          "type": "metric",
+          "name": "Mode 58: A real wage keeps its level; skeleton mean 118.4 (Mode 56: 118.4)",
+          "column": "A Real Wage",
+          "metric": "mean",
+          "op": ">",
+          "value": 115
+        },
+        {
+          "type": "metric",
+          "name": "Mode 58: A metal output holds; skeleton mean 29.7",
+          "column": "A Metal Production",
+          "metric": "mean",
+          "op": ">",
+          "value": 28
+        },
+        {
+          "type": "metric",
+          "name": "Mode 58: A is fully fed",
+          "column": "A Food Fulfillment",
+          "metric": "min",
+          "op": ">=",
+          "value": 0.99
+        },
+        {
+          "type": "metric",
+          "name": "Mode 58: B is fully fed",
+          "column": "B Food Fulfillment",
+          "metric": "min",
+          "op": ">=",
+          "value": 0.99
+        }
+      ]
+    },
+    "59": {
+      "name": "v7.7.17 Transport Surge with Money",
+      "checks": [
+        {
+          "type": "identity",
+          "name": "Mode 59: A CM plant Capital Goods pair identity",
+          "abs_tol": 1e-8,
+          "terms": [
+            {
+              "column": "A Construction Materials Plant Capital Goods Consumption",
+              "coef": 1
+            },
+            {
+              "column": "A Construction Materials Plant Expansion",
+              "coef": -5
+            }
+          ],
+          "note": "Construction Materials Plant Capital Goods per Capacity = 5."
+        },
+        {
+          "type": "identity",
+          "name": "Mode 59: A CM plant Construction Materials pair identity",
+          "abs_tol": 1e-8,
+          "terms": [
+            {
+              "column": "A Construction Materials Plant Construction Materials Consumption",
+              "coef": 1
+            },
+            {
+              "column": "A Construction Materials Plant Expansion",
+              "coef": -5
+            }
+          ],
+          "note": "Construction Materials Plant Construction Materials per Capacity = 5."
+        },
+        {
+          "type": "identity",
+          "name": "Mode 59: A CM production capacity equals plant active capacity",
+          "abs_tol": 1e-8,
+          "terms": [
+            {
+              "column": "A Construction Materials Production Capacity",
+              "coef": 1
+            },
+            {
+              "column": "A Construction Materials Plant Active Capacity",
+              "coef": -1
+            }
+          ],
+          "note": "No Mode-28 shock is active in Modes 34-35."
+        },
+        {
+          "type": "identity",
+          "name": "Mode 59: A regolith -> Construction Materials pair identity",
+          "abs_tol": 1e-8,
+          "terms": [
+            {
+              "column": "A Construction Materials Regolith Consumption",
+              "coef": 1
+            },
+            {
+              "column": "A Construction Materials Production Rate",
+              "coef": -2
+            }
+          ],
+          "note": "Regolith per Construction Materials Unit = 2."
+        },
+        {
+          "type": "identity",
+          "name": "Mode 59: A Refinery Construction Materials pair identity",
+          "abs_tol": 1e-8,
+          "terms": [
+            {
+              "column": "A Refinery Construction Materials Consumption",
+              "coef": 1
+            },
+            {
+              "column": "A Refinery Expansion",
+              "coef": -20
+            }
+          ]
+        },
+        {
+          "type": "identity",
+          "name": "Mode 59: A Electronics Construction Materials pair identity",
+          "abs_tol": 1e-8,
+          "terms": [
+            {
+              "column": "A Electronics Construction Materials Consumption",
+              "coef": 1
+            },
+            {
+              "column": "A Electronics Factory Expansion",
+              "coef": -12
+            }
+          ]
+        },
+        {
+          "type": "identity",
+          "name": "Mode 59: A Power Construction Materials pair identity",
+          "abs_tol": 1e-8,
+          "terms": [
+            {
+              "column": "A Power Construction Materials Consumption",
+              "coef": 1
+            },
+            {
+              "column": "A Power Generation Expansion",
+              "coef": -1
+            }
+          ]
+        },
+        {
+          "type": "identity",
+          "name": "Mode 59: A Refinery Capital Goods pair identity",
+          "abs_tol": 1e-8,
+          "terms": [
+            {
+              "column": "A Refinery Capital Goods Consumption",
+              "coef": 1
+            },
+            {
+              "column": "A Refinery Expansion",
+              "coef": -17
+            }
+          ]
+        },
+        {
+          "type": "identity",
+          "name": "Mode 59: A Electronics Capital Goods pair identity",
+          "abs_tol": 1e-8,
+          "terms": [
+            {
+              "column": "A Electronics Capital Goods Consumption",
+              "coef": 1
+            },
+            {
+              "column": "A Electronics Factory Expansion",
+              "coef": -11.5
+            }
+          ]
+        },
+        {
+          "type": "identity",
+          "name": "Mode 59: A Power Capital Goods pair identity",
+          "abs_tol": 1e-8,
+          "terms": [
+            {
+              "column": "A Power Capital Goods Consumption",
+              "coef": 1
+            },
+            {
+              "column": "A Power Generation Expansion",
+              "coef": -0.5
+            }
+          ]
+        },
+        {
+          "type": "identity",
+          "name": "Mode 59: B CM plant Capital Goods pair identity",
+          "abs_tol": 1e-8,
+          "terms": [
+            {
+              "column": "B Construction Materials Plant Capital Goods Consumption",
+              "coef": 1
+            },
+            {
+              "column": "B Construction Materials Plant Expansion",
+              "coef": -5
+            }
+          ],
+          "note": "Construction Materials Plant Capital Goods per Capacity = 5."
+        },
+        {
+          "type": "identity",
+          "name": "Mode 59: B CM plant Construction Materials pair identity",
+          "abs_tol": 1e-8,
+          "terms": [
+            {
+              "column": "B Construction Materials Plant Construction Materials Consumption",
+              "coef": 1
+            },
+            {
+              "column": "B Construction Materials Plant Expansion",
+              "coef": -5
+            }
+          ],
+          "note": "Construction Materials Plant Construction Materials per Capacity = 5."
+        },
+        {
+          "type": "identity",
+          "name": "Mode 59: B CM production capacity equals plant active capacity",
+          "abs_tol": 1e-8,
+          "terms": [
+            {
+              "column": "B Construction Materials Production Capacity",
+              "coef": 1
+            },
+            {
+              "column": "B Construction Materials Plant Active Capacity",
+              "coef": -1
+            }
+          ],
+          "note": "No Mode-28 shock is active in Modes 34-35."
+        },
+        {
+          "type": "identity",
+          "name": "Mode 59: B regolith -> Construction Materials pair identity",
+          "abs_tol": 1e-8,
+          "terms": [
+            {
+              "column": "B Construction Materials Regolith Consumption",
+              "coef": 1
+            },
+            {
+              "column": "B Construction Materials Production Rate",
+              "coef": -2
+            }
+          ],
+          "note": "Regolith per Construction Materials Unit = 2."
+        },
+        {
+          "type": "identity",
+          "name": "Mode 59: B Refinery Construction Materials pair identity",
+          "abs_tol": 1e-8,
+          "terms": [
+            {
+              "column": "B Refinery Construction Materials Consumption",
+              "coef": 1
+            },
+            {
+              "column": "B Refinery Expansion",
+              "coef": -20
+            }
+          ]
+        },
+        {
+          "type": "identity",
+          "name": "Mode 59: B Electronics Construction Materials pair identity",
+          "abs_tol": 1e-8,
+          "terms": [
+            {
+              "column": "B Electronics Construction Materials Consumption",
+              "coef": 1
+            },
+            {
+              "column": "B Electronics Factory Expansion",
+              "coef": -12
+            }
+          ]
+        },
+        {
+          "type": "identity",
+          "name": "Mode 59: B Power Construction Materials pair identity",
+          "abs_tol": 1e-8,
+          "terms": [
+            {
+              "column": "B Power Construction Materials Consumption",
+              "coef": 1
+            },
+            {
+              "column": "B Power Generation Expansion",
+              "coef": -1
+            }
+          ]
+        },
+        {
+          "type": "identity",
+          "name": "Mode 59: B Refinery Capital Goods pair identity",
+          "abs_tol": 1e-8,
+          "terms": [
+            {
+              "column": "B Refinery Capital Goods Consumption",
+              "coef": 1
+            },
+            {
+              "column": "B Refinery Expansion",
+              "coef": -17
+            }
+          ]
+        },
+        {
+          "type": "identity",
+          "name": "Mode 59: B Electronics Capital Goods pair identity",
+          "abs_tol": 1e-8,
+          "terms": [
+            {
+              "column": "B Electronics Capital Goods Consumption",
+              "coef": 1
+            },
+            {
+              "column": "B Electronics Factory Expansion",
+              "coef": -11.5
+            }
+          ]
+        },
+        {
+          "type": "identity",
+          "name": "Mode 59: B Power Capital Goods pair identity",
+          "abs_tol": 1e-8,
+          "terms": [
+            {
+              "column": "B Power Capital Goods Consumption",
+              "coef": 1
+            },
+            {
+              "column": "B Power Generation Expansion",
+              "coef": -0.5
+            }
+          ]
+        },
+        {
+          "type": "identity",
+          "name": "Mode 59: Transport Construction Materials pair identity",
+          "abs_tol": 1e-8,
+          "terms": [
+            {
+              "column": "A Transport Construction Materials Consumption",
+              "coef": 1
+            },
+            {
+              "column": "B Transport Construction Materials Consumption",
+              "coef": 1
+            },
+            {
+              "column": "Transport Capacity Expansion",
+              "coef": -3
+            }
+          ]
+        },
+        {
+          "type": "identity",
+          "name": "Mode 59: Transport Capital Goods pair identity",
+          "abs_tol": 1e-8,
+          "terms": [
+            {
+              "column": "A Transport Capital Goods Consumption",
+              "coef": 1
+            },
+            {
+              "column": "B Transport Capital Goods Consumption",
+              "coef": 1
+            },
+            {
+              "column": "Transport Capacity Expansion",
+              "coef": -2.8333333333333335
+            }
+          ]
+        },
+        {
+          "type": "identity",
+          "name": "Mode 59: A CG plant Capital Goods pair identity",
+          "abs_tol": 1e-8,
+          "terms": [
+            {
+              "column": "A Capital Goods Plant Capital Goods Consumption",
+              "coef": 1
+            },
+            {
+              "column": "A Capital Goods Plant Expansion",
+              "coef": -5
+            }
+          ],
+          "note": "Capital Goods Plant Capital Goods per Capacity = 5."
+        },
+        {
+          "type": "identity",
+          "name": "Mode 59: A CG plant Construction Materials pair identity",
+          "abs_tol": 1e-8,
+          "terms": [
+            {
+              "column": "A Capital Goods Plant Construction Materials Consumption",
+              "coef": 1
+            },
+            {
+              "column": "A Capital Goods Plant Expansion",
+              "coef": -5
+            }
+          ],
+          "note": "Capital Goods Plant Construction Materials per Capacity = 5."
+        },
+        {
+          "type": "identity",
+          "name": "Mode 59: A Capital Goods production capacity equals plant active capacity",
+          "abs_tol": 1e-8,
+          "terms": [
+            {
+              "column": "A Capital Goods Production Capacity",
+              "coef": 1
+            },
+            {
+              "column": "A Capital Goods Plant Active Capacity",
+              "coef": -1
+            }
+          ],
+          "note": "No Mode-22 shock is active in Modes 36-37."
+        },
+        {
+          "type": "identity",
+          "name": "Mode 59: B CG plant Capital Goods pair identity",
+          "abs_tol": 1e-8,
+          "terms": [
+            {
+              "column": "B Capital Goods Plant Capital Goods Consumption",
+              "coef": 1
+            },
+            {
+              "column": "B Capital Goods Plant Expansion",
+              "coef": -5
+            }
+          ],
+          "note": "Capital Goods Plant Capital Goods per Capacity = 5."
+        },
+        {
+          "type": "identity",
+          "name": "Mode 59: B CG plant Construction Materials pair identity",
+          "abs_tol": 1e-8,
+          "terms": [
+            {
+              "column": "B Capital Goods Plant Construction Materials Consumption",
+              "coef": 1
+            },
+            {
+              "column": "B Capital Goods Plant Expansion",
+              "coef": -5
+            }
+          ],
+          "note": "Capital Goods Plant Construction Materials per Capacity = 5."
+        },
+        {
+          "type": "identity",
+          "name": "Mode 59: B Capital Goods production capacity equals plant active capacity",
+          "abs_tol": 1e-8,
+          "terms": [
+            {
+              "column": "B Capital Goods Production Capacity",
+              "coef": 1
+            },
+            {
+              "column": "B Capital Goods Plant Active Capacity",
+              "coef": -1
+            }
+          ],
+          "note": "No Mode-22 shock is active in Modes 36-37."
+        },
+        {
+          "type": "identity",
+          "name": "Mode 59: A Regolith Mine Capital Goods pair identity",
+          "abs_tol": 1e-8,
+          "terms": [
+            {
+              "column": "A Regolith Mine Capital Goods Consumption",
+              "coef": 1
+            },
+            {
+              "column": "A Regolith Mine Expansion",
+              "coef": -2
+            }
+          ],
+          "note": "Regolith Mine Capital Goods per Capacity = 2."
+        },
+        {
+          "type": "identity",
+          "name": "Mode 59: A Regolith Mine Construction Materials pair identity",
+          "abs_tol": 1e-8,
+          "terms": [
+            {
+              "column": "A Regolith Mine Construction Materials Consumption",
+              "coef": 1
+            },
+            {
+              "column": "A Regolith Mine Expansion",
+              "coef": -2
+            }
+          ],
+          "note": "Regolith Mine Construction Materials per Capacity = 2."
+        },
+        {
+          "type": "identity",
+          "name": "Mode 59: A Regolith extraction capacity equals mine capacity",
+          "abs_tol": 1e-8,
+          "terms": [
+            {
+              "column": "A Regolith Extraction Capacity",
+              "coef": 1
+            },
+            {
+              "column": "A Regolith Mine Capacity",
+              "coef": -1
+            }
+          ],
+          "note": "Regolith Capital Enabled = 1 and no Mode-29 regolith-capacity shock is active in Modes 38-39."
+        },
+        {
+          "type": "identity",
+          "name": "Mode 59: B Regolith Mine Capital Goods pair identity",
+          "abs_tol": 1e-8,
+          "terms": [
+            {
+              "column": "B Regolith Mine Capital Goods Consumption",
+              "coef": 1
+            },
+            {
+              "column": "B Regolith Mine Expansion",
+              "coef": -2
+            }
+          ],
+          "note": "Regolith Mine Capital Goods per Capacity = 2."
+        },
+        {
+          "type": "identity",
+          "name": "Mode 59: B Regolith Mine Construction Materials pair identity",
+          "abs_tol": 1e-8,
+          "terms": [
+            {
+              "column": "B Regolith Mine Construction Materials Consumption",
+              "coef": 1
+            },
+            {
+              "column": "B Regolith Mine Expansion",
+              "coef": -2
+            }
+          ],
+          "note": "Regolith Mine Construction Materials per Capacity = 2."
+        },
+        {
+          "type": "identity",
+          "name": "Mode 59: B Regolith extraction capacity equals mine capacity",
+          "abs_tol": 1e-8,
+          "terms": [
+            {
+              "column": "B Regolith Extraction Capacity",
+              "coef": 1
+            },
+            {
+              "column": "B Regolith Mine Capacity",
+              "coef": -1
+            }
+          ],
+          "note": "Regolith Capital Enabled = 1 and no Mode-29 regolith-capacity shock is active in Modes 38-39."
+        },
+        {
+          "type": "identity",
+          "name": "Mode 59: A Ore Mine Capital Goods pair identity",
+          "abs_tol": 1e-8,
+          "terms": [
+            {
+              "column": "A Ore Mine Capital Goods Consumption",
+              "coef": 1
+            },
+            {
+              "column": "A Ore Mine Expansion",
+              "coef": -0.5
+            }
+          ]
+        },
+        {
+          "type": "identity",
+          "name": "Mode 59: A Ore Mine Construction Materials pair identity",
+          "abs_tol": 1e-8,
+          "terms": [
+            {
+              "column": "A Ore Mine Construction Materials Consumption",
+              "coef": 1
+            },
+            {
+              "column": "A Ore Mine Expansion",
+              "coef": -0.5
+            }
+          ]
+        },
+        {
+          "type": "identity",
+          "name": "Mode 59: A effective mining capacity equals ore mine capacity",
+          "abs_tol": 1e-8,
+          "terms": [
+            {
+              "column": "A Effective Mining Capacity",
+              "coef": 1
+            },
+            {
+              "column": "A Ore Mine Capacity",
+              "coef": -1
+            }
+          ]
+        },
+        {
+          "type": "identity",
+          "name": "Mode 59: B Ore Mine Capital Goods pair identity",
+          "abs_tol": 1e-8,
+          "terms": [
+            {
+              "column": "B Ore Mine Capital Goods Consumption",
+              "coef": 1
+            },
+            {
+              "column": "B Ore Mine Expansion",
+              "coef": -0.5
+            }
+          ]
+        },
+        {
+          "type": "identity",
+          "name": "Mode 59: B Ore Mine Construction Materials pair identity",
+          "abs_tol": 1e-8,
+          "terms": [
+            {
+              "column": "B Ore Mine Construction Materials Consumption",
+              "coef": 1
+            },
+            {
+              "column": "B Ore Mine Expansion",
+              "coef": -0.5
+            }
+          ]
+        },
+        {
+          "type": "identity",
+          "name": "Mode 59: B effective mining capacity equals ore mine capacity",
+          "abs_tol": 1e-8,
+          "terms": [
+            {
+              "column": "B Effective Mining Capacity",
+              "coef": 1
+            },
+            {
+              "column": "B Ore Mine Capacity",
+              "coef": -1
+            }
+          ]
+        },
+        {
+          "type": "identity",
+          "name": "Mode 59: A Power Resource Mine Capital Goods pair identity",
+          "abs_tol": 1e-8,
+          "terms": [
+            {
+              "column": "A Power Resource Mine Capital Goods Consumption",
+              "coef": 1
+            },
+            {
+              "column": "A Power Resource Mine Expansion",
+              "coef": -0.02
+            }
+          ]
+        },
+        {
+          "type": "identity",
+          "name": "Mode 59: A Power Resource Mine Construction Materials pair identity",
+          "abs_tol": 1e-8,
+          "terms": [
+            {
+              "column": "A Power Resource Mine Construction Materials Consumption",
+              "coef": 1
+            },
+            {
+              "column": "A Power Resource Mine Expansion",
+              "coef": -0.02
+            }
+          ]
+        },
+        {
+          "type": "identity",
+          "name": "Mode 59: B Power Resource Mine Capital Goods pair identity",
+          "abs_tol": 1e-8,
+          "terms": [
+            {
+              "column": "B Power Resource Mine Capital Goods Consumption",
+              "coef": 1
+            },
+            {
+              "column": "B Power Resource Mine Expansion",
+              "coef": -0.02
+            }
+          ]
+        },
+        {
+          "type": "identity",
+          "name": "Mode 59: B Power Resource Mine Construction Materials pair identity",
+          "abs_tol": 1e-8,
+          "terms": [
+            {
+              "column": "B Power Resource Mine Construction Materials Consumption",
+              "coef": 1
+            },
+            {
+              "column": "B Power Resource Mine Expansion",
+              "coef": -0.02
+            }
+          ]
+        },
+        {
+          "type": "identity",
+          "name": "Mode 59: A Ore exploration Capital Goods pair identity",
+          "abs_tol": 1e-8,
+          "terms": [
+            {
+              "column": "A Ore Exploration Capital Goods Consumption",
+              "coef": 1
+            },
+            {
+              "column": "A Ore Exploration",
+              "coef": -0.0002
+            }
+          ]
+        },
+        {
+          "type": "identity",
+          "name": "Mode 59: B Ore exploration Capital Goods pair identity",
+          "abs_tol": 1e-8,
+          "terms": [
+            {
+              "column": "B Ore Exploration Capital Goods Consumption",
+              "coef": 1
+            },
+            {
+              "column": "B Ore Exploration",
+              "coef": -0.0002
+            }
+          ]
+        },
+        {
+          "type": "identity",
+          "name": "Mode 59: A Regolith exploration Capital Goods pair identity",
+          "abs_tol": 1e-8,
+          "terms": [
+            {
+              "column": "A Regolith Exploration Capital Goods Consumption",
+              "coef": 1
+            },
+            {
+              "column": "A Regolith Exploration",
+              "coef": -0.0005
+            }
+          ]
+        },
+        {
+          "type": "identity",
+          "name": "Mode 59: B Regolith exploration Capital Goods pair identity",
+          "abs_tol": 1e-8,
+          "terms": [
+            {
+              "column": "B Regolith Exploration Capital Goods Consumption",
+              "coef": 1
+            },
+            {
+              "column": "B Regolith Exploration",
+              "coef": -0.0005
+            }
+          ]
+        },
+        {
+          "type": "identity",
+          "name": "Mode 59: A Power Resource exploration Capital Goods pair identity",
+          "abs_tol": 1e-8,
+          "terms": [
+            {
+              "column": "A Power Resource Exploration Capital Goods Consumption",
+              "coef": 1
+            },
+            {
+              "column": "A Power Resource Exploration",
+              "coef": -0.000007
+            }
+          ]
+        },
+        {
+          "type": "identity",
+          "name": "Mode 59: B Power Resource exploration Capital Goods pair identity",
+          "abs_tol": 1e-8,
+          "terms": [
+            {
+              "column": "B Power Resource Exploration Capital Goods Consumption",
+              "coef": 1
+            },
+            {
+              "column": "B Power Resource Exploration",
+              "coef": -0.000007
+            }
+          ]
+        },
+        {
+          "type": "relation",
+          "name": "Mode 59: A Mining rate does not exceed its pre-energy rate",
+          "left": "A Mining Rate",
+          "op": "<=",
+          "right": "A Mining Pre Energy Rate",
+          "abs_tol": 1e-9
+        },
+        {
+          "type": "relation",
+          "name": "Mode 59: B Mining rate does not exceed its pre-energy rate",
+          "left": "B Mining Rate",
+          "op": "<=",
+          "right": "B Mining Pre Energy Rate",
+          "abs_tol": 1e-9
+        },
+        {
+          "type": "relation",
+          "name": "Mode 59: A Regolith Extraction rate does not exceed its pre-energy rate",
+          "left": "A Regolith Extraction Rate",
+          "op": "<=",
+          "right": "A Regolith Extraction Pre Energy Rate",
+          "abs_tol": 1e-9
+        },
+        {
+          "type": "relation",
+          "name": "Mode 59: B Regolith Extraction rate does not exceed its pre-energy rate",
+          "left": "B Regolith Extraction Rate",
+          "op": "<=",
+          "right": "B Regolith Extraction Pre Energy Rate",
+          "abs_tol": 1e-9
+        },
+        {
+          "type": "relation",
+          "name": "Mode 59: A Power Resource Extraction rate does not exceed its pre-energy rate",
+          "left": "A Power Resource Extraction Rate",
+          "op": "<=",
+          "right": "A Power Resource Extraction Pre Energy Rate",
+          "abs_tol": 1e-9
+        },
+        {
+          "type": "relation",
+          "name": "Mode 59: B Power Resource Extraction rate does not exceed its pre-energy rate",
+          "left": "B Power Resource Extraction Rate",
+          "op": "<=",
+          "right": "B Power Resource Extraction Pre Energy Rate",
+          "abs_tol": 1e-9
+        },
+        {
+          "type": "relation",
+          "name": "Mode 59: A Capital Goods rate does not exceed its pre-energy rate",
+          "left": "A Capital Goods Production Rate",
+          "op": "<=",
+          "right": "A Capital Goods Pre Energy Rate",
+          "abs_tol": 1e-9
+        },
+        {
+          "type": "relation",
+          "name": "Mode 59: B Capital Goods rate does not exceed its pre-energy rate",
+          "left": "B Capital Goods Production Rate",
+          "op": "<=",
+          "right": "B Capital Goods Pre Energy Rate",
+          "abs_tol": 1e-9
+        },
+        {
+          "type": "metric",
+          "name": "Mode 59: A energy-sector own use is always fully served",
+          "column": "A Priority Energy Fulfillment Ratio",
+          "metric": "min",
+          "op": ">=",
+          "value": 0.999
+        },
+        {
+          "type": "metric",
+          "name": "Mode 59: B energy-sector own use is always fully served",
+          "column": "B Priority Energy Fulfillment Ratio",
+          "metric": "min",
+          "op": ">=",
+          "value": 0.999
+        },
+        {
+          "type": "metric",
+          "name": "Mode 59: the budget damps the surge price peak of A metal; skeleton max 60.4 (Mode 57: 78.1)",
+          "column": "A Market Price",
+          "metric": "max",
+          "op": "<",
+          "value": 70
+        },
+        {
+          "type": "metric",
+          "name": "Mode 59: A stays staffed through the surge; skeleton min 0.9986 (Mode 57: 0.957)",
+          "column": "A Labor Availability",
+          "metric": "min",
+          "op": ">",
+          "value": 0.99
+        },
+        {
+          "type": "metric",
+          "name": "Mode 59: the trade deficit of B is gone; skeleton end -33 (Mode 57: -255)",
+          "column": "B Balance of Payments",
+          "metric": "last",
+          "op": ">",
+          "value": -120
+        },
+        {
+          "type": "metric",
+          "name": "Mode 59: A stays fully fed through the surge",
           "column": "A Food Fulfillment",
           "metric": "min",
           "op": ">=",

@@ -1,15 +1,15 @@
 {
   "status": "ACCEPTED",
-  "model_name": "Orbital Economy v7.7.16 r1 — Cost Pricing",
-  "model_file": "orbital_economy_v7_7_16_r1_modeljson.json",
-  "model_sha256": "e512efbb45f54dd08785d960626e8eb5baf4b8fc811efc6d9692265d71a1dd3e",
-  "validation_file": "validation-v7.7.16.json",
-  "validation_sha256": "dd124ce56d165d4926f2eb91d50388806a7859082862ecab91a7faa4244202f6",
-  "accepted_date": "2026-10-17",
+  "model_name": "Orbital Economy v7.7.17 r1 — Money",
+  "model_file": "orbital_economy_v7_7_17_r1_modeljson.json",
+  "model_sha256": "43625d458d7bfc20e6b3a0868b4f3f2f503f249075e65c7afac9353ddca137c9",
+  "validation_file": "validation-v7.7.17.json",
+  "validation_sha256": "96851f18fa2ee2b4a99d4b0cdf2265364b2653f27eef04c5a865b1f34da81ef6",
+  "accepted_date": "2026-10-18",
   "engine": "simulation@9.0.0",
   "notes": [
-    "v7.7.16: full money accounting, step 1 (owner decisions 2026-10-16) — prices of ore, power resource, energy and food at full unit cost (materials and energy through smoothed price signals, labor x wage, capital wear, rent = the old base price) x 1.15 x their scarcity factor; cost prices of capital goods, construction materials and regolith; one 15 % markup; reference prices and the price index scaled per region; one cost_pricing node, model/nodes/cost_pricing.json, switch Cost Pricing Enabled. Money stocks come next. See docs/tasks/039-cost-pricing/.",
-    "Modes 0-55 keep Cost Pricing Enabled = 0 and reproduce v7.7.15 r1 exactly; Mode 56 = Mode 52 with cost pricing, Mode 57 = Mode 53 (transport surge with the labor market) with cost pricing.",
+    "v7.7.17: full money accounting, step 2 (owner decisions 2026-10-17) — household, firm and transport money per region with every payment (wages, rent, dividends, purchases, exports, imports, freight); one consolidated firm sector per region; rent and dividends to the households of the region, freight to the households of both regions by trade share; household budgets scale final metal and electronics demand (food first); one money node, model/nodes/money.json, switch Money Enabled; money only on cost prices. See docs/tasks/041-money/.",
+    "Modes 0-57 keep Money Enabled = 0 and reproduce v7.7.16 r1 exactly; Mode 58 = Mode 56 (cost pricing) with money, Mode 59 = Mode 57 (transport surge with cost pricing) with money.",
     "Exact numbers are defined on the canonical platform (docs/VERSIONING_AND_AUTHORITY.md section 8); series-digest.windows.json is the golden."
   ]
 }

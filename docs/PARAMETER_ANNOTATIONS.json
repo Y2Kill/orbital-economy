@@ -1,7 +1,7 @@
 {
   "format": "orbital-economy-parameter-annotations-v1",
-  "model": "Orbital Economy v7.7.16 r1 — Cost Pricing",
-  "updated": "2026-10-17",
+  "model": "Orbital Economy v7.7.17 r1 — Money",
+  "updated": "2026-10-18",
   "policy": "Каждый внешний параметр, влияющий на структуру поведения (сравнительные преимущества, нормирование, планирование), должен иметь аннотацию: роль, что меняет, доказательство (ссылка на прогон/документ). Несимметричные пары A/B аннотируются в первую очередь. Изменение значения = изменение модели → через change-policy, с обновлением аннотации.",
   "embedded_literals": [
     {
@@ -4501,6 +4501,148 @@
         "cost-pricing",
         "reference",
         "symmetric"
+      ]
+    },
+    "Money Enabled": {
+      "role": "Переключатель денежного учёта (0 по умолчанию, 1 в Modes 58–59).",
+      "effect": "Включает парные денежные платежи и бюджетные ограничения спроса только при Cost Pricing Enabled = 1; Modes 0–57 не меняются.",
+      "evidence": "Решения владельца от 2026-10-17; docs/research/MONEY_ACCOUNTING_PROTOTYPE_2026-10-17_RU.md; docs/tasks/041-money/V7_7_17_ARCHITECTURE_SPEC.md §5",
+      "since": "v7.7.17 r1",
+      "tags": [
+        "money",
+        "switch",
+        "regression"
+      ]
+    },
+    "Firm Money Target Days": {
+      "role": "Целевой запас денег фирм: 60 дней.",
+      "effect": "Цель денежных остатков фирм равна числу дней фонда оплаты труда; избыток распределяется дивидендами.",
+      "evidence": "Решения владельца от 2026-10-17; docs/research/MONEY_ACCOUNTING_PROTOTYPE_2026-10-17_RU.md; docs/tasks/041-money/V7_7_17_ARCHITECTURE_SPEC.md §5",
+      "since": "v7.7.17 r1",
+      "tags": [
+        "money",
+        "firm",
+        "dividends",
+        "target"
+      ]
+    },
+    "Dividend Payout Time": {
+      "role": "Срок выплаты дивидендов: 90 дней.",
+      "effect": "Определяет скорость перевода избытка денег фирм домохозяйствам; не создаёт/уничтожает деньги.",
+      "evidence": "Решения владельца от 2026-10-17; docs/research/MONEY_ACCOUNTING_PROTOTYPE_2026-10-17_RU.md; docs/tasks/041-money/V7_7_17_ARCHITECTURE_SPEC.md §5",
+      "since": "v7.7.17 r1",
+      "tags": [
+        "money",
+        "dividends",
+        "time"
+      ]
+    },
+    "Transport Payout Time": {
+      "role": "Время выплаты денег транспорта: 30 дней.",
+      "effect": "Накопленный фрахт выплачивается домохозяйствам по доле региона в торговле.",
+      "evidence": "Решения владельца от 2026-10-17; docs/research/MONEY_ACCOUNTING_PROTOTYPE_2026-10-17_RU.md; docs/tasks/041-money/V7_7_17_ARCHITECTURE_SPEC.md §5",
+      "since": "v7.7.17 r1",
+      "tags": [
+        "money",
+        "transport",
+        "freight",
+        "time"
+      ]
+    },
+    "Household Income Smoothing Time": {
+      "role": "Время сглаживания дохода домохозяйств: 30 дней.",
+      "effect": "Определяет инерцию сглаженного дохода, на основе которого домохозяйства планируют траты.",
+      "evidence": "Решения владельца от 2026-10-17; docs/research/MONEY_ACCOUNTING_PROTOTYPE_2026-10-17_RU.md; docs/tasks/041-money/V7_7_17_ARCHITECTURE_SPEC.md §5",
+      "since": "v7.7.17 r1",
+      "tags": [
+        "money",
+        "household",
+        "income",
+        "smoothing"
+      ]
+    },
+    "Household Money Target Days": {
+      "role": "KEY PARAMETER — целевой запас денег домохозяйств: 60 дней.",
+      "effect": "Ключевой параметр, определяющий уровень экономической активности: цель денежных запасов домохозяйств равна указанному числу дней сглаженного дохода; изменение смещает долгосрочный спрос и производство.",
+      "evidence": "Решения владельца от 2026-10-17; docs/research/MONEY_ACCOUNTING_PROTOTYPE_2026-10-17_RU.md; docs/tasks/041-money/V7_7_17_ARCHITECTURE_SPEC.md §5",
+      "since": "v7.7.17 r1",
+      "tags": [
+        "money",
+        "household",
+        "target",
+        "key-parameter",
+        "activity",
+        "long-horizon"
+      ]
+    },
+    "Household Money Adjustment Time": {
+      "role": "Время коррекции денежных остатков домохозяйств: 180 дней.",
+      "effect": "Определяет скорость компенсации разности между текущими деньгами и целевым запасом в плане расходов.",
+      "evidence": "Решения владельца от 2026-10-17; docs/research/MONEY_ACCOUNTING_PROTOTYPE_2026-10-17_RU.md; docs/tasks/041-money/V7_7_17_ARCHITECTURE_SPEC.md §5",
+      "since": "v7.7.17 r1",
+      "tags": [
+        "money",
+        "household",
+        "budget",
+        "time"
+      ]
+    },
+    "Transport Money": {
+      "role": "Начальные деньги общего транспортного сектора: 1253.5.",
+      "effect": "Накопленный фрахт поступает на транспортный счёт и возвращается домохозяйствам обоих регионов; старт задан калибровкой неподвижной точки.",
+      "evidence": "ARCHIVE/evidence/045-money-node/calibrate.mjs; docs/research/MONEY_ACCOUNTING_PROTOTYPE_2026-10-17_RU.md; docs/tasks/041-money/V7_7_17_ARCHITECTURE_SPEC.md §5",
+      "since": "v7.7.17 r1",
+      "tags": [
+        "money",
+        "transport",
+        "stock",
+        "initial",
+        "calibration"
+      ]
+    },
+    "A Household Money": {
+      "role": "Начальные деньги домохозяйств (A 182470; B 38425), калибровка: средние 5-го года Mode 58, три итерации.",
+      "effect": "Начальный денежный запас домохозяйств, откалиброванный к равновесию Mode 58; определяет начальную дистанцию до целевых 60 дней сглаженного дохода.",
+      "evidence": "ARCHIVE/evidence/045-money-node/calibrate.mjs; docs/research/MONEY_ACCOUNTING_PROTOTYPE_2026-10-17_RU.md; docs/tasks/041-money/V7_7_17_ARCHITECTURE_SPEC.md §5",
+      "since": "v7.7.17 r1",
+      "applies_to_mirror": true,
+      "tags": [
+        "money",
+        "household",
+        "stock",
+        "initial",
+        "calibration",
+        "asymmetry"
+      ]
+    },
+    "A Firm Money": {
+      "role": "Начальные деньги сводного сектора фирм (A 183970; B 37742), калибровка: средние 5-го года Mode 58, три итерации.",
+      "effect": "Начальный запас фирм около 60 дней фонда зарплаты; регулирует начальные выплаты дивидендов и ликвидность.",
+      "evidence": "ARCHIVE/evidence/045-money-node/calibrate.mjs; docs/research/MONEY_ACCOUNTING_PROTOTYPE_2026-10-17_RU.md; docs/tasks/041-money/V7_7_17_ARCHITECTURE_SPEC.md §5",
+      "since": "v7.7.17 r1",
+      "applies_to_mirror": true,
+      "tags": [
+        "money",
+        "firm",
+        "stock",
+        "initial",
+        "calibration",
+        "asymmetry"
+      ]
+    },
+    "A Smoothed Household Income": {
+      "role": "Начальный сглаженный доход домохозяйств (A 2857.8; B 608.85), калибровка: средние 5-го года Mode 58, три итерации.",
+      "effect": "Инициализирует бюджетный план расходов; получен из средних 5-го года Mode 58 для каждого региона.",
+      "evidence": "ARCHIVE/evidence/045-money-node/calibrate.mjs; docs/research/MONEY_ACCOUNTING_PROTOTYPE_2026-10-17_RU.md; docs/tasks/041-money/V7_7_17_ARCHITECTURE_SPEC.md §5",
+      "since": "v7.7.17 r1",
+      "applies_to_mirror": true,
+      "tags": [
+        "money",
+        "household",
+        "income",
+        "initial",
+        "calibration",
+        "asymmetry"
       ]
     }
   }

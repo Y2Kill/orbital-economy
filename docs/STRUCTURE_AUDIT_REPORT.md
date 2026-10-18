@@ -1,15 +1,15 @@
 # Orbital Economy Lab — structure audit
 
-- generated: 2026-10-17T09:33:55.757Z
-- model: Orbital Economy v7.7.16 r1 — Cost Pricing
-- model SHA-256: `e512efbb45f54dd08785d960626e8eb5baf4b8fc811efc6d9692265d71a1dd3e`
-- validation: Orbital Economy v7.7.16 validation r1
-- validation SHA-256: `dd124ce56d165d4926f2eb91d50388806a7859082862ecab91a7faa4244202f6`
+- generated: 2026-10-18T07:24:47.628Z
+- model: Orbital Economy v7.7.17 r1 — Money
+- model SHA-256: `43625d458d7bfc20e6b3a0868b4f3f2f503f249075e65c7afac9353ddca137c9`
+- validation: Orbital Economy v7.7.17 validation r1
+- validation SHA-256: `96851f18fa2ee2b4a99d4b0cdf2265364b2653f27eef04c5a865b1f34da81ef6`
 - status: **PASS**
 
 ## Open boundaries (declared physical-boundary meter)
 
-- flows total: 351; crossing the model boundary: 290; classified: 290; unclassified: 0
+- flows total: 363; crossing the model boundary: 302; classified: 302; unclassified: 0
 - closed-world violations: **0** (mode: `classify`) — zero means the currently declared closed-world boundary contract is satisfied; it is not a Planet v1 completeness claim
 - declared transformation pairs: 27; transformation flows without a pair: 0
 
@@ -22,7 +22,7 @@
 | power_resource_consumption | yes | 2 | v7.6 physical operating resource is consumed in exact proportion to actual delivered generation. |
 | unit_transformation | yes | 8 | input stock -> output stock conversion modelled as a sink/source pair (different units); every flow here must belong to a declared transformation pair whose numeric identity is checked at runtime |
 | information_signal | yes | 130 | smoothing / information stocks, not matter |
-| financial_accounting | yes | 16 | money bookkeeping, not matter |
+| financial_accounting | yes | 28 | money bookkeeping, not matter |
 | capital_state_accounting | yes | 33 | Active is an operational-state sub-account of Installed; these flows change state, not physical capital |
 | capital_transformation | yes | 57 | v7.5/v7.5.1: installed capital expansion is a unit transformation of Capital Goods; regional sectors use one local sink, shared Transport uses two A/B regional sinks whose total identity is checked at runtime. v7.7: colonial sector expansion is additionally backed by a local Construction Materials sink. v7.7.1: shared Transport expansion is additionally backed by construction materials from both A and B inventories (two legs). v7.7.3: construction-materials plant expansion is backed by local capital goods and construction materials. v7.7.4: capital-goods plant expansion is backed by local capital goods and construction materials. |
 | capital_goods_transformation | yes | 6 | metal + electronics -> capital goods (declared pair; identity checked at runtime) |
@@ -238,7 +238,7 @@ Declared unit-transformation pairs (source flow physically backed by sink flows;
 - B Regolith Cost Price Signal Increase
 - B Regolith Cost Price Signal Decrease
 
-**financial_accounting** (16)
+**financial_accounting** (28)
 
 - Book Metal Goods Contract Value A to B
 - Recognize Delivered Metal Goods Value A to B
@@ -256,6 +256,18 @@ Declared unit-transformation pairs (source flow physically backed by sink flows;
 - Recognize Delivered Electronics Goods Value B to A
 - Book Electronics Freight Contract Value B to A
 - Recognize Delivered Electronics Freight Value B to A
+- A Household Income Flow
+- A Household Purchases Flow
+- A Firm Cash Flow
+- A Dividend Flow
+- A Smoothed Income Change
+- B Household Income Flow
+- B Household Purchases Flow
+- B Firm Cash Flow
+- B Dividend Flow
+- B Smoothed Income Change
+- Transport Freight Income
+- Transport Payout Flow
 
 **capital_state_accounting** (33)
 
@@ -418,8 +430,8 @@ Declared unit-transformation pairs (source flow physically backed by sink flows;
 ## Colony symmetry
 
 - tokens: A ↔ B
-- mirrored pairs checked: 1508; mirrored links checked: 3862
-- structural mismatches: **0**; numeric parameter differences (allowed): 186; elements under exceptions: 0
+- mirrored pairs checked: 1564; mirrored links checked: 4050
+- structural mismatches: **0**; numeric parameter differences (allowed): 192; elements under exceptions: 0
 
 <details><summary>Numeric parameter differences between colonies (allowed)</summary>
 
@@ -518,6 +530,9 @@ Declared unit-transformation pairs (source flow physically backed by sink flows;
 | value | A Reference Metal Price Cost Scale | 2.254 | B Reference Metal Price Cost Scale | 2.028 |
 | value | A Electronics Reference Price Cost Scale | 1.972 | B Electronics Reference Price Cost Scale | 2.027 |
 | value | A Food Index Cost Scale | 1.754 | B Food Index Cost Scale | 2.475 |
+| initial_value | A Household Money | 182470 | B Household Money | 38425 |
+| initial_value | A Firm Money | 183970 | B Firm Money | 37742 |
+| initial_value | A Smoothed Household Income | 2857.8 | B Smoothed Household Income | 608.85 |
 
 </details>
 
@@ -699,6 +714,6 @@ Declared unit-transformation pairs (source flow physically backed by sink flows;
 ## Algebraic loops (switch-aware, unconditional static audit)
 
 - status: **PASS**
-- switches: 19 — Capital Lifecycle Enabled, Intermediate Inputs Enabled, Capital Goods Enabled, Transport Capital Goods Enabled, Power Resource Enabled, Construction Materials Enabled, Transport Construction Materials Enabled, Construction Materials Energy Enabled, Construction Materials Capital Enabled, Capital Goods Capital Enabled, Regolith Capital Enabled, Ore Capital Enabled, Power Resource Capital Enabled, Deposits Enabled, Process Energy Enabled, Food Enabled, Labor Market Enabled, Wage Pricing Enabled, Cost Pricing Enabled
-- combinations: 524288; with loops: **0**
+- switches: 20 — Capital Lifecycle Enabled, Intermediate Inputs Enabled, Capital Goods Enabled, Transport Capital Goods Enabled, Power Resource Enabled, Construction Materials Enabled, Transport Construction Materials Enabled, Construction Materials Energy Enabled, Construction Materials Capital Enabled, Capital Goods Capital Enabled, Regolith Capital Enabled, Ore Capital Enabled, Power Resource Capital Enabled, Deposits Enabled, Process Energy Enabled, Food Enabled, Labor Market Enabled, Wage Pricing Enabled, Cost Pricing Enabled, Money Enabled
+- combinations: 1048576; with loops: **0**
 - Modes with loops: none

@@ -1,28 +1,28 @@
-# Статус проверок Orbital Economy Lab v0.9.19 — baseline v7.7.16 r1
+# Статус проверок Orbital Economy Lab v0.9.21 — baseline v7.7.17 r1
 
 ## Принятая основа
 
-- Модель: **Orbital Economy v7.7.16 r1 — Cost Pricing** — ACCEPTED 2026-10-17.
-- SHA-256: `e512efbb45f54dd08785d960626e8eb5baf4b8fc811efc6d9692265d71a1dd3e`.
-- Validation: `validation/validation-v7.7.16.json`.
-- Policy: `policy/change-policy-v7.7.16-strict.json` (default deny, rules: []).
+- Модель: **Orbital Economy v7.7.17 r1 — Money** — ACCEPTED 2026-10-18.
+- SHA-256: `43625d458d7bfc20e6b3a0868b4f3f2f503f249075e65c7afac9353ddca137c9`.
+- Validation: `validation/validation-v7.7.17.json`.
+- Policy: `policy/change-policy-v7.7.17-strict.json` (default deny, rules: []).
 - Engine: `simulation@9.0.0` pinned; каноническая платформа Windows x64 · Node 24.11.1 (`../../docs/VERSIONING_AND_AUTHORITY.md` §8), эталон `reference/accepted/series-digest.windows.json`.
-- Scenarios: Modes 0–57.
-- Предшественник: v7.7.15 r1 (`a5a233129b013f838cac863e4f9b8aad9da8e90bacfe48763fcedefad929b975`), лежит в `reference/v7.7.15/`.
+- Scenarios: Modes 0–59.
+- Предшественник: v7.7.16 r1 (`e512efbb45f54dd08785d960626e8eb5baf4b8fc811efc6d9692265d71a1dd3e`), лежит в `reference/v7.7.16/`.
 
-## Проверки promotion v7.7.16 (прогон 2026-10-17, каноническая платформа)
+## Проверки promotion v7.7.17 (прогон 2026-10-18, каноническая платформа)
 
 | Проверка | Результат |
 |---|---|
-| Validation Modes 0–57 | **PASS** — 58/58, 27882 проверок |
-| Capital Lifecycle conformance | **PASS** — 11 instances ядра, 0 NON_CONFORMING; `simple_capital` 6, `deposit` 6, `labor` 17, `population` 2, `food` 2, `labor_market` 2, `wage_pricing` 2 и `cost_pricing` 2 instances CONFORMING |
-| Structure audit | **PASS** — 351 FLOW, 290 boundary, unclassified 0, closed-world 0, пары 27 |
+| Validation Modes 0–59 | **PASS** — 60/60, 29220 проверок |
+| Capital Lifecycle conformance | **PASS** — 11 instances ядра, 0 NON_CONFORMING; `simple_capital` 6, `deposit` 6, `labor` 17, `population` 2, `food` 2, `labor_market` 2, `wage_pricing` 2, `cost_pricing` 2 и `money` 2 instances CONFORMING |
+| Structure audit | **PASS** — 363 FLOW, 302 boundary, unclassified 0, closed-world 0, пары 27 |
 | A/B symmetry | **PASS** — mismatches 0, exceptions 0 |
-| Algebraic loop audit | **PASS** — 19 switches, 524288 combinations, loops 0 |
+| Algebraic loop audit | **PASS** — 20 switches, 1048576 combinations, loops 0 |
 | Planet closure (`planet_v1`) | **PASS** — P2 11/8/0/0, P3 16/2/1/0, P4 6/0, P5 19/0, P6 4 (нормы спроса на душу), reversibility 0 |
-| Parameter registry | 613 параметр(ов); 438 аннотировано; 85 несимметричных пар; 0 без аннотации |
-| Regression Modes 0–55 vs v7.7.15 r1 | **IDENTICAL** — 56 × `common=1782, changed=0, added=81, maxAbs=0` (`Cost Pricing Enabled` = 0) |
-| Policy задачи 039 | **PASS** — 4998 событий, неожиданных 0 |
+| Parameter registry | 627 параметр(ов); 452 аннотировано; 88 несимметричных пар; 0 без аннотации |
+| Regression Modes 0–57 vs v7.7.16 r1 | **IDENTICAL** — 58 × `common=1863, changed=0, added=68, maxAbs=0` (`Money Enabled` = 0) |
+| Policy задачи 041 | **PASS** — 4212 событий, неожиданных 0 |
 
 Прежние приёмки — `../../docs/ACCEPTANCE_STATUS.md`, раздел «Previous acceptances».
 
@@ -33,14 +33,14 @@
 | Скрипт | Результат |
 |---|---|
 | `SELF_TEST.cmd` (Modes 0, 12) | **PASS** |
-| `QA_SELF_TEST.cmd` | **PASS** 49/49 (Windows, promotion v7.7.16) |
-| `POLICY_SELF_TEST.cmd` | **PASS** 10/10 (Windows, promotion v7.7.16) |
-| `CONFORMANCE_SELF_TEST.cmd` | **PASS** 18/18 (Windows, promotion v7.7.16) |
-| `STRUCTURE_SELF_TEST.cmd` | **PASS** 21/21 (Windows, promotion v7.7.16) |
-| `LOOP_SELF_TEST.cmd` | **PASS** 19/19 (Windows, promotion v7.7.16); accepted 19 switches / 524288; fast path byte-identical to `--exhaustive` (case 16 pinned to <= 10 switches) |
-| `PLANET_SELF_TEST.cmd` | **PASS** 20/20 (Windows, promotion v7.7.16); accepted in planet_v1 mode: P2=11/8/0/0, P3=16/2/1/0, P4=6/0, P5=19/0, P6=4 |
-| `NODE_SELF_TEST.cmd` | **PASS** 73/73 (Windows, promotion v7.7.16); слои снимаются по модели: `cost_pricing` сверху, под ним `wage_pricing`, `labor_market` и `food`; верхний узел снимается, только если его переключатель есть в модели; случаи 67–73 на принятой модели снимают и собирают заново слой `cost_pricing` |
-| `COMPARE_SELF_TEST.cmd` | **PASS** (Windows, promotion v7.7.16) |
+| `QA_SELF_TEST.cmd` | **PASS** 50/50 (Windows, promotion v7.7.17) |
+| `POLICY_SELF_TEST.cmd` | **PASS** 10/10 (Windows, promotion v7.7.17) |
+| `CONFORMANCE_SELF_TEST.cmd` | **PASS** 18/18 (Windows, promotion v7.7.17) |
+| `STRUCTURE_SELF_TEST.cmd` | **PASS** 21/21 (Windows, promotion v7.7.17) |
+| `LOOP_SELF_TEST.cmd` | **PASS** 19/19 (Windows, promotion v7.7.17); accepted 20 switches / 1048576; fast path byte-identical to `--exhaustive` (case 16 pinned to <= 10 switches) |
+| `PLANET_SELF_TEST.cmd` | **PASS** 20/20 (Windows, promotion v7.7.17); accepted in planet_v1 mode: P2=11/8/0/0, P3=16/2/1/0, P4=6/0, P5=19/0, P6=4 |
+| `NODE_SELF_TEST.cmd` | **PASS** 80/80 (Windows, promotion v7.7.17); слои снимаются по модели: `money` сверху, под ним `cost_pricing`, `wage_pricing`, `labor_market` и `food`; верхний узел снимается, только если его переключатель есть в модели; случаи 74–80 проверяют узел `money`: раскрытие, validation, пробные Modes 58–59, три региона, снятие и сборка слоя без различий, отказ на шести неверных декларациях, 73 прежних случая на принятой модели с деньгами |
+| `COMPARE_SELF_TEST.cmd` | **PASS** (Windows, promotion v7.7.17) |
 
 ## Lab v0.9.14 — exact loop-audit speed-up (задача 025)
 
@@ -82,7 +82,7 @@ Accepted model, validation и policy задачей 018 не изменяютс�
 
 ## Рабочая область
 
-`input/model`, `input/validation`, `input/policy` и `reference/accepted/model` содержат принятые артефакты v7.7.16 r1, поэтому `RUN_LAB.cmd` и `CHECK_CANDIDATE.cmd` запускаются без аргументов; `CHECK_CANDIDATE` на нетронутой области даёт `BYTE_IDENTICAL`. Отчёты предыдущих прогонов в `output/` не входят в поставку: актуальные копии лежат в `docs/CAPITAL_LIFECYCLE_CONFORMANCE_REPORT.md`, `docs/STRUCTURE_AUDIT_REPORT.md`, `docs/PARAMETER_REGISTRY.md` пакета.
+`input/model`, `input/validation`, `input/policy` и `reference/accepted/model` содержат принятые артефакты v7.7.17 r1, поэтому `RUN_LAB.cmd` и `CHECK_CANDIDATE.cmd` запускаются без аргументов; `CHECK_CANDIDATE` на нетронутой области даёт `BYTE_IDENTICAL`. Отчёты предыдущих прогонов в `output/` не входят в поставку: актуальные копии лежат в `docs/CAPITAL_LIFECYCLE_CONFORMANCE_REPORT.md`, `docs/STRUCTURE_AUDIT_REPORT.md`, `docs/PARAMETER_REGISTRY.md` пакета.
 
 Канонический разбор дефектов r1 и того, что именно изменено в r2, — `docs/V7_6_R1_TO_R2_FIX_REPORT.md`; порядок команд воспроизведения — `docs/ACCEPTANCE_STATUS.md`.
 

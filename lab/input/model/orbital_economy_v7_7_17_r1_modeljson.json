@@ -1,6 +1,6 @@
 {
   "engine": "SIMULATION_PACKAGE",
-  "name": "Orbital Economy v7.7.16 r1 — Cost Pricing",
+  "name": "Orbital Economy v7.7.17 r1 — Money",
   "description": "Task 030 / Planet v2 step 1: add the declarative population node for A and B. Population, demography, migration and labor are accounting-only; no existing formula or scenario is changed and no new Mode is added.",
   "simulation": {
     "algorithm": "RK1",
@@ -576,7 +576,7 @@
       "type": "VARIABLE",
       "name": "A Local Demand",
       "behavior": {
-        "value": "[A Effective Local Base Demand] * ([A Reference Metal Price] / [A Market Price]) ^ [A Demand Elasticity]"
+        "value": "IfThenElse([Money Enabled] = 1, [A Unscaled Local Demand] * [A Budget Factor], [A Unscaled Local Demand])"
       },
       "display": {
         "coordinates": [
@@ -4666,7 +4666,7 @@
       "type": "VARIABLE",
       "name": "B Local Demand",
       "behavior": {
-        "value": "[B Effective Local Base Demand] * ([B Reference Metal Price] / [B Market Price]) ^ [B Demand Elasticity]"
+        "value": "IfThenElse([Money Enabled] = 1, [B Unscaled Local Demand] * [B Budget Factor], [B Unscaled Local Demand])"
       },
       "display": {
         "coordinates": [
@@ -9731,7 +9731,7 @@
       "type": "VARIABLE",
       "name": "Test 2 Transport Surge Active",
       "behavior": {
-        "value": "IfThenElse([Timed Test Mode] = 57, [Temporary Test Window], IfThenElse([Timed Test Mode] = 55, [Temporary Test Window], IfThenElse([Timed Test Mode] = 53, [Temporary Test Window], IfThenElse([Timed Test Mode] = 50, [Temporary Test Window], IfThenElse([Timed Test Mode] = 2, [Temporary Test Window], IfThenElse([Timed Test Mode] = 24, [Temporary Test Window], IfThenElse([Timed Test Mode] = 31, [Temporary Test Window], IfThenElse([Timed Test Mode] = 35, [Temporary Test Window], IfThenElse([Timed Test Mode] = 37, [Temporary Test Window], IfThenElse([Timed Test Mode] = 39, [Temporary Test Window], IfThenElse([Timed Test Mode] = 41, [Temporary Test Window], IfThenElse([Timed Test Mode] = 43, [Temporary Test Window], IfThenElse([Timed Test Mode] = 45, [Temporary Test Window], IfThenElse([Timed Test Mode] = 47, [Temporary Test Window], 0))))))))))))))"
+        "value": "IfThenElse([Timed Test Mode] = 59, [Temporary Test Window], IfThenElse([Timed Test Mode] = 57, [Temporary Test Window], IfThenElse([Timed Test Mode] = 55, [Temporary Test Window], IfThenElse([Timed Test Mode] = 53, [Temporary Test Window], IfThenElse([Timed Test Mode] = 50, [Temporary Test Window], IfThenElse([Timed Test Mode] = 2, [Temporary Test Window], IfThenElse([Timed Test Mode] = 24, [Temporary Test Window], IfThenElse([Timed Test Mode] = 31, [Temporary Test Window], IfThenElse([Timed Test Mode] = 35, [Temporary Test Window], IfThenElse([Timed Test Mode] = 37, [Temporary Test Window], IfThenElse([Timed Test Mode] = 39, [Temporary Test Window], IfThenElse([Timed Test Mode] = 41, [Temporary Test Window], IfThenElse([Timed Test Mode] = 43, [Temporary Test Window], IfThenElse([Timed Test Mode] = 45, [Temporary Test Window], IfThenElse([Timed Test Mode] = 47, [Temporary Test Window], 0)))))))))))))))"
       },
       "display": {
         "coordinates": [
@@ -12645,7 +12645,7 @@
       "type": "VARIABLE",
       "name": "A Electronics Local Demand",
       "behavior": {
-        "value": "[A Effective Electronics Local Base Demand] * ([A Electronics Reference Price] / [A Electronics Market Price]) ^ [A Electronics Demand Elasticity]"
+        "value": "IfThenElse([Money Enabled] = 1, [A Unscaled Electronics Local Demand] * [A Budget Factor], [A Unscaled Electronics Local Demand])"
       },
       "display": {
         "coordinates": [
@@ -12679,7 +12679,7 @@
       "type": "VARIABLE",
       "name": "B Electronics Local Demand",
       "behavior": {
-        "value": "[B Effective Electronics Local Base Demand] * ([B Electronics Reference Price] / [B Electronics Market Price]) ^ [B Electronics Demand Elasticity]"
+        "value": "IfThenElse([Money Enabled] = 1, [B Unscaled Electronics Local Demand] * [B Budget Factor], [B Unscaled Electronics Local Demand])"
       },
       "display": {
         "coordinates": [
@@ -43687,6 +43687,1558 @@
       "type": "LINK",
       "from": "B Food Index Reference",
       "to": "B Price Index"
+    },
+    {
+      "type": "VARIABLE",
+      "name": "Money Enabled",
+      "behavior": {
+        "value": 0
+      },
+      "description": "Money node: switch of money accounting and household budgets (0 = every earlier series unchanged)."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "Firm Money Target Days",
+      "behavior": {
+        "value": 60
+      },
+      "description": "Money node: parameter Firm Money Target Days."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "Dividend Payout Time",
+      "behavior": {
+        "value": 90
+      },
+      "description": "Money node: parameter Dividend Payout Time."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "Transport Payout Time",
+      "behavior": {
+        "value": 30
+      },
+      "description": "Money node: parameter Transport Payout Time."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "Household Income Smoothing Time",
+      "behavior": {
+        "value": 30
+      },
+      "description": "Money node: parameter Household Income Smoothing Time."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "Household Money Target Days",
+      "behavior": {
+        "value": 60
+      },
+      "description": "Money node: parameter Household Money Target Days."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "Household Money Adjustment Time",
+      "behavior": {
+        "value": 180
+      },
+      "description": "Money node: parameter Household Money Adjustment Time."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "A Wage Bill",
+      "behavior": {
+        "value": "[A Wage] * [A Employment]"
+      },
+      "description": "Money node: wages paid by the firms of the region."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "A Rent Payments",
+      "behavior": {
+        "value": "[A Effective Ore Base Cost] * [A Mining] + [Base Power Resource Price] * [A Power Resource Extraction] + [A Power Generation Cost] * [A Available Generation]"
+      },
+      "description": "Money node: rent paid to the households (the old base prices)."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "A Household Purchases",
+      "behavior": {
+        "value": "[A Food Consumption] * [A Food Price] + [A Local Sales] * [A Market Price] + [A Electronics Local Sales] * [A Electronics Market Price]"
+      },
+      "description": "Money node: household purchases at market prices."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "A Export Goods Revenue",
+      "behavior": {
+        "value": "[Recognize Delivered Metal Goods Value A to B] + [Recognize Delivered Electronics Goods Value A to B] + [Food Arrival A to B] * [A Food Price]"
+      },
+      "description": "Money node: value of goods delivered to other regions."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "A Import Goods Payments",
+      "behavior": {
+        "value": "[Recognize Delivered Metal Goods Value B to A] + [Recognize Delivered Electronics Goods Value B to A] + [Food Arrival B to A] * [B Food Price]"
+      },
+      "description": "Money node: value of goods delivered from other regions."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "A Import Freight Payments",
+      "behavior": {
+        "value": "[Recognize Delivered Metal Freight Value B to A] + [Recognize Delivered Electronics Freight Value B to A] + [Food Arrival B to A] * [Food Freight Weight per Unit] * [Freight Price]"
+      },
+      "description": "Money node: freight on goods delivered from other regions."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "A Firm Target Money",
+      "behavior": {
+        "value": "[A Wage Bill] * [Firm Money Target Days]"
+      },
+      "description": "Money node: A Firm Target Money."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "A Dividends",
+      "behavior": {
+        "value": "Max(0, [A Firm Money] - [A Firm Target Money]) / [Dividend Payout Time]"
+      },
+      "description": "Money node: dividends paid to the households."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "A Firm Net Cash Flow",
+      "behavior": {
+        "value": "[A Household Purchases] + [A Export Goods Revenue] - [A Wage Bill] - [A Rent Payments] - [A Import Goods Payments] - [A Import Freight Payments]"
+      },
+      "description": "Money node: A Firm Net Cash Flow."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "A Balance of Payments",
+      "behavior": {
+        "value": "[A Export Goods Revenue] - [A Import Goods Payments] - [A Import Freight Payments]"
+      },
+      "description": "Money node: A Balance of Payments."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "B Wage Bill",
+      "behavior": {
+        "value": "[B Wage] * [B Employment]"
+      },
+      "description": "Money node: wages paid by the firms of the region."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "B Rent Payments",
+      "behavior": {
+        "value": "[B Effective Ore Base Cost] * [B Mining] + [Base Power Resource Price] * [B Power Resource Extraction] + [B Power Generation Cost] * [B Available Generation]"
+      },
+      "description": "Money node: rent paid to the households (the old base prices)."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "B Household Purchases",
+      "behavior": {
+        "value": "[B Food Consumption] * [B Food Price] + [B Local Sales] * [B Market Price] + [B Electronics Local Sales] * [B Electronics Market Price]"
+      },
+      "description": "Money node: household purchases at market prices."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "B Export Goods Revenue",
+      "behavior": {
+        "value": "[Recognize Delivered Metal Goods Value B to A] + [Recognize Delivered Electronics Goods Value B to A] + [Food Arrival B to A] * [B Food Price]"
+      },
+      "description": "Money node: value of goods delivered to other regions."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "B Import Goods Payments",
+      "behavior": {
+        "value": "[Recognize Delivered Metal Goods Value A to B] + [Recognize Delivered Electronics Goods Value A to B] + [Food Arrival A to B] * [A Food Price]"
+      },
+      "description": "Money node: value of goods delivered from other regions."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "B Import Freight Payments",
+      "behavior": {
+        "value": "[Recognize Delivered Metal Freight Value A to B] + [Recognize Delivered Electronics Freight Value A to B] + [Food Arrival A to B] * [Food Freight Weight per Unit] * [Freight Price]"
+      },
+      "description": "Money node: freight on goods delivered from other regions."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "B Firm Target Money",
+      "behavior": {
+        "value": "[B Wage Bill] * [Firm Money Target Days]"
+      },
+      "description": "Money node: B Firm Target Money."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "B Dividends",
+      "behavior": {
+        "value": "Max(0, [B Firm Money] - [B Firm Target Money]) / [Dividend Payout Time]"
+      },
+      "description": "Money node: dividends paid to the households."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "B Firm Net Cash Flow",
+      "behavior": {
+        "value": "[B Household Purchases] + [B Export Goods Revenue] - [B Wage Bill] - [B Rent Payments] - [B Import Goods Payments] - [B Import Freight Payments]"
+      },
+      "description": "Money node: B Firm Net Cash Flow."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "B Balance of Payments",
+      "behavior": {
+        "value": "[B Export Goods Revenue] - [B Import Goods Payments] - [B Import Freight Payments]"
+      },
+      "description": "Money node: B Balance of Payments."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "Total Trade Value",
+      "behavior": {
+        "value": "[A Export Goods Revenue] + [A Import Goods Payments] + [B Export Goods Revenue] + [B Import Goods Payments]"
+      },
+      "description": "Money node: Total Trade Value."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "Transport Payout",
+      "behavior": {
+        "value": "[Transport Money] / [Transport Payout Time]"
+      },
+      "description": "Money node: freight paid out to the households."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "A Trade Share",
+      "behavior": {
+        "value": "IfThenElse([Total Trade Value] > 0.000001, ([A Export Goods Revenue] + [A Import Goods Payments]) / [Total Trade Value], 1 / 2)"
+      },
+      "description": "Money node: A Trade Share."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "A Transport Income",
+      "behavior": {
+        "value": "[Transport Payout] * [A Trade Share]"
+      },
+      "description": "Money node: A Transport Income."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "A Household Income",
+      "behavior": {
+        "value": "[A Wage Bill] + [A Rent Payments] + [A Dividends] + [A Transport Income]"
+      },
+      "description": "Money node: A Household Income."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "A Household Saving",
+      "behavior": {
+        "value": "[A Household Income] - [A Household Purchases]"
+      },
+      "description": "Money node: A Household Saving."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "B Trade Share",
+      "behavior": {
+        "value": "IfThenElse([Total Trade Value] > 0.000001, ([B Export Goods Revenue] + [B Import Goods Payments]) / [Total Trade Value], 1 / 2)"
+      },
+      "description": "Money node: B Trade Share."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "B Transport Income",
+      "behavior": {
+        "value": "[Transport Payout] * [B Trade Share]"
+      },
+      "description": "Money node: B Transport Income."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "B Household Income",
+      "behavior": {
+        "value": "[B Wage Bill] + [B Rent Payments] + [B Dividends] + [B Transport Income]"
+      },
+      "description": "Money node: B Household Income."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "B Household Saving",
+      "behavior": {
+        "value": "[B Household Income] - [B Household Purchases]"
+      },
+      "description": "Money node: B Household Saving."
+    },
+    {
+      "type": "STOCK",
+      "name": "A Household Money",
+      "behavior": {
+        "initial_value": 182470,
+        "non_negative": false
+      },
+      "description": "Money node: money held by the households."
+    },
+    {
+      "type": "STOCK",
+      "name": "A Firm Money",
+      "behavior": {
+        "initial_value": 183970,
+        "non_negative": false
+      },
+      "description": "Money node: money held by the consolidated firms."
+    },
+    {
+      "type": "STOCK",
+      "name": "A Smoothed Household Income",
+      "behavior": {
+        "initial_value": 2857.8,
+        "non_negative": false
+      },
+      "description": "Money node: household income seen by the spending plan."
+    },
+    {
+      "type": "FLOW",
+      "name": "A Household Income Flow",
+      "from": null,
+      "to": "A Household Money",
+      "behavior": {
+        "value": "IfThenElse([Money Enabled] = 1, [A Household Income], 0)",
+        "non_negative": false
+      },
+      "description": "Money node: A Household Income Flow."
+    },
+    {
+      "type": "FLOW",
+      "name": "A Household Purchases Flow",
+      "from": "A Household Money",
+      "to": null,
+      "behavior": {
+        "value": "IfThenElse([Money Enabled] = 1, [A Household Purchases], 0)",
+        "non_negative": false
+      },
+      "description": "Money node: A Household Purchases Flow."
+    },
+    {
+      "type": "FLOW",
+      "name": "A Firm Cash Flow",
+      "from": null,
+      "to": "A Firm Money",
+      "behavior": {
+        "value": "IfThenElse([Money Enabled] = 1, [A Firm Net Cash Flow], 0)",
+        "non_negative": false
+      },
+      "description": "Money node: A Firm Cash Flow."
+    },
+    {
+      "type": "FLOW",
+      "name": "A Dividend Flow",
+      "from": "A Firm Money",
+      "to": null,
+      "behavior": {
+        "value": "IfThenElse([Money Enabled] = 1, [A Dividends], 0)",
+        "non_negative": false
+      },
+      "description": "Money node: A Dividend Flow."
+    },
+    {
+      "type": "FLOW",
+      "name": "A Smoothed Income Change",
+      "from": null,
+      "to": "A Smoothed Household Income",
+      "behavior": {
+        "value": "IfThenElse([Money Enabled] = 1, ([A Household Income] - [A Smoothed Household Income]) / [Household Income Smoothing Time], 0)",
+        "non_negative": false
+      },
+      "description": "Money node: A Smoothed Income Change."
+    },
+    {
+      "type": "STOCK",
+      "name": "B Household Money",
+      "behavior": {
+        "initial_value": 38425,
+        "non_negative": false
+      },
+      "description": "Money node: money held by the households."
+    },
+    {
+      "type": "STOCK",
+      "name": "B Firm Money",
+      "behavior": {
+        "initial_value": 37742,
+        "non_negative": false
+      },
+      "description": "Money node: money held by the consolidated firms."
+    },
+    {
+      "type": "STOCK",
+      "name": "B Smoothed Household Income",
+      "behavior": {
+        "initial_value": 608.85,
+        "non_negative": false
+      },
+      "description": "Money node: household income seen by the spending plan."
+    },
+    {
+      "type": "FLOW",
+      "name": "B Household Income Flow",
+      "from": null,
+      "to": "B Household Money",
+      "behavior": {
+        "value": "IfThenElse([Money Enabled] = 1, [B Household Income], 0)",
+        "non_negative": false
+      },
+      "description": "Money node: B Household Income Flow."
+    },
+    {
+      "type": "FLOW",
+      "name": "B Household Purchases Flow",
+      "from": "B Household Money",
+      "to": null,
+      "behavior": {
+        "value": "IfThenElse([Money Enabled] = 1, [B Household Purchases], 0)",
+        "non_negative": false
+      },
+      "description": "Money node: B Household Purchases Flow."
+    },
+    {
+      "type": "FLOW",
+      "name": "B Firm Cash Flow",
+      "from": null,
+      "to": "B Firm Money",
+      "behavior": {
+        "value": "IfThenElse([Money Enabled] = 1, [B Firm Net Cash Flow], 0)",
+        "non_negative": false
+      },
+      "description": "Money node: B Firm Cash Flow."
+    },
+    {
+      "type": "FLOW",
+      "name": "B Dividend Flow",
+      "from": "B Firm Money",
+      "to": null,
+      "behavior": {
+        "value": "IfThenElse([Money Enabled] = 1, [B Dividends], 0)",
+        "non_negative": false
+      },
+      "description": "Money node: B Dividend Flow."
+    },
+    {
+      "type": "FLOW",
+      "name": "B Smoothed Income Change",
+      "from": null,
+      "to": "B Smoothed Household Income",
+      "behavior": {
+        "value": "IfThenElse([Money Enabled] = 1, ([B Household Income] - [B Smoothed Household Income]) / [Household Income Smoothing Time], 0)",
+        "non_negative": false
+      },
+      "description": "Money node: B Smoothed Income Change."
+    },
+    {
+      "type": "STOCK",
+      "name": "Transport Money",
+      "behavior": {
+        "initial_value": 1253.5,
+        "non_negative": false
+      },
+      "description": "Money node: freight held by the shared transport."
+    },
+    {
+      "type": "FLOW",
+      "name": "Transport Freight Income",
+      "from": null,
+      "to": "Transport Money",
+      "behavior": {
+        "value": "IfThenElse([Money Enabled] = 1, [A Import Freight Payments] + [B Import Freight Payments], 0)",
+        "non_negative": false
+      },
+      "description": "Money node: Transport Freight Income."
+    },
+    {
+      "type": "FLOW",
+      "name": "Transport Payout Flow",
+      "from": "Transport Money",
+      "to": null,
+      "behavior": {
+        "value": "IfThenElse([Money Enabled] = 1, [Transport Payout], 0)",
+        "non_negative": false
+      },
+      "description": "Money node: Transport Payout Flow."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "A Household Spending Plan",
+      "behavior": {
+        "value": "Max(0, [A Smoothed Household Income] + ([A Household Money] - [A Smoothed Household Income] * [Household Money Target Days]) / [Household Money Adjustment Time])"
+      },
+      "description": "Money node: A Household Spending Plan."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "A First Spending",
+      "behavior": {
+        "value": "[A Food Consumption] * [A Food Price]"
+      },
+      "description": "Money node: purchases paid before the budgeted goods (need)."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "A Unscaled Local Demand",
+      "behavior": {
+        "value": "[A Effective Local Base Demand] * ([A Reference Metal Price] / [A Market Price]) ^ [A Demand Elasticity]"
+      },
+      "description": "Money node: A Local Demand before the budget."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "A Unscaled Electronics Local Demand",
+      "behavior": {
+        "value": "[A Effective Electronics Local Base Demand] * ([A Electronics Reference Price] / [A Electronics Market Price]) ^ [A Electronics Demand Elasticity]"
+      },
+      "description": "Money node: A Electronics Local Demand before the budget."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "A Norm Goods Cost",
+      "behavior": {
+        "value": "[A Unscaled Local Demand] * [A Market Price] + [A Unscaled Electronics Local Demand] * [A Electronics Market Price]"
+      },
+      "description": "Money node: cost of the unscaled budgeted demand."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "A Budget Factor",
+      "behavior": {
+        "value": "Max(0, [A Household Spending Plan] - [A First Spending]) / Max([A Norm Goods Cost], 0.000001)"
+      },
+      "description": "Money node: A Budget Factor."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "B Household Spending Plan",
+      "behavior": {
+        "value": "Max(0, [B Smoothed Household Income] + ([B Household Money] - [B Smoothed Household Income] * [Household Money Target Days]) / [Household Money Adjustment Time])"
+      },
+      "description": "Money node: B Household Spending Plan."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "B First Spending",
+      "behavior": {
+        "value": "[B Food Consumption] * [B Food Price]"
+      },
+      "description": "Money node: purchases paid before the budgeted goods (need)."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "B Unscaled Local Demand",
+      "behavior": {
+        "value": "[B Effective Local Base Demand] * ([B Reference Metal Price] / [B Market Price]) ^ [B Demand Elasticity]"
+      },
+      "description": "Money node: B Local Demand before the budget."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "B Unscaled Electronics Local Demand",
+      "behavior": {
+        "value": "[B Effective Electronics Local Base Demand] * ([B Electronics Reference Price] / [B Electronics Market Price]) ^ [B Electronics Demand Elasticity]"
+      },
+      "description": "Money node: B Electronics Local Demand before the budget."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "B Norm Goods Cost",
+      "behavior": {
+        "value": "[B Unscaled Local Demand] * [B Market Price] + [B Unscaled Electronics Local Demand] * [B Electronics Market Price]"
+      },
+      "description": "Money node: cost of the unscaled budgeted demand."
+    },
+    {
+      "type": "VARIABLE",
+      "name": "B Budget Factor",
+      "behavior": {
+        "value": "Max(0, [B Household Spending Plan] - [B First Spending]) / Max([B Norm Goods Cost], 0.000001)"
+      },
+      "description": "Money node: B Budget Factor."
+    },
+    {
+      "type": "LINK",
+      "from": "A Wage",
+      "to": "A Wage Bill"
+    },
+    {
+      "type": "LINK",
+      "from": "A Employment",
+      "to": "A Wage Bill"
+    },
+    {
+      "type": "LINK",
+      "from": "A Effective Ore Base Cost",
+      "to": "A Rent Payments"
+    },
+    {
+      "type": "LINK",
+      "from": "A Mining",
+      "to": "A Rent Payments"
+    },
+    {
+      "type": "LINK",
+      "from": "Base Power Resource Price",
+      "to": "A Rent Payments"
+    },
+    {
+      "type": "LINK",
+      "from": "A Power Resource Extraction",
+      "to": "A Rent Payments"
+    },
+    {
+      "type": "LINK",
+      "from": "A Power Generation Cost",
+      "to": "A Rent Payments"
+    },
+    {
+      "type": "LINK",
+      "from": "A Available Generation",
+      "to": "A Rent Payments"
+    },
+    {
+      "type": "LINK",
+      "from": "A Food Consumption",
+      "to": "A Household Purchases"
+    },
+    {
+      "type": "LINK",
+      "from": "A Food Price",
+      "to": "A Household Purchases"
+    },
+    {
+      "type": "LINK",
+      "from": "A Local Sales",
+      "to": "A Household Purchases"
+    },
+    {
+      "type": "LINK",
+      "from": "A Market Price",
+      "to": "A Household Purchases"
+    },
+    {
+      "type": "LINK",
+      "from": "A Electronics Local Sales",
+      "to": "A Household Purchases"
+    },
+    {
+      "type": "LINK",
+      "from": "A Electronics Market Price",
+      "to": "A Household Purchases"
+    },
+    {
+      "type": "LINK",
+      "from": "Recognize Delivered Metal Goods Value A to B",
+      "to": "A Export Goods Revenue"
+    },
+    {
+      "type": "LINK",
+      "from": "Recognize Delivered Electronics Goods Value A to B",
+      "to": "A Export Goods Revenue"
+    },
+    {
+      "type": "LINK",
+      "from": "Food Arrival A to B",
+      "to": "A Export Goods Revenue"
+    },
+    {
+      "type": "LINK",
+      "from": "A Food Price",
+      "to": "A Export Goods Revenue"
+    },
+    {
+      "type": "LINK",
+      "from": "Recognize Delivered Metal Goods Value B to A",
+      "to": "A Import Goods Payments"
+    },
+    {
+      "type": "LINK",
+      "from": "Recognize Delivered Electronics Goods Value B to A",
+      "to": "A Import Goods Payments"
+    },
+    {
+      "type": "LINK",
+      "from": "Food Arrival B to A",
+      "to": "A Import Goods Payments"
+    },
+    {
+      "type": "LINK",
+      "from": "B Food Price",
+      "to": "A Import Goods Payments"
+    },
+    {
+      "type": "LINK",
+      "from": "Recognize Delivered Metal Freight Value B to A",
+      "to": "A Import Freight Payments"
+    },
+    {
+      "type": "LINK",
+      "from": "Recognize Delivered Electronics Freight Value B to A",
+      "to": "A Import Freight Payments"
+    },
+    {
+      "type": "LINK",
+      "from": "Food Arrival B to A",
+      "to": "A Import Freight Payments"
+    },
+    {
+      "type": "LINK",
+      "from": "Food Freight Weight per Unit",
+      "to": "A Import Freight Payments"
+    },
+    {
+      "type": "LINK",
+      "from": "Freight Price",
+      "to": "A Import Freight Payments"
+    },
+    {
+      "type": "LINK",
+      "from": "A Wage Bill",
+      "to": "A Firm Target Money"
+    },
+    {
+      "type": "LINK",
+      "from": "Firm Money Target Days",
+      "to": "A Firm Target Money"
+    },
+    {
+      "type": "LINK",
+      "from": "A Firm Money",
+      "to": "A Dividends"
+    },
+    {
+      "type": "LINK",
+      "from": "A Firm Target Money",
+      "to": "A Dividends"
+    },
+    {
+      "type": "LINK",
+      "from": "Dividend Payout Time",
+      "to": "A Dividends"
+    },
+    {
+      "type": "LINK",
+      "from": "A Household Purchases",
+      "to": "A Firm Net Cash Flow"
+    },
+    {
+      "type": "LINK",
+      "from": "A Export Goods Revenue",
+      "to": "A Firm Net Cash Flow"
+    },
+    {
+      "type": "LINK",
+      "from": "A Wage Bill",
+      "to": "A Firm Net Cash Flow"
+    },
+    {
+      "type": "LINK",
+      "from": "A Rent Payments",
+      "to": "A Firm Net Cash Flow"
+    },
+    {
+      "type": "LINK",
+      "from": "A Import Goods Payments",
+      "to": "A Firm Net Cash Flow"
+    },
+    {
+      "type": "LINK",
+      "from": "A Import Freight Payments",
+      "to": "A Firm Net Cash Flow"
+    },
+    {
+      "type": "LINK",
+      "from": "A Export Goods Revenue",
+      "to": "A Balance of Payments"
+    },
+    {
+      "type": "LINK",
+      "from": "A Import Goods Payments",
+      "to": "A Balance of Payments"
+    },
+    {
+      "type": "LINK",
+      "from": "A Import Freight Payments",
+      "to": "A Balance of Payments"
+    },
+    {
+      "type": "LINK",
+      "from": "B Wage",
+      "to": "B Wage Bill"
+    },
+    {
+      "type": "LINK",
+      "from": "B Employment",
+      "to": "B Wage Bill"
+    },
+    {
+      "type": "LINK",
+      "from": "B Effective Ore Base Cost",
+      "to": "B Rent Payments"
+    },
+    {
+      "type": "LINK",
+      "from": "B Mining",
+      "to": "B Rent Payments"
+    },
+    {
+      "type": "LINK",
+      "from": "Base Power Resource Price",
+      "to": "B Rent Payments"
+    },
+    {
+      "type": "LINK",
+      "from": "B Power Resource Extraction",
+      "to": "B Rent Payments"
+    },
+    {
+      "type": "LINK",
+      "from": "B Power Generation Cost",
+      "to": "B Rent Payments"
+    },
+    {
+      "type": "LINK",
+      "from": "B Available Generation",
+      "to": "B Rent Payments"
+    },
+    {
+      "type": "LINK",
+      "from": "B Food Consumption",
+      "to": "B Household Purchases"
+    },
+    {
+      "type": "LINK",
+      "from": "B Food Price",
+      "to": "B Household Purchases"
+    },
+    {
+      "type": "LINK",
+      "from": "B Local Sales",
+      "to": "B Household Purchases"
+    },
+    {
+      "type": "LINK",
+      "from": "B Market Price",
+      "to": "B Household Purchases"
+    },
+    {
+      "type": "LINK",
+      "from": "B Electronics Local Sales",
+      "to": "B Household Purchases"
+    },
+    {
+      "type": "LINK",
+      "from": "B Electronics Market Price",
+      "to": "B Household Purchases"
+    },
+    {
+      "type": "LINK",
+      "from": "Recognize Delivered Metal Goods Value B to A",
+      "to": "B Export Goods Revenue"
+    },
+    {
+      "type": "LINK",
+      "from": "Recognize Delivered Electronics Goods Value B to A",
+      "to": "B Export Goods Revenue"
+    },
+    {
+      "type": "LINK",
+      "from": "Food Arrival B to A",
+      "to": "B Export Goods Revenue"
+    },
+    {
+      "type": "LINK",
+      "from": "B Food Price",
+      "to": "B Export Goods Revenue"
+    },
+    {
+      "type": "LINK",
+      "from": "Recognize Delivered Metal Goods Value A to B",
+      "to": "B Import Goods Payments"
+    },
+    {
+      "type": "LINK",
+      "from": "Recognize Delivered Electronics Goods Value A to B",
+      "to": "B Import Goods Payments"
+    },
+    {
+      "type": "LINK",
+      "from": "Food Arrival A to B",
+      "to": "B Import Goods Payments"
+    },
+    {
+      "type": "LINK",
+      "from": "A Food Price",
+      "to": "B Import Goods Payments"
+    },
+    {
+      "type": "LINK",
+      "from": "Recognize Delivered Metal Freight Value A to B",
+      "to": "B Import Freight Payments"
+    },
+    {
+      "type": "LINK",
+      "from": "Recognize Delivered Electronics Freight Value A to B",
+      "to": "B Import Freight Payments"
+    },
+    {
+      "type": "LINK",
+      "from": "Food Arrival A to B",
+      "to": "B Import Freight Payments"
+    },
+    {
+      "type": "LINK",
+      "from": "Food Freight Weight per Unit",
+      "to": "B Import Freight Payments"
+    },
+    {
+      "type": "LINK",
+      "from": "Freight Price",
+      "to": "B Import Freight Payments"
+    },
+    {
+      "type": "LINK",
+      "from": "B Wage Bill",
+      "to": "B Firm Target Money"
+    },
+    {
+      "type": "LINK",
+      "from": "Firm Money Target Days",
+      "to": "B Firm Target Money"
+    },
+    {
+      "type": "LINK",
+      "from": "B Firm Money",
+      "to": "B Dividends"
+    },
+    {
+      "type": "LINK",
+      "from": "B Firm Target Money",
+      "to": "B Dividends"
+    },
+    {
+      "type": "LINK",
+      "from": "Dividend Payout Time",
+      "to": "B Dividends"
+    },
+    {
+      "type": "LINK",
+      "from": "B Household Purchases",
+      "to": "B Firm Net Cash Flow"
+    },
+    {
+      "type": "LINK",
+      "from": "B Export Goods Revenue",
+      "to": "B Firm Net Cash Flow"
+    },
+    {
+      "type": "LINK",
+      "from": "B Wage Bill",
+      "to": "B Firm Net Cash Flow"
+    },
+    {
+      "type": "LINK",
+      "from": "B Rent Payments",
+      "to": "B Firm Net Cash Flow"
+    },
+    {
+      "type": "LINK",
+      "from": "B Import Goods Payments",
+      "to": "B Firm Net Cash Flow"
+    },
+    {
+      "type": "LINK",
+      "from": "B Import Freight Payments",
+      "to": "B Firm Net Cash Flow"
+    },
+    {
+      "type": "LINK",
+      "from": "B Export Goods Revenue",
+      "to": "B Balance of Payments"
+    },
+    {
+      "type": "LINK",
+      "from": "B Import Goods Payments",
+      "to": "B Balance of Payments"
+    },
+    {
+      "type": "LINK",
+      "from": "B Import Freight Payments",
+      "to": "B Balance of Payments"
+    },
+    {
+      "type": "LINK",
+      "from": "A Export Goods Revenue",
+      "to": "Total Trade Value"
+    },
+    {
+      "type": "LINK",
+      "from": "A Import Goods Payments",
+      "to": "Total Trade Value"
+    },
+    {
+      "type": "LINK",
+      "from": "B Export Goods Revenue",
+      "to": "Total Trade Value"
+    },
+    {
+      "type": "LINK",
+      "from": "B Import Goods Payments",
+      "to": "Total Trade Value"
+    },
+    {
+      "type": "LINK",
+      "from": "Transport Money",
+      "to": "Transport Payout"
+    },
+    {
+      "type": "LINK",
+      "from": "Transport Payout Time",
+      "to": "Transport Payout"
+    },
+    {
+      "type": "LINK",
+      "from": "Total Trade Value",
+      "to": "A Trade Share"
+    },
+    {
+      "type": "LINK",
+      "from": "A Export Goods Revenue",
+      "to": "A Trade Share"
+    },
+    {
+      "type": "LINK",
+      "from": "A Import Goods Payments",
+      "to": "A Trade Share"
+    },
+    {
+      "type": "LINK",
+      "from": "Transport Payout",
+      "to": "A Transport Income"
+    },
+    {
+      "type": "LINK",
+      "from": "A Trade Share",
+      "to": "A Transport Income"
+    },
+    {
+      "type": "LINK",
+      "from": "A Wage Bill",
+      "to": "A Household Income"
+    },
+    {
+      "type": "LINK",
+      "from": "A Rent Payments",
+      "to": "A Household Income"
+    },
+    {
+      "type": "LINK",
+      "from": "A Dividends",
+      "to": "A Household Income"
+    },
+    {
+      "type": "LINK",
+      "from": "A Transport Income",
+      "to": "A Household Income"
+    },
+    {
+      "type": "LINK",
+      "from": "A Household Income",
+      "to": "A Household Saving"
+    },
+    {
+      "type": "LINK",
+      "from": "A Household Purchases",
+      "to": "A Household Saving"
+    },
+    {
+      "type": "LINK",
+      "from": "Total Trade Value",
+      "to": "B Trade Share"
+    },
+    {
+      "type": "LINK",
+      "from": "B Export Goods Revenue",
+      "to": "B Trade Share"
+    },
+    {
+      "type": "LINK",
+      "from": "B Import Goods Payments",
+      "to": "B Trade Share"
+    },
+    {
+      "type": "LINK",
+      "from": "Transport Payout",
+      "to": "B Transport Income"
+    },
+    {
+      "type": "LINK",
+      "from": "B Trade Share",
+      "to": "B Transport Income"
+    },
+    {
+      "type": "LINK",
+      "from": "B Wage Bill",
+      "to": "B Household Income"
+    },
+    {
+      "type": "LINK",
+      "from": "B Rent Payments",
+      "to": "B Household Income"
+    },
+    {
+      "type": "LINK",
+      "from": "B Dividends",
+      "to": "B Household Income"
+    },
+    {
+      "type": "LINK",
+      "from": "B Transport Income",
+      "to": "B Household Income"
+    },
+    {
+      "type": "LINK",
+      "from": "B Household Income",
+      "to": "B Household Saving"
+    },
+    {
+      "type": "LINK",
+      "from": "B Household Purchases",
+      "to": "B Household Saving"
+    },
+    {
+      "type": "LINK",
+      "from": "Money Enabled",
+      "to": "A Household Income Flow"
+    },
+    {
+      "type": "LINK",
+      "from": "A Household Income",
+      "to": "A Household Income Flow"
+    },
+    {
+      "type": "LINK",
+      "from": "Money Enabled",
+      "to": "A Household Purchases Flow"
+    },
+    {
+      "type": "LINK",
+      "from": "A Household Purchases",
+      "to": "A Household Purchases Flow"
+    },
+    {
+      "type": "LINK",
+      "from": "Money Enabled",
+      "to": "A Firm Cash Flow"
+    },
+    {
+      "type": "LINK",
+      "from": "A Firm Net Cash Flow",
+      "to": "A Firm Cash Flow"
+    },
+    {
+      "type": "LINK",
+      "from": "Money Enabled",
+      "to": "A Dividend Flow"
+    },
+    {
+      "type": "LINK",
+      "from": "A Dividends",
+      "to": "A Dividend Flow"
+    },
+    {
+      "type": "LINK",
+      "from": "Money Enabled",
+      "to": "A Smoothed Income Change"
+    },
+    {
+      "type": "LINK",
+      "from": "A Household Income",
+      "to": "A Smoothed Income Change"
+    },
+    {
+      "type": "LINK",
+      "from": "A Smoothed Household Income",
+      "to": "A Smoothed Income Change"
+    },
+    {
+      "type": "LINK",
+      "from": "Household Income Smoothing Time",
+      "to": "A Smoothed Income Change"
+    },
+    {
+      "type": "LINK",
+      "from": "Money Enabled",
+      "to": "B Household Income Flow"
+    },
+    {
+      "type": "LINK",
+      "from": "B Household Income",
+      "to": "B Household Income Flow"
+    },
+    {
+      "type": "LINK",
+      "from": "Money Enabled",
+      "to": "B Household Purchases Flow"
+    },
+    {
+      "type": "LINK",
+      "from": "B Household Purchases",
+      "to": "B Household Purchases Flow"
+    },
+    {
+      "type": "LINK",
+      "from": "Money Enabled",
+      "to": "B Firm Cash Flow"
+    },
+    {
+      "type": "LINK",
+      "from": "B Firm Net Cash Flow",
+      "to": "B Firm Cash Flow"
+    },
+    {
+      "type": "LINK",
+      "from": "Money Enabled",
+      "to": "B Dividend Flow"
+    },
+    {
+      "type": "LINK",
+      "from": "B Dividends",
+      "to": "B Dividend Flow"
+    },
+    {
+      "type": "LINK",
+      "from": "Money Enabled",
+      "to": "B Smoothed Income Change"
+    },
+    {
+      "type": "LINK",
+      "from": "B Household Income",
+      "to": "B Smoothed Income Change"
+    },
+    {
+      "type": "LINK",
+      "from": "B Smoothed Household Income",
+      "to": "B Smoothed Income Change"
+    },
+    {
+      "type": "LINK",
+      "from": "Household Income Smoothing Time",
+      "to": "B Smoothed Income Change"
+    },
+    {
+      "type": "LINK",
+      "from": "Money Enabled",
+      "to": "Transport Freight Income"
+    },
+    {
+      "type": "LINK",
+      "from": "A Import Freight Payments",
+      "to": "Transport Freight Income"
+    },
+    {
+      "type": "LINK",
+      "from": "B Import Freight Payments",
+      "to": "Transport Freight Income"
+    },
+    {
+      "type": "LINK",
+      "from": "Money Enabled",
+      "to": "Transport Payout Flow"
+    },
+    {
+      "type": "LINK",
+      "from": "Transport Payout",
+      "to": "Transport Payout Flow"
+    },
+    {
+      "type": "LINK",
+      "from": "A Smoothed Household Income",
+      "to": "A Household Spending Plan"
+    },
+    {
+      "type": "LINK",
+      "from": "A Household Money",
+      "to": "A Household Spending Plan"
+    },
+    {
+      "type": "LINK",
+      "from": "Household Money Target Days",
+      "to": "A Household Spending Plan"
+    },
+    {
+      "type": "LINK",
+      "from": "Household Money Adjustment Time",
+      "to": "A Household Spending Plan"
+    },
+    {
+      "type": "LINK",
+      "from": "A Food Consumption",
+      "to": "A First Spending"
+    },
+    {
+      "type": "LINK",
+      "from": "A Food Price",
+      "to": "A First Spending"
+    },
+    {
+      "type": "LINK",
+      "from": "A Effective Local Base Demand",
+      "to": "A Unscaled Local Demand"
+    },
+    {
+      "type": "LINK",
+      "from": "A Reference Metal Price",
+      "to": "A Unscaled Local Demand"
+    },
+    {
+      "type": "LINK",
+      "from": "A Market Price",
+      "to": "A Unscaled Local Demand"
+    },
+    {
+      "type": "LINK",
+      "from": "A Demand Elasticity",
+      "to": "A Unscaled Local Demand"
+    },
+    {
+      "type": "LINK",
+      "from": "A Effective Electronics Local Base Demand",
+      "to": "A Unscaled Electronics Local Demand"
+    },
+    {
+      "type": "LINK",
+      "from": "A Electronics Reference Price",
+      "to": "A Unscaled Electronics Local Demand"
+    },
+    {
+      "type": "LINK",
+      "from": "A Electronics Market Price",
+      "to": "A Unscaled Electronics Local Demand"
+    },
+    {
+      "type": "LINK",
+      "from": "A Electronics Demand Elasticity",
+      "to": "A Unscaled Electronics Local Demand"
+    },
+    {
+      "type": "LINK",
+      "from": "A Unscaled Local Demand",
+      "to": "A Norm Goods Cost"
+    },
+    {
+      "type": "LINK",
+      "from": "A Market Price",
+      "to": "A Norm Goods Cost"
+    },
+    {
+      "type": "LINK",
+      "from": "A Unscaled Electronics Local Demand",
+      "to": "A Norm Goods Cost"
+    },
+    {
+      "type": "LINK",
+      "from": "A Electronics Market Price",
+      "to": "A Norm Goods Cost"
+    },
+    {
+      "type": "LINK",
+      "from": "A Household Spending Plan",
+      "to": "A Budget Factor"
+    },
+    {
+      "type": "LINK",
+      "from": "A First Spending",
+      "to": "A Budget Factor"
+    },
+    {
+      "type": "LINK",
+      "from": "A Norm Goods Cost",
+      "to": "A Budget Factor"
+    },
+    {
+      "type": "LINK",
+      "from": "B Smoothed Household Income",
+      "to": "B Household Spending Plan"
+    },
+    {
+      "type": "LINK",
+      "from": "B Household Money",
+      "to": "B Household Spending Plan"
+    },
+    {
+      "type": "LINK",
+      "from": "Household Money Target Days",
+      "to": "B Household Spending Plan"
+    },
+    {
+      "type": "LINK",
+      "from": "Household Money Adjustment Time",
+      "to": "B Household Spending Plan"
+    },
+    {
+      "type": "LINK",
+      "from": "B Food Consumption",
+      "to": "B First Spending"
+    },
+    {
+      "type": "LINK",
+      "from": "B Food Price",
+      "to": "B First Spending"
+    },
+    {
+      "type": "LINK",
+      "from": "B Effective Local Base Demand",
+      "to": "B Unscaled Local Demand"
+    },
+    {
+      "type": "LINK",
+      "from": "B Reference Metal Price",
+      "to": "B Unscaled Local Demand"
+    },
+    {
+      "type": "LINK",
+      "from": "B Market Price",
+      "to": "B Unscaled Local Demand"
+    },
+    {
+      "type": "LINK",
+      "from": "B Demand Elasticity",
+      "to": "B Unscaled Local Demand"
+    },
+    {
+      "type": "LINK",
+      "from": "B Effective Electronics Local Base Demand",
+      "to": "B Unscaled Electronics Local Demand"
+    },
+    {
+      "type": "LINK",
+      "from": "B Electronics Reference Price",
+      "to": "B Unscaled Electronics Local Demand"
+    },
+    {
+      "type": "LINK",
+      "from": "B Electronics Market Price",
+      "to": "B Unscaled Electronics Local Demand"
+    },
+    {
+      "type": "LINK",
+      "from": "B Electronics Demand Elasticity",
+      "to": "B Unscaled Electronics Local Demand"
+    },
+    {
+      "type": "LINK",
+      "from": "B Unscaled Local Demand",
+      "to": "B Norm Goods Cost"
+    },
+    {
+      "type": "LINK",
+      "from": "B Market Price",
+      "to": "B Norm Goods Cost"
+    },
+    {
+      "type": "LINK",
+      "from": "B Unscaled Electronics Local Demand",
+      "to": "B Norm Goods Cost"
+    },
+    {
+      "type": "LINK",
+      "from": "B Electronics Market Price",
+      "to": "B Norm Goods Cost"
+    },
+    {
+      "type": "LINK",
+      "from": "B Household Spending Plan",
+      "to": "B Budget Factor"
+    },
+    {
+      "type": "LINK",
+      "from": "B First Spending",
+      "to": "B Budget Factor"
+    },
+    {
+      "type": "LINK",
+      "from": "B Norm Goods Cost",
+      "to": "B Budget Factor"
+    },
+    {
+      "type": "LINK",
+      "from": "Money Enabled",
+      "to": "A Local Demand"
+    },
+    {
+      "type": "LINK",
+      "from": "A Unscaled Local Demand",
+      "to": "A Local Demand"
+    },
+    {
+      "type": "LINK",
+      "from": "A Budget Factor",
+      "to": "A Local Demand"
+    },
+    {
+      "type": "LINK",
+      "from": "Money Enabled",
+      "to": "A Electronics Local Demand"
+    },
+    {
+      "type": "LINK",
+      "from": "A Unscaled Electronics Local Demand",
+      "to": "A Electronics Local Demand"
+    },
+    {
+      "type": "LINK",
+      "from": "A Budget Factor",
+      "to": "A Electronics Local Demand"
+    },
+    {
+      "type": "LINK",
+      "from": "Money Enabled",
+      "to": "B Local Demand"
+    },
+    {
+      "type": "LINK",
+      "from": "B Unscaled Local Demand",
+      "to": "B Local Demand"
+    },
+    {
+      "type": "LINK",
+      "from": "B Budget Factor",
+      "to": "B Local Demand"
+    },
+    {
+      "type": "LINK",
+      "from": "Money Enabled",
+      "to": "B Electronics Local Demand"
+    },
+    {
+      "type": "LINK",
+      "from": "B Unscaled Electronics Local Demand",
+      "to": "B Electronics Local Demand"
+    },
+    {
+      "type": "LINK",
+      "from": "B Budget Factor",
+      "to": "B Electronics Local Demand"
     }
   ],
   "visualizations": [
@@ -45653,6 +47205,58 @@
         "Food Enabled": 1,
         "Labor Market Enabled": 1,
         "Cost Pricing Enabled": 1
+      }
+    },
+    {
+      "name": "v7.7.17 Money",
+      "description": "Mode 56 (cost pricing) with money: household, firm and transport money with every payment; household budgets scale final metal and electronics demand.",
+      "values": {
+        "Capital Lifecycle Enabled": 1,
+        "Intermediate Inputs Enabled": 1,
+        "Capital Goods Enabled": 1,
+        "Transport Capital Goods Enabled": 1,
+        "Power Resource Enabled": 1,
+        "Construction Materials Enabled": 1,
+        "Transport Construction Materials Enabled": 1,
+        "Construction Materials Energy Enabled": 1,
+        "Construction Materials Capital Enabled": 1,
+        "Capital Goods Capital Enabled": 1,
+        "Regolith Capital Enabled": 1,
+        "Ore Capital Enabled": 1,
+        "Timed Test Mode": 58,
+        "Power Resource Capital Enabled": 1,
+        "Deposits Enabled": 1,
+        "Process Energy Enabled": 1,
+        "Food Enabled": 1,
+        "Labor Market Enabled": 1,
+        "Cost Pricing Enabled": 1,
+        "Money Enabled": 1
+      }
+    },
+    {
+      "name": "v7.7.17 Transport Surge with Money",
+      "description": "Mode 57 (transport surge with cost pricing) with money.",
+      "values": {
+        "Capital Lifecycle Enabled": 1,
+        "Intermediate Inputs Enabled": 1,
+        "Capital Goods Enabled": 1,
+        "Transport Capital Goods Enabled": 1,
+        "Power Resource Enabled": 1,
+        "Construction Materials Enabled": 1,
+        "Transport Construction Materials Enabled": 1,
+        "Construction Materials Energy Enabled": 1,
+        "Construction Materials Capital Enabled": 1,
+        "Capital Goods Capital Enabled": 1,
+        "Regolith Capital Enabled": 1,
+        "Ore Capital Enabled": 1,
+        "Timed Test Mode": 59,
+        "Power Resource Capital Enabled": 1,
+        "Deposits Enabled": 1,
+        "Process Energy Enabled": 1,
+        "Food Enabled": 1,
+        "Labor Market Enabled": 1,
+        "Cost Pricing Enabled": 1,
+        "Money Enabled": 1
       }
     }
   ]
