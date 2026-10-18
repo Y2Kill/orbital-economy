@@ -102,6 +102,7 @@ const foodDeclarations = allNodeDeclarations.filter(x => x.decl?.type === 'food'
 const laborMarketDeclarations = allNodeDeclarations.filter(x => x.decl?.type === 'labor_market');
 const wagePricingFixture = readJson(path.join(root, 'fixtures', 'nodes', 'wage_pricing.json'));
 const costPricingFixture = readJson(path.join(root, 'fixtures', 'nodes', 'cost_pricing.json'));
+const costPricingGatedFixture = readJson(path.join(root, 'fixtures', 'nodes', 'cost_pricing_gated.json'));
 const moneyFixture = readJson(path.join(root, 'fixtures', 'nodes', 'money.json'));
 // A switched top layer is peeled only when the supplied model carries its switch: a nested run on a lower
 // layer (case 66 inside an accepted model that already has cost_pricing) must not peel a node it does not have.
@@ -199,7 +200,11 @@ function oldBranch(value, switchName, targetName) {
     throw new Error(`${targetName}: expected outer IfThenElse for ${switchName}`);
   }
   const args = splitTopLevelArgs(text.slice('IfThenElse('.length, -1));
-  if (args.length !== 3 || args[0] !== `[${switchName}] = 1`) {
+  const plain = args[0] === `[${switchName}] = 1`;
+  const gated = switchName === 'Cost Pricing Enabled' &&
+    args[0].startsWith(`[${switchName}] * [`) &&
+    /^\\[[^\\]]+\\] \\* \\[[^\\]]+\\] = 1$/.test(args[0]);
+  if (args.length !== 3 || (!plain && !gated)) {
     throw new Error(`${targetName}: outer switch is not ${switchName}`);
   }
   return args[2];
@@ -443,11 +448,17 @@ function stripCostPricingNode(raw, decl) {
   // oldBranch() returns text; restore the original JSON number type, not a string.
   const markupTargets = new Set((decl.colonies || []).flatMap(colony =>
     (decl.markups || []).map(name => name.replaceAll('{C}', colony))));
-  const numericLiteral = /^-?(?:\d+(?:\.\d*)?|\.\d+)(?:e[+-]?\d+)?$/i;
+  const numericLiteral = /^-?(?:\\d+(?:\\.\\d*)?|\\.\\d+)(?:e[+-]?\\d+)?$/i;
+  const extraPriceLinks = new Set();
   for (const name of costPricingReplacementNames(decl)) {
     const element = byName.get(name);
     if (!element) throw new Error('cost_pricing: replacement target missing: ' + name);
-    const old = oldBranch(element.behavior.value, decl.switch, name);
+    const formula = String(element.behavior.value);
+    const match = formula.match(/^IfThenElse\\(\\[Cost Pricing Enabled\\] \\* \\[([^\\]]+)\\] = 1,/);
+    const old = oldBranch(formula, decl.switch, name);
+    if (match && !old.includes(`[${match[1]}]`)) {
+      extraPriceLinks.add(`${match[1]}|${name}`);
+    }
     const reference = (decl.references || []).find(r =>
       decl.colonies.some(c => r.target.replaceAll('{C}', c) === name));
     if (reference) {
@@ -464,7 +475,8 @@ function stripCostPricingNode(raw, decl) {
     }
   }
   out.elements = out.elements.filter(e => e.type === 'LINK'
-    ? !generated.has(e.from) && !generated.has(e.to)
+    ? !generated.has(e.from) && !generated.has(e.to) &&
+      !extraPriceLinks.has(`${e.from}|${e.to}`)
     : !generated.has(e.name));
   for (const sc of out.scenarios || []) {
     if (sc.values) delete sc.values[decl.switch];
