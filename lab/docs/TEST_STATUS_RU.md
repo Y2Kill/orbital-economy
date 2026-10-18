@@ -1,4 +1,4 @@
-# Статус проверок Orbital Economy Lab v0.9.21 — baseline v7.7.17 r1
+# Статус проверок Orbital Economy Lab v0.9.22 — baseline v7.7.17 r1
 
 ## Принятая основа
 
@@ -39,7 +39,7 @@
 | `STRUCTURE_SELF_TEST.cmd` | **PASS** 21/21 (Windows, promotion v7.7.17) |
 | `LOOP_SELF_TEST.cmd` | **PASS** 19/19 (Windows, promotion v7.7.17); accepted 20 switches / 1048576; fast path byte-identical to `--exhaustive` (case 16 pinned to <= 10 switches) |
 | `PLANET_SELF_TEST.cmd` | **PASS** 20/20 (Windows, promotion v7.7.17); accepted in planet_v1 mode: P2=11/8/0/0, P3=16/2/1/0, P4=6/0, P5=19/0, P6=4 |
-| `NODE_SELF_TEST.cmd` | **PASS** 80/80 (Windows, promotion v7.7.17); слои снимаются по модели: `money` сверху, под ним `cost_pricing`, `wage_pricing`, `labor_market` и `food`; верхний узел снимается, только если его переключатель есть в модели; случаи 74–80 проверяют узел `money`: раскрытие, validation, пробные Modes 58–59, три региона, снятие и сборка слоя без различий, отказ на шести неверных декларациях, 73 прежних случая на принятой модели с деньгами |
+| `NODE_SELF_TEST.cmd` | **PASS** 87/87 (Windows, приёмка задачи 042, Lab v0.9.22; 81–87 — привязки затрат к слоям); слои снимаются по модели: `money` сверху, под ним `cost_pricing`, `wage_pricing`, `labor_market` и `food`; верхний узел снимается, только если его переключатель есть в модели; случаи 74–80 проверяют узел `money`: раскрытие, validation, пробные Modes 58–59, три региона, снятие и сборка слоя без различий, отказ на шести неверных декларациях, 73 прежних случая на принятой модели с деньгами |
 | `COMPARE_SELF_TEST.cmd` | **PASS** (Windows, promotion v7.7.17) |
 
 ## Lab v0.9.14 — exact loop-audit speed-up (задача 025)
@@ -189,6 +189,6 @@ Windows: NODE 66/66 (внутри NODE 66 — прежние 59/59 на accepted
 
 Принятая база v7.7.16: эталон 68 элементов, 4 замены, 193 связи, fingerprint `b126c6aeba3e57cf`; conformance/audit 302 открытых потока (финансовых +12), unclassified 0, симметрия 0, петель 0/1048576; Modes 58–59 с деньгами. Эталонный дрейф денег за 360 дней порядка 2e-9. Результаты текущей ветки подтверждаются CI и не должны подменяться эталонными числами.
 
-## Задача 042, Lab v0.9.22 (до подтверждения CI)
+## Задача 042, Lab v0.9.22 — принято 2026-10-18
 
-Параметры эталонного раскрытия: при пустых gate прежние 81 / 22 / 356 и отпечаток `6fe385abca34eabd`; с привязками — 81 / 22 / 420 и `c5b7f68fc75695d0`. Меняются 14 формул `Full Cost`, 4 `Capital Wear` и две цены Power Resource. Новые проверки NODE 81–87 должны довести счётчик до 87/87. Accepted модель, validation, policy и другие node-классы сохраняются без изменений. Результаты CI следует записывать отдельно по SHA головы.
+Приёмка на Windows (`../../docs/tasks/042-cost-pricing-gates/ACCEPTANCE_RU.md`): NODE 87/87, QA 50/50, structure 21/21, loop 19/19, planet 20/20, conformance 18/18, policy 10/10, compare PASS. Раскрытие против v7.7.15 побайтно равно прототипу: с привязками 81 / 22 / 420, `c5b7f68fc75695d0`; без них 81 / 22 / 356, `6fe385abca34eabd`. Раскрытие всех `model/nodes/*.json` не изменилось; `RUN_LAB` `OVERALL: PASS`; принятая v7.7.17 против себя — `BYTE_IDENTICAL`. CI на финальной голове не уложился в 60 минут `bench-selftests` (node_qa около 95 минут на Windows); лимит поднят после слияния.

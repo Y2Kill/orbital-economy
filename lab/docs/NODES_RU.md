@@ -1,4 +1,4 @@
-# Declarative Nodes — Orbital Economy Lab v0.9.21
+# Declarative Nodes — Orbital Economy Lab v0.9.22
 
 ## 1. Назначение
 
