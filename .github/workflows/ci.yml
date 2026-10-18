@@ -102,7 +102,9 @@ jobs:
     # the self-test set grows with every node type and GitHub runner speed varies.
     # 30 minutes stopped being enough on 2026-10-02 (task 024): main needs ~19 min, the loop self-test
     # grows 2x per model switch, node QA went 1:45 -> 6:40, and a slow runner ran every step ~1.8x longer.
-    timeout-minutes: 60
+    # 60 minutes stopped being enough on 2026-10-18 (task 042): node QA (87 cases, two nested layer runs)
+    # needs ~95 min on Windows and was still running after 30 min of the job's hour.
+    timeout-minutes: 150
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
