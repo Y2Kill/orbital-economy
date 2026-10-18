@@ -19,7 +19,7 @@ bd159f0403f7df6225286a28e5b35ffbc57224c97cd45770a3e0140bd4c6f332  ./docs/CURRENT
 b6171a54948a800ed985e58edc06085b490eb85e8797bde2615537174ac8eb60  ./docs/PARAMETER_ANNOTATIONS.json
 8acb351a189fc81b757b29462b423ba416874fcef9e14cc724c2de08d5723fa6  ./docs/PARAMETER_REGISTRY.md
 d07dc1ed24932af43a384f825e166deb503e0c643ccba5de81bf70c843257538  ./docs/PLANET_V1_CONTRACT_RU.md
-7b037fbbfa56f9bb49f268dd3c40a96b5c940906007c06ae4a98705c195d485b  ./docs/ROADMAP.md
+1ddb5147555eea9a7e28425360e922a8fc9bed2bbecfd1a91e2a71ccb26fda07  ./docs/ROADMAP.md
 55d12851b240c57bd330fc872345a1f657bea56348b46d58813796beb19708ec  ./docs/STRUCTURE_AUDIT_REPORT.md
 3ae639958b7a331cfddf5d730a720990ff0cfb988046709d75391c34967b6baf  ./docs/V7_5_1_TO_V7_6_CHANGE_REPORT.md
 4cadd7f34b7c345f2bb5a18e46a584179eb5ed6b527e4fb4f623059dc001dd35  ./docs/V7_6_1_CALIBRATION_REPORT.md
@@ -38,6 +38,7 @@ cb0873f42c3baec572355306e5751d82e1ba30594c686cd29680c6d7c09199be  ./docs/researc
 e4280d5801de163b2c2ef4fa6b572432578ce5c86338f1c45a1168052ab904c8  ./docs/research/LONG_RUN_2026-10-04_RU.md
 41cf090ed1828d03e67b21568e298abda1cf1d23f619c309f31c20d33a48076b  ./docs/research/MONEY_ACCOUNTING_PROTOTYPE_2026-10-17_RU.md
 c1b6d56fa750298f0362cfa18e6ae19c3f65920c5487b64a63bb10e600692f18  ./docs/research/POPULATION_PROTOTYPE_2026-10-04_RU.md
+4deb3f1f75dbcf42d725f77c14ad8afb758df63b17362bb3038bb5070a31d745  ./docs/research/RECALIBRATION_PREP_2026-10-18_RU.md
 f51840ce0b27e00a6dedf9bd3b5a602f029f857ea46941a32d96c7ff7c12618d  ./docs/research/SENSITIVITY_2026-10-10_RU.md
 b635e5358b9a89d424c7a005a9de7f1459f8d31811d1026c45dcdb57999ceec9  ./docs/tasks/001-v7.4-intermediate-inputs/INDEX_RU.md
 f63ac3ad68259baf9b6d754afdd3e39a3d7bd7ed8e639ba2387e65a332af81d8  ./docs/tasks/001-v7.4-intermediate-inputs/issue/README_RU.md
@@ -482,6 +483,12 @@ b4b98900a7fbcce233d5470083ae41dbca79bc963fd29f20e5751814e71d85c4  ./docs/tasks/0
 4bca9c9bf33dcabf14c8aa0c456d1f6cd95c987f6dbc483d8ea7feae30dc27d7  ./docs/tasks/041-money/draft/skeleton-patch.json
 705ef4d1ea4965375782d763e9d96bd4a9b0a18758955367ffd387b7018e3b02  ./docs/tasks/041-money/draft/validation-v7.7.17-draft.json
 83f0a013e937c8f050278381ee47923f8ffe17b89a20e05f87c86bcea170b6ed  ./docs/tasks/041-money/scope.json
+62352f0f71f69ae2cc0d0423c81b7587aee6f7f36c525af4da5f173f40c73c36  ./docs/tasks/042-cost-pricing-gates/TASK_RU.md
+d8f82d246b48b248b2346d97b8bfcd45e4c72c6e15506b0710e0ea99a60c8a2f  ./docs/tasks/042-cost-pricing-gates/fixtures/cost_pricing.json
+bd14c8e3f2600ba5318211c6a9dd21750067516b2984ff4bd7c56ef378b017ba  ./docs/tasks/042-cost-pricing-gates/reference/cost_pricing_gates_prototype.mjs
+acbec86cbb28343cf6c71820df4c3a8fa43c24c16c6ac1ff16baad2d8778c89b  ./docs/tasks/042-cost-pricing-gates/reference/definition_fingerprint.mjs
+34eb1db6e707794bc19c92290a9047fc49e578dec0a9576d3ed3731761286a21  ./docs/tasks/042-cost-pricing-gates/reference/make_gated.mjs
+eee1444621456a792b9908d62ca7531fcf07fc0f0067902712dde95e568716e2  ./docs/tasks/042-cost-pricing-gates/scope.json
 44d2e557f1cb2322739bc95ee2b6dcbf6d6fcb708da14e90d53250936e50da5c  ./docs/tasks/README_RU.md
 bbf818e93b88d606b3137b1bb69d60db8c41c9df4089025a921b1ca00f473244  ./lab/APPLY_PATCH.cmd
 03799002cfccb38ee10f474f00942ec7bb14d843507597a9566221799ee45f79  ./lab/CHANGELOG.md
