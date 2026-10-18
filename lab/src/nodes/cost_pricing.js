@@ -8,6 +8,18 @@ const isPositive = value => typeof value === 'number' && Number.isFinite(value) 
 const fold = value => String(value).toLowerCase();
 const substitute = (template, colony) => template.replaceAll('{C}', colony);
 
+function validateGateName(name, switchName, path, errors) {
+  if (name === undefined) return;
+  if (!isString(name)) {
+    errors.push(`${path}: gate must be a non-empty string`);
+  } else if (name.includes('{C}')) {
+    errors.push(`${path}: gate must not contain {C}`);
+  } else if (name === switchName) {
+    errors.push(`${path}: gate must differ from node switch`);
+  }
+}
+
+
 function unknownFields(value, allowed, path, errors) {
   if (!isObject(value)) return;
   for (const field of Object.keys(value)) {
@@ -43,7 +55,7 @@ function uniqueName(value, seen, path, errors) {
 
 export function validateCostPricingDeclaration(decl, path, errors) {
   const top = ['type','version','colonies','switch','parameters','inputs','signals',
-    'wear_signals','costs','prices','markups','references','price_index'];
+    'wear_signals','wear_gates','costs','prices','markups','references','price_index'];
   unknownFields(decl, top, path, errors);
   for (const field of top) {
     if (!Object.hasOwn(decl, field)) errors.push(`${path}.${field}: required field is missing`);
@@ -95,6 +107,18 @@ export function validateCostPricingDeclaration(decl, path, errors) {
     }
   }
 
+  if (decl.wear_gates !== undefined) {
+    const p = `${path}.wear_gates`;
+    if (!isObject(decl.wear_gates)) {
+      errors.push(`${p}: expected object`);
+    } else {
+      unknownFields(decl.wear_gates, ['capital_goods', 'construction_materials'], p, errors);
+      for (const key of ['capital_goods', 'construction_materials']) {
+        validateGateName(decl.wear_gates[key], decl.switch, `${p}.${key}`, errors);
+      }
+    }
+  }
+
   const costNames = new Set();
   if (!Array.isArray(decl.costs) || !decl.costs.length) errors.push(`${path}.costs: non-empty array required`);
   else for (const [i, item] of decl.costs.entries()) {
@@ -115,7 +139,8 @@ export function validateCostPricingDeclaration(decl, path, errors) {
       else for (const [j, q] of item.inputs.entries()) {
         const qp = `${p}.inputs[${j}]`;
         if (!isObject(q)) { errors.push(`${qp}: expected object`); continue; }
-        unknownFields(q, ['per_unit','signal'], qp, errors);
+        unknownFields(q, ['per_unit','signal','gate'], qp, errors);
+        validateGateName(q.gate, decl.switch, `${qp}.gate`, errors);
         requiredString(q, 'per_unit', qp, errors);
         requiredString(q, 'signal', qp, errors);
         if (isString(q.signal) && !signalNames.has(fold(q.signal))) errors.push(`${qp}.signal: unknown signal "${q.signal}"`);
@@ -126,7 +151,8 @@ export function validateCostPricingDeclaration(decl, path, errors) {
     }
     if (item.wear !== undefined) {
       const wp = `${p}.wear`;
-      unknownFields(item.wear, ['capital_goods','construction_materials','depreciation'], wp, errors);
+      unknownFields(item.wear, ['capital_goods','construction_materials','depreciation','gate'], wp, errors);
+      validateGateName(item.wear.gate, decl.switch, `${wp}.gate`, errors);
       requiredString(item.wear, 'capital_goods', wp, errors);
       requiredString(item.wear, 'depreciation', wp, errors);
       if (item.wear.construction_materials !== undefined) requiredString(item.wear, 'construction_materials', wp, errors);
@@ -138,7 +164,8 @@ export function validateCostPricingDeclaration(decl, path, errors) {
   else for (const [i, item] of decl.prices.entries()) {
     const p = `${path}.prices[${i}]`;
     if (!isObject(item)) { errors.push(`${p}: expected object`); continue; }
-    unknownFields(item, ['target','cost','scarcity'], p, errors);
+    unknownFields(item, ['target','cost','scarcity','gate'], p, errors);
+    validateGateName(item.gate, decl.switch, `${p}.gate`, errors);
     for (const k of ['target','cost','scarcity']) requiredString(item,k,p,errors);
     uniqueName(item.target, targets, `${p}.target`, errors);
     const cost = (decl.costs || []).find(c => c.name === item.cost);
@@ -217,9 +244,38 @@ export function expandCostPricing(decl, base) {
   const V = (name, value, note) => add.push({ type: 'VARIABLE', name, behavior: { value }, description: `Cost pricing node: ${note || name}.` });
   const S = (name, initial, note) => add.push({ type: 'STOCK', name, behavior: { initial_value: initial, non_negative: true }, description: `Cost pricing node: ${note || name}.` });
   const F = (name, from, to, value, note) => add.push({ type: 'FLOW', name, from, to, behavior: { value, non_negative: true }, description: `Cost pricing node: ${note || name}.` });
-  const wrap = (name, fresh, oldRef) => { const old = oldRef ?? val(name); rep.push({ name, value: `IfThenElse(${ON}, ${fresh(`(${old})`)}, ${old})` }); };
+  const wrap = (name, fresh, oldRef, on = ON) => { const old = oldRef ?? val(name); rep.push({ name, value: `IfThenElse(${on}, ${fresh(`(${old})`)}, ${old})` }); };
   if (byName.has(SW)) throw new Error(`cost_pricing: switch "${SW}" already exists in base`);
   const refsOf = v => [...new Set([...String(v).matchAll(/\[([^\]]+)\]/g)].map(m => m[1]))];
+
+  // Every optional gate must point to a numeric, global base-model switch.
+  // Validation of all gate paths is completed before emitting formulas.
+  const gate = (name, location) => {
+    if (name === undefined) return '';
+    if (!isString(name) || name.includes('{C}') || name === SW) {
+      throw new Error(`${location}: invalid gate "${name}"`);
+    }
+    const element = byName.get(name);
+    if (!element) throw new Error(`${location}: gate "${name}" missing from base`);
+    if (element.type !== 'VARIABLE' ||
+        (element.behavior?.value !== 0 && element.behavior?.value !== 1)) {
+      throw new Error(`${location}: gate "${name}" must be numeric 0/1 VARIABLE`);
+    }
+    return ` * [${name}]`;
+  };
+  const WG = decl.wear_gates || {};
+  for (const key of ['capital_goods', 'construction_materials']) {
+    gate(WG[key], `node.wear_gates.${key}`);
+  }
+  for (const [i, cost] of decl.costs.entries()) {
+    for (const [j, input] of (cost.inputs || []).entries()) {
+      gate(input.gate, `node.costs[${i}].inputs[${j}].gate`);
+    }
+    if (cost.wear) gate(cost.wear.gate, `node.costs[${i}].wear.gate`);
+  }
+  for (const [i, price] of decl.prices.entries()) {
+    gate(price.gate, `node.prices[${i}].gate`);
+  }
 
   V(SW, 0, 'switch of cost pricing (0 = every earlier series unchanged)');
   for (const [k, v] of Object.entries(P)) V(k, v, `parameter ${k}`);
@@ -235,10 +291,10 @@ export function expandCostPricing(decl, base) {
     }
     for (const c of decl.costs) {
       const terms = [];
-      for (const q of c.inputs || []) terms.push(`[${sub(q.per_unit, X)}] * ${sig(q.signal)}`);
+      for (const q of c.inputs || []) terms.push(`[${sub(q.per_unit, X)}] * ${sig(q.signal)}${gate(q.gate)}`);
       if (c.labor) terms.push(`[${sub(c.labor, X)}]${c.automation ? ` * [${sub(c.automation, X)}]` : ''} * ${W}`);
-      const wear = c.wear ? `(${[`[${sub(c.wear.capital_goods, X)}] * ${sig(decl.wear_signals.capital_goods)}`,
-                                ...(c.wear.construction_materials ? [`[${sub(c.wear.construction_materials, X)}] * ${sig(decl.wear_signals.construction_materials)}`] : [])].join(' + ')}) * [${sub(c.wear.depreciation, X)}]` : null;   // construction materials optional (farms use none)
+      const wear = c.wear ? `(${[`[${sub(c.wear.capital_goods, X)}] * ${sig(decl.wear_signals.capital_goods)}${gate(WG.capital_goods)}`,
+                                ...(c.wear.construction_materials ? [`[${sub(c.wear.construction_materials, X)}] * ${sig(decl.wear_signals.construction_materials)}${gate(WG.construction_materials)}`] : [])].join(' + ')}) * [${sub(c.wear.depreciation, X)}]${gate(c.wear.gate)}` : null;   // construction materials optional (farms use none)
       if (c.extend) {
         const wn = `${X} ${c.name} Capital Wear`;
         V(wn, wear, `${c.name.toLowerCase()} capital wear per unit`);
@@ -253,7 +309,8 @@ export function expandCostPricing(decl, base) {
     for (const p of decl.prices) {
       const scarcity = sub(p.scarcity, X);
       for (const r of refsOf(scarcity)) must(r);
-      wrap(sub(p.target, X), () => `[${X} ${p.cost} Full Cost] * ${MU} * ${scarcity}`);
+      const on = p.gate === undefined ? ON : `[${SW}]${gate(p.gate)} = 1`;
+      wrap(sub(p.target, X), () => `[${X} ${p.cost} Full Cost] * ${MU} * ${scarcity}`, undefined, on);
     }
     for (const m of decl.markups) wrap(sub(m, X), () => `[${MARKUP}]`);
     for (const r of decl.references) {
