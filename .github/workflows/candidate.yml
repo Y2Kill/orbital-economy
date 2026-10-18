@@ -29,7 +29,7 @@ jobs:
   candidate:
     name: candidate
     runs-on: ubuntu-latest
-    timeout-minutes: 60
+    timeout-minutes: 120
     env:
       MODES: ${{ github.event_name == 'workflow_dispatch' && inputs.modes || 'all' }}
     steps:
