@@ -2694,5 +2694,236 @@ await expect('80. money first layer and 73 earlier NODE cases survive accepted+m
   return 'money first; older 73/73 PASS on accepted+money';
 });
 
+
+let gatedCostState = null;
+
+await expect('81. gated cost_pricing expansion yields 81/22/420 and reference fingerprint', () => {
+  const base = withoutCost;
+  const expanded = expandNode(costPricingGatedFixture, base);
+  const counts = [expanded.patch.add_elements.length,
+    expanded.patch.replace_formulas.length, expanded.patch.add_links.length].join('/');
+  if (counts !== '81/22/420') throw new Error('gated patch counts: ' + counts);
+  const model = applyPatch(base, { format: PATCH_FORMAT, ...expanded.patch }).model;
+  const fp = definitionFingerprint(model);
+  if (base.name.includes('v7.7.15') && fp !== 'c5b7f68fc75695d0') {
+    throw new Error('gated fingerprint ' + fp + ', expected c5b7f68fc75695d0');
+  }
+  const old = expandNode(costPricingFixture, base);
+  if (JSON.stringify(expanded.validation) !== JSON.stringify(old.validation)) {
+    throw new Error('gate declarations changed validation fragment');
+  }
+  const created = expanded.patch.add_elements.filter(e => e.type !== 'LINK');
+  const before = [...created.map(e => [e.name, e.behavior.value ?? e.behavior.initial_value]),
+    ...expanded.patch.replace_formulas.map(e => [e.name, e.value])];
+  const previous = new Map([
+    ...old.patch.add_elements.map(e => [e.name, e.behavior.value ?? e.behavior.initial_value]),
+    ...old.patch.replace_formulas.map(e => [e.name, e.value])]);
+  const changed = before.filter(([name,value]) => value !== previous.get(name)).map(([name]) => name);
+  if (changed.length !== 20 ||
+      changed.filter(n => n.endsWith(' Full Cost')).length !== 14 ||
+      changed.filter(n => n.endsWith(' Capital Wear')).length !== 4 ||
+      changed.filter(n => n.endsWith(' Power Resource Price')).length !== 2) {
+    throw new Error('gated formula delta not 14 full cost + 4 wear + 2 power prices: ' +
+      JSON.stringify(changed));
+  }
+  gatedCostState = { base, expanded, model, old };
+  return counts + ', fingerprint ' + fp + ', changed formulas 14/4/2';
+});
+
+await expect('82. ungated cost_pricing preserves 81/22/356 and legacy formula bytes', () => {
+  if (!gatedCostState) throw new Error('case 81 must run first');
+  const { base, old } = gatedCostState;
+  const again = expandNode(costPricingFixture, base);
+  if (JSON.stringify(again) !== JSON.stringify(old)) throw new Error('plain expansion unstable');
+  const counts = [again.patch.add_elements.length, again.patch.replace_formulas.length,
+    again.patch.add_links.length].join('/');
+  if (counts !== '81/22/356') throw new Error('plain counts ' + counts);
+  const model = applyPatch(base, { format: PATCH_FORMAT, ...again.patch }).model;
+  const fp = definitionFingerprint(model);
+  if (base.name.includes('v7.7.15') && fp !== '6fe385abca34eabd') {
+    throw new Error('plain fingerprint ' + fp);
+  }
+  return counts + ', fingerprint ' + fp + ', ungated expansion stable';
+});
+
+await expect('83. all gates = 1: gated vs plain runtime bit-identical', () => {
+  if (!gatedCostState) throw new Error('case 81 must run first');
+  const { base, model, old } = gatedCostState;
+  const plain = applyPatch(base, { format: PATCH_FORMAT, ...old.patch }).model;
+  const gates = new Set([
+    ...Object.values(costPricingGatedFixture.wear_gates),
+    ...costPricingGatedFixture.costs.flatMap(c =>
+      [...(c.inputs || []).map(i => i.gate), c.wear?.gate]),
+    ...costPricingGatedFixture.prices.map(p => p.gate)
+  ].filter(Boolean));
+  const run = raw => {
+    const scenario = structuredClone(raw.scenarios.at(-1));
+    scenario.values = { ...scenario.values, [costPricingFixture.switch]: 1 };
+    for (const name of gates) scenario.values[name] = 1;
+    const engine = loadModelJSON(modelJsonForScenario(raw, scenario));
+    const errors = engine.check();
+    if (errors.length) throw new Error('model.check: ' +
+      errors.map(e => e.message || e).join('; '));
+    const output = engine.simulate();
+    return { engine, output, ctx: seriesContext(engine, output) };
+  };
+  const a = run(model), b = run(plain);
+  const names = model.elements.filter(e => e.type !== 'LINK').map(e => e.name);
+  for (const name of names) {
+    const va = a.ctx.get(name), vb = b.ctx.get(name);
+    if (va.length !== vb.length || va.some((value, i) => !Object.is(value, vb[i]))) {
+      throw new Error('all-gates-on series not bit-identical: ' + name);
+    }
+  }
+  gatedCostState.run = run;
+  gatedCostState.allOn = a;
+  gatedCostState.gates = [...gates];
+  return names.length + ' series bit-identical (gate factors multiply by 1)';
+});
+
+await expect('84. process energy gate removes ore energy cost and plugins still PASS', () => {
+  if (!gatedCostState?.run) throw new Error('case 83 must run first');
+  const { model, run, allOn, expanded } = gatedCostState;
+  const scenario = structuredClone(model.scenarios.at(-1));
+  scenario.values = { ...scenario.values, [costPricingFixture.switch]: 1 };
+  for (const gate of gatedCostState.gates) scenario.values[gate] = 1;
+  scenario.values['Process Energy Enabled'] = 0;
+  const engine = loadModelJSON(modelJsonForScenario(model, scenario));
+  const errors = engine.check();
+  if (errors.length) throw new Error('model.check: ' +
+    errors.map(e => e.message || e).join('; '));
+  const output = engine.simulate();
+  const ctx = seriesContext(engine, output);
+  const full = ctx.get('A Ore Full Cost');
+  const original = allOn.ctx.get('A Ore Full Cost');
+  if (!full.some((value,i) => value < original[i] - 1e-9)) {
+    throw new Error('turning Process Energy Enabled off did not reduce A Ore Full Cost');
+  }
+  const merged = mergeNodeValidation(withoutCostValidation, [expanded.validation]);
+  const checks = [
+    checkFiniteAll(engine, output),
+    checkTimeAxis(output, merged.expected_time_step ?? model.simulation.time_step,
+      merged.time_step_tolerance ?? 1e-12)
+  ];
+  for (const plugin of merged.plugins) checks.push(...checkPlugin(plugin,ctx));
+  const failures = checks.filter(x => x.status === 'FAIL');
+  if (failures.length) throw new Error('plugin checks failed: ' +
+    failures.slice(0,7).map(x => x.name + ': ' + x.message).join('; '));
+  return 'A Ore Full Cost falls, all merged runtime plugins PASS';
+});
+
+await expect('85. gated cost_pricing peel and rebuild restore exact base and gate links', () => {
+  if (!gatedCostState) throw new Error('case 81 must run first');
+  const { model, base } = gatedCostState;
+  const stripped = stripCostPricingNode(model, costPricingGatedFixture);
+  const rebuilt = applyPatch(stripped, { format: PATCH_FORMAT,
+    ...expandNode(costPricingGatedFixture, stripped).patch }).model;
+  for (const [expected, actual] of [[base, stripped], [model, rebuilt]]) {
+    const defs = new Map(expected.elements.filter(e => e.type !== 'LINK')
+      .map(e => [e.name, def(e)]));
+    const got = new Map(actual.elements.filter(e => e.type !== 'LINK')
+      .map(e => [e.name, def(e)]));
+    if (defs.size !== got.size) throw new Error('primitive count after peel/rebuild differs');
+    for (const [name, value] of defs) if (got.get(name) !== value) {
+      throw new Error('definition mismatch after peel/rebuild: ' + name);
+    }
+    if (!sameSet(linkSet(expected), linkSet(actual))) throw new Error('LINK mismatch');
+  }
+  for (const region of costPricingGatedFixture.colonies) {
+    const name = region + ' Power Resource Price';
+    const before = base.elements.find(e => e.type !== 'LINK' && e.name === name);
+    const after = stripped.elements.find(e => e.type !== 'LINK' && e.name === name);
+    if (def(before) !== def(after) ||
+        stripped.elements.some(e => e.type === 'LINK' &&
+          e.from === 'Power Resource Enabled' && e.to === name &&
+          !String(after.behavior.value).includes('[Power Resource Enabled]'))) {
+      throw new Error('gated price was not restored: ' + name);
+    }
+  }
+  return '0 diffs, restored power resource prices and cleaned gate links';
+});
+
+await expect('86. cost pricing gates reject six malformed references with paths', async () => {
+  const base = gatedCostState?.base || withoutCost;
+  const invalid = async (modify, pattern, label) => {
+    const decl = structuredClone(costPricingGatedFixture);
+    modify(decl);
+    await requireThrow(() => expandNode(decl, base), pattern, label);
+  };
+  await invalid(d => d.costs[0].inputs[0].gate = 'Missing Physical Gate',
+    /node\\.costs\\[0\\]\\.inputs\\[0\\]\\.gate/, 'missing gate');
+  await invalid(d => d.costs[0].wear.gate = 'Cost Price Signal Time',
+    /node\\.costs\\[0\\]\\.wear\\.gate/, 'non 0/1 constant');
+  await invalid(d => d.prices[1].gate = d.switch,
+    /node\\.prices\\[1\\]\\.gate/, 'self gate');
+  await invalid(d => d.costs[0].inputs[0].gate = '{C} Process Energy Enabled',
+    /node\\.costs\\[0\\]\\.inputs\\[0\\]\\.gate/, 'regional gate');
+  await invalid(d => d.wear_gates.unexpected = 'Power Resource Enabled',
+    /node\\.wear_gates\\.unexpected/, 'unknown wear gate');
+  await invalid(d => d.prices[1].gate = 'A Price Index',
+    /node\\.prices\\[1\\]\\.gate/, 'gate is a formula rather than 0/1');
+  return 'six expected gate schema/base errors rejected';
+});
+
+await expect('87. gated accepted-model layering: money first, cost pricing second, cases 1-80', () => {
+  if (!gatedCostState) throw new Error('case 81 must run first');
+  const plain = expandNode(costPricingFixture, gatedCostState.base);
+  const gated = gatedCostState.expanded;
+  const formulaMap = patch => new Map([
+    ...patch.add_elements.map(e => [e.name, e.behavior.value ?? e.behavior.initial_value]),
+    ...patch.replace_formulas.map(e => [e.name, e.value])
+  ]);
+  const originals = formulaMap(plain.patch);
+  const updated = formulaMap(gated.patch);
+  const acceptedGated = structuredClone(suppliedAccepted);
+  const named = new Map(acceptedGated.elements.filter(e => e.type !== 'LINK')
+    .map(e => [e.name,e]));
+  for (const [name, value] of updated) {
+    if (value === originals.get(name)) continue;
+    const element = named.get(name);
+    if (!element || String(element.behavior.value) !== String(originals.get(name))) {
+      throw new Error('accepted layer does not carry plain formula: ' + name);
+    }
+    element.behavior.value = value;
+  }
+  const existing = linkSet(acceptedGated);
+  for (const link of gated.patch.add_links) {
+    const key = link.from + '|' + link.to;
+    if (!existing.has(key)) {
+      acceptedGated.elements.push({ type: 'LINK', from: link.from, to: link.to });
+      existing.add(key);
+    }
+  }
+  const matching = acceptedLayeredNodes.filter(n => !n.decl.switch ||
+    acceptedGated.elements.some(e => e.type !== 'LINK' && e.name === n.decl.switch));
+  const chain = buildLayers(acceptedGated, matching);
+  if (chain.order[0]?.decl.type !== 'money' || chain.order[1]?.decl.type !== 'cost_pricing') {
+    throw new Error('expected money then gated cost_pricing at top: ' +
+      chain.order.slice(0,3).map(n => n.decl.type).join(' -> '));
+  }
+  const audit = runStructureAudits(acceptedGated, suppliedValidation);
+  if (audit.status !== 'PASS' || audit.algebraicLoops.combinationsWithLoops !== 0) {
+    throw new Error('gated accepted model audit: ' + JSON.stringify(audit));
+  }
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'orbital-economy-gated-'));
+  try {
+    const modelFile = path.join(dir,'accepted.json');
+    const validationFile = path.join(dir,'validation.json');
+    fs.writeFileSync(modelFile,JSON.stringify(acceptedGated));
+    fs.writeFileSync(validationFile,JSON.stringify(suppliedValidation,null,2)+'\\n');
+    const run = spawnSync(process.execPath, [
+      '--expose-gc', path.join(root,'src','node_qa.js'), '--cases=1-80',
+      '--accepted-model=' + modelFile, '--accepted-validation=' + validationFile
+    ], { cwd:root, encoding:'utf8', maxBuffer:16<<20 });
+    if (run.status !== 0 || !run.stdout.includes('NODE SELF-TEST: 80 passed, 0 failed')) {
+      throw new Error('gated accepted 1-80 regression failed: ' +
+        (run.stderr || '').slice(-4000) + '\\n' + (run.stdout || '').slice(-5000));
+    }
+  } finally {
+    fs.rmSync(dir,{recursive:true,force:true});
+  }
+  return 'money then cost_pricing; 1-80/80 PASS on gated accepted model';
+});
+
 console.log(`\nNODE SELF-TEST: ${passed} passed, ${failed} failed`);
 if (failed) process.exitCode = 1;
