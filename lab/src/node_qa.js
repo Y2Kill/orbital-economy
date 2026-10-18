@@ -203,7 +203,7 @@ function oldBranch(value, switchName, targetName) {
   const plain = args[0] === `[${switchName}] = 1`;
   const gated = switchName === 'Cost Pricing Enabled' &&
     args[0].startsWith(`[${switchName}] * [`) &&
-    /^\\[[^\\]]+\\] \\* \\[[^\\]]+\\] = 1$/.test(args[0]);
+    /^\[[^\]]+\] \* \[[^\]]+\] = 1$/.test(args[0]);
   if (args.length !== 3 || (!plain && !gated)) {
     throw new Error(`${targetName}: outer switch is not ${switchName}`);
   }
@@ -448,13 +448,13 @@ function stripCostPricingNode(raw, decl) {
   // oldBranch() returns text; restore the original JSON number type, not a string.
   const markupTargets = new Set((decl.colonies || []).flatMap(colony =>
     (decl.markups || []).map(name => name.replaceAll('{C}', colony))));
-  const numericLiteral = /^-?(?:\\d+(?:\\.\\d*)?|\\.\\d+)(?:e[+-]?\\d+)?$/i;
+  const numericLiteral = /^-?(?:\d+(?:\.\d*)?|\.\d+)(?:e[+-]?\d+)?$/i;
   const extraPriceLinks = new Set();
   for (const name of costPricingReplacementNames(decl)) {
     const element = byName.get(name);
     if (!element) throw new Error('cost_pricing: replacement target missing: ' + name);
     const formula = String(element.behavior.value);
-    const match = formula.match(/^IfThenElse\\(\\[Cost Pricing Enabled\\] \\* \\[([^\\]]+)\\] = 1,/);
+    const match = formula.match(/^IfThenElse\(\[Cost Pricing Enabled\] \* \[([^\]]+)\] = 1,/);
     const old = oldBranch(formula, decl.switch, name);
     if (match && !old.includes(`[${match[1]}]`)) {
       extraPriceLinks.add(`${match[1]}|${name}`);
@@ -2781,35 +2781,45 @@ await expect('83. all gates = 1: gated vs plain runtime bit-identical', () => {
   return names.length + ' series bit-identical (gate factors multiply by 1)';
 });
 
-await expect('84. process energy gate removes ore energy cost and plugins still PASS', () => {
-  if (!gatedCostState?.run) throw new Error('case 83 must run first');
-  const { model, run, allOn, expanded } = gatedCostState;
-  const scenario = structuredClone(model.scenarios.at(-1));
+await expect('84. Mode 44: process energy gate reduces ore cost and plugins still PASS', () => {
+  if (!gatedCostState) throw new Error('case 81 must run first');
+  const { base, model, old, expanded } = gatedCostState;
+  const source = model.scenarios.find(sc => /\bMode\s*44\b/i.test(sc.name || '')) ||
+    model.scenarios[44];
+  if (!source) throw new Error('Mode 44 scenario is missing');
+  if (Number(source.values?.['Process Energy Enabled']) !== 0) {
+    throw new Error('Mode 44 must disable Process Energy Enabled in the original scenario');
+  }
+  const scenario = structuredClone(source);
   scenario.values = { ...scenario.values, [costPricingFixture.switch]: 1 };
-  for (const gate of gatedCostState.gates) scenario.values[gate] = 1;
-  scenario.values['Process Energy Enabled'] = 0;
-  const engine = loadModelJSON(modelJsonForScenario(model, scenario));
-  const errors = engine.check();
-  if (errors.length) throw new Error('model.check: ' +
-    errors.map(e => e.message || e).join('; '));
-  const output = engine.simulate();
-  const ctx = seriesContext(engine, output);
-  const full = ctx.get('A Ore Full Cost');
-  const original = allOn.ctx.get('A Ore Full Cost');
-  if (!full.some((value,i) => value < original[i] - 1e-9)) {
-    throw new Error('turning Process Energy Enabled off did not reduce A Ore Full Cost');
+  const runMode44 = raw => {
+    const engine = loadModelJSON(modelJsonForScenario(raw, scenario));
+    const errors = engine.check();
+    if (errors.length) throw new Error('model.check: ' +
+      errors.map(e => e.message || e).join('; '));
+    const output = engine.simulate();
+    return { engine, output, ctx: seriesContext(engine, output) };
+  };
+  const gated = runMode44(model);
+  const plainModel = applyPatch(base, { format: PATCH_FORMAT, ...old.patch }).model;
+  const plain = runMode44(plainModel);
+  const full = gated.ctx.get('A Ore Full Cost');
+  const originalCost = plain.ctx.get('A Ore Full Cost');
+  if (full.length !== originalCost.length ||
+      !full.some((value, i) => value < originalCost[i] - 1e-9)) {
+    throw new Error('Mode 44 gated A Ore Full Cost is not below ungated cost');
   }
   const merged = mergeNodeValidation(withoutCostValidation, [expanded.validation]);
   const checks = [
-    checkFiniteAll(engine, output),
-    checkTimeAxis(output, merged.expected_time_step ?? model.simulation.time_step,
+    checkFiniteAll(gated.engine, gated.output),
+    checkTimeAxis(gated.output, merged.expected_time_step ?? model.simulation.time_step,
       merged.time_step_tolerance ?? 1e-12)
   ];
-  for (const plugin of merged.plugins) checks.push(...checkPlugin(plugin,ctx));
+  for (const plugin of merged.plugins) checks.push(...checkPlugin(plugin, gated.ctx));
   const failures = checks.filter(x => x.status === 'FAIL');
-  if (failures.length) throw new Error('plugin checks failed: ' +
-    failures.slice(0,7).map(x => x.name + ': ' + x.message).join('; '));
-  return 'A Ore Full Cost falls, all merged runtime plugins PASS';
+  if (failures.length) throw new Error('Mode 44 plugin checks failed: ' +
+    failures.slice(0, 7).map(x => x.name + ': ' + x.message).join('; '));
+  return 'Mode 44 (process energy already off): gated ore cost below ungated; merged runtime plugins PASS';
 });
 
 await expect('85. gated cost_pricing peel and rebuild restore exact base and gate links', () => {
@@ -2851,17 +2861,17 @@ await expect('86. cost pricing gates reject six malformed references with paths'
     await requireThrow(() => expandNode(decl, base), pattern, label);
   };
   await invalid(d => d.costs[0].inputs[0].gate = 'Missing Physical Gate',
-    /node\\.costs\\[0\\]\\.inputs\\[0\\]\\.gate/, 'missing gate');
+    /node\.costs\[0\]\.inputs\[0\]\.gate/, 'missing gate');
   await invalid(d => d.costs[0].wear.gate = 'Cost Price Signal Time',
-    /node\\.costs\\[0\\]\\.wear\\.gate/, 'non 0/1 constant');
+    /node\.costs\[0\]\.wear\.gate/, 'non 0/1 constant');
   await invalid(d => d.prices[1].gate = d.switch,
-    /node\\.prices\\[1\\]\\.gate/, 'self gate');
+    /node\.prices\[1\]\.gate/, 'self gate');
   await invalid(d => d.costs[0].inputs[0].gate = '{C} Process Energy Enabled',
-    /node\\.costs\\[0\\]\\.inputs\\[0\\]\\.gate/, 'regional gate');
+    /node\.costs\[0\]\.inputs\[0\]\.gate/, 'regional gate');
   await invalid(d => d.wear_gates.unexpected = 'Power Resource Enabled',
-    /node\\.wear_gates\\.unexpected/, 'unknown wear gate');
+    /node\.wear_gates\.unexpected/, 'unknown wear gate');
   await invalid(d => d.prices[1].gate = 'A Price Index',
-    /node\\.prices\\[1\\]\\.gate/, 'gate is a formula rather than 0/1');
+    /node\.prices\[1\]\.gate/, 'gate is a formula rather than 0/1');
   return 'six expected gate schema/base errors rejected';
 });
 
@@ -2910,14 +2920,14 @@ await expect('87. gated accepted-model layering: money first, cost pricing secon
     const modelFile = path.join(dir,'accepted.json');
     const validationFile = path.join(dir,'validation.json');
     fs.writeFileSync(modelFile,JSON.stringify(acceptedGated));
-    fs.writeFileSync(validationFile,JSON.stringify(suppliedValidation,null,2)+'\\n');
+    fs.writeFileSync(validationFile,JSON.stringify(suppliedValidation,null,2)+'\n');
     const run = spawnSync(process.execPath, [
       '--expose-gc', path.join(root,'src','node_qa.js'), '--cases=1-80',
       '--accepted-model=' + modelFile, '--accepted-validation=' + validationFile
     ], { cwd:root, encoding:'utf8', maxBuffer:16<<20 });
     if (run.status !== 0 || !run.stdout.includes('NODE SELF-TEST: 80 passed, 0 failed')) {
       throw new Error('gated accepted 1-80 regression failed: ' +
-        (run.stderr || '').slice(-4000) + '\\n' + (run.stdout || '').slice(-5000));
+        (run.stderr || '').slice(-4000) + '\n' + (run.stdout || '').slice(-5000));
     }
   } finally {
     fs.rmSync(dir,{recursive:true,force:true});
