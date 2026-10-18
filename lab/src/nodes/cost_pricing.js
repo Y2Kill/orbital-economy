@@ -58,7 +58,9 @@ export function validateCostPricingDeclaration(decl, path, errors) {
     'wear_signals','wear_gates','costs','prices','markups','references','price_index'];
   unknownFields(decl, top, path, errors);
   for (const field of top) {
-    if (!Object.hasOwn(decl, field)) errors.push(`${path}.${field}: required field is missing`);
+    if (field !== 'wear_gates' && !Object.hasOwn(decl, field)) {
+      errors.push(`${path}.${field}: required field is missing`);
+    }
   }
   if (decl.version !== 1) errors.push(`${path}.version: must be 1`);
   requiredString(decl, 'switch', path, errors);
