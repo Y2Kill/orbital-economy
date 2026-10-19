@@ -71,3 +71,18 @@
 ## Ограничения
 
 В этой среде нельзя исполнить локально строгий guard, Node bench, APPLY_PATCH, fingerprint, 60 Modes и Windows приёмку. Их прохождение не заявляется до GitHub Actions и проверки владельца. Не затрагиваются `main`, `model/nodes/*`, `model/`, `validation/`, `policy/`, `tools/`, `.github/`, `SHA256SUMS.txt`. `sums_by: reviewer`; `[skip ci]` не использовать.
+
+
+## Подтверждение CI — 2026-10-19
+
+Кодовая голова кандидата: `17d7fb5ce65eae079db088989254839f1844e4ff`.
+
+- **Candidate acceptance 39223272345 — SUCCESS:** https://github.com/Y2Kill/orbital-economy/actions/runs/39223272345 . Все 5 шагов зелёные: apply-patch, conformance, audit, validation и policy. Итоговый candidate SHA-256: `80a03e92aeccb9cae033be5eba08e64881002ebc496a6d5197f153760a69b04e`; validation SHA-256: `79b4ab4f571b4a537f150c229c563779e097bdefa0a91fb0b24387040f660dde`.
+- **CI 39223272549 — SUCCESS:** https://github.com/Y2Kill/orbital-economy/actions/runs/39223272549 . Зелёные jobs guard, tools-selftest, bench-selftests; node_qa: **87 passed, 0 failed**; остальные selftests и короткий bench (Modes 0,12) — PASS. CI guard: `BRANCH CHECK: PASS (0 fail, 1 warn)`; предупреждение об устаревшем SHA256SUMS допустимо при `sums_by: reviewer` и не означает строгий guard.
+- **КТ1:** apply-patch, conformance, audit подтверждены зелёным candidate.yml 39223272345. Из лога: граничных потоков **302**, `symmetry mismatches=0`, `algebraic loops=0/1048576`, `planet_v1=PASS`. Точное значение definition fingerprint `024f99393d36e71e` *не было напечатано CI*; оно подтверждалось предварительным skeleton владельца, но требует отдельной проверки по N1/ревью. Поэтому КТ1 **не отмечается полностью закрытой**.
+- **КТ2 — PASS:** зелёный candidate.yml 39223272345; `POLICY RESULT: PASS`, **56506** событий, все **56506** разрешены, **0 unexpected**. В Modes 56–59 при сравнении изменены по **8 рядов**, прочих разрешений policy не добавлялось.
+- **КТ3:** зелёный candidate.yml 39223272345; в логе **60 раз** `Candidate validation: PASS`, Modes 0–59, без ошибок. Приложенная выше таблица содержит известные ориентиры из skeleton, но не является полной подтверждённой таблицей всех пересмотренных проверок: КТ3 **по CI подтверждена, а табличная часть ещё не закрыта**.
+- **КТ4 — CI-условия PASS:** на кодовом коммите `17d7fb5` candidate.yml **5/5 PASS** (39223272345), ci.yml **SUCCESS** (39223272549). Пять требуемых файлов, включая отчёт, уже присутствовали в этом коммите. Окончательная приёмка остаётся за владельцем (строгий guard, Windows N2, ревью 24 формул/64 связей/сценариев, подтверждение fingerprint и проверка таблицы).
+- Отмены по лимиту времени у двух проверенных запусков **не было**. Строгий guard без `--in-progress` в Git checkout агентом не исполнялся; его PASS не заявляется.
+
+Новые изменения в этой записи — только дополнение журнала; рабочие файлы `candidate/` после зелёных проверок не изменялись.
