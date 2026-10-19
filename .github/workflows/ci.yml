@@ -147,7 +147,16 @@ jobs:
         run: node --expose-gc src/compare_qa.js
       - name: Node self-test
         working-directory: lab
-        run: node --expose-gc src/node_qa.js
+        # Five independent case blocks in parallel (2026-10-19): one process took ~95 min on Windows; the nested
+        # re-runs of cases 66, 73, 80 and 87 dominate, so blocks finish in about the time of the largest one.
+        run: |
+          blocks="1-59 60-66 67-73 74-80 81-87"
+          pids=""
+          for c in $blocks; do node --expose-gc src/node_qa.js --cases=$c > node-qa-$c.log 2>&1 & pids="$pids $!"; done
+          rc=0
+          for p in $pids; do wait $p || rc=1; done
+          for c in $blocks; do echo "===== node_qa --cases=$c"; cat node-qa-$c.log; done
+          exit $rc
       - name: Bench self-test (Modes 0,12)
         working-directory: lab
         run: node --expose-gc src/cli.js lab --input=input --modes=0,12

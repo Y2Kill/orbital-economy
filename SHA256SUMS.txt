@@ -1,7 +1,7 @@
 e3e17a68147b548710eb8750b9c9917d89b9f2923098dbcef77861d4fd374fe4  ./.gitattributes
 5ec2b39f89176037b885fce0ae73a5000b5961f718a3b70f1d21772e2a0d9e96  ./.github/workflows/bench-full.yml
 8e2a0b0893da5548d53b2adb5e71882f4e82256d5cd0803d9b5d393087a0672a  ./.github/workflows/candidate.yml
-7baa3bb64ab6f689a3ed1f6596eeb780bc4a47ecab93cbba5718a67126f72fff  ./.github/workflows/ci.yml
+c883e846fd176b245b01b5e24672398c79edf1598ed77b8d87569ceac930bbd1  ./.github/workflows/ci.yml
 39a069346ae5c7e06a0868fe493c0e2cf6491644a36cf80ac56c4842a5ebbc25  ./.github/workflows/cross-os.yml
 240161132e72dc13384c6f5d0876f409c1b7e6c396fb98e4c46b9c20f0237b72  ./.gitignore
 4fc44a7a70d4aa4403cdca537412255cae70503679dd4a2e67d99625da79e82e  ./BASELINE_MANIFEST.json
