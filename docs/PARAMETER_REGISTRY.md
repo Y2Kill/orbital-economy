@@ -1,8 +1,8 @@
 # Orbital Economy — реестр внешних параметров
 
-- generated: 2026-10-19T11:43:08.063Z
+- generated: 2026-10-19T16:54:15.724Z
 - model: Orbital Economy v7.7.18 r1 — Recalibration onto Cost Prices — SHA-256 `43034a2890e06c030b04433a3ed9cebf1961d4ccf9101766a8394d2033748b48`
-- annotations: docs/PARAMETER_ANNOTATIONS.json (SHA-256 `4fc603493a046e607967722c746a56d0f2d924960f59432e317342fd41fc921f`)
+- annotations: docs/PARAMETER_ANNOTATIONS.json (SHA-256 `e0f37c5e13e577ac9455e04471fd0a76f17a9ac165ad3188c0dfba49fef8766d`)
 
 Всё, что модель не выводит сама: числовые константы, начальные запасы, переключатели, тестовые множители. Инвентарь сгенерирован из ModelJSON; аннотации («роль / что меняет / доказательство») ведутся вручную и версионируются вместе с baseline.
 
@@ -548,7 +548,7 @@
 | Process Energy Enabled | switch | 1 | Process-energy layer master switch, raw value 1. | 0 preserves accepted v7.7.8 process-rate and allocator behaviour in Modes 0-45; 1 enables energy requests and fulfillment-limited process rates in Modes 46-47. | V7_7_9_ARCHITECTURE_SPEC §1–§2 and draft/process-energy.json. |
 | Regolith Capital Enabled | switch | 1 | Regolith simple-capital master switch, raw value 1. | 0 preserves accepted Modes 0-37 exactly; 1 makes regolith extraction capacity read mine capital and enables mine expansion, depreciation, retirement, and backing-resource sinks. | V7_7_5_ARCHITECTURE_SPEC §0–§3; owner node declaration. |
 | Transport Construction Materials Enabled | switch | 1 | v7.7.1 shared-Transport Construction Materials master switch. | 0 preserves Modes 0-29 exactly; 1 makes shared Transport expansion require both Capital Goods and Construction Materials. | V7_7_1_ARCHITECTURE_SPEC §0–§3. |
-| Wage Pricing Enabled | switch | 0 | Переключатель wage_pricing: 0 по умолчанию; 1 только в Modes 54–55. | Ценовой спрос (η = 0.5) использует новые опорные цены; затратные цены перекрывают прямой канал изменения цен от зарплаты, сохраняя передачу через себестоимость. Вывод wage_pricing — отдельная задача. | docs/tasks/043-recalibration/V7_7_18_RECALIBRATION_SPEC.md §§0–5; docs/research/RECALIBRATION_PREP_2026-10-18_RU.md §1.2, §3, §4 |
+| Wage Pricing Enabled | switch | 0 | Переключатель wage_pricing: 0 по умолчанию; 1 только в Modes 54–55. Слой заморожен как устаревший (решение владельца 2026-10-19, вариант 4): модель не меняется, слой не развивается и не используется в новых Modes. | Ценовой канал (цены руды, энергии, еды вслед за зарплатой) перекрыт затратными ценами во всех Modes: эта ветка формул не вычисляется ни в одном Mode, зарплата доходит до цен через трудовые затраты. Жив только ценовой спрос (η = 0.5) в Modes 54–55; рядом с бюджетами домохозяйств его вклад мал (пик цены металла A 60.30 против 60.44 в Mode 53). Modes 54–55 — регрессия ценового спроса. Вернуться: при удалении выключенных веток (ROADMAP) или когда цены товаров разойдутся и ценовой спрос станет каналом замещения (вариант 3: включить его в полных Modes). | docs/tasks/043-recalibration/V7_7_18_RECALIBRATION_SPEC.md §§0–5; docs/research/RECALIBRATION_PREP_2026-10-18_RU.md §1.2, §3, §4; решение владельца 2026-10-19 (варианты 1–4: оставить, убрать, сделать частью модели, заморозить) — docs/ROADMAP.md |
 | Priority Stress A Ore Base Cost | test_wiring | 4 | Нейтральная A-сторона override-константа ore base cost для Mode 8. | Равна A Ore Base Cost = 4; позволяет A Effective Ore Base Cost иметь ту же test chain, что B, сохраняя прежний результат. |  |
 | Reverse A Mining Capacity | test_wiring | 70 | Нейтральная A-сторона override-константа mining capacity для Mode 4. | Равна A Mining Capacity = 70; симметризует ветку Reverse Advantage без изменения численного результата A. |  |
 | Reverse A Wage | test_wiring | 100 | Нейтральная A-сторона override-константа Mode 4; зеркало Reverse B Wage. | Равна A Wage = 100, поэтому введение A Effective Wage не меняет A в Mode 4; позволяет сделать cost wiring A/B структурно зеркальным. |  |

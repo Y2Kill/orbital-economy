@@ -8,7 +8,9 @@
 
 Recalibration onto cost prices (owner decision 2026-10-18, option A; experiments `docs/research/RECALIBRATION_PREP_2026-10-18_RU.md`): cost pricing in every Mode, money only in the full Modes 52–55 — the money start is an equilibrium of the full economy, and in the ladder Modes 0–48 budgets choke region B. First the bench: cost terms gated by the switch of their physical layer (task 042, Lab v0.9.22, accepted 2026-10-18 in round 3; without gates the full cost counted the power resource, process energy and capital wear where those layers are off). Then the model: v7.7.18 (task 043, accepted 2026-10-19 in round 1; the demand reference prices of wage pricing recalibrated to cost prices too) — 20 gated formulas, cost pricing in Modes 0–55 and money in 52–55; Modes 56–59 keep their inputs and reproduce v7.7.17 (a patch cannot rename scenarios, so no old-price control under the old names); 61 checks of earlier tasks rebased on the new levels with the same factors, 9 money checks added.
 
-Next: decide on wage pricing — on cost prices next to household budgets it is nearly inert (Modes 54–55 ≈ 52–53); then, if needed, credit, interest and cross-region ownership.
+Wage pricing — decided 2026-10-19 (owner, option 4 of four: keep / remove / make price demand part of the full Modes / freeze): **frozen**. The model keeps it unchanged; its price branch is evaluated in no Mode (cost pricing is on everywhere), only the price demand of Modes 54–55 is live and small next to the budgets. Removing it would need a bench that deletes node layers — against the project's rule that earlier mechanisms stay under their switch — and would also drop the only channel through which demand reacts to relative prices. Revisit with the retiring of switched-off branches (below) or when goods' prices diverge enough for price demand to act as substitution (then option 3: switch it on in the full Modes).
+
+Next: the watch window up to v7.7.18 (cost prices, money, budgets, balance of payments); node_qa in CI as parallel `--cases=` blocks; long runs and sensitivity on the new calibration; full-stack versions of the main shocks; then, if needed, credit, interest and cross-region ownership.
 
 ## v7.7.17 Money — full money accounting, step 2 (tasks 040 bench, 041 model)
 
@@ -163,7 +165,7 @@ Idea: run old Modes on a frozen model and bench (tag + pinned engine) and delete
 
 Why not now: it replaces the project's central guarantee (old Modes bit-exact on the main line) with replaying history on an old tag. The number of switches (7 in v7.7.1) is not the cost. The cost is untested switch combinations, and the loop audit above covers them statically.
 
-**Trigger:** the first model change for which an exact algebraic fallback at `switch = 0` is impossible or would distort the design. The v7.7.2 increment (construction materials using energy) still had a clean fallback: Modes 0–31 bit-exact.
+**Trigger:** the first model change for which an exact algebraic fallback at `switch = 0` is impossible or would distort the design. Since v7.7.18 the price branch of wage pricing is the first branch evaluated in no Mode at all (cost pricing is on everywhere); it stays, frozen, until this trigger fires (owner, 2026-10-19). The v7.7.2 increment (construction materials using energy) still had a clean fallback: Modes 0–31 bit-exact.
 
 ## External review observations (2026-09-27) — decided: node generator first (task 015 — done, Lab v0.9.8), then `simple_capital` (task 016 — done, Lab v0.9.9)
 
