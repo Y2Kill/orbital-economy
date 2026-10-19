@@ -3,7 +3,7 @@
   "name": "Orbital Economy v7.7.18 Recalibration candidate r1 - change contract",
   "description": "Written before implementation from V7_7_18_RECALIBRATION_SPEC.md. Accepted baseline: v7.7.17 r1. Cost pricing becomes the price system of Modes 0-55, money joins in 52-55; Modes 56-59 must reproduce v7.7.17 exactly except the dead demand references of wage pricing.",
   "accepted_model_sha256": "43625d458d7bfc20e6b3a0868b4f3f2f503f249075e65c7afac9353ddca137c9",
-  "validation_sha256": "79b4ab4f571b4a537f150c229c563779e097bdefa0a91fb0b24387040f660dde",
+  "validation_sha256": "f0553b5274833ee7f2a56d497fcfa5ed400ace04930b4dff2a96f7e9771acae9",
   "comparison": {
     "abs_tolerance": 0,
     "rel_tolerance": null,
