@@ -19,7 +19,7 @@ bd159f0403f7df6225286a28e5b35ffbc57224c97cd45770a3e0140bd4c6f332  ./docs/CURRENT
 b6171a54948a800ed985e58edc06085b490eb85e8797bde2615537174ac8eb60  ./docs/PARAMETER_ANNOTATIONS.json
 8acb351a189fc81b757b29462b423ba416874fcef9e14cc724c2de08d5723fa6  ./docs/PARAMETER_REGISTRY.md
 d07dc1ed24932af43a384f825e166deb503e0c643ccba5de81bf70c843257538  ./docs/PLANET_V1_CONTRACT_RU.md
-da0723e3de1c053520699b17fe67f162a521268b8cc787231ee4db2482386ba2  ./docs/ROADMAP.md
+cee9f37f13662607fc3e021316c4bcc57c27caa447379fe2c5fb3d290cb527c1  ./docs/ROADMAP.md
 55d12851b240c57bd330fc872345a1f657bea56348b46d58813796beb19708ec  ./docs/STRUCTURE_AUDIT_REPORT.md
 3ae639958b7a331cfddf5d730a720990ff0cfb988046709d75391c34967b6baf  ./docs/V7_5_1_TO_V7_6_CHANGE_REPORT.md
 4cadd7f34b7c345f2bb5a18e46a584179eb5ed6b527e4fb4f623059dc001dd35  ./docs/V7_6_1_CALIBRATION_REPORT.md
@@ -38,7 +38,7 @@ cb0873f42c3baec572355306e5751d82e1ba30594c686cd29680c6d7c09199be  ./docs/researc
 e4280d5801de163b2c2ef4fa6b572432578ce5c86338f1c45a1168052ab904c8  ./docs/research/LONG_RUN_2026-10-04_RU.md
 41cf090ed1828d03e67b21568e298abda1cf1d23f619c309f31c20d33a48076b  ./docs/research/MONEY_ACCOUNTING_PROTOTYPE_2026-10-17_RU.md
 c1b6d56fa750298f0362cfa18e6ae19c3f65920c5487b64a63bb10e600692f18  ./docs/research/POPULATION_PROTOTYPE_2026-10-04_RU.md
-4deb3f1f75dbcf42d725f77c14ad8afb758df63b17362bb3038bb5070a31d745  ./docs/research/RECALIBRATION_PREP_2026-10-18_RU.md
+296019f7f4c9a8b9af23720bc23e72806da7dbf9f9e9fc8ae0af08ec0626049a  ./docs/research/RECALIBRATION_PREP_2026-10-18_RU.md
 f51840ce0b27e00a6dedf9bd3b5a602f029f857ea46941a32d96c7ff7c12618d  ./docs/research/SENSITIVITY_2026-10-10_RU.md
 b635e5358b9a89d424c7a005a9de7f1459f8d31811d1026c45dcdb57999ceec9  ./docs/tasks/001-v7.4-intermediate-inputs/INDEX_RU.md
 f63ac3ad68259baf9b6d754afdd3e39a3d7bd7ed8e639ba2387e65a332af81d8  ./docs/tasks/001-v7.4-intermediate-inputs/issue/README_RU.md
@@ -491,6 +491,12 @@ bd14c8e3f2600ba5318211c6a9dd21750067516b2984ff4bd7c56ef378b017ba  ./docs/tasks/0
 acbec86cbb28343cf6c71820df4c3a8fa43c24c16c6ac1ff16baad2d8778c89b  ./docs/tasks/042-cost-pricing-gates/reference/definition_fingerprint.mjs
 34eb1db6e707794bc19c92290a9047fc49e578dec0a9576d3ed3731761286a21  ./docs/tasks/042-cost-pricing-gates/reference/make_gated.mjs
 eee1444621456a792b9908d62ca7531fcf07fc0f0067902712dde95e568716e2  ./docs/tasks/042-cost-pricing-gates/scope.json
+30295a8a4cf471ab6f544a3c887217fbc3a4ef0a2d47b28957cdd69ce01848d0  ./docs/tasks/043-recalibration/TASK_RU.md
+b8e5f069ea7a5672690862496e5bea6eb44287672637663864dae701aa19dc0b  ./docs/tasks/043-recalibration/V7_7_18_RECALIBRATION_SPEC.md
+29290fbb58127ea387cc591ef138381b7fcb3fa4eeae5fb9f0f46133a6e93f10  ./docs/tasks/043-recalibration/draft/change-policy-v7.7.18-draft.json
+5d0177ee2c868fd262ff48296fdd6d5821d989c9f19071a68e751e5025d998d4  ./docs/tasks/043-recalibration/draft/skeleton-patch.json
+79b4ab4f571b4a537f150c229c563779e097bdefa0a91fb0b24387040f660dde  ./docs/tasks/043-recalibration/draft/validation-v7.7.18-draft.json
+e09be361260d6a7332e8c207335f13a17ac6ede8881a9a6d3fc30f23c5bd9ea8  ./docs/tasks/043-recalibration/scope.json
 44d2e557f1cb2322739bc95ee2b6dcbf6d6fcb708da14e90d53250936e50da5c  ./docs/tasks/README_RU.md
 bbf818e93b88d606b3137b1bb69d60db8c41c9df4089025a921b1ca00f473244  ./lab/APPLY_PATCH.cmd
 046dc77903d88eda36ef201e46833701e196c53a45efcb42e4ec020dd5c654f7  ./lab/CHANGELOG.md
@@ -518,7 +524,7 @@ a67632c2a2288834db3396fab5fc92fb903eba13b9793d1b748b9f2b9c5de058  ./lab/README_R
 52bcfc0749480fa5467e713f3a6948258dccb560357eef5822f8bcee070c652c  ./lab/RUN_LAB.cmd
 324ccedcd35621f7716bc905acc67d09076f040075e68d8e1c5e657a32f48499  ./lab/RUN_TESTS.cmd
 b08fd6ad35bba528bf455553dfd5d9f7c68b81658f2cbf6cf2a3989afb647629  ./lab/SELF_TEST.cmd
-e263c7fe0190f8e0163616e16102206a67be6fe2b03efd7c5877bddf606c1e47  ./lab/SHA256SUMS.txt
+8f8187091be40c43934cffa74614ddde3491c21eeb404593fb2492ba265777ac  ./lab/SHA256SUMS.txt
 75120cad55eab07655f699135bd7997c2a18db496be28dbd8741ddecedd4bdda  ./lab/STRUCTURE_AUDIT.cmd
 7396a4da60a41cc41a67c7bb8baa619b0ad5be9e745c0c08f17c1a26a56a18e5  ./lab/STRUCTURE_SELF_TEST.cmd
 58cb8e2bf5a04de53a4c568c22bd8f840585e27dec55b701520b28472e6652b8  ./lab/docs/ARCHITECTURE_RU.md
@@ -571,7 +577,7 @@ e980c535ef0ade1768c9f4cdbf1058e219ad3e0eb21cc8fc9c4221a12f33c720  ./lab/src/depo
 1ffae379e11c3962d782cb10ea3bdd637ac4f0541d80e484d1501798d6184a26  ./lab/src/loop_audit.js
 d50e351606b701badfeba199e4adef824e30b1c6e14e1d27593c1a5347399d8e  ./lab/src/loop_qa.js
 6c8dbd8fc2705b12c0130e2226276328c9f84d2d6aa6c22a845e7ad53c1fadf8  ./lab/src/model.js
-7395447c46c20f718264a23ad1551fefd929297b72b912c40c74b63948de8321  ./lab/src/node_qa.js
+f65718b17a239a38072986b246ce5bbb21ddc436376c8ce790899d82e0580754  ./lab/src/node_qa.js
 334743997c6b2bd14177298d69dabd1472b17ed1f8ec29e352ac856373b30f05  ./lab/src/nodes/capital_lifecycle.js
 03ef32838f37520fd45cff84ae23fcd1322f927cf147fff71dfe574f70e14b2d  ./lab/src/nodes/cost_pricing.js
 db5abb1bd96c438a0ca066cc300df8b8f691d083e6770814cd86a86cd1809b74  ./lab/src/nodes/deposit.js

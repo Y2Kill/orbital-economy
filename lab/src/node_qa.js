@@ -2078,7 +2078,9 @@ await expect('60. wage_pricing fixture expands and APPLY_PATCH matches prototype
   const declaration = wagePricingDeclarations.find(x=>x.decl.switch===wagePricingFixture.switch)?.decl;
   const layer = declaration ? layers.get(declaration) : null;
   const base = layer?.base || accepted;
-  const expanded = expandNode(wagePricingFixture, base);
+  // an accepted layer is rebuilt from its own declaration (a recalibration may change its values, as task 043 does
+  // with the demand reference prices); without one the bench fixture is used
+  const expanded = expandNode(declaration || wagePricingFixture, base);
   const p = expanded.patch;
   if (p.add_elements.length !== 18 || p.replace_formulas.length !== 10 || p.add_links.length !== 42) throw new Error('wage_pricing patch counts differ');
   const model = applyPatch(base, { format: PATCH_FORMAT, ...p }).model;
@@ -2087,7 +2089,7 @@ await expect('60. wage_pricing fixture expands and APPLY_PATCH matches prototype
   const byName = new Map(base.elements.filter(e => e.type !== 'LINK').map(e => [e.name,e]));
   for (const r of p.replace_formulas) if (oldBranch(r.value,wagePricingFixture.switch,r.name) !== String(byName.get(r.name).behavior.value)) throw new Error('old branch differs: '+r.name);
   if(layer && definitionFingerprint(layer.target)!==fp)throw new Error('accepted wage_pricing layer does not rebuild exactly');
-  wagePricingState = { base, model, expanded };
+  wagePricingState = { base, model, expanded, decl: declaration || wagePricingFixture };
   return '18 elements / 10 replacements / 42 links; fingerprint=' + fp;
 });
 
@@ -2151,8 +2153,8 @@ await expect('63. three-region wage_pricing expands with 3 instances and static 
 
 await expect('64. strip wage_pricing by oldBranch and rebuild with zero definition/link differences', () => {
   if (!wagePricingState) throw new Error('case 60 did not produce wage_pricing state');
-  const stripped = stripWagePricingNode(wagePricingState.model,wagePricingFixture);
-  const expanded = expandNode(wagePricingFixture,stripped);
+  const stripped = stripWagePricingNode(wagePricingState.model,wagePricingState.decl);
+  const expanded = expandNode(wagePricingState.decl,stripped);
   const rebuilt = applyPatch(stripped,{format:PATCH_FORMAT,...expanded.patch}).model;
   for (const [expected,actual] of [[wagePricingState.base,stripped],[wagePricingState.model,rebuilt]]) {
     const a=new Map(expected.elements.filter(e=>e.type!=='LINK').map(e=>[e.name,def(e)]));
@@ -2891,8 +2893,10 @@ await expect('87. gated accepted-model layering: money first, cost pricing secon
   for (const [name, value] of updated) {
     if (value === originals.get(name)) continue;
     const element = named.get(name);
+    // before task 043 the accepted layer carries the plain formula, after it the gated one
+    if (element && String(element.behavior.value) === String(value)) continue;
     if (!element || String(element.behavior.value) !== String(originals.get(name))) {
-      throw new Error('accepted layer does not carry plain formula: ' + name);
+      throw new Error('accepted layer carries neither the plain nor the gated formula: ' + name);
     }
     element.behavior.value = value;
   }

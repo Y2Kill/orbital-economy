@@ -1,0 +1,17 @@
+{
+  "task": "043",
+  "title": "v7.7.18 Recalibration onto cost prices (owner decision 2026-10-18, option A): cost pricing in Modes 0-55, money in Modes 52-55; the cost_pricing layer gated by physical layers (20 formulas, 64 links, Lab v0.9.22); wage-pricing demand reference prices recalibrated to cost prices; Modes 56-59 reproduce v7.7.17 except 8 dead series; 61 scenario checks rebased, 9 money checks added",
+  "branch": "task/043-recalibration",
+  "allow": [],
+  "allow_binary": [],
+  "allow_protected": [
+    "docs/tasks/043-recalibration/candidate/**"
+  ],
+  "required_changes": [
+    "docs/tasks/043-recalibration/candidate/model-patch.json",
+    "docs/tasks/043-recalibration/candidate/validation.json",
+    "docs/tasks/043-recalibration/candidate/change-policy.json",
+    "docs/tasks/043-recalibration/candidate/PARAMETER_ANNOTATIONS_fragment.json"
+  ],
+  "sums_by": "reviewer"
+}

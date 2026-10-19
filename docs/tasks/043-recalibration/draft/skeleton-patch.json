@@ -1,0 +1,703 @@
+{
+  "format": "orbital-economy-model-patch-v1",
+  "base_sha256": "43625d458d7bfc20e6b3a0868b4f3f2f503f249075e65c7afac9353ddca137c9",
+  "name": "Orbital Economy v7.7.18 skeleton",
+  "replace_formulas": [
+    {
+      "name": "A Ore Full Cost",
+      "value": "[Mining Energy per Unit] * [A Energy Cost Price Signal] * [Process Energy Enabled] + [A Mining Labor per Unit] * [A Mining Automation Factor] * [A Wage] + ([Ore Mine Capital Goods per Capacity] * [A Capital Goods Cost Price Signal] * [Capital Goods Enabled] + [Ore Mine Construction Materials per Capacity] * [A Construction Materials Cost Price Signal] * [Construction Materials Enabled]) * [Ore Mine Depreciation Rate] * [Ore Capital Enabled] + [A Effective Ore Base Cost]"
+    },
+    {
+      "name": "A Regolith Full Cost",
+      "value": "[Regolith Extraction Energy per Unit] * [A Energy Cost Price Signal] * [Process Energy Enabled] + [A Regolith Extraction Labor per Unit] * [A Regolith Extraction Automation Factor] * [A Wage] + ([Regolith Mine Capital Goods per Capacity] * [A Capital Goods Cost Price Signal] * [Capital Goods Enabled] + [Regolith Mine Construction Materials per Capacity] * [A Construction Materials Cost Price Signal] * [Construction Materials Enabled]) * [Regolith Mine Depreciation Rate] * [Regolith Capital Enabled]"
+    },
+    {
+      "name": "A Power Resource Full Cost",
+      "value": "[Power Resource Extraction Energy per Unit] * [A Energy Cost Price Signal] * [Process Energy Enabled] + [A Power Resource Extraction Labor per Unit] * [A Power Resource Extraction Automation Factor] * [A Wage] + ([Power Resource Mine Capital Goods per Capacity] * [A Capital Goods Cost Price Signal] * [Capital Goods Enabled] + [Power Resource Mine Construction Materials per Capacity] * [A Construction Materials Cost Price Signal] * [Construction Materials Enabled]) * [Power Resource Mine Depreciation Rate] * [Power Resource Capital Enabled] + [Base Power Resource Price]"
+    },
+    {
+      "name": "A Energy Full Cost",
+      "value": "[Power Resource per Energy] * [A Power Resource Cost Price Signal] * [Power Resource Enabled] + [A Generation Labor per Unit] * [A Generation Automation Factor] * [A Wage] + ([A Power Capital Goods per Capacity] * [A Capital Goods Cost Price Signal] * [Capital Goods Enabled] + [A Power Construction Materials per Capacity] * [A Construction Materials Cost Price Signal] * [Construction Materials Enabled]) * [Power Depreciation Rate] * [Capital Lifecycle Enabled] + [A Power Generation Cost]"
+    },
+    {
+      "name": "A Capital Goods Full Cost",
+      "value": "[Metal per Capital Goods Unit] * [A Metal Cost Price Signal] + [Electronics per Capital Goods Unit] * [A Electronics Cost Price Signal] + [Capital Goods Energy per Unit] * [A Energy Cost Price Signal] * [Process Energy Enabled] + [A Capital Goods Labor per Unit] * [A Capital Goods Automation Factor] * [A Wage] + ([Capital Goods Plant Capital Goods per Capacity] * [A Capital Goods Cost Price Signal] * [Capital Goods Enabled] + [Capital Goods Plant Construction Materials per Capacity] * [A Construction Materials Cost Price Signal] * [Construction Materials Enabled]) * [Capital Goods Plant Depreciation Rate] * [Capital Goods Capital Enabled]"
+    },
+    {
+      "name": "A Construction Materials Full Cost",
+      "value": "[Regolith per Construction Materials Unit] * [A Regolith Cost Price Signal] + [Construction Materials Energy per Unit] * [A Energy Cost Price Signal] * [Construction Materials Energy Enabled] + [A Construction Materials Labor per Unit] * [A Construction Materials Automation Factor] * [A Wage] + ([Construction Materials Plant Capital Goods per Capacity] * [A Capital Goods Cost Price Signal] * [Capital Goods Enabled] + [Construction Materials Plant Construction Materials per Capacity] * [A Construction Materials Cost Price Signal] * [Construction Materials Enabled]) * [Construction Materials Plant Depreciation Rate] * [Construction Materials Capital Enabled]"
+    },
+    {
+      "name": "A Food Full Cost",
+      "value": "[Food Energy per Unit] * [A Energy Cost Price Signal] * [Food Enabled] + [Food Labor per Unit] * [A Wage] + ([Farm Capital Goods per Capacity] * [A Capital Goods Cost Price Signal] * [Capital Goods Enabled]) * [Farm Depreciation Rate] * [Food Enabled]"
+    },
+    {
+      "name": "A Metal Capital Wear",
+      "value": "([A Refinery Capital Goods per Capacity] * [A Capital Goods Cost Price Signal] * [Capital Goods Enabled] + [A Refinery Construction Materials per Capacity] * [A Construction Materials Cost Price Signal] * [Construction Materials Enabled]) * [A Refinery Depreciation Rate]"
+    },
+    {
+      "name": "A Electronics Capital Wear",
+      "value": "([A Electronics Capital Goods per Capacity] * [A Capital Goods Cost Price Signal] * [Capital Goods Enabled] + [A Electronics Construction Materials per Capacity] * [A Construction Materials Cost Price Signal] * [Construction Materials Enabled]) * [Electronics Depreciation Rate] * [Capital Lifecycle Enabled]"
+    },
+    {
+      "name": "B Ore Full Cost",
+      "value": "[Mining Energy per Unit] * [B Energy Cost Price Signal] * [Process Energy Enabled] + [B Mining Labor per Unit] * [B Mining Automation Factor] * [B Wage] + ([Ore Mine Capital Goods per Capacity] * [B Capital Goods Cost Price Signal] * [Capital Goods Enabled] + [Ore Mine Construction Materials per Capacity] * [B Construction Materials Cost Price Signal] * [Construction Materials Enabled]) * [Ore Mine Depreciation Rate] * [Ore Capital Enabled] + [B Effective Ore Base Cost]"
+    },
+    {
+      "name": "B Regolith Full Cost",
+      "value": "[Regolith Extraction Energy per Unit] * [B Energy Cost Price Signal] * [Process Energy Enabled] + [B Regolith Extraction Labor per Unit] * [B Regolith Extraction Automation Factor] * [B Wage] + ([Regolith Mine Capital Goods per Capacity] * [B Capital Goods Cost Price Signal] * [Capital Goods Enabled] + [Regolith Mine Construction Materials per Capacity] * [B Construction Materials Cost Price Signal] * [Construction Materials Enabled]) * [Regolith Mine Depreciation Rate] * [Regolith Capital Enabled]"
+    },
+    {
+      "name": "B Power Resource Full Cost",
+      "value": "[Power Resource Extraction Energy per Unit] * [B Energy Cost Price Signal] * [Process Energy Enabled] + [B Power Resource Extraction Labor per Unit] * [B Power Resource Extraction Automation Factor] * [B Wage] + ([Power Resource Mine Capital Goods per Capacity] * [B Capital Goods Cost Price Signal] * [Capital Goods Enabled] + [Power Resource Mine Construction Materials per Capacity] * [B Construction Materials Cost Price Signal] * [Construction Materials Enabled]) * [Power Resource Mine Depreciation Rate] * [Power Resource Capital Enabled] + [Base Power Resource Price]"
+    },
+    {
+      "name": "B Energy Full Cost",
+      "value": "[Power Resource per Energy] * [B Power Resource Cost Price Signal] * [Power Resource Enabled] + [B Generation Labor per Unit] * [B Generation Automation Factor] * [B Wage] + ([B Power Capital Goods per Capacity] * [B Capital Goods Cost Price Signal] * [Capital Goods Enabled] + [B Power Construction Materials per Capacity] * [B Construction Materials Cost Price Signal] * [Construction Materials Enabled]) * [Power Depreciation Rate] * [Capital Lifecycle Enabled] + [B Power Generation Cost]"
+    },
+    {
+      "name": "B Capital Goods Full Cost",
+      "value": "[Metal per Capital Goods Unit] * [B Metal Cost Price Signal] + [Electronics per Capital Goods Unit] * [B Electronics Cost Price Signal] + [Capital Goods Energy per Unit] * [B Energy Cost Price Signal] * [Process Energy Enabled] + [B Capital Goods Labor per Unit] * [B Capital Goods Automation Factor] * [B Wage] + ([Capital Goods Plant Capital Goods per Capacity] * [B Capital Goods Cost Price Signal] * [Capital Goods Enabled] + [Capital Goods Plant Construction Materials per Capacity] * [B Construction Materials Cost Price Signal] * [Construction Materials Enabled]) * [Capital Goods Plant Depreciation Rate] * [Capital Goods Capital Enabled]"
+    },
+    {
+      "name": "B Construction Materials Full Cost",
+      "value": "[Regolith per Construction Materials Unit] * [B Regolith Cost Price Signal] + [Construction Materials Energy per Unit] * [B Energy Cost Price Signal] * [Construction Materials Energy Enabled] + [B Construction Materials Labor per Unit] * [B Construction Materials Automation Factor] * [B Wage] + ([Construction Materials Plant Capital Goods per Capacity] * [B Capital Goods Cost Price Signal] * [Capital Goods Enabled] + [Construction Materials Plant Construction Materials per Capacity] * [B Construction Materials Cost Price Signal] * [Construction Materials Enabled]) * [Construction Materials Plant Depreciation Rate] * [Construction Materials Capital Enabled]"
+    },
+    {
+      "name": "B Food Full Cost",
+      "value": "[Food Energy per Unit] * [B Energy Cost Price Signal] * [Food Enabled] + [Food Labor per Unit] * [B Wage] + ([Farm Capital Goods per Capacity] * [B Capital Goods Cost Price Signal] * [Capital Goods Enabled]) * [Farm Depreciation Rate] * [Food Enabled]"
+    },
+    {
+      "name": "B Metal Capital Wear",
+      "value": "([B Refinery Capital Goods per Capacity] * [B Capital Goods Cost Price Signal] * [Capital Goods Enabled] + [B Refinery Construction Materials per Capacity] * [B Construction Materials Cost Price Signal] * [Construction Materials Enabled]) * [B Refinery Depreciation Rate]"
+    },
+    {
+      "name": "B Electronics Capital Wear",
+      "value": "([B Electronics Capital Goods per Capacity] * [B Capital Goods Cost Price Signal] * [Capital Goods Enabled] + [B Electronics Construction Materials per Capacity] * [B Construction Materials Cost Price Signal] * [Construction Materials Enabled]) * [Electronics Depreciation Rate] * [Capital Lifecycle Enabled]"
+    },
+    {
+      "name": "A Power Resource Price",
+      "value": "IfThenElse([Cost Pricing Enabled] * [Power Resource Enabled] = 1, [A Power Resource Full Cost] * (1 + [Universal Markup]) * (1 + [Power Resource Scarcity Price Strength] * (1 - [A Perceived Power Resource Fulfillment])), [Base Power Resource Price] * (1 + [Power Resource Scarcity Price Strength] * (1 - [A Perceived Power Resource Fulfillment])))"
+    },
+    {
+      "name": "B Power Resource Price",
+      "value": "IfThenElse([Cost Pricing Enabled] * [Power Resource Enabled] = 1, [B Power Resource Full Cost] * (1 + [Universal Markup]) * (1 + [Power Resource Scarcity Price Strength] * (1 - [B Perceived Power Resource Fulfillment])), [Base Power Resource Price] * (1 + [Power Resource Scarcity Price Strength] * (1 - [B Perceived Power Resource Fulfillment])))"
+    },
+    {
+      "name": "A Metal Demand Reference Price",
+      "value": 58.38
+    },
+    {
+      "name": "B Metal Demand Reference Price",
+      "value": 69.89
+    },
+    {
+      "name": "A Electronics Demand Reference Price",
+      "value": 45.55
+    },
+    {
+      "name": "B Electronics Demand Reference Price",
+      "value": 44.41
+    }
+  ],
+  "add_links": [
+    {
+      "from": "Process Energy Enabled",
+      "to": "A Ore Full Cost"
+    },
+    {
+      "from": "Capital Goods Enabled",
+      "to": "A Ore Full Cost"
+    },
+    {
+      "from": "Construction Materials Enabled",
+      "to": "A Ore Full Cost"
+    },
+    {
+      "from": "Ore Capital Enabled",
+      "to": "A Ore Full Cost"
+    },
+    {
+      "from": "Process Energy Enabled",
+      "to": "A Regolith Full Cost"
+    },
+    {
+      "from": "Capital Goods Enabled",
+      "to": "A Regolith Full Cost"
+    },
+    {
+      "from": "Construction Materials Enabled",
+      "to": "A Regolith Full Cost"
+    },
+    {
+      "from": "Regolith Capital Enabled",
+      "to": "A Regolith Full Cost"
+    },
+    {
+      "from": "Process Energy Enabled",
+      "to": "A Power Resource Full Cost"
+    },
+    {
+      "from": "Capital Goods Enabled",
+      "to": "A Power Resource Full Cost"
+    },
+    {
+      "from": "Construction Materials Enabled",
+      "to": "A Power Resource Full Cost"
+    },
+    {
+      "from": "Power Resource Capital Enabled",
+      "to": "A Power Resource Full Cost"
+    },
+    {
+      "from": "Power Resource Enabled",
+      "to": "A Energy Full Cost"
+    },
+    {
+      "from": "Capital Goods Enabled",
+      "to": "A Energy Full Cost"
+    },
+    {
+      "from": "Construction Materials Enabled",
+      "to": "A Energy Full Cost"
+    },
+    {
+      "from": "Capital Lifecycle Enabled",
+      "to": "A Energy Full Cost"
+    },
+    {
+      "from": "Process Energy Enabled",
+      "to": "A Capital Goods Full Cost"
+    },
+    {
+      "from": "Capital Goods Enabled",
+      "to": "A Capital Goods Full Cost"
+    },
+    {
+      "from": "Construction Materials Enabled",
+      "to": "A Capital Goods Full Cost"
+    },
+    {
+      "from": "Capital Goods Capital Enabled",
+      "to": "A Capital Goods Full Cost"
+    },
+    {
+      "from": "Construction Materials Energy Enabled",
+      "to": "A Construction Materials Full Cost"
+    },
+    {
+      "from": "Capital Goods Enabled",
+      "to": "A Construction Materials Full Cost"
+    },
+    {
+      "from": "Construction Materials Enabled",
+      "to": "A Construction Materials Full Cost"
+    },
+    {
+      "from": "Construction Materials Capital Enabled",
+      "to": "A Construction Materials Full Cost"
+    },
+    {
+      "from": "Food Enabled",
+      "to": "A Food Full Cost"
+    },
+    {
+      "from": "Capital Goods Enabled",
+      "to": "A Food Full Cost"
+    },
+    {
+      "from": "Capital Goods Enabled",
+      "to": "A Metal Capital Wear"
+    },
+    {
+      "from": "Construction Materials Enabled",
+      "to": "A Metal Capital Wear"
+    },
+    {
+      "from": "Capital Goods Enabled",
+      "to": "A Electronics Capital Wear"
+    },
+    {
+      "from": "Construction Materials Enabled",
+      "to": "A Electronics Capital Wear"
+    },
+    {
+      "from": "Capital Lifecycle Enabled",
+      "to": "A Electronics Capital Wear"
+    },
+    {
+      "from": "Process Energy Enabled",
+      "to": "B Ore Full Cost"
+    },
+    {
+      "from": "Capital Goods Enabled",
+      "to": "B Ore Full Cost"
+    },
+    {
+      "from": "Construction Materials Enabled",
+      "to": "B Ore Full Cost"
+    },
+    {
+      "from": "Ore Capital Enabled",
+      "to": "B Ore Full Cost"
+    },
+    {
+      "from": "Process Energy Enabled",
+      "to": "B Regolith Full Cost"
+    },
+    {
+      "from": "Capital Goods Enabled",
+      "to": "B Regolith Full Cost"
+    },
+    {
+      "from": "Construction Materials Enabled",
+      "to": "B Regolith Full Cost"
+    },
+    {
+      "from": "Regolith Capital Enabled",
+      "to": "B Regolith Full Cost"
+    },
+    {
+      "from": "Process Energy Enabled",
+      "to": "B Power Resource Full Cost"
+    },
+    {
+      "from": "Capital Goods Enabled",
+      "to": "B Power Resource Full Cost"
+    },
+    {
+      "from": "Construction Materials Enabled",
+      "to": "B Power Resource Full Cost"
+    },
+    {
+      "from": "Power Resource Capital Enabled",
+      "to": "B Power Resource Full Cost"
+    },
+    {
+      "from": "Power Resource Enabled",
+      "to": "B Energy Full Cost"
+    },
+    {
+      "from": "Capital Goods Enabled",
+      "to": "B Energy Full Cost"
+    },
+    {
+      "from": "Construction Materials Enabled",
+      "to": "B Energy Full Cost"
+    },
+    {
+      "from": "Capital Lifecycle Enabled",
+      "to": "B Energy Full Cost"
+    },
+    {
+      "from": "Process Energy Enabled",
+      "to": "B Capital Goods Full Cost"
+    },
+    {
+      "from": "Capital Goods Enabled",
+      "to": "B Capital Goods Full Cost"
+    },
+    {
+      "from": "Construction Materials Enabled",
+      "to": "B Capital Goods Full Cost"
+    },
+    {
+      "from": "Capital Goods Capital Enabled",
+      "to": "B Capital Goods Full Cost"
+    },
+    {
+      "from": "Construction Materials Energy Enabled",
+      "to": "B Construction Materials Full Cost"
+    },
+    {
+      "from": "Capital Goods Enabled",
+      "to": "B Construction Materials Full Cost"
+    },
+    {
+      "from": "Construction Materials Enabled",
+      "to": "B Construction Materials Full Cost"
+    },
+    {
+      "from": "Construction Materials Capital Enabled",
+      "to": "B Construction Materials Full Cost"
+    },
+    {
+      "from": "Food Enabled",
+      "to": "B Food Full Cost"
+    },
+    {
+      "from": "Capital Goods Enabled",
+      "to": "B Food Full Cost"
+    },
+    {
+      "from": "Capital Goods Enabled",
+      "to": "B Metal Capital Wear"
+    },
+    {
+      "from": "Construction Materials Enabled",
+      "to": "B Metal Capital Wear"
+    },
+    {
+      "from": "Capital Goods Enabled",
+      "to": "B Electronics Capital Wear"
+    },
+    {
+      "from": "Construction Materials Enabled",
+      "to": "B Electronics Capital Wear"
+    },
+    {
+      "from": "Capital Lifecycle Enabled",
+      "to": "B Electronics Capital Wear"
+    },
+    {
+      "from": "Power Resource Enabled",
+      "to": "A Power Resource Price"
+    },
+    {
+      "from": "Power Resource Enabled",
+      "to": "B Power Resource Price"
+    }
+  ],
+  "modify_scenarios": [
+    {
+      "mode": 0,
+      "set": {
+        "Cost Pricing Enabled": 1
+      }
+    },
+    {
+      "mode": 1,
+      "set": {
+        "Cost Pricing Enabled": 1
+      }
+    },
+    {
+      "mode": 2,
+      "set": {
+        "Cost Pricing Enabled": 1
+      }
+    },
+    {
+      "mode": 3,
+      "set": {
+        "Cost Pricing Enabled": 1
+      }
+    },
+    {
+      "mode": 4,
+      "set": {
+        "Cost Pricing Enabled": 1
+      }
+    },
+    {
+      "mode": 5,
+      "set": {
+        "Cost Pricing Enabled": 1
+      }
+    },
+    {
+      "mode": 6,
+      "set": {
+        "Cost Pricing Enabled": 1
+      }
+    },
+    {
+      "mode": 7,
+      "set": {
+        "Cost Pricing Enabled": 1
+      }
+    },
+    {
+      "mode": 8,
+      "set": {
+        "Cost Pricing Enabled": 1
+      }
+    },
+    {
+      "mode": 9,
+      "set": {
+        "Cost Pricing Enabled": 1
+      }
+    },
+    {
+      "mode": 10,
+      "set": {
+        "Cost Pricing Enabled": 1
+      }
+    },
+    {
+      "mode": 11,
+      "set": {
+        "Cost Pricing Enabled": 1
+      }
+    },
+    {
+      "mode": 12,
+      "set": {
+        "Cost Pricing Enabled": 1
+      }
+    },
+    {
+      "mode": 13,
+      "set": {
+        "Cost Pricing Enabled": 1
+      }
+    },
+    {
+      "mode": 14,
+      "set": {
+        "Cost Pricing Enabled": 1
+      }
+    },
+    {
+      "mode": 15,
+      "set": {
+        "Cost Pricing Enabled": 1
+      }
+    },
+    {
+      "mode": 16,
+      "set": {
+        "Cost Pricing Enabled": 1
+      }
+    },
+    {
+      "mode": 17,
+      "set": {
+        "Cost Pricing Enabled": 1
+      }
+    },
+    {
+      "mode": 18,
+      "set": {
+        "Cost Pricing Enabled": 1
+      }
+    },
+    {
+      "mode": 19,
+      "set": {
+        "Cost Pricing Enabled": 1
+      }
+    },
+    {
+      "mode": 20,
+      "set": {
+        "Cost Pricing Enabled": 1
+      }
+    },
+    {
+      "mode": 21,
+      "set": {
+        "Cost Pricing Enabled": 1
+      }
+    },
+    {
+      "mode": 22,
+      "set": {
+        "Cost Pricing Enabled": 1
+      }
+    },
+    {
+      "mode": 23,
+      "set": {
+        "Cost Pricing Enabled": 1
+      }
+    },
+    {
+      "mode": 24,
+      "set": {
+        "Cost Pricing Enabled": 1
+      }
+    },
+    {
+      "mode": 25,
+      "set": {
+        "Cost Pricing Enabled": 1
+      }
+    },
+    {
+      "mode": 26,
+      "set": {
+        "Cost Pricing Enabled": 1
+      }
+    },
+    {
+      "mode": 27,
+      "set": {
+        "Cost Pricing Enabled": 1
+      }
+    },
+    {
+      "mode": 28,
+      "set": {
+        "Cost Pricing Enabled": 1
+      }
+    },
+    {
+      "mode": 29,
+      "set": {
+        "Cost Pricing Enabled": 1
+      }
+    },
+    {
+      "mode": 30,
+      "set": {
+        "Cost Pricing Enabled": 1
+      }
+    },
+    {
+      "mode": 31,
+      "set": {
+        "Cost Pricing Enabled": 1
+      }
+    },
+    {
+      "mode": 32,
+      "set": {
+        "Cost Pricing Enabled": 1
+      }
+    },
+    {
+      "mode": 33,
+      "set": {
+        "Cost Pricing Enabled": 1
+      }
+    },
+    {
+      "mode": 34,
+      "set": {
+        "Cost Pricing Enabled": 1
+      }
+    },
+    {
+      "mode": 35,
+      "set": {
+        "Cost Pricing Enabled": 1
+      }
+    },
+    {
+      "mode": 36,
+      "set": {
+        "Cost Pricing Enabled": 1
+      }
+    },
+    {
+      "mode": 37,
+      "set": {
+        "Cost Pricing Enabled": 1
+      }
+    },
+    {
+      "mode": 38,
+      "set": {
+        "Cost Pricing Enabled": 1
+      }
+    },
+    {
+      "mode": 39,
+      "set": {
+        "Cost Pricing Enabled": 1
+      }
+    },
+    {
+      "mode": 40,
+      "set": {
+        "Cost Pricing Enabled": 1
+      }
+    },
+    {
+      "mode": 41,
+      "set": {
+        "Cost Pricing Enabled": 1
+      }
+    },
+    {
+      "mode": 42,
+      "set": {
+        "Cost Pricing Enabled": 1
+      }
+    },
+    {
+      "mode": 43,
+      "set": {
+        "Cost Pricing Enabled": 1
+      }
+    },
+    {
+      "mode": 44,
+      "set": {
+        "Cost Pricing Enabled": 1
+      }
+    },
+    {
+      "mode": 45,
+      "set": {
+        "Cost Pricing Enabled": 1
+      }
+    },
+    {
+      "mode": 46,
+      "set": {
+        "Cost Pricing Enabled": 1
+      }
+    },
+    {
+      "mode": 47,
+      "set": {
+        "Cost Pricing Enabled": 1
+      }
+    },
+    {
+      "mode": 48,
+      "set": {
+        "Cost Pricing Enabled": 1
+      }
+    },
+    {
+      "mode": 49,
+      "set": {
+        "Cost Pricing Enabled": 1
+      }
+    },
+    {
+      "mode": 50,
+      "set": {
+        "Cost Pricing Enabled": 1
+      }
+    },
+    {
+      "mode": 51,
+      "set": {
+        "Cost Pricing Enabled": 1
+      }
+    },
+    {
+      "mode": 52,
+      "set": {
+        "Cost Pricing Enabled": 1,
+        "Money Enabled": 1
+      }
+    },
+    {
+      "mode": 53,
+      "set": {
+        "Cost Pricing Enabled": 1,
+        "Money Enabled": 1
+      }
+    },
+    {
+      "mode": 54,
+      "set": {
+        "Cost Pricing Enabled": 1,
+        "Money Enabled": 1
+      }
+    },
+    {
+      "mode": 55,
+      "set": {
+        "Cost Pricing Enabled": 1,
+        "Money Enabled": 1
+      }
+    }
+  ]
+}
