@@ -145,18 +145,39 @@ jobs:
       - name: Compare self-test
         working-directory: lab
         run: node --expose-gc src/compare_qa.js
-      - name: Node self-test
-        working-directory: lab
-        # Five independent case blocks in parallel (2026-10-19): one process took ~95 min on Windows; the nested
-        # re-runs of cases 66, 73, 80 and 87 dominate, so blocks finish in about the time of the largest one.
-        run: |
-          blocks="1-59 60-66 67-73 74-80 81-87"
-          pids=""
-          for c in $blocks; do node --expose-gc src/node_qa.js --cases=$c > node-qa-$c.log 2>&1 & pids="$pids $!"; done
-          rc=0
-          for p in $pids; do wait $p || rc=1; done
-          for c in $blocks; do echo "===== node_qa --cases=$c"; cat node-qa-$c.log; done
-          exit $rc
       - name: Bench self-test (Modes 0,12)
         working-directory: lab
         run: node --expose-gc src/cli.js lab --input=input --modes=0,12
+
+  node-selftests:
+    name: node-selftests (${{ matrix.cases }})
+    runs-on: ubuntu-latest
+    # node_qa split into independent case blocks, one runner each (2026-10-19). One process needs ~95 min on Windows;
+    # five blocks on one runner starved it (the nested re-runs of 66, 73, 80, 87 start processes of their own).
+    timeout-minutes: 120
+    strategy:
+      fail-fast: false
+      matrix:
+        cases: ['1-59', '60-66', '67-73', '74-80', '81-87']
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: '24.11.1'
+          package-manager-cache: false
+      - name: Install bench dependencies offline from vendor
+        working-directory: lab
+        shell: bash
+        run: |
+          set -euo pipefail
+          cache="${RUNNER_TEMP}/orbital-economy-npm-cache"
+          rm -rf "${cache}"
+          mkdir -p "${cache}"
+          npm cache add ./vendor/simulation-9.0.0.tgz ./vendor/csv-parse-5.6.0.tgz --cache "${cache}"
+          npm ci --offline --cache "${cache}"
+          rm -rf "${cache}"
+      - name: Node self-test (cases ${{ matrix.cases }})
+        working-directory: lab
+        run: node --expose-gc src/node_qa.js --cases=${{ matrix.cases }}
