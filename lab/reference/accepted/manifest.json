@@ -1,15 +1,15 @@
 {
   "status": "ACCEPTED",
-  "model_name": "Orbital Economy v7.7.17 r1 — Money",
-  "model_file": "orbital_economy_v7_7_17_r1_modeljson.json",
-  "model_sha256": "43625d458d7bfc20e6b3a0868b4f3f2f503f249075e65c7afac9353ddca137c9",
-  "validation_file": "validation-v7.7.17.json",
-  "validation_sha256": "96851f18fa2ee2b4a99d4b0cdf2265364b2653f27eef04c5a865b1f34da81ef6",
-  "accepted_date": "2026-10-18",
+  "model_name": "Orbital Economy v7.7.18 r1 — Recalibration onto Cost Prices",
+  "model_file": "orbital_economy_v7_7_18_r1_modeljson.json",
+  "model_sha256": "43034a2890e06c030b04433a3ed9cebf1961d4ccf9101766a8394d2033748b48",
+  "validation_file": "validation-v7.7.18.json",
+  "validation_sha256": "cc2d46969cb26253f2ba2d8ff312bd51464402516c9fa1082ef668dbca12d7a4",
+  "accepted_date": "2026-10-19",
   "engine": "simulation@9.0.0",
   "notes": [
-    "v7.7.17: full money accounting, step 2 (owner decisions 2026-10-17) — household, firm and transport money per region with every payment (wages, rent, dividends, purchases, exports, imports, freight); one consolidated firm sector per region; rent and dividends to the households of the region, freight to the households of both regions by trade share; household budgets scale final metal and electronics demand (food first); one money node, model/nodes/money.json, switch Money Enabled; money only on cost prices. See docs/tasks/041-money/.",
-    "Modes 0-57 keep Money Enabled = 0 and reproduce v7.7.16 r1 exactly; Mode 58 = Mode 56 (cost pricing) with money, Mode 59 = Mode 57 (transport surge with cost pricing) with money.",
+    "v7.7.18: recalibration onto cost prices (owner decision 2026-10-18, option A) — cost pricing in Modes 0-55, money in Modes 52-55; the cost_pricing layer gated by the switches of the physical layers (Lab v0.9.22, model/nodes/cost_pricing.json); the demand reference prices of wage pricing recalibrated to cost prices (model/nodes/wage_pricing.json). See docs/tasks/043-recalibration/.",
+    "Modes 56-59 keep their inputs and reproduce v7.7.17 r1 exactly except 8 dead series (demand references of wage pricing and their price demand factors, read only with Wage Pricing Enabled = 1).",
     "Exact numbers are defined on the canonical platform (docs/VERSIONING_AND_AUTHORITY.md section 8); series-digest.windows.json is the golden."
   ]
 }

@@ -5,16 +5,16 @@
     "os": "Windows 10 Pro x64 (10.0.19045)",
     "node": "v24.11.1",
     "cpu": "Intel(R) Core(TM) i7-9750H CPU @ 2.60GHz",
-    "produced": "2026-10-18"
+    "produced": "2026-10-19"
   },
   "engine": {
     "package": "simulation",
     "version": "9.0.0"
   },
   "model": {
-    "file": "model/orbital_economy_v7_7_17_r1_modeljson.json",
-    "sha256": "43625d458d7bfc20e6b3a0868b4f3f2f503f249075e65c7afac9353ddca137c9",
-    "name": "Orbital Economy v7.7.17 r1 — Money"
+    "file": "model/orbital_economy_v7_7_18_r1_modeljson.json",
+    "sha256": "43034a2890e06c030b04433a3ed9cebf1961d4ccf9101766a8394d2033748b48",
+    "name": "Orbital Economy v7.7.18 r1 — Recalibration onto Cost Prices"
   },
   "modes": {
     "0": {
@@ -22,420 +22,420 @@
       "points": 4321,
       "series_count": 1931,
       "time_sha256": "3b769001a357701f4ad082bff1aae0e8a7c20848d856c91d27d6e7cd4461f0cf",
-      "mode_sha256": "f3dddf844ee458195d4987c1870e44e63cc032c87eeb41e212392a0c6baa600b"
+      "mode_sha256": "447734c417a893bc357338f0abae83680df8410667d6e83b09d3145951c3a9ee"
     },
     "1": {
       "scenario": "Timed B Reactivation",
       "points": 4321,
       "series_count": 1931,
       "time_sha256": "3b769001a357701f4ad082bff1aae0e8a7c20848d856c91d27d6e7cd4461f0cf",
-      "mode_sha256": "3faee4338bc70ee9cdd2800d3e18668ff26d4baef7c07b15d7c1eb105c080eb5"
+      "mode_sha256": "daeb2aee1b833095aaf5504dab265996e7bf1e9e4078352aebb8df7555e7e2b4"
     },
     "2": {
       "scenario": "Timed Transport Demand Surge",
       "points": 4321,
       "series_count": 1931,
       "time_sha256": "3b769001a357701f4ad082bff1aae0e8a7c20848d856c91d27d6e7cd4461f0cf",
-      "mode_sha256": "837d2e5047fdfc258f769584bef649c62afe2cd6f894dc0aad10506d024dab2d"
+      "mode_sha256": "2196a0470f7812aa34f1120461258d35d1a596ddcca98b39f9a3ed3cac5497a9"
     },
     "3": {
       "scenario": "Timed Low Demand Rationalization",
       "points": 4321,
       "series_count": 1931,
       "time_sha256": "3b769001a357701f4ad082bff1aae0e8a7c20848d856c91d27d6e7cd4461f0cf",
-      "mode_sha256": "6b3cca0ea688e22039f9d5bb439281f12f0b4b1bb558e0a20a350002158bb27f"
+      "mode_sha256": "8cf6f6ef7694daed2967e53d39ee0176aeab96a7a93a5212f0dc2937a1f2b085"
     },
     "4": {
       "scenario": "Timed Reverse Advantage",
       "points": 4321,
       "series_count": 1931,
       "time_sha256": "3b769001a357701f4ad082bff1aae0e8a7c20848d856c91d27d6e7cd4461f0cf",
-      "mode_sha256": "e95614f23fc9a06c349d521930a4f6cf6b2090d52f066e01cb747dc720843b38"
+      "mode_sha256": "9c5f2568af1058bef87b63d49da434b42bce7a3464439203b1a3c4ce93b58e49"
     },
     "5": {
       "scenario": "Timed Electronics Demand Surge",
       "points": 4321,
       "series_count": 1931,
       "time_sha256": "3b769001a357701f4ad082bff1aae0e8a7c20848d856c91d27d6e7cd4461f0cf",
-      "mode_sha256": "4871a9543f80e4c4a8d2faa24219af77c65108ca7a4a3487286a02c69e358874"
+      "mode_sha256": "9f87977e6b59372b83b5ebc905346d5ff3bdc1f971d22f4af86bef1e238ed963"
     },
     "6": {
       "scenario": "Timed Reverse Electronics Advantage",
       "points": 4321,
       "series_count": 1931,
       "time_sha256": "3b769001a357701f4ad082bff1aae0e8a7c20848d856c91d27d6e7cd4461f0cf",
-      "mode_sha256": "884e6aa7dbb6a76b7d54fd449417fe3115d6c908dd0d6824d03f14f1a73a5010"
+      "mode_sha256": "5c815c07beef794f288b0523c65b33cac2fcfe08464f0c0a8254ae4cbabe126d"
     },
     "7": {
       "scenario": "Timed Two-Good Transport Surge",
       "points": 4321,
       "series_count": 1931,
       "time_sha256": "3b769001a357701f4ad082bff1aae0e8a7c20848d856c91d27d6e7cd4461f0cf",
-      "mode_sha256": "28658fad5e11dc85213049135667d49f331cb57f91d790fe287867347e17c10f"
+      "mode_sha256": "cca950cd63551f94fbf7bfda8fdd624197c03f56b061d43df2943ceaf9db642f"
     },
     "8": {
       "scenario": "Timed Metal Priority Scarcity",
       "points": 4321,
       "series_count": 1931,
       "time_sha256": "3b769001a357701f4ad082bff1aae0e8a7c20848d856c91d27d6e7cd4461f0cf",
-      "mode_sha256": "8f239ee22a64d8f62d505f7ac6b43dbf384729b7c46b5b21a833e259be00e62c"
+      "mode_sha256": "69b0b26b86c24330636127abbdde4bca9de71eb5d7f7b0a2d166906f629416a7"
     },
     "9": {
       "scenario": "v7.2 Simultaneous Two-Industry Energy Shortage",
       "points": 4321,
       "series_count": 1931,
       "time_sha256": "3b769001a357701f4ad082bff1aae0e8a7c20848d856c91d27d6e7cd4461f0cf",
-      "mode_sha256": "4f46d328af1532227b48ce51850a440ff83e306a13f3737e263da6b1c772c10d"
+      "mode_sha256": "23fd5af4930dfe5957e5bbf12ccd60eef37dbfa11e05acaef9978a2344a71400"
     },
     "10": {
       "scenario": "v7.2 Cheap-Energy Comparative Advantage",
       "points": 4321,
       "series_count": 1931,
       "time_sha256": "3b769001a357701f4ad082bff1aae0e8a7c20848d856c91d27d6e7cd4461f0cf",
-      "mode_sha256": "315f4c6ef4b646d7aed5d2758768912b09cb9ce2eb3aadd7fbfba61572cf09a9"
+      "mode_sha256": "7cac0f9eca1a9cf2bf2425a5cdef5937037c0b45eb4a7f922947052f71dfb297"
     },
     "11": {
       "scenario": "v7.2 Generation Capacity Shock Recovery",
       "points": 4321,
       "series_count": 1931,
       "time_sha256": "3b769001a357701f4ad082bff1aae0e8a7c20848d856c91d27d6e7cd4461f0cf",
-      "mode_sha256": "acdeb58693c2f91153a263ba820c5d370c00014006192a80599b52400d9c203e"
+      "mode_sha256": "b44e25c89724a5cd90ae20d24f07878373668ae9eaade77156573b29b7b4ffef"
     },
     "12": {
       "scenario": "v7.3 Lifecycle Baseline",
       "points": 4321,
       "series_count": 1931,
       "time_sha256": "3b769001a357701f4ad082bff1aae0e8a7c20848d856c91d27d6e7cd4461f0cf",
-      "mode_sha256": "6363b33447f193f77184565c4f70c11cb9ac9de12bebd9b346b921fefb2ad6af"
+      "mode_sha256": "89339b27b1ca0d22e7d57fbcf9b7eaea06a96e87f3310368f22f2fae00160f6b"
     },
     "13": {
       "scenario": "v7.3 Temporary Electronics Reactivation",
       "points": 4321,
       "series_count": 1931,
       "time_sha256": "3b769001a357701f4ad082bff1aae0e8a7c20848d856c91d27d6e7cd4461f0cf",
-      "mode_sha256": "14019c3164807e766047b37434539c89cb12ce7a722777157894428938a5e914"
+      "mode_sha256": "37273b763f9e820a5f28d3fedd99ba9b674c4f71a291e09b57c892607b73a5ef"
     },
     "14": {
       "scenario": "v7.3 Sustained Electronics Growth",
       "points": 4321,
       "series_count": 1931,
       "time_sha256": "3b769001a357701f4ad082bff1aae0e8a7c20848d856c91d27d6e7cd4461f0cf",
-      "mode_sha256": "326371dba17cef647379f14311d7f11587ded33cc6751643a1d92a3167e7c986"
+      "mode_sha256": "a9e7b50710f13fd9a3728808ca52663564f63ee025e5d28d2071c6223339934a"
     },
     "15": {
       "scenario": "v7.3 Electronics Collapse and Recovery",
       "points": 4321,
       "series_count": 1931,
       "time_sha256": "3b769001a357701f4ad082bff1aae0e8a7c20848d856c91d27d6e7cd4461f0cf",
-      "mode_sha256": "6718fba018e8523f29dedddb925fb15b3940ab8b9e3222229b89b3d752ed0d32"
+      "mode_sha256": "513b29b8ea7f5b498d586a30a2e6bc8c5bfcd38d55b4e95251bee0b363b2b322"
     },
     "16": {
       "scenario": "v7.3 Sustained Metal Driven Power Growth",
       "points": 4321,
       "series_count": 1931,
       "time_sha256": "3b769001a357701f4ad082bff1aae0e8a7c20848d856c91d27d6e7cd4461f0cf",
-      "mode_sha256": "597b983037adfee872825b23bd5a09afdb674bee7dd09179b5ae7215ab15b499"
+      "mode_sha256": "262a417acb8f31a8e3c25cdaa2ad5d96f8378055f2c85ed669e75951745506ff"
     },
     "17": {
       "scenario": "v7.4 Intermediate Inputs Baseline",
       "points": 4321,
       "series_count": 1931,
       "time_sha256": "3b769001a357701f4ad082bff1aae0e8a7c20848d856c91d27d6e7cd4461f0cf",
-      "mode_sha256": "d1fcd96290a21e38ce4a45dc394ffa4767d03c434bd7d1f5a0e617cd54092a13"
+      "mode_sha256": "caf160f257799b5f331e04ae7d8e09e0d0ec884d53bb9bc4dccd6706d6ca098e"
     },
     "18": {
       "scenario": "v7.4 Temporary Metal Supply Shock",
       "points": 4321,
       "series_count": 1931,
       "time_sha256": "3b769001a357701f4ad082bff1aae0e8a7c20848d856c91d27d6e7cd4461f0cf",
-      "mode_sha256": "99551aae91c174775d0e3c3027d48e6b6a3c91d860b0dfb76c3142800ac4cd0d"
+      "mode_sha256": "60629b15437d8e988fd5fc615b0ebe39f8f34940a8cd64b7922d87cd32b3ad98"
     },
     "19": {
       "scenario": "v7.4 Sustained Electronics Growth with Input Coupling",
       "points": 4321,
       "series_count": 1931,
       "time_sha256": "3b769001a357701f4ad082bff1aae0e8a7c20848d856c91d27d6e7cd4461f0cf",
-      "mode_sha256": "0c4a721f41b069ef67946124d54db55daf65e5c4273c1561a9713afa245d5d89"
+      "mode_sha256": "6dcde45ddeb880a9c8e058d885910c97266ee789d23b673fd9320f6d8a8d01a1"
     },
     "20": {
       "scenario": "v7.4 Coupled Metal Demand Growth",
       "points": 4321,
       "series_count": 1931,
       "time_sha256": "3b769001a357701f4ad082bff1aae0e8a7c20848d856c91d27d6e7cd4461f0cf",
-      "mode_sha256": "b6bb7f3d87c297b82f7c59fd81f3635e49e56aa1fd5b384879ea828d6c00b1e4"
+      "mode_sha256": "218b2143c9bcd2f2a2e487ae583bd5f7b38a9eb5345f58fb15bce786e3efa1b7"
     },
     "21": {
       "scenario": "v7.5 Capital Goods Baseline",
       "points": 4321,
       "series_count": 1931,
       "time_sha256": "3b769001a357701f4ad082bff1aae0e8a7c20848d856c91d27d6e7cd4461f0cf",
-      "mode_sha256": "464d8394003d0e70d472f7bcd6269b72d63835c1da03defaf9a501076450fd0f"
+      "mode_sha256": "56cf6d488b86fb83546ecaf2c02b8e07d2fe35f0a4cfc6035be5cff6c7514ba6"
     },
     "22": {
       "scenario": "v7.5 Capital Goods Supply Shock",
       "points": 4321,
       "series_count": 1931,
       "time_sha256": "3b769001a357701f4ad082bff1aae0e8a7c20848d856c91d27d6e7cd4461f0cf",
-      "mode_sha256": "afba96b6691f7cb13ba21a7cd4443eac2a29d8088a84c93750ce9014f97d9e4c"
+      "mode_sha256": "d61518eae642a09a42ad7ed40a0d7e7035f5f34fff9a1675c107ec15a9c2b8c6"
     },
     "23": {
       "scenario": "v7.5 Investment Boom",
       "points": 4321,
       "series_count": 1931,
       "time_sha256": "3b769001a357701f4ad082bff1aae0e8a7c20848d856c91d27d6e7cd4461f0cf",
-      "mode_sha256": "a03ebecd82e9c5149e01b9e0bc1fef04d41495e1974fa784447e356f5f6fdd1d"
+      "mode_sha256": "f98323dfa1ead0f7cc99c2830d172a3f06aea0a1b3e71bad82a0568155a8e4f3"
     },
     "24": {
       "scenario": "v7.5.1 Transport Capital Goods Closure",
       "points": 4321,
       "series_count": 1931,
       "time_sha256": "3b769001a357701f4ad082bff1aae0e8a7c20848d856c91d27d6e7cd4461f0cf",
-      "mode_sha256": "96fa7106b43dd7b878df8afd2286de25d643698db57cfb8c3a7cda8c597bea41"
+      "mode_sha256": "91669ad57d6fa27f14b4806c94084401ed489c7708f1059badf72b903ef440b2"
     },
     "25": {
       "scenario": "v7.6 Energy Resource Supply Shock",
       "points": 4321,
       "series_count": 1931,
       "time_sha256": "3b769001a357701f4ad082bff1aae0e8a7c20848d856c91d27d6e7cd4461f0cf",
-      "mode_sha256": "f22c8c0cbff54bcaae122e79bcd00f2de0d3c98a2cabc980fdd3ac75e54de9b8"
+      "mode_sha256": "4d514aef46515d35e194ffcddb5ed8a1d2e4fbb5996e979215201706d5f5c7d3"
     },
     "26": {
       "scenario": "v7.6 Energy Capacity-Only Control Shock",
       "points": 4321,
       "series_count": 1931,
       "time_sha256": "3b769001a357701f4ad082bff1aae0e8a7c20848d856c91d27d6e7cd4461f0cf",
-      "mode_sha256": "aeda7ee1bb1582a21a31a833ff41cdfbd23ba36d13a0163386d04aa6c0cda4ce"
+      "mode_sha256": "caebf1f7a107bcfd4c6901c7d8b2791fdaa6db07c7b0e690cf2cec1924fa4cf0"
     },
     "27": {
       "scenario": "v7.7 Construction Materials Baseline",
       "points": 4321,
       "series_count": 1931,
       "time_sha256": "3b769001a357701f4ad082bff1aae0e8a7c20848d856c91d27d6e7cd4461f0cf",
-      "mode_sha256": "73c2b8642db5a43a0a900b039231ee4d3cc803c61d6c84b607de87ecea9f2e04"
+      "mode_sha256": "65f3af8171c7900276718dfc5b1a57349393383dbe2431e2521558956480f994"
     },
     "28": {
       "scenario": "v7.7 Construction Materials Supply Shock",
       "points": 4321,
       "series_count": 1931,
       "time_sha256": "3b769001a357701f4ad082bff1aae0e8a7c20848d856c91d27d6e7cd4461f0cf",
-      "mode_sha256": "61eaf76b03b4236a5e05d8e7fddeafef7e809e881ad90af4162c59484210e468"
+      "mode_sha256": "7ca0546f70de3299fe868b67a208dc5a75f57f8fd08c79cf09b5c2f040c090d5"
     },
     "29": {
       "scenario": "v7.7 Regolith Supply Shock",
       "points": 4321,
       "series_count": 1931,
       "time_sha256": "3b769001a357701f4ad082bff1aae0e8a7c20848d856c91d27d6e7cd4461f0cf",
-      "mode_sha256": "235edee29838770275d9c64d91f6d15ee0d49ea66d685e311ffd78e0662907c9"
+      "mode_sha256": "7d7479dbd37238e5ca5193c1722bd2621bacf9790773444026ee1326cbbb648a"
     },
     "30": {
       "scenario": "v7.7.1 Transport Construction Materials Baseline",
       "points": 4321,
       "series_count": 1931,
       "time_sha256": "3b769001a357701f4ad082bff1aae0e8a7c20848d856c91d27d6e7cd4461f0cf",
-      "mode_sha256": "6595b8e2821b241bca91d0be3604c8fb49639fdde262e6f9aa5cd273c6051171"
+      "mode_sha256": "c9b1a9a362f6a582efcd040a6ef9cf70b8481faed97e7c0a4a86623e10d53f7f"
     },
     "31": {
       "scenario": "v7.7.1 Transport Surge on Construction Materials",
       "points": 4321,
       "series_count": 1931,
       "time_sha256": "3b769001a357701f4ad082bff1aae0e8a7c20848d856c91d27d6e7cd4461f0cf",
-      "mode_sha256": "58d3e7db1cd1db77858041513827693481b26530773c891e8868c6eb0465ae0a"
+      "mode_sha256": "0008ce7b1e2f05dc63c9cdcff96860e6920a0a7d1343f8a15c8f0d7ffdf53fc6"
     },
     "32": {
       "scenario": "v7.7.2 Construction Materials Energy Baseline",
       "points": 4321,
       "series_count": 1931,
       "time_sha256": "3b769001a357701f4ad082bff1aae0e8a7c20848d856c91d27d6e7cd4461f0cf",
-      "mode_sha256": "efd2f82a258b381b31b920044382650837da43974106ae4b71465902a342f81e"
+      "mode_sha256": "3600ef8cadbad2fdb6db98169d79939fe0f650d031cf28f992ed9ecc21384a61"
     },
     "33": {
       "scenario": "v7.7.2 Generation Capacity Shock with Construction Materials Energy",
       "points": 4321,
       "series_count": 1931,
       "time_sha256": "3b769001a357701f4ad082bff1aae0e8a7c20848d856c91d27d6e7cd4461f0cf",
-      "mode_sha256": "7536de6fb22dac532635c14b2c2390b06b0b6fe302640517d9e6b44501bcdd71"
+      "mode_sha256": "d45b6e14ac6fab79defe930a08f491f8adb4db0cf416d4683401a84e3e79052d"
     },
     "34": {
       "scenario": "v7.7.3 Construction Materials Capital Baseline",
       "points": 4321,
       "series_count": 1931,
       "time_sha256": "3b769001a357701f4ad082bff1aae0e8a7c20848d856c91d27d6e7cd4461f0cf",
-      "mode_sha256": "522ff6de83d3ce551bb05e6e225844c83dc28e3a7dc9a091423bfee3df7071df"
+      "mode_sha256": "d4f8c949487501f388f4992aed9f471f3193d573d5209dc0f4c32d52c02acc4b"
     },
     "35": {
       "scenario": "v7.7.3 Transport Surge on Construction Materials Capital",
       "points": 4321,
       "series_count": 1931,
       "time_sha256": "3b769001a357701f4ad082bff1aae0e8a7c20848d856c91d27d6e7cd4461f0cf",
-      "mode_sha256": "ecef35784778b4c21ad17f5ba9e6e0696fc26c24bb3f14d6c053edb20eb5711d"
+      "mode_sha256": "e172d88462f09f48266e4a1cc547de4dd85ae214f247dd9034afd8e3f2dfb941"
     },
     "36": {
       "scenario": "v7.7.4 Capital Goods Capital Baseline",
       "points": 4321,
       "series_count": 1931,
       "time_sha256": "3b769001a357701f4ad082bff1aae0e8a7c20848d856c91d27d6e7cd4461f0cf",
-      "mode_sha256": "94d0cc10a995cc8b7462fc88f71209d2dd7cf7b62cdb24fa0c2ae25365874ca1"
+      "mode_sha256": "bf5f4f226f3e0dc3529ea2b80d09a65e7eb67cdf5d4297062d4d62c013e7f5da"
     },
     "37": {
       "scenario": "v7.7.4 Transport Surge on Capital Goods Capital",
       "points": 4321,
       "series_count": 1931,
       "time_sha256": "3b769001a357701f4ad082bff1aae0e8a7c20848d856c91d27d6e7cd4461f0cf",
-      "mode_sha256": "d836b4bdc897ddfaf0ff1f0e95ea5f1734aebe13e80a6c16e3b2ede5aa647099"
+      "mode_sha256": "773fafab05cf577c1be5acadfc737ec9288a188026f74629a344adcd35bff42a"
     },
     "38": {
       "scenario": "v7.7.5 Regolith Capital Baseline",
       "points": 4321,
       "series_count": 1931,
       "time_sha256": "3b769001a357701f4ad082bff1aae0e8a7c20848d856c91d27d6e7cd4461f0cf",
-      "mode_sha256": "cd616998831b4d0ceadbd6a9298de8c9f345c6da8d81017fa8b412d415edbd7d"
+      "mode_sha256": "14bbbba0d60159c7e6aae5a58565ca35a10df9db5a6d9756df38344f6bbf1b39"
     },
     "39": {
       "scenario": "v7.7.5 Transport Surge on Regolith Capital",
       "points": 4321,
       "series_count": 1931,
       "time_sha256": "3b769001a357701f4ad082bff1aae0e8a7c20848d856c91d27d6e7cd4461f0cf",
-      "mode_sha256": "08ec60038bd1ffd5922972bd8fd3baffd9629a2a18693ef710208cabdb528702"
+      "mode_sha256": "ae70f1532248d75087bf93a724c5b33bba64c3724151ceae900e0ef0bf405f84"
     },
     "40": {
       "scenario": "v7.7.6 Ore Capital Baseline",
       "points": 4321,
       "series_count": 1931,
       "time_sha256": "3b769001a357701f4ad082bff1aae0e8a7c20848d856c91d27d6e7cd4461f0cf",
-      "mode_sha256": "2714670330d0c270e682a037e0a6a4a7ebf296581577dbd7c92de791cd52efa3"
+      "mode_sha256": "062accc2172c185eb9c63a070d08cbf0f15fe599210a619bee2fa3b58f054bfd"
     },
     "41": {
       "scenario": "v7.7.6 Transport Surge on Ore Capital",
       "points": 4321,
       "series_count": 1931,
       "time_sha256": "3b769001a357701f4ad082bff1aae0e8a7c20848d856c91d27d6e7cd4461f0cf",
-      "mode_sha256": "d7ae162eb1411747caa4ab387dd5c547a07279adccdde4e871b9fb3d78508223"
+      "mode_sha256": "4b4503b241f918341c9b5652470f62e4ee31a430e9353f37e260523d41b3637f"
     },
     "42": {
       "scenario": "v7.7.7 Power Resource Capital Baseline",
       "points": 4321,
       "series_count": 1931,
       "time_sha256": "3b769001a357701f4ad082bff1aae0e8a7c20848d856c91d27d6e7cd4461f0cf",
-      "mode_sha256": "7c190d131a5d374071f7b3efa1ae6b86e300a0ed6f35fbf57a2156bebae8ad29"
+      "mode_sha256": "e9a847d13174e8c6bb4d465aa7a1594f85c4d57f8e89d4a395205b9489e86f65"
     },
     "43": {
       "scenario": "v7.7.7 Transport Surge on Power Resource Capital",
       "points": 4321,
       "series_count": 1931,
       "time_sha256": "3b769001a357701f4ad082bff1aae0e8a7c20848d856c91d27d6e7cd4461f0cf",
-      "mode_sha256": "0870ad95a28a14a589d75a3e4fb7a160a8dda02f39807835a8f7b7a22f94c698"
+      "mode_sha256": "ad94b484a362703ff834624f7bb3650fb130b602166764d9302fb4c6c3937b53"
     },
     "44": {
       "scenario": "v7.7.8 Deposits Baseline",
       "points": 4321,
       "series_count": 1931,
       "time_sha256": "3b769001a357701f4ad082bff1aae0e8a7c20848d856c91d27d6e7cd4461f0cf",
-      "mode_sha256": "c72d000d0303b649c073c51d1700fa7ff635eb27601d6d20dc2ebdb32d35170d"
+      "mode_sha256": "374ca2eccee14e1b868c8fadbe67a3c8a102bff0716abacc203dfce31ad0e566"
     },
     "45": {
       "scenario": "v7.7.8 Transport Surge on Deposits",
       "points": 4321,
       "series_count": 1931,
       "time_sha256": "3b769001a357701f4ad082bff1aae0e8a7c20848d856c91d27d6e7cd4461f0cf",
-      "mode_sha256": "0b66cc9bf8bd582fb8361bd4ead2329e9b9f67c1510698ff4b5ed2cbeb8e58c3"
+      "mode_sha256": "d26122de005abe9903986b547a85d9efc49fdc6100fa02cc539d2fb778f78509"
     },
     "46": {
       "scenario": "v7.7.9 Process Energy Baseline",
       "points": 4321,
       "series_count": 1931,
       "time_sha256": "3b769001a357701f4ad082bff1aae0e8a7c20848d856c91d27d6e7cd4461f0cf",
-      "mode_sha256": "9a57bb8038d911a6db8ae62469bdc14e01258c1f5ed5e25493a47969554c5c96"
+      "mode_sha256": "8d1ac1e029f074168a311d8ea02de55cd5c1ccda9071a105fa3d3b7487666cbc"
     },
     "47": {
       "scenario": "v7.7.9 Transport Surge on Process Energy",
       "points": 4321,
       "series_count": 1931,
       "time_sha256": "3b769001a357701f4ad082bff1aae0e8a7c20848d856c91d27d6e7cd4461f0cf",
-      "mode_sha256": "ab5c494b985d8dc48256c2e71f35fecda115191ae975215aa5f467b79c94a97c"
+      "mode_sha256": "3dce6a0455b7e985b2ce1a876aeb61e33ab2087178a43dbf276d0306f885b065"
     },
     "48": {
       "scenario": "v7.7.10 Automation Probe",
       "points": 4321,
       "series_count": 1931,
       "time_sha256": "3b769001a357701f4ad082bff1aae0e8a7c20848d856c91d27d6e7cd4461f0cf",
-      "mode_sha256": "ad121a480061dcc9312b32db526b5c2ec689ab7dfcd734c40ce6395874b54626"
+      "mode_sha256": "5089de1094f5db19922341d3779ebcf4708780301d391d6a8703813046d45d9a"
     },
     "49": {
       "scenario": "v7.7.12 Food Baseline",
       "points": 4321,
       "series_count": 1931,
       "time_sha256": "3b769001a357701f4ad082bff1aae0e8a7c20848d856c91d27d6e7cd4461f0cf",
-      "mode_sha256": "0d76964759fd9de42aa3d817f79c1fcf2edeeb53417f5f9b5d9cde6bd1842aa9"
+      "mode_sha256": "eaafaf547855cbbace10476483590c89fb90b3be048e2717f3e5b34255a1ab27"
     },
     "50": {
       "scenario": "v7.7.12 Transport Surge with Food",
       "points": 4321,
       "series_count": 1931,
       "time_sha256": "3b769001a357701f4ad082bff1aae0e8a7c20848d856c91d27d6e7cd4461f0cf",
-      "mode_sha256": "2be76979bff9268bb3303902eecce80e4bdcbede7d70e4c6c2908736132ae1ca"
+      "mode_sha256": "2118342c936448463c48d8cdc3a5d8598a40d62a6e39d0c01ae0c6d7318a3a0b"
     },
     "51": {
       "scenario": "v7.7.12 Food Equal Land Probe",
       "points": 4321,
       "series_count": 1931,
       "time_sha256": "3b769001a357701f4ad082bff1aae0e8a7c20848d856c91d27d6e7cd4461f0cf",
-      "mode_sha256": "27f2bd7bf3a3186ebf982bae9b9d14d040aa5305cb36b343733020751d19c165"
+      "mode_sha256": "ad308e7aeeb7bb1cab52bce1089279891a3e7f942bfeff6a963da4be23de4b56"
     },
     "52": {
       "scenario": "v7.7.13 Labor Market",
       "points": 4321,
       "series_count": 1931,
       "time_sha256": "3b769001a357701f4ad082bff1aae0e8a7c20848d856c91d27d6e7cd4461f0cf",
-      "mode_sha256": "b470076d5fb06a4aa5fb93a5fde607629929b46bee745c0ab4f195a0640e7634"
+      "mode_sha256": "15e7ca5ae993eaad986f0eac99440c44e674d06c145efa84562e089b54c5e702"
     },
     "53": {
       "scenario": "v7.7.13 Transport Surge with Labor Market",
       "points": 4321,
       "series_count": 1931,
       "time_sha256": "3b769001a357701f4ad082bff1aae0e8a7c20848d856c91d27d6e7cd4461f0cf",
-      "mode_sha256": "425911b6d0f73fd12e9da9e07569ff57f593278b7c9812be9dc72eca94be3e6f"
+      "mode_sha256": "f8aa0e526ed0498da204f94fdfaa61601251f75e4835f1cca3ee0628409c3d31"
     },
     "54": {
       "scenario": "v7.7.15 Wage Pricing",
       "points": 4321,
       "series_count": 1931,
       "time_sha256": "3b769001a357701f4ad082bff1aae0e8a7c20848d856c91d27d6e7cd4461f0cf",
-      "mode_sha256": "d949acd6c0ea50d3309dedf1ff580985d2c98b957937a8f4eea8e54c9d88f252"
+      "mode_sha256": "5f5f8cf1dc3fdfd3b51c568e3af710f6080ed30db3139008666d53ec7233439f"
     },
     "55": {
       "scenario": "v7.7.15 Transport Surge with Wage Pricing",
       "points": 4321,
       "series_count": 1931,
       "time_sha256": "3b769001a357701f4ad082bff1aae0e8a7c20848d856c91d27d6e7cd4461f0cf",
-      "mode_sha256": "44c2faff4f452994ebd732cf9ece8ccecd8328053d41f6a8b8cae6c41318d59d"
+      "mode_sha256": "c35fa9b0330250419c1592bcf18559a09725245eaebd192235daa7f6b0f80299"
     },
     "56": {
       "scenario": "v7.7.16 Cost Pricing",
       "points": 4321,
       "series_count": 1931,
       "time_sha256": "3b769001a357701f4ad082bff1aae0e8a7c20848d856c91d27d6e7cd4461f0cf",
-      "mode_sha256": "74f01187d6b8087f85fc4491b3458c9cee61613d63735efb4ea4420095451be8"
+      "mode_sha256": "92e4ae358101696c9828c578977c0f935196a682f3fab5005996bb5e0a60cce5"
     },
     "57": {
       "scenario": "v7.7.16 Transport Surge with Cost Pricing",
       "points": 4321,
       "series_count": 1931,
       "time_sha256": "3b769001a357701f4ad082bff1aae0e8a7c20848d856c91d27d6e7cd4461f0cf",
-      "mode_sha256": "c3f1dfe223ac9ec9f279ecbe5c63cbd1b359b9bbfe4aa1eefbac853242d1239c"
+      "mode_sha256": "20694cb754bb23529d985c279e62dd70598bef5ee25f89fba478c99f74883946"
     },
     "58": {
       "scenario": "v7.7.17 Money",
       "points": 4321,
       "series_count": 1931,
       "time_sha256": "3b769001a357701f4ad082bff1aae0e8a7c20848d856c91d27d6e7cd4461f0cf",
-      "mode_sha256": "98a720e5ea52f777849a82da59ee51ae84c9eb898ff1a2d8b6e6971a2c440c1e"
+      "mode_sha256": "6fae0d72bcb367bd6542bbc80f3c3dacde807f7ecddab9b7c5a57375c956ee46"
     },
     "59": {
       "scenario": "v7.7.17 Transport Surge with Money",
       "points": 4321,
       "series_count": 1931,
       "time_sha256": "3b769001a357701f4ad082bff1aae0e8a7c20848d856c91d27d6e7cd4461f0cf",
-      "mode_sha256": "74e43463b91cc33d966e9e34a601ebf4d70c7300f346553624f719caa791a388"
+      "mode_sha256": "8c3739b75f386dc64bcfa23ae50ecdc92de4c51fd939190c40eabe0d698a916a"
     }
   }
 }

@@ -75,13 +75,18 @@
     "capital_goods": "Capital Goods",
     "construction_materials": "Construction Materials"
   },
+  "wear_gates": {
+    "capital_goods": "Capital Goods Enabled",
+    "construction_materials": "Construction Materials Enabled"
+  },
   "costs": [
     {
       "name": "Ore",
       "inputs": [
         {
           "per_unit": "Mining Energy per Unit",
-          "signal": "Energy"
+          "signal": "Energy",
+          "gate": "Process Energy Enabled"
         }
       ],
       "labor": "{C} Mining Labor per Unit",
@@ -89,7 +94,8 @@
       "wear": {
         "capital_goods": "Ore Mine Capital Goods per Capacity",
         "construction_materials": "Ore Mine Construction Materials per Capacity",
-        "depreciation": "Ore Mine Depreciation Rate"
+        "depreciation": "Ore Mine Depreciation Rate",
+        "gate": "Ore Capital Enabled"
       },
       "rent": "{C} Effective Ore Base Cost"
     },
@@ -99,7 +105,8 @@
       "inputs": [
         {
           "per_unit": "Regolith Extraction Energy per Unit",
-          "signal": "Energy"
+          "signal": "Energy",
+          "gate": "Process Energy Enabled"
         }
       ],
       "labor": "{C} Regolith Extraction Labor per Unit",
@@ -107,7 +114,8 @@
       "wear": {
         "capital_goods": "Regolith Mine Capital Goods per Capacity",
         "construction_materials": "Regolith Mine Construction Materials per Capacity",
-        "depreciation": "Regolith Mine Depreciation Rate"
+        "depreciation": "Regolith Mine Depreciation Rate",
+        "gate": "Regolith Capital Enabled"
       }
     },
     {
@@ -115,7 +123,8 @@
       "inputs": [
         {
           "per_unit": "Power Resource Extraction Energy per Unit",
-          "signal": "Energy"
+          "signal": "Energy",
+          "gate": "Process Energy Enabled"
         }
       ],
       "labor": "{C} Power Resource Extraction Labor per Unit",
@@ -123,7 +132,8 @@
       "wear": {
         "capital_goods": "Power Resource Mine Capital Goods per Capacity",
         "construction_materials": "Power Resource Mine Construction Materials per Capacity",
-        "depreciation": "Power Resource Mine Depreciation Rate"
+        "depreciation": "Power Resource Mine Depreciation Rate",
+        "gate": "Power Resource Capital Enabled"
       },
       "rent": "Base Power Resource Price"
     },
@@ -132,7 +142,8 @@
       "inputs": [
         {
           "per_unit": "Power Resource per Energy",
-          "signal": "Power Resource"
+          "signal": "Power Resource",
+          "gate": "Power Resource Enabled"
         }
       ],
       "labor": "{C} Generation Labor per Unit",
@@ -140,7 +151,8 @@
       "wear": {
         "capital_goods": "{C} Power Capital Goods per Capacity",
         "construction_materials": "{C} Power Construction Materials per Capacity",
-        "depreciation": "Power Depreciation Rate"
+        "depreciation": "Power Depreciation Rate",
+        "gate": "Capital Lifecycle Enabled"
       },
       "rent": "{C} Power Generation Cost"
     },
@@ -158,7 +170,8 @@
         },
         {
           "per_unit": "Capital Goods Energy per Unit",
-          "signal": "Energy"
+          "signal": "Energy",
+          "gate": "Process Energy Enabled"
         }
       ],
       "labor": "{C} Capital Goods Labor per Unit",
@@ -166,7 +179,8 @@
       "wear": {
         "capital_goods": "Capital Goods Plant Capital Goods per Capacity",
         "construction_materials": "Capital Goods Plant Construction Materials per Capacity",
-        "depreciation": "Capital Goods Plant Depreciation Rate"
+        "depreciation": "Capital Goods Plant Depreciation Rate",
+        "gate": "Capital Goods Capital Enabled"
       }
     },
     {
@@ -179,7 +193,8 @@
         },
         {
           "per_unit": "Construction Materials Energy per Unit",
-          "signal": "Energy"
+          "signal": "Energy",
+          "gate": "Construction Materials Energy Enabled"
         }
       ],
       "labor": "{C} Construction Materials Labor per Unit",
@@ -187,7 +202,8 @@
       "wear": {
         "capital_goods": "Construction Materials Plant Capital Goods per Capacity",
         "construction_materials": "Construction Materials Plant Construction Materials per Capacity",
-        "depreciation": "Construction Materials Plant Depreciation Rate"
+        "depreciation": "Construction Materials Plant Depreciation Rate",
+        "gate": "Construction Materials Capital Enabled"
       }
     },
     {
@@ -195,13 +211,15 @@
       "inputs": [
         {
           "per_unit": "Food Energy per Unit",
-          "signal": "Energy"
+          "signal": "Energy",
+          "gate": "Food Enabled"
         }
       ],
       "labor": "Food Labor per Unit",
       "wear": {
         "capital_goods": "Farm Capital Goods per Capacity",
-        "depreciation": "Farm Depreciation Rate"
+        "depreciation": "Farm Depreciation Rate",
+        "gate": "Food Enabled"
       }
     },
     {
@@ -219,7 +237,8 @@
       "wear": {
         "capital_goods": "{C} Electronics Capital Goods per Capacity",
         "construction_materials": "{C} Electronics Construction Materials per Capacity",
-        "depreciation": "Electronics Depreciation Rate"
+        "depreciation": "Electronics Depreciation Rate",
+        "gate": "Capital Lifecycle Enabled"
       }
     }
   ],
@@ -232,7 +251,8 @@
     {
       "target": "{C} Power Resource Price",
       "cost": "Power Resource",
-      "scarcity": "(1 + [Power Resource Scarcity Price Strength] * (1 - [{C} Perceived Power Resource Fulfillment]))"
+      "scarcity": "(1 + [Power Resource Scarcity Price Strength] * (1 - [{C} Perceived Power Resource Fulfillment]))",
+      "gate": "Power Resource Enabled"
     },
     {
       "target": "{C} Energy Price",

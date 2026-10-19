@@ -77,8 +77,7 @@ Modes 56–59 входов не меняют, и все привязки там 
 
 **Правило:** порог, записанный от уровня мира прежних цен или от уровня другого Mode, пересчитан от уровня skeleton **с тем же множителем**. Это касается и проверок, которые не падали: на затратных ценах они проходили бы, ничего не проверяя (Mode 18: «цена A выросла на 25 %» с порогом 42.45 при цене до шока 60.2).
 
-Множитель меняется в трёх местах, причина указана в строке:
-- Mode 23 производство ×1.1 — ×1.2 выше мощности завода;
+Множитель меняется в двух местах, причина указана в строке:
 - Mode 23 генерация ×1.3 — как Mode 19 в v7.7.14;
 - Mode 18 событие себестоимости B ×1.25 — себестоимость B реагирует быстрее.
 
@@ -87,6 +86,8 @@ Modes 56–59 входов не меняют, и все привязки там 
 - Modes 53/55 — ограничитель труда: с деньгами A укомплектован, как в Mode 59.
 
 Проверки денег Modes 58–59 добавлены в 52–53.
+
+**Mode 23 — от средних за дни 300–360 (раунд 2).** Спрос и производство оборудования в Mode 23 дребезжат вокруг начала бума: в соседних шагах 0.67 → 0.87 → 0.70 → 0, до шока бывают пики до 1.9. Мгновенное значение в день 359.75 оказалось всплеском, и пики легли по-разному на Windows и Linux — канонический прогон уронил порядок событий. Пороги Mode 23 считаются от средних за дни 300–360: спрос 0.889, производство 0.810, генерация 0.663, переработка 0.0311. Средние одинаковы на обеих платформах, порядок событий 367 → 383.5 → 608, запас всех проверок ≥ 4 %.
 
 | Mode | Проверка (прежнее имя) | Было | Стало | Причина / skeleton |
 |---|---|---|---|---|
@@ -116,11 +117,11 @@ Modes 56–59 входов не меняют, и все привязки там 
 | 22 | A refinery capital @720 lags Mode 21 (57.88) by >= 3% | last <= 56.1 на [720, 720] | last <= 60.86 на [720, 720] |  |
 | 22 | A power capital @720 lags Mode 21 (1647.2) by >= 3% | last <= 1597 на [720, 720] | last <= 1658.2 на [720, 720] |  |
 | 22 | B unaffected | min >= 0.85 на [0, 1080] | min >= 0.75 на [0, 1080] | B spent its capital goods buffer on power in years 1-2 (Mode 21), skeleton min 0.81 |
-| 23 | A capital goods demand rises >= 1.2 x pre-shock (0.602 @359.75) | max >= 0.72 на [360, 1080] | max >= 1.062 на [360, 1080] | rebased on the cost-price pre-shock level |
-| 23 | A capital goods production follows demand (>= 1.2 x pre-shock 0.552) | max >= 0.72 на [360, 1080] | max >= 0.957 на [360, 1080] | rebased on the cost-price pre-shock level |
-| 23 | demand rise -> fulfillment dip -> production rise | > 0.98 → < 0.95 → > 0.907 | > 1.062 → < 0.95 → > 0.957 | rebased on the cost-price pre-shock level |
-| 23 | A power expansion >= 1.5 x pre-shock (0.356 @359.75) | max >= 0.534 на [360, 1080] | max >= 0.849 на [360, 1080] | rebased on the cost-price pre-shock level |
-| 23 | A refinery expansion holds (>= 0.9 x pre-shock 0.024) | max >= 0.0216 на [360, 1080] | max >= 0.028 на [360, 1080] | rebased on the cost-price pre-shock level |
+| 23 | A capital goods demand rises >= 1.2 x pre-shock (0.602 @359.75) | max >= 0.72 на [360, 1080] | max >= 1.066 на [360, 1080] | rebased on the cost-price pre-shock mean (days 300-360) |
+| 23 | A capital goods production follows demand (>= 1.2 x pre-shock 0.552) | max >= 0.72 на [360, 1080] | max >= 0.972 на [360, 1080] | rebased on the cost-price pre-shock mean (days 300-360) |
+| 23 | demand rise -> fulfillment dip -> production rise | > 0.98 → < 0.95 → > 0.907 | > 1.066 → < 0.95 → > 0.972 | rebased on the cost-price pre-shock mean (days 300-360) |
+| 23 | A power expansion >= 1.5 x pre-shock (0.356 @359.75) | max >= 0.534 на [360, 1080] | max >= 0.862 на [360, 1080] | rebased on the cost-price pre-shock mean (days 300-360) |
+| 23 | A refinery expansion holds (>= 0.9 x pre-shock 0.024) | max >= 0.0216 на [360, 1080] | max >= 0.028 на [360, 1080] | rebased on the cost-price pre-shock mean (days 300-360) |
 | 23 | B capital goods fulfillment stays >= 0.85 (scale-free buffer) | min >= 0.85 на [0, 1080] | min >= 0.7 на [0, 1080] | B spent its capital goods buffer on power in years 1-2 (Mode 21), skeleton min 0.764 |
 | 25 | A energy is rationed, not cut off (v7.6.1 calibration) | min >= 400 на [360, 720] | min >= 350 на [360, 720] | deeper on cost prices, skeleton min 394.5 (v7.7.17: 599) |
 | 31 | B construction-materials production absent before surge | нет события > 0 на [0, 359.75] | max <= 0.05 на [0, 359.75] | from day 226 at most 0.02 |

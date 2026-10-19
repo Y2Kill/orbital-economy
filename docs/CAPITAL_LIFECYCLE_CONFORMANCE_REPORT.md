@@ -1,10 +1,10 @@
 # Orbital Economy Lab — Capital Lifecycle Kernel conformance
 
-- generated: 2026-10-18T07:23:58.525Z
-- model: Orbital Economy v7.7.17 r1 — Money
-- model SHA-256: `43625d458d7bfc20e6b3a0868b4f3f2f503f249075e65c7afac9353ddca137c9`
-- validation: Orbital Economy v7.7.17 validation r1
-- validation SHA-256: `96851f18fa2ee2b4a99d4b0cdf2265364b2653f27eef04c5a865b1f34da81ef6`
+- generated: 2026-10-19T11:41:15.064Z
+- model: Orbital Economy v7.7.18 r1 — Recalibration onto Cost Prices
+- model SHA-256: `43034a2890e06c030b04433a3ed9cebf1961d4ccf9101766a8394d2033748b48`
+- validation: Orbital Economy v7.7.18 validation r1
+- validation SHA-256: `cc2d46969cb26253f2ba2d8ff312bd51464402516c9fa1082ef668dbca12d7a4`
 - kernel format: orbital-economy-capital-lifecycle-kernel-v1
 - status: **PASS**
 

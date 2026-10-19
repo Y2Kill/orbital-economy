@@ -1,10 +1,10 @@
 # Orbital Economy Lab — structure audit
 
-- generated: 2026-10-18T07:24:47.628Z
-- model: Orbital Economy v7.7.17 r1 — Money
-- model SHA-256: `43625d458d7bfc20e6b3a0868b4f3f2f503f249075e65c7afac9353ddca137c9`
-- validation: Orbital Economy v7.7.17 validation r1
-- validation SHA-256: `96851f18fa2ee2b4a99d4b0cdf2265364b2653f27eef04c5a865b1f34da81ef6`
+- generated: 2026-10-19T11:43:06.751Z
+- model: Orbital Economy v7.7.18 r1 — Recalibration onto Cost Prices
+- model SHA-256: `43034a2890e06c030b04433a3ed9cebf1961d4ccf9101766a8394d2033748b48`
+- validation: Orbital Economy v7.7.18 validation r1
+- validation SHA-256: `cc2d46969cb26253f2ba2d8ff312bd51464402516c9fa1082ef668dbca12d7a4`
 - status: **PASS**
 
 ## Open boundaries (declared physical-boundary meter)
@@ -430,7 +430,7 @@ Declared unit-transformation pairs (source flow physically backed by sink flows;
 ## Colony symmetry
 
 - tokens: A ↔ B
-- mirrored pairs checked: 1564; mirrored links checked: 4050
+- mirrored pairs checked: 1564; mirrored links checked: 4114
 - structural mismatches: **0**; numeric parameter differences (allowed): 192; elements under exceptions: 0
 
 <details><summary>Numeric parameter differences between colonies (allowed)</summary>
@@ -518,8 +518,8 @@ Declared unit-transformation pairs (source flow physically backed by sink flows;
 | value | A External Electronics Local Base Demand | 20 | B External Electronics Local Base Demand | 16 |
 | value | A Ore Labor Share | 1 | B Ore Labor Share | 0.5 |
 | value | A Energy Labor Share | 0.83 | B Energy Labor Share | 1 |
-| value | A Metal Demand Reference Price | 25.9 | B Metal Demand Reference Price | 34.46 |
-| value | A Electronics Demand Reference Price | 23.1 | B Electronics Demand Reference Price | 21.91 |
+| value | A Metal Demand Reference Price | 58.38 | B Metal Demand Reference Price | 69.89 |
+| value | A Electronics Demand Reference Price | 45.55 | B Electronics Demand Reference Price | 44.41 |
 | initial_value | A Energy Cost Price Signal | 0.5731 | B Energy Cost Price Signal | 0.6787 |
 | initial_value | A Power Resource Cost Price Signal | 0.31 | B Power Resource Cost Price Signal | 0.4085 |
 | initial_value | A Metal Cost Price Signal | 49.95 | B Metal Cost Price Signal | 80.99 |
