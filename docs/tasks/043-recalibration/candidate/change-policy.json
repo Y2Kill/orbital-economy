@@ -1,0 +1,117 @@
+{
+  "format": "orbital-economy-change-policy-v1",
+  "name": "Orbital Economy v7.7.18 Recalibration candidate r1 - change contract",
+  "description": "Written before implementation from V7_7_18_RECALIBRATION_SPEC.md. Accepted baseline: v7.7.17 r1. Cost pricing becomes the price system of Modes 0-55, money joins in 52-55; Modes 56-59 must reproduce v7.7.17 exactly except the dead demand references of wage pricing.",
+  "accepted_model_sha256": "43625d458d7bfc20e6b3a0868b4f3f2f503f249075e65c7afac9353ddca137c9",
+  "validation_sha256": "79b4ab4f571b4a537f150c229c563779e097bdefa0a91fb0b24387040f660dde",
+  "comparison": {
+    "abs_tolerance": 0,
+    "rel_tolerance": null,
+    "rel_floor": 1e-12
+  },
+  "engine": {
+    "package": "simulation",
+    "version": "9.0.0"
+  },
+  "default_action": "deny",
+  "require_full_mode_coverage": true,
+  "rules": [
+    {
+      "id": "dead-demand-references-in-56-59",
+      "action": "allow",
+      "event": "series_changed",
+      "modes": "56-59",
+      "name": [
+        "? Electronics Demand Reference Price",
+        "? Electronics Price Demand Factor",
+        "? Metal Demand Reference Price",
+        "? Metal Price Demand Factor"
+      ],
+      "required": true,
+      "note": "the demand reference prices of wage pricing are recalibrated to cost prices (spec §1.2); with Wage Pricing Enabled = 0 nothing reads them or their price demand factors in Modes 56-59"
+    },
+    {
+      "id": "regression-guard-modes-56-59",
+      "action": "deny",
+      "event": "series_changed",
+      "modes": "56-59",
+      "name": "*",
+      "note": "Modes 56-59 keep their inputs and every gate is 1 there (x * 1 = x): they reproduce v7.7.17 r1 exactly except the dead references above (first match wins)"
+    },
+    {
+      "id": "forbid-removals-and-structural-drift",
+      "action": "deny",
+      "event": [
+        "element_added",
+        "element_removed",
+        "series_added",
+        "series_removed",
+        "mode_added",
+        "mode_removed",
+        "link_removed",
+        "type_changed",
+        "simulation_changed",
+        "time_axis_changed",
+        "scenario_renamed"
+      ],
+      "name": "*"
+    },
+    {
+      "id": "change-definitions-per-spec",
+      "action": "allow",
+      "event": "definition_changed",
+      "name": [
+        "? Capital Goods Full Cost",
+        "? Construction Materials Full Cost",
+        "? Electronics Capital Wear",
+        "? Electronics Demand Reference Price",
+        "? Energy Full Cost",
+        "? Food Full Cost",
+        "? Metal Capital Wear",
+        "? Metal Demand Reference Price",
+        "? Ore Full Cost",
+        "? Power Resource Full Cost",
+        "? Power Resource Price",
+        "? Regolith Full Cost"
+      ],
+      "required": true,
+      "note": "the 20 cost terms and power resource prices gated by the switches of their physical layers (Lab v0.9.22, spec §1.1) and the 4 demand reference prices of wage pricing recalibrated to cost prices (spec §1.2)"
+    },
+    {
+      "id": "link-into-changed-definitions",
+      "action": "allow",
+      "event": "link_added",
+      "name": [
+        "* -> ? Capital Goods Full Cost",
+        "* -> ? Construction Materials Full Cost",
+        "* -> ? Electronics Capital Wear",
+        "* -> ? Electronics Demand Reference Price",
+        "* -> ? Energy Full Cost",
+        "* -> ? Food Full Cost",
+        "* -> ? Metal Capital Wear",
+        "* -> ? Metal Demand Reference Price",
+        "* -> ? Ore Full Cost",
+        "* -> ? Power Resource Full Cost",
+        "* -> ? Power Resource Price",
+        "* -> ? Regolith Full Cost"
+      ]
+    },
+    {
+      "id": "cost-pricing-and-money-in-modes-0-55",
+      "action": "allow",
+      "event": "scenario_input_changed",
+      "modes": "0-55",
+      "name": "*",
+      "required": true,
+      "note": "Cost Pricing Enabled = 1 in Modes 0-55, Money Enabled = 1 in Modes 52-55 (owner decision 2026-10-18, option A; spec §2)"
+    },
+    {
+      "id": "every-series-may-change-in-0-55",
+      "action": "allow",
+      "event": "series_changed",
+      "modes": "0-55",
+      "name": "*",
+      "note": "a recalibration: cost prices change prices, demand and through them production, trade and capital in every Mode 0-55; money adds budgets in 52-55 (spec §3)"
+    }
+  ]
+}

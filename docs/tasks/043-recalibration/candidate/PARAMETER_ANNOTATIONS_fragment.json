@@ -1,0 +1,66 @@
+{
+  "format": "orbital-economy-parameter-annotations-v1",
+  "model": "Orbital Economy v7.7.18 Recalibration candidate r1",
+  "updated": "2026-10-19",
+  "note": "Only five updated keys; since, mirror flag and tags preserved from accepted annotations.",
+  "parameters": {
+    "A Metal Demand Reference Price": {
+      "role": "Опорные цены металлического спроса в новой затратной калибровке: A = 58.38, B = 69.89. Из прежних 25.9 / 34.46 по масштабам 2.254 / 2.028.",
+      "effect": "Нормируют (P / P_ref)^(-η) при Wage Pricing Enabled = 1 (Modes 54–55, η = 0.5). Без перекалибровки спрос сокращался примерно на треть.",
+      "evidence": "docs/tasks/043-recalibration/V7_7_18_RECALIBRATION_SPEC.md §§0–5; docs/research/RECALIBRATION_PREP_2026-10-18_RU.md §1.2; docs/tasks/037-wage-pricing/V7_7_15_ARCHITECTURE_SPEC.md",
+      "since": "v7.7.15 r1",
+      "applies_to_mirror": true,
+      "tags": [
+        "wage-pricing",
+        "metal",
+        "reference-price",
+        "asymmetry"
+      ]
+    },
+    "A Electronics Demand Reference Price": {
+      "role": "Опорные цены спроса электроники: A = 45.55, B = 44.41. Из прежних 23.1 / 21.91 по масштабам 1.972 / 2.027.",
+      "effect": "Нормируют ценовой множитель спроса электроники (P / P_ref)^(-η) при Wage Pricing Enabled = 1 (Modes 54–55, η = 0.5).",
+      "evidence": "docs/tasks/043-recalibration/V7_7_18_RECALIBRATION_SPEC.md §§0–5; docs/research/RECALIBRATION_PREP_2026-10-18_RU.md §1.2; docs/tasks/037-wage-pricing/V7_7_15_ARCHITECTURE_SPEC.md",
+      "since": "v7.7.15 r1",
+      "applies_to_mirror": true,
+      "tags": [
+        "wage-pricing",
+        "electronics",
+        "reference-price",
+        "asymmetry"
+      ]
+    },
+    "Cost Pricing Enabled": {
+      "role": "Переключатель затратного ценообразования: 0 по умолчанию, 1 во всех Modes 0–59 входами сценариев.",
+      "effect": "Рыночная система цен от полной стоимости. Затратные статьи умножены на переключатели соответствующих физических слоёв. В Modes 56–59 эти множители равны 1, и прежние используемые ряды сохраняются бит в бит.",
+      "evidence": "docs/tasks/043-recalibration/V7_7_18_RECALIBRATION_SPEC.md §§0–5; docs/research/RECALIBRATION_PREP_2026-10-18_RU.md §1.1, §2",
+      "since": "v7.7.16 r1",
+      "tags": [
+        "cost-pricing",
+        "switch"
+      ]
+    },
+    "Money Enabled": {
+      "role": "Переключатель денежного учёта: 0 по умолчанию, 1 в полных Modes 52–55 и 58–59.",
+      "effect": "Бюджеты и денежные потоки используются только при полной экономике с затратными ценами. В лестничных Modes 0–51 деньги выключены: для них равновесный денежный старт не калибровался.",
+      "evidence": "docs/tasks/043-recalibration/V7_7_18_RECALIBRATION_SPEC.md §§0–5; docs/research/RECALIBRATION_PREP_2026-10-18_RU.md §2; docs/tasks/041-money/V7_7_17_ARCHITECTURE_SPEC.md",
+      "since": "v7.7.17 r1",
+      "tags": [
+        "money",
+        "switch",
+        "regression"
+      ]
+    },
+    "Wage Pricing Enabled": {
+      "role": "Переключатель wage_pricing: 0 по умолчанию; 1 только в Modes 54–55.",
+      "effect": "Ценовой спрос (η = 0.5) использует новые опорные цены; затратные цены перекрывают прямой канал изменения цен от зарплаты, сохраняя передачу через себестоимость. Вывод wage_pricing — отдельная задача.",
+      "evidence": "docs/tasks/043-recalibration/V7_7_18_RECALIBRATION_SPEC.md §§0–5; docs/research/RECALIBRATION_PREP_2026-10-18_RU.md §1.2, §3, §4",
+      "since": "v7.7.15 r1",
+      "tags": [
+        "wage-pricing",
+        "switch",
+        "regression-guard"
+      ]
+    }
+  }
+}
