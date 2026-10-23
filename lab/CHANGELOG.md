@@ -1,4 +1,10 @@
-## v0.9.22 — cost_pricing layer gates
+## v0.9.23 — labor_market wage-demand elasticity
+
+- Необязательный `Labor Demand Wage Elasticity` (finite, >0) замыкает связь «зарплата → потребность в труде» под переключателем рынка труда.
+- Без параметра раскрытие побайтно прежнее. Эталон v7.7.12: 32/26/116, `90e7cee80ae16fd6`; без параметра 31/24/108, `8ac752ca9a1175e4`.
+- NODE 88–94: schema, runtime, switch-off parity, peel/rebuild и accepted-layer regression. Модель и validation/policy не меняются.
+
+## v0.9.23 — cost_pricing layer gates
 
 - Четыре необязательные разновидности привязок: `costs[].inputs[].gate`, `costs[].wear.gate`, `wear_gates` для двух компонентов износа, `prices[].gate`.
 - Только глобальные числовые VARIABLE-переключатели 0/1 из исходной модели; ошибки с путём декларации.

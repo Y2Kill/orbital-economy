@@ -1,4 +1,4 @@
-# Orbital Economy Lab v0.9.22
+# Orbital Economy Lab v0.9.23
 
 Локальный стенд для запуска, проверки, regression-анализа, policy-gating, Capital Lifecycle Kernel и статических аудитов структуры для ModelJSON Orbital Economy. v0.9.19 добавляет declarative wage_pricing: передачу региональной зарплаты в цены без труда, ценовой фактор эффективного конечного спроса, static/runtime validation и верхний слой node QA. v0.9.18 добавляет declarative `labor_market`: спрос по населению, гибкую зарплату, labor-availability guard и переобъявление Planet P6. v0.9.17 добавляет declarative `food`. v0.9.16 добавляет declarative `population`: региональное население, рождения/смерти, миграцию по привлекательности, учёт труда и проверку сохранения людей без обратной связи на экономику. v0.9.15 добавляет declarative `labor`. v0.9.14 ускоряет switch-aware algebraic-loop audit точными сокращениями без изменения результата и сохраняет полный `--exhaustive` путь как эталон. v0.9.13 добавляет declarative `energy_consumer`, явный STOCK-сигнал энергетического запроса в Planet closure и runtime-проверку приоритетных потребителей. v0.9.12 добавляет node `deposit`, безопасный `retarget_flows` для endpoints существующих FLOW и deposit conformance/runtime checks. v0.9.11 расширяет `simple_capital`: smooth cap для скорости без capacity-параметра и раздельный initial sizing signal по колониям. v0.9.10 добавляет строгую статическую схему validation: ошибки формы блокируют запуск до simulation. v0.9.6 добавляет `planet_closure`: декларативную per-process карту критериев Planet v1 P2–P6 с dependency paths, exceptions/debt counters и режимами `report/classify/planet_v1/planet_strict`.
 
@@ -951,6 +951,10 @@ Generated validation добавляет plugin `labor_market`, информац�
 
 Узел `money` задаёт закрытый баланс между домохозяйствами, фирмами и транспортом, платежи и дивиденды, и ограничивает спрос бюджетом. Использует затратные цены слоя `cost_pricing`; без `Money Enabled` прежние Modes неизменны. Фикстура `fixtures/nodes/money.json`, описание в `docs/NODES_RU.md`, plugin и допуски в `docs/VALIDATION_FORMAT_RU.md`.
 
-## Lab 0.9.22 — привязки затрат к физическим слоям
+## Lab 0.9.23 — привязки затрат к физическим слоям
 
 У `cost_pricing` появились необязательные множители `gate` для входов и износа, переключатели для составляющих износа `wear_gates` и внешний gate на цену. Они исключают стоимость физических входов, отключённых в Mode; без них поведение идентично Lab 0.9.21. Декларация-пример: `fixtures/nodes/cost_pricing_gated.json`, описание: `docs/NODES_RU.md`. Это подготовка к модельной перекалибровке v7.7.18 (задача 043), а не изменение принятой v7.7.17.
+
+## Lab v0.9.23 — эластичность трудового спроса
+
+У `labor_market` новый необязательный положительный параметр `Labor Demand Wage Elasticity`. При включённом рынке труда `{C} Total Labor Requirement` умножается на `([{C} Wage] / [{C} Initial Wage]) ^ (-[Labor Demand Wage Elasticity])`; при выключенном действует прежняя формула. Без параметра раскрытие не меняется. Фикстура `fixtures/nodes/labor_market_elastic.json`; новые NODE 88–94.
