@@ -10,7 +10,9 @@ Recalibration onto cost prices (owner decision 2026-10-18, option A; experiments
 
 Wage pricing — decided 2026-10-19 (owner, option 4 of four: keep / remove / make price demand part of the full Modes / freeze): **frozen**. The model keeps it unchanged; its price branch is evaluated in no Mode (cost pricing is on everywhere), only the price demand of Modes 54–55 is live and small next to the budgets. Removing it would need a bench that deletes node layers — against the project's rule that earlier mechanisms stay under their switch — and would also drop the only channel through which demand reacts to relative prices. Revisit with the retiring of switched-off branches (below) or when goods' prices diverge enough for price demand to act as substitution (then option 3: switch it on in the full Modes).
 
-Next: the watch window up to v7.7.18 (cost prices, money, budgets, balance of payments); node_qa in CI as parallel `--cases=` blocks; long runs and sensitivity on the new calibration; full-stack versions of the main shocks; then, if needed, credit, interest and cross-region ownership.
+Done 2026-10-23: the watch window shows v7.7.18; long runs, full-stack shocks and sensitivity on v7.7.18 (`docs/research/LONGRUN_V7_7_18_2026-10-23_RU.md`). The full economy is stable for 80 years and region B revives only on cost prices, but there is a **nominal deflation without a floor**: wages fall the whole time (A 100 → 85, B 140 → 79 in 80 years) and cost prices follow them — the known wage drift of v7.7.14, amplified by cost pricing.
+
+Next: a nominal anchor (owner decision — wage returning to a norm, wage → labor demand, or a price target; prototype on the server first); then full-stack shocks as validation Modes; Morris on the strong parameters if needed; then, if needed, credit, interest and cross-region ownership.
 
 ## v7.7.17 Money — full money accounting, step 2 (tasks 040 bench, 041 model)
 
