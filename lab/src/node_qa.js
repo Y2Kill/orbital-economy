@@ -71,7 +71,8 @@ const laborFixtureFile = path.join(root, 'fixtures', 'nodes', 'process-labor.jso
 const populationFixtureFile = path.join(root, 'fixtures', 'nodes', 'population.json');
 const foodFixtureFile = path.join(root, 'fixtures', 'nodes', 'food.json');
 const laborMarketFixtureFile = path.join(root, 'fixtures', 'nodes', 'labor_market.json');
-for (const f of [modelFile, validationFile, simpleFixtureFile, powerFixtureFile, depositFixtureFile, energyFixtureFile, laborFixtureFile, populationFixtureFile, foodFixtureFile, laborMarketFixtureFile, ...declarationFiles]) {
+const laborMarketElasticFixtureFile = path.join(root, 'fixtures', 'nodes', 'labor_market_elastic.json');
+for (const f of [modelFile, validationFile, simpleFixtureFile, powerFixtureFile, depositFixtureFile, energyFixtureFile, laborFixtureFile, populationFixtureFile, foodFixtureFile, laborMarketFixtureFile, laborMarketElasticFixtureFile, ...declarationFiles]) {
   if (!fs.existsSync(f)) {
     console.error(`[FAIL] Required node QA input is missing: ${f}`);
     process.exit(2);
@@ -89,6 +90,7 @@ const laborFixture = readJson(laborFixtureFile);
 const populationFixture = readJson(populationFixtureFile);
 const foodFixture = readJson(foodFixtureFile);
 const laborMarketFixture = readJson(laborMarketFixtureFile);
+const laborMarketElasticFixture = readJson(laborMarketElasticFixtureFile);
 const allNodeDeclarations = fs.readdirSync(nodeDir)
   .filter(name => name.endsWith('.json'))
   .map(name => path.join(nodeDir, name))
@@ -2937,6 +2939,73 @@ await expect('87. gated accepted-model layering: money first, cost pricing secon
     fs.rmSync(dir,{recursive:true,force:true});
   }
   return 'money then cost_pricing; 1-80/80 PASS on gated accepted model';
+});
+
+
+let elasticLaborMarketState = null;
+
+await expect('88. elastic labor_market expands with expected patch counts and fingerprint', () => {
+  const base = acceptedBelowLaborMarket;
+  const expanded = expandNode(laborMarketElasticFixture, base);
+  const counts = [expanded.patch.add_elements.length,
+    expanded.patch.replace_formulas.length, expanded.patch.add_links.length].join('/');
+  if (counts !== '32/26/116') throw new Error('elastic prototype counts: ' + counts);
+  const model = applyPatch(base, { format: PATCH_FORMAT, ...expanded.patch }).model;
+  const fp = definitionFingerprint(model);
+  // The published fingerprint is for v7.7.12; newer accepted bases may differ.
+  const plain = applyPatch(base, { format: PATCH_FORMAT,
+    ...expandNode(laborMarketFixture, base).patch }).model;
+  if (definitionFingerprint(plain) === '8ac752ca9a1175e4' && fp !== '90e7cee80ae16fd6')
+    throw new Error('v7.7.12 elastic fingerprint: ' + fp);
+  for (const X of laborMarketElasticFixture.colonies) {
+    const target = laborMarketElasticFixture.inputs.labor_requirement.replaceAll('{C}', X);
+    const replacement = expanded.patch.replace_formulas.find(r => r.name === target);
+    const original = base.elements.find(e => e.type !== 'LINK' && e.name === target)?.behavior?.value;
+    const expected = 'IfThenElse([Labor Market Enabled] = 1, (' + original +
+      ') * ([' + X + ' Wage] / [' + X +
+      ' Initial Wage]) ^ (-[Labor Demand Wage Elasticity]), ' + original + ')';
+    if (replacement?.value !== expected)
+      throw new Error(target + ': elastic formula differs from reference');
+  }
+  elasticLaborMarketState = { base, expanded, model, plain, fp };
+  return counts + '; definition fingerprint=' + fp;
+});
+
+await expect('89. labor_market without elasticity remains byte-identical', () => {
+  const base = acceptedBelowLaborMarket;
+  const expanded = expandNode(laborMarketFixture, base);
+  const counts = [expanded.patch.add_elements.length,
+    expanded.patch.replace_formulas.length, expanded.patch.add_links.length].join('/');
+  if (counts !== '31/24/108') throw new Error('plain prototype counts: ' + counts);
+  const model = applyPatch(base, { format: PATCH_FORMAT, ...expanded.patch }).model;
+  const previouslyBuilt = laborMarketState?.expanded || expanded;
+  if (JSON.stringify(expanded.patch) !== JSON.stringify(previouslyBuilt.patch))
+    throw new Error('plain expansion differs from case 53');
+  if (elasticLaborMarketState &&
+      JSON.stringify(model) !== JSON.stringify(elasticLaborMarketState.plain))
+    throw new Error('plain model differs from case 88');
+  const fp = definitionFingerprint(model);
+  if (fp === '8ac752ca9a1175e4' && elasticLaborMarketState?.fp !== '90e7cee80ae16fd6')
+    throw new Error('v7.7.12 elastic fingerprint differs from reference');
+  return counts + '; fingerprint=' + fp + '; unchanged plain patch';
+});
+
+await expect('93. elastic wage demand parameter schema rejects invalid values with paths', async () => {
+  const invalid = async (value, label) => {
+    const decl = structuredClone(laborMarketElasticFixture);
+    decl.parameters['Labor Demand Wage Elasticity'] = value;
+    await requireThrow(() => expandNode(decl, acceptedBelowLaborMarket),
+      /node\.parameters\.Labor Demand Wage Elasticity/, label);
+  };
+  await invalid(0, 'zero elasticity');
+  await invalid(-1.5, 'negative elasticity');
+  await invalid('1.5', 'string elasticity');
+  const unknown = structuredClone(laborMarketElasticFixture);
+  unknown.parameters['Unknown Labor Market Parameter'] = 1;
+  await requireThrow(() => expandNode(unknown, acceptedBelowLaborMarket),
+    /node\.parameters\.Unknown Labor Market Parameter: unknown field/,
+    'unknown parameter');
+  return 'zero, negative, string, and unknown parameter rejected with paths';
 });
 
 console.log(`\nNODE SELF-TEST: ${passed} passed, ${failed} failed`);

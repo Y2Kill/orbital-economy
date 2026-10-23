@@ -5,6 +5,8 @@ const isString = x => typeof x === 'string' && x.length > 0;
 const isNumber = x => typeof x === 'number' && Number.isFinite(x);
 const key = s => String(s).toLowerCase();
 
+// task 044: optional parameter; when present, {C} Total Labor Requirement follows the wage
+const ELASTICITY = 'Labor Demand Wage Elasticity';
 const PARAMETER_NAMES = [
   'Metal Demand per Capita',
   'Electronics Demand per Capita',
@@ -45,13 +47,15 @@ export function validateLaborMarketDeclaration(decl, path, errors) {
 
   if (!isObj(decl.parameters)) errors.push(path + '.parameters: must be an object');
   else {
-    const allowed = new Set(PARAMETER_NAMES);
+    const allowed = new Set([...PARAMETER_NAMES, ELASTICITY]);   // task 044
     unknownFields(decl.parameters, allowed, path + '.parameters', errors);
     for (const name of PARAMETER_NAMES) {
       if (!(name in decl.parameters)) errors.push(path + '.parameters.' + name + ': required field is missing');
       else if (!isNumber(decl.parameters[name])) errors.push(path + '.parameters.' + name + ': must be a finite number');
       else if (!(decl.parameters[name] > 0)) errors.push(path + '.parameters.' + name + ': must be > 0');
     }
+    if (ELASTICITY in decl.parameters && !(isNumber(decl.parameters[ELASTICITY]) && decl.parameters[ELASTICITY] > 0))
+      errors.push(path + '.parameters.' + ELASTICITY + ': must be a finite number > 0');   // task 044
   }
 
   const ip = path + '.inputs';
@@ -118,6 +122,7 @@ export function laborMarketReplacementNames(decl) {
   const out = [], sub = (s, X) => String(s).replaceAll('{C}', X);
   for (const X of decl.colonies || []) {
     out.push(sub(decl.inputs?.wage, X));
+    if (decl.parameters && ELASTICITY in decl.parameters) out.push(sub(decl.inputs?.labor_requirement, X));   // task 044
     for (const d of decl.demand || []) out.push(sub(d.target, X));
     for (const r of decl.rates || []) out.push(sub(r, X));
   }
@@ -193,6 +198,8 @@ export function expandLaborMarket(decl, base) {
       wrap(t, () => `[${d.per_capita}] * [${sub(I.population, X)}]`, oldRef);
     }
     for (const r of decl.rates) wrap(sub(r, X), o => `${o} * [${X} Labor Availability]`);
+    // task 044: cheaper labor -> processes use more people per unit of output (and fewer when labor is dear)
+    if (ELASTICITY in P) wrap(sub(I.labor_requirement, X), o => `${o} * ([${wageName}] / [${X} Initial Wage]) ^ (-[${ELASTICITY}])`);
   }
 
   for (const e of add) if (byName.has(e.name)) throw new Error(`labor_market: generated name conflicts with base element "${e.name}"`);
