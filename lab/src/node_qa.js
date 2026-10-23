@@ -374,8 +374,12 @@ function stripLaborMarketNode(raw, decl) {
       if (!refs(old).has(population)) extraLinks.add(population + '|' + target);
     }
     for (const r of decl.rates || []) restore(sub(r, X));
-    if (decl.parameters && 'Labor Demand Wage Elasticity' in decl.parameters)
-      restore(sub(decl.inputs.labor_requirement, X));
+    if (decl.parameters && 'Labor Demand Wage Elasticity' in decl.parameters) {
+      const requirement = sub(decl.inputs.labor_requirement, X);
+      const wage = sub(decl.inputs.wage, X);
+      const original = restore(requirement);
+      if (!refs(original).has(wage)) extraLinks.add(wage + '|' + requirement);
+    }
   }
   out.elements = out.elements.filter(e => {
     if (e.type === 'LINK') return !generated.has(e.from) && !generated.has(e.to) && !extraLinks.has(e.from + '|' + e.to);
@@ -3177,9 +3181,15 @@ await expect('94. accepted elastic labor_market is peeled by its own declaration
       '--expose-gc', path.join(root, 'src', 'node_qa.js'), '--cases=1-87',
       '--accepted-model=' + modelFile, '--accepted-validation=' + validationFile
     ], { cwd: sandboxLab, encoding: 'utf8', maxBuffer: 16 << 20 });
-    if (run.status !== 0 || !run.stdout.includes('NODE SELF-TEST: 87 passed, 0 failed'))
+    if (run.status !== 0 || !run.stdout.includes('NODE SELF-TEST: 87 passed, 0 failed')) {
+      const failures = (run.stdout || '').split('\n')
+        .filter(line => line.includes('[FAIL]')).join('\n');
       throw new Error('accepted elastic regression failed: ' +
-        (run.stderr || '').slice(-2000) + '\n' + (run.stdout || '').slice(-4000));
+        '\nAll nested [FAIL] lines:\n' + (failures || '(none)') +
+        '\nNested process exit status: ' + run.status +
+        '\nStderr:\n' + (run.stderr || '').slice(-2000) +
+        '\nStdout tail:\n' + (run.stdout || '').slice(-4000));
+    }
   } finally {
     fs.rmSync(tmp, { recursive: true, force: true });
   }
