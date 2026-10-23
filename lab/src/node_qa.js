@@ -1913,18 +1913,20 @@ await expect('52. switched food is peeled before switchless population/labor lay
 });
 
 
+const laborMarketTestFixture = laborMarketDeclarations.find(x => x.decl.switch === laborMarketFixture.switch)?.decl || laborMarketFixture;
 let laborMarketState = null;
 
 await expect('53. labor_market fixture expands and APPLY_PATCH matches prototype counts/fingerprint', () => {
-  const alreadyPresent = accepted.elements.some(e => e.type !== 'LINK' && e.name === laborMarketFixture.switch);
-  const acceptedDecl = laborMarketDeclarations.find(x => x.decl.switch === laborMarketFixture.switch)?.decl || null;
+  const alreadyPresent = accepted.elements.some(e => e.type !== 'LINK' && e.name === laborMarketTestFixture.switch);
+  const acceptedDecl = laborMarketDeclarations.find(x => x.decl.switch === laborMarketTestFixture.switch)?.decl || null;
   const acceptedLayer = alreadyPresent && acceptedDecl ? layers.get(acceptedDecl) : null;
   if (alreadyPresent && !acceptedLayer) throw new Error('labor_market layer is present in accepted model but its declaration/layer cannot be identified');
   const baseModel = alreadyPresent ? acceptedLayer.base : accepted;
-  const expanded = expandNode(laborMarketFixture, baseModel);
+  const expanded = expandNode(laborMarketTestFixture, baseModel);
   const model = applyPatch(baseModel, { format: PATCH_FORMAT, ...expanded.patch }).model;
   const counts = [expanded.patch.add_elements.length, expanded.patch.replace_formulas.length, expanded.patch.add_links.length];
-  if (counts.join('/') !== '31/24/108') throw new Error('prototype count mismatch: got ' + counts.join('/') + ', expected 31/24/108');
+  const expectedCounts = 'Labor Demand Wage Elasticity' in laborMarketTestFixture.parameters ? '32/26/116' : '31/24/108';
+  if (counts.join('/') !== expectedCounts) throw new Error('prototype count mismatch: got ' + counts.join('/') + ', expected ' + expectedCounts);
   const fp = definitionFingerprint(model);
   if (!alreadyPresent && fp !== '8ac752ca9a1175e4') throw new Error('definition fingerprint ' + fp + ', expected 8ac752ca9a1175e4');
   if (alreadyPresent) {
@@ -1935,7 +1937,7 @@ await expect('53. labor_market fixture expands and APPLY_PATCH matches prototype
     if (!sameSet(linkSet(acceptedLayer.target), linkSet(model))) throw new Error('accepted labor_market layer link set differs');
   }
   laborMarketState = { base: baseModel, model, expanded, alreadyPresent, acceptedLayer, target: acceptedLayer?.target || model };
-  return `31 elements / 24 replacements / 108 links; fingerprint=${fp}${alreadyPresent ? '; accepted layer rebuilt exactly' : ''}`;
+  return `${counts.join('/')} elements/replacements/links; fingerprint=${fp}${alreadyPresent ? '; accepted layer rebuilt exactly' : ''}`;
 });
 
 await expect('54. labor_market fragments merge: plugin/static PASS, boundaries +8, symmetry 0, P6=4, loops 0', () => {
@@ -1960,7 +1962,7 @@ await expect('54. labor_market fragments merge: plugin/static PASS, boundaries +
 await expect('55. labor_market trial runs every merged runtime plugin with switch on', () => {
   if (!laborMarketState?.validation) throw new Error('case 54 did not produce merged validation');
   const source=(laborMarketState.model.scenarios||[]).at(-1); if(!source) throw new Error('model has no scenarios');
-  const trial=structuredClone(source); trial.name=(source.name||'last mode')+' — Node QA labor_market'; trial.values={...trial.values,[laborMarketFixture.switch]:1};
+  const trial=structuredClone(source); trial.name=(source.name||'last mode')+' — Node QA labor_market'; trial.values={...trial.values,[laborMarketTestFixture.switch]:1};
   const simModel=loadModelJSON(modelJsonForScenario(laborMarketState.model,trial));
   const errs=simModel.check(); if(errs.length)throw new Error('trial model.check: '+errs.map(e=>e.message||e).join('; '));
   const results=simModel.simulate(), ctx=seriesContext(simModel,results);
@@ -1970,7 +1972,7 @@ await expect('55. labor_market trial runs every merged runtime plugin with switc
   for(const check of laborMarketState.validation.global_checks||[])checks.push(runGenericCheck(check,ctx));
   const bad=checks.filter(x=>x.status==='FAIL');if(bad.length)throw new Error('merged runtime plugins: '+bad.map(x=>x.name+': '+(x.message||'FAIL')).join('; '));
   let wageMoved=false;
-  for(const X of laborMarketFixture.colonies){
+  for(const X of laborMarketTestFixture.colonies){
     const a=Array.from(ctx.get(X+' Labor Availability'),Number);if(a.some(v=>v < -1e-9 || v > 1+1e-9))throw new Error(X+' availability outside [0,1]');
     const w=Array.from(ctx.get(X+' Flexible Wage'),Number),w0=Array.from(ctx.get(X+' Initial Wage'),Number);if(w.some((v,i)=>Math.abs(v-w0[i])>1e-6))wageMoved=true;
   }
@@ -1979,7 +1981,7 @@ await expect('55. labor_market trial runs every merged runtime plugin with switc
 });
 
 await expect('56. three-region labor_market expands with 3 instances and static PASS', () => {
-  const base=structuredClone(laborMarketState?.base||accepted), decl3=structuredClone(laborMarketFixture);decl3.colonies=['A','B','C'];
+  const base=structuredClone(laborMarketState?.base||accepted), decl3=structuredClone(laborMarketTestFixture);decl3.colonies=['A','B','C'];
   // Clone the whole A primitive namespace into a synthetic C namespace. Old rate formulas have their
   // own A-local dependency chains (e.g. Mining Rate -> Mining Pre Energy Rate); cloning only the direct
   // declaration inputs would leave those old switch branches unresolved.
@@ -2003,11 +2005,11 @@ await expect('56. three-region labor_market expands with 3 instances and static 
 
 await expect('57. strip labor_market restores old numeric branches and rebuilds with zero differences', () => {
   if (!laborMarketState?.model) throw new Error('case 53 did not produce labor_market model');
-  const stripped = stripLaborMarketNode(laborMarketState.model, laborMarketFixture);
-  for (const X of laborMarketFixture.colonies) {
-    const wage = stripped.elements.find(e => e.type !== 'LINK' && e.name === laborMarketFixture.inputs.wage.replaceAll('{C}', X));
+  const stripped = stripLaborMarketNode(laborMarketState.model, laborMarketTestFixture);
+  for (const X of laborMarketTestFixture.colonies) {
+    const wage = stripped.elements.find(e => e.type !== 'LINK' && e.name === laborMarketTestFixture.inputs.wage.replaceAll('{C}', X));
     if (!wage || !Number.isFinite(Number(wage.behavior.value)) || typeof wage.behavior.value !== 'number') throw new Error(X + ' Wage was not restored to its numeric value');
-    for (const d of laborMarketFixture.demand) {
+    for (const d of laborMarketTestFixture.demand) {
       const name = d.target.replaceAll('{C}', X), e = stripped.elements.find(x => x.type !== 'LINK' && x.name === name);
       if (!e || !Number.isFinite(Number(e.behavior.value)) || typeof e.behavior.value !== 'number') throw new Error(name + ' was not restored to its numeric value');
     }
@@ -2017,7 +2019,7 @@ await expect('57. strip labor_market restores old numeric branches and rebuilds 
   if (baseDefs.size !== strippedDefs.size) throw new Error('stripped/base element count differs');
   for (const [name, definition] of baseDefs) if (strippedDefs.get(name) !== definition) throw new Error('stripped definition differs from base: ' + name);
   if (!sameSet(linkSet(laborMarketState.base), linkSet(stripped))) throw new Error('stripped link set differs from base');
-  const expanded = expandNode(laborMarketFixture, stripped);
+  const expanded = expandNode(laborMarketTestFixture, stripped);
   const rebuilt = applyPatch(stripped, { format: PATCH_FORMAT, ...expanded.patch }).model;
   const a = new Map(laborMarketState.model.elements.filter(e => e.type !== 'LINK').map(e => [e.name, def(e)]));
   const b = new Map(rebuilt.elements.filter(e => e.type !== 'LINK').map(e => [e.name, def(e)]));
@@ -2030,35 +2032,35 @@ await expect('57. strip labor_market restores old numeric branches and rebuilds 
 await expect('58. labor_market schema/base checks reject five required invalid cases with paths/names', async () => {
   const baseModel = laborMarketState?.base || accepted;
 
-  const extra = structuredClone(laborMarketFixture);
+  const extra = structuredClone(laborMarketTestFixture);
   extra.parameters['Unexpected Labor Market Parameter'] = 1;
   await requireThrow(() => expandNode(extra, baseModel), /node\.parameters\.Unexpected Labor Market Parameter: unknown field/, 'extra parameter');
 
-  const badPerCapita = structuredClone(laborMarketFixture);
+  const badPerCapita = structuredClone(laborMarketTestFixture);
   badPerCapita.demand[0].per_capita = 'Missing per Capita';
   await requireThrow(() => expandNode(badPerCapita, baseModel), /node\.demand\[0\]\.per_capita: must name one of parameters/, 'per_capita outside parameters');
 
-  const missingRate = structuredClone(laborMarketFixture);
+  const missingRate = structuredClone(laborMarketTestFixture);
   missingRate.rates[0] = '{C} Missing Labor Market Rate';
   await requireThrow(() => expandNode(missingRate, baseModel), /base element missing: A Missing Labor Market Rate/, 'missing rate');
 
-  const duplicateRate = structuredClone(laborMarketFixture);
+  const duplicateRate = structuredClone(laborMarketTestFixture);
   duplicateRate.rates[1] = duplicateRate.rates[0];
   await requireThrow(() => expandNode(duplicateRate, baseModel), /node\.rates\[1\]: duplicate rate/, 'duplicate rate');
 
   const nonNumericWageBase = structuredClone(baseModel);
-  const wageName = laborMarketFixture.inputs.wage.replaceAll('{C}', 'A');
+  const wageName = laborMarketTestFixture.inputs.wage.replaceAll('{C}', 'A');
   const wage = nonNumericWageBase.elements.find(e => e.type !== 'LINK' && e.name === wageName);
   if (!wage) throw new Error('wage fixture target missing: ' + wageName);
   wage.behavior.value = '[A Population]';
-  await requireThrow(() => expandNode(laborMarketFixture, nonNumericWageBase), /inputs\.wage\[A\].*not a numeric constant/, 'non-numeric wage');
+  await requireThrow(() => expandNode(laborMarketTestFixture, nonNumericWageBase), /inputs\.wage\[A\].*not a numeric constant/, 'non-numeric wage');
 
   return 'extra parameter, bad per_capita, missing rate, duplicate rate, and non-numeric wage rejected';
 });
 
 await expect('59. labor_market is peeled first above food and every earlier node layer remains rebuildable', () => {
   if (!laborMarketState?.model) throw new Error('case 53 did not produce labor_market model');
-  const lmNode={decl:laborMarketFixture,strip:stripLaborMarketNode,targets:laborMarketReplacementNames,generated:laborMarketGeneratedNames};
+  const lmNode={decl:laborMarketTestFixture,strip:stripLaborMarketNode,targets:laborMarketReplacementNames,generated:laborMarketGeneratedNames};
   const nodes=laborMarketDeclarations.length?layeredNodes:[...layeredNodes,lmNode];
   const chain=buildLayers(laborMarketState.model,nodes);
   if(chain.order[0]?.decl?.type!=='labor_market')throw new Error('labor_market was not the first layer peeled');
