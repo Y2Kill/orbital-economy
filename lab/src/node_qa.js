@@ -2990,6 +2990,79 @@ await expect('89. labor_market without elasticity remains byte-identical', () =>
   return counts + '; fingerprint=' + fp + '; unchanged plain patch';
 });
 
+
+await expect('90. disabled elastic labor_market produces identical runtime series', () => {
+  const base = acceptedBelowLaborMarket;
+  const plain = applyPatch(base, { format: PATCH_FORMAT,
+    ...expandNode(laborMarketFixture, base).patch }).model;
+  const elastic = applyPatch(base, { format: PATCH_FORMAT,
+    ...expandNode(laborMarketElasticFixture, base).patch }).model;
+  const source = plain.scenarios?.at(-1);
+  if (!source) throw new Error('missing last scenario');
+  const scenario = structuredClone(source);
+  scenario.values = { ...scenario.values, [laborMarketFixture.switch]: 0 };
+  const simulate = model => {
+    const engine = loadModelJSON(modelJsonForScenario(model, scenario));
+    const errors = engine.check();
+    if (errors.length) throw new Error('disabled model.check: ' + errors.map(x => x.message || x).join('; '));
+    return seriesContext(engine, engine.simulate());
+  };
+  const before = simulate(plain), after = simulate(elastic);
+  for (const e of plain.elements.filter(e => e.type !== 'LINK')) {
+    const one = Array.from(before.get(e.name), Number);
+    const two = Array.from(after.get(e.name), Number);
+    if (one.length !== two.length || one.some((v, i) => !Object.is(v, two[i])))
+      throw new Error(e.name + ': disabled elastic and plain differ');
+  }
+  return 'all common series identical with Labor Market Enabled = 0';
+});
+
+await expect('91. elastic labor_market runtime plugins PASS and lower wages raise labor demand', () => {
+  const base = acceptedBelowLaborMarket;
+  const regular = applyPatch(base, { format: PATCH_FORMAT,
+    ...expandNode(laborMarketFixture, base).patch }).model;
+  const expanded = expandNode(laborMarketElasticFixture, base);
+  const elastic = applyPatch(base, { format: PATCH_FORMAT, ...expanded.patch }).model;
+  const validation = mergeNodeValidation(validationBelowLaborMarket, [expanded.validation]);
+  const source = elastic.scenarios?.at(-1);
+  if (!source) throw new Error('missing last scenario');
+  const scenario = structuredClone(source);
+  scenario.values = { ...scenario.values, [laborMarketElasticFixture.switch]: 1 };
+  const simulate = model => {
+    const engine = loadModelJSON(modelJsonForScenario(model, scenario));
+    const errors = engine.check();
+    if (errors.length) throw new Error('enabled model.check: ' + errors.map(x => x.message || x).join('; '));
+    const results = engine.simulate();
+    return { engine, results, ctx: seriesContext(engine, results) };
+  };
+  const before = simulate(regular), after = simulate(elastic);
+  const checks = [
+    checkTimeAxis(after.results, validation.expected_time_step ??
+      elastic.simulation?.time_step ?? null, validation.time_step_tolerance ?? 1e-12),
+    checkFiniteAll(after.engine, after.results)
+  ];
+  if (validation.non_negative_regex) checks.push(checkNonNegativeRegex(
+    after.engine, after.results, validation.non_negative_regex.pattern,
+    validation.non_negative_regex.tolerance ?? 1e-10));
+  for (const plugin of validation.plugins || []) checks.push(...checkPlugin(plugin, after.ctx));
+  for (const check of validation.global_checks || []) checks.push(runGenericCheck(check, after.ctx));
+  const failures = checks.filter(x => x.status === 'FAIL');
+  if (failures.length) throw new Error('elastic runtime plugin failures: ' +
+    failures.map(x => x.name + ': ' + (x.message || 'FAIL')).join('; '));
+  let found = 0;
+  for (const region of laborMarketElasticFixture.colonies) {
+    const wage = Array.from(after.ctx.get(region + ' Wage'), Number);
+    const initial = Array.from(after.ctx.get(region + ' Initial Wage'), Number);
+    const requirement = Array.from(after.ctx.get(region + ' Total Labor Requirement'), Number);
+    const plainReq = Array.from(before.ctx.get(region + ' Total Labor Requirement'), Number);
+    for (let i = 0; i < wage.length; i++) {
+      if (wage[i] < initial[i] - 1e-8 && requirement[i] > plainReq[i] + 1e-8) found++;
+    }
+  }
+  if (!found) throw new Error('no observation of cheaper labor raising requirement');
+  return 'all merged runtime plugins PASS; cheaper labor increases demand (' + found + ' points)';
+});
+
 await expect('93. elastic wage demand parameter schema rejects invalid values with paths', async () => {
   const invalid = async (value, label) => {
     const decl = structuredClone(laborMarketElasticFixture);
