@@ -3167,7 +3167,7 @@ await expect('94. accepted elastic labor_market is peeled by its own declaration
     fs.mkdirSync(sandboxLab, { recursive: true });
     fs.mkdirSync(nodesDir, { recursive: true });
     for (const name of ['src', 'fixtures', 'input', 'reference'])
-      fs.symlinkSync(path.join(root, name), path.join(sandboxLab, name), 'dir');
+      fs.symlinkSync(path.join(root, name), path.join(sandboxLab, name), process.platform === 'win32' ? 'junction' : 'dir');
     for (const name of fs.readdirSync(nodeDir).filter(x => x.endsWith('.json'))) {
       const decl = readJson(path.join(nodeDir, name));
       const variant = decl.type === 'labor_market' && decl.switch === laborMarketElasticFixture.switch
