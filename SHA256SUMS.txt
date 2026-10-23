@@ -1,7 +1,7 @@
 e3e17a68147b548710eb8750b9c9917d89b9f2923098dbcef77861d4fd374fe4  ./.gitattributes
 5ec2b39f89176037b885fce0ae73a5000b5961f718a3b70f1d21772e2a0d9e96  ./.github/workflows/bench-full.yml
 8e2a0b0893da5548d53b2adb5e71882f4e82256d5cd0803d9b5d393087a0672a  ./.github/workflows/candidate.yml
-a2028dca02cbf410a43fa57b40e150eb74e7626d19d3967cd92dada11c457f72  ./.github/workflows/ci.yml
+8901e07d076908fed819d3f8588af4b42c4b549aac2d33541ba09a5b3f219894  ./.github/workflows/ci.yml
 39a069346ae5c7e06a0868fe493c0e2cf6491644a36cf80ac56c4842a5ebbc25  ./.github/workflows/cross-os.yml
 240161132e72dc13384c6f5d0876f409c1b7e6c396fb98e4c46b9c20f0237b72  ./.gitignore
 4fc44a7a70d4aa4403cdca537412255cae70503679dd4a2e67d99625da79e82e  ./BASELINE_MANIFEST.json
@@ -505,6 +505,12 @@ f0553b5274833ee7f2a56d497fcfa5ed400ace04930b4dff2a96f7e9771acae9  ./docs/tasks/0
 5d0177ee2c868fd262ff48296fdd6d5821d989c9f19071a68e751e5025d998d4  ./docs/tasks/043-recalibration/draft/skeleton-patch.json
 f0553b5274833ee7f2a56d497fcfa5ed400ace04930b4dff2a96f7e9771acae9  ./docs/tasks/043-recalibration/draft/validation-v7.7.18-draft.json
 e09be361260d6a7332e8c207335f13a17ac6ede8881a9a6d3fc30f23c5bd9ea8  ./docs/tasks/043-recalibration/scope.json
+acf9c74f2bb2be33ab5edbeef03f4c9e4f1393941460e364ec0785b698eb15e0  ./docs/tasks/044-labor-demand-elasticity/TASK_RU.md
+4ddff898518477ebed60689e95b9b3ab2771e75ef35b153e3cae82a3bffef0ea  ./docs/tasks/044-labor-demand-elasticity/fixtures/labor_market.json
+acbec86cbb28343cf6c71820df4c3a8fa43c24c16c6ac1ff16baad2d8778c89b  ./docs/tasks/044-labor-demand-elasticity/reference/definition_fingerprint.mjs
+bdb2bc88ef59a447f9aebbbf4b24ed41ccd629fb0cc877fb26754972d14dc35e  ./docs/tasks/044-labor-demand-elasticity/reference/labor_market_elasticity_prototype.mjs
+6bd368f0c288b99b1c45592a7f247448d3513bfe0fb1d2d37ac6575fd36bf0b2  ./docs/tasks/044-labor-demand-elasticity/reference/make_elastic.mjs
+2dab69ad716962435a56c5ad45e0a41322006865399aba27b747a47b4a655190  ./docs/tasks/044-labor-demand-elasticity/scope.json
 44d2e557f1cb2322739bc95ee2b6dcbf6d6fcb708da14e90d53250936e50da5c  ./docs/tasks/README_RU.md
 bbf818e93b88d606b3137b1bb69d60db8c41c9df4089025a921b1ca00f473244  ./lab/APPLY_PATCH.cmd
 046dc77903d88eda36ef201e46833701e196c53a45efcb42e4ec020dd5c654f7  ./lab/CHANGELOG.md
