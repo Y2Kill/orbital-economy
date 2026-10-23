@@ -39,7 +39,7 @@
 | `STRUCTURE_SELF_TEST.cmd` | **PASS** 21/21 (Windows, promotion v7.7.18) |
 | `LOOP_SELF_TEST.cmd` | **PASS** 19/19 (Windows, promotion v7.7.18); accepted 20 switches / 1048576; fast path byte-identical to `--exhaustive` (case 16 pinned to <= 10 switches) |
 | `PLANET_SELF_TEST.cmd` | **PASS** 20/20 (Windows, promotion v7.7.18); accepted in planet_v1 mode: P2=11/8/0/0, P3=16/2/1/0, P4=6/0, P5=19/0, P6=4 |
-| `NODE_SELF_TEST.cmd` | **PASS** 87/87 (Windows, promotion v7.7.18); слои снимаются по модели: `money` сверху, под ним `cost_pricing` (с привязками к слоям), `wage_pricing`, `labor_market` и `food`; принятый слой пересобирается по своей декларации из `model/nodes/` (v7.7.18 изменил декларации `cost_pricing` и `wage_pricing`); случаи 81–87 — привязки затрат к слоям |
+| `NODE_SELF_TEST.cmd` | **PASS** 94/94 (Windows, приёмка задачи 044, Lab v0.9.23; 88–94 — эластичность спроса на труд; на CI — шесть блоков `node-selftests`); слои снимаются по модели: `money` сверху, под ним `cost_pricing` (с привязками к слоям), `wage_pricing`, `labor_market` и `food`; принятый слой пересобирается по своей декларации из `model/nodes/` (v7.7.18 изменил декларации `cost_pricing` и `wage_pricing`); случаи 81–87 — привязки затрат к слоям |
 | `COMPARE_SELF_TEST.cmd` | **PASS** (Windows, promotion v7.7.18) |
 
 ## Lab v0.9.14 — exact loop-audit speed-up (задача 025)
