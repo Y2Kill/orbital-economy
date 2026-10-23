@@ -374,6 +374,8 @@ function stripLaborMarketNode(raw, decl) {
       if (!refs(old).has(population)) extraLinks.add(population + '|' + target);
     }
     for (const r of decl.rates || []) restore(sub(r, X));
+    if (decl.parameters && 'Labor Demand Wage Elasticity' in decl.parameters)
+      restore(sub(decl.inputs.labor_requirement, X));
   }
   out.elements = out.elements.filter(e => {
     if (e.type === 'LINK') return !generated.has(e.from) && !generated.has(e.to) && !extraLinks.has(e.from + '|' + e.to);
@@ -3079,6 +3081,37 @@ await expect('93. elastic wage demand parameter schema rejects invalid values wi
     /node\.parameters\.Unknown Labor Market Parameter: unknown field/,
     'unknown parameter');
   return 'zero, negative, string, and unknown parameter rejected with paths';
+});
+
+
+await expect('92. elastic labor_market peel restores the exact base and rebuilds without differences', () => {
+  const base = acceptedBelowLaborMarket;
+  const patch = expandNode(laborMarketElasticFixture, base).patch;
+  const model = applyPatch(base, { format: PATCH_FORMAT, ...patch }).model;
+  const stripped = stripLaborMarketNode(model, laborMarketElasticFixture);
+  const byName = raw => new Map(raw.elements.filter(e => e.type !== 'LINK')
+    .map(e => [e.name, def(e)]));
+  const original = byName(base), actual = byName(stripped);
+  if (original.size !== actual.size) throw new Error('strip element count differs');
+  for (const [name, definition] of original) if (actual.get(name) !== definition)
+    throw new Error('strip definition differs: ' + name);
+  if (!sameSet(linkSet(base), linkSet(stripped))) throw new Error('strip links differ');
+  if (stripped.elements.some(e => e.name === 'Labor Demand Wage Elasticity'))
+    throw new Error('optional parameter survived peel');
+  const rebuilt = applyPatch(stripped, { format: PATCH_FORMAT,
+    ...expandNode(laborMarketElasticFixture, stripped).patch }).model;
+  const expected = byName(model), got = byName(rebuilt);
+  if (expected.size !== got.size) throw new Error('rebuilt element count differs');
+  for (const [name, definition] of expected) if (got.get(name) !== definition)
+    throw new Error('rebuilt definition differs: ' + name);
+  if (!sameSet(linkSet(model), linkSet(rebuilt))) throw new Error('rebuilt links differ');
+  for (const region of laborMarketElasticFixture.colonies) {
+    const target = region + ' Total Labor Requirement';
+    const old = base.elements.find(e => e.name === target)?.behavior?.value;
+    const restored = stripped.elements.find(e => e.name === target)?.behavior?.value;
+    if (old !== restored) throw new Error('labor requirement not restored: ' + target);
+  }
+  return 'zero definition/link differences; original labor requirement restored';
 });
 
 console.log(`\nNODE SELF-TEST: ${passed} passed, ${failed} failed`);
