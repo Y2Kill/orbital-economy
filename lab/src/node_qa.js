@@ -3114,5 +3114,75 @@ await expect('92. elastic labor_market peel restores the exact base and rebuilds
   return 'zero definition/link differences; original labor requirement restored';
 });
 
+
+await expect('94. accepted elastic labor_market is peeled by its own declaration; cases 1-87 still pass', () => {
+  const declaration = laborMarketDeclarations.find(x => x.decl.switch === laborMarketElasticFixture.switch);
+  if (!declaration) throw new Error('accepted labor_market declaration not found');
+  const layer = layers.get(declaration.decl);
+  const base = layer?.base;
+  if (!base) throw new Error('accepted labor_market base missing');
+  const plain = expandNode(declaration.decl, base);
+  const elastic = expandNode(laborMarketElasticFixture, base);
+  const modified = structuredClone(suppliedAccepted);
+  const byName = new Map(modified.elements.filter(e => e.type !== 'LINK').map(e => [e.name, e]));
+  for (const element of elastic.patch.add_elements)
+    if (!byName.has(element.name)) modified.elements.push(structuredClone(element));
+  const existing = new Map(plain.patch.replace_formulas.map(x => [x.name, x.value]));
+  for (const replacement of elastic.patch.replace_formulas) {
+    const target = byName.get(replacement.name);
+    if (!target) throw new Error('missing target: ' + replacement.name);
+    if (!existing.has(replacement.name) || target.behavior.value === existing.get(replacement.name))
+      target.behavior.value = replacement.value;
+  }
+  const links = linkSet(modified);
+  for (const link of elastic.patch.add_links) {
+    const pair = link.from + '|' + link.to;
+    if (!links.has(pair)) {
+      modified.elements.push({ type: 'LINK', from: link.from, to: link.to });
+      links.add(pair);
+    }
+  }
+  const nodes = acceptedLayeredNodes.map(n => n.decl === declaration.decl
+    ? { ...n, decl: laborMarketElasticFixture } : n);
+  const chain = buildLayers(modified, nodes);
+  const recognized = chain.layers.get(laborMarketElasticFixture);
+  if (!recognized) throw new Error('accepted elastic labor_market layer not recognized');
+  const rebuilt = applyPatch(recognized.base, { format: PATCH_FORMAT,
+    ...expandNode(laborMarketElasticFixture, recognized.base).patch }).model;
+  const expected = new Map(recognized.target.elements.filter(e => e.type !== 'LINK')
+    .map(e => [e.name, def(e)]));
+  for (const e of rebuilt.elements.filter(e => e.type !== 'LINK'))
+    if (expected.get(e.name) !== def(e)) throw new Error('accepted elastic rebuild mismatch: ' + e.name);
+  if (!sameSet(linkSet(recognized.target), linkSet(rebuilt)))
+    throw new Error('accepted elastic LINK mismatch');
+  const tmp = fs.mkdtempSync(path.join(os.tmpdir(), 'orbital-elastic-'));
+  try {
+    const sandboxLab = path.join(tmp, 'lab'), nodesDir = path.join(tmp, 'model', 'nodes');
+    fs.mkdirSync(sandboxLab, { recursive: true });
+    fs.mkdirSync(nodesDir, { recursive: true });
+    for (const name of ['src', 'fixtures', 'input', 'reference'])
+      fs.symlinkSync(path.join(root, name), path.join(sandboxLab, name), 'dir');
+    for (const name of fs.readdirSync(nodeDir).filter(x => x.endsWith('.json'))) {
+      const decl = readJson(path.join(nodeDir, name));
+      const variant = decl.type === 'labor_market' && decl.switch === laborMarketElasticFixture.switch
+        ? laborMarketElasticFixture : decl;
+      fs.writeFileSync(path.join(nodesDir, name), JSON.stringify(variant, null, 2) + '\n');
+    }
+    const modelFile = path.join(tmp, 'model.json'), validationFile = path.join(tmp, 'validation.json');
+    fs.writeFileSync(modelFile, JSON.stringify(modified));
+    fs.writeFileSync(validationFile, JSON.stringify(suppliedValidation, null, 2) + '\n');
+    const run = spawnSync(process.execPath, [
+      '--expose-gc', path.join(root, 'src', 'node_qa.js'), '--cases=1-87',
+      '--accepted-model=' + modelFile, '--accepted-validation=' + validationFile
+    ], { cwd: sandboxLab, encoding: 'utf8', maxBuffer: 16 << 20 });
+    if (run.status !== 0 || !run.stdout.includes('NODE SELF-TEST: 87 passed, 0 failed'))
+      throw new Error('accepted elastic regression failed: ' +
+        (run.stderr || '').slice(-2000) + '\n' + (run.stdout || '').slice(-4000));
+  } finally {
+    fs.rmSync(tmp, { recursive: true, force: true });
+  }
+  return 'accepted elastic declaration rebuilt; cases 1-87 PASS';
+});
+
 console.log(`\nNODE SELF-TEST: ${passed} passed, ${failed} failed`);
 if (failed) process.exitCode = 1;
