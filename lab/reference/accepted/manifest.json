@@ -1,15 +1,15 @@
 {
   "status": "ACCEPTED",
-  "model_name": "Orbital Economy v7.7.18 r1 — Recalibration onto Cost Prices",
-  "model_file": "orbital_economy_v7_7_18_r1_modeljson.json",
-  "model_sha256": "43034a2890e06c030b04433a3ed9cebf1961d4ccf9101766a8394d2033748b48",
-  "validation_file": "validation-v7.7.18.json",
-  "validation_sha256": "cc2d46969cb26253f2ba2d8ff312bd51464402516c9fa1082ef668dbca12d7a4",
-  "accepted_date": "2026-10-19",
+  "model_name": "Orbital Economy v7.7.19 r1 — Nominal Anchor",
+  "model_file": "orbital_economy_v7_7_19_r1_modeljson.json",
+  "model_sha256": "d59c1aa0fd38b99dc727be1f0f9ef7015f1f9200f10833e25ce669c122630f82",
+  "validation_file": "validation-v7.7.19.json",
+  "validation_sha256": "0bf2c7689e6076f2a421a6fa980f3bce9504c3db566d308537003da6ff267d17",
+  "accepted_date": "2026-10-24",
   "engine": "simulation@9.0.0",
   "notes": [
-    "v7.7.18: recalibration onto cost prices (owner decision 2026-10-18, option A) — cost pricing in Modes 0-55, money in Modes 52-55; the cost_pricing layer gated by the switches of the physical layers (Lab v0.9.22, model/nodes/cost_pricing.json); the demand reference prices of wage pricing recalibrated to cost prices (model/nodes/wage_pricing.json). See docs/tasks/043-recalibration/.",
-    "Modes 56-59 keep their inputs and reproduce v7.7.17 r1 exactly except 8 dead series (demand references of wage pricing and their price demand factors, read only with Wage Pricing Enabled = 1).",
+    "v7.7.19: nominal anchor (owner decision 2026-10-23) — labor demand follows the wage with elasticity 1.5 in the labor_market layer (Lab v0.9.23, model/nodes/labor_market.json): {C} Total Labor Requirement x (wage / initial wage)^(-1.5) under Labor Market Enabled. See docs/tasks/045-nominal-anchor/.",
+    "Modes 0-51 (labor market off) reproduce v7.7.18 r1 exactly; Modes 52-59 change.",
     "Exact numbers are defined on the canonical platform (docs/VERSIONING_AND_AUTHORITY.md section 8); series-digest.windows.json is the golden."
   ]
 }

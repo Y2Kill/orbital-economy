@@ -1,28 +1,28 @@
-# Статус проверок Orbital Economy Lab v0.9.23 — baseline v7.7.18 r1
+# Статус проверок Orbital Economy Lab v0.9.23 — baseline v7.7.19 r1
 
 ## Принятая основа
 
-- Модель: **Orbital Economy v7.7.18 r1 — Recalibration onto Cost Prices** — ACCEPTED 2026-10-19.
-- SHA-256: `43034a2890e06c030b04433a3ed9cebf1961d4ccf9101766a8394d2033748b48`.
-- Validation: `validation/validation-v7.7.18.json`.
-- Policy: `policy/change-policy-v7.7.18-strict.json` (default deny, rules: []).
+- Модель: **Orbital Economy v7.7.19 r1 — Nominal Anchor** — ACCEPTED 2026-10-24.
+- SHA-256: `d59c1aa0fd38b99dc727be1f0f9ef7015f1f9200f10833e25ce669c122630f82`.
+- Validation: `validation/validation-v7.7.19.json`.
+- Policy: `policy/change-policy-v7.7.19-strict.json` (default deny, rules: []).
 - Engine: `simulation@9.0.0` pinned; каноническая платформа Windows x64 · Node 24.11.1 (`../../docs/VERSIONING_AND_AUTHORITY.md` §8), эталон `reference/accepted/series-digest.windows.json`.
 - Scenarios: Modes 0–59.
-- Предшественник: v7.7.17 r1 (`43625d458d7bfc20e6b3a0868b4f3f2f503f249075e65c7afac9353ddca137c9`), лежит в `reference/v7.7.17/`.
+- Предшественник: v7.7.18 r1 (`43034a2890e06c030b04433a3ed9cebf1961d4ccf9101766a8394d2033748b48`), лежит в `reference/v7.7.18/`.
 
-## Проверки promotion v7.7.18 (прогон 2026-10-19, каноническая платформа)
+## Проверки promotion v7.7.19 (прогон 2026-10-24, каноническая платформа)
 
 | Проверка | Результат |
 |---|---|
-| Validation Modes 0–59 | **PASS** — 60/60, 29229 проверок |
+| Validation Modes 0–59 | **PASS** — 60/60, 29232 проверок |
 | Capital Lifecycle conformance | **PASS** — 11 instances ядра, 0 NON_CONFORMING; `simple_capital` 6, `deposit` 6, `labor` 17, `population` 2, `food` 2, `labor_market` 2, `wage_pricing` 2, `cost_pricing` 2 и `money` 2 instances CONFORMING |
 | Structure audit | **PASS** — 363 FLOW, 302 boundary, unclassified 0, closed-world 0, пары 27 |
 | A/B symmetry | **PASS** — mismatches 0, exceptions 0 |
 | Algebraic loop audit | **PASS** — 20 switches, 1048576 combinations, loops 0 |
 | Planet closure (`planet_v1`) | **PASS** — P2 11/8/0/0, P3 16/2/1/0, P4 6/0, P5 19/0, P6 4 (нормы спроса на душу), reversibility 0 |
-| Parameter registry | 627 параметр(ов); 452 аннотировано; 88 несимметричных пар; 0 без аннотации |
-| Regression Modes 56–59 vs v7.7.17 r1 | изменены только 8 нечитаемых рядов (опорные цены спроса `wage_pricing` и их множители); Modes 0–55 — перекалибровка |
-| Policy задачи 043 | **PASS** — 56506 событий, неожиданных 0 |
+| Parameter registry | 628 параметр(ов); 453 аннотировано; 88 несимметричных пар; 0 без аннотации |
+| Regression Modes 0–51 vs v7.7.18 r1 | **IDENTICAL** — 52 Modes (рынок труда выключен); Modes 52–59 — спрос на труд следует за зарплатой |
+| Policy задачи 045 | **PASS** — 9580 событий, неожиданных 0 |
 
 Прежние приёмки — `../../docs/ACCEPTANCE_STATUS.md`, раздел «Previous acceptances».
 
@@ -33,14 +33,14 @@
 | Скрипт | Результат |
 |---|---|
 | `SELF_TEST.cmd` (Modes 0, 12) | **PASS** |
-| `QA_SELF_TEST.cmd` | **PASS** 50/50 (Windows, promotion v7.7.18) |
-| `POLICY_SELF_TEST.cmd` | **PASS** 10/10 (Windows, promotion v7.7.18) |
-| `CONFORMANCE_SELF_TEST.cmd` | **PASS** 18/18 (Windows, promotion v7.7.18) |
-| `STRUCTURE_SELF_TEST.cmd` | **PASS** 21/21 (Windows, promotion v7.7.18) |
-| `LOOP_SELF_TEST.cmd` | **PASS** 19/19 (Windows, promotion v7.7.18); accepted 20 switches / 1048576; fast path byte-identical to `--exhaustive` (case 16 pinned to <= 10 switches) |
-| `PLANET_SELF_TEST.cmd` | **PASS** 20/20 (Windows, promotion v7.7.18); accepted in planet_v1 mode: P2=11/8/0/0, P3=16/2/1/0, P4=6/0, P5=19/0, P6=4 |
-| `NODE_SELF_TEST.cmd` | **PASS** 94/94 (Windows, приёмка задачи 044, Lab v0.9.23; 88–94 — эластичность спроса на труд; на CI — шесть блоков `node-selftests`); слои снимаются по модели: `money` сверху, под ним `cost_pricing` (с привязками к слоям), `wage_pricing`, `labor_market` и `food`; принятый слой пересобирается по своей декларации из `model/nodes/` (v7.7.18 изменил декларации `cost_pricing` и `wage_pricing`); случаи 81–87 — привязки затрат к слоям |
-| `COMPARE_SELF_TEST.cmd` | **PASS** (Windows, promotion v7.7.18) |
+| `QA_SELF_TEST.cmd` | **PASS** 50/50 (Windows, promotion v7.7.19) |
+| `POLICY_SELF_TEST.cmd` | **PASS** 10/10 (Windows, promotion v7.7.19) |
+| `CONFORMANCE_SELF_TEST.cmd` | **PASS** 18/18 (Windows, promotion v7.7.19) |
+| `STRUCTURE_SELF_TEST.cmd` | **PASS** 21/21 (Windows, promotion v7.7.19) |
+| `LOOP_SELF_TEST.cmd` | **PASS** 19/19 (Windows, promotion v7.7.19); accepted 20 switches / 1048576; fast path byte-identical to `--exhaustive` (case 16 pinned to <= 10 switches) |
+| `PLANET_SELF_TEST.cmd` | **PASS** 20/20 (Windows, promotion v7.7.19); accepted in planet_v1 mode: P2=11/8/0/0, P3=16/2/1/0, P4=6/0, P5=19/0, P6=4 |
+| `NODE_SELF_TEST.cmd` | **PASS** 94/94 (Windows, promotion v7.7.19; шесть блоков); слои снимаются по модели: `money` сверху, под ним `cost_pricing`, `wage_pricing`, `labor_market` (с эластичностью спроса на труд) и `food`; принятый слой пересобирается по своей декларации из `model/nodes/` |
+| `COMPARE_SELF_TEST.cmd` | **PASS** (Windows, promotion v7.7.19) |
 
 ## Lab v0.9.14 — exact loop-audit speed-up (задача 025)
 
@@ -82,7 +82,7 @@ Accepted model, validation и policy задачей 018 не изменяютс�
 
 ## Рабочая область
 
-`input/model`, `input/validation`, `input/policy` и `reference/accepted/model` содержат принятые артефакты v7.7.18 r1, поэтому `RUN_LAB.cmd` и `CHECK_CANDIDATE.cmd` запускаются без аргументов; `CHECK_CANDIDATE` на нетронутой области даёт `BYTE_IDENTICAL`. Отчёты предыдущих прогонов в `output/` не входят в поставку: актуальные копии лежат в `docs/CAPITAL_LIFECYCLE_CONFORMANCE_REPORT.md`, `docs/STRUCTURE_AUDIT_REPORT.md`, `docs/PARAMETER_REGISTRY.md` пакета.
+`input/model`, `input/validation`, `input/policy` и `reference/accepted/model` содержат принятые артефакты v7.7.19 r1, поэтому `RUN_LAB.cmd` и `CHECK_CANDIDATE.cmd` запускаются без аргументов; `CHECK_CANDIDATE` на нетронутой области даёт `BYTE_IDENTICAL`. Отчёты предыдущих прогонов в `output/` не входят в поставку: актуальные копии лежат в `docs/CAPITAL_LIFECYCLE_CONFORMANCE_REPORT.md`, `docs/STRUCTURE_AUDIT_REPORT.md`, `docs/PARAMETER_REGISTRY.md` пакета.
 
 Канонический разбор дефектов r1 и того, что именно изменено в r2, — `docs/V7_6_R1_TO_R2_FIX_REPORT.md`; порядок команд воспроизведения — `docs/ACCEPTANCE_STATUS.md`.
 

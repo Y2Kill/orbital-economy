@@ -1,7 +1,7 @@
 # Architecture
 
 **Document status:** CURRENT  
-**Base:** Orbital Economy v7.7.18 r1  
+**Base:** Orbital Economy v7.7.19 r1  
 **Rule:** this document describes accepted code; code is authoritative on conflict.
 
 ## 1. Model character
@@ -131,6 +131,8 @@ Transport uses a documented shared-infrastructure variation with a secondary Cap
 **Money (v7.7.17, full money accounting, step 2).** A `money` node (`model/nodes/money.json`, Lab v0.9.21) under the switch `Money Enabled`. Each region has household money (+ wages, rent at the old base prices, dividends, its share of freight; − purchases at market prices) and the money of one consolidated firm sector (+ household purchases and exports; − wages, rent, imports, import freight, dividends = Max(0, money − 60 days of the wage bill) / 90 days); the shared transport holds the freight and pays it out over 30 days by each region’s share of trade. Every payment is booked on both sides: total money is conserved and the exports of one region are the imports of the other (checked by the `money` plugin). Household budgets: spending plan = smoothed income + (money − 60 days of income) / 180 days; food is paid first, metal and electronics demand is scaled by the rest of the budget. The start is an equilibrium (fixed point of year 5). Money works only on cost prices: on the old prices firms sell households less than they pay them and budgets wipe out both regions (`docs/research/MONEY_ACCOUNTING_PROTOTYPE_2026-10-17_RU.md`).
 
 **Recalibration onto cost prices (v7.7.18).** Cost pricing is the price system of every Mode (`Cost Pricing Enabled` = 1 in all scenarios); money runs in the full Modes 52–55 and 58–59 — its equilibrium start belongs to the full economy, and in the ladder Modes 0–48 it would choke region B. The `cost_pricing` declaration carries layer gates (Lab v0.9.22): every cost term is multiplied by the switch that turns its physical flow on (process energy, power resource, capital wear of a mine, …), so a Mode without a layer pays nothing for it; where every gate is 1 the series are bit-identical (x · 1 = x). The demand reference prices of wage pricing were recalibrated to cost prices (old value × the cost scale of the good). Experiments: `docs/research/RECALIBRATION_PREP_2026-10-18_RU.md`.
+
+**Nominal anchor (v7.7.19).** Labor demand follows the wage: the `labor_market` declaration carries `Labor Demand Wage Elasticity` = 1.5 (Lab v0.9.23), and `{C} Total Labor Requirement` becomes (old) × (wage / initial wage)^(−1.5) under `Labor Market Enabled`. Cheaper labor puts more people on a unit of output, employment and labor tightness rise and the wage stops drifting. Without it the wage drifted whenever tightness was off its target 0.95, and on cost prices the whole price level followed (v7.7.18 long runs: wages A 100 → 85, B 140 → 79 in 80 years). A nominal wage norm was rejected: it froze region B's high starting wage and stalled B. Modes without the labor market (0–51) are bit-identical. Research: `docs/research/NOMINAL_ANCHOR_2026-10-23_RU.md`.
 
 ## 6. Markets and trade
 

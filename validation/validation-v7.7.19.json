@@ -1,5 +1,5 @@
 {
-  "name": "Orbital Economy v7.7.18 validation r1",
+  "name": "Orbital Economy v7.7.19 validation r1",
   "mode_variable": "Timed Test Mode",
   "expected_time_step": 0.25,
   "time_step_tolerance": 1e-12,
@@ -8,7 +8,60 @@
     "pattern": "(Installed|Active|Inactive|Decommissioning|Retired).*(Capacity|Capital)|Unserved Demand$",
     "tolerance": 1e-9
   },
-  "regression_modes": [],
+  "regression_modes": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11,
+    12,
+    13,
+    14,
+    15,
+    16,
+    17,
+    18,
+    19,
+    20,
+    21,
+    22,
+    23,
+    24,
+    25,
+    26,
+    27,
+    28,
+    29,
+    30,
+    31,
+    32,
+    33,
+    34,
+    35,
+    36,
+    37,
+    38,
+    39,
+    40,
+    41,
+    42,
+    43,
+    44,
+    45,
+    46,
+    47,
+    48,
+    49,
+    50,
+    51
+  ],
   "regression_tolerance": 0,
   "plugins": [
     {
@@ -73344,6 +73397,22 @@
           "metric": "last",
           "op": "<",
           "value": 4
+        },
+        {
+          "type": "metric",
+          "name": "Mode 52: cheaper labor raises B labor demand (wage elasticity 1.5); v7.7.19 labor demand elasticity: skeleton end 3.38, without the elasticity 3.22",
+          "column": "B Total Labor Requirement",
+          "metric": "last",
+          "op": ">",
+          "value": 3.3
+        },
+        {
+          "type": "metric",
+          "name": "Mode 52: B employment rises with the cheaper wage; v7.7.19 labor demand elasticity: skeleton end 0.701, without the elasticity 0.668",
+          "column": "B Employment Rate",
+          "metric": "last",
+          "op": ">",
+          "value": 0.69
         }
       ]
     },
@@ -74279,6 +74348,14 @@
           "metric": "mean",
           "op": ">",
           "value": 115
+        },
+        {
+          "type": "metric",
+          "name": "Mode 53: B employment rises with the cheaper wage through the surge; v7.7.19 labor demand elasticity: skeleton end 0.705, without the elasticity 0.671",
+          "column": "B Employment Rate",
+          "metric": "last",
+          "op": ">",
+          "value": 0.69
         }
       ]
     },
@@ -76084,19 +76161,19 @@
         },
         {
           "type": "metric",
-          "name": "Mode 55: A labor availability is not lower than in Mode 53 (0.9986); v7.7.18 recalibration",
+          "name": "Mode 55: A labor availability is not lower than in Mode 53 (0.9951); v7.7.19 labor demand elasticity: skeleton min 0.9968",
           "column": "A Labor Availability",
           "metric": "min",
           "op": ">",
-          "value": 0.9986
+          "value": 0.9951
         },
         {
           "type": "metric",
-          "name": "Mode 55: price demand does not raise the A metal price peak above Mode 53 (60.44); v7.7.18 recalibration: with budgets price demand adds little, skeleton max 60.30",
+          "name": "Mode 55: price demand does not raise the A metal price peak above Mode 53 (60.98); v7.7.19 labor demand elasticity: skeleton max 60.62",
           "column": "A Market Price",
           "metric": "max",
           "op": "<",
-          "value": 60.5
+          "value": 61
         },
         {
           "type": "metric",
@@ -80226,6 +80303,7 @@
     "v7.7.4 candidate r3: corrected Mode 37 DSL format after r2 exposed that metric from_day/to_day are ignored and event_absent requires nested event. No model or threshold change in this revision; true windowed values are taken from the r3 CI report.",
     "v7.7.5 DRAFT: structural declarations produced by expand-nodes --validation (simple_capital plugin, capital_transformation and capital_retirement names, pairs, planet_closure capacity kind simple for regolith). The executor adds switch-off checks for Modes 0-37, pair identities for the two mine expansions (Modes 38-39), and scenario checks for Modes 38-39.",
     "v7.7.5 r2: Modes 38-39 inherit only pre-task v7.7.4 identities; the switch-off Extraction Capacity = Base identity remains restricted to Modes 0-37 except 29. Numeric expectations are calibrated from candidate r1 run 36410009451.",
-    "v7.7.18 recalibration (task 043, owner decision 2026-10-18, option A): cost pricing in Modes 0-55, money in Modes 52-55; thresholds written against the old price world or against a level of another Mode are rebased on the skeleton with the same factor; see docs/tasks/043-recalibration/V7_7_18_RECALIBRATION_SPEC.md section 4."
+    "v7.7.18 recalibration (task 043, owner decision 2026-10-18, option A): cost pricing in Modes 0-55, money in Modes 52-55; thresholds written against the old price world or against a level of another Mode are rebased on the skeleton with the same factor; see docs/tasks/043-recalibration/V7_7_18_RECALIBRATION_SPEC.md section 4.",
+    "v7.7.19 (task 045, owner decision 2026-10-23, nominal anchor): labor demand follows the wage with elasticity 1.5 in the labor_market layer; Modes 0-51 (labor market off) reproduce v7.7.18 exactly; two Mode 55 checks rebased on the new Mode 53 levels, three checks of the mechanism added in Modes 52-53."
   ]
 }

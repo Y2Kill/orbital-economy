@@ -9,7 +9,8 @@
     "Wage Adjustment Rate": 0.000277777777778,
     "Target Labor Tightness": 0.95,
     "Wage Floor Share": 0.3,
-    "Labor Demand Signal Time": 10
+    "Labor Demand Signal Time": 10,
+    "Labor Demand Wage Elasticity": 1.5
   },
   "inputs": {
     "population": "{C} Population",

@@ -1,16 +1,16 @@
 # Orbital Economy — реестр внешних параметров
 
-- generated: 2026-10-19T16:54:15.724Z
-- model: Orbital Economy v7.7.18 r1 — Recalibration onto Cost Prices — SHA-256 `43034a2890e06c030b04433a3ed9cebf1961d4ccf9101766a8394d2033748b48`
-- annotations: docs/PARAMETER_ANNOTATIONS.json (SHA-256 `e0f37c5e13e577ac9455e04471fd0a76f17a9ac165ad3188c0dfba49fef8766d`)
+- generated: 2026-10-24T13:14:38.931Z
+- model: Orbital Economy v7.7.19 r1 — Nominal Anchor — SHA-256 `d59c1aa0fd38b99dc727be1f0f9ef7015f1f9200f10833e25ce669c122630f82`
+- annotations: docs/PARAMETER_ANNOTATIONS.json (SHA-256 `92d965608f80e08414213a6a70911a95f052a56997f4f82ce5bf767765e41f2b`)
 
 Всё, что модель не выводит сама: числовые константы, начальные запасы, переключатели, тестовые множители. Инвентарь сгенерирован из ModelJSON; аннотации («роль / что меняет / доказательство») ведутся вручную и версионируются вместе с baseline.
 
 ## Сводка
 
-- внешних величин: **627** (константы 407, начальные запасы 154, переключатели 31, тестовая обвязка 35)
-- по колониям: A 171, B 171, глобальные 285
-- аннотировано: **452 / 627** (72 %)
+- внешних величин: **628** (константы 408, начальные запасы 154, переключатели 31, тестовая обвязка 35)
+- по колониям: A 171, B 171, глобальные 286
+- аннотировано: **453 / 628** (72 %)
 - несимметричных пар A/B: **88**, из них без аннотации: **0**
 
 ## Несимметричные пары A/B — что задаёт различия колоний
@@ -198,10 +198,11 @@
 | B Regolith Extraction Labor per Unit | constant | 0.2 | Regolith Extraction labor intensity for colony B, value 0.2. | Multiplies B Regolith Extraction output and its Automation Factor to form the process Labor Requirement. The A/B pair is intentionally symmetric at 0.2/0.2. | V7_7_10_ARCHITECTURE_SPEC §1–§2 and draft/process-labor.json. |
 | Food Labor per Unit | constant | 0.15 | Farm labor intensity, value 0.15 labor units per unit of food production. | Scales Farming Labor Requirement; labor remains accounting-only at Planet v2 step 2. | docs/tasks/032-food/V7_7_12_ARCHITECTURE_SPEC.md §§1–5 and docs/research/FOOD_PROTOTYPE_2026-10-05_RU.md. |
 | Labor Demand Signal Time | constant | 10 | Smoothing time of unconstrained labor demand, 10 model days. | Controls how quickly Labor Demand Signal follows labor demand reconstructed before the output guard. | docs/tasks/034-labor-market/V7_7_13_ARCHITECTURE_SPEC.md §§0–5 and docs/research/CLOSURE_PROTOTYPE_2026-10-09_RU.md. |
+| Labor Demand Wage Elasticity | constant | 1.5 | KEY PARAMETER: labor-demand wage elasticity ε=1.5; nominal anchor controlling long-run wage-level drift and the A → B population shift. | Only when Labor Market Enabled = 1, each regional Total Labor Requirement = its former food-wrapped formula × (regional Wage / Initial Wage)^(-1.5). Cheaper labor creates more jobs per unit of output, raises employment and the wage bill and feeds back through labor tightness; with the labor market disabled the original formula applies exactly. | docs/research/NOMINAL_ANCHOR_2026-10-23_RU.md: alternative ε=0.5/1/1.5/2 versus wage norms and hybrid over 80 years; docs/tasks/045-nominal-anchor/V7_7_19_ARCHITECTURE_SPEC.md §§1–5; owner decision 2026-10-23 chooses ε=1.5. |
 | Labor Participation Share | constant | 0.52 | Dimensionless share of population counted as labor force, recalibrated from 0.50 to 0.52. | Labor Force = Population × Labor Participation Share for each region. The 0.52 calibration moves colony A off the labor-shortage edge while preserving the intended labor-market mechanism; labor-demand signal initial stocks are recalibrated consistently to 14.56 / 4.42. | docs/research/SENSITIVITY_2026-10-10_RU.md: participation is strongly nonlinear and its effect grows on the 20-year horizon; owner 80-year calibration decision on 2026-10-11 selected 0.52 to remove the shortage-edge behavior while keeping wages stable for roughly two decades. |
 | Minimum Human Labor Share | constant | 0.05 | Automation floor parameter, value 0.05. | Sets the irreducible human share in every generated Automation Factor. | V7_7_10_ARCHITECTURE_SPEC §1–§2 and draft/process-labor.json. |
 | Reference Real Wage | constant | 100 | Reference real-wage level, value 100 in model wage units after price-index normalization. | Normalizes Real Wage in the attractiveness formula so the wage term is dimensionless. | docs/research/POPULATION_PROTOTYPE_2026-10-04_RU.md: reference real wage 100 was set manually; retained normalization baseline. |
-| Target Labor Tightness | constant | 0.95 | KEY PARAMETER: target ratio of smoothed labor demand to labor force; value remains 0.95. | Sets the long-run wage equilibrium target: tightness above 0.95 raises wages and below 0.95 lowers them. The value is unchanged in v7.7.14 but is explicitly marked key because sensitivity grows materially on long horizons. | docs/research/SENSITIVITY_2026-10-10_RU.md: Target Labor Tightness grows from moderate short-horizon sensitivity to a strong long-horizon wage driver; owner decision 2026-10-11 keeps 0.95 unchanged and marks it as a key parameter. |
+| Target Labor Tightness | constant | 0.95 | KEY PARAMETER: target ratio of smoothed labor demand to labor force; value remains 0.95. | Controls the target ratio of smoothed labor demand to labor force, 0.95. Above/below the target wages rise/fall; from v7.7.19 the changed wage also increases/decreases labor demand through Labor Demand Wage Elasticity, feeding back into employment and labor tightness, so tightness converges through labor demand as well as the wage. Value remains 0.95. | docs/research/SENSITIVITY_2026-10-10_RU.md: Target Labor Tightness grows from moderate short-horizon sensitivity to a strong long-horizon wage driver; owner decision 2026-10-11 keeps 0.95 unchanged and marks it as a key parameter. See also docs/research/NOMINAL_ANCHOR_2026-10-23_RU.md and docs/tasks/045-nominal-anchor/V7_7_19_ARCHITECTURE_SPEC.md §5 (wage → labor demand negative feedback, owner decision 2026-10-23). |
 | Wage Adjustment Rate | constant | 0.000277777777778 | Flexible-wage adjustment rate, 0.000277777777778 per model day (10% per 360-day model year). | Scales Wage Increase/Decrease response to the gap between Labor Tightness and Target Labor Tightness. | docs/tasks/034-labor-market/V7_7_13_ARCHITECTURE_SPEC.md §§0–5 and docs/research/CLOSURE_PROTOTYPE_2026-10-09_RU.md. |
 | Wage Floor Share | constant | 0.3 | Lower bound for flexible wage as a share of the region's Initial Wage, value 0.3. | Prevents Flexible Wage from falling below 30% of the pre-labor-market wage. | docs/tasks/034-labor-market/V7_7_13_ARCHITECTURE_SPEC.md §§0–5 and docs/research/CLOSURE_PROTOTYPE_2026-10-09_RU.md. |
 | A Initial Reference Metal Price | constant | 40 | Symmetric stored initial reference price (A/B 40). | Preserves the accepted numeric reference when cost pricing wraps reference-price formulas; serves as the switch-off branch. | docs/research/COST_PRICES_PROTOTYPE_2026-10-16_RU.md; docs/tasks/039-cost-pricing/V7_7_16_ARCHITECTURE_SPEC.md §5; ARCHIVE/evidence/042-cost-pricing-node/calibrate.mjs. |
@@ -711,6 +712,7 @@
 | B Regolith Extraction Labor per Unit | constant | B | 0.2 | = | Generated labor element for B Regolith Extraction Labor per Unit. | ✓ |
 | Food Labor per Unit | constant | global | 0.15 |  | Food node: parameter Food Labor per Unit. | ✓ |
 | Labor Demand Signal Time | constant | global | 10 |  | Labor market node: parameter Labor Demand Signal Time. | ✓ |
+| Labor Demand Wage Elasticity | constant | global | 1.5 |  | Labor market node: parameter Labor Demand Wage Elasticity. | ✓ |
 | Labor Participation Share | constant | global | 0.52 |  | Generated population element for Labor Participation Share. | ✓ |
 | Minimum Human Labor Share | constant | global | 0.05 |  | Generated labor element for Minimum Human Labor Share. | ✓ |
 | Reference Real Wage | constant | global | 100 |  | Generated population element for Reference Real Wage. | ✓ |

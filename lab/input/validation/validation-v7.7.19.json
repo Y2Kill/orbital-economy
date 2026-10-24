@@ -1,5 +1,5 @@
 {
-  "name": "Orbital Economy v7.7.17 validation r1",
+  "name": "Orbital Economy v7.7.19 validation r1",
   "mode_variable": "Timed Test Mode",
   "expected_time_step": 0.25,
   "time_step_tolerance": 1e-12,
@@ -60,13 +60,7 @@
     48,
     49,
     50,
-    51,
-    52,
-    53,
-    54,
-    55,
-    56,
-    57
+    51
   ],
   "regression_tolerance": 0,
   "plugins": [
@@ -29097,7 +29091,7 @@
         },
         {
           "type": "metric",
-          "name": "Mode 18: A metal price rises >= 25% (pre-shock 33.96)",
+          "name": "Mode 18: A metal price rises >= 25% (pre-shock 60.17); v7.7.18 recalibration: rebased on the cost-price pre-shock level",
           "column": "A Market Price",
           "metric": "max",
           "window": [
@@ -29105,11 +29099,11 @@
             720
           ],
           "op": ">=",
-          "value": 42.45
+          "value": 75.2
         },
         {
           "type": "metric",
-          "name": "Mode 18: shock propagates through trade — B metal price rises >= 25% (pre-shock 40.44)",
+          "name": "Mode 18: shock propagates through trade — B metal price rises >= 25% (pre-shock 66.91); v7.7.18 recalibration: rebased on the cost-price pre-shock level",
           "column": "B Market Price",
           "metric": "max",
           "window": [
@@ -29117,11 +29111,11 @@
             720
           ],
           "op": ">=",
-          "value": 50.55
+          "value": 83.6
         },
         {
           "type": "metric",
-          "name": "Mode 18: cost channel — B electronics unit cost rises >= 15% (pre-shock 17.47)",
+          "name": "Mode 18: cost channel — B electronics unit cost rises >= 15% (pre-shock 26.07); v7.7.18 recalibration: rebased on the cost-price pre-shock level",
           "column": "B Electronics Unit Cost",
           "metric": "max",
           "window": [
@@ -29129,7 +29123,7 @@
             720
           ],
           "op": ">=",
-          "value": 20.09
+          "value": 29.98
         },
         {
           "type": "metric",
@@ -29145,7 +29139,7 @@
         },
         {
           "type": "metric",
-          "name": "Mode 18: B electronics output falls to <= 70% (pre-shock 16.59)",
+          "name": "Mode 18: B electronics output falls to <= 70% (pre-shock 19.84); v7.7.18 recalibration: rebased on the cost-price pre-shock level",
           "column": "B Electronics Production Rate",
           "metric": "min",
           "window": [
@@ -29153,11 +29147,11 @@
             720
           ],
           "op": "<=",
-          "value": 11.6
+          "value": 13.89
         },
         {
           "type": "event_order",
-          "name": "Mode 18: ore depletion -> A price -> B electronics cost",
+          "name": "Mode 18: ore depletion -> A price -> B electronics cost (A price x1.25, B cost x1.25: on cost prices the B cost carries the metal at cost price and reacts faster); v7.7.18 recalibration: rebased on the cost-price pre-shock level",
           "events": [
             {
               "name": "A ore inventory < 500",
@@ -29170,20 +29164,20 @@
               ]
             },
             {
-              "name": "A market price > 42.45",
+              "name": "A market price > 75.2",
               "column": "A Market Price",
               "op": ">",
-              "value": 42.45,
+              "value": 75.2,
               "window": [
                 360,
                 720
               ]
             },
             {
-              "name": "B electronics unit cost > 20.09",
+              "name": "B electronics unit cost > 32.59",
               "column": "B Electronics Unit Cost",
               "op": ">",
-              "value": 20.09,
+              "value": 32.59,
               "window": [
                 360,
                 720
@@ -29193,7 +29187,7 @@
         },
         {
           "type": "metric",
-          "name": "Mode 18: recovery — A metal price back within 5% by day 1080",
+          "name": "Mode 18: recovery — A metal price back within 5% (of 60.17) by day 1080; v7.7.18 recalibration: rebased on the cost-price pre-shock level",
           "column": "A Market Price",
           "metric": "last",
           "window": [
@@ -29201,11 +29195,11 @@
             1080
           ],
           "op": "<=",
-          "value": 35.66
+          "value": 63.18
         },
         {
           "type": "metric",
-          "name": "Mode 18: recovery — B electronics output >= 85% of pre-shock (16.27) by day 1080; v7.7.14 recalibration",
+          "name": "Mode 18: recovery — B electronics output >= 85% of pre-shock (19.84) by day 1080; v7.7.18 recalibration: rebased on the cost-price pre-shock level",
           "column": "B Electronics Production Rate",
           "metric": "last",
           "window": [
@@ -29213,7 +29207,7 @@
             1080
           ],
           "op": ">=",
-          "value": 13.8
+          "value": 16.86
         },
         {
           "type": "metric",
@@ -30700,7 +30694,7 @@
       "checks": [
         {
           "type": "metric",
-          "name": "Mode 19: A metal input demand at day 1080 >= 1.5 x pre-shock",
+          "name": "Mode 19: A metal input demand at day 1080 >= 1.5 x pre-shock (5.52); v7.7.18 recalibration: rebased on the cost-price pre-shock level",
           "column": "A Electronics Metal Input Demand",
           "metric": "last",
           "window": [
@@ -30708,7 +30702,7 @@
             1080
           ],
           "op": ">=",
-          "value": 7.303
+          "value": 8.28
         },
         {
           "type": "metric",
@@ -30724,23 +30718,23 @@
         },
         {
           "type": "event_order",
-          "name": "Mode 19: input demand rise precedes generation build-up; v7.7.14 recalibration: generation already builds before the shock (0.632), so its rise threshold is 1.3x",
+          "name": "Mode 19: input demand rise precedes generation build-up (1.2 x / 1.3 x the pre-shock levels 5.52 / 0.710); v7.7.18 recalibration: rebased on the cost-price pre-shock level",
           "events": [
             {
-              "name": "A metal input demand > 1.2 x pre-shock (5.076)",
+              "name": "A metal input demand > 1.2 x pre-shock (5.52)",
               "column": "A Electronics Metal Input Demand",
               "op": ">",
-              "value": 6.09,
+              "value": 6.62,
               "window": [
                 360,
                 1080
               ]
             },
             {
-              "name": "A generation expansion > 1.3 x pre-shock (0.632)",
+              "name": "A generation expansion > 1.3 x pre-shock (0.710)",
               "column": "A Power Generation Expansion",
               "op": ">",
-              "value": 0.82,
+              "value": 0.923,
               "window": [
                 360,
                 1080
@@ -30750,7 +30744,7 @@
         },
         {
           "type": "metric",
-          "name": "Mode 19: generation expansion accelerates >= 1.5 x pre-shock (r1.2)",
+          "name": "Mode 19: generation expansion accelerates >= 1.3 x pre-shock (0.710); v7.7.18 recalibration: rebased on the cost-price pre-shock level",
           "column": "A Power Generation Expansion",
           "metric": "max",
           "window": [
@@ -30758,7 +30752,7 @@
             1080
           ],
           "op": ">=",
-          "value": 0.5864
+          "value": 0.923
         },
         {
           "type": "metric",
@@ -30774,7 +30768,7 @@
         },
         {
           "type": "metric",
-          "name": "Mode 19: A input fulfillment dips under sustained growth (< pre-shock 0.9664) (r1.2)",
+          "name": "Mode 19: A input fulfillment dips under sustained growth (< pre-shock 0.9652); v7.7.18 recalibration: rebased on the cost-price pre-shock level",
           "column": "A Electronics Metal Input Fulfillment",
           "metric": "min",
           "window": [
@@ -30782,7 +30776,7 @@
             1080
           ],
           "op": "<",
-          "value": 0.9664
+          "value": 0.9652
         },
         {
           "type": "metric",
@@ -33804,11 +33798,11 @@
         },
         {
           "type": "metric",
-          "name": "Mode 21: B has no expansion demand after the first year (B contracts); v7.7.14 recalibration: a first-year transient up to 0.057",
+          "name": "Mode 21: B has no expansion demand in the third year; v7.7.18 recalibration: on cost prices B spends its starting capital goods on power in years 1-2, then builds nothing",
           "column": "B Capital Goods Demand",
           "metric": "max",
           "window": [
-            360,
+            720,
             1080
           ],
           "op": "<=",
@@ -33817,15 +33811,15 @@
         },
         {
           "type": "metric",
-          "name": "Mode 21: B capital goods inventory stays flat after the first year (contracting B builds nothing); v7.7.14 recalibration: it settles at 25.69 from 30 in year 1",
+          "name": "Mode 21: B capital goods inventory stays flat in the third year (lower); v7.7.18 recalibration: on cost prices B spends its starting capital goods on power in years 1-2, then builds nothing (stock 0.551 from 30)",
           "column": "B Capital Goods Inventory",
           "metric": "min",
           "window": [
-            360,
+            720,
             1080
           ],
           "op": ">=",
-          "value": 25.6,
+          "value": 0.5,
           "tolerance": 1e-9
         },
         {
@@ -33842,7 +33836,7 @@
         },
         {
           "type": "metric",
-          "name": "Mode 21: going concern - planet electronics production @1080 within +-15% of Mode 17 (37.04)",
+          "name": "Mode 21: going concern - planet electronics production @1080 within +-15% of Mode 17 (44.83); v7.7.18 recalibration: Mode 17 on cost prices",
           "column": "Planet Electronics Production Rate",
           "metric": "last",
           "window": [
@@ -33850,11 +33844,11 @@
             1080
           ],
           "op": ">=",
-          "value": 31.5
+          "value": 38.1
         },
         {
           "type": "metric",
-          "name": "Mode 21: going concern - planet electronics production @1080 not above +15% of Mode 17",
+          "name": "Mode 21: going concern - planet electronics production @1080 not above +15% of Mode 17 (44.83); v7.7.18 recalibration: Mode 17 on cost prices",
           "column": "Planet Electronics Production Rate",
           "metric": "last",
           "window": [
@@ -33862,11 +33856,11 @@
             1080
           ],
           "op": "<=",
-          "value": 42.6
+          "value": 51.55
         },
         {
           "type": "metric",
-          "name": "Mode 21: going concern - planet smelting @1080 within +-15% of Mode 17 (50.09)",
+          "name": "Mode 21: going concern - planet smelting @1080 within +-15% of Mode 17 (58.47); v7.7.18 recalibration: Mode 17 on cost prices",
           "column": "Planet Smelting Rate",
           "metric": "last",
           "window": [
@@ -33874,11 +33868,11 @@
             1080
           ],
           "op": ">=",
-          "value": 42.6
+          "value": 49.7
         },
         {
           "type": "metric",
-          "name": "Mode 21: going concern - planet smelting @1080 not above +15% of Mode 17",
+          "name": "Mode 21: going concern - planet smelting @1080 not above +15% of Mode 17 (58.47); v7.7.18 recalibration: Mode 17 on cost prices",
           "column": "Planet Smelting Rate",
           "metric": "last",
           "window": [
@@ -33886,11 +33880,11 @@
             1080
           ],
           "op": "<=",
-          "value": 57.6
+          "value": 67.24
         },
         {
           "type": "metric",
-          "name": "Mode 21: A refinery capital @1080 within 0.9..1.0 x Mode 17 (61.28)",
+          "name": "Mode 21: A refinery capital @1080 within 0.9..1.0 x Mode 17 (69.24); v7.7.18 recalibration: Mode 17 on cost prices",
           "column": "A Refinery Installed Capacity",
           "metric": "last",
           "window": [
@@ -33898,11 +33892,11 @@
             1080
           ],
           "op": ">=",
-          "value": 55.2
+          "value": 62.3
         },
         {
           "type": "metric",
-          "name": "Mode 21: A refinery capital @1080 not above Mode 17 (64.27); v7.7.14 recalibration",
+          "name": "Mode 21: A refinery capital @1080 not above Mode 17 (69.24); v7.7.18 recalibration: Mode 17 on cost prices",
           "column": "A Refinery Installed Capacity",
           "metric": "last",
           "window": [
@@ -33910,11 +33904,11 @@
             1080
           ],
           "op": "<=",
-          "value": 64.3
+          "value": 69.3
         },
         {
           "type": "metric",
-          "name": "Mode 21: A power capital @1080 within 0.9..1.0 x Mode 17 (1610.1)",
+          "name": "Mode 21: A power capital @1080 within 0.9..1.0 x Mode 17 (1922.1); v7.7.18 recalibration: Mode 17 on cost prices",
           "column": "A Power Installed Generation Capital",
           "metric": "last",
           "window": [
@@ -33922,11 +33916,11 @@
             1080
           ],
           "op": ">=",
-          "value": 1449
+          "value": 1729.9
         },
         {
           "type": "metric",
-          "name": "Mode 21: A power capital @1080 not above Mode 17 (1815.5); v7.7.14 recalibration",
+          "name": "Mode 21: A power capital @1080 not above Mode 17 (1922.1); v7.7.18 recalibration: Mode 17 on cost prices",
           "column": "A Power Installed Generation Capital",
           "metric": "last",
           "window": [
@@ -33934,7 +33928,7 @@
             1080
           ],
           "op": "<=",
-          "value": 1815
+          "value": 1922.2
         },
         {
           "type": "change",
@@ -35417,15 +35411,15 @@
         },
         {
           "type": "metric",
-          "name": "Mode 21: B capital goods inventory stays flat after the first year (upper); v7.7.14 recalibration",
+          "name": "Mode 21: B capital goods inventory stays flat in the third year (upper); v7.7.18 recalibration: on cost prices B spends its starting capital goods on power in years 1-2, then builds nothing",
           "column": "B Capital Goods Inventory",
           "metric": "max",
           "window": [
-            360,
+            720,
             1080
           ],
           "op": "<=",
-          "value": 25.8
+          "value": 0.6
         }
       ]
     },
@@ -35446,7 +35440,7 @@
         },
         {
           "type": "metric",
-          "name": "Mode 22: A capital goods fulfillment stays above 0.2 (no total collapse)",
+          "name": "Mode 22: A capital goods fulfillment stays above 0.15 (no total collapse); v7.7.18 recalibration: skeleton min 0.197",
           "column": "A Capital Goods Fulfillment",
           "metric": "min",
           "window": [
@@ -35454,7 +35448,7 @@
             720
           ],
           "op": ">=",
-          "value": 0.2
+          "value": 0.15
         },
         {
           "type": "metric",
@@ -35470,7 +35464,7 @@
         },
         {
           "type": "metric",
-          "name": "Mode 22: A refinery capital @720 lags Mode 21 (57.88) by >= 3%",
+          "name": "Mode 22: A refinery capital @720 lags Mode 21 (62.74) by >= 3%; v7.7.18 recalibration",
           "column": "A Refinery Installed Capacity",
           "metric": "last",
           "window": [
@@ -35478,11 +35472,11 @@
             720
           ],
           "op": "<=",
-          "value": 56.1
+          "value": 60.86
         },
         {
           "type": "metric",
-          "name": "Mode 22: A power capital @720 lags Mode 21 (1647.2) by >= 3%; v7.7.14 recalibration",
+          "name": "Mode 22: A power capital @720 lags Mode 21 (1709.5) by >= 3%; v7.7.18 recalibration",
           "column": "A Power Installed Generation Capital",
           "metric": "last",
           "window": [
@@ -35490,7 +35484,7 @@
             720
           ],
           "op": "<=",
-          "value": 1597
+          "value": 1658.2
         },
         {
           "type": "metric",
@@ -35506,7 +35500,7 @@
         },
         {
           "type": "metric",
-          "name": "Mode 22: B unaffected",
+          "name": "Mode 22: B is hit mildly, without collapse; v7.7.18 recalibration: B spent its capital goods buffer on power in years 1-2 (Mode 21), skeleton min 0.81",
           "column": "B Capital Goods Fulfillment",
           "metric": "min",
           "window": [
@@ -35514,7 +35508,7 @@
             1080
           ],
           "op": ">=",
-          "value": 0.85
+          "value": 0.75
         },
         {
           "type": "event_order",
@@ -36985,7 +36979,7 @@
       "checks": [
         {
           "type": "metric",
-          "name": "Mode 23: A capital goods demand rises >= 1.2 x pre-shock (0.602 @359.75)",
+          "name": "Mode 23: A capital goods demand rises >= 1.2 x pre-shock (mean 0.889); v7.7.18 recalibration: rebased on the cost-price pre-shock mean (days 300-360)",
           "column": "A Capital Goods Demand",
           "metric": "max",
           "window": [
@@ -36993,11 +36987,11 @@
             1080
           ],
           "op": ">=",
-          "value": 0.72
+          "value": 1.066
         },
         {
           "type": "metric",
-          "name": "Mode 23: A capital goods production follows demand (>= 1.2 x pre-shock 0.552)",
+          "name": "Mode 23: A capital goods production follows demand (>= 1.2 x pre-shock mean 0.810); v7.7.18 recalibration: rebased on the cost-price pre-shock mean (days 300-360)",
           "column": "A Capital Goods Production Rate",
           "metric": "max",
           "window": [
@@ -37005,7 +36999,7 @@
             1080
           ],
           "op": ">=",
-          "value": 0.72
+          "value": 0.972
         },
         {
           "type": "metric",
@@ -37033,13 +37027,13 @@
         },
         {
           "type": "event_order",
-          "name": "Mode 23: demand rise -> fulfillment dip -> production rise; v7.7.14 recalibration: thresholds 1.2x the new pre-shock levels (demand 0.817, production 0.756)",
+          "name": "Mode 23: demand rise -> fulfillment dip -> production rise (1.2 x the pre-shock means 0.889 / 0.810); v7.7.18 recalibration: rebased on the cost-price pre-shock mean (days 300-360)",
           "events": [
             {
-              "name": "demand > 0.98",
+              "name": "demand > 1.066",
               "column": "A Capital Goods Demand",
               "op": ">",
-              "value": 0.98,
+              "value": 1.066,
               "window": [
                 360,
                 1080
@@ -37056,10 +37050,10 @@
               ]
             },
             {
-              "name": "production > 0.907",
+              "name": "production > 0.972",
               "column": "A Capital Goods Production Rate",
               "op": ">",
-              "value": 0.907,
+              "value": 0.972,
               "window": [
                 360,
                 1080
@@ -37081,7 +37075,7 @@
         },
         {
           "type": "metric",
-          "name": "Mode 23: A power expansion >= 1.5 x pre-shock (0.356 @359.75)",
+          "name": "Mode 23: A power expansion >= 1.3 x pre-shock (mean 0.663); v7.7.18 recalibration: rebased on the cost-price pre-shock mean (days 300-360)",
           "column": "A Power Generation Expansion",
           "metric": "max",
           "window": [
@@ -37089,11 +37083,11 @@
             1080
           ],
           "op": ">=",
-          "value": 0.534
+          "value": 0.862
         },
         {
           "type": "metric",
-          "name": "Mode 23: A refinery expansion holds (>= 0.9 x pre-shock 0.024)",
+          "name": "Mode 23: A refinery expansion holds (>= 0.9 x pre-shock mean 0.0311); v7.7.18 recalibration: rebased on the cost-price pre-shock mean (days 300-360)",
           "column": "A Refinery Expansion",
           "metric": "max",
           "window": [
@@ -37101,7 +37095,7 @@
             1080
           ],
           "op": ">=",
-          "value": 0.0216
+          "value": 0.028
         },
         {
           "type": "metric",
@@ -37117,7 +37111,7 @@
         },
         {
           "type": "metric",
-          "name": "Mode 23: B capital goods fulfillment stays >= 0.85 (scale-free buffer)",
+          "name": "Mode 23: B capital goods fulfillment stays >= 0.70; v7.7.18 recalibration: B spent its capital goods buffer on power in years 1-2 (Mode 21), skeleton min 0.764",
           "column": "B Capital Goods Fulfillment",
           "metric": "min",
           "window": [
@@ -37125,7 +37119,7 @@
             1080
           ],
           "op": ">=",
-          "value": 0.85
+          "value": 0.7
         },
         {
           "type": "identity",
@@ -40126,7 +40120,7 @@
         },
         {
           "type": "metric",
-          "name": "Mode 25: A energy is rationed, not cut off (v7.6.1 calibration)",
+          "name": "Mode 25: A energy is rationed, not cut off (v7.6.1 calibration); v7.7.18 recalibration: deeper on cost prices, skeleton min 394.5 (v7.7.17: 599)",
           "column": "A Energy Supply",
           "metric": "min",
           "window": [
@@ -40134,7 +40128,7 @@
             720
           ],
           "op": ">=",
-          "value": 400
+          "value": 350
         },
         {
           "type": "metric",
@@ -48351,17 +48345,16 @@
           "value": 0.95
         },
         {
-          "type": "event_absent",
-          "name": "Mode 31: B construction-materials production absent before surge",
-          "event": {
-            "column": "B Construction Materials Production",
-            "op": ">",
-            "value": 0,
-            "window": [
-              0,
-              359.75
-            ]
-          }
+          "type": "metric",
+          "name": "Mode 31: B construction-materials production stays small before surge; v7.7.18 recalibration: from day 226 at most 0.02",
+          "column": "B Construction Materials Production",
+          "metric": "max",
+          "window": [
+            0,
+            359.75
+          ],
+          "op": "<=",
+          "value": 0.05
         },
         {
           "type": "event_order",
@@ -53741,11 +53734,11 @@
         },
         {
           "type": "metric",
-          "name": "Mode 35: B CM plant expansion during surge",
+          "name": "Mode 35: B CM plant expansion during surge; v7.7.18 recalibration: B wins fewer surge orders on cost prices, skeleton 0.0039 (v7.7.17: 0.0083)",
           "column": "B Construction Materials Plant Expansion",
           "metric": "max",
           "op": ">",
-          "value": 0.007,
+          "value": 0.003,
           "window": [
             360,
             720
@@ -53753,12 +53746,12 @@
         },
         {
           "type": "change",
-          "name": "Mode 35: B CM plant installed capacity grows during surge",
+          "name": "Mode 35: B CM plant installed capacity grows during surge; v7.7.18 recalibration: B wins fewer surge orders on cost prices, skeleton +0.49 (v7.7.17: +0.84)",
           "column": "B Construction Materials Plant Installed Capacity",
           "from_day": 360,
           "to_day": 720,
           "op": ">",
-          "value": 0.8
+          "value": 0.4
         },
         {
           "type": "metric",
@@ -53786,11 +53779,11 @@
         },
         {
           "type": "metric",
-          "name": "Mode 35: B Construction Materials production rate is active",
+          "name": "Mode 35: B Construction Materials production rate is active; v7.7.18 recalibration: B wins fewer surge orders on cost prices, skeleton 0.89 (v7.7.17: 1.03)",
           "column": "B Construction Materials Production Rate",
           "metric": "max",
           "op": ">",
-          "value": 0.9,
+          "value": 0.8,
           "window": [
             360,
             720
@@ -56448,11 +56441,11 @@
         },
         {
           "type": "metric",
-          "name": "Mode 37: B CG plant expansion responds during surge",
+          "name": "Mode 37: B CG plant expansion responds during surge; v7.7.18 recalibration: B wins fewer surge orders on cost prices, skeleton 0.0034 (v7.7.17: 0.0082)",
           "column": "B Capital Goods Plant Expansion",
           "metric": "max",
           "op": ">",
-          "value": 0.005,
+          "value": 0.0025,
           "window": [
             360,
             720
@@ -56460,12 +56453,12 @@
         },
         {
           "type": "change",
-          "name": "Mode 37: B CG plant installed capacity rebuilds during surge",
+          "name": "Mode 37: B CG plant installed capacity rebuilds during surge; v7.7.18 recalibration: B wins fewer surge orders on cost prices, skeleton +0.47 (v7.7.17: +0.75)",
           "column": "B Capital Goods Plant Installed Capacity",
           "from_day": 360,
           "to_day": 720,
           "op": ">",
-          "value": 0.5
+          "value": 0.4
         },
         {
           "type": "metric",
@@ -56493,11 +56486,11 @@
         },
         {
           "type": "metric",
-          "name": "Mode 37: B Capital Goods production rate recovers",
+          "name": "Mode 37: B Capital Goods production rate recovers; v7.7.18 recalibration: B wins fewer surge orders on cost prices, skeleton 0.76 (v7.7.17: 0.96)",
           "column": "B Capital Goods Production Rate",
           "metric": "max",
           "op": ">",
-          "value": 0.9,
+          "value": 0.7,
           "window": [
             360,
             720
@@ -57878,12 +57871,12 @@
         },
         {
           "type": "change",
-          "name": "Mode 38: A Regolith Mine Capacity declines materially by day 1080",
+          "name": "Mode 38: A Regolith Mine Capacity declines materially by day 1080; v7.7.18 recalibration: skeleton -3.98 (v7.7.17: -4.17)",
           "column": "A Regolith Mine Capacity",
           "from_day": 0,
           "to_day": 1080,
           "op": "<",
-          "value": -4
+          "value": -3.5
         },
         {
           "type": "metric",
@@ -59095,11 +59088,11 @@
         },
         {
           "type": "metric",
-          "name": "Mode 39: B Regolith Mine expansion responds during surge",
+          "name": "Mode 39: B Regolith Mine expansion responds during surge; v7.7.18 recalibration: B wins fewer surge orders on cost prices, skeleton 0.025 (v7.7.17: 0.039)",
           "column": "B Regolith Mine Expansion",
           "metric": "max",
           "op": ">",
-          "value": 0.03,
+          "value": 0.02,
           "window": [
             360,
             720
@@ -59107,12 +59100,12 @@
         },
         {
           "type": "change",
-          "name": "Mode 39: B Regolith Mine Capacity rebuilds during surge",
+          "name": "Mode 39: B Regolith Mine Capacity rebuilds during surge; v7.7.18 recalibration: B wins fewer surge orders on cost prices, skeleton +3.24 (v7.7.17: +5.29)",
           "column": "B Regolith Mine Capacity",
           "from_day": 360,
           "to_day": 720,
           "op": ">",
-          "value": 5
+          "value": 2.5
         },
         {
           "type": "metric",
@@ -64175,11 +64168,11 @@
         },
         {
           "type": "metric",
-          "name": "Mode 43: B power resource inventory is drawn down while the mine rebuilds",
+          "name": "Mode 43: B power resource inventory is drawn down while the mine rebuilds; v7.7.18 recalibration: B wins fewer surge orders on cost prices, skeleton min 1908 from 5000 (v7.7.17: 1553)",
           "column": "B Power Resource Inventory",
           "metric": "min",
           "op": "<",
-          "value": 1900,
+          "value": 1950,
           "window": [
             360,
             720
@@ -69591,7 +69584,7 @@
         },
         {
           "type": "metric",
-          "name": "Mode 48: A labor requirement falls with automation (Mode 46 mean 13.45)",
+          "name": "Mode 48: A labor requirement falls with automation (Mode 46 mean 14.48); v7.7.18 recalibration",
           "column": "A Total Labor Requirement",
           "metric": "mean",
           "op": "<",
@@ -69599,35 +69592,35 @@
         },
         {
           "type": "metric",
-          "name": "Mode 48: A metal unit cost falls with automation (Mode 46 mean 20.59)",
+          "name": "Mode 48: A metal unit cost falls with automation (Mode 46 mean 47.05); v7.7.18 recalibration: Mode 46 on cost prices, same ratio",
           "column": "A Metal Unit Cost",
           "metric": "mean",
           "op": "<",
-          "value": 18.7
+          "value": 42.7
         },
         {
           "type": "metric",
-          "name": "Mode 48: A electronics unit cost falls with automation (Mode 46 mean 16.16)",
+          "name": "Mode 48: A electronics unit cost falls with automation (Mode 46 mean 33.04); v7.7.18 recalibration: Mode 46 on cost prices, same ratio",
           "column": "A Electronics Unit Cost",
           "metric": "mean",
           "op": "<",
-          "value": 14.9
+          "value": 30.5
         },
         {
           "type": "metric",
-          "name": "Mode 48: A metal price follows the lower cost (Mode 46 mean 36.98)",
+          "name": "Mode 48: A metal price follows the lower cost (Mode 46 mean 78.66); v7.7.18 recalibration: Mode 46 on cost prices, same ratio",
           "column": "A Market Price",
           "metric": "mean",
           "op": "<",
-          "value": 36
+          "value": 76.6
         },
         {
           "type": "metric",
-          "name": "Mode 48: A metal production rises a little (Mode 46 mean 36.71)",
+          "name": "Mode 48: A metal production rises a little (Mode 46 mean 38.98); v7.7.18 recalibration, skeleton 40.68",
           "column": "A Metal Production",
           "metric": "mean",
           "op": ">",
-          "value": 37.1
+          "value": 39.4
         }
       ]
     },
@@ -70558,11 +70551,11 @@
         },
         {
           "type": "metric",
-          "name": "Mode 49: A food price stays near its reference 10; skeleton max 10.49",
+          "name": "Mode 49: A food price stays within 10% of its start at cost price (17.59); v7.7.18 recalibration: skeleton max 18.57",
           "column": "A Food Price",
           "metric": "max",
           "op": "<",
-          "value": 11
+          "value": 19.35
         },
         {
           "type": "metric",
@@ -73347,11 +73340,11 @@
         },
         {
           "type": "metric",
-          "name": "Mode 52: A metal price falls with less export demand; skeleton mean 26.7 (Mode 49: 37.2)",
+          "name": "Mode 52: A metal price falls with less export demand; v7.7.18 recalibration: skeleton mean 58.84 (Mode 49: 79.27)",
           "column": "A Market Price",
           "metric": "mean",
           "op": "<",
-          "value": 30
+          "value": 63.9
         },
         {
           "type": "metric",
@@ -73364,6 +73357,62 @@
             720,
             1080
           ]
+        },
+        {
+          "type": "metric",
+          "name": "Mode 52: with money B households stay out of debt; v7.7.18 recalibration, skeleton min 37537",
+          "column": "B Household Money",
+          "metric": "min",
+          "op": ">",
+          "value": 30000
+        },
+        {
+          "type": "metric",
+          "name": "Mode 52: with money the trade deficit of B is gone; v7.7.18 recalibration, skeleton end -37",
+          "column": "B Balance of Payments",
+          "metric": "last",
+          "op": ">",
+          "value": -120
+        },
+        {
+          "type": "metric",
+          "name": "Mode 52: with money A households hold money near their target; v7.7.18 recalibration, skeleton min 162778",
+          "column": "A Household Money",
+          "metric": "min",
+          "op": ">",
+          "value": 140000
+        },
+        {
+          "type": "metric",
+          "name": "Mode 52: with money A real wage keeps its level; v7.7.18 recalibration, skeleton mean 118.4",
+          "column": "A Real Wage",
+          "metric": "mean",
+          "op": ">",
+          "value": 115
+        },
+        {
+          "type": "metric",
+          "name": "Mode 52: with money the budget holds B demand to its income; v7.7.18 recalibration, skeleton end 3.40 (v7.7.17: 5.64)",
+          "column": "B Local Demand",
+          "metric": "last",
+          "op": "<",
+          "value": 4
+        },
+        {
+          "type": "metric",
+          "name": "Mode 52: cheaper labor raises B labor demand (wage elasticity 1.5); v7.7.19 labor demand elasticity: skeleton end 3.38, without the elasticity 3.22",
+          "column": "B Total Labor Requirement",
+          "metric": "last",
+          "op": ">",
+          "value": 3.3
+        },
+        {
+          "type": "metric",
+          "name": "Mode 52: B employment rises with the cheaper wage; v7.7.19 labor demand elasticity: skeleton end 0.701, without the elasticity 0.668",
+          "column": "B Employment Rate",
+          "metric": "last",
+          "op": ">",
+          "value": 0.69
         }
       ]
     },
@@ -74230,11 +74279,11 @@
         },
         {
           "type": "metric",
-          "name": "Mode 53: the labor guard bites during the transport surge; skeleton min 0.961",
+          "name": "Mode 53: A stays staffed through the surge; v7.7.18 recalibration: with money the budget keeps A staffed (as Mode 59); the labor guard stays tested in Mode 57, skeleton min 0.9986",
           "column": "A Labor Availability",
           "metric": "min",
-          "op": "<",
-          "value": 0.98
+          "op": ">",
+          "value": 0.99
         },
         {
           "type": "metric",
@@ -74246,11 +74295,11 @@
         },
         {
           "type": "metric",
-          "name": "Mode 53: A labor runs tight during the surge; skeleton max 1.040",
+          "name": "Mode 53: A labor stays near balance through the surge; v7.7.18 recalibration: with money the budget keeps A staffed (as Mode 59); the labor guard stays tested in Mode 57, skeleton max 1.0014",
           "column": "A Labor Tightness",
           "metric": "max",
-          "op": ">",
-          "value": 1.02
+          "op": "<",
+          "value": 1.01
         },
         {
           "type": "metric",
@@ -74267,6 +74316,46 @@
           "metric": "min",
           "op": "<",
           "value": 139
+        },
+        {
+          "type": "metric",
+          "name": "Mode 53: with money B households stay out of debt; v7.7.18 recalibration, skeleton min 37537",
+          "column": "B Household Money",
+          "metric": "min",
+          "op": ">",
+          "value": 30000
+        },
+        {
+          "type": "metric",
+          "name": "Mode 53: with money the trade deficit of B is gone; v7.7.18 recalibration, skeleton end -33",
+          "column": "B Balance of Payments",
+          "metric": "last",
+          "op": ">",
+          "value": -120
+        },
+        {
+          "type": "metric",
+          "name": "Mode 53: with money A households hold money near their target; v7.7.18 recalibration, skeleton min 162778",
+          "column": "A Household Money",
+          "metric": "min",
+          "op": ">",
+          "value": 140000
+        },
+        {
+          "type": "metric",
+          "name": "Mode 53: with money A real wage keeps its level; v7.7.18 recalibration, skeleton mean 118.4",
+          "column": "A Real Wage",
+          "metric": "mean",
+          "op": ">",
+          "value": 115
+        },
+        {
+          "type": "metric",
+          "name": "Mode 53: B employment rises with the cheaper wage through the surge; v7.7.19 labor demand elasticity: skeleton end 0.705, without the elasticity 0.671",
+          "column": "B Employment Rate",
+          "metric": "last",
+          "op": ">",
+          "value": 0.69
         }
       ]
     },
@@ -75133,19 +75222,19 @@
         },
         {
           "type": "metric",
-          "name": "Mode 54: B ore gets cheaper as B wage falls; skeleton min 13.77 (Mode 52: 14.00)",
+          "name": "Mode 54: B ore gets cheaper as B wage falls (start 24.97, wage 140 -> 135); v7.7.18 recalibration: on cost prices the wage reaches prices through the labor cost, skeleton min 24.66",
           "column": "B Ore Price",
           "metric": "min",
           "op": "<",
-          "value": 13.9
+          "value": 24.85
         },
         {
           "type": "metric",
-          "name": "Mode 54: B food gets cheaper in the third year; skeleton max 9.82 (Mode 52: 10.01)",
+          "name": "Mode 54: B food is cheaper than at the start (24.55) in the third year; v7.7.18 recalibration: on cost prices the wage reaches prices through the labor cost, skeleton max 24.20",
           "column": "B Food Price",
           "metric": "max",
           "op": "<",
-          "value": 9.95,
+          "value": 24.4,
           "window": [
             720,
             1080
@@ -75153,19 +75242,19 @@
         },
         {
           "type": "metric",
-          "name": "Mode 54: B energy gets cheaper; skeleton min 0.0677 (Mode 52: 0.0700)",
+          "name": "Mode 54: B energy gets cheaper than at the start (0.679); v7.7.18 recalibration: on cost prices the wage reaches prices through the labor cost, skeleton min 0.658",
           "column": "B Energy Price",
           "metric": "min",
           "op": "<",
-          "value": 0.0695
+          "value": 0.67
         },
         {
           "type": "metric",
-          "name": "Mode 54: A prices move with A wage only slightly; skeleton A ore max 4.041",
+          "name": "Mode 54: A prices move with A wage only slightly (A ore start 11.03); v7.7.18 recalibration: on cost prices the wage reaches prices through the labor cost, skeleton max 11.09",
           "column": "A Ore Price",
           "metric": "max",
           "op": "<",
-          "value": 4.2
+          "value": 11.2
         },
         {
           "type": "metric",
@@ -76064,35 +76153,35 @@
         },
         {
           "type": "metric",
-          "name": "Mode 55: the labor guard still bites in the surge; skeleton min 0.964",
-          "column": "A Labor Availability",
-          "metric": "min",
-          "op": "<",
-          "value": 0.98
-        },
-        {
-          "type": "metric",
-          "name": "Mode 55: the labor guard bites less than without wage pricing; skeleton min 0.964 (Mode 53: 0.946)",
+          "name": "Mode 55: A stays staffed through the surge; v7.7.18 recalibration: with money the budget keeps A staffed (as Mode 59); the labor guard stays tested in Mode 57, skeleton min 1.00",
           "column": "A Labor Availability",
           "metric": "min",
           "op": ">",
-          "value": 0.955
+          "value": 0.99
         },
         {
           "type": "metric",
-          "name": "Mode 55: price demand damps the A metal price peak; skeleton max 33.4 (Mode 53: 36.5)",
+          "name": "Mode 55: A labor availability is not lower than in Mode 53 (0.9951); v7.7.19 labor demand elasticity: skeleton min 0.9968",
+          "column": "A Labor Availability",
+          "metric": "min",
+          "op": ">",
+          "value": 0.9951
+        },
+        {
+          "type": "metric",
+          "name": "Mode 55: price demand does not raise the A metal price peak above Mode 53 (60.98); v7.7.19 labor demand elasticity: skeleton max 60.62",
           "column": "A Market Price",
           "metric": "max",
           "op": "<",
-          "value": 35
+          "value": 61
         },
         {
           "type": "metric",
-          "name": "Mode 55: A ore follows A wage up in the surge; skeleton max 4.124",
+          "name": "Mode 55: A ore follows A wage up in the surge (start 11.03); v7.7.18 recalibration: on cost prices the wage reaches prices through the labor cost, skeleton max 11.10",
           "column": "A Ore Price",
           "metric": "max",
           "op": ">",
-          "value": 4.05
+          "value": 11.05
         },
         {
           "type": "metric",
@@ -80213,6 +80302,8 @@
     "v7.7.4 candidate r2: calibration probes replaced after first full run 36329067162 with rounded semantic thresholds; no owner rules or structural checks were weakened.",
     "v7.7.4 candidate r3: corrected Mode 37 DSL format after r2 exposed that metric from_day/to_day are ignored and event_absent requires nested event. No model or threshold change in this revision; true windowed values are taken from the r3 CI report.",
     "v7.7.5 DRAFT: structural declarations produced by expand-nodes --validation (simple_capital plugin, capital_transformation and capital_retirement names, pairs, planet_closure capacity kind simple for regolith). The executor adds switch-off checks for Modes 0-37, pair identities for the two mine expansions (Modes 38-39), and scenario checks for Modes 38-39.",
-    "v7.7.5 r2: Modes 38-39 inherit only pre-task v7.7.4 identities; the switch-off Extraction Capacity = Base identity remains restricted to Modes 0-37 except 29. Numeric expectations are calibrated from candidate r1 run 36410009451."
+    "v7.7.5 r2: Modes 38-39 inherit only pre-task v7.7.4 identities; the switch-off Extraction Capacity = Base identity remains restricted to Modes 0-37 except 29. Numeric expectations are calibrated from candidate r1 run 36410009451.",
+    "v7.7.18 recalibration (task 043, owner decision 2026-10-18, option A): cost pricing in Modes 0-55, money in Modes 52-55; thresholds written against the old price world or against a level of another Mode are rebased on the skeleton with the same factor; see docs/tasks/043-recalibration/V7_7_18_RECALIBRATION_SPEC.md section 4.",
+    "v7.7.19 (task 045, owner decision 2026-10-23, nominal anchor): labor demand follows the wage with elasticity 1.5 in the labor_market layer; Modes 0-51 (labor market off) reproduce v7.7.18 exactly; two Mode 55 checks rebased on the new Mode 53 levels, three checks of the mechanism added in Modes 52-53."
   ]
 }

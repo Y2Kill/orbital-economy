@@ -1,6 +1,6 @@
 {
   "engine": "SIMULATION_PACKAGE",
-  "name": "Orbital Economy v7.7.17 r1 — Money",
+  "name": "Orbital Economy v7.7.19 r1 — Nominal Anchor",
   "description": "Task 030 / Planet v2 step 1: add the declarative population node for A and B. Population, demography, migration and labor are accounting-only; no existing formula or scenario is changed and no new Mode is added.",
   "simulation": {
     "algorithm": "RK1",
@@ -24758,7 +24758,7 @@
       "type": "VARIABLE",
       "name": "A Power Resource Price",
       "behavior": {
-        "value": "IfThenElse([Cost Pricing Enabled] = 1, [A Power Resource Full Cost] * (1 + [Universal Markup]) * (1 + [Power Resource Scarcity Price Strength] * (1 - [A Perceived Power Resource Fulfillment])), [Base Power Resource Price] * (1 + [Power Resource Scarcity Price Strength] * (1 - [A Perceived Power Resource Fulfillment])))"
+        "value": "IfThenElse([Cost Pricing Enabled] * [Power Resource Enabled] = 1, [A Power Resource Full Cost] * (1 + [Universal Markup]) * (1 + [Power Resource Scarcity Price Strength] * (1 - [A Perceived Power Resource Fulfillment])), [Base Power Resource Price] * (1 + [Power Resource Scarcity Price Strength] * (1 - [A Perceived Power Resource Fulfillment])))"
       },
       "description": "Power-resource price in colony A, with a scarcity premium from physical fulfillment."
     },
@@ -24853,7 +24853,7 @@
       "type": "VARIABLE",
       "name": "B Power Resource Price",
       "behavior": {
-        "value": "IfThenElse([Cost Pricing Enabled] = 1, [B Power Resource Full Cost] * (1 + [Universal Markup]) * (1 + [Power Resource Scarcity Price Strength] * (1 - [B Perceived Power Resource Fulfillment])), [Base Power Resource Price] * (1 + [Power Resource Scarcity Price Strength] * (1 - [B Perceived Power Resource Fulfillment])))"
+        "value": "IfThenElse([Cost Pricing Enabled] * [Power Resource Enabled] = 1, [B Power Resource Full Cost] * (1 + [Universal Markup]) * (1 + [Power Resource Scarcity Price Strength] * (1 - [B Perceived Power Resource Fulfillment])), [Base Power Resource Price] * (1 + [Power Resource Scarcity Price Strength] * (1 - [B Perceived Power Resource Fulfillment])))"
       },
       "description": "Power-resource price in colony B, with a scarcity premium from physical fulfillment."
     },
@@ -36428,7 +36428,7 @@
       "type": "VARIABLE",
       "name": "A Total Labor Requirement",
       "behavior": {
-        "value": "IfThenElse([Food Enabled] = 1, ([A Mining Labor Requirement] + [A Smelting Labor Requirement] + [A Electronics Labor Requirement] + [A Capital Goods Labor Requirement] + [A Regolith Extraction Labor Requirement] + [A Construction Materials Labor Requirement] + [A Power Resource Extraction Labor Requirement] + [A Generation Labor Requirement]) + [A Farming Labor Requirement], [A Mining Labor Requirement] + [A Smelting Labor Requirement] + [A Electronics Labor Requirement] + [A Capital Goods Labor Requirement] + [A Regolith Extraction Labor Requirement] + [A Construction Materials Labor Requirement] + [A Power Resource Extraction Labor Requirement] + [A Generation Labor Requirement])"
+        "value": "IfThenElse([Labor Market Enabled] = 1, (IfThenElse([Food Enabled] = 1, ([A Mining Labor Requirement] + [A Smelting Labor Requirement] + [A Electronics Labor Requirement] + [A Capital Goods Labor Requirement] + [A Regolith Extraction Labor Requirement] + [A Construction Materials Labor Requirement] + [A Power Resource Extraction Labor Requirement] + [A Generation Labor Requirement]) + [A Farming Labor Requirement], [A Mining Labor Requirement] + [A Smelting Labor Requirement] + [A Electronics Labor Requirement] + [A Capital Goods Labor Requirement] + [A Regolith Extraction Labor Requirement] + [A Construction Materials Labor Requirement] + [A Power Resource Extraction Labor Requirement] + [A Generation Labor Requirement])) * ([A Wage] / [A Initial Wage]) ^ (-[Labor Demand Wage Elasticity]), IfThenElse([Food Enabled] = 1, ([A Mining Labor Requirement] + [A Smelting Labor Requirement] + [A Electronics Labor Requirement] + [A Capital Goods Labor Requirement] + [A Regolith Extraction Labor Requirement] + [A Construction Materials Labor Requirement] + [A Power Resource Extraction Labor Requirement] + [A Generation Labor Requirement]) + [A Farming Labor Requirement], [A Mining Labor Requirement] + [A Smelting Labor Requirement] + [A Electronics Labor Requirement] + [A Capital Goods Labor Requirement] + [A Regolith Extraction Labor Requirement] + [A Construction Materials Labor Requirement] + [A Power Resource Extraction Labor Requirement] + [A Generation Labor Requirement]))"
       },
       "description": "Generated labor element for A Total Labor Requirement."
     },
@@ -36436,7 +36436,7 @@
       "type": "VARIABLE",
       "name": "B Total Labor Requirement",
       "behavior": {
-        "value": "IfThenElse([Food Enabled] = 1, ([B Mining Labor Requirement] + [B Smelting Labor Requirement] + [B Electronics Labor Requirement] + [B Capital Goods Labor Requirement] + [B Regolith Extraction Labor Requirement] + [B Construction Materials Labor Requirement] + [B Power Resource Extraction Labor Requirement] + [B Generation Labor Requirement]) + [B Farming Labor Requirement], [B Mining Labor Requirement] + [B Smelting Labor Requirement] + [B Electronics Labor Requirement] + [B Capital Goods Labor Requirement] + [B Regolith Extraction Labor Requirement] + [B Construction Materials Labor Requirement] + [B Power Resource Extraction Labor Requirement] + [B Generation Labor Requirement])"
+        "value": "IfThenElse([Labor Market Enabled] = 1, (IfThenElse([Food Enabled] = 1, ([B Mining Labor Requirement] + [B Smelting Labor Requirement] + [B Electronics Labor Requirement] + [B Capital Goods Labor Requirement] + [B Regolith Extraction Labor Requirement] + [B Construction Materials Labor Requirement] + [B Power Resource Extraction Labor Requirement] + [B Generation Labor Requirement]) + [B Farming Labor Requirement], [B Mining Labor Requirement] + [B Smelting Labor Requirement] + [B Electronics Labor Requirement] + [B Capital Goods Labor Requirement] + [B Regolith Extraction Labor Requirement] + [B Construction Materials Labor Requirement] + [B Power Resource Extraction Labor Requirement] + [B Generation Labor Requirement])) * ([B Wage] / [B Initial Wage]) ^ (-[Labor Demand Wage Elasticity]), IfThenElse([Food Enabled] = 1, ([B Mining Labor Requirement] + [B Smelting Labor Requirement] + [B Electronics Labor Requirement] + [B Capital Goods Labor Requirement] + [B Regolith Extraction Labor Requirement] + [B Construction Materials Labor Requirement] + [B Power Resource Extraction Labor Requirement] + [B Generation Labor Requirement]) + [B Farming Labor Requirement], [B Mining Labor Requirement] + [B Smelting Labor Requirement] + [B Electronics Labor Requirement] + [B Capital Goods Labor Requirement] + [B Regolith Extraction Labor Requirement] + [B Construction Materials Labor Requirement] + [B Power Resource Extraction Labor Requirement] + [B Generation Labor Requirement]))"
       },
       "description": "Generated labor element for B Total Labor Requirement."
     },
@@ -40860,7 +40860,7 @@
       "type": "VARIABLE",
       "name": "A Metal Demand Reference Price",
       "behavior": {
-        "value": 25.9
+        "value": 58.38
       },
       "description": "Wage pricing node: metal price at which demand is the norm."
     },
@@ -40876,7 +40876,7 @@
       "type": "VARIABLE",
       "name": "A Electronics Demand Reference Price",
       "behavior": {
-        "value": 23.1
+        "value": 45.55
       },
       "description": "Wage pricing node: electronics price at which demand is the norm."
     },
@@ -40924,7 +40924,7 @@
       "type": "VARIABLE",
       "name": "B Metal Demand Reference Price",
       "behavior": {
-        "value": 34.46
+        "value": 69.89
       },
       "description": "Wage pricing node: metal price at which demand is the norm."
     },
@@ -40940,7 +40940,7 @@
       "type": "VARIABLE",
       "name": "B Electronics Demand Reference Price",
       "behavior": {
-        "value": 21.91
+        "value": 44.41
       },
       "description": "Wage pricing node: electronics price at which demand is the norm."
     },
@@ -41407,7 +41407,7 @@
       "type": "VARIABLE",
       "name": "A Ore Full Cost",
       "behavior": {
-        "value": "[Mining Energy per Unit] * [A Energy Cost Price Signal] + [A Mining Labor per Unit] * [A Mining Automation Factor] * [A Wage] + ([Ore Mine Capital Goods per Capacity] * [A Capital Goods Cost Price Signal] + [Ore Mine Construction Materials per Capacity] * [A Construction Materials Cost Price Signal]) * [Ore Mine Depreciation Rate] + [A Effective Ore Base Cost]"
+        "value": "[Mining Energy per Unit] * [A Energy Cost Price Signal] * [Process Energy Enabled] + [A Mining Labor per Unit] * [A Mining Automation Factor] * [A Wage] + ([Ore Mine Capital Goods per Capacity] * [A Capital Goods Cost Price Signal] * [Capital Goods Enabled] + [Ore Mine Construction Materials per Capacity] * [A Construction Materials Cost Price Signal] * [Construction Materials Enabled]) * [Ore Mine Depreciation Rate] * [Ore Capital Enabled] + [A Effective Ore Base Cost]"
       },
       "description": "Cost pricing node: full unit cost of ore (materials, energy, labor, capital wear, rent)."
     },
@@ -41415,7 +41415,7 @@
       "type": "VARIABLE",
       "name": "A Regolith Full Cost",
       "behavior": {
-        "value": "[Regolith Extraction Energy per Unit] * [A Energy Cost Price Signal] + [A Regolith Extraction Labor per Unit] * [A Regolith Extraction Automation Factor] * [A Wage] + ([Regolith Mine Capital Goods per Capacity] * [A Capital Goods Cost Price Signal] + [Regolith Mine Construction Materials per Capacity] * [A Construction Materials Cost Price Signal]) * [Regolith Mine Depreciation Rate]"
+        "value": "[Regolith Extraction Energy per Unit] * [A Energy Cost Price Signal] * [Process Energy Enabled] + [A Regolith Extraction Labor per Unit] * [A Regolith Extraction Automation Factor] * [A Wage] + ([Regolith Mine Capital Goods per Capacity] * [A Capital Goods Cost Price Signal] * [Capital Goods Enabled] + [Regolith Mine Construction Materials per Capacity] * [A Construction Materials Cost Price Signal] * [Construction Materials Enabled]) * [Regolith Mine Depreciation Rate] * [Regolith Capital Enabled]"
       },
       "description": "Cost pricing node: full unit cost of regolith (materials, energy, labor, capital wear, rent)."
     },
@@ -41431,7 +41431,7 @@
       "type": "VARIABLE",
       "name": "A Power Resource Full Cost",
       "behavior": {
-        "value": "[Power Resource Extraction Energy per Unit] * [A Energy Cost Price Signal] + [A Power Resource Extraction Labor per Unit] * [A Power Resource Extraction Automation Factor] * [A Wage] + ([Power Resource Mine Capital Goods per Capacity] * [A Capital Goods Cost Price Signal] + [Power Resource Mine Construction Materials per Capacity] * [A Construction Materials Cost Price Signal]) * [Power Resource Mine Depreciation Rate] + [Base Power Resource Price]"
+        "value": "[Power Resource Extraction Energy per Unit] * [A Energy Cost Price Signal] * [Process Energy Enabled] + [A Power Resource Extraction Labor per Unit] * [A Power Resource Extraction Automation Factor] * [A Wage] + ([Power Resource Mine Capital Goods per Capacity] * [A Capital Goods Cost Price Signal] * [Capital Goods Enabled] + [Power Resource Mine Construction Materials per Capacity] * [A Construction Materials Cost Price Signal] * [Construction Materials Enabled]) * [Power Resource Mine Depreciation Rate] * [Power Resource Capital Enabled] + [Base Power Resource Price]"
       },
       "description": "Cost pricing node: full unit cost of power resource (materials, energy, labor, capital wear, rent)."
     },
@@ -41439,7 +41439,7 @@
       "type": "VARIABLE",
       "name": "A Energy Full Cost",
       "behavior": {
-        "value": "[Power Resource per Energy] * [A Power Resource Cost Price Signal] + [A Generation Labor per Unit] * [A Generation Automation Factor] * [A Wage] + ([A Power Capital Goods per Capacity] * [A Capital Goods Cost Price Signal] + [A Power Construction Materials per Capacity] * [A Construction Materials Cost Price Signal]) * [Power Depreciation Rate] + [A Power Generation Cost]"
+        "value": "[Power Resource per Energy] * [A Power Resource Cost Price Signal] * [Power Resource Enabled] + [A Generation Labor per Unit] * [A Generation Automation Factor] * [A Wage] + ([A Power Capital Goods per Capacity] * [A Capital Goods Cost Price Signal] * [Capital Goods Enabled] + [A Power Construction Materials per Capacity] * [A Construction Materials Cost Price Signal] * [Construction Materials Enabled]) * [Power Depreciation Rate] * [Capital Lifecycle Enabled] + [A Power Generation Cost]"
       },
       "description": "Cost pricing node: full unit cost of energy (materials, energy, labor, capital wear, rent)."
     },
@@ -41447,7 +41447,7 @@
       "type": "VARIABLE",
       "name": "A Capital Goods Full Cost",
       "behavior": {
-        "value": "[Metal per Capital Goods Unit] * [A Metal Cost Price Signal] + [Electronics per Capital Goods Unit] * [A Electronics Cost Price Signal] + [Capital Goods Energy per Unit] * [A Energy Cost Price Signal] + [A Capital Goods Labor per Unit] * [A Capital Goods Automation Factor] * [A Wage] + ([Capital Goods Plant Capital Goods per Capacity] * [A Capital Goods Cost Price Signal] + [Capital Goods Plant Construction Materials per Capacity] * [A Construction Materials Cost Price Signal]) * [Capital Goods Plant Depreciation Rate]"
+        "value": "[Metal per Capital Goods Unit] * [A Metal Cost Price Signal] + [Electronics per Capital Goods Unit] * [A Electronics Cost Price Signal] + [Capital Goods Energy per Unit] * [A Energy Cost Price Signal] * [Process Energy Enabled] + [A Capital Goods Labor per Unit] * [A Capital Goods Automation Factor] * [A Wage] + ([Capital Goods Plant Capital Goods per Capacity] * [A Capital Goods Cost Price Signal] * [Capital Goods Enabled] + [Capital Goods Plant Construction Materials per Capacity] * [A Construction Materials Cost Price Signal] * [Construction Materials Enabled]) * [Capital Goods Plant Depreciation Rate] * [Capital Goods Capital Enabled]"
       },
       "description": "Cost pricing node: full unit cost of capital goods (materials, energy, labor, capital wear, rent)."
     },
@@ -41463,7 +41463,7 @@
       "type": "VARIABLE",
       "name": "A Construction Materials Full Cost",
       "behavior": {
-        "value": "[Regolith per Construction Materials Unit] * [A Regolith Cost Price Signal] + [Construction Materials Energy per Unit] * [A Energy Cost Price Signal] + [A Construction Materials Labor per Unit] * [A Construction Materials Automation Factor] * [A Wage] + ([Construction Materials Plant Capital Goods per Capacity] * [A Capital Goods Cost Price Signal] + [Construction Materials Plant Construction Materials per Capacity] * [A Construction Materials Cost Price Signal]) * [Construction Materials Plant Depreciation Rate]"
+        "value": "[Regolith per Construction Materials Unit] * [A Regolith Cost Price Signal] + [Construction Materials Energy per Unit] * [A Energy Cost Price Signal] * [Construction Materials Energy Enabled] + [A Construction Materials Labor per Unit] * [A Construction Materials Automation Factor] * [A Wage] + ([Construction Materials Plant Capital Goods per Capacity] * [A Capital Goods Cost Price Signal] * [Capital Goods Enabled] + [Construction Materials Plant Construction Materials per Capacity] * [A Construction Materials Cost Price Signal] * [Construction Materials Enabled]) * [Construction Materials Plant Depreciation Rate] * [Construction Materials Capital Enabled]"
       },
       "description": "Cost pricing node: full unit cost of construction materials (materials, energy, labor, capital wear, rent)."
     },
@@ -41479,7 +41479,7 @@
       "type": "VARIABLE",
       "name": "A Food Full Cost",
       "behavior": {
-        "value": "[Food Energy per Unit] * [A Energy Cost Price Signal] + [Food Labor per Unit] * [A Wage] + ([Farm Capital Goods per Capacity] * [A Capital Goods Cost Price Signal]) * [Farm Depreciation Rate]"
+        "value": "[Food Energy per Unit] * [A Energy Cost Price Signal] * [Food Enabled] + [Food Labor per Unit] * [A Wage] + ([Farm Capital Goods per Capacity] * [A Capital Goods Cost Price Signal] * [Capital Goods Enabled]) * [Farm Depreciation Rate] * [Food Enabled]"
       },
       "description": "Cost pricing node: full unit cost of food (materials, energy, labor, capital wear, rent)."
     },
@@ -41487,7 +41487,7 @@
       "type": "VARIABLE",
       "name": "A Metal Capital Wear",
       "behavior": {
-        "value": "([A Refinery Capital Goods per Capacity] * [A Capital Goods Cost Price Signal] + [A Refinery Construction Materials per Capacity] * [A Construction Materials Cost Price Signal]) * [A Refinery Depreciation Rate]"
+        "value": "([A Refinery Capital Goods per Capacity] * [A Capital Goods Cost Price Signal] * [Capital Goods Enabled] + [A Refinery Construction Materials per Capacity] * [A Construction Materials Cost Price Signal] * [Construction Materials Enabled]) * [A Refinery Depreciation Rate]"
       },
       "description": "Cost pricing node: metal capital wear per unit."
     },
@@ -41495,7 +41495,7 @@
       "type": "VARIABLE",
       "name": "A Electronics Capital Wear",
       "behavior": {
-        "value": "([A Electronics Capital Goods per Capacity] * [A Capital Goods Cost Price Signal] + [A Electronics Construction Materials per Capacity] * [A Construction Materials Cost Price Signal]) * [Electronics Depreciation Rate]"
+        "value": "([A Electronics Capital Goods per Capacity] * [A Capital Goods Cost Price Signal] * [Capital Goods Enabled] + [A Electronics Construction Materials per Capacity] * [A Construction Materials Cost Price Signal] * [Construction Materials Enabled]) * [Electronics Depreciation Rate] * [Capital Lifecycle Enabled]"
       },
       "description": "Cost pricing node: electronics capital wear per unit."
     },
@@ -41768,7 +41768,7 @@
       "type": "VARIABLE",
       "name": "B Ore Full Cost",
       "behavior": {
-        "value": "[Mining Energy per Unit] * [B Energy Cost Price Signal] + [B Mining Labor per Unit] * [B Mining Automation Factor] * [B Wage] + ([Ore Mine Capital Goods per Capacity] * [B Capital Goods Cost Price Signal] + [Ore Mine Construction Materials per Capacity] * [B Construction Materials Cost Price Signal]) * [Ore Mine Depreciation Rate] + [B Effective Ore Base Cost]"
+        "value": "[Mining Energy per Unit] * [B Energy Cost Price Signal] * [Process Energy Enabled] + [B Mining Labor per Unit] * [B Mining Automation Factor] * [B Wage] + ([Ore Mine Capital Goods per Capacity] * [B Capital Goods Cost Price Signal] * [Capital Goods Enabled] + [Ore Mine Construction Materials per Capacity] * [B Construction Materials Cost Price Signal] * [Construction Materials Enabled]) * [Ore Mine Depreciation Rate] * [Ore Capital Enabled] + [B Effective Ore Base Cost]"
       },
       "description": "Cost pricing node: full unit cost of ore (materials, energy, labor, capital wear, rent)."
     },
@@ -41776,7 +41776,7 @@
       "type": "VARIABLE",
       "name": "B Regolith Full Cost",
       "behavior": {
-        "value": "[Regolith Extraction Energy per Unit] * [B Energy Cost Price Signal] + [B Regolith Extraction Labor per Unit] * [B Regolith Extraction Automation Factor] * [B Wage] + ([Regolith Mine Capital Goods per Capacity] * [B Capital Goods Cost Price Signal] + [Regolith Mine Construction Materials per Capacity] * [B Construction Materials Cost Price Signal]) * [Regolith Mine Depreciation Rate]"
+        "value": "[Regolith Extraction Energy per Unit] * [B Energy Cost Price Signal] * [Process Energy Enabled] + [B Regolith Extraction Labor per Unit] * [B Regolith Extraction Automation Factor] * [B Wage] + ([Regolith Mine Capital Goods per Capacity] * [B Capital Goods Cost Price Signal] * [Capital Goods Enabled] + [Regolith Mine Construction Materials per Capacity] * [B Construction Materials Cost Price Signal] * [Construction Materials Enabled]) * [Regolith Mine Depreciation Rate] * [Regolith Capital Enabled]"
       },
       "description": "Cost pricing node: full unit cost of regolith (materials, energy, labor, capital wear, rent)."
     },
@@ -41792,7 +41792,7 @@
       "type": "VARIABLE",
       "name": "B Power Resource Full Cost",
       "behavior": {
-        "value": "[Power Resource Extraction Energy per Unit] * [B Energy Cost Price Signal] + [B Power Resource Extraction Labor per Unit] * [B Power Resource Extraction Automation Factor] * [B Wage] + ([Power Resource Mine Capital Goods per Capacity] * [B Capital Goods Cost Price Signal] + [Power Resource Mine Construction Materials per Capacity] * [B Construction Materials Cost Price Signal]) * [Power Resource Mine Depreciation Rate] + [Base Power Resource Price]"
+        "value": "[Power Resource Extraction Energy per Unit] * [B Energy Cost Price Signal] * [Process Energy Enabled] + [B Power Resource Extraction Labor per Unit] * [B Power Resource Extraction Automation Factor] * [B Wage] + ([Power Resource Mine Capital Goods per Capacity] * [B Capital Goods Cost Price Signal] * [Capital Goods Enabled] + [Power Resource Mine Construction Materials per Capacity] * [B Construction Materials Cost Price Signal] * [Construction Materials Enabled]) * [Power Resource Mine Depreciation Rate] * [Power Resource Capital Enabled] + [Base Power Resource Price]"
       },
       "description": "Cost pricing node: full unit cost of power resource (materials, energy, labor, capital wear, rent)."
     },
@@ -41800,7 +41800,7 @@
       "type": "VARIABLE",
       "name": "B Energy Full Cost",
       "behavior": {
-        "value": "[Power Resource per Energy] * [B Power Resource Cost Price Signal] + [B Generation Labor per Unit] * [B Generation Automation Factor] * [B Wage] + ([B Power Capital Goods per Capacity] * [B Capital Goods Cost Price Signal] + [B Power Construction Materials per Capacity] * [B Construction Materials Cost Price Signal]) * [Power Depreciation Rate] + [B Power Generation Cost]"
+        "value": "[Power Resource per Energy] * [B Power Resource Cost Price Signal] * [Power Resource Enabled] + [B Generation Labor per Unit] * [B Generation Automation Factor] * [B Wage] + ([B Power Capital Goods per Capacity] * [B Capital Goods Cost Price Signal] * [Capital Goods Enabled] + [B Power Construction Materials per Capacity] * [B Construction Materials Cost Price Signal] * [Construction Materials Enabled]) * [Power Depreciation Rate] * [Capital Lifecycle Enabled] + [B Power Generation Cost]"
       },
       "description": "Cost pricing node: full unit cost of energy (materials, energy, labor, capital wear, rent)."
     },
@@ -41808,7 +41808,7 @@
       "type": "VARIABLE",
       "name": "B Capital Goods Full Cost",
       "behavior": {
-        "value": "[Metal per Capital Goods Unit] * [B Metal Cost Price Signal] + [Electronics per Capital Goods Unit] * [B Electronics Cost Price Signal] + [Capital Goods Energy per Unit] * [B Energy Cost Price Signal] + [B Capital Goods Labor per Unit] * [B Capital Goods Automation Factor] * [B Wage] + ([Capital Goods Plant Capital Goods per Capacity] * [B Capital Goods Cost Price Signal] + [Capital Goods Plant Construction Materials per Capacity] * [B Construction Materials Cost Price Signal]) * [Capital Goods Plant Depreciation Rate]"
+        "value": "[Metal per Capital Goods Unit] * [B Metal Cost Price Signal] + [Electronics per Capital Goods Unit] * [B Electronics Cost Price Signal] + [Capital Goods Energy per Unit] * [B Energy Cost Price Signal] * [Process Energy Enabled] + [B Capital Goods Labor per Unit] * [B Capital Goods Automation Factor] * [B Wage] + ([Capital Goods Plant Capital Goods per Capacity] * [B Capital Goods Cost Price Signal] * [Capital Goods Enabled] + [Capital Goods Plant Construction Materials per Capacity] * [B Construction Materials Cost Price Signal] * [Construction Materials Enabled]) * [Capital Goods Plant Depreciation Rate] * [Capital Goods Capital Enabled]"
       },
       "description": "Cost pricing node: full unit cost of capital goods (materials, energy, labor, capital wear, rent)."
     },
@@ -41824,7 +41824,7 @@
       "type": "VARIABLE",
       "name": "B Construction Materials Full Cost",
       "behavior": {
-        "value": "[Regolith per Construction Materials Unit] * [B Regolith Cost Price Signal] + [Construction Materials Energy per Unit] * [B Energy Cost Price Signal] + [B Construction Materials Labor per Unit] * [B Construction Materials Automation Factor] * [B Wage] + ([Construction Materials Plant Capital Goods per Capacity] * [B Capital Goods Cost Price Signal] + [Construction Materials Plant Construction Materials per Capacity] * [B Construction Materials Cost Price Signal]) * [Construction Materials Plant Depreciation Rate]"
+        "value": "[Regolith per Construction Materials Unit] * [B Regolith Cost Price Signal] + [Construction Materials Energy per Unit] * [B Energy Cost Price Signal] * [Construction Materials Energy Enabled] + [B Construction Materials Labor per Unit] * [B Construction Materials Automation Factor] * [B Wage] + ([Construction Materials Plant Capital Goods per Capacity] * [B Capital Goods Cost Price Signal] * [Capital Goods Enabled] + [Construction Materials Plant Construction Materials per Capacity] * [B Construction Materials Cost Price Signal] * [Construction Materials Enabled]) * [Construction Materials Plant Depreciation Rate] * [Construction Materials Capital Enabled]"
       },
       "description": "Cost pricing node: full unit cost of construction materials (materials, energy, labor, capital wear, rent)."
     },
@@ -41840,7 +41840,7 @@
       "type": "VARIABLE",
       "name": "B Food Full Cost",
       "behavior": {
-        "value": "[Food Energy per Unit] * [B Energy Cost Price Signal] + [Food Labor per Unit] * [B Wage] + ([Farm Capital Goods per Capacity] * [B Capital Goods Cost Price Signal]) * [Farm Depreciation Rate]"
+        "value": "[Food Energy per Unit] * [B Energy Cost Price Signal] * [Food Enabled] + [Food Labor per Unit] * [B Wage] + ([Farm Capital Goods per Capacity] * [B Capital Goods Cost Price Signal] * [Capital Goods Enabled]) * [Farm Depreciation Rate] * [Food Enabled]"
       },
       "description": "Cost pricing node: full unit cost of food (materials, energy, labor, capital wear, rent)."
     },
@@ -41848,7 +41848,7 @@
       "type": "VARIABLE",
       "name": "B Metal Capital Wear",
       "behavior": {
-        "value": "([B Refinery Capital Goods per Capacity] * [B Capital Goods Cost Price Signal] + [B Refinery Construction Materials per Capacity] * [B Construction Materials Cost Price Signal]) * [B Refinery Depreciation Rate]"
+        "value": "([B Refinery Capital Goods per Capacity] * [B Capital Goods Cost Price Signal] * [Capital Goods Enabled] + [B Refinery Construction Materials per Capacity] * [B Construction Materials Cost Price Signal] * [Construction Materials Enabled]) * [B Refinery Depreciation Rate]"
       },
       "description": "Cost pricing node: metal capital wear per unit."
     },
@@ -41856,7 +41856,7 @@
       "type": "VARIABLE",
       "name": "B Electronics Capital Wear",
       "behavior": {
-        "value": "([B Electronics Capital Goods per Capacity] * [B Capital Goods Cost Price Signal] + [B Electronics Construction Materials per Capacity] * [B Construction Materials Cost Price Signal]) * [Electronics Depreciation Rate]"
+        "value": "([B Electronics Capital Goods per Capacity] * [B Capital Goods Cost Price Signal] * [Capital Goods Enabled] + [B Electronics Construction Materials per Capacity] * [B Construction Materials Cost Price Signal] * [Construction Materials Enabled]) * [Electronics Depreciation Rate] * [Capital Lifecycle Enabled]"
       },
       "description": "Cost pricing node: electronics capital wear per unit."
     },
@@ -45239,6 +45239,374 @@
       "type": "LINK",
       "from": "B Budget Factor",
       "to": "B Electronics Local Demand"
+    },
+    {
+      "type": "LINK",
+      "from": "Process Energy Enabled",
+      "to": "A Ore Full Cost"
+    },
+    {
+      "type": "LINK",
+      "from": "Capital Goods Enabled",
+      "to": "A Ore Full Cost"
+    },
+    {
+      "type": "LINK",
+      "from": "Construction Materials Enabled",
+      "to": "A Ore Full Cost"
+    },
+    {
+      "type": "LINK",
+      "from": "Ore Capital Enabled",
+      "to": "A Ore Full Cost"
+    },
+    {
+      "type": "LINK",
+      "from": "Process Energy Enabled",
+      "to": "A Regolith Full Cost"
+    },
+    {
+      "type": "LINK",
+      "from": "Capital Goods Enabled",
+      "to": "A Regolith Full Cost"
+    },
+    {
+      "type": "LINK",
+      "from": "Construction Materials Enabled",
+      "to": "A Regolith Full Cost"
+    },
+    {
+      "type": "LINK",
+      "from": "Regolith Capital Enabled",
+      "to": "A Regolith Full Cost"
+    },
+    {
+      "type": "LINK",
+      "from": "Process Energy Enabled",
+      "to": "A Power Resource Full Cost"
+    },
+    {
+      "type": "LINK",
+      "from": "Capital Goods Enabled",
+      "to": "A Power Resource Full Cost"
+    },
+    {
+      "type": "LINK",
+      "from": "Construction Materials Enabled",
+      "to": "A Power Resource Full Cost"
+    },
+    {
+      "type": "LINK",
+      "from": "Power Resource Capital Enabled",
+      "to": "A Power Resource Full Cost"
+    },
+    {
+      "type": "LINK",
+      "from": "Power Resource Enabled",
+      "to": "A Energy Full Cost"
+    },
+    {
+      "type": "LINK",
+      "from": "Capital Goods Enabled",
+      "to": "A Energy Full Cost"
+    },
+    {
+      "type": "LINK",
+      "from": "Construction Materials Enabled",
+      "to": "A Energy Full Cost"
+    },
+    {
+      "type": "LINK",
+      "from": "Capital Lifecycle Enabled",
+      "to": "A Energy Full Cost"
+    },
+    {
+      "type": "LINK",
+      "from": "Process Energy Enabled",
+      "to": "A Capital Goods Full Cost"
+    },
+    {
+      "type": "LINK",
+      "from": "Capital Goods Enabled",
+      "to": "A Capital Goods Full Cost"
+    },
+    {
+      "type": "LINK",
+      "from": "Construction Materials Enabled",
+      "to": "A Capital Goods Full Cost"
+    },
+    {
+      "type": "LINK",
+      "from": "Capital Goods Capital Enabled",
+      "to": "A Capital Goods Full Cost"
+    },
+    {
+      "type": "LINK",
+      "from": "Construction Materials Energy Enabled",
+      "to": "A Construction Materials Full Cost"
+    },
+    {
+      "type": "LINK",
+      "from": "Capital Goods Enabled",
+      "to": "A Construction Materials Full Cost"
+    },
+    {
+      "type": "LINK",
+      "from": "Construction Materials Enabled",
+      "to": "A Construction Materials Full Cost"
+    },
+    {
+      "type": "LINK",
+      "from": "Construction Materials Capital Enabled",
+      "to": "A Construction Materials Full Cost"
+    },
+    {
+      "type": "LINK",
+      "from": "Food Enabled",
+      "to": "A Food Full Cost"
+    },
+    {
+      "type": "LINK",
+      "from": "Capital Goods Enabled",
+      "to": "A Food Full Cost"
+    },
+    {
+      "type": "LINK",
+      "from": "Capital Goods Enabled",
+      "to": "A Metal Capital Wear"
+    },
+    {
+      "type": "LINK",
+      "from": "Construction Materials Enabled",
+      "to": "A Metal Capital Wear"
+    },
+    {
+      "type": "LINK",
+      "from": "Capital Goods Enabled",
+      "to": "A Electronics Capital Wear"
+    },
+    {
+      "type": "LINK",
+      "from": "Construction Materials Enabled",
+      "to": "A Electronics Capital Wear"
+    },
+    {
+      "type": "LINK",
+      "from": "Capital Lifecycle Enabled",
+      "to": "A Electronics Capital Wear"
+    },
+    {
+      "type": "LINK",
+      "from": "Process Energy Enabled",
+      "to": "B Ore Full Cost"
+    },
+    {
+      "type": "LINK",
+      "from": "Capital Goods Enabled",
+      "to": "B Ore Full Cost"
+    },
+    {
+      "type": "LINK",
+      "from": "Construction Materials Enabled",
+      "to": "B Ore Full Cost"
+    },
+    {
+      "type": "LINK",
+      "from": "Ore Capital Enabled",
+      "to": "B Ore Full Cost"
+    },
+    {
+      "type": "LINK",
+      "from": "Process Energy Enabled",
+      "to": "B Regolith Full Cost"
+    },
+    {
+      "type": "LINK",
+      "from": "Capital Goods Enabled",
+      "to": "B Regolith Full Cost"
+    },
+    {
+      "type": "LINK",
+      "from": "Construction Materials Enabled",
+      "to": "B Regolith Full Cost"
+    },
+    {
+      "type": "LINK",
+      "from": "Regolith Capital Enabled",
+      "to": "B Regolith Full Cost"
+    },
+    {
+      "type": "LINK",
+      "from": "Process Energy Enabled",
+      "to": "B Power Resource Full Cost"
+    },
+    {
+      "type": "LINK",
+      "from": "Capital Goods Enabled",
+      "to": "B Power Resource Full Cost"
+    },
+    {
+      "type": "LINK",
+      "from": "Construction Materials Enabled",
+      "to": "B Power Resource Full Cost"
+    },
+    {
+      "type": "LINK",
+      "from": "Power Resource Capital Enabled",
+      "to": "B Power Resource Full Cost"
+    },
+    {
+      "type": "LINK",
+      "from": "Power Resource Enabled",
+      "to": "B Energy Full Cost"
+    },
+    {
+      "type": "LINK",
+      "from": "Capital Goods Enabled",
+      "to": "B Energy Full Cost"
+    },
+    {
+      "type": "LINK",
+      "from": "Construction Materials Enabled",
+      "to": "B Energy Full Cost"
+    },
+    {
+      "type": "LINK",
+      "from": "Capital Lifecycle Enabled",
+      "to": "B Energy Full Cost"
+    },
+    {
+      "type": "LINK",
+      "from": "Process Energy Enabled",
+      "to": "B Capital Goods Full Cost"
+    },
+    {
+      "type": "LINK",
+      "from": "Capital Goods Enabled",
+      "to": "B Capital Goods Full Cost"
+    },
+    {
+      "type": "LINK",
+      "from": "Construction Materials Enabled",
+      "to": "B Capital Goods Full Cost"
+    },
+    {
+      "type": "LINK",
+      "from": "Capital Goods Capital Enabled",
+      "to": "B Capital Goods Full Cost"
+    },
+    {
+      "type": "LINK",
+      "from": "Construction Materials Energy Enabled",
+      "to": "B Construction Materials Full Cost"
+    },
+    {
+      "type": "LINK",
+      "from": "Capital Goods Enabled",
+      "to": "B Construction Materials Full Cost"
+    },
+    {
+      "type": "LINK",
+      "from": "Construction Materials Enabled",
+      "to": "B Construction Materials Full Cost"
+    },
+    {
+      "type": "LINK",
+      "from": "Construction Materials Capital Enabled",
+      "to": "B Construction Materials Full Cost"
+    },
+    {
+      "type": "LINK",
+      "from": "Food Enabled",
+      "to": "B Food Full Cost"
+    },
+    {
+      "type": "LINK",
+      "from": "Capital Goods Enabled",
+      "to": "B Food Full Cost"
+    },
+    {
+      "type": "LINK",
+      "from": "Capital Goods Enabled",
+      "to": "B Metal Capital Wear"
+    },
+    {
+      "type": "LINK",
+      "from": "Construction Materials Enabled",
+      "to": "B Metal Capital Wear"
+    },
+    {
+      "type": "LINK",
+      "from": "Capital Goods Enabled",
+      "to": "B Electronics Capital Wear"
+    },
+    {
+      "type": "LINK",
+      "from": "Construction Materials Enabled",
+      "to": "B Electronics Capital Wear"
+    },
+    {
+      "type": "LINK",
+      "from": "Capital Lifecycle Enabled",
+      "to": "B Electronics Capital Wear"
+    },
+    {
+      "type": "LINK",
+      "from": "Power Resource Enabled",
+      "to": "A Power Resource Price"
+    },
+    {
+      "type": "LINK",
+      "from": "Power Resource Enabled",
+      "to": "B Power Resource Price"
+    },
+    {
+      "type": "VARIABLE",
+      "name": "Labor Demand Wage Elasticity",
+      "behavior": {
+        "value": 1.5
+      },
+      "description": "Labor market node: parameter Labor Demand Wage Elasticity."
+    },
+    {
+      "type": "LINK",
+      "from": "Labor Market Enabled",
+      "to": "A Total Labor Requirement"
+    },
+    {
+      "type": "LINK",
+      "from": "A Wage",
+      "to": "A Total Labor Requirement"
+    },
+    {
+      "type": "LINK",
+      "from": "A Initial Wage",
+      "to": "A Total Labor Requirement"
+    },
+    {
+      "type": "LINK",
+      "from": "Labor Demand Wage Elasticity",
+      "to": "A Total Labor Requirement"
+    },
+    {
+      "type": "LINK",
+      "from": "Labor Market Enabled",
+      "to": "B Total Labor Requirement"
+    },
+    {
+      "type": "LINK",
+      "from": "B Wage",
+      "to": "B Total Labor Requirement"
+    },
+    {
+      "type": "LINK",
+      "from": "B Initial Wage",
+      "to": "B Total Labor Requirement"
+    },
+    {
+      "type": "LINK",
+      "from": "Labor Demand Wage Elasticity",
+      "to": "B Total Labor Requirement"
     }
   ],
   "visualizations": [
@@ -45921,7 +46289,8 @@
         "Ore Capital Enabled": 0,
         "Power Resource Capital Enabled": 0,
         "Deposits Enabled": 0,
-        "Process Energy Enabled": 0
+        "Process Energy Enabled": 0,
+        "Cost Pricing Enabled": 1
       }
     },
     {
@@ -45943,7 +46312,8 @@
         "Ore Capital Enabled": 0,
         "Power Resource Capital Enabled": 0,
         "Deposits Enabled": 0,
-        "Process Energy Enabled": 0
+        "Process Energy Enabled": 0,
+        "Cost Pricing Enabled": 1
       }
     },
     {
@@ -45965,7 +46335,8 @@
         "Ore Capital Enabled": 0,
         "Power Resource Capital Enabled": 0,
         "Deposits Enabled": 0,
-        "Process Energy Enabled": 0
+        "Process Energy Enabled": 0,
+        "Cost Pricing Enabled": 1
       }
     },
     {
@@ -45987,7 +46358,8 @@
         "Ore Capital Enabled": 0,
         "Power Resource Capital Enabled": 0,
         "Deposits Enabled": 0,
-        "Process Energy Enabled": 0
+        "Process Energy Enabled": 0,
+        "Cost Pricing Enabled": 1
       }
     },
     {
@@ -46009,7 +46381,8 @@
         "Ore Capital Enabled": 0,
         "Power Resource Capital Enabled": 0,
         "Deposits Enabled": 0,
-        "Process Energy Enabled": 0
+        "Process Energy Enabled": 0,
+        "Cost Pricing Enabled": 1
       }
     },
     {
@@ -46031,7 +46404,8 @@
         "Ore Capital Enabled": 0,
         "Power Resource Capital Enabled": 0,
         "Deposits Enabled": 0,
-        "Process Energy Enabled": 0
+        "Process Energy Enabled": 0,
+        "Cost Pricing Enabled": 1
       }
     },
     {
@@ -46053,7 +46427,8 @@
         "Ore Capital Enabled": 0,
         "Power Resource Capital Enabled": 0,
         "Deposits Enabled": 0,
-        "Process Energy Enabled": 0
+        "Process Energy Enabled": 0,
+        "Cost Pricing Enabled": 1
       }
     },
     {
@@ -46075,7 +46450,8 @@
         "Ore Capital Enabled": 0,
         "Power Resource Capital Enabled": 0,
         "Deposits Enabled": 0,
-        "Process Energy Enabled": 0
+        "Process Energy Enabled": 0,
+        "Cost Pricing Enabled": 1
       }
     },
     {
@@ -46097,7 +46473,8 @@
         "Ore Capital Enabled": 0,
         "Power Resource Capital Enabled": 0,
         "Deposits Enabled": 0,
-        "Process Energy Enabled": 0
+        "Process Energy Enabled": 0,
+        "Cost Pricing Enabled": 1
       }
     },
     {
@@ -46119,7 +46496,8 @@
         "Ore Capital Enabled": 0,
         "Power Resource Capital Enabled": 0,
         "Deposits Enabled": 0,
-        "Process Energy Enabled": 0
+        "Process Energy Enabled": 0,
+        "Cost Pricing Enabled": 1
       }
     },
     {
@@ -46141,7 +46519,8 @@
         "Ore Capital Enabled": 0,
         "Power Resource Capital Enabled": 0,
         "Deposits Enabled": 0,
-        "Process Energy Enabled": 0
+        "Process Energy Enabled": 0,
+        "Cost Pricing Enabled": 1
       }
     },
     {
@@ -46163,7 +46542,8 @@
         "Ore Capital Enabled": 0,
         "Power Resource Capital Enabled": 0,
         "Deposits Enabled": 0,
-        "Process Energy Enabled": 0
+        "Process Energy Enabled": 0,
+        "Cost Pricing Enabled": 1
       }
     },
     {
@@ -46185,7 +46565,8 @@
         "Ore Capital Enabled": 0,
         "Power Resource Capital Enabled": 0,
         "Deposits Enabled": 0,
-        "Process Energy Enabled": 0
+        "Process Energy Enabled": 0,
+        "Cost Pricing Enabled": 1
       }
     },
     {
@@ -46207,7 +46588,8 @@
         "Ore Capital Enabled": 0,
         "Power Resource Capital Enabled": 0,
         "Deposits Enabled": 0,
-        "Process Energy Enabled": 0
+        "Process Energy Enabled": 0,
+        "Cost Pricing Enabled": 1
       }
     },
     {
@@ -46229,7 +46611,8 @@
         "Ore Capital Enabled": 0,
         "Power Resource Capital Enabled": 0,
         "Deposits Enabled": 0,
-        "Process Energy Enabled": 0
+        "Process Energy Enabled": 0,
+        "Cost Pricing Enabled": 1
       }
     },
     {
@@ -46251,7 +46634,8 @@
         "Ore Capital Enabled": 0,
         "Power Resource Capital Enabled": 0,
         "Deposits Enabled": 0,
-        "Process Energy Enabled": 0
+        "Process Energy Enabled": 0,
+        "Cost Pricing Enabled": 1
       }
     },
     {
@@ -46273,7 +46657,8 @@
         "Ore Capital Enabled": 0,
         "Power Resource Capital Enabled": 0,
         "Deposits Enabled": 0,
-        "Process Energy Enabled": 0
+        "Process Energy Enabled": 0,
+        "Cost Pricing Enabled": 1
       }
     },
     {
@@ -46295,7 +46680,8 @@
         "Ore Capital Enabled": 0,
         "Power Resource Capital Enabled": 0,
         "Deposits Enabled": 0,
-        "Process Energy Enabled": 0
+        "Process Energy Enabled": 0,
+        "Cost Pricing Enabled": 1
       }
     },
     {
@@ -46317,7 +46703,8 @@
         "Ore Capital Enabled": 0,
         "Power Resource Capital Enabled": 0,
         "Deposits Enabled": 0,
-        "Process Energy Enabled": 0
+        "Process Energy Enabled": 0,
+        "Cost Pricing Enabled": 1
       }
     },
     {
@@ -46339,7 +46726,8 @@
         "Ore Capital Enabled": 0,
         "Power Resource Capital Enabled": 0,
         "Deposits Enabled": 0,
-        "Process Energy Enabled": 0
+        "Process Energy Enabled": 0,
+        "Cost Pricing Enabled": 1
       }
     },
     {
@@ -46361,7 +46749,8 @@
         "Ore Capital Enabled": 0,
         "Power Resource Capital Enabled": 0,
         "Deposits Enabled": 0,
-        "Process Energy Enabled": 0
+        "Process Energy Enabled": 0,
+        "Cost Pricing Enabled": 1
       }
     },
     {
@@ -46383,7 +46772,8 @@
         "Ore Capital Enabled": 0,
         "Power Resource Capital Enabled": 0,
         "Deposits Enabled": 0,
-        "Process Energy Enabled": 0
+        "Process Energy Enabled": 0,
+        "Cost Pricing Enabled": 1
       }
     },
     {
@@ -46405,7 +46795,8 @@
         "Ore Capital Enabled": 0,
         "Power Resource Capital Enabled": 0,
         "Deposits Enabled": 0,
-        "Process Energy Enabled": 0
+        "Process Energy Enabled": 0,
+        "Cost Pricing Enabled": 1
       }
     },
     {
@@ -46427,7 +46818,8 @@
         "Ore Capital Enabled": 0,
         "Power Resource Capital Enabled": 0,
         "Deposits Enabled": 0,
-        "Process Energy Enabled": 0
+        "Process Energy Enabled": 0,
+        "Cost Pricing Enabled": 1
       }
     },
     {
@@ -46449,7 +46841,8 @@
         "Ore Capital Enabled": 0,
         "Power Resource Capital Enabled": 0,
         "Deposits Enabled": 0,
-        "Process Energy Enabled": 0
+        "Process Energy Enabled": 0,
+        "Cost Pricing Enabled": 1
       }
     },
     {
@@ -46471,7 +46864,8 @@
         "Ore Capital Enabled": 0,
         "Power Resource Capital Enabled": 0,
         "Deposits Enabled": 0,
-        "Process Energy Enabled": 0
+        "Process Energy Enabled": 0,
+        "Cost Pricing Enabled": 1
       }
     },
     {
@@ -46493,7 +46887,8 @@
         "Ore Capital Enabled": 0,
         "Power Resource Capital Enabled": 0,
         "Deposits Enabled": 0,
-        "Process Energy Enabled": 0
+        "Process Energy Enabled": 0,
+        "Cost Pricing Enabled": 1
       }
     },
     {
@@ -46515,7 +46910,8 @@
         "Ore Capital Enabled": 0,
         "Power Resource Capital Enabled": 0,
         "Deposits Enabled": 0,
-        "Process Energy Enabled": 0
+        "Process Energy Enabled": 0,
+        "Cost Pricing Enabled": 1
       }
     },
     {
@@ -46537,7 +46933,8 @@
         "Ore Capital Enabled": 0,
         "Power Resource Capital Enabled": 0,
         "Deposits Enabled": 0,
-        "Process Energy Enabled": 0
+        "Process Energy Enabled": 0,
+        "Cost Pricing Enabled": 1
       }
     },
     {
@@ -46559,7 +46956,8 @@
         "Ore Capital Enabled": 0,
         "Power Resource Capital Enabled": 0,
         "Deposits Enabled": 0,
-        "Process Energy Enabled": 0
+        "Process Energy Enabled": 0,
+        "Cost Pricing Enabled": 1
       }
     },
     {
@@ -46581,7 +46979,8 @@
         "Ore Capital Enabled": 0,
         "Power Resource Capital Enabled": 0,
         "Deposits Enabled": 0,
-        "Process Energy Enabled": 0
+        "Process Energy Enabled": 0,
+        "Cost Pricing Enabled": 1
       }
     },
     {
@@ -46603,7 +47002,8 @@
         "Ore Capital Enabled": 0,
         "Power Resource Capital Enabled": 0,
         "Deposits Enabled": 0,
-        "Process Energy Enabled": 0
+        "Process Energy Enabled": 0,
+        "Cost Pricing Enabled": 1
       }
     },
     {
@@ -46625,7 +47025,8 @@
         "Ore Capital Enabled": 0,
         "Power Resource Capital Enabled": 0,
         "Deposits Enabled": 0,
-        "Process Energy Enabled": 0
+        "Process Energy Enabled": 0,
+        "Cost Pricing Enabled": 1
       }
     },
     {
@@ -46647,7 +47048,8 @@
         "Ore Capital Enabled": 0,
         "Power Resource Capital Enabled": 0,
         "Deposits Enabled": 0,
-        "Process Energy Enabled": 0
+        "Process Energy Enabled": 0,
+        "Cost Pricing Enabled": 1
       }
     },
     {
@@ -46669,7 +47071,8 @@
         "Ore Capital Enabled": 0,
         "Power Resource Capital Enabled": 0,
         "Deposits Enabled": 0,
-        "Process Energy Enabled": 0
+        "Process Energy Enabled": 0,
+        "Cost Pricing Enabled": 1
       }
     },
     {
@@ -46691,7 +47094,8 @@
         "Ore Capital Enabled": 0,
         "Power Resource Capital Enabled": 0,
         "Deposits Enabled": 0,
-        "Process Energy Enabled": 0
+        "Process Energy Enabled": 0,
+        "Cost Pricing Enabled": 1
       }
     },
     {
@@ -46713,7 +47117,8 @@
         "Ore Capital Enabled": 0,
         "Power Resource Capital Enabled": 0,
         "Deposits Enabled": 0,
-        "Process Energy Enabled": 0
+        "Process Energy Enabled": 0,
+        "Cost Pricing Enabled": 1
       }
     },
     {
@@ -46735,7 +47140,8 @@
         "Ore Capital Enabled": 0,
         "Power Resource Capital Enabled": 0,
         "Deposits Enabled": 0,
-        "Process Energy Enabled": 0
+        "Process Energy Enabled": 0,
+        "Cost Pricing Enabled": 1
       }
     },
     {
@@ -46757,7 +47163,8 @@
         "Ore Capital Enabled": 0,
         "Power Resource Capital Enabled": 0,
         "Deposits Enabled": 0,
-        "Process Energy Enabled": 0
+        "Process Energy Enabled": 0,
+        "Cost Pricing Enabled": 1
       }
     },
     {
@@ -46779,7 +47186,8 @@
         "Ore Capital Enabled": 0,
         "Power Resource Capital Enabled": 0,
         "Deposits Enabled": 0,
-        "Process Energy Enabled": 0
+        "Process Energy Enabled": 0,
+        "Cost Pricing Enabled": 1
       }
     },
     {
@@ -46801,7 +47209,8 @@
         "Ore Capital Enabled": 1,
         "Power Resource Capital Enabled": 0,
         "Deposits Enabled": 0,
-        "Process Energy Enabled": 0
+        "Process Energy Enabled": 0,
+        "Cost Pricing Enabled": 1
       }
     },
     {
@@ -46823,7 +47232,8 @@
         "Ore Capital Enabled": 1,
         "Power Resource Capital Enabled": 0,
         "Deposits Enabled": 0,
-        "Process Energy Enabled": 0
+        "Process Energy Enabled": 0,
+        "Cost Pricing Enabled": 1
       }
     },
     {
@@ -46845,7 +47255,8 @@
         "Timed Test Mode": 42,
         "Power Resource Capital Enabled": 1,
         "Deposits Enabled": 0,
-        "Process Energy Enabled": 0
+        "Process Energy Enabled": 0,
+        "Cost Pricing Enabled": 1
       }
     },
     {
@@ -46867,7 +47278,8 @@
         "Timed Test Mode": 43,
         "Power Resource Capital Enabled": 1,
         "Deposits Enabled": 0,
-        "Process Energy Enabled": 0
+        "Process Energy Enabled": 0,
+        "Cost Pricing Enabled": 1
       }
     },
     {
@@ -46889,7 +47301,8 @@
         "Timed Test Mode": 44,
         "Power Resource Capital Enabled": 1,
         "Deposits Enabled": 1,
-        "Process Energy Enabled": 0
+        "Process Energy Enabled": 0,
+        "Cost Pricing Enabled": 1
       }
     },
     {
@@ -46911,7 +47324,8 @@
         "Timed Test Mode": 45,
         "Power Resource Capital Enabled": 1,
         "Deposits Enabled": 1,
-        "Process Energy Enabled": 0
+        "Process Energy Enabled": 0,
+        "Cost Pricing Enabled": 1
       }
     },
     {
@@ -46933,7 +47347,8 @@
         "Timed Test Mode": 46,
         "Power Resource Capital Enabled": 1,
         "Deposits Enabled": 1,
-        "Process Energy Enabled": 1
+        "Process Energy Enabled": 1,
+        "Cost Pricing Enabled": 1
       }
     },
     {
@@ -46955,7 +47370,8 @@
         "Timed Test Mode": 47,
         "Power Resource Capital Enabled": 1,
         "Deposits Enabled": 1,
-        "Process Energy Enabled": 1
+        "Process Energy Enabled": 1,
+        "Cost Pricing Enabled": 1
       }
     },
     {
@@ -46985,7 +47401,8 @@
         "A Regolith Extraction Automation Level": 0.5,
         "A Construction Materials Automation Level": 0.5,
         "A Power Resource Extraction Automation Level": 0.5,
-        "A Generation Automation Level": 0.5
+        "A Generation Automation Level": 0.5,
+        "Cost Pricing Enabled": 1
       }
     },
     {
@@ -47008,7 +47425,8 @@
         "Power Resource Capital Enabled": 1,
         "Deposits Enabled": 1,
         "Process Energy Enabled": 1,
-        "Food Enabled": 1
+        "Food Enabled": 1,
+        "Cost Pricing Enabled": 1
       }
     },
     {
@@ -47031,7 +47449,8 @@
         "Power Resource Capital Enabled": 1,
         "Deposits Enabled": 1,
         "Process Energy Enabled": 1,
-        "Food Enabled": 1
+        "Food Enabled": 1,
+        "Cost Pricing Enabled": 1
       }
     },
     {
@@ -47056,7 +47475,8 @@
         "Process Energy Enabled": 1,
         "Food Enabled": 1,
         "A Farm Land Capacity": 40,
-        "B Farm Land Capacity": 40
+        "B Farm Land Capacity": 40,
+        "Cost Pricing Enabled": 1
       }
     },
     {
@@ -47080,7 +47500,9 @@
         "Deposits Enabled": 1,
         "Process Energy Enabled": 1,
         "Food Enabled": 1,
-        "Labor Market Enabled": 1
+        "Labor Market Enabled": 1,
+        "Cost Pricing Enabled": 1,
+        "Money Enabled": 1
       }
     },
     {
@@ -47104,7 +47526,9 @@
         "Deposits Enabled": 1,
         "Process Energy Enabled": 1,
         "Food Enabled": 1,
-        "Labor Market Enabled": 1
+        "Labor Market Enabled": 1,
+        "Cost Pricing Enabled": 1,
+        "Money Enabled": 1
       }
     },
     {
@@ -47129,7 +47553,9 @@
         "Process Energy Enabled": 1,
         "Food Enabled": 1,
         "Labor Market Enabled": 1,
-        "Wage Pricing Enabled": 1
+        "Wage Pricing Enabled": 1,
+        "Cost Pricing Enabled": 1,
+        "Money Enabled": 1
       }
     },
     {
@@ -47154,7 +47580,9 @@
         "Process Energy Enabled": 1,
         "Food Enabled": 1,
         "Labor Market Enabled": 1,
-        "Wage Pricing Enabled": 1
+        "Wage Pricing Enabled": 1,
+        "Cost Pricing Enabled": 1,
+        "Money Enabled": 1
       }
     },
     {
