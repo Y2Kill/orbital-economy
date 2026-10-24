@@ -1,0 +1,59 @@
+{
+  "format": "orbital-economy-model-patch-v1",
+  "base_sha256": "43034a2890e06c030b04433a3ed9cebf1961d4ccf9101766a8394d2033748b48",
+  "name": "Orbital Economy v7.7.19 Nominal Anchor candidate r1",
+  "add_elements": [
+    {
+      "type": "VARIABLE",
+      "name": "Labor Demand Wage Elasticity",
+      "behavior": {
+        "value": 1.5
+      },
+      "description": "Labor market node: parameter Labor Demand Wage Elasticity."
+    }
+  ],
+  "replace_formulas": [
+    {
+      "name": "A Total Labor Requirement",
+      "value": "IfThenElse([Labor Market Enabled] = 1, (IfThenElse([Food Enabled] = 1, ([A Mining Labor Requirement] + [A Smelting Labor Requirement] + [A Electronics Labor Requirement] + [A Capital Goods Labor Requirement] + [A Regolith Extraction Labor Requirement] + [A Construction Materials Labor Requirement] + [A Power Resource Extraction Labor Requirement] + [A Generation Labor Requirement]) + [A Farming Labor Requirement], [A Mining Labor Requirement] + [A Smelting Labor Requirement] + [A Electronics Labor Requirement] + [A Capital Goods Labor Requirement] + [A Regolith Extraction Labor Requirement] + [A Construction Materials Labor Requirement] + [A Power Resource Extraction Labor Requirement] + [A Generation Labor Requirement])) * ([A Wage] / [A Initial Wage]) ^ (-[Labor Demand Wage Elasticity]), IfThenElse([Food Enabled] = 1, ([A Mining Labor Requirement] + [A Smelting Labor Requirement] + [A Electronics Labor Requirement] + [A Capital Goods Labor Requirement] + [A Regolith Extraction Labor Requirement] + [A Construction Materials Labor Requirement] + [A Power Resource Extraction Labor Requirement] + [A Generation Labor Requirement]) + [A Farming Labor Requirement], [A Mining Labor Requirement] + [A Smelting Labor Requirement] + [A Electronics Labor Requirement] + [A Capital Goods Labor Requirement] + [A Regolith Extraction Labor Requirement] + [A Construction Materials Labor Requirement] + [A Power Resource Extraction Labor Requirement] + [A Generation Labor Requirement]))"
+    },
+    {
+      "name": "B Total Labor Requirement",
+      "value": "IfThenElse([Labor Market Enabled] = 1, (IfThenElse([Food Enabled] = 1, ([B Mining Labor Requirement] + [B Smelting Labor Requirement] + [B Electronics Labor Requirement] + [B Capital Goods Labor Requirement] + [B Regolith Extraction Labor Requirement] + [B Construction Materials Labor Requirement] + [B Power Resource Extraction Labor Requirement] + [B Generation Labor Requirement]) + [B Farming Labor Requirement], [B Mining Labor Requirement] + [B Smelting Labor Requirement] + [B Electronics Labor Requirement] + [B Capital Goods Labor Requirement] + [B Regolith Extraction Labor Requirement] + [B Construction Materials Labor Requirement] + [B Power Resource Extraction Labor Requirement] + [B Generation Labor Requirement])) * ([B Wage] / [B Initial Wage]) ^ (-[Labor Demand Wage Elasticity]), IfThenElse([Food Enabled] = 1, ([B Mining Labor Requirement] + [B Smelting Labor Requirement] + [B Electronics Labor Requirement] + [B Capital Goods Labor Requirement] + [B Regolith Extraction Labor Requirement] + [B Construction Materials Labor Requirement] + [B Power Resource Extraction Labor Requirement] + [B Generation Labor Requirement]) + [B Farming Labor Requirement], [B Mining Labor Requirement] + [B Smelting Labor Requirement] + [B Electronics Labor Requirement] + [B Capital Goods Labor Requirement] + [B Regolith Extraction Labor Requirement] + [B Construction Materials Labor Requirement] + [B Power Resource Extraction Labor Requirement] + [B Generation Labor Requirement]))"
+    }
+  ],
+  "add_links": [
+    {
+      "from": "Labor Market Enabled",
+      "to": "A Total Labor Requirement"
+    },
+    {
+      "from": "A Wage",
+      "to": "A Total Labor Requirement"
+    },
+    {
+      "from": "A Initial Wage",
+      "to": "A Total Labor Requirement"
+    },
+    {
+      "from": "Labor Demand Wage Elasticity",
+      "to": "A Total Labor Requirement"
+    },
+    {
+      "from": "Labor Market Enabled",
+      "to": "B Total Labor Requirement"
+    },
+    {
+      "from": "B Wage",
+      "to": "B Total Labor Requirement"
+    },
+    {
+      "from": "B Initial Wage",
+      "to": "B Total Labor Requirement"
+    },
+    {
+      "from": "Labor Demand Wage Elasticity",
+      "to": "B Total Labor Requirement"
+    }
+  ]
+}

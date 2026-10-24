@@ -1,0 +1,39 @@
+{
+  "format": "orbital-economy-parameter-annotations-fragment-v1",
+  "model": "Orbital Economy v7.7.19 Nominal Anchor candidate r1",
+  "updated": "2026-10-24",
+  "note": "Task 045: one new key parameter and one updated key parameter. Merge parameters into accepted annotations on promotion; other entries remain unchanged.",
+  "parameters": {
+    "Labor Demand Wage Elasticity": {
+      "role": "KEY PARAMETER: labor-demand wage elasticity ε=1.5; nominal anchor controlling long-run wage-level drift and the A → B population shift.",
+      "effect": "Only when Labor Market Enabled = 1, each regional Total Labor Requirement = its former food-wrapped formula × (regional Wage / Initial Wage)^(-1.5). Cheaper labor creates more jobs per unit of output, raises employment and the wage bill and feeds back through labor tightness; with the labor market disabled the original formula applies exactly.",
+      "evidence": "docs/research/NOMINAL_ANCHOR_2026-10-23_RU.md: alternative ε=0.5/1/1.5/2 versus wage norms and hybrid over 80 years; docs/tasks/045-nominal-anchor/V7_7_19_ARCHITECTURE_SPEC.md §§1–5; owner decision 2026-10-23 chooses ε=1.5.",
+      "since": "v7.7.19 candidate r1",
+      "tags": [
+        "labor-market",
+        "wage",
+        "demand",
+        "elasticity",
+        "nominal-anchor",
+        "key-parameter",
+        "long-horizon",
+        "sensitivity",
+        "migration"
+      ]
+    },
+    "Target Labor Tightness": {
+      "role": "KEY PARAMETER: target ratio of smoothed labor demand to labor force; value remains 0.95.",
+      "effect": "Controls the target ratio of smoothed labor demand to labor force, 0.95. Above/below the target wages rise/fall; from v7.7.19 the changed wage also increases/decreases labor demand through Labor Demand Wage Elasticity, feeding back into employment and labor tightness, so tightness converges through labor demand as well as the wage. Value remains 0.95.",
+      "evidence": "docs/research/SENSITIVITY_2026-10-10_RU.md: Target Labor Tightness grows from moderate short-horizon sensitivity to a strong long-horizon wage driver; owner decision 2026-10-11 keeps 0.95 unchanged and marks it as a key parameter. See also docs/research/NOMINAL_ANCHOR_2026-10-23_RU.md and docs/tasks/045-nominal-anchor/V7_7_19_ARCHITECTURE_SPEC.md §5 (wage → labor demand negative feedback, owner decision 2026-10-23).",
+      "since": "v7.7.13 r1",
+      "tags": [
+        "labor-market",
+        "wage",
+        "target",
+        "key-parameter",
+        "long-horizon",
+        "sensitivity"
+      ]
+    }
+  }
+}
