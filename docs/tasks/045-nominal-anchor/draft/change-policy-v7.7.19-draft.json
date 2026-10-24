@@ -1,0 +1,89 @@
+{
+  "format": "orbital-economy-change-policy-v1",
+  "name": "Orbital Economy v7.7.19 Labor Demand Elasticity - change contract DRAFT (owner); executor finalises and justifies every change",
+  "description": "Written before implementation from V7_7_19_ARCHITECTURE_SPEC.md. Accepted baseline: v7.7.18 r1. Modes 0-51 must reproduce it exactly; Modes 52-59 (labor market on) change.",
+  "accepted_model_sha256": "43034a2890e06c030b04433a3ed9cebf1961d4ccf9101766a8394d2033748b48",
+  "validation_sha256": "033e3ef02010d496900c03f290b30085167b9ce399f973569057e3739c69d9b0",
+  "comparison": {
+    "abs_tolerance": 0,
+    "rel_tolerance": null,
+    "rel_floor": 1e-12
+  },
+  "engine": {
+    "package": "simulation",
+    "version": "9.0.0"
+  },
+  "default_action": "deny",
+  "require_full_mode_coverage": true,
+  "rules": [
+    {
+      "id": "regression-guard-modes-0-51",
+      "action": "deny",
+      "event": "series_changed",
+      "modes": "0-51",
+      "name": "*",
+      "note": "Modes 0-51 run without the labor market: the new replacement keeps its old branch there, so they reproduce v7.7.18 r1 exactly (first match wins)"
+    },
+    {
+      "id": "forbid-removals-and-structural-drift",
+      "action": "deny",
+      "event": [
+        "element_removed",
+        "series_removed",
+        "mode_added",
+        "mode_removed",
+        "link_removed",
+        "type_changed",
+        "simulation_changed",
+        "time_axis_changed",
+        "scenario_renamed",
+        "scenario_input_changed"
+      ],
+      "name": "*"
+    },
+    {
+      "id": "add-elasticity-parameter",
+      "action": "allow",
+      "event": "element_added",
+      "name": [
+        "Labor Demand Wage Elasticity"
+      ],
+      "required": true,
+      "note": "the wage elasticity of labor demand, 1.5 (owner decision 2026-10-23; spec §1)"
+    },
+    {
+      "id": "labor-requirement-follows-the-wage",
+      "action": "allow",
+      "event": "definition_changed",
+      "name": [
+        "? Total Labor Requirement"
+      ],
+      "required": true,
+      "note": "IfThenElse([Labor Market Enabled] = 1, (old) * ([{C} Wage] / [{C} Initial Wage]) ^ (-[Labor Demand Wage Elasticity]), old) — the labor_market expansion of Lab v0.9.23 (spec §1)"
+    },
+    {
+      "id": "links-into-labor-requirement",
+      "action": "allow",
+      "event": "link_added",
+      "name": [
+        "* -> ? Total Labor Requirement"
+      ]
+    },
+    {
+      "id": "parameter-series",
+      "action": "allow",
+      "event": "series_added",
+      "name": [
+        "Labor Demand Wage Elasticity"
+      ]
+    },
+    {
+      "id": "labor-market-modes-change",
+      "action": "allow",
+      "event": "series_changed",
+      "modes": "52-59",
+      "name": "*",
+      "note": "with the labor market on, labor demand follows the wage: employment, wages, prices, money and through them every series of Modes 52-59 move (spec §3)"
+    }
+  ]
+}

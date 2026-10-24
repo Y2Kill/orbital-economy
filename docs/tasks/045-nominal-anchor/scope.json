@@ -1,0 +1,17 @@
+{
+  "task": "045",
+  "title": "v7.7.19 Nominal Anchor (owner decision 2026-10-23): labor demand follows the wage with elasticity 1.5 in the accepted labor_market layer (1 parameter, 2 formulas, 8 links); Modes 0-51 reproduce v7.7.18 exactly; 2 Mode 55 checks rebased, 3 mechanism checks added",
+  "branch": "task/045-nominal-anchor",
+  "allow": [],
+  "allow_binary": [],
+  "allow_protected": [
+    "docs/tasks/045-nominal-anchor/candidate/**"
+  ],
+  "required_changes": [
+    "docs/tasks/045-nominal-anchor/candidate/model-patch.json",
+    "docs/tasks/045-nominal-anchor/candidate/validation.json",
+    "docs/tasks/045-nominal-anchor/candidate/change-policy.json",
+    "docs/tasks/045-nominal-anchor/candidate/PARAMETER_ANNOTATIONS_fragment.json"
+  ],
+  "sums_by": "reviewer"
+}

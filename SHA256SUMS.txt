@@ -19,7 +19,7 @@ a29e6265018e0e33ab981504236ef31c38c117b0ba73ccfe34ead00902fa8af5  ./docs/HISTORY
 e0f37c5e13e577ac9455e04471fd0a76f17a9ac165ad3188c0dfba49fef8766d  ./docs/PARAMETER_ANNOTATIONS.json
 80b0295edd16a6aa882aa6c1ac7427e4feed9f85b5ca38785f0433873ac0582c  ./docs/PARAMETER_REGISTRY.md
 d07dc1ed24932af43a384f825e166deb503e0c643ccba5de81bf70c843257538  ./docs/PLANET_V1_CONTRACT_RU.md
-b6d572bb0181322a2d9ba7e03abd0b30a4abf6f8ef4cf28cf9a567344fe65ae2  ./docs/ROADMAP.md
+176867499ea92faee0017d366afc205408a6ad4e2d04925c1dd63f7183fef97d  ./docs/ROADMAP.md
 7cc825033340ac3cb674c4b53e079090a6b553fe29aa8267491a71d67d590a89  ./docs/STRUCTURE_AUDIT_REPORT.md
 3ae639958b7a331cfddf5d730a720990ff0cfb988046709d75391c34967b6baf  ./docs/V7_5_1_TO_V7_6_CHANGE_REPORT.md
 4cadd7f34b7c345f2bb5a18e46a584179eb5ed6b527e4fb4f623059dc001dd35  ./docs/V7_6_1_CALIBRATION_REPORT.md
@@ -513,6 +513,12 @@ acbec86cbb28343cf6c71820df4c3a8fa43c24c16c6ac1ff16baad2d8778c89b  ./docs/tasks/0
 bdb2bc88ef59a447f9aebbbf4b24ed41ccd629fb0cc877fb26754972d14dc35e  ./docs/tasks/044-labor-demand-elasticity/reference/labor_market_elasticity_prototype.mjs
 6bd368f0c288b99b1c45592a7f247448d3513bfe0fb1d2d37ac6575fd36bf0b2  ./docs/tasks/044-labor-demand-elasticity/reference/make_elastic.mjs
 2dab69ad716962435a56c5ad45e0a41322006865399aba27b747a47b4a655190  ./docs/tasks/044-labor-demand-elasticity/scope.json
+0d12fd0d66115c914cfbdccc5b79cbc515822429403a6edb0792083ec1bd3b46  ./docs/tasks/045-nominal-anchor/TASK_RU.md
+f4ce1aeba9ac9c1c07e8be647b76742de3b0f5ce8566676e41e80a0e57e7d24e  ./docs/tasks/045-nominal-anchor/V7_7_19_ARCHITECTURE_SPEC.md
+5533d1969962bfae2b720ff9ce5ae9cfbc306c4f8b77176e9d96c4586c795dfa  ./docs/tasks/045-nominal-anchor/draft/change-policy-v7.7.19-draft.json
+8627b5474c2cecd639b83de619261869dbefb3db34f1e91b43dfe497ac16d427  ./docs/tasks/045-nominal-anchor/draft/skeleton-patch.json
+033e3ef02010d496900c03f290b30085167b9ce399f973569057e3739c69d9b0  ./docs/tasks/045-nominal-anchor/draft/validation-v7.7.19-draft.json
+fce0c2f4fab52f0eea9c36bc2a769036cb29736a37f985767db245f2d431dd83  ./docs/tasks/045-nominal-anchor/scope.json
 44d2e557f1cb2322739bc95ee2b6dcbf6d6fcb708da14e90d53250936e50da5c  ./docs/tasks/README_RU.md
 bbf818e93b88d606b3137b1bb69d60db8c41c9df4089025a921b1ca00f473244  ./lab/APPLY_PATCH.cmd
 1c2facd5b18592e5cdfa16be4fbe0b8c2efb4b4be7bb44b6bbec2ccfd33d87fe  ./lab/CHANGELOG.md
