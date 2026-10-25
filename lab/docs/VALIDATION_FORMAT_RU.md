@@ -486,3 +486,9 @@ Runtime во всех точках, независимо от switch: relative_w
 ## money — Lab v0.9.21
 
 Плагин `{ "type": "money", "abs_tol": 1e-6, "rel_tol": 1e-9, "switch": "Money Enabled", "transport": { "money": "Transport Money", "payout": "Transport Payout" }, "instances": [...] }`. Региональный экземпляр содержит `name`, `colony`, `wage_bill`, `rent`, `dividends`, `transport_income`, `income`, `purchases`, `household_money`, `firm_money`, `exports`, `imports`, `import_freight`, `budget_factor`. Статика проверяет все названные колонки; runtime проверяет тождество дохода, неотрицательные дивиденды и доли бюджета, замкнутую торговлю и сохранение общей суммы денег с допуском `abs_tol * Max(1, abs(initial_total))`. Относительная нормировка тождества `max(1, abs(expected))`. Денежные граничные FLOW в `open_boundaries` классифицируются как `financial_accounting` (входы и выходы). Снятие слоя удаляет фрагмент validation и его денежные граничные потоки.
+
+## money.issued — Lab v0.9.24
+
+Плагин `money` принимает необязательное поле `issued` — непустое имя STOCK со счётом суммарной денежной эмиссии (например, `"Money Issued Total"`). Поле копируется из `money_issued` сгенерированного validation-фрагмента и проверяется при конфликтном слиянии. Conformance требует существование этой колонки, схема проверяет непустую строку.
+
+При `issued` проверка `money: total money conserved` оценивает `Σ(все Household Money + все Firm Money + Transport Money) − issued` на каждом моменте относительно момента 0. Без поля остаётся прежний контроль `Σmoney` без каких-либо изменений поведения. Сгенерированный фрагмент при наличии `anchor` также добавляет `Money Issue Flow` в категорию `financial_accounting`.
