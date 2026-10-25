@@ -1,7 +1,7 @@
 e3e17a68147b548710eb8750b9c9917d89b9f2923098dbcef77861d4fd374fe4  ./.gitattributes
 5ec2b39f89176037b885fce0ae73a5000b5961f718a3b70f1d21772e2a0d9e96  ./.github/workflows/bench-full.yml
 8e2a0b0893da5548d53b2adb5e71882f4e82256d5cd0803d9b5d393087a0672a  ./.github/workflows/candidate.yml
-8901e07d076908fed819d3f8588af4b42c4b549aac2d33541ba09a5b3f219894  ./.github/workflows/ci.yml
+612c3caeeb98d72baf345be1faa2ecb63a6eb415eb7bef5cfaf90ff49f61844e  ./.github/workflows/ci.yml
 39a069346ae5c7e06a0868fe493c0e2cf6491644a36cf80ac56c4842a5ebbc25  ./.github/workflows/cross-os.yml
 240161132e72dc13384c6f5d0876f409c1b7e6c396fb98e4c46b9c20f0237b72  ./.gitignore
 dc5891b82b653803abbaa3c0df0bb134d7cd6a348cacb50f55d1ad7f7ec49daa  ./BASELINE_MANIFEST.json
@@ -19,7 +19,7 @@ d8a5f2adf5eaef8720b6f8ee5d9423f768cef37bf4663325e6cbabb12d12adf0  ./docs/HISTORY
 92d965608f80e08414213a6a70911a95f052a56997f4f82ce5bf767765e41f2b  ./docs/PARAMETER_ANNOTATIONS.json
 fd7b9de97b02c0b2bd7c3bb1b55f85189d4b4765d027b2746810ed134516279f  ./docs/PARAMETER_REGISTRY.md
 d07dc1ed24932af43a384f825e166deb503e0c643ccba5de81bf70c843257538  ./docs/PLANET_V1_CONTRACT_RU.md
-1a6eacdc78e1fe42884531e9bf53c7e5bb4e06b238b0ad9c3605efaa1a03cf8b  ./docs/ROADMAP.md
+cea4c880bb577e43cda02b535ddec1e038aa2b997f9b947cb000cc69494e6905  ./docs/ROADMAP.md
 573b86f0d3c9aab66f16e6b6697baae74fa29ef2622b8cc9d548191bbe2f1145  ./docs/STRUCTURE_AUDIT_REPORT.md
 3ae639958b7a331cfddf5d730a720990ff0cfb988046709d75391c34967b6baf  ./docs/V7_5_1_TO_V7_6_CHANGE_REPORT.md
 4cadd7f34b7c345f2bb5a18e46a584179eb5ed6b527e4fb4f623059dc001dd35  ./docs/V7_6_1_CALIBRATION_REPORT.md
@@ -527,6 +527,12 @@ c27d55e66f797ea659112992f5cf52ff267fec474e1a90c05d0c6d760de152e5  ./docs/tasks/0
 8627b5474c2cecd639b83de619261869dbefb3db34f1e91b43dfe497ac16d427  ./docs/tasks/045-nominal-anchor/draft/skeleton-patch.json
 033e3ef02010d496900c03f290b30085167b9ce399f973569057e3739c69d9b0  ./docs/tasks/045-nominal-anchor/draft/validation-v7.7.19-draft.json
 fce0c2f4fab52f0eea9c36bc2a769036cb29736a37f985767db245f2d431dd83  ./docs/tasks/045-nominal-anchor/scope.json
+230d16ee8cb4ce1daab4c0765079a7cd147589f385f73c36417073c0f3835e30  ./docs/tasks/046-money-anchor/TASK_RU.md
+25bf5e9e42d81328b4fbbcd8bdc7d383c1fc1afc4297068147dd3e7bf8a23fc6  ./docs/tasks/046-money-anchor/fixtures/money_anchor.json
+a3ff633f3e76d4e0a9bb14cec29e19607330546678b17da766c6b3ff9fd72ea1  ./docs/tasks/046-money-anchor/reference/check_anchor.mjs
+59b48d3eb6c8ff50c7e4762250aac5b2efc9328ca70cf99b7c7eca323f9b54ad  ./docs/tasks/046-money-anchor/reference/money_anchor_prototype.mjs
+e0d605bc76ccf6353d4bd00612b8c04e39e98b69730bba04b90bcc22b340cea2  ./docs/tasks/046-money-anchor/reference/runtime_anchor.mjs
+9d428007cf98377883c92b6197fc4c996573328ea1fe558d2c0cec872f1012ef  ./docs/tasks/046-money-anchor/scope.json
 44d2e557f1cb2322739bc95ee2b6dcbf6d6fcb708da14e90d53250936e50da5c  ./docs/tasks/README_RU.md
 bbf818e93b88d606b3137b1bb69d60db8c41c9df4089025a921b1ca00f473244  ./lab/APPLY_PATCH.cmd
 1c2facd5b18592e5cdfa16be4fbe0b8c2efb4b4be7bb44b6bbec2ccfd33d87fe  ./lab/CHANGELOG.md
