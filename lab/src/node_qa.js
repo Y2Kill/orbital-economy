@@ -2987,9 +2987,13 @@ await expect('89. labor_market without elasticity remains byte-identical', () =>
     expanded.patch.replace_formulas.length, expanded.patch.add_links.length].join('/');
   if (counts !== '31/24/108') throw new Error('plain prototype counts: ' + counts);
   const model = applyPatch(base, { format: PATCH_FORMAT, ...expanded.patch }).model;
-  const previouslyBuilt = laborMarketState?.expanded || expanded;
-  if (JSON.stringify(expanded.patch) !== JSON.stringify(previouslyBuilt.patch))
-    throw new Error('plain expansion differs from case 53');
+  // Case 53 uses the accepted labor_market declaration; with elasticity it
+  // cannot be a byte-identical reference for the historical plain fixture.
+  if (!('Labor Demand Wage Elasticity' in laborMarketTestFixture.parameters)) {
+    const previouslyBuilt = laborMarketState?.expanded || expanded;
+    if (JSON.stringify(expanded.patch) !== JSON.stringify(previouslyBuilt.patch))
+      throw new Error('plain expansion differs from case 53');
+  }
   if (elasticLaborMarketState &&
       JSON.stringify(model) !== JSON.stringify(elasticLaborMarketState.plain))
     throw new Error('plain model differs from case 88');
@@ -3283,6 +3287,11 @@ await expect('98. money anchor Modes 58/59 pass merged plugins and require issue
   surge.behavior.value = 'IfThenElse([Timed Test Mode] = 59, [Temporary Test Window], ' +
     surge.behavior.value + ')';
   for (const [from, mode] of [[56, 58], [57, 59]]) {
+    const existing = trialModel.scenarios.find(sc => sc.values['Timed Test Mode'] === mode);
+    if (existing) {
+      existing.values[moneyAnchorFixture.switch] = 1;
+      continue;
+    }
     const original = trialModel.scenarios.find(sc => sc.values['Timed Test Mode'] === from);
     if (!original) throw new Error('trial base Mode ' + from + ' absent');
     trialModel.scenarios.push({
