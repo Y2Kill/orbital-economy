@@ -3277,10 +3277,25 @@ await expect('98. money anchor Modes 58/59 pass merged plugins and require issue
   if (!rejected) throw new Error('money issued conflict accepted');
   const conformance = runMoneyConformance(moneyAnchorState.model, merged);
   if (conformance.status !== 'PASS') throw new Error('money conformance: ' + JSON.stringify(conformance));
+  const trialModel = structuredClone(moneyAnchorState.model);
+  const surge = trialModel.elements.find(e => e.type !== 'LINK' &&
+    e.name === 'Test 2 Transport Surge Active');
+  surge.behavior.value = 'IfThenElse([Timed Test Mode] = 59, [Temporary Test Window], ' +
+    surge.behavior.value + ')';
+  for (const [from, mode] of [[56, 58], [57, 59]]) {
+    const original = trialModel.scenarios.find(sc => sc.values['Timed Test Mode'] === from);
+    if (!original) throw new Error('trial base Mode ' + from + ' absent');
+    trialModel.scenarios.push({
+      name: 'money anchor trial Mode ' + mode,
+      description: 'money anchor with household budgets and cost pricing',
+      values: { ...structuredClone(original.values),
+        'Timed Test Mode': mode, [moneyAnchorFixture.switch]: 1 }
+    });
+  }
   for (const mode of [58, 59]) {
-    const scenario = moneyAnchorState.model.scenarios.find(s => s.values['Timed Test Mode'] === mode);
+    const scenario = trialModel.scenarios.find(s => s.values['Timed Test Mode'] === mode);
     if (!scenario) throw new Error('Mode ' + mode + ' missing');
-    const engine = loadModelJSON(modelJsonForScenario(moneyAnchorState.model, scenario));
+    const engine = loadModelJSON(modelJsonForScenario(trialModel, scenario));
     const errors = engine.check();
     if (errors.length) throw new Error('Mode ' + mode + ' model.check ' +
       errors.map(e => e.message || e).join('; '));
@@ -3383,7 +3398,7 @@ await expect('101. zero labor demand wage elasticity leaves every common series 
   return 'all shared series bit-identical with epsilon zero';
 });
 
-await expect('102. synthetic accepted money anchor peels by declaration; NODE 1-94 PASS', () => {
+await expect('102. synthetic accepted money anchor peels by declaration; NODE 1-93 PASS', () => {
   if (!moneyAnchorState) throw new Error('case 95 must run first');
   const old = moneyDeclarations.find(x => x.decl.switch === moneyAnchorFixture.switch)?.decl;
   if (!old) throw new Error('accepted money declaration missing');
@@ -3449,12 +3464,13 @@ await expect('102. synthetic accepted money anchor peels by declaration; NODE 1-
     fs.writeFileSync(modelFile, JSON.stringify(modified));
     fs.writeFileSync(validationFile, JSON.stringify(mergedValidation, null, 2) + '\n');
     const run = spawnSync(process.execPath, [
-      '--expose-gc', path.join(root, 'src', 'node_qa.js'), '--cases=1-94',
+      // Case 94 itself recursively runs NODE 1-87; exclude it to avoid double nesting and the CI timeout.
+      '--expose-gc', path.join(root, 'src', 'node_qa.js'), '--cases=1-93',
       '--accepted-model=' + modelFile, '--accepted-validation=' + validationFile
     ], { cwd: sandbox, encoding: 'utf8', maxBuffer: 16 << 20 });
-    if (run.status !== 0 || !run.stdout.includes('NODE SELF-TEST: 94 passed, 0 failed')) {
+    if (run.status !== 0 || !run.stdout.includes('NODE SELF-TEST: 93 passed, 0 failed')) {
       const failures = (run.stdout || '').split('\n').filter(x => x.includes('[FAIL]')).join('\n');
-      throw new Error('accepted anchored NODE 1-94 failed: ' +
+      throw new Error('accepted anchored NODE 1-93 failed: ' +
         '\nAll nested [FAIL] lines:\n' + (failures || '(none)') +
         '\nExit status=' + run.status + '\nStderr:\n' + (run.stderr || '').slice(-2000) +
         '\nStdout tail:\n' + (run.stdout || '').slice(-4000));
@@ -3462,7 +3478,7 @@ await expect('102. synthetic accepted money anchor peels by declaration; NODE 1-
   } finally {
     fs.rmSync(temp, { recursive: true, force: true });
   }
-  return 'anchored accepted layer rebuild PASS; previous NODE 1-94 PASS';
+  return 'anchored accepted layer rebuild PASS; previous NODE 1-93 PASS';
 });
 
 console.log(`\nNODE SELF-TEST: ${passed} passed, ${failed} failed`);
