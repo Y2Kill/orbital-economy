@@ -53,6 +53,7 @@ import { costPricingGeneratedNames, costPricingReplacementNames } from './nodes/
 import { moneyGeneratedNames, moneyReplacementNames } from './nodes/money.js';
 import { runLifecycleConformance, runFoodConformance, runLaborMarketConformance, runWagePricingConformance, runCostPricingConformance, runMoneyConformance } from './lifecycle_conformance.js';
 import { runStructureAudits } from './structure_audit.js';
+import { checkValidationSchema } from './validation_schema.js';
 
 const root = path.resolve(process.cwd());
 const option = name => process.argv.find(a=>a.startsWith('--'+name+'='))?.slice(name.length+3);
@@ -3270,6 +3271,12 @@ await expect('97. money switch off: common time series bit-identical and issued 
 await expect('98. money anchor Modes 58/59 pass merged plugins and require issued tracking', () => {
   if (!moneyAnchorState) throw new Error('case 95 must run first');
   const merged = mergeNodeValidation(withoutMoneyValidation, [moneyAnchorState.expanded.validation]);
+  // The complete validation must also pass the CLI's static schema, not only validateMoneySpec.
+  const knownModes = new Set(moneyAnchorState.model.scenarios
+    .map(s => s.values['Timed Test Mode']));
+  const schema = checkValidationSchema(merged, { modes: knownModes });
+  if (schema.status !== 'PASS') throw new Error('merged validation schema: ' +
+    schema.errors.map(e => e.path + ': ' + e.message).join('; '));
   const plugin = merged.plugins.find(p => p.type === 'money');
   if (plugin?.issued !== 'Money Issued Total') throw new Error('money issued field did not merge');
   const older = structuredClone(plugin);

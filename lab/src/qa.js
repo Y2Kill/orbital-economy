@@ -735,8 +735,15 @@ try {
     const status = (p, data) => checkPlugin(p, ctx(data));
     if (status(plugin, data).some(x => x.status === 'FAIL'))
       throw new Error('valid issued conservation rejected');
+    const validation = { plugins: [plugin] };
+    const withIssued = checkValidationSchema(validation);
+    if (withIssued.status !== 'PASS')
+      throw new Error('schema rejected optional issued: ' + JSON.stringify(withIssued.errors));
     const previous = structuredClone(plugin);
     delete previous.issued;
+    const withoutIssued = checkValidationSchema({ plugins: [previous] });
+    if (withoutIssued.status !== 'PASS')
+      throw new Error('schema rejected money without issued: ' + JSON.stringify(withoutIssued.errors));
     if (!status(previous, data).some(x => x.status === 'FAIL' && x.name === 'money: total money conserved'))
       throw new Error('plain plugin failed to detect newly issued money');
     const broken = structuredClone(data);
