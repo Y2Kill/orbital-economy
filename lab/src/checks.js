@@ -310,7 +310,9 @@ export function checkPlugin(plugin, ctx) {
       const balances = plugin.instances.flatMap(inst =>
         [series(inst.household_money), series(inst.firm_money)]);
       balances.push(series(plugin.transport.money));
-      const total = i => balances.reduce((sum, v) => sum + v[i], 0);
+      const issued = plugin.issued === undefined ? null : series(plugin.issued);
+      const total = i => balances.reduce((sum, v) => sum + v[i], 0) -
+        (issued ? issued[i] : 0);
       const initial = total(0);
       const allowed = absTol * Math.max(1, Math.abs(initial));
       let worst = 0, at = null;

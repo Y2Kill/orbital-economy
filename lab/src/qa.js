@@ -702,6 +702,50 @@ try {
     return 'good PASS; income/dividends/trade/money conservation violations FAIL';
   });
 
+
+  await expect('51 money issued conservation and negative checks', () => {
+    const times = [0, 1, 2];
+    const data = {
+      sw: [1,1,1], issued: [0,10,20],
+      homeA: [100,105,110], firmA: [200,200,200],
+      homeB: [50,55,60], firmB: [100,100,100], transport: [20,20,20],
+      wageA: [5,5,5], rentA: [2,2,2], divA: [1,1,1], freightA: [2,2,2],
+      incomeA: [10,10,10], purchaseA: [8,8,8],
+      exportA: [8,8,8], importA: [4,4,4], importFreightA: [1,1,1], budgetA: [1,1,1],
+      wageB: [4,4,4], rentB: [1,1,1], divB: [1,1,1], freightB: [1,1,1],
+      incomeB: [7,7,7], purchaseB: [8,8,8],
+      exportB: [4,4,4], importB: [8,8,8], importFreightB: [1,1,1], budgetB: [.8,.8,.8],
+      payout: [2,2,2]
+    };
+    const instance = s => ({
+      name: s + ' money', colony: s, wage_bill: 'wage' + s, rent: 'rent' + s,
+      dividends: 'div' + s, transport_income: 'freight' + s, income: 'income' + s,
+      purchases: 'purchase' + s, household_money: 'home' + s, firm_money: 'firm' + s,
+      exports: 'export' + s, imports: 'import' + s, import_freight: 'importFreight' + s,
+      budget_factor: 'budget' + s
+    });
+    const plugin = { type: 'money', switch: 'sw', issued: 'issued',
+      abs_tol: 1e-6, rel_tol: 1e-9,
+      transport: { money: 'transport', payout: 'payout' },
+      instances: [instance('A'), instance('B')] };
+    const ctx = series => ({ times, get(name) {
+      if (!(name in series)) throw new Error('missing series ' + name);
+      return series[name];
+    } });
+    const status = (p, data) => checkPlugin(p, ctx(data));
+    if (status(plugin, data).some(x => x.status === 'FAIL'))
+      throw new Error('valid issued conservation rejected');
+    const previous = structuredClone(plugin);
+    delete previous.issued;
+    if (!status(previous, data).some(x => x.status === 'FAIL' && x.name === 'money: total money conserved'))
+      throw new Error('plain plugin failed to detect newly issued money');
+    const broken = structuredClone(data);
+    broken.issued[1] = 5;
+    if (!status(plugin, broken).some(x => x.status === 'FAIL' && x.name === 'money: total money conserved'))
+      throw new Error('issued accounting violation was not caught');
+    return 'money minus issued PASS; old plugin and broken issue FAIL';
+  });
+
 } finally {
   fs.rmSync(tmp, { recursive: true, force: true });
 }

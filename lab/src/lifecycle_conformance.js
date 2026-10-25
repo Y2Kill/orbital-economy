@@ -752,6 +752,10 @@ export function validateMoneySpec(plugin) {
       typeof plugin.transport.payout !== 'string') {
     errors.push('money.transport: money and payout required');
   }
+  if (Object.hasOwn(plugin, 'issued') &&
+      (typeof plugin.issued !== 'string' || !plugin.issued.trim())) {
+    errors.push('money.issued: non-empty string required');
+  }
   const columns = ['name', 'colony', 'wage_bill', 'rent', 'dividends',
     'transport_income', 'income', 'purchases', 'household_money', 'firm_money',
     'exports', 'imports', 'import_freight', 'budget_factor'];
@@ -779,7 +783,7 @@ export function runMoneyConformance(raw, validation, index = indexModel(raw)) {
   const specErrors = validateMoneySpec(plugin);
   if (specErrors.length) return { status: 'FAIL', specErrors, instances: [], summary: empty };
   const instances = plugin.instances.map(inst => {
-    const names = [plugin.switch, ...Object.values(plugin.transport),
+    const names = [plugin.switch, ...(plugin.issued === undefined ? [] : [plugin.issued]), ...Object.values(plugin.transport),
       ...Object.entries(inst).filter(([key]) => key !== 'name' && key !== 'colony').map(([, value]) => value)];
     const checks = [...new Set(names)].map(name =>
       index.get(name) ? pass('column ' + name) :

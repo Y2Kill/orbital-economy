@@ -403,9 +403,11 @@ export function mergeNodeValidation(validation, fragments) {
       const relTol = fragment.money_rel_tol ?? 1e-9;
       const sw = fragment.money_switch;
       const transport = fragment.money_transport;
+      const issued = fragment.money_issued;
       if (!money) {
         money = { type: 'money', abs_tol: absTol, rel_tol: relTol, switch: sw,
           transport: structuredClone(transport), instances: [] };
+        if (issued !== undefined) money.issued = issued;
         out.plugins.push(money);
       }
       if (!Array.isArray(money.instances)) {
@@ -413,7 +415,8 @@ export function mergeNodeValidation(validation, fragments) {
       }
       if ((money.abs_tol ?? 1e-6) !== absTol ||
           (money.rel_tol ?? 1e-9) !== relTol ||
-          money.switch !== sw || !jsonEqual(money.transport, transport)) {
+          money.switch !== sw || !jsonEqual(money.transport, transport) ||
+           money.issued !== issued) {
         throw new Error('validation: money plugin definition differs');
       }
       for (const instance of fragment.money_instances) {
