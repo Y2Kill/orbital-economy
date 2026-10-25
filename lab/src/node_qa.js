@@ -106,6 +106,7 @@ const wagePricingFixture = readJson(path.join(root, 'fixtures', 'nodes', 'wage_p
 const costPricingFixture = readJson(path.join(root, 'fixtures', 'nodes', 'cost_pricing.json'));
 const costPricingGatedFixture = readJson(path.join(root, 'fixtures', 'nodes', 'cost_pricing_gated.json'));
 const moneyFixture = readJson(path.join(root, 'fixtures', 'nodes', 'money.json'));
+const moneyAnchorFixture = readJson(path.join(root, 'fixtures', 'nodes', 'money_anchor.json'));
 // A switched top layer is peeled only when the supplied model carries its switch: a nested run on a lower
 // layer (case 66 inside an accepted model that already has cost_pricing) must not peel a node it does not have.
 const carriesSwitch = sw => suppliedAccepted.elements.some(e => e.type !== 'LINK' && e.name === sw);
@@ -3078,7 +3079,9 @@ await expect('93. elastic wage demand parameter schema rejects invalid values wi
     await requireThrow(() => expandNode(decl, acceptedBelowLaborMarket),
       /node\.parameters\.Labor Demand Wage Elasticity/, label);
   };
-  await invalid(0, 'zero elasticity');
+  const zero = structuredClone(laborMarketElasticFixture);
+  zero.parameters['Labor Demand Wage Elasticity'] = 0;
+  expandNode(zero, acceptedBelowLaborMarket);
   await invalid(-1.5, 'negative elasticity');
   await invalid('1.5', 'string elasticity');
   const unknown = structuredClone(laborMarketElasticFixture);
@@ -3086,7 +3089,7 @@ await expect('93. elastic wage demand parameter schema rejects invalid values wi
   await requireThrow(() => expandNode(unknown, acceptedBelowLaborMarket),
     /node\.parameters\.Unknown Labor Market Parameter: unknown field/,
     'unknown parameter');
-  return 'zero, negative, string, and unknown parameter rejected with paths';
+  return 'zero elasticity accepted; negative, string, and unknown parameter rejected with paths';
 });
 
 
@@ -3194,6 +3197,56 @@ await expect('94. accepted elastic labor_market is peeled by its own declaration
     fs.rmSync(tmp, { recursive: true, force: true });
   }
   return 'accepted elastic declaration rebuilt; cases 1-87 PASS';
+});
+
+
+let moneyAnchorState = null;
+
+await expect('95. money anchor fixture expands with expected counts and fingerprint', () => {
+  const base = withoutMoney;
+  const expanded = expandNode(moneyAnchorFixture, base);
+  const counts = [expanded.patch.add_elements.length, expanded.patch.replace_formulas.length,
+    expanded.patch.add_links.length].join('/');
+  if (counts !== '76/4/210') throw new Error('anchor counts ' + counts + ' != 76/4/210');
+  const model = applyPatch(base, { format: PATCH_FORMAT, ...expanded.patch }).model;
+  const fingerprint = definitionFingerprint(model);
+  const expected = base.name.includes('v7.7.16') ? '034b62558eb30b98'
+    : base.name.includes('v7.7.19') ? 'c5aec871879ea15b' : null;
+  if (expected && fingerprint !== expected)
+    throw new Error('anchor fingerprint ' + fingerprint + ' != ' + expected);
+  if (expanded.validation.money_issued !== 'Money Issued Total' ||
+      !expanded.validation.money_boundary_flows.includes('Money Issue Flow'))
+    throw new Error('anchor validation fragment incomplete');
+  moneyAnchorState = { base, expanded, model };
+  return counts + ' fingerprint=' + fingerprint;
+});
+
+await expect('96. old money fixture stays unchanged, byte-identical on same base', () => {
+  const base = withoutMoney;
+  const plain = expandNode(moneyFixture, base);
+  const expected = [plain.patch.add_elements.length, plain.patch.replace_formulas.length,
+    plain.patch.add_links.length].join('/');
+  if (expected !== '68/4/193') throw new Error('plain money counts ' + expected);
+  if (JSON.stringify(plain) !== JSON.stringify(moneyState?.expanded || plain))
+    throw new Error('plain expansion has changed compared to case 74');
+  if (Object.hasOwn(plain.validation, 'money_issued'))
+    throw new Error('plain money must not emit money_issued');
+  return expected + '; no anchor-related changes';
+});
+
+await expect('100. anchor declaration and money plugin reject malformed values with exact paths', async () => {
+  const invalid = async (change, pattern, label) => {
+    const decl = structuredClone(moneyAnchorFixture);
+    change(decl);
+    await requireThrow(() => expandNode(decl, withoutMoney), pattern, label);
+  };
+  await invalid(d => { d.anchor = 1; }, /node\.anchor/, 'anchor not object');
+  await invalid(d => { delete d.anchor.price_index; }, /node\.anchor\.price_index/, 'missing price_index');
+  await invalid(d => { d.anchor.weight = 'Population'; }, /node\.anchor\.weight/, 'weight no placeholder');
+  await invalid(d => { d.anchor.target = 0; }, /node\.anchor\.target/, 'zero target');
+  await invalid(d => { d.anchor.time = -1; }, /node\.anchor\.time/, 'negative time');
+  await invalid(d => { d.anchor.unexpected = 1; }, /node\.anchor\.unexpected/, 'unknown field');
+  return 'six invalid anchor declarations rejected';
 });
 
 console.log(`\nNODE SELF-TEST: ${passed} passed, ${failed} failed`);

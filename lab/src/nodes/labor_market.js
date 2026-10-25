@@ -54,8 +54,8 @@ export function validateLaborMarketDeclaration(decl, path, errors) {
       else if (!isNumber(decl.parameters[name])) errors.push(path + '.parameters.' + name + ': must be a finite number');
       else if (!(decl.parameters[name] > 0)) errors.push(path + '.parameters.' + name + ': must be > 0');
     }
-    if (ELASTICITY in decl.parameters && !(isNumber(decl.parameters[ELASTICITY]) && decl.parameters[ELASTICITY] > 0))
-      errors.push(path + '.parameters.' + ELASTICITY + ': must be a finite number > 0');   // task 044
+    if (ELASTICITY in decl.parameters && !(isNumber(decl.parameters[ELASTICITY]) && decl.parameters[ELASTICITY] >= 0))
+      errors.push(path + '.parameters.' + ELASTICITY + ': must be a finite number >= 0');   // task 046
   }
 
   const ip = path + '.inputs';
