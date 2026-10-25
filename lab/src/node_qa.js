@@ -3249,5 +3249,271 @@ await expect('100. anchor declaration and money plugin reject malformed values w
   return 'six invalid anchor declarations rejected';
 });
 
+
+let moneyAnchorState = null;
+
+await expect('95. anchored money fixture expansion matches reference counts and fingerprint', () => {
+  const base = withoutMoney;
+  const expanded = expandNode(moneyAnchorFixture, base);
+  const counts = [expanded.patch.add_elements.length,
+    expanded.patch.replace_formulas.length, expanded.patch.add_links.length].join('/');
+  if (counts !== '76/4/210') throw new Error('anchored count mismatch ' + counts);
+  const model = applyPatch(base, { format: PATCH_FORMAT, ...expanded.patch }).model;
+  const fingerprint = definitionFingerprint(model);
+  const expected = base.name.includes('v7.7.16') ? '034b62558eb30b98'
+    : base.name.includes('v7.7.19') ? 'c5aec871879ea15b' : null;
+  if (expected && fingerprint !== expected)
+    throw new Error('anchor fingerprint ' + fingerprint + ' expected ' + expected);
+  if (expanded.validation.money_issued !== 'Money Issued Total' ||
+      !expanded.validation.money_boundary_flows.includes('Money Issue Flow'))
+    throw new Error('missing issued or boundary validation');
+  moneyAnchorState = { base, expanded, model };
+  return counts + ' fingerprint=' + fingerprint;
+});
+
+await expect('96. money without anchor remains byte-identical to previous fixture', () => {
+  if (!moneyAnchorState) throw new Error('case 95 must run first');
+  const expanded = expandNode(moneyFixture, moneyAnchorState.base);
+  const counts = [expanded.patch.add_elements.length,
+    expanded.patch.replace_formulas.length, expanded.patch.add_links.length].join('/');
+  if (counts !== '68/4/193') throw new Error('plain money counts ' + counts);
+  const old = moneyState?.expanded;
+  if (old && JSON.stringify(expanded) !== JSON.stringify(old))
+    throw new Error('unanchored expansion differs from case 74');
+  if (Object.hasOwn(expanded.validation, 'money_issued'))
+    throw new Error('unexpected issued field in plain money validation');
+  return counts + ' plain expansion unchanged';
+});
+
+await expect('97. money switch off: common time series bit-identical and issued zero', () => {
+  if (!moneyAnchorState) throw new Error('case 95 must run first');
+  const base = moneyAnchorState.base;
+  const plain = applyPatch(base, { format: PATCH_FORMAT,
+    ...expandNode(moneyFixture, base).patch }).model;
+  const anchored = moneyAnchorState.model;
+  const src = plain.scenarios.find(sc => sc.values['Timed Test Mode'] === 0) || plain.scenarios[0];
+  if (!src) throw new Error('no scenario');
+  const scenario = structuredClone(src);
+  scenario.values = { ...scenario.values, [moneyFixture.switch]: 0 };
+  const simulate = raw => {
+    const model = loadModelJSON(modelJsonForScenario(raw, scenario));
+    const errors = model.check();
+    if (errors.length) throw new Error(errors.map(x => x.message || x).join('; '));
+    return seriesContext(model, model.simulate());
+  };
+  const first = simulate(plain), second = simulate(anchored);
+  for (const e of plain.elements.filter(x => x.type !== 'LINK')) {
+    const a = Array.from(first.get(e.name), Number);
+    const b = Array.from(second.get(e.name), Number);
+    if (a.length !== b.length || a.some((v, idx) => !Object.is(v, b[idx])))
+      throw new Error('money off series differs: ' + e.name);
+  }
+  if (Array.from(second.get('Money Issued Total'), Number).some(v => v !== 0))
+    throw new Error('money issued with money disabled');
+  return 'all shared series identical; issued total zero';
+});
+
+await expect('98. money anchor Modes 58/59 pass merged plugins and require issued tracking', () => {
+  if (!moneyAnchorState) throw new Error('case 95 must run first');
+  const merged = mergeNodeValidation(withoutMoneyValidation, [moneyAnchorState.expanded.validation]);
+  const plugin = merged.plugins.find(p => p.type === 'money');
+  if (plugin?.issued !== 'Money Issued Total') throw new Error('money issued field did not merge');
+  const older = structuredClone(plugin);
+  delete older.issued;
+  const conflict = structuredClone(moneyAnchorState.expanded.validation);
+  conflict.money_issued = 'Wrong Issued Account';
+  let rejected = false;
+  try { mergeNodeValidation(merged, [conflict]); } catch { rejected = true; }
+  if (!rejected) throw new Error('money issued conflict accepted');
+  const conformance = runMoneyConformance(moneyAnchorState.model, merged);
+  if (conformance.status !== 'PASS') throw new Error('money conformance: ' + JSON.stringify(conformance));
+  for (const mode of [58, 59]) {
+    const scenario = moneyAnchorState.model.scenarios.find(s => s.values['Timed Test Mode'] === mode);
+    if (!scenario) throw new Error('Mode ' + mode + ' missing');
+    const engine = loadModelJSON(modelJsonForScenario(moneyAnchorState.model, scenario));
+    const errors = engine.check();
+    if (errors.length) throw new Error('Mode ' + mode + ' model.check ' +
+      errors.map(e => e.message || e).join('; '));
+    const results = engine.simulate();
+    const ctx = seriesContext(engine, results);
+    const checks = [
+      checkFiniteAll(engine, results),
+      checkTimeAxis(results, merged.expected_time_step ?? moneyAnchorState.model.simulation?.time_step,
+        merged.time_step_tolerance ?? 1e-12)
+    ];
+    if (merged.non_negative_regex)
+      checks.push(checkNonNegativeRegex(engine, results, merged.non_negative_regex.pattern,
+        merged.non_negative_regex.tolerance ?? 1e-10));
+    for (const item of merged.plugins || []) checks.push(...checkPlugin(item, ctx));
+    for (const check of merged.global_checks || []) checks.push(runGenericCheck(check, ctx));
+    const failures = checks.filter(c => c.status === 'FAIL');
+    if (failures.length)
+      throw new Error('Mode ' + mode + ' plugins fail: ' +
+        failures.map(c => c.name + ' ' + (c.message || '')).join('; ').slice(0,4000));
+    const issued = Array.from(ctx.get('Money Issued Total'), Number);
+    if (!Number.isFinite(issued.at(-1)) || issued.at(-1) === 0)
+      throw new Error('Mode ' + mode + ' has no issued money');
+    if (!checkPlugin(older, ctx).some(c => c.status === 'FAIL' && c.name === 'money: total money conserved'))
+      throw new Error('Mode ' + mode + ' without issued failed to detect drift');
+  }
+  return 'Modes 58 and 59 plugin PASS, issued nonzero, old accounting FAIL';
+});
+
+await expect('99. anchor money peel and rebuild have zero primitive/link differences', () => {
+  if (!moneyAnchorState) throw new Error('case 95 must run first');
+  const stripped = stripMoneyNode(moneyAnchorState.model, moneyAnchorFixture);
+  const rebuilt = applyPatch(stripped, { format: PATCH_FORMAT,
+    ...expandNode(moneyAnchorFixture, stripped).patch }).model;
+  for (const [expected, actual] of [
+    [moneyAnchorState.base, stripped], [moneyAnchorState.model, rebuilt]
+  ]) {
+    const a = new Map(expected.elements.filter(e => e.type !== 'LINK')
+      .map(e => [e.name, def(e)]));
+    const b = new Map(actual.elements.filter(e => e.type !== 'LINK')
+      .map(e => [e.name, def(e)]));
+    if (a.size !== b.size) throw new Error('primitive count mismatch');
+    for (const [name, value] of a)
+      if (b.get(name) !== value) throw new Error('definition differs: ' + name);
+    if (!sameSet(linkSet(expected), linkSet(actual))) throw new Error('LINK differences');
+  }
+  if (stripped.elements.some(e => e.type !== 'LINK' && e.name === 'Money Issued Total'))
+    throw new Error('Money Issued Total survived removal');
+  return 'zero primitive/link differences and no generated anchor names';
+});
+
+await expect('100. money anchor rejects malformed fields; plugin issued must be string', async () => {
+  const invalid = async (modify, pattern, label) => {
+    const decl = structuredClone(moneyAnchorFixture);
+    modify(decl);
+    await requireThrow(() => expandNode(decl, withoutMoney), pattern, label);
+  };
+  await invalid(d => { d.anchor = []; }, /node\.anchor/, 'not object');
+  await invalid(d => { delete d.anchor.price_index; }, /node\.anchor\.price_index/, 'missing price_index');
+  await invalid(d => { d.anchor.weight = 'Population'; }, /node\.anchor\.weight/, 'weight without C');
+  await invalid(d => { d.anchor.target = 0; }, /node\.anchor\.target/, 'target zero');
+  await invalid(d => { d.anchor.time = -1; }, /node\.anchor\.time/, 'time negative');
+  await invalid(d => { d.anchor.unexpected = 3; }, /node\.anchor\.unexpected/, 'unknown field');
+  const expanded = expandNode(moneyAnchorFixture, withoutMoney);
+  const validation = mergeNodeValidation(withoutMoneyValidation, [expanded.validation]);
+  const plugin = validation.plugins.find(p => p.type === 'money');
+  plugin.issued = 42;
+  const conformance = runMoneyConformance(
+    applyPatch(withoutMoney, { format: PATCH_FORMAT, ...expanded.patch }).model, validation);
+  if (conformance.status !== 'FAIL' ||
+      !conformance.specErrors?.some(e => e.includes('money.issued')))
+    throw new Error('money plugin did not reject issued non-string');
+  return 'six anchor paths and issued non-string rejected';
+});
+
+await expect('101. zero labor demand wage elasticity leaves every common series unchanged', () => {
+  const base = acceptedBelowLaborMarket;
+  const zero = structuredClone(laborMarketElasticFixture);
+  zero.parameters['Labor Demand Wage Elasticity'] = 0;
+  const plain = applyPatch(base, { format: PATCH_FORMAT,
+    ...expandNode(laborMarketFixture, base).patch }).model;
+  const elastic = applyPatch(base, { format: PATCH_FORMAT,
+    ...expandNode(zero, base).patch }).model;
+  const src = plain.scenarios.at(-1);
+  if (!src) throw new Error('scenario missing');
+  const scenario = structuredClone(src);
+  scenario.values = { ...scenario.values, [laborMarketFixture.switch]: 1 };
+  const simulate = raw => {
+    const model = loadModelJSON(modelJsonForScenario(raw, scenario));
+    const errors = model.check();
+    if (errors.length) throw new Error(errors.map(e => e.message || e).join('; '));
+    return seriesContext(model, model.simulate());
+  };
+  const first = simulate(plain), second = simulate(elastic);
+  for (const e of plain.elements.filter(x => x.type !== 'LINK')) {
+    const a = Array.from(first.get(e.name), Number);
+    const b = Array.from(second.get(e.name), Number);
+    if (a.length !== b.length || a.some((v, idx) => !Object.is(v, b[idx])))
+      throw new Error('epsilon=0 changes common series: ' + e.name);
+  }
+  return 'all shared series bit-identical with epsilon zero';
+});
+
+await expect('102. synthetic accepted money anchor peels by declaration; NODE 1-94 PASS', () => {
+  if (!moneyAnchorState) throw new Error('case 95 must run first');
+  const old = moneyDeclarations.find(x => x.decl.switch === moneyAnchorFixture.switch)?.decl;
+  if (!old) throw new Error('accepted money declaration missing');
+  const modified = structuredClone(suppliedAccepted);
+  const existing = new Map(modified.elements.filter(e => e.type !== 'LINK').map(e => [e.name, e]));
+  const plain = expandNode(old, withoutMoney);
+  const anchor = expandNode(moneyAnchorFixture, withoutMoney);
+  const plainByName = new Map(plain.patch.add_elements.map(e => [e.name, e]));
+  for (const element of anchor.patch.add_elements) {
+    const previous = plainByName.get(element.name);
+    if (!previous) {
+      modified.elements.push(structuredClone(element));
+    } else if (def(previous) !== def(element)) {
+      const current = existing.get(element.name);
+      if (!current || def(current) !== def(previous))
+        throw new Error('accepted old money definition differs: ' + element.name);
+      current.behavior.value = element.behavior.value;
+    }
+  }
+  const links = linkSet(modified);
+  for (const link of anchor.patch.add_links) {
+    const key = link.from + '|' + link.to;
+    if (!links.has(key)) {
+      modified.elements.push({ type: 'LINK', from: link.from, to: link.to });
+      links.add(key);
+    }
+  }
+  const mergedValidation = mergeNodeValidation(withoutMoneyValidation, [anchor.validation]);
+  const nodes = acceptedLayeredNodes.map(n => n.decl === old
+    ? { ...n, decl: moneyAnchorFixture } : n);
+  const chain = buildLayers(modified, nodes);
+  const layer = chain.layers.get(moneyAnchorFixture);
+  if (!layer) throw new Error('accepted anchor layer not found');
+  const rebuilt = applyPatch(layer.base, { format: PATCH_FORMAT,
+    ...expandNode(moneyAnchorFixture, layer.base).patch }).model;
+  const a = new Map(layer.target.elements.filter(e => e.type !== 'LINK')
+    .map(e => [e.name, def(e)]));
+  const b = new Map(rebuilt.elements.filter(e => e.type !== 'LINK')
+    .map(e => [e.name, def(e)]));
+  if (a.size !== b.size) throw new Error('anchored accepted rebuild primitive count differs');
+  for (const [name, definition] of a)
+    if (b.get(name) !== definition) throw new Error('anchored accepted rebuild differs: ' + name);
+  if (!sameSet(linkSet(layer.target), linkSet(rebuilt)))
+    throw new Error('anchored accepted rebuild links differ');
+
+  const temp = fs.mkdtempSync(path.join(os.tmpdir(), 'orbital-money-anchor-'));
+  try {
+    const sandbox = path.join(temp, 'lab');
+    const nodesDir = path.join(temp, 'model', 'nodes');
+    fs.mkdirSync(sandbox, { recursive: true });
+    fs.mkdirSync(nodesDir, { recursive: true });
+    for (const name of ['src', 'fixtures', 'input', 'reference'])
+      fs.symlinkSync(path.join(root, name), path.join(sandbox, name),
+        process.platform === 'win32' ? 'junction' : 'dir');
+    for (const file of fs.readdirSync(nodeDir).filter(name => name.endsWith('.json'))) {
+      const decl = readJson(path.join(nodeDir, file));
+      const replacement = decl.type === 'money' && decl.switch === moneyAnchorFixture.switch
+        ? moneyAnchorFixture : decl;
+      fs.writeFileSync(path.join(nodesDir, file), JSON.stringify(replacement, null, 2) + '\n');
+    }
+    const modelFile = path.join(temp, 'accepted.json');
+    const validationFile = path.join(temp, 'validation.json');
+    fs.writeFileSync(modelFile, JSON.stringify(modified));
+    fs.writeFileSync(validationFile, JSON.stringify(mergedValidation, null, 2) + '\n');
+    const run = spawnSync(process.execPath, [
+      '--expose-gc', path.join(root, 'src', 'node_qa.js'), '--cases=1-94',
+      '--accepted-model=' + modelFile, '--accepted-validation=' + validationFile
+    ], { cwd: sandbox, encoding: 'utf8', maxBuffer: 16 << 20 });
+    if (run.status !== 0 || !run.stdout.includes('NODE SELF-TEST: 94 passed, 0 failed')) {
+      const failures = (run.stdout || '').split('\n').filter(x => x.includes('[FAIL]')).join('\n');
+      throw new Error('accepted anchored NODE 1-94 failed: ' +
+        '\nAll nested [FAIL] lines:\n' + (failures || '(none)') +
+        '\nExit status=' + run.status + '\nStderr:\n' + (run.stderr || '').slice(-2000) +
+        '\nStdout tail:\n' + (run.stdout || '').slice(-4000));
+    }
+  } finally {
+    fs.rmSync(temp, { recursive: true, force: true });
+  }
+  return 'anchored accepted layer rebuild PASS; previous NODE 1-94 PASS';
+});
+
 console.log(`\nNODE SELF-TEST: ${passed} passed, ${failed} failed`);
 if (failed) process.exitCode = 1;
